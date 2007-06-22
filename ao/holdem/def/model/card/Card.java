@@ -1,6 +1,6 @@
 package ao.holdem.def.model.card;
 
-import ao.holdem.def.model.card.eval5.Lookup;
+import ao.holdem.def.model.card.eval5.Eval5Lookup;
 
 
 /**
@@ -140,7 +140,7 @@ public enum Card
             Card c1, Card c2, Card c3, Card c4, Card c5)
     {
         return handValue(c1.SIGNITURE, c2.SIGNITURE, c3.SIGNITURE,
-                        c4.SIGNITURE, c5.SIGNITURE);
+                         c4.SIGNITURE, c5.SIGNITURE);
     }
     public static short handValue(int c1, int c2, int c3, int c4, int c5)
     {
@@ -153,14 +153,14 @@ public enum Card
         // check for flushes and straight flushes
         if (suitsEqual(c1, c2, c3, c4, c5))
         {
-            return Lookup.flushes( index );
+            return Eval5Lookup.flushes( index );
         }
 
         // check for straights and high card hands
-        short high = Lookup.unique5( index );
+        short high = Eval5Lookup.unique5( index );
         if (high != 0) return high;
 
-        return Lookup.remainingHands(
+        return Eval5Lookup.remainingHands(
                 (c1 & 0xff) * (c2 & 0xff) * (c3 & 0xff) *
                 (c4 & 0xff) * (c5 & 0xff));
     }
@@ -183,23 +183,32 @@ public enum Card
     @Override
     public String toString()
     {
-        return RANK + " of " + SUIT;
+        return RANK.toString() + SUIT;
     }
 
 
     //--------------------------------------------------------------------
     public enum Rank
     {
-        TWO(2),    THREE(3),  FOUR(5),  FIVE(7), SIX(11),
-        SEVEN(13), EIGHT(17), NINE(19), TEN(23), JACK(29),
-        QUEEN(31), KING(37),  ACE(41);
+        TWO(2, "2"),   THREE(3, "3"),  FOUR(5, "4"),   FIVE(7, "5"),
+        SIX(11, "6"),  SEVEN(13, "7"), EIGHT(17, "8"), NINE(19, "9"),
+        TEN(23, "10"), JACK(29, "J"),  QUEEN(31, "Q"), KING(37, "K"),
+        ACE(41, "A");
 
-        private final int PRIME;
-        private final int MASK;
-        private Rank(int prime)
+        private final int    PRIME;
+        private final int    MASK;
+        private final String NAME;
+
+        private Rank(int prime, String name)
         {
             PRIME = prime;
             MASK  = 1 << ordinal();
+            NAME  = name;
+        }
+
+        public String toString()
+        {
+            return NAME;
         }
     }
 
@@ -207,11 +216,22 @@ public enum Card
     //--------------------------------------------------------------------
     public enum Suit
     {
-        CLUBS, DIAMONDS, HEARTS, SPADES;
+        CLUBS("c"), DIAMONDS("d"), HEARTS("h"), SPADES("s");
+
+        private final String NAME;
+        private Suit(String name)
+        {
+            NAME = name;
+        }
 
         private int mask()
         {
             return 1 << (3 - ordinal());
+        }
+
+        public String toString()
+        {
+            return NAME;
         }
     }
 }

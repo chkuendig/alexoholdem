@@ -130,7 +130,8 @@ public class PersistentShorts
         DataInputStream cache =
                 new DataInputStream(
                         new BufferedInputStream(
-                                new FileInputStream(cacheFile)));
+                                new FileInputStream(cacheFile),
+                                1048576));
         for (int i = 0; i < cached.length; i++)
         {
             cached[ i ] = cache.readShort();

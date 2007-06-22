@@ -7,10 +7,10 @@ import ao.holdem.def.model.card.lookup.PersistentShorts;
  *  http://www.suffecool.net/poker/code/arrays.h
  *  http://www.geocities.com/psenzee/code/fast_eval.c
  */
-public class Lookup
+public class Eval5Lookup
 {
     //--------------------------------------------------------------------
-    private Lookup() {}
+    private Eval5Lookup() {}
 
 
     //--------------------------------------------------------------------
@@ -44,9 +44,9 @@ public class Lookup
     //--------------------------------------------------------------------
     public static short remainingHands(int primeProduct)
     {
-        return hashVals[ find_fast(primeProduct) ];
+        return hashVals[ findFast(primeProduct) ];
     }
-    private static int find_fast(int u)
+    private static int findFast(int u)
     {
         long adjusted = u;
         adjusted = (adjusted + 0xe91aaa35) & 0xFFFFFFFFL;

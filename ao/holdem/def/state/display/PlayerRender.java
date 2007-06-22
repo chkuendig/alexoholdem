@@ -41,7 +41,7 @@ public class PlayerRender extends JPanel
     }
     private int baseColor(int awayFromDealer)
     {
-        return ((5 + awayFromDealer) * awayFromDealer
-                        * awayFromDealer) % 150 + 10*awayFromDealer;
+        return ((420 + awayFromDealer) * awayFromDealer
+                        * awayFromDealer) % 155 + 10*awayFromDealer;
     }
 }

@@ -6,8 +6,8 @@ import ao.holdem.bots.SimpleBot;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.FastEval7;
-import ao.holdem.def.model.card.eval7.UniqueIndex;
+import ao.holdem.def.model.card.eval7.Eval7Faster;
+import ao.holdem.def.model.card.eval7.Eval7FastLookup;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.state.display.OutcomeStepRender;
 import ao.holdem.def.state.domain.BettingRound;
@@ -40,7 +40,6 @@ public class Main
         // configure log4j logging
         BasicConfigurator.configure();
 
-        
         // throw off number sequence
 //        Rand.nextInt();
 //        Rand.nextDouble();
@@ -136,7 +135,7 @@ public class Main
                         SimpleBot.class));
 
         Holdem holdem = new HoldemImpl();
-        holdem.configure(4, provider);
+        holdem.configure(10, provider);
 
         for (Outcome.Step step : holdem.play().log())
         {
@@ -169,7 +168,7 @@ public class Main
                 mask |= (1L << card.ordinal());
             }
 
-            int index = UniqueIndex.index52c7(mask);
+            int index = Eval7FastLookup.index52c7(mask);
             if (index >= 133784560)
             {
                 System.out.println("OUT OF BOUNDS " + mask + " with " + index);
@@ -213,10 +212,10 @@ public class Main
             if (count++ % 1000000  == 0) System.out.print(".");
 
             short value =
-            FastEval7.handValue(c0, c1, c2, c3, c4, c5, c6);
-//            FastEval7.handValue(combiner.nextElement());
-//            Lookup7.handValue(combiner.nextElement());
-//            Lookup7.handValue(cards[c1], cards[c2], cards[c3], cards[c4],
+            Eval7Faster.handValue(c0, c1, c2, c3, c4, c5, c6);
+//            Eval7Faster.handValue(combiner.nextElement());
+//            Eval7Fast.handValue(combiner.nextElement());
+//            Eval7Fast.handValue(cards[c1], cards[c2], cards[c3], cards[c4],
 //                              cards[c5], cards[c6], cards[c7]);
 //            new Hand( combiner.nextElement() ).value();
 
