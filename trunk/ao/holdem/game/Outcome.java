@@ -72,10 +72,21 @@ public class Outcome
 
 
     //--------------------------------------------------------------------
-//    public List<Bot> winner()
-//    {
-//        return null;
-//    }
+    /**
+     * @return A list of winning teams.  More than one team wins
+     *          if there is a split pot.
+     *          Each team consists of the bots make it up, they are
+     *          listed in action order.
+     */
+    public List<List<Bot>> winners()
+    {
+        return null;
+    }
+
+    public List<List<Bot>> loser()
+    {
+        return null;
+    }
 
 
     //--------------------------------------------------------------------

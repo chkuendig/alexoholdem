@@ -10,10 +10,10 @@ import java.io.*;
 /**
  *
  */
-public class Lookup7
+public class Eval7Fast
 {
     //--------------------------------------------------------------------
-    private Lookup7() {}
+    private Eval7Fast() {}
 
 
     //--------------------------------------------------------------------
@@ -103,7 +103,7 @@ public class Lookup7
         while (combiner.hasMoreElements())
         {
             Card handOf7[] = combiner.nextElement();
-            int index = UniqueIndex.index52c7(mask(handOf7));
+            int index = Eval7FastLookup.index52c7(mask(handOf7));
             if (isNull(vals, index))
             {
                 set(vals, index, new Hand( handOf7 ).value());
@@ -148,7 +148,7 @@ public class Lookup7
     {
         assert sevenCards.length == 7;
 
-        int index = UniqueIndex.index52c7( mask(sevenCards) );
+        int index = Eval7FastLookup.index52c7( mask(sevenCards) );
         short val = get(values, index);
         return val == 0
                 ? set(values, index, new Hand( sevenCards ).value())
@@ -159,7 +159,7 @@ public class Lookup7
             Card c1, Card c2, Card c3, Card c4,
             Card c5, Card c6, Card c7)
     {
-        int index = UniqueIndex.index52c7(
+        int index = Eval7FastLookup.index52c7(
                         mask(c1, c2, c3, c4, c5, c6, c7) );
         short val = get(values, index);
         return val == 0

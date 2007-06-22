@@ -1,6 +1,7 @@
 package ao.holdem.def.model.card.eval7;
 
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.card.lookup.PersistentInts;
 import ao.holdem.def.model.card.lookup.PersistentLongs;
 import ao.holdem.def.model.cards.Hand;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 /**
  * http://forumserver.twoplustwo.com/showflat.php?Cat=0&Number=8513906&page=0&fpart=all&vc=1
  */
-public class FastEval7
+public class Eval7Faster
 {
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
@@ -245,40 +246,18 @@ public class FastEval7
 
             switch (numCards) {
                 case 5 :
-                	handRank = Card.handValue(hand[0],hand[1],hand[2],hand[3],hand[4]);
+                	handRank = EvalSlow.valueOf(
+                            hand[0],hand[1],hand[2],hand[3],hand[4]);
                     break;
 
                 case 6 :
-                    handRank = Card.handValue(                   hand[0],hand[1],hand[2],hand[3],hand[4]);
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[3],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[3],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[2],hand[3],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[2],hand[3],hand[4],hand[5]));
+                    handRank = EvalSlow.valueOf(
+                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
                     break;
 
                 case 7 :
-                    handRank = Card.handValue(                   hand[0],hand[1],hand[2],hand[3],hand[4]);
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[3],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[3],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[4],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[2],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[3],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[3],hand[4],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[3],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[1],hand[4],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[2],hand[3],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[2],hand[3],hand[4],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[2],hand[3],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[2],hand[4],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[0],hand[3],hand[4],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[2],hand[3],hand[4],hand[5]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[2],hand[3],hand[4],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[2],hand[3],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[2],hand[4],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[1],hand[3],hand[4],hand[5],hand[6]));
-                    handRank = Math.max(handRank, Card.handValue(hand[2],hand[3],hand[4],hand[5],hand[6]));
+                    handRank = EvalSlow.valueOf(
+                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[7]);
                     break;
 
                 default :

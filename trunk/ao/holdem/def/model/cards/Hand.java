@@ -1,6 +1,7 @@
 package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.community.River;
 import ao.util.stats.Combiner;
 
@@ -44,7 +45,7 @@ public class Hand implements Comparable<Hand>
 //            System.out.println("!!!" + i++);
             Card permutation[] = combiner.nextElement();
 
-            short permutationRank = Card.handValue(permutation);
+            short permutationRank = EvalSlow.valueOf(permutation);
             if (permutationRank > bestFiveValue)
             {
                 bestFiveValue = permutationRank;

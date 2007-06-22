@@ -144,7 +144,8 @@ public class HoldemHand
                 switch (action)
                 {
                     case FOLD:
-//                        log.debug(awayFromDealer + " clockwise from dealer folds.");
+//                        log.debug(awayFromDealer +
+//                                    " clockwise from dealer folds.");
                         state.folded(awayFromDealer);
 
                         active.remove( (Integer)awayFromDealer );
@@ -152,7 +153,8 @@ public class HoldemHand
                         break;
 
                     case RAISE:
-//                        log.debug(awayFromDealer + " clockwise from dealer raises.");
+//                        log.debug(awayFromDealer +
+//                                    " clockwise from dealer raises.");
                         state.raised( awayFromDealer );
 
                         previousRaiser = awayFromDealer;
@@ -160,12 +162,14 @@ public class HoldemHand
                         break;
 
                     case CALL:
-//                        log.debug(awayFromDealer + " clockwise from dealer calls.");
+//                        log.debug(awayFromDealer +
+//                                    " clockwise from dealer calls.");
                         state.called( awayFromDealer );
                         break;
 
                     case CHECK:
-//                        log.debug(awayFromDealer + " clockwise from dealer checks.");
+//                        log.debug(awayFromDealer +
+//                                    " clockwise from dealer checks.");
                         state.checked( awayFromDealer );
                         break;
                 }

@@ -2,11 +2,12 @@ package ao.holdem.def.state.display;
 
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.game.Outcome;
+import ao.util.async.Condition;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -53,15 +54,14 @@ public class OutcomeStepRender extends JPanel
         final Condition c = new Condition(false);
         envFrame.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                c.set_true();
+                c.setTrue();
             }
         });
         
-        try   { c.wait_for_true(); }
+        try   { c.waitForTrue(); }
         catch (InterruptedException ignored) {}
 
         envFrame.setVisible(false);
         envFrame.dispose();
     }
-    
 }

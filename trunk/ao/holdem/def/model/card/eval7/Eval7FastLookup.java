@@ -7,10 +7,10 @@ import ao.holdem.def.model.card.lookup.PersistentShorts;
  * http://senzee.blogspot.com/search/label/Poker%20Hand%20Evaluation
  * http://www.geocities.com/psenzee/code/index52c7.h
  */
-public class UniqueIndex
+public class Eval7FastLookup
 {
     //--------------------------------------------------------------------
-    private UniqueIndex() {}
+    private Eval7FastLookup() {}
 
 
     //--------------------------------------------------------------------
