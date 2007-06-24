@@ -6,19 +6,19 @@ import ao.holdem.bots.SimpleBot;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.card.eval7.Eval7FastLookup;
+import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.state.display.OutcomeStepRender;
+import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.Decider;
+import ao.holdem.def.state.domain.DealerDistance;
 import ao.holdem.def.state.domain.Opposition;
 import ao.holdem.game.Holdem;
 import ao.holdem.game.Outcome;
 import ao.holdem.game.impl.HoldemImpl;
 import ao.holdem.net.OverTheWireState;
 import ao.util.stats.Combiner;
-import org.apache.log4j.BasicConfigurator;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -38,7 +38,7 @@ public class Main
     public static void main(String[] args)
     {
         // configure log4j logging
-        BasicConfigurator.configure();
+//        BasicConfigurator.configure();
 
         // throw off number sequence
 //        Rand.nextInt();
@@ -117,30 +117,38 @@ public class Main
 
 
     //--------------------------------------------------------------------
+//    private static int counter = 0;
     public static void runHoldemGame()
     {
         BotProvider provider = new BotProvider();
 
         provider.add(
                 BotFactory.Impl.newInstance(
-                        EnumSet.allOf(Decider.class),
+                        EnumSet.allOf(BetsToCall.class),
+                        EnumSet.allOf(DealerDistance.class),
                         EnumSet.allOf(Opposition.class),
                         EnumSet.allOf(BettingRound.class),
                         RandomBot.class));
         provider.add(
                 BotFactory.Impl.newInstance(
-                        EnumSet.allOf(Decider.class),
+                        EnumSet.allOf(BetsToCall.class),
+                        EnumSet.allOf(DealerDistance.class),
                         EnumSet.allOf(Opposition.class),
                         EnumSet.allOf(BettingRound.class),
                         SimpleBot.class));
 
         Holdem holdem = new HoldemImpl();
-        holdem.configure(10, provider);
+        holdem.configure(4, provider);
 
-        for (Outcome.Step step : holdem.play().log())
-        {
-            OutcomeStepRender.display( step );
-        }
+        Outcome outcome = holdem.play();
+//        if (++counter == 6)
+//        {
+            System.out.println("winners: " + outcome.winners());
+            for (Outcome.Step step : outcome.log())
+            {
+                OutcomeStepRender.display( step );
+            }
+//        }
     }
 
 

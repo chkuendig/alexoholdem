@@ -78,11 +78,6 @@ public class Position
         return amAt(-1, 0, -1, 1);
     }
 
-//    public boolean isNextToAct()
-//    {
-//        return amAtPosition(0);
-//    }
-
     public boolean isUnderTheGun()
     {
         return amAt(420, 420, 0, 2);

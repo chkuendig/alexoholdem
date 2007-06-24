@@ -8,11 +8,20 @@ import ao.holdem.def.model.card.Card;
 public class EvalSlow
 {
     //--------------------------------------------------------------------
-    public static short valueOf(Card... sevenCards)
+    public static short valueOf(Card... cards)
     {
-        return valueOf(sevenCards[0], sevenCards[1], sevenCards[2],
-                       sevenCards[3], sevenCards[4], sevenCards[5],
-                       sevenCards[6]);
+        if (cards.length == 5)
+        {
+            return valueOf(cards[0], cards[1], cards[2],
+                           cards[3], cards[4]);
+        }
+        else if (cards.length == 7)
+        {
+            return valueOf(cards[0], cards[1], cards[2],
+                           cards[3], cards[4], cards[5],
+                           cards[6]);
+        }
+        throw new Error("can only handle 5 or 7 cards.");
     }
 
     public static short valueOf(
