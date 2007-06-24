@@ -8,7 +8,6 @@ import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.game.Outcome;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -18,15 +17,13 @@ import java.util.List;
 /**
  *
  */
-public class HoldemHand
+public class HandPlay
 {
     //--------------------------------------------------------------------
     private final static Logger log =
-            Logger.getLogger(HoldemHand.class.getName());
-    static
-    {
-        log.setLevel( Level.DEBUG );
-    }
+            Logger.getLogger(HandPlay.class.getName());
+//    static {  log.setLevel( Level.OFF );  }
+
 
     //--------------------------------------------------------------------
     private Deck        deck;
@@ -36,8 +33,8 @@ public class HoldemHand
 
 
     //--------------------------------------------------------------------
-    public HoldemHand(int         numPlayers,
-                      BotProvider botProvider)
+    public HandPlay(int         numPlayers,
+                    BotProvider botProvider)
     {
         assert numPlayers >= 2;
 
@@ -46,7 +43,7 @@ public class HoldemHand
         bots = botProvider;
 
         state   = new HandState( numPlayers );
-        outcome = new Outcome();
+        outcome = new Outcome(   numPlayers );
     }
 
 
@@ -120,7 +117,8 @@ public class HoldemHand
     public boolean roundOfBetting()
     {
         log.debug("starting round of betting.");
-        List<Integer> active = state.active();
+        List<Integer> active =
+                state.activeByAwayFromDealerInActionOrder();
         state.remainingBets( 4 );
 
         int previousRaiser = -1;
@@ -176,6 +174,7 @@ public class HoldemHand
             }
             if (! raiseOccurred) break;
         }
+
         outcome.add( state.envFor(active.get(0)) );
 
         log.debug("round of betting is done.");
@@ -186,9 +185,10 @@ public class HoldemHand
     //--------------------------------------------------------------------
     private TakenAction nextAction(int awayFromDealer)
     {
-        Bot bot = bots.forDomain(state.domainDecider(awayFromDealer),
-                                 state.domainOpposition(),
-                                 state.domainBettingRound());
+        Bot bot = bots.forDomain(state.domainBets(awayFromDealer),
+                                 state.domainBettingRound(),
+                                 state.domainPosition(awayFromDealer),
+                                 state.domainOpposition());
         log.debug(bot + " is actor for: " +
                   awayFromDealer + " clockwise from dealer.");
 
@@ -243,6 +243,7 @@ public class HoldemHand
 
     public Outcome showdown()
     {
+        outcome.showdown(state.activeByAwayFromDealerInActionOrder());
         return outcome;
     }
 }

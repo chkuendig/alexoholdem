@@ -28,7 +28,7 @@ public class PlayerGroup extends JPanel
             playerViews[ fromDealer ] =
                 new PlayerRender(player,
                                  env.holeOf(position),
-                                 env.position(),
+                                 env.awayFromFirstToAct(),
                                  fromDealer);
         }
 

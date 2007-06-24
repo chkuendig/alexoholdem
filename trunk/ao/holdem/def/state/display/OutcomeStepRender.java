@@ -34,8 +34,8 @@ public class OutcomeStepRender extends JPanel
         {
 //            setBorder(new LineBorder(Color.RED, 5));
             setBorder(new CompoundBorder(
-                    new LineBorder(Color.RED, 5),
-                    new EmptyBorder(1, 1, 1, 1)));
+                        new LineBorder(Color.RED, 5),
+                        new EmptyBorder(1, 1, 1, 1)));
         }
     }
 

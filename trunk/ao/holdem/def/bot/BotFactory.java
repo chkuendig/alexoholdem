@@ -1,8 +1,6 @@
 package ao.holdem.def.bot;
 
-import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.Decider;
-import ao.holdem.def.state.domain.Opposition;
+import ao.holdem.def.state.domain.*;
 
 import java.util.EnumSet;
 
@@ -12,7 +10,8 @@ import java.util.EnumSet;
 public interface BotFactory
 {
     //--------------------------------------------------------------------
-    public EnumSet<Decider>      decitionDomain();
+    public EnumSet<BetsToCall>   betDomain();
+    public EnumSet<DealerDistance>  positionDomain();
     public EnumSet<Opposition>   oppositionDomain();
     public EnumSet<BettingRound> roundDomain();
 
@@ -25,14 +24,29 @@ public interface BotFactory
         private Impl() {}
 
         public static BotFactory newInstance(
-                final EnumSet<Decider>      deciders,
+                final EnumSet<BetsToCall>   bets,
+                final EnumSet<DealerDistance>  positions,
                 final EnumSet<Opposition>   oppositions,
                 final EnumSet<BettingRound> rounds,
                 final Class<? extends Bot>  clazz)
         {
+            final Bot instance;
+            try
+            {
+                instance = clazz.newInstance();
+            }
+            catch (Exception e)
+            {
+                throw new Error( e );
+            }
+
             return new BotFactory() {
-                public EnumSet<Decider> decitionDomain() {
-                    return deciders;
+                public EnumSet<BetsToCall> betDomain() {
+                    return bets;
+                }
+
+                public EnumSet<DealerDistance> positionDomain() {
+                    return positions;
                 }
 
                 public EnumSet<Opposition> oppositionDomain() {
@@ -44,14 +58,7 @@ public interface BotFactory
                 }
 
                 public Bot nextInstance() {
-                    try
-                    {
-                        return clazz.newInstance();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Error( e );
-                    }
+                    return instance;
                 }
             };
         }

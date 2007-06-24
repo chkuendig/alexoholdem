@@ -26,7 +26,7 @@ public class Hand implements Comparable<Hand>
     public Hand(Hole hole, River community)
     {
         this(hole.first(), hole.second(),
-             community.fifth(), community.second(),
+             community.first(), community.second(),
              community.third(), community.fourth(),
              community.fifth());
     }

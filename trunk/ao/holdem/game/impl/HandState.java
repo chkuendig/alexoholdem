@@ -6,8 +6,9 @@ import ao.holdem.def.model.cards.community.Community;
 import ao.holdem.def.model.cards.community.Flop;
 import ao.holdem.def.model.cards.community.River;
 import ao.holdem.def.model.cards.community.Turn;
+import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.Decider;
+import ao.holdem.def.state.domain.DealerDistance;
 import ao.holdem.def.state.domain.Opposition;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.Player;
@@ -87,20 +88,29 @@ public class HandState
                     community,
                     fromFirstToAct,
                     yourPosition,
-                    toMatch - commitment[awayFromDealer],
+                    toCall(awayFromDealer),
                     remainingBets,
                     domainBettingRound(),
                     holes, position2dealerDistance());
     }
 
-    public Decider domainDecider(int awayFromDealer)
+
+    //--------------------------------------------------------------------
+    private int toCall(int awayFromDealer)
     {
-        return canCheck(awayFromDealer)
-                ? Decider.CHECK_RAISE
-                : canRaise()
-                   ? Decider.FOLD_CALL_RAISE
-                   : Decider.FOLD_CALL;
+        return toMatch - commitment[awayFromDealer];
     }
+
+    public BetsToCall domainBets(int awayFromDealer)
+    {
+        return BetsToCall.from(toCall(awayFromDealer), betSize());
+    }
+
+    public DealerDistance domainPosition(int awayFromDealer)
+    {
+        return DealerDistance.values()[ awayFromDealer ];
+    }
+
     public Opposition domainOpposition()
     {
         return Opposition.fromPlayers( players() );
@@ -309,7 +319,7 @@ public class HandState
 
 
     //--------------------------------------------------------------------
-    public List<Integer> active()
+    public List<Integer> activeByAwayFromDealerInActionOrder()
     {
         List<Integer> active = new ArrayList<Integer>();
 

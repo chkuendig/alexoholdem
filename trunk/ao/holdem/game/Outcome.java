@@ -1,6 +1,9 @@
 package ao.holdem.game;
 
 import ao.holdem.def.bot.Bot;
+import ao.holdem.def.model.cards.Hand;
+import ao.holdem.def.model.cards.Hole;
+import ao.holdem.def.model.cards.community.Community;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
 
@@ -14,20 +17,27 @@ import java.util.List;
 public class Outcome
 {
     //--------------------------------------------------------------------
-    private final List<Step> STATES;
-
+    private final List<Step> STEPS;
+    private final boolean    WINNERS[];
 
     //--------------------------------------------------------------------
-    public Outcome()
+    public Outcome(int numPlayers)
     {
-        STATES = new ArrayList<Step>();
+        STEPS   = new ArrayList<Step>();
+        WINNERS = new boolean[ numPlayers ];
     }
 
 
     //--------------------------------------------------------------------
     public void add(Bot bot, GodEnvironment env, TakenAction action)
     {
-        STATES.add( new Step(bot, env, action) );
+        Step step = new Step(bot, env, action);
+        STEPS.add( step );
+
+        if (step.isWinner())
+        {
+            WINNERS[ env.awayFromDealer() ] = true;
+        }
     }
 
     public void add(GodEnvironment env)
@@ -39,53 +49,94 @@ public class Outcome
     //--------------------------------------------------------------------
     public List<Step> log()
     {
-        return STATES;
+        return STEPS;
     }
 
 
     //--------------------------------------------------------------------
-    /**
-     * Actions taken by each bot at each round of betting.
-     * So actions()[0] contains actions for the pre-lop etc.
-     * If a Bot folds, then consequent actions are
-     *  TakenAction.DID_NOT_ACT.
-     * @return ...
-     */
-//    public List<Map<Bot, TakenAction>> actions()
-//    {
-//        return null;
-//    }
+    public void showdown(List<Integer> byAwayFromDealer)
+    {
+        GodEnvironment lastEnv =
+                STEPS.get(STEPS.size() - 1).environment();
+        Community community = lastEnv.community();
 
+        short         maxVal  = Short.MIN_VALUE;
+        List<Integer> winners = new ArrayList<Integer>();
+        for (int awayFromDealer : byAwayFromDealer)
+        {
+            Hole hole = lastEnv.holeOfAbs( awayFromDealer );
 
-    //--------------------------------------------------------------------
-//    public Community community()
-//    {
-//        return null;
-//    }
+            Hand hand = new Hand(hole, community.river());
+            if (hand.value() > maxVal)
+            {
+                maxVal = hand.value();
+                winners.clear();
+            }
+            if (hand.value() == maxVal)
+            {
+                winners.add( awayFromDealer );
+            }
+        }
 
-
-    //--------------------------------------------------------------------
-//    public Map<Bot, Hole> holes()
-//    {
-//        return null;
-//    }
+        for (int winner : winners)
+        {
+            WINNERS[ winner ] = true;
+        }
+    }
 
 
     //--------------------------------------------------------------------
     /**
      * @return A list of winning teams.  More than one team wins
      *          if there is a split pot.
-     *          Each team consists of the bots make it up, they are
+     *          Each team consists of the bots that make it up, they are
      *          listed in action order.
+     *         Note that if everybody folds to the big blind, then
+     *          there is no winning bot (since no bot is designated
+     *          to act for big blind), however all acting bots
+     *          in this care are losers.
      */
     public List<List<Bot>> winners()
     {
-        return null;
+        return byAwayFromDealer( true );
     }
 
-    public List<List<Bot>> loser()
+    public List<List<Bot>> losers()
     {
-        return null;
+        return byAwayFromDealer( false );
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<List<Bot>> byAwayFromDealer(boolean winners)
+    {
+        int numPlayers = STEPS.get(0).environment().playerCount();
+        List<List<Bot>> byAwayFromDealer =
+                new ArrayList<List<Bot>>(numPlayers);
+        for (int i = 0; i < numPlayers; i++)
+        {
+            byAwayFromDealer.add( new ArrayList<Bot>() );
+        }
+
+        for (Step step : STEPS)
+        {
+            if (step.isParcial()) continue;
+
+            int awayFromDealer = step.environment().awayFromDealer();
+            if (WINNERS[ awayFromDealer ] == winners)
+            {
+                byAwayFromDealer.get( awayFromDealer )
+                        .add( step.actor() );
+            }
+        }
+
+        for (List<Bot> bots : new ArrayList<List<Bot>>(byAwayFromDealer))
+        {
+            if (bots.isEmpty())
+            {
+                byAwayFromDealer.remove( bots );
+            }
+        }
+        return byAwayFromDealer;
     }
 
 
@@ -95,14 +146,21 @@ public class Outcome
         private final Bot            BOT;
         private final GodEnvironment ENV;
         private final TakenAction    ACTION;
+        private final boolean        IS_WINNER;
 
-        public Step(Bot bot, GodEnvironment env, TakenAction action)
+        public Step(Bot            bot,
+                    GodEnvironment env,
+                    TakenAction    action)
         {
-            BOT    = bot;
-            ENV    = env;
-            ACTION = action;
+            BOT       = bot;
+            ENV       = env;
+            ACTION    = action;
+            IS_WINNER = ENV.activeOpponents() == 0;
+        }
 
-//            if ENV.activeOpponents()
+        public boolean isWinner()
+        {
+            return IS_WINNER;
         }
 
         public Bot actor()

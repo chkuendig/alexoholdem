@@ -11,19 +11,15 @@ public class GodEnvironment extends Environment
 {
     //--------------------------------------------------------------------
     private final Hole holesByAwayFromDealer[];
-    private final int  fromPositionToDistanceFromDealer[];
 
 
     //--------------------------------------------------------------------
     public GodEnvironment(
             Environment env,
-            Hole        holesByAwayFromDealer[],
-            int         fromPositionToDistanceFromDealer[])
+            Hole        holesByAwayFromDealer[])
     {
         super(env);
         this.holesByAwayFromDealer = holesByAwayFromDealer;
-        this.fromPositionToDistanceFromDealer =
-                fromPositionToDistanceFromDealer;
     }
     public GodEnvironment(
             Community    community,
@@ -38,23 +34,23 @@ public class GodEnvironment extends Environment
         super(holesByAwayFromDealer[
                 fromPositionToDistanceFromDealer[yourPosition]],
               community, byPosition, yourPosition,
-              toCall, remainingRaises, round);
+              toCall, remainingRaises, round,
+              fromPositionToDistanceFromDealer);
 
         this.holesByAwayFromDealer = holesByAwayFromDealer;
-        this.fromPositionToDistanceFromDealer =
-                fromPositionToDistanceFromDealer;
     }
 
 
     //--------------------------------------------------------------------
-    public Hole holeOf(int position)
+    public Hole holeOf(int awayFromFirstToAct)
     {
-        return holesByAwayFromDealer[ awayFromDealer(position) ];
+        return holesByAwayFromDealer[
+                awayFromDealer(awayFromFirstToAct) ];
     }
 
-    public int awayFromDealer(int atPosition)
+    public Hole holeOfAbs(int awayFromDealer)
     {
-        return fromPositionToDistanceFromDealer[atPosition];
+        return holesByAwayFromDealer[ awayFromDealer ];
     }
 
 

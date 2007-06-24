@@ -11,8 +11,26 @@ import ao.holdem.def.state.env.Environment;
  */
 public class SimpleBot implements Bot
 {
+    //--------------------------------------------------------------------
+//    private static int nextId;
+
+
+    //--------------------------------------------------------------------
+//    private final int ID = nextId++;
+
+//    public SimpleBot()
+//    {
+//        ID = nextId++;
+//        System.out.println("initing " + toString());
+//    }
+
+
+    //--------------------------------------------------------------------
     public Action act(Environment env)
     {
+//        System.out.println(toString() + " acting with " + env.hole());
+//        return Action.CHECK_OR_CALL;
+
         Hole hole = env.hole();
 
         // raise if both are hole cards are face cards,
@@ -29,9 +47,11 @@ public class SimpleBot implements Bot
         return Action.CHECK_OR_FOLD;
     }
 
+
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {
-        return "SimpleBot";
+        return "SimpleBot";// + ID;
     }
 }

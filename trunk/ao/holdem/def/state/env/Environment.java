@@ -17,14 +17,15 @@ public class Environment
     private final int          TO_CALL;
     private final int          REMAINING_RAISES;
     private final BettingRound ROUND;
-
+    private final int          fromPositionToDistanceFromDealer[];
     
     //--------------------------------------------------------------------
     public Environment(Environment copyEnv)
     {
         this(copyEnv.HOLE, copyEnv.COMMUNITY, copyEnv.BY_POSITION,
              copyEnv.POSITION, copyEnv.TO_CALL,
-             copyEnv.REMAINING_RAISES, copyEnv.ROUND);
+             copyEnv.REMAINING_RAISES, copyEnv.ROUND,
+             copyEnv.fromPositionToDistanceFromDealer);
     }
     public Environment(Hole         hole,
                        Community    community,
@@ -32,7 +33,8 @@ public class Environment
                        int          yourPosition,
                        int          toCall,
                        int          remainingRaises,
-                       BettingRound round)
+                       BettingRound round,
+                       int          fromPositionToDistanceFromDealer[])
     {
         HOLE             = hole;
         COMMUNITY        = community;
@@ -41,6 +43,9 @@ public class Environment
         TO_CALL          = toCall;
         REMAINING_RAISES = remainingRaises;
         ROUND            = round;
+
+        this.fromPositionToDistanceFromDealer =
+                fromPositionToDistanceFromDealer;
     }
 
 
@@ -91,9 +96,19 @@ public class Environment
      *         1 = second to act,
      *              etc.
      */
-    public int position()
+    public int awayFromFirstToAct()
     {
         return POSITION;
+    }
+
+    public int awayFromDealer(int awayFromFirstToAct)
+    {
+        return fromPositionToDistanceFromDealer[awayFromFirstToAct];
+    }
+
+    public int awayFromDealer()
+    {
+        return awayFromDealer(you().position().awayFromFirstToAct());
     }
 
     public BettingRound bettingRound()

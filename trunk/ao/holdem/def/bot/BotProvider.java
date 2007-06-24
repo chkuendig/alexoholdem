@@ -1,7 +1,8 @@
 package ao.holdem.def.bot;
 
+import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.Decider;
+import ao.holdem.def.state.domain.DealerDistance;
 import ao.holdem.def.state.domain.Opposition;
 import ao.util.rand.Rand;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class BotProvider
 {
     //--------------------------------------------------------------------
-    private final List<BotFactory>[][][] FACTORIES;
+    private final List<BotFactory>[][][][] FACTORIES;
 
 
 
@@ -22,25 +23,33 @@ public class BotProvider
     @SuppressWarnings("unchecked")
     public BotProvider()
     {
-        FACTORIES = (List<BotFactory>[][][])
-                        new List[Decider.values().length]
-                                [Opposition.values().length]
-                                [BettingRound.values().length];
+        FACTORIES = (List<BotFactory>[][][][])
+                        new List[BetsToCall.values().length]
+                                [BettingRound.values().length]
+                                [DealerDistance.values().length]
+                                [Opposition.values().length];
 
-        for (int decider = 0; decider < FACTORIES.length; decider++)
+        for (int bet = 0; bet < FACTORIES.length; bet++)
         {
-            int oppositions = FACTORIES[decider].length;
-            for (int opposition = 0;
-                     opposition < oppositions;
-                     opposition++)
+            int rounds = FACTORIES[bet].length;
+            for (int round = 0;
+                     round < rounds;
+                     round++)
             {
-                int bettingRounds = FACTORIES[decider][opposition].length;
-                for (int bettingRound = 0;
-                         bettingRound < bettingRounds;
-                         bettingRound++)
+                int positions = FACTORIES[bet][round].length;
+                for (int position = 0;
+                         position < positions;
+                         position++)
                 {
-                    FACTORIES[decider][opposition][bettingRound] =
-                            new ArrayList<BotFactory>();
+                    int opponents =
+                            FACTORIES[bet][round][position].length;
+                    for (int opponent = 0;
+                             opponent < opponents;
+                             opponent++)
+                    {
+                        FACTORIES[bet][round][position][opponent] =
+                                new ArrayList<BotFactory>();
+                    }
                 }
             }
         }
@@ -50,15 +59,19 @@ public class BotProvider
     //--------------------------------------------------------------------
     public void add(BotFactory factory)
     {
-        for (Decider decider : factory.decitionDomain())
+        for (BetsToCall bets : factory.betDomain())
         {
-            for (Opposition opposition : factory.oppositionDomain())
+            for (BettingRound round : factory.roundDomain())
             {
-                for (BettingRound round : factory.roundDomain())
+                for (DealerDistance position : factory.positionDomain())
                 {
-                    FACTORIES[decider.ordinal()]
-                             [opposition.ordinal()]
-                             [round.ordinal()].add( factory );
+                    for (Opposition opposition : factory.oppositionDomain())
+                    {
+                        FACTORIES[bets.ordinal()]
+                                 [round.ordinal()]
+                                 [position.ordinal()]
+                                 [opposition.ordinal()].add( factory );
+                    }
                 }
             }
         }
@@ -66,13 +79,15 @@ public class BotProvider
 
 
     //--------------------------------------------------------------------
-    public Bot forDomain(Decider      decider,
-                         Opposition   opposition,
-                         BettingRound round)
+    public Bot forDomain(BetsToCall   bets,
+                         BettingRound round,
+                         DealerDistance position,
+                         Opposition   opposition)
     {
         return Rand.fromList(
-                    FACTORIES[decider.ordinal()]
-                             [opposition.ordinal()]
-                             [round.ordinal()]).nextInstance();
+                    FACTORIES[bets.ordinal()]
+                             [round.ordinal()]
+                             [position.ordinal()]
+                             [opposition.ordinal()]).nextInstance();
     }
 }

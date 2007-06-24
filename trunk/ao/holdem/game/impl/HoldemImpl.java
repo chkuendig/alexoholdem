@@ -75,7 +75,7 @@ public class HoldemImpl implements Holdem
         log.debug("starting hand.");
         advanceButton();
 
-        HoldemHand hand = new HoldemHand(numPlayers, botProvider);
+        HandPlay hand = new HandPlay(numPlayers, botProvider);
 
         log.debug("setting up hand.");
         hand.dealHoleCards();
