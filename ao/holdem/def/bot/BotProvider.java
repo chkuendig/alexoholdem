@@ -1,9 +1,6 @@
 package ao.holdem.def.bot;
 
-import ao.holdem.def.state.domain.BetsToCall;
-import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.DealerDistance;
-import ao.holdem.def.state.domain.Opposition;
+import ao.holdem.def.state.domain.*;
 import ao.util.rand.Rand;
 
 import java.util.ArrayList;
@@ -79,15 +76,18 @@ public class BotProvider
 
 
     //--------------------------------------------------------------------
-    public Bot forDomain(BetsToCall   bets,
-                         BettingRound round,
-                         DealerDistance position,
-                         Opposition   opposition)
+    public Bot forDomain(Domain domain)
     {
         return Rand.fromList(
-                    FACTORIES[bets.ordinal()]
-                             [round.ordinal()]
-                             [position.ordinal()]
-                             [opposition.ordinal()]).nextInstance();
+                    FACTORIES[domain.bets().ordinal()]
+                             [domain.round().ordinal()]
+                             [domain.dealerDistance().ordinal()]
+                             [domain.opposition().ordinal()]
+                ).nextInstance();
     }
+
+//    public Bot forDomain(Domain domain)
+//    {
+//        return null;
+//    }
 }

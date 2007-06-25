@@ -56,9 +56,8 @@ public class HoldemImpl implements Holdem
 
 
     //--------------------------------------------------------------------
-    public synchronized void
-            configure( int         numPlayers,
-                       BotProvider botProvider )
+    public void configure( int         numPlayers,
+                           BotProvider botProvider )
     {
         assert 2 <= numPlayers && numPlayers <= 10;
 
@@ -70,7 +69,7 @@ public class HoldemImpl implements Holdem
 
 
     //--------------------------------------------------------------------
-    public synchronized Outcome play()
+    public Outcome play()
     {
         log.debug("starting hand.");
         advanceButton();
@@ -92,6 +91,7 @@ public class HoldemImpl implements Holdem
 
         log.debug("turn.");
         hand.turn();
+
         log.debug("turn betting round (3rd).");
         if (hand.roundOfBetting()) return hand.outcome();
 
@@ -123,13 +123,15 @@ public class HoldemImpl implements Holdem
 
 
     //--------------------------------------------------------------------
-    private static int clockwise(int fromSeat, int by)
+    private int clockwise(int fromSeat, int by)
     {
-        return mod10(fromSeat + by);
+        return modNumPlayers(fromSeat + by);
     }
-    private static int mod10(int index)
+    private int modNumPlayers(int index)
     {
-        return (index >= 0) ? index % 10 : 10 - index;
+        return (index >= 0)
+               ? index % numPlayers
+               : numPlayers - index;
     }
 }
 

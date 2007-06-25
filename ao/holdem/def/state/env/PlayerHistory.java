@@ -1,4 +1,4 @@
-package ao.ai.rl.problem.poker.def.state.env;
+package ao.holdem.def.state.env;
 
 /**
  * Player history.

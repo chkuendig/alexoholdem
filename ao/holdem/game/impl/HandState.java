@@ -89,9 +89,21 @@ public class HandState
                     fromFirstToAct,
                     yourPosition,
                     toCall(awayFromDealer),
+                    potSize(),
+                    commitment[awayFromDealer],
                     remainingBets,
                     domainBettingRound(),
                     holes, position2dealerDistance());
+    }
+
+    private int potSize()
+    {
+        int pot = 0;
+        for (int commit : commitment)
+        {
+            pot += commit;
+        }
+        return pot;
     }
 
 
@@ -108,7 +120,7 @@ public class HandState
 
     public DealerDistance domainPosition(int awayFromDealer)
     {
-        return DealerDistance.values()[ awayFromDealer ];
+        return DealerDistance.from(awayFromDealer);
     }
 
     public Opposition domainOpposition()
@@ -147,10 +159,13 @@ public class HandState
         }
     }
 
-    public void remainingBets(int remainingRaises)
+    public void replenishBets(int remainingBets)
     {
-        log.debug("bets remaining in hand: " + remainingRaises + ".");
-        this.remainingBets = remainingRaises;
+        log.debug("bets remaining in hand: " + remainingBets + ".");
+
+        // this is done to take into account big blind
+        this.remainingBets =
+                Math.min(this.remainingBets + remainingBets, 4);
     }
 
 
@@ -172,17 +187,21 @@ public class HandState
 
     public void raised(int awayFromDealer)
     {
-        raised(awayFromDealer, true);
+        raised(awayFromDealer, false);
     }
-    private void raised(int awayFromDealer, boolean asAction)
+    private void raised(int awayFromDealer, boolean isBigBlind)
     {
         remainingBets--;
         log.debug(awayFromDealer + " clockwise from dealer raises. " +
                   remainingBets + " bets remaining.");
 
-        commit(awayFromDealer, toMatch + betSize());
-        if (asAction)
+        if (isBigBlind)
         {
+            commit(awayFromDealer, betSize());
+        }
+        else
+        {
+            commit(awayFromDealer, toMatch + betSize());
             actions[ awayFromDealer ] = TakenAction.RAISE;
         }
     }
@@ -218,7 +237,7 @@ public class HandState
         log.debug("big blind is " + awayFromDealer +
                   " clockwise from dealer.");
         bigBlind = awayFromDealer;
-        raised(awayFromDealer, false);
+        raised(awayFromDealer, true);
 //        commit(bigBlind, 2);
     }
 

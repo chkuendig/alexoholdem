@@ -10,10 +10,10 @@ import java.util.EnumSet;
 public interface BotFactory
 {
     //--------------------------------------------------------------------
-    public EnumSet<BetsToCall>   betDomain();
-    public EnumSet<DealerDistance>  positionDomain();
-    public EnumSet<Opposition>   oppositionDomain();
-    public EnumSet<BettingRound> roundDomain();
+    public EnumSet<BetsToCall>     betDomain();
+    public EnumSet<DealerDistance> positionDomain();
+    public EnumSet<Opposition>     oppositionDomain();
+    public EnumSet<BettingRound>   roundDomain();
 
     public Bot nextInstance();
 
@@ -23,12 +23,22 @@ public interface BotFactory
     {
         private Impl() {}
 
+        public static BotFactory newGlobalInstance(
+                Class<? extends Bot> clazz)
+        {
+            return newInstance(EnumSet.allOf(BetsToCall.class),
+                               EnumSet.allOf(DealerDistance.class),
+                               EnumSet.allOf(Opposition.class),
+                               EnumSet.allOf(BettingRound.class),
+                               clazz);
+        }
+
         public static BotFactory newInstance(
-                final EnumSet<BetsToCall>   bets,
-                final EnumSet<DealerDistance>  positions,
-                final EnumSet<Opposition>   oppositions,
-                final EnumSet<BettingRound> rounds,
-                final Class<? extends Bot>  clazz)
+                final EnumSet<BetsToCall>     bets,
+                final EnumSet<DealerDistance> positions,
+                final EnumSet<Opposition>     oppositions,
+                final EnumSet<BettingRound>   rounds,
+                final Class<? extends Bot>    clazz)
         {
             final Bot instance;
             try

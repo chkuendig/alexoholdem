@@ -26,6 +26,8 @@ public class GodEnvironment extends Environment
             Player       byPosition[],
             int          yourPosition,
             int          toCall,
+            int          pot,
+            int          commit,
             int          remainingRaises,
             BettingRound round,
             Hole         holesByAwayFromDealer[],
@@ -34,7 +36,7 @@ public class GodEnvironment extends Environment
         super(holesByAwayFromDealer[
                 fromPositionToDistanceFromDealer[yourPosition]],
               community, byPosition, yourPosition,
-              toCall, remainingRaises, round,
+              toCall, pot, commit, remainingRaises, round,
               fromPositionToDistanceFromDealer);
 
         this.holesByAwayFromDealer = holesByAwayFromDealer;

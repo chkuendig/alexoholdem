@@ -1,6 +1,6 @@
 package ao.holdem.bots;
 
-import ao.holdem.def.bot.Bot;
+import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.action.Action;
@@ -9,22 +9,8 @@ import ao.holdem.def.state.env.Environment;
 /**
  *
  */
-public class SimpleBot implements Bot
+public class SimpleBot extends AbstractBot
 {
-    //--------------------------------------------------------------------
-//    private static int nextId;
-
-
-    //--------------------------------------------------------------------
-//    private final int ID = nextId++;
-
-//    public SimpleBot()
-//    {
-//        ID = nextId++;
-//        System.out.println("initing " + toString());
-//    }
-
-
     //--------------------------------------------------------------------
     public Action act(Environment env)
     {
@@ -49,9 +35,9 @@ public class SimpleBot implements Bot
 
 
     //--------------------------------------------------------------------
-    @Override
-    public String toString()
-    {
-        return "SimpleBot";// + ID;
-    }
+//    @Override
+//    public String toString()
+//    {
+//        return "SimpleBot";
+//    }
 }

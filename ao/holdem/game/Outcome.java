@@ -1,9 +1,11 @@
 package ao.holdem.game;
 
-import ao.holdem.def.bot.Bot;
+import ao.holdem.def.bot.LocalBot;
+import ao.holdem.def.bot.Team;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
 
@@ -20,6 +22,7 @@ public class Outcome
     private final List<Step> STEPS;
     private final boolean    WINNERS[];
 
+
     //--------------------------------------------------------------------
     public Outcome(int numPlayers)
     {
@@ -29,7 +32,9 @@ public class Outcome
 
 
     //--------------------------------------------------------------------
-    public void add(Bot bot, GodEnvironment env, TakenAction action)
+    public void add(LocalBot       bot,
+                    GodEnvironment env,
+                    TakenAction    action)
     {
         Step step = new Step(bot, env, action);
         STEPS.add( step );
@@ -50,6 +55,11 @@ public class Outcome
     public List<Step> log()
     {
         return STEPS;
+    }
+
+    public int pot()
+    {
+        return STEPS.get( STEPS.size() - 1 ).environment().pot();
     }
 
 
@@ -86,6 +96,14 @@ public class Outcome
 
 
     //--------------------------------------------------------------------
+    public List<Team> players()
+    {
+        List<Team> players = new ArrayList<Team>();
+        players.addAll( winners() );
+        players.addAll( losers()  );
+        return players;
+    }
+
     /**
      * @return A list of winning teams.  More than one team wins
      *          if there is a split pot.
@@ -96,59 +114,82 @@ public class Outcome
      *          to act for big blind), however all acting bots
      *          in this care are losers.
      */
-    public List<List<Bot>> winners()
+    public List<Team> winners()
     {
         return byAwayFromDealer( true );
     }
 
-    public List<List<Bot>> losers()
+    public List<Team> losers()
     {
         return byAwayFromDealer( false );
     }
 
     @SuppressWarnings("unchecked")
-    private List<List<Bot>> byAwayFromDealer(boolean winners)
+    private List<Team> byAwayFromDealer(boolean winners)
     {
         int numPlayers = STEPS.get(0).environment().playerCount();
-        List<List<Bot>> byAwayFromDealer =
-                new ArrayList<List<Bot>>(numPlayers);
+        List<Team> byAwayFromDealer = new ArrayList<Team>(numPlayers);
         for (int i = 0; i < numPlayers; i++)
         {
-            byAwayFromDealer.add( new ArrayList<Bot>() );
+            byAwayFromDealer.add( new Team() );
         }
 
+        int winnerCount = winnerCount();
         for (Step step : STEPS)
         {
-            if (step.isParcial()) continue;
-
-            int awayFromDealer = step.environment().awayFromDealer();
+            Environment env    = step.environment();
+            int awayFromDealer = env.awayFromDealer();
             if (WINNERS[ awayFromDealer ] == winners)
             {
-                byAwayFromDealer.get( awayFromDealer )
-                        .add( step.actor() );
+                Team team = byAwayFromDealer.get( awayFromDealer );
+
+                if (! step.isParcial())
+                {
+                    team.add( step.actor() );
+                }
+                team.setStackDelta(
+                        stackDeltaFor(env, winnerCount, winners) );
             }
         }
 
-        for (List<Bot> bots : new ArrayList<List<Bot>>(byAwayFromDealer))
+        for (Team team :
+                new ArrayList<Team>(byAwayFromDealer))
         {
-            if (bots.isEmpty())
+            if (team.members().isEmpty())
             {
-                byAwayFromDealer.remove( bots );
+                byAwayFromDealer.remove( team );
             }
         }
         return byAwayFromDealer;
+    }
+
+    private double stackDeltaFor(Environment env,
+                                 int         numWinners,
+                                 boolean     winners)
+    {
+        return (winners ? ((double)env.pot())/numWinners : 0)
+                - env.commit();
+    }
+    private int winnerCount()
+    {
+        int winnerCount = 0;
+        for (boolean isWinner : WINNERS)
+        {
+            if (isWinner) winnerCount++;
+        }
+        return winnerCount;
     }
 
 
     //--------------------------------------------------------------------
     public static class Step
     {
-        private final Bot            BOT;
+        private final LocalBot       BOT;
         private final GodEnvironment ENV;
         private final TakenAction    ACTION;
         private final boolean        IS_WINNER;
 
-        public Step(Bot            bot,
+        public Step(LocalBot       bot,
                     GodEnvironment env,
                     TakenAction    action)
         {
@@ -163,7 +204,7 @@ public class Outcome
             return IS_WINNER;
         }
 
-        public Bot actor()
+        public LocalBot actor()
         {
             return BOT;
         }
