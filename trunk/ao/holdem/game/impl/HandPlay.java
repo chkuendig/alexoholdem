@@ -2,8 +2,10 @@ package ao.holdem.game.impl;
 
 import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.BotProvider;
+import ao.holdem.def.bot.LocalBot;
 import ao.holdem.def.model.cards.Deck;
 import ao.holdem.def.state.action.Action;
+import ao.holdem.def.state.domain.Domain;
 import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
@@ -119,7 +121,7 @@ public class HandPlay
         log.debug("starting round of betting.");
         List<Integer> active =
                 state.activeByAwayFromDealerInActionOrder();
-        state.remainingBets( 4 );
+        state.replenishBets( 4 );
 
         int previousRaiser = -1;
         round_circle:
@@ -175,7 +177,11 @@ public class HandPlay
             if (! raiseOccurred) break;
         }
 
-        outcome.add( state.envFor(active.get(0)) );
+        // so that their post-action environments are captured.
+        for (Integer remaining : active)
+        {
+            outcome.add( state.envFor(remaining) );
+        }
 
         log.debug("round of betting is done.");
         return (active.size() == 1);
@@ -185,10 +191,8 @@ public class HandPlay
     //--------------------------------------------------------------------
     private TakenAction nextAction(int awayFromDealer)
     {
-        Bot bot = bots.forDomain(state.domainBets(awayFromDealer),
-                                 state.domainBettingRound(),
-                                 state.domainPosition(awayFromDealer),
-                                 state.domainOpposition());
+        Domain domain = new Domain(state, awayFromDealer);
+        Bot bot = bots.forDomain( domain );
         log.debug(bot + " is actor for: " +
                   awayFromDealer + " clockwise from dealer.");
 
@@ -198,7 +202,7 @@ public class HandPlay
                   "made choice of: " + action + ".");
 
         TakenAction taken = concreteAction(awayFromDealer, action);
-        outcome.add(bot, env, taken);
+        outcome.add(new LocalBot(bot, domain), env, taken);
         return taken;
     }
 

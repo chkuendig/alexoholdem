@@ -15,16 +15,19 @@ public class Environment
     private final Player       BY_POSITION[];
     private final int          POSITION;
     private final int          TO_CALL;
+    private final int          POT;
+    private final int          COMMIT;
     private final int          REMAINING_RAISES;
     private final BettingRound ROUND;
     private final int          fromPositionToDistanceFromDealer[];
-    
+
+
     //--------------------------------------------------------------------
     public Environment(Environment copyEnv)
     {
         this(copyEnv.HOLE, copyEnv.COMMUNITY, copyEnv.BY_POSITION,
-             copyEnv.POSITION, copyEnv.TO_CALL,
-             copyEnv.REMAINING_RAISES, copyEnv.ROUND,
+             copyEnv.POSITION, copyEnv.TO_CALL, copyEnv.POT,
+             copyEnv.COMMIT, copyEnv.REMAINING_RAISES, copyEnv.ROUND,
              copyEnv.fromPositionToDistanceFromDealer);
     }
     public Environment(Hole         hole,
@@ -32,6 +35,8 @@ public class Environment
                        Player       byPosition[],
                        int          yourPosition,
                        int          toCall,
+                       int          pot,
+                       int          commit,
                        int          remainingRaises,
                        BettingRound round,
                        int          fromPositionToDistanceFromDealer[])
@@ -41,6 +46,8 @@ public class Environment
         BY_POSITION      = byPosition;
         POSITION         = yourPosition;
         TO_CALL          = toCall;
+        POT              = pot;
+        COMMIT           = commit;
         REMAINING_RAISES = remainingRaises;
         ROUND            = round;
 
@@ -115,18 +122,39 @@ public class Environment
     {
         return ROUND;
     }
-    
+
+
+    //--------------------------------------------------------------------
     /**
      * @return the minimum number of small blinds that you are required
      *          to bet in order to call or check.
      *         if the pot hasn't been raised since the last time you
-     *          played then this will be 0, since u can just call.
+     *          played then this will be 0, since you can just call.
      */
-    public int toCallOrCheck()
+    public int toCall()
     {
         return TO_CALL;
     }
 
+    /**
+     * @return number of small blinds in the pot.
+     */
+    public int pot()
+    {
+        return POT;
+    }
+
+    /**
+     * @return how much money you already have in this current pot
+     *          in small blinds.
+     */
+    public int commit()
+    {
+        return COMMIT;
+    }
+
+
+    //--------------------------------------------------------------------
     public boolean canCheck()
     {
         return TO_CALL == 0;

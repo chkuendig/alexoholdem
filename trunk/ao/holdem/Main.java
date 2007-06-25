@@ -1,6 +1,7 @@
 package ao.holdem;
 
 
+import ao.holdem.bots.AlwaysRaiseBot;
 import ao.holdem.bots.RandomBot;
 import ao.holdem.bots.SimpleBot;
 import ao.holdem.def.bot.BotFactory;
@@ -9,15 +10,8 @@ import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval7.Eval7FastLookup;
 import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.cards.Hand;
-import ao.holdem.def.state.display.OutcomeStepRender;
-import ao.holdem.def.state.domain.BetsToCall;
-import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.domain.DealerDistance;
-import ao.holdem.def.state.domain.Opposition;
-import ao.holdem.game.Holdem;
-import ao.holdem.game.Outcome;
-import ao.holdem.game.impl.HoldemImpl;
 import ao.holdem.net.OverTheWireState;
+import ao.holdem.tourney.Tourney;
 import ao.util.stats.Combiner;
 
 import java.io.IOException;
@@ -26,7 +20,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.EnumSet;
 
 
 /**
@@ -44,12 +37,12 @@ public class Main
 //        Rand.nextInt();
 //        Rand.nextDouble();
 
-        for (int i = 0; i < 100; i++)
-        {
+//        for (int i = 0; i < 100; i++)
+//        {
             runHoldemGame();
 //            runNetCode();
 //            runPoker();
-        }
+//        }
     }
 
 
@@ -123,31 +116,27 @@ public class Main
         BotProvider provider = new BotProvider();
 
         provider.add(
-                BotFactory.Impl.newInstance(
-                        EnumSet.allOf(BetsToCall.class),
-                        EnumSet.allOf(DealerDistance.class),
-                        EnumSet.allOf(Opposition.class),
-                        EnumSet.allOf(BettingRound.class),
-                        RandomBot.class));
+                BotFactory.Impl.newGlobalInstance(RandomBot.class));
         provider.add(
-                BotFactory.Impl.newInstance(
-                        EnumSet.allOf(BetsToCall.class),
-                        EnumSet.allOf(DealerDistance.class),
-                        EnumSet.allOf(Opposition.class),
-                        EnumSet.allOf(BettingRound.class),
-                        SimpleBot.class));
+                BotFactory.Impl.newGlobalInstance(SimpleBot.class));
+        provider.add(
+                BotFactory.Impl.newGlobalInstance(AlwaysRaiseBot.class));
 
-        Holdem holdem = new HoldemImpl();
-        holdem.configure(4, provider);
+        Tourney tourney = new Tourney( provider );
+        for (int i = 0; i < 1000; i++)
+        {
+            tourney.runRandom();
+        }
+        tourney.tabDelimitedReport( System.out );
 
-        Outcome outcome = holdem.play();
-//        if (++counter == 6)
+//        Holdem holdem = new HoldemImpl();
+//        holdem.configure(4, provider);
+//
+//        Outcome outcome = holdem.play();
+//        System.out.println("winners: " + outcome.winners());
+//        for (Outcome.Step step : outcome.log())
 //        {
-            System.out.println("winners: " + outcome.winners());
-            for (Outcome.Step step : outcome.log())
-            {
-                OutcomeStepRender.display( step );
-            }
+//            OutcomeStepRender.display( step );
 //        }
     }
 
@@ -155,12 +144,9 @@ public class Main
     //----------------------------------------------------------
     public static void runPoker()
     {
-        for (int i = 0; i < 10; i++)
-        {
-//            doRun52c7();
-//            doRunHandsOf5();
-            doRunHandsOf7();
-        }
+//        doRun52c7();
+//        doRunHandsOf5();
+        doRunHandsOf7();
     }
     public static void doRun52c7()
     {
