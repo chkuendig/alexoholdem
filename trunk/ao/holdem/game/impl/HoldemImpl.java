@@ -1,9 +1,14 @@
 package ao.holdem.game.impl;
 
-import ao.holdem.def.bot.BotProvider;
+import ao.holdem.def.bot.Bot;
+import ao.holdem.def.bot.LocalBot;
+import ao.holdem.def.state.domain.*;
 import ao.holdem.game.Holdem;
 import ao.holdem.game.Outcome;
 import org.apache.log4j.Logger;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -45,26 +50,39 @@ public class HoldemImpl implements Holdem
 
     //--------------------------------------------------------------------
     // 0 index means dealer.
-//    private final BotProvider BY_SEAT[];
+//    private final LocalBotProvider BY_SEAT[];
     private       int         button = -1;
-    private       int         numPlayers;
-    private       BotProvider botProvider;
+//    private       int         numPlayers;
+//    private       LocalBotProvider botProvider;
+    private List<Bot> bots;
 
 
     //--------------------------------------------------------------------
     public HoldemImpl() {}
 
 
-    //--------------------------------------------------------------------
-    public void configure( int         numPlayers,
-                           BotProvider botProvider )
+    //-------------------------------------------------------------------
+    public void configure(List<Bot> players)
     {
-        assert 2 <= numPlayers && numPlayers <= 10;
+        shutDown();
 
-        log.debug("configuring holdem game for " +
-                    numPlayers + " players.");
-        this.numPlayers  = numPlayers;
-        this.botProvider = botProvider;
+        bots = players;
+        for (Bot bot : bots)
+        {
+            bot.introduce();
+        }
+    }
+
+    public void shutDown()
+    {
+        if (bots != null)
+        {
+            for (Bot bot : bots)
+            {
+                bot.retire();
+            }
+            bots.clear();
+        }
     }
 
 
@@ -74,7 +92,7 @@ public class HoldemImpl implements Holdem
         log.debug("starting hand.");
         advanceButton();
 
-        HandPlay hand = new HandPlay(numPlayers, botProvider);
+        HandPlay hand = new HandPlay(bots);
 
         log.debug("setting up hand.");
         hand.dealHoleCards();
@@ -105,13 +123,42 @@ public class HoldemImpl implements Holdem
         return hand.showdown();
     }
 
+
+    //--------------------------------------------------------------------
+    public LocalBot winningBigBlind()
+    {
+        int bigBlind = (bots.size() == 2) ? 1 : 2;
+
+        Domain domain =
+                new Domain(BetsToCall.ZERO,
+                           BettingRound.PREFLOP,
+                           DealerDistance.from(bigBlind),
+                           Opposition.fromPlayers(bots.size()));
+
+        return new LocalBot(bots.get(bigBlind), domain);
+    }
+
+
     //--------------------------------------------------------------------
     private void advanceButton()
     {
-        button = clockwise(button, 1);
+        Collections.rotate(bots, -1);
+
+//        button = clockwise(button, 1);
         log.debug("advancing button to " + button +
                   " away from first dealer.");
     }
+
+//    private int clockwise(int fromSeat, int by)
+//    {
+//        return modNumPlayers(fromSeat + by);
+//    }
+//    private int modNumPlayers(int index)
+//    {
+//        return (index >= 0)
+//               ? index % bots.size()
+//               : bots.size() - index;
+//    }
 
 
     //--------------------------------------------------------------------
@@ -119,19 +166,6 @@ public class HoldemImpl implements Holdem
     public String toString()
     {
         return "HoldemImpl";
-    }
-
-
-    //--------------------------------------------------------------------
-    private int clockwise(int fromSeat, int by)
-    {
-        return modNumPlayers(fromSeat + by);
-    }
-    private int modNumPlayers(int index)
-    {
-        return (index >= 0)
-               ? index % numPlayers
-               : numPlayers - index;
     }
 }
 

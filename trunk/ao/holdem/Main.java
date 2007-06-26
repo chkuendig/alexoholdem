@@ -1,8 +1,7 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.AlwaysRaiseBot;
-import ao.holdem.bots.LooseSklanskyBot;
+import ao.holdem.bots.*;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
@@ -114,19 +113,22 @@ public class Main
     {
         BotProvider provider = new BotProvider();
 
-//        provider.add(
-//                BotFactory.Impl.newGlobalInstance(RandomBot.class));
-//        provider.add(
-//                BotFactory.Impl.newGlobalInstance(PokerTipsBot.class));
         provider.add(
-                BotFactory.Impl.newGlobalInstance(AlwaysRaiseBot.class));
+                BotFactory.Impl.fromClass(RandomBot.class));
         provider.add(
-                BotFactory.Impl.newGlobalInstance(LooseSklanskyBot.class));
+                BotFactory.Impl.fromClass(PokerTipsBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(MathBot.class));
 
         Tourney tourney = new Tourney( provider );
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < 100; i++)
         {
-            tourney.runRandom();
+//            tourney.runRandom();
+            tourney.run(2, 50);
         }
         tourney.tabDelimitedReport( System.out );
 
@@ -207,10 +209,10 @@ public class Main
             if (count++ % 1000000  == 0) System.out.print(".");
 
             short value =
-            Eval7Faster.handValue(c0, c1, c2, c3, c4, c5, c6);
-//            Eval7Faster.handValue(combiner.nextElement());
-//            Eval7Fast.handValue(combiner.nextElement());
-//            Eval7Fast.handValue(cards[c1], cards[c2], cards[c3], cards[c4],
+            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
+//            Eval7Faster.valueOf(combiner.nextElement());
+//            Eval7Fast.valueOf(combiner.nextElement());
+//            Eval7Fast.valueOf(cards[c1], cards[c2], cards[c3], cards[c4],
 //                              cards[c5], cards[c6], cards[c7]);
 //            new Hand( combiner.nextElement() ).value();
 
@@ -241,14 +243,14 @@ public class Main
         System.out.println(Arrays.toString(frequency));
         System.out.println("took: " + (System.currentTimeMillis() - start));
 
-//        System.out.println(Card.handValue(
+//        System.out.println(Card.valueOf(
 //                Card.ACE_OF_HEARTS,
 //                Card.KING_OF_HEARTS,
 //                Card.QUEEN_OF_HEARTS,
 //                Card.TEN_OF_HEARTS,
 //                Card.SEVEN_OF_HEARTS));
 //
-//        System.out.println(Card.handValue(
+//        System.out.println(Card.valueOf(
 //                Card.ACE_OF_HEARTS,
 //                Card.KING_OF_HEARTS,
 //                Card.QUEEN_OF_HEARTS,

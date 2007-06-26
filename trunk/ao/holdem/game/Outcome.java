@@ -96,6 +96,10 @@ public class Outcome
 
 
     //--------------------------------------------------------------------
+//    public
+    
+
+    //--------------------------------------------------------------------
     public List<Team> players()
     {
         List<Team> players = new ArrayList<Team>();
