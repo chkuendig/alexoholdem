@@ -328,20 +328,20 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
-    public static short handValue(Card... sevenCards)
+    public static short valueOf(Card... sevenCards)
     {
-        return handValue(sevenCards[0], sevenCards[1], sevenCards[2],
+        return valueOf(sevenCards[0], sevenCards[1], sevenCards[2],
                          sevenCards[3], sevenCards[4], sevenCards[5],
                          sevenCards[6]);
     }
-    public static short handValue(
+    public static short valueOf(
             Card c1, Card c2, Card c3, Card c4,
             Card c5, Card c6, Card c7)
     {
-        return handValue(c1.index(), c2.index(), c3.index(), c4.index(),
+        return valueOf(c1.index(), c2.index(), c3.index(), c4.index(),
                          c5.index(), c6.index(), c7.index());
     }
-    public static short handValue(
+    public static short valueOf(
             int index1, int index2, int index3, int index4,
             int index5, int index6, int index7)
     {
@@ -396,7 +396,7 @@ public class Eval7Faster
 //                                    handRank = handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[
 //                                            53 + c0] + c1] + c2] + c3] + c4] + c5] + c6];
 
-                                    int value = handValue(c0, c1, c2, c3, c4, c5, c6);
+                                    int value = valueOf(c0, c1, c2, c3, c4, c5, c6);
                                     frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
 
 //                                    handEnumerations[handRank >>> 12]++;

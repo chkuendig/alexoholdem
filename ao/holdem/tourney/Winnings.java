@@ -10,17 +10,21 @@ public class Winnings implements Comparable<Winnings>
 
 
     //--------------------------------------------------------------------
+    public Winnings() {}
+
     public Winnings(Winnings copyWinnings)
     {
-        winnings = copyWinnings.winnings;
+        this(copyWinnings.winnings);
     }
-    public Winnings()
-    {
-        winnings = 0;
-    }
+
     public Winnings(double deltaStack, int teamMembers)
     {
-        winnings = deltaStack / teamMembers;
+        this(deltaStack / teamMembers);
+    }
+
+    private Winnings(double value)
+    {
+        winnings = value;
     }
 
 
@@ -34,6 +38,13 @@ public class Winnings implements Comparable<Winnings>
     public void add(Winnings addend)
     {
         winnings += addend.winnings;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Winnings negate()
+    {
+        return new Winnings(-winnings);
     }
 
 

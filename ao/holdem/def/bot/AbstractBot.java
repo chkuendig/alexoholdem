@@ -6,6 +6,11 @@ package ao.holdem.def.bot;
 public abstract class AbstractBot implements Bot
 {
     //--------------------------------------------------------------------
+    public void introduce() {}
+    public void retire()    {}
+
+
+    //--------------------------------------------------------------------
     @Override public String toString()
     {
 //        throw new Error("You must define your own toString method!!");

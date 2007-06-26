@@ -1,7 +1,6 @@
 package ao.holdem.game.impl;
 
 import ao.holdem.def.bot.Bot;
-import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.bot.LocalBot;
 import ao.holdem.def.model.cards.Deck;
 import ao.holdem.def.state.action.Action;
@@ -28,24 +27,23 @@ public class HandPlay
 
 
     //--------------------------------------------------------------------
-    private Deck        deck;
-    private BotProvider bots;
-    private HandState   state;
-    private Outcome     outcome;
+    private Deck      deck;
+    private List<Bot> bots;
+    private HandState state;
+    private Outcome   outcome;
 
 
     //--------------------------------------------------------------------
-    public HandPlay(int         numPlayers,
-                    BotProvider botProvider)
+    public HandPlay(List<Bot> players)
     {
-        assert numPlayers >= 2;
+        assert players.size() >= 2;
 
-        log.debug("initiating hand with " + numPlayers + " players.");
+        log.debug("initiating hand with " + players.size() + " players.");
         deck = new Deck();
-        bots = botProvider;
+        bots = players;
 
-        state   = new HandState( numPlayers );
-        outcome = new Outcome(   numPlayers );
+        state   = new HandState( players.size() );
+        outcome = new Outcome(   players.size() );
     }
 
 
@@ -192,7 +190,9 @@ public class HandPlay
     private TakenAction nextAction(int awayFromDealer)
     {
         Domain domain = new Domain(state, awayFromDealer);
-        Bot bot = bots.forDomain( domain );
+        //Bot bot = bots.forDomain( domain );
+        Bot bot = bots.get(awayFromDealer);
+
         log.debug(bot + " is actor for: " +
                   awayFromDealer + " clockwise from dealer.");
 

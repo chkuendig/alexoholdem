@@ -8,9 +8,16 @@ import ao.holdem.def.state.env.Environment;
  */
 public interface Bot
 {
+    //--------------------------------------------------------------------
+    public void introduce();
+    public void retire();
+
+
+    //--------------------------------------------------------------------
     public Action act(Environment env);
 
 
+    //--------------------------------------------------------------------
     // these two methods must be properly defined.
     @Override public int hashCode();
     @Override public boolean equals(Object o);

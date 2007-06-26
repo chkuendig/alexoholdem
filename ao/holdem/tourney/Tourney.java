@@ -25,9 +25,9 @@ public class Tourney
 
 
     //--------------------------------------------------------------------
-    public Tourney(BotProvider bots)
+    public Tourney(BotProvider players)
     {
-        BOTS   = bots;
+        BOTS   = players;
         SCORES = Scoreboard.getInstance();
     }
 
@@ -36,8 +36,7 @@ public class Tourney
     public void runRandom()
     {
         int numPlayers = 2 + Rand.nextInt(9);
-//        int numPlayers = 4;
-        int numRounds  = 20 / numPlayers;
+        int numRounds  = 200 / numPlayers;
 
         run(numPlayers, numRounds);
     }
@@ -47,7 +46,7 @@ public class Tourney
     public void run(int numPlayers, int numRounds)
     {
         Holdem holdem = new HoldemImpl();
-        holdem.configure(numPlayers, BOTS);
+        holdem.configure(BOTS.nextBots(numPlayers));
 
         for (int round = 0; round < numRounds; round++)
         {
@@ -68,7 +67,9 @@ public class Tourney
 
             if (! sum.isCloseToZero())
             {
-                // big blind wins without taking action.               
+                // big blind wins without taking action.
+                SCORES.update( holdem.winningBigBlind(), sum.negate() );
+
 //                for (Outcome.Step step : outcome.log())
 //                {
 //                    OutcomeStepRender.display( step );
@@ -76,6 +77,8 @@ public class Tourney
 //                System.out.println(round);
             }
         }
+
+        holdem.shutDown();
     }
 
 

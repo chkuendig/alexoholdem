@@ -26,10 +26,10 @@ public class Domain
              handState.domainOpposition());
     }
 
-    private Domain(BetsToCall     bets,
-                   BettingRound   round,
-                   DealerDistance dealerDistance,
-                   Opposition     opposition)
+    public Domain(BetsToCall     bets,
+                  BettingRound   round,
+                  DealerDistance dealerDistance,
+                  Opposition     opposition)
     {
         BETS            = bets;
         ROUND           = round;
