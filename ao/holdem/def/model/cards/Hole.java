@@ -22,6 +22,30 @@ public class Hole
 
 
     //--------------------------------------------------------------------
+    public boolean ranks(Card.Rank rankA, Card.Rank rankB)
+    {
+        return FIRST.rank() == rankA && SECOND.rank() == rankB ||
+               FIRST.rank() == rankB && SECOND.rank() == rankA;
+    }
+    
+    public boolean ranks(Card.Rank rank)
+    {
+        return FIRST.rank() == rank || SECOND.rank() == rank;
+    }
+
+    public boolean suited()
+    {
+        return FIRST.suit() == SECOND.suit();
+    }
+
+    public boolean hasXcard()
+    {
+        return FIRST.rank().ordinal() < Card.Rank.JACK.ordinal() ||
+                SECOND.rank().ordinal() < Card.Rank.JACK.ordinal();
+    }
+
+
+    //--------------------------------------------------------------------
     public Card first()
     {
         return FIRST;

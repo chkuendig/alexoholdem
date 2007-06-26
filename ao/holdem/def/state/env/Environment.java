@@ -118,6 +118,23 @@ public class Environment
         return awayFromDealer(you().position().awayFromFirstToAct());
     }
 
+    // dealer has best (highest/latest) position.
+    // small blind has worst (lowest/earliest) postion.
+    public int position()
+    {
+        return awayFromDealer() == 0
+                ? playerCount()
+                : awayFromDealer();
+    }
+
+    // 1.0 = dealer.  ~0.1 = small blind.
+    // pretty much its a % of latest postion.
+    public double realPosition()
+    {
+        return ((double) position()) / playerCount();
+    }
+
+
     public BettingRound bettingRound()
     {
         return ROUND;
@@ -160,7 +177,11 @@ public class Environment
         return TO_CALL == 0;
     }
 
-    public int remainingRaises()
+    public int bets()
+    {
+        return 4 - REMAINING_RAISES;
+    }
+    public int remainingBets()
     {
         return REMAINING_RAISES;
     }
