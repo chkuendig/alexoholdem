@@ -2,8 +2,7 @@ package ao.holdem;
 
 
 import ao.holdem.bots.AlwaysRaiseBot;
-import ao.holdem.bots.RandomBot;
-import ao.holdem.bots.SimpleBot;
+import ao.holdem.bots.LooseSklanskyBot;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
@@ -115,15 +114,17 @@ public class Main
     {
         BotProvider provider = new BotProvider();
 
-        provider.add(
-                BotFactory.Impl.newGlobalInstance(RandomBot.class));
-        provider.add(
-                BotFactory.Impl.newGlobalInstance(SimpleBot.class));
+//        provider.add(
+//                BotFactory.Impl.newGlobalInstance(RandomBot.class));
+//        provider.add(
+//                BotFactory.Impl.newGlobalInstance(PokerTipsBot.class));
         provider.add(
                 BotFactory.Impl.newGlobalInstance(AlwaysRaiseBot.class));
+        provider.add(
+                BotFactory.Impl.newGlobalInstance(LooseSklanskyBot.class));
 
         Tourney tourney = new Tourney( provider );
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 10000; i++)
         {
             tourney.runRandom();
         }
