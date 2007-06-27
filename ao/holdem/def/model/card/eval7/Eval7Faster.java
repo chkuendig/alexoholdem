@@ -219,11 +219,14 @@ public class Eval7Faster
 		int suit;
 		int numCards = 0;
 
+        Card checkup[] = new Card[7];
         final int[] primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41};
 
         if (key != 0) {
+            int lastDontCare = 1;
             for (cardIndex = 0; cardIndex < 7; cardIndex++) {
             	currentCard = (int)((key >>> (8 * cardIndex)) & 0xFF);
+
                 if (currentCard == 0) break;
                 numCards++;
 
@@ -237,8 +240,22 @@ public class Eval7Faster
                 // b    = bit turned on depending on rank of card
 
                 // extract suit and rank from 8-bit packed representation
-                rank = (currentCard >>> 4) - 1;
-                suit = currentCard & 0xF;
+                rank = (currentCard >>> 4) - 1; // 0..12
+                suit = currentCard & 0xF; //0..4, 0 = don't care.
+
+                if (suit == 0)
+                {
+                    checkup[cardIndex] =
+                            Card.values()[ (lastDontCare - 1)*13 + rank ];
+
+                    lastDontCare = (lastDontCare + 1) % 5;
+                    if (lastDontCare == 0) lastDontCare = 1;
+                }
+                else
+                {
+                    checkup[cardIndex] =
+                            Card.values()[ (suit - 1)*13 + rank ];
+                }
 
                 // change card representation to Cactus Kev Representation
                 hand[cardIndex] = primes[rank] | (rank << 8) | (1 << (suit + 11)) | (1 << (16 + rank));
@@ -246,18 +263,44 @@ public class Eval7Faster
 
             switch (numCards) {
                 case 5 :
-                	handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4]);
+                    handRank = //EvalSlow.valueOf(
+//                            hand[0],hand[1],hand[2],hand[3],hand[4]);
+//                    if (handRank !=
+                            EvalSlow.valueOf(
+                                    checkup[0],checkup[1],checkup[2],
+                                    checkup[3],checkup[4]);//)
+//                    {
+//                        System.out.println("### WTF?!!??!");
+//                    }
+
                     break;
 
                 case 6 :
+//                    handRank = EvalSlow.valueOf(
+//                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
                     handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
+                            checkup[0],checkup[1],checkup[2],
+                            checkup[3],checkup[4],checkup[5]);
                     break;
 
                 case 7 :
-                    handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[7]);
+                    handRank =
+                            EvalSlow.valueOf(
+                                    checkup[0],checkup[1],checkup[2],
+                                    checkup[3],checkup[4],checkup[5],
+                                    checkup[6]);
+
+//                    handRank = EvalSlow.valueOf(
+//                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
+//                    if (handRank !=
+//                            EvalSlow.valueOf(
+//                                    checkup[0],checkup[1],checkup[2],
+//                                    checkup[3],checkup[4],checkup[5],
+//                                    checkup[6]))
+//                    {
+//                        System.out.println("### WTF?!!??!");
+//                    }
+
                     break;
 
                 default :

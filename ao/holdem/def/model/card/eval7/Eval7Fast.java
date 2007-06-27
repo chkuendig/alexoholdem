@@ -144,7 +144,7 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    public static short handValue(Card... sevenCards)
+    public static short valueOf(Card... sevenCards)
     {
         assert sevenCards.length == 7;
 
@@ -155,7 +155,7 @@ public class Eval7Fast
                 : val;
     }
 
-    public static short handValue(
+    public static short valueOf(
             Card c1, Card c2, Card c3, Card c4,
             Card c5, Card c6, Card c7)
     {
