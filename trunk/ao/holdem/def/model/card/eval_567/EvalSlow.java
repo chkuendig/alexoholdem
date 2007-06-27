@@ -104,6 +104,20 @@ public class EvalSlow
         return (short) value;
     }
 
+    public static short valueOf(
+            Card c0, Card c1, Card c2, Card c3, Card c4, Card c5)
+    {
+        int value;
+
+        value =                 Card.handValue(c0,c1,c2,c3,c4);
+        value = Math.max(value, Card.handValue(c0,c1,c2,c3,c5));
+        value = Math.max(value, Card.handValue(c0,c1,c2,c4,c5));
+        value = Math.max(value, Card.handValue(c0,c1,c3,c4,c5));
+        value = Math.max(value, Card.handValue(c0,c2,c3,c4,c5));
+        value = Math.max(value, Card.handValue(c1,c2,c3,c4,c5));
+
+        return (short) value;
+    }
 
     //--------------------------------------------------------------------
     public static short valueOf(

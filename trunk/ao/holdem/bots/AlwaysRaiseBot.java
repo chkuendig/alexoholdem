@@ -12,6 +12,9 @@ public class AlwaysRaiseBot extends AbstractBot
     //--------------------------------------------------------------------
     public Action act(Environment env)
     {
+        System.out.println(
+                "aways raising shane styles" +
+                " with " + env.hole() + " on " + env.community());
         return Action.RAISE_OR_CALL;
     }
 

@@ -1,15 +1,18 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.*;
+import ao.holdem.bots.AlwaysRaiseBot;
+import ao.holdem.bots.MathBot;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval7.Eval7FastLookup;
 import ao.holdem.def.model.card.eval7.Eval7Faster;
+import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
+import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
 
 import java.io.IOException;
@@ -32,7 +35,7 @@ public class Main
 //        BasicConfigurator.configure();
 
         // throw off number sequence
-//        Rand.nextInt();
+        Rand.nextInt();
 //        Rand.nextDouble();
 
 //        for (int i = 0; i < 100; i++)
@@ -113,23 +116,23 @@ public class Main
     {
         BotProvider provider = new BotProvider();
 
-        provider.add(
-                BotFactory.Impl.fromClass(RandomBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(PokerTipsBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(RandomBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(PokerTipsBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(MathBot.class));
 
         Tourney tourney = new Tourney( provider );
-        for (int i = 0; i < 100; i++)
-        {
+//        for (int i = 0; i < 100; i++)
+//        {
 //            tourney.runRandom();
             tourney.run(2, 50);
-        }
+//        }
         tourney.tabDelimitedReport( System.out );
 
 //        Holdem holdem = new HoldemImpl();
@@ -208,14 +211,19 @@ public class Main
             }
             if (count++ % 1000000  == 0) System.out.print(".");
 
-            short value =
-            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
-//            Eval7Faster.valueOf(combiner.nextElement());
+//            Card cards[] = combiner.nextElement();
+            short value = //EvalSlow.valueOf( cards );
+            Eval7Faster.valueOf(c5, c0, c3, c2, c4, c1, c6);
+//            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());
-//            Eval7Fast.valueOf(cards[c1], cards[c2], cards[c3], cards[c4],
-//                              cards[c5], cards[c6], cards[c7]);
-//            new Hand( combiner.nextElement() ).value();
+//            Eval7Faster.valueOf(cards[c1], cards[c2], cards[c3], cards[c4],
+//                                cards[c5], cards[c6], cards[c7]);
+//            new Hand( cards ).value();
 
+//            if (value != EvalSlow.valueOf( cards ))
+//            {
+//                System.out.println("WTF!!!!!");
+//            }
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
         }}}}}}}
 //        }
@@ -236,7 +244,7 @@ public class Main
             if (count   % 10000000 == 0) System.out.println();
             if (count++ % 1000000  == 0) System.out.print(".");
 
-            int value = Card.handValue(permuter.nextElement());
+            int value = EvalSlow.valueOf(permuter.nextElement());
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
         }
 
