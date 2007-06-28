@@ -33,7 +33,7 @@ public class Environment
     public Environment(Hole         hole,
                        Community    community,
                        Player       byPosition[],
-                       int          yourPosition,
+                       int          youAwayFromFirstToAct,
                        int          toCall,
                        int          pot,
                        int          commit,
@@ -44,7 +44,7 @@ public class Environment
         HOLE             = hole;
         COMMUNITY        = community;
         BY_POSITION      = byPosition;
-        POSITION         = yourPosition;
+        POSITION         = youAwayFromFirstToAct;
         TO_CALL          = toCall;
         POT              = pot;
         COMMIT           = commit;

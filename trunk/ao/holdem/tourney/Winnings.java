@@ -7,6 +7,8 @@ public class Winnings implements Comparable<Winnings>
 {
     //--------------------------------------------------------------------
     private double winnings;
+    private int    confidence;
+    private double avgWins;
 
 
     //--------------------------------------------------------------------
@@ -14,17 +16,20 @@ public class Winnings implements Comparable<Winnings>
 
     public Winnings(Winnings copyWinnings)
     {
-        this(copyWinnings.winnings);
+        this(copyWinnings.winnings, copyWinnings.confidence, false);
     }
 
     public Winnings(double deltaStack, int teamMembers)
     {
-        this(deltaStack / teamMembers);
+        this(deltaStack / teamMembers, 1, false);
     }
 
-    private Winnings(double value)
+    private Winnings(double value, int certainty, boolean disambiguator)
     {
-        winnings = value;
+        winnings   = value;
+        confidence = certainty;
+
+        avgWins = winnings / certainty;
     }
 
 
@@ -34,17 +39,19 @@ public class Winnings implements Comparable<Winnings>
         return Math.abs(winnings) < 0.0001;
     }
 
+
     //--------------------------------------------------------------------
     public void add(Winnings addend)
     {
-        winnings += addend.winnings;
+        winnings   += addend.winnings;
+        confidence += addend.confidence;
     }
 
 
     //--------------------------------------------------------------------
     public Winnings negate()
     {
-        return new Winnings(-winnings);
+        return new Winnings(-winnings, confidence);
     }
 
 
@@ -52,7 +59,7 @@ public class Winnings implements Comparable<Winnings>
     @Override
     public int compareTo(Winnings o)
     {
-        return Double.compare(winnings, o.winnings);
+        return Double.compare(avgWins, o.avgWins);
     }
 
 
@@ -60,6 +67,6 @@ public class Winnings implements Comparable<Winnings>
     @Override
     public String toString()
     {
-        return Double.toString( winnings );
+        return Double.toString( avgWins );
     }
 }

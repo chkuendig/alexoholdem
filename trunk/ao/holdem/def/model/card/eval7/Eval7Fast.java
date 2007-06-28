@@ -2,6 +2,7 @@ package ao.holdem.def.model.card.eval7;
 
 
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
 import ao.util.stats.Combiner;
 
@@ -54,7 +55,8 @@ public class Eval7Fast
         DataInputStream cache =
                 new DataInputStream(
                         new BufferedInputStream(
-                                new FileInputStream(cacheFile)));
+                                new FileInputStream(cacheFile),
+                                1048576));
         for (int i = 0; i < 133784560; i++)
         {
             set(vals, i, cache.readShort());
@@ -106,7 +108,7 @@ public class Eval7Fast
             int index = Eval7FastLookup.index52c7(mask(handOf7));
             if (isNull(vals, index))
             {
-                set(vals, index, new Hand( handOf7 ).value());
+                set(vals, index, EvalSlow.valueOf( handOf7 ));
             }
         }
     }
@@ -164,8 +166,14 @@ public class Eval7Fast
         short val = get(values, index);
         return val == 0
                 ? set(values, index,
-                      new Hand(c1, c2, c3, c4, c5, c6, c7).value())
+                      EvalSlow.valueOf(c1, c2, c3, c4, c5, c6, c7))
                 : val;
+    }
+
+    public static short valueOf(long sevenCardMask)
+    {
+        int index = Eval7FastLookup.index52c7(sevenCardMask);
+        return get(values, index); // will be wrong.
     }
 
 

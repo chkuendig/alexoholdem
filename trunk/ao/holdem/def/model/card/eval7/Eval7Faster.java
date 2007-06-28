@@ -2,8 +2,6 @@ package ao.holdem.def.model.card.eval7;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
-import ao.holdem.def.model.card.lookup.PersistentInts;
-import ao.holdem.def.model.card.lookup.PersistentLongs;
 import ao.holdem.def.model.cards.Hand;
 
 import java.util.Arrays;
@@ -33,19 +31,19 @@ public class Eval7Faster
     //--------------------------------------------------------------------
     static
     {
-        handRanks = PersistentInts.retrieve("lookup/fast_ranks.cache");
-        keys      = PersistentLongs.retrieve("lookup/fast_keys.cache");
-
-        if (handRanks == null || keys == null)
-        {
+//        handRanks = PersistentInts.retrieve("lookup/fast_ranks.cache");
+//        keys      = PersistentLongs.retrieve("lookup/fast_keys.cache");
+//
+//        if (handRanks == null || keys == null)
+//        {
             handRanks = new int[32487834];
             keys      = new long[612978];
 
-            generateTables();
-
-            PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
-            PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
-        }
+//            generateTables();
+//
+//            PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
+//            PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
+//        }
     }
 
 
@@ -245,11 +243,15 @@ public class Eval7Faster
 
                 if (suit == 0)
                 {
-                    checkup[cardIndex] =
-                            Card.values()[ (lastDontCare - 1)*13 + rank ];
+                    do
+                    {
+                        checkup[cardIndex] =
+                                Card.values()[ (lastDontCare - 1)*13 + rank ];
 
-                    lastDontCare = (lastDontCare + 1) % 5;
-                    if (lastDontCare == 0) lastDontCare = 1;
+                        lastDontCare = (lastDontCare + 1) % 5;
+                        if (lastDontCare == 0) lastDontCare = 1;
+                    }
+                    while (contains(checkup, cardIndex - 1, checkup[cardIndex]));
                 }
                 else
                 {
@@ -263,12 +265,12 @@ public class Eval7Faster
 
             switch (numCards) {
                 case 5 :
-                    handRank = //EvalSlow.valueOf(
-//                            hand[0],hand[1],hand[2],hand[3],hand[4]);
+                    handRank = EvalSlow.valueOf(
+                            hand[0],hand[1],hand[2],hand[3],hand[4]);
 //                    if (handRank !=
-                            EvalSlow.valueOf(
-                                    checkup[0],checkup[1],checkup[2],
-                                    checkup[3],checkup[4]);//)
+//                            EvalSlow.valueOf(
+//                                    checkup[0],checkup[1],checkup[2],
+//                                    checkup[3],checkup[4]))
 //                    {
 //                        System.out.println("### WTF?!!??!");
 //                    }
@@ -276,22 +278,22 @@ public class Eval7Faster
                     break;
 
                 case 6 :
-//                    handRank = EvalSlow.valueOf(
-//                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
                     handRank = EvalSlow.valueOf(
-                            checkup[0],checkup[1],checkup[2],
-                            checkup[3],checkup[4],checkup[5]);
+                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
+//                    handRank = EvalSlow.valueOf(
+//                            checkup[0],checkup[1],checkup[2],
+//                            checkup[3],checkup[4],checkup[5]);
                     break;
 
                 case 7 :
-                    handRank =
-                            EvalSlow.valueOf(
-                                    checkup[0],checkup[1],checkup[2],
-                                    checkup[3],checkup[4],checkup[5],
-                                    checkup[6]);
+//                    handRank =
+//                            EvalSlow.valueOf(
+//                                    checkup[0],checkup[1],checkup[2],
+//                                    checkup[3],checkup[4],checkup[5],
+//                                    checkup[6]);
 
-//                    handRank = EvalSlow.valueOf(
-//                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
+                    handRank = EvalSlow.valueOf(
+                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
 //                    if (handRank !=
 //                            EvalSlow.valueOf(
 //                                    checkup[0],checkup[1],checkup[2],
@@ -310,6 +312,19 @@ public class Eval7Faster
         }
         return handRank;
 	}
+
+    private static boolean contains(Card cards[], int upToIndex, Card card)
+    {
+        for (int i = 0; i <= upToIndex; i++)
+        {
+            if (cards[i] == card)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 		
     //--------------------------------------------------------------------
 	private static void generateTables() {
@@ -399,14 +414,24 @@ public class Eval7Faster
 //                           index5] + index6] + index7];
     }
 
+    public static int finalIndexOf(
+            int index1, int index2, int index3, int index4,
+            int index5, int index6, int index7)
+    {
+        return handRanks[handRanks[handRanks[
+                handRanks[handRanks[handRanks[
+                    53 + index1] + index2] + index3] + index4] +
+                           index5] + index6] + index7;
+    }
+
     //--------------------------------------------------------------------
 	public static void main(String [] args) {
-//        generateTables();
+        generateTables();
 //        PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
 //        PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
         
         int c0, c1, c2, c3, c4, c5, c6;
-//        int u0, u1, u2, u3, u4, u5;
+        int u0, u1, u2, u3, u4, u5;
 //		int numHands = 0;
 //		int handRank;
 //        int[]          handEnumerations = new int[10];
@@ -421,25 +446,26 @@ public class Eval7Faster
         int frequency[] = new int[ Hand.HandRank.values().length ];
 
         for (c0 = 1; c0 < 53; c0++) {
+            u0 = handRanks[53 + c0];
             for (c1 = c0 + 1; c1 < 53; c1++) {
+                u1 = handRanks[u0 + c1];
                 for (c2 = c1 + 1; c2 < 53; c2++) {
+                    u2 = handRanks[u1 + c2];
                     for (c3 = c2 + 1; c3 < 53; c3++) {
+                        u3 = handRanks[u2 + c3];
                         for (c4 = c3 + 1; c4 < 53; c4++) {
+                            u4 = handRanks[u3 + c4];
                             for (c5 = c4 + 1; c5 < 53; c5++) {
+                                u5 = handRanks[u4 + c5];
                                 for (c6 = c5 + 1; c6 < 53; c6++) {
 
-//                                    u0 = handRanks[53 + c0];
-//                                    u1 = handRanks[u0 + c1];
-//                                    u2 = handRanks[u1 + c2];
-//                                    u3 = handRanks[u2 + c3];
-//                                    u4 = handRanks[u3 + c4];
-//                                    u5 = handRanks[u4 + c5];
 //                                    handRank = handRanks[u5 + c6];
 
 //                                    handRank = handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[
 //                                            53 + c0] + c1] + c2] + c3] + c4] + c5] + c6];
 
-                                    int value = valueOf(c0, c1, c2, c3, c4, c5, c6);
+//                                    int value = valueOf(c0, c1, c2, c3, c4, c5, c6);
+                                    int value = handRanks[u5 + c6];
                                     frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
 
 //                                    handEnumerations[handRank >>> 12]++;
