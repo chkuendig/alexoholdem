@@ -151,7 +151,7 @@ public class OddFinder
 //                if (atOpponent == 1)
 //                {
 //                    odds = odds.min();
-//                }
+//                }                          
 //                else
 //                {
 //                    odds = odds.min(

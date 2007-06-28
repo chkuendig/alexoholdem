@@ -1,7 +1,7 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.AlwaysRaiseBot;
+import ao.holdem.bots.LooseSklanskyBot;
 import ao.holdem.bots.MathBot;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
@@ -38,12 +38,22 @@ public class Main
         Rand.nextInt();
 //        Rand.nextDouble();
 
-//        for (int i = 0; i < 100; i++)
+//        Combiner<Integer> c =
+//                new Combiner<Integer>(
+//                        new Integer[]{0, 1, 2, 3, 4, 5, 6},
+//                        5);
+//        while (c.hasMoreElements())
 //        {
-            runHoldemGame();
-//            runNetCode();
-//            runPoker();
+//            System.out.println(Arrays.toString(c.nextElement()));
 //        }
+
+
+        for (int i = 0; i < 100; i++)
+        {
+//            runHoldemGame();
+//            runNetCode();
+            runPoker();
+        }
     }
 
 
@@ -120,10 +130,10 @@ public class Main
 //                BotFactory.Impl.fromClass(RandomBot.class));
 //        provider.add(
 //                BotFactory.Impl.fromClass(PokerTipsBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
 //        provider.add(
-//                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
+//                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(MathBot.class));
 
@@ -190,16 +200,32 @@ public class Main
         long start = System.currentTimeMillis();
         int  count = 0;
 
+        int exactFrequency[] = new int[ 7462 ];
         int frequency[] = new int[ Hand.HandRank.values().length ];
         for (int c0 = 1; c0 < 53; c0++) {
+            Card card0 = Card.values()[ c0 - 1 ];
+            long fastCard0 = 1L << (c0 - 1);
             for (int c1 = c0 + 1; c1 < 53; c1++) {
+                Card card1 = Card.values()[ c1 - 1 ];
+                long fastCard1 = 1L << (c1 - 1);
                 for (int c2 = c1 + 1; c2 < 53; c2++) {
+                    Card card2 = Card.values()[ c2 - 1 ];
+                    long fastCard2 = 1L << (c2 - 1);
                     for (int c3 = c2 + 1; c3 < 53; c3++) {
+                        Card card3 = Card.values()[ c3 - 1 ];
+                        long fastCard3 = 1L << (c3 - 1);
                         for (int c4 = c3 + 1; c4 < 53; c4++) {
+                            Card card4 = Card.values()[ c4 - 1 ];
+                            long fastCard4 = 1L << (c4 - 1);
                             for (int c5 = c4 + 1; c5 < 53; c5++) {
+                                Card card5 = Card.values()[ c5 - 1 ];
+                                long fastCard5 = 1L << (c5 - 1);
                                 for (int c6 = c5 + 1; c6 < 53; c6++) {
+                                    Card card6 = Card.values()[ c6 - 1 ];
+                                    long fastCard6 = 1L << (c6 - 1);
 //        while (combiner.hasMoreElements())
 //        {
+        {
             if (count % 10000000 == 0)
             {
                 long delta = (System.currentTimeMillis() - start);
@@ -211,24 +237,48 @@ public class Main
             }
             if (count++ % 1000000  == 0) System.out.print(".");
 
+//            {
+//                Permuter<Integer> perm =
+//                        new Permuter<Integer>(
+//                                new Integer[]{c0, c1, c2, c3, c4, c5, c6});
+//
+//                int fValue = Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
+//                while (perm.hasMoreElements())
+//                {
+//                    Integer onePerm[] = perm.nextElement();
+//
+//                    if (fValue != Eval7Faster.valueOf(
+//                            onePerm[0], onePerm[1], onePerm[2],
+//                            onePerm[3], onePerm[4], onePerm[5], onePerm[6]))
+//                    {
+//                        System.out.println("### WTF?!?!");
+//                    }
+//                }
+//            }
+
 //            Card cards[] = combiner.nextElement();
             short value = //EvalSlow.valueOf( cards );
-            Eval7Faster.valueOf(c5, c0, c3, c2, c4, c1, c6);
+//            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
+//            Eval7Fast.valueOf(fastCard0 | fastCard1 | fastCard2 | fastCard3 | fastCard4 | fastCard5 | fastCard6);
+            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
 //            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());
 //            Eval7Faster.valueOf(cards[c1], cards[c2], cards[c3], cards[c4],
 //                                cards[c5], cards[c6], cards[c7]);
-//            new Hand( cards ).value();
-
-//            if (value != EvalSlow.valueOf( cards ))
+//            EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6);
+//            new Hand(card0, card1, card2, card3, card4, card5, card6).value();
+//            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
 //            {
-//                System.out.println("WTF!!!!!");
+//                System.out.println("WTF!!!!!\t" + value + "\t" + EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
 //            }
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+            exactFrequency[ value ]++;
+        }
         }}}}}}}
 //        }
         System.out.println("total: " + total);
         System.out.println(Arrays.toString(frequency));
+        System.out.println(Arrays.toString(exactFrequency));
     }
     public static void doRunHandsOf5()
     {
