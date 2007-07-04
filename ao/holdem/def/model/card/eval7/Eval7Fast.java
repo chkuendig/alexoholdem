@@ -3,10 +3,10 @@ package ao.holdem.def.model.card.eval7;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
-import ao.holdem.def.model.cards.Hand;
 import ao.util.stats.Combiner;
 
 import java.io.*;
+import java.util.Arrays;
 
 /**
  *
@@ -18,10 +18,11 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    // brocken up into 128 pices of 1,048,576 values
+    private static final int NUM_HANDS = (int) Combiner.choose(52, 7);
+
 //    private static final AtomicReference<short[][]> values =
 //            new AtomicReference<short[][]>();
-    private static final short values[][] = alloc();
+    private static final short values[] = alloc();
 
 
 //    private static short[][] readOrPopulate()
@@ -35,7 +36,7 @@ public class Eval7Fast
     }
 
     //--------------------------------------------------------------------
-    private static boolean read(short vals[][])
+    private static boolean read(short vals[])
     {
         try
         {
@@ -47,7 +48,7 @@ public class Eval7Fast
         }
     }
 
-    private static boolean doRead(short vals[][]) throws Exception
+    private static boolean doRead(short vals[]) throws Exception
     {
         File cacheFile = new File("lookup/cache7.bin");
         if (! cacheFile.canRead()) return false;
@@ -57,7 +58,7 @@ public class Eval7Fast
                         new BufferedInputStream(
                                 new FileInputStream(cacheFile),
                                 1048576));
-        for (int i = 0; i < 133784560; i++)
+        for (int i = 0; i < NUM_HANDS; i++)
         {
             set(vals, i, cache.readShort());
         }
@@ -67,7 +68,7 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    private static void populate(short vals[][])
+    private static void populate(short vals[])
     {
         try
         {
@@ -79,7 +80,7 @@ public class Eval7Fast
         }
     }
 
-    private static void doPopulate(short vals[][]) throws Exception
+    private static void doPopulate(short vals[]) throws Exception
     {
         compute(vals);
 
@@ -90,7 +91,7 @@ public class Eval7Fast
                 new DataOutputStream(
                         new BufferedOutputStream(
                                 new FileOutputStream(cacheFile)));
-        for (int i = 0; i < 133784560; i++)
+        for (int i = 0; i < NUM_HANDS; i++)
         {
             cache.writeShort( get(vals, i) );
         }
@@ -99,7 +100,7 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    private static void compute(short vals[][])
+    private static void compute(short vals[])
     {
         Combiner<Card> combiner = new Combiner<Card>(Card.values(), 7);
         while (combiner.hasMoreElements())
@@ -115,33 +116,28 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    private static short[][] alloc()
+    private static short[] alloc()
     {
-        // 133 784 560
-        short table[][] = new short[128][];
-        for (int i = 0; i < 127; i++)
-        {
-            table[i] = new short[ 1048576 ];
-        }
-        table[127] = new short[ 615408 ];
+        short table[] = new short[ NUM_HANDS ];
+        Arrays.fill(table, (short) -1);
         return table;
     }
 
-    private static boolean isNull(short[][] table, int index)
+    private static boolean isNull(short[] table, int index)
     {
         // will never return true for an entry that had its value set.
-        return table[ index >> 20 ][ index & 0xfffff ] == 0;
+        return table[ index ] == -1;
     }
 
-    private static short set(short[][] table, int index, short val)
+    private static short set(short[] table, int index, short val)
     {
-        table[ index >> 20 ][ index & 0xfffff ] = val;
+        table[ index ] = val;
         return val;
     }
 
-    private static short get(short[][] table, int index)
+    private static short get(short[] table, int index)
     {
-        return table[ index >> 20 ][ index & 0xfffff ];
+        return table[ index ];
     }
 
 
@@ -152,8 +148,8 @@ public class Eval7Fast
 
         int index = Eval7FastLookup.index52c7( mask(sevenCards) );
         short val = get(values, index);
-        return val == 0
-                ? set(values, index, new Hand( sevenCards ).value())
+        return val == -1
+                ? set(values, index, EvalSlow.valueOf( sevenCards ))
                 : val;
     }
 
@@ -164,7 +160,7 @@ public class Eval7Fast
         int index = Eval7FastLookup.index52c7(
                         mask(c1, c2, c3, c4, c5, c6, c7) );
         short val = get(values, index);
-        return val == 0
+        return val == -1
                 ? set(values, index,
                       EvalSlow.valueOf(c1, c2, c3, c4, c5, c6, c7))
                 : val;

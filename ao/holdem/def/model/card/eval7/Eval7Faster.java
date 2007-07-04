@@ -2,6 +2,8 @@ package ao.holdem.def.model.card.eval7;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
+import ao.holdem.def.model.card.lookup.PersistentInts;
+import ao.holdem.def.model.card.lookup.PersistentLongs;
 import ao.holdem.def.model.cards.Hand;
 
 import java.util.Arrays;
@@ -31,19 +33,19 @@ public class Eval7Faster
     //--------------------------------------------------------------------
     static
     {
-//        handRanks = PersistentInts.retrieve("lookup/fast_ranks.cache");
-//        keys      = PersistentLongs.retrieve("lookup/fast_keys.cache");
-//
-//        if (handRanks == null || keys == null)
-//        {
+        handRanks = PersistentInts.retrieve("lookup/fast_ranks.cache");
+        keys      = PersistentLongs.retrieve("lookup/fast_keys.cache");
+
+        if (handRanks == null || keys == null)
+        {
             handRanks = new int[32487834];
             keys      = new long[612978];
 
-//            generateTables();
-//
-//            PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
-//            PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
-//        }
+            generateTables();
+
+            PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
+            PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
+        }
     }
 
 
@@ -414,19 +416,19 @@ public class Eval7Faster
 //                           index5] + index6] + index7];
     }
 
-    public static int finalIndexOf(
-            int index1, int index2, int index3, int index4,
-            int index5, int index6, int index7)
-    {
-        return handRanks[handRanks[handRanks[
-                handRanks[handRanks[handRanks[
-                    53 + index1] + index2] + index3] + index4] +
-                           index5] + index6] + index7;
-    }
+//    public static int finalIndexOf(
+//            int index1, int index2, int index3, int index4,
+//            int index5, int index6, int index7)
+//    {
+//        return handRanks[handRanks[handRanks[
+//                handRanks[handRanks[handRanks[
+//                    53 + index1] + index2] + index3] + index4] +
+//                           index5] + index6] + index7;
+//    }
 
     //--------------------------------------------------------------------
 	public static void main(String [] args) {
-        generateTables();
+//        generateTables();
 //        PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
 //        PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
         

@@ -1,5 +1,6 @@
 package ao.holdem.def.model.card.eval7.other;
 
+import ao.holdem.Main;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
@@ -125,9 +126,10 @@ public class HandRankSetup {
 		}
 
 		timer = System.nanoTime() - timer;
+
         
         System.out.println(Arrays.toString(frequency));
-        System.out.println(Arrays.toString(exactFrequency));
+        System.out.println(Main.join(exactFrequency, "\t"));
 
 
         for (int i = 0; i <= 9; i++)  // display the results
