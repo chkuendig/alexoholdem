@@ -47,7 +47,6 @@ public class Main
 //            System.out.println(Arrays.toString(c.nextElement()));
 //        }
 
-
         for (int i = 0; i < 100; i++)
         {
 //            runHoldemGame();
@@ -260,11 +259,10 @@ public class Main
             short value = //EvalSlow.valueOf( cards );
 //            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            Eval7Fast.valueOf(fastCard0 | fastCard1 | fastCard2 | fastCard3 | fastCard4 | fastCard5 | fastCard6);
-            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
+//            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
 //            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());
-//            Eval7Faster.valueOf(cards[c1], cards[c2], cards[c3], cards[c4],
-//                                cards[c5], cards[c6], cards[c7]);
+            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            new Hand(card0, card1, card2, card3, card4, card5, card6).value();
 //            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
@@ -276,10 +274,29 @@ public class Main
         }
         }}}}}}}
 //        }
+
         System.out.println("total: " + total);
         System.out.println(Arrays.toString(frequency));
-        System.out.println(Arrays.toString(exactFrequency));
+        System.out.println(join(exactFrequency, "\t"));
     }
+
+    public static String join(int vals[], String with)
+    {
+        StringBuilder str = new StringBuilder();
+
+        for (int i = 0; i < vals.length; i++)
+        {
+            if (i != 0)
+            {
+                str.append( with );
+            }
+            str.append( vals[i] );
+        }
+
+        return str.toString();
+    }
+
+
     public static void doRunHandsOf5()
     {
         Combiner<Card> permuter =
