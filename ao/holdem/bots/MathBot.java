@@ -1,5 +1,8 @@
 package ao.holdem.bots;
 
+import ao.holdem.bots.util.HeadsUpOddFinder;
+import ao.holdem.bots.util.OddCounter;
+import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
@@ -22,12 +25,12 @@ public class MathBot extends AbstractBot
         Hole      hole      = env.hole();
         Community community = env.community();
 
-        OddFinder oddFinder = new OddFinder(hole, community, 1);
-        if (oddFinder.combos() > 100000000)
+        HeadsUpOddFinder oddFinder = new HeadsUpOddFinder();
+        if (OddCounter.combos(community, 1) > 100000000)
         {
             return new LooseSklanskyBot().act(env);
         }
-        OddFinder.Odds odds = oddFinder.compute();
+        Odds odds = oddFinder.compute(hole, community, 1);
 
         double potOdds =
                 ((double) env.toCall()) /

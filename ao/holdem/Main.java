@@ -3,13 +3,18 @@ package ao.holdem;
 
 import ao.holdem.bots.LooseSklanskyBot;
 import ao.holdem.bots.MathBot;
+import ao.holdem.bots.util.GeneralOddFinder;
+import ao.holdem.bots.util.OddFinder;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.model.card.eval7.Eval7Fast;
 import ao.holdem.def.model.card.eval7.Eval7FastLookup;
-import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
+import ao.holdem.def.model.cards.Hole;
+import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.community.Flop;
 import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
@@ -161,7 +166,21 @@ public class Main
     {
 //        doRun52c7();
 //        doRunHandsOf5();
-        doRunHandsOf7();
+//        doRunHandsOf7();
+        doRunOdds();
+    }
+    public static void doRunOdds()
+    {
+        OddFinder f = new GeneralOddFinder();
+
+        Hole h = new Hole(Card.SEVEN_OF_CLUBS,
+                          Card.TWO_OF_DIAMONDS);
+        Community c = new Community(new Flop(Card.TWO_OF_CLUBS,
+                                             Card.ACE_OF_CLUBS,
+                                             Card.QUEEN_OF_CLUBS));
+        System.out.println(
+                "odds for " + h + "|" + c + " vs 1 " +
+                f.compute(h, c, 1));
     }
     public static void doRun52c7()
     {
@@ -257,12 +276,12 @@ public class Main
 
 //            Card cards[] = combiner.nextElement();
             short value = //EvalSlow.valueOf( cards );
-//            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
+            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            Eval7Fast.valueOf(fastCard0 | fastCard1 | fastCard2 | fastCard3 | fastCard4 | fastCard5 | fastCard6);
 //            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
 //            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());
-            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
+//            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            new Hand(card0, card1, card2, card3, card4, card5, card6).value();
 //            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
