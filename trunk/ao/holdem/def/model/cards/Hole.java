@@ -44,6 +44,11 @@ public class Hole
                 SECOND.rank().ordinal() < Card.Rank.JACK.ordinal();
     }
 
+    public boolean contains(Card card)
+    {
+        return FIRST == card || SECOND == card;
+    }
+
 
     //--------------------------------------------------------------------
     public Card first()

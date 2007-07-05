@@ -1,4 +1,4 @@
-package ao.holdem.bots;
+package ao.holdem.bots.util;
 
 import static ao.holdem.def.model.card.Card.Rank.*;
 import ao.holdem.def.model.cards.Hole;
