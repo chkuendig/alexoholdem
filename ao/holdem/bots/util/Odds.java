@@ -6,18 +6,18 @@ package ao.holdem.bots.util;
 public class Odds
 {
     //--------------------------------------------------------------------
-    private final int WIN;
-    private final int LOSE;
-    private final int SPLIT;
+    private final long WIN;
+    private final long LOSE;
+    private final long SPLIT;
 
 
     //--------------------------------------------------------------------
     public Odds()
     {
-        this(-1, -1, -1);
+        this(0, 0, 0);
     }
 
-    public Odds(int winOdds, int loseOdds, int splitOdds)
+    public Odds(long winOdds, long loseOdds, long splitOdds)
     {
         WIN   = winOdds;
         LOSE  = loseOdds;
@@ -26,19 +26,19 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    public Odds min(Odds between)
+    public Odds plus(Odds addend)
     {
-        return (winPercent() < between.winPercent())
-                ? this
-                : between;
-//            return new Odds(WIN   + addend.WIN,
-//                            LOSE  + addend.LOSE,
-//                            SPLIT + addend.SPLIT);
+//        return (winPercent() < between.winPercent())
+//                ? this
+//                : between;
+            return new Odds(WIN   + addend.WIN,
+                            LOSE  + addend.LOSE,
+                            SPLIT + addend.SPLIT);
     }
 
 
     //--------------------------------------------------------------------
-    public int winOdds()
+    public long winOdds()
     {
         return WIN;
     }
@@ -49,7 +49,7 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    public int loseOdds()
+    public long loseOdds()
     {
         return LOSE;
     }
@@ -60,7 +60,7 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    public int splitOdds()
+    public long splitOdds()
     {
         return SPLIT;
     }
