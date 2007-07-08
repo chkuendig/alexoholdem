@@ -68,6 +68,14 @@ public enum Card
 
 
     //--------------------------------------------------------------------
+    public static Card valueOf(Rank rank, Suit suit)
+    {
+        return values()[ rank.ordinal() +
+                         suit.ordinal() * Rank.values().length ];
+    }
+
+
+    //--------------------------------------------------------------------
     private final Rank RANK;
     private final Suit SUIT;
     private final int  SIGNITURE;

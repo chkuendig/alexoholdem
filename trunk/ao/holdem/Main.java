@@ -1,9 +1,10 @@
 package ao.holdem;
 
 
+import ao.holdem.bots.AlwaysRaiseBot;
 import ao.holdem.bots.LooseSklanskyBot;
 import ao.holdem.bots.MathBot;
-import ao.holdem.bots.util.GeneralOddFinder;
+import ao.holdem.bots.util.AproximatingOddFinder;
 import ao.holdem.bots.util.OddFinder;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
@@ -14,7 +15,6 @@ import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
-import ao.holdem.def.model.cards.community.Flop;
 import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
@@ -52,11 +52,11 @@ public class Main
 //            System.out.println(Arrays.toString(c.nextElement()));
 //        }
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1; i++)
         {
-//            runHoldemGame();
+            runHoldemGame();
 //            runNetCode();
-            runPoker();
+//            runPoker();
         }
     }
 
@@ -134,8 +134,8 @@ public class Main
 //                BotFactory.Impl.fromClass(RandomBot.class));
 //        provider.add(
 //                BotFactory.Impl.fromClass(PokerTipsBot.class));
-//        provider.add(
-//                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(LooseSklanskyBot.class));
         provider.add(
@@ -145,7 +145,7 @@ public class Main
 //        for (int i = 0; i < 100; i++)
 //        {
 //            tourney.runRandom();
-            tourney.run(2, 50);
+            tourney.run(4, 50);
 //        }
         tourney.tabDelimitedReport( System.out );
 
@@ -171,16 +171,51 @@ public class Main
     }
     public static void doRunOdds()
     {
-        OddFinder f = new GeneralOddFinder();
+        OddFinder f = new AproximatingOddFinder();
+//        for (Card.Suit suitA : Card.Suit.values())
+//        {
+//            for (Card.Suit suitB : Card.Suit.values())
+//            {
+//                Hole twoThree =
+//                        new Hole(Card.valueOf(Card.Rank.TWO,   suitA),
+//                                 Card.valueOf(Card.Rank.THREE, suitB));
+//                Community c = new Community();
+//
+//                System.out.println(
+//                        twoThree + "\t" +
+//                        f.compute(twoThree, c, 1));
+//            }
+//        }
 
-        Hole h = new Hole(Card.SEVEN_OF_CLUBS,
-                          Card.TWO_OF_DIAMONDS);
-        Community c = new Community(new Flop(Card.TWO_OF_CLUBS,
-                                             Card.ACE_OF_CLUBS,
-                                             Card.QUEEN_OF_CLUBS));
-        System.out.println(
-                "odds for " + h + "|" + c + " vs 1 " +
-                f.compute(h, c, 1));
+
+//        for (Card.Rank rank : Card.Rank.values())
+//        {
+//            Hole pocketPair =
+//                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
+//                             Card.valueOf(rank, Card.Suit.CLUBS));
+//            Community c = new Community();
+//
+//            System.out.println(
+//                    pocketPair + "\t" +
+//                    f.compute(pocketPair, c, 1));
+//        }
+        for (Card.Rank ranks[] :
+                new Combiner<Card.Rank>(Card.Rank.values(), 2))
+        {
+            Hole suited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+                                   Card.valueOf(ranks[1], Card.Suit.CLUBS));
+            Hole unsuited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+                                     Card.valueOf(ranks[1], Card.Suit.DIAMONDS));
+
+            Community c = new Community();
+
+            System.out.println(
+                "suited\t" + suited + "\t" +
+                f.compute(suited, c, 1));
+            System.out.println(
+                "unsuited\t" + unsuited + "\t" +
+                f.compute(unsuited, c, 1));
+        }
     }
     public static void doRun52c7()
     {
@@ -218,29 +253,23 @@ public class Main
         long start = System.currentTimeMillis();
         int  count = 0;
 
+        Card cards[] = Card.values();
         int exactFrequency[] = new int[ 7462 ];
         int frequency[] = new int[ Hand.HandRank.values().length ];
         for (int c0 = 1; c0 < 53; c0++) {
-            Card card0 = Card.values()[ c0 - 1 ];
-            long fastCard0 = 1L << (c0 - 1);
+            Card card0 = cards[ c0 - 1 ];
             for (int c1 = c0 + 1; c1 < 53; c1++) {
-                Card card1 = Card.values()[ c1 - 1 ];
-                long fastCard1 = 1L << (c1 - 1);
+                Card card1 = cards[ c1 - 1 ];
                 for (int c2 = c1 + 1; c2 < 53; c2++) {
-                    Card card2 = Card.values()[ c2 - 1 ];
-                    long fastCard2 = 1L << (c2 - 1);
+                    Card card2 = cards[ c2 - 1 ];
                     for (int c3 = c2 + 1; c3 < 53; c3++) {
-                        Card card3 = Card.values()[ c3 - 1 ];
-                        long fastCard3 = 1L << (c3 - 1);
+                        Card card3 = cards[ c3 - 1 ];
                         for (int c4 = c3 + 1; c4 < 53; c4++) {
-                            Card card4 = Card.values()[ c4 - 1 ];
-                            long fastCard4 = 1L << (c4 - 1);
+                            Card card4 = cards[ c4 - 1 ];
                             for (int c5 = c4 + 1; c5 < 53; c5++) {
-                                Card card5 = Card.values()[ c5 - 1 ];
-                                long fastCard5 = 1L << (c5 - 1);
+                                Card card5 = cards[ c5 - 1 ];
                                 for (int c6 = c5 + 1; c6 < 53; c6++) {
-                                    Card card6 = Card.values()[ c6 - 1 ];
-                                    long fastCard6 = 1L << (c6 - 1);
+                                    Card card6 = cards[ c6 - 1 ];
 //        while (combiner.hasMoreElements())
 //        {
         {
@@ -284,10 +313,11 @@ public class Main
 //            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            new Hand(card0, card1, card2, card3, card4, card5, card6).value();
-//            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
-//            {
-//                System.out.println("WTF!!!!!\t" + value + "\t" + EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
-//            }
+            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
+            {
+                System.out.println("WTF!!!!!\t" + value + "\t" +
+                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
+            }
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
             exactFrequency[ value ]++;
         }
@@ -368,5 +398,4 @@ public class Main
 //        System.out.println(a.compareTo( b ));
     }
 }
-
 
