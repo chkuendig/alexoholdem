@@ -71,6 +71,15 @@ public class Odds
 
 
     //--------------------------------------------------------------------
+    public double strengthVsRandom()
+    {
+        return (WIN + SPLIT/2.0)
+               / (WIN + LOSE + SPLIT);
+
+    }
+
+
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {
