@@ -12,8 +12,8 @@ import ao.util.stats.FastIntCombiner;
 public class AproximatingOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int FLOPS = 2000;
-    private static final int HOLES = 100;
+    private static final int FLOPS = 4000;
+    private static final int HOLES = 500;
 
 
     //--------------------------------------------------------------------
