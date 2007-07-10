@@ -19,7 +19,8 @@ public class GeneralOddFinder implements OddFinder
                             COM_B  = 52 - (2 + 2),
                             COM_C  = 52 - (2 + 3),
                             COM_D  = 52 - (2 + 4),
-                            COM_E  = 52 - (2 + 5);
+                            COM_E  = 52 - (2 + 5),
+                            OPPS   = 52 - (2 + 5 + 1);
 
 
     //--------------------------------------------------------------------
@@ -284,6 +285,11 @@ public class GeneralOddFinder implements OddFinder
         }
     }
 
+    // selected from right [51] to left [0]
+    //  meaning rightmost elements of indexes[] are
+    //  personal hole cards, and common community cards,
+    //  and to the left of those (0..44, ie. < 52 - 2 - 5)
+    //  are opponents' simulated cards.
     public static int[] cardIndexes()
     {
         int  indexes[] = new int[52];

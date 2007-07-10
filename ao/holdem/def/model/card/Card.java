@@ -65,35 +65,27 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-    public static Card valueOf(Rank rank, Suit suit)
-    {
-        return values()[ rank.ordinal() +
-                         suit.ordinal() * Rank.values().length ];
-    }
-
-    public static Card byIndex(int index)
-    {
-        return values()[ index ];
-    }
-
-//    public static Card byInvertedIndex()
-
+//    public static Card valueOf(Rank rank, Suit suit)
+//    {
+//        return values()[ rank.ordinal() +
+//                         suit.ordinal() * Rank.values().length ];
+//    }
 
 
     //--------------------------------------------------------------------
     private final Rank RANK;
     private final Suit SUIT;
     private final int  INDEX;
-    private final int  INDEX_FAST;
+    private final int  INVERTED_INDEX;
 
     private Card(Rank rank, Suit suit)
     {
         RANK = rank;
         SUIT = suit;
 
-        INDEX      = ordinal() + 1;
-        INDEX_FAST = RANK.ordinal() * Suit.values().length +
-                     SUIT.ordinal() + 1;
+        INDEX          = ordinal() + 1;
+        INVERTED_INDEX = RANK.ordinal() * Suit.values().length +
+                         SUIT.ordinal() + 1;
     }
 
 
@@ -149,18 +141,8 @@ public enum Card
      */
     public int invertedIndex()
     {
-        return INDEX_FAST;
+        return INVERTED_INDEX;
     }
-
-
-    //--------------------------------------------------------------------
-//    public static boolean suitsEqual(
-//            Card c1, Card c2, Card c3, Card c4, Card c5)
-//    {
-//        return suitsEqual(c1.SIGNITURE, c2.SIGNITURE, c3.SIGNITURE,
-//                          c4.SIGNITURE, c5.SIGNITURE);
-//    }
-
 
 
     //--------------------------------------------------------------------
