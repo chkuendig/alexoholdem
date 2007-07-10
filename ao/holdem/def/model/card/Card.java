@@ -80,6 +80,7 @@ public enum Card
     private final Suit SUIT;
     private final int  SIGNITURE;
     private final int  INDEX;
+    private final int  INDEX_FAST;
 
     private Card(Rank rank, Suit suit)
     {
@@ -98,7 +99,9 @@ public enum Card
                     RANK.ordinal() << 8  |
                     RANK.PRIME;
 
-        INDEX = ordinal() + 1;
+        INDEX      = ordinal() + 1;
+        INDEX_FAST = RANK.ordinal() * Suit.values().length +
+                     SUIT.ordinal() + 1;
     }
 
 
@@ -133,6 +136,26 @@ public enum Card
     public int index()
     {
         return INDEX;
+    }
+
+    /*
+       2c =  1    2d =  2    2h =  3    2s =  4
+       3c =  5    3d =  6    3h =  7    3s =  8
+       4c =  9    4d = 10    4h = 11    4s = 12
+       5c = 13    5d = 14    5h = 15    5s = 16
+       6c = 17    6d = 18    6h = 19    6s = 20
+       7c = 21    7d = 22    7h = 23    7s = 24
+       8c = 25    8d = 26    8h = 27    8s = 28
+       9c = 29    9d = 30    9h = 31    9s = 32
+       Tc = 33    Td = 34    Th = 35    Ts = 36
+       Jc = 37    Jd = 38    Jh = 39    Js = 40
+       Qc = 41    Qd = 42    Qh = 43    Qs = 44
+       Kc = 45    Kd = 46    Kh = 47    Ks = 48
+       Ac = 49    Ad = 50    Ah = 51    As = 52
+     */
+    public int indexFaster()
+    {
+        return INDEX_FAST;
     }
 
 
