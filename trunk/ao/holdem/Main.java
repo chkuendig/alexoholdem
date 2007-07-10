@@ -10,8 +10,8 @@ import ao.holdem.bots.util.OddFinder;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.Eval7Fast;
 import ao.holdem.def.model.card.eval7.Eval7FastLookup;
+import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.model.cards.Hole;
@@ -55,9 +55,9 @@ public class Main
 
         for (int i = 0; i < 1; i++)
         {
-            runHoldemGame();
+//            runHoldemGame();
 //            runNetCode();
-//            runPoker();
+            runPoker();
         }
     }
 
@@ -169,8 +169,8 @@ public class Main
     {
 //        doRun52c7();
 //        doRunHandsOf5();
-//        doRunHandsOf7();
-        doRunOdds();
+        doRunHandsOf7();
+//        doRunOdds();
     }
     public static void doRunOdds()
     {
@@ -307,20 +307,34 @@ public class Main
 //            }
 
 //            Card cards[] = combiner.nextElement();
-            short value = //EvalSlow.valueOf( cards );
-            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
+            final short value = //EvalSlow.valueOf( cards );
+//            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            Eval7Fast.valueOf(fastCard0 | fastCard1 | fastCard2 | fastCard3 | fastCard4 | fastCard5 | fastCard6);
 //            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
 //            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());
-//            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
+            Eval7Faster.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6);
 //            new Hand(card0, card1, card2, card3, card4, card5, card6).value();
-            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
-            {
-                System.out.println("WTF!!!!!\t" + value + "\t" +
-                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
-            }
+
+//            FastCombiner<Card> c =
+//                    new FastCombiner<Card>(
+//                            new Card[]{card0, card1, card2, card3, card4, card5, card6});
+//            c.combine(new FastCombiner.CombinationVisitor7<Card>() {
+//                public void visit(Card ca0, Card ca1, Card ca2, Card ca3, Card ca4, Card ca5, Card ca6)
+//                {
+//                    if (value != EvalSlow.valueOf(ca0, ca1, ca2, ca3, ca4, ca5, ca6))
+//                    {
+//                        System.out.println("wtf!?!?");
+//                    }
+//                }
+//            });
+
+//            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
+//            {
+//                System.out.println("WTF!!!!!\t" + value + "\t" +
+//                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
+//            }
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
             exactFrequency[ value ]++;
         }
