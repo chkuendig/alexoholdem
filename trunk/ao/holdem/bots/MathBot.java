@@ -24,7 +24,7 @@ public class MathBot extends AbstractBot
         Community community = env.community();
 
 //        HeadsUpOddFinder oddFinder = new HeadsUpOddFinder();
-        OddFinder oddFinder = new AproximatingOddFinder();
+        OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
                         hole, community, env.activeOpponents());
 

@@ -9,11 +9,11 @@ import ao.util.stats.FastIntCombiner;
 /**
  * Threadsafe!!
  */
-public class AproximatingOddFinder implements OddFinder
+public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int FLOPS = 4000;
-    private static final int HOLES = 500;
+    private static final int FLOP_ITR = 4000;
+    private static final int HOLE_ITR = 500;
 
 
     //--------------------------------------------------------------------
@@ -44,58 +44,58 @@ public class AproximatingOddFinder implements OddFinder
 //                fc.combine(c5);
 //                return c5.odds();
 
-                for (int i = 0; i < FLOPS; i++)
+                for (int i = 0; i < FLOP_ITR; i++)
                 {
-                    int xComA = rand.nextInt( 50 );
-                    GeneralOddFinder.swap(indexes, xComA, 49);
-                    int xComB = rand.nextInt( 49 );
-                    GeneralOddFinder.swap(indexes, xComB, 48);
-                    int xComC = rand.nextInt( 48 );
-                    GeneralOddFinder.swap(indexes, xComC, 47);
-                    int xComD = rand.nextInt( 47 );
-                    GeneralOddFinder.swap(indexes, xComD, 46);
-                    int xComE = rand.nextInt( 46 );
-                    GeneralOddFinder.swap(indexes, xComE, 45);
+                    int xComA = rand.nextInt( GeneralOddFinder.COM_A + 1 );
+                    GeneralOddFinder.swap(indexes, xComA, GeneralOddFinder.COM_A);
+                    int xComB = rand.nextInt( GeneralOddFinder.COM_B + 1 );
+                    GeneralOddFinder.swap(indexes, xComB, GeneralOddFinder.COM_B);
+                    int xComC = rand.nextInt( GeneralOddFinder.COM_C + 1 );
+                    GeneralOddFinder.swap(indexes, xComC, GeneralOddFinder.COM_C);
+                    int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
+                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
 
                     odds = odds.plus(computeOppOdds(
                                 activeOpponents, indexes, cards, rand));
 
-                    GeneralOddFinder.swap(indexes, xComE, 45);
-                    GeneralOddFinder.swap(indexes, xComD, 46);
-                    GeneralOddFinder.swap(indexes, xComC, 47);
-                    GeneralOddFinder.swap(indexes, xComB, 48);
-                    GeneralOddFinder.swap(indexes, xComA, 49);
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+                    GeneralOddFinder.swap(indexes, xComC, GeneralOddFinder.COM_C);
+                    GeneralOddFinder.swap(indexes, xComB, GeneralOddFinder.COM_B);
+                    GeneralOddFinder.swap(indexes, xComA, GeneralOddFinder.COM_A);
                 }
                 break;
             case 3:
-                for (int i = 0; i < FLOPS; i++)
+                for (int i = 0; i < FLOP_ITR; i++)
                 {
-                    int xComD = rand.nextInt( 47 );
-                    GeneralOddFinder.swap(indexes, xComD, 46);
-                    int xComE = rand.nextInt( 46 );
-                    GeneralOddFinder.swap(indexes, xComE, 45);
+                    int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
+                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
 
                     odds = odds.plus(computeOppOdds(
                                 activeOpponents, indexes, cards, rand));
 
-                    GeneralOddFinder.swap(indexes, xComE, 45);
-                    GeneralOddFinder.swap(indexes, xComD, 46);
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
                 }
                 break;
             case 4:
-                for (int i = 0; i < FLOPS; i++)
+                for (int i = 0; i < FLOP_ITR; i++)
                 {
-                    int xComE = rand.nextInt( 46 );
-                    GeneralOddFinder.swap(indexes, xComE, 45);
+                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
 
                     odds = odds.plus(computeOppOdds(
                                 activeOpponents, indexes, cards, rand));
 
-                    GeneralOddFinder.swap(indexes, xComE, 45);
+                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
                 }
                 break;
             case 5:
-                for (int i = 0; i < FLOPS; i++)
+                for (int i = 0; i < FLOP_ITR; i++)
                 {
                     odds = odds.plus(computeOppOdds(
                                 activeOpponents, indexes, cards, rand));
@@ -158,11 +158,11 @@ public class AproximatingOddFinder implements OddFinder
             Card cards[],
             MersenneTwisterFast rand)
     {
-        Card comA = cards[ indexes[49] ];
-        Card comB = cards[ indexes[48] ];
-        Card comC = cards[ indexes[47] ];
-        Card comD = cards[ indexes[46] ];
-        Card comE = cards[ indexes[45] ];
+        Card comA = cards[ indexes[GeneralOddFinder.COM_A] ];
+        Card comB = cards[ indexes[GeneralOddFinder.COM_B] ];
+        Card comC = cards[ indexes[GeneralOddFinder.COM_C] ];
+        Card comD = cards[ indexes[GeneralOddFinder.COM_D] ];
+        Card comE = cards[ indexes[GeneralOddFinder.COM_E] ];
 
         int wins   = 0;
         int losses = 0;
@@ -171,10 +171,10 @@ public class AproximatingOddFinder implements OddFinder
         short myVal =
                 GeneralOddFinder.evalHand(
                         comA, comB, comC, comD, comE,
-                        cards[ indexes[50] ],
-                        cards[ indexes[51] ]);
+                        cards[ indexes[GeneralOddFinder.HOLE_A] ],
+                        cards[ indexes[GeneralOddFinder.HOLE_B] ]);
 
-        for (int i = 0; i < HOLES; i++)
+        for (int i = 0; i < HOLE_ITR; i++)
         {
             short oppVal =
                     approxMaxOppVal(0, activeOpps, indexes, cards,
@@ -202,7 +202,7 @@ public class AproximatingOddFinder implements OddFinder
             return Short.MIN_VALUE;
         }
 
-        int holeDestA = 44 - atOpp*2;
+        int holeDestA = GeneralOddFinder.OPPS - atOpp*2;
         int holeDestB = holeDestA - 1;
 
         int xOppA = rand.nextInt( holeDestA + 1 );

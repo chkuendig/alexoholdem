@@ -5,7 +5,7 @@ import ao.holdem.bots.LooseSklanskyBot;
 import ao.holdem.bots.MathBot;
 import ao.holdem.bots.MathTightBot;
 import ao.holdem.bots.PokerTipsBot;
-import ao.holdem.bots.util.AproximatingOddFinder;
+import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
 import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.BotFactory;
@@ -176,7 +176,7 @@ public class Main
     public static void doRunOdds()
     {
         Community c = new Community();
-        OddFinder f = new AproximatingOddFinder();
+        OddFinder f = new ApproximateOddFinder();
         for (int opps = 2; opps <= 10; opps++)
         {
             for (Card holes[] : new Combiner<Card>(Card.values(), 2))
@@ -329,7 +329,6 @@ public class Main
 //            Card cards[] = combiner.nextElement();
             final short value = //EvalSlow.valueOf( cards );
 //            Eval7Fast.valueOf(card0, card1, card2, card3, card4, card5, card6);
-//            Eval7Fast.valueOf(fastCard0 | fastCard1 | fastCard2 | fastCard3 | fastCard4 | fastCard5 | fastCard6);
 //            Eval7Faster.valueOf(c0, c1, c2, c3, c4, c5, c6);
 //            Eval7Faster.valueOf(cards);
 //            Eval7Fast.valueOf(combiner.nextElement());

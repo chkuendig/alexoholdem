@@ -1,6 +1,6 @@
 package ao.holdem.bots;
 
-import ao.holdem.bots.util.AproximatingOddFinder;
+import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
 import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.AbstractBot;
@@ -26,7 +26,7 @@ public class MathTightBot extends AbstractBot
         Community community = env.community();
 
 //        HeadsUpOddFinder oddFinder = new HeadsUpOddFinder();
-        OddFinder oddFinder = new AproximatingOddFinder();
+        OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
                         hole, community, env.activeOpponents());
 
