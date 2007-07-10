@@ -1,7 +1,7 @@
 package ao.holdem.bots.util;
 
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.Eval7Fast;
+import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
 import ao.util.stats.FastIntCombiner;
@@ -256,9 +256,9 @@ public class GeneralOddFinder implements OddFinder
     }
 
     public static short evalHand(Card a, Card b, Card c,
-                                  Card d, Card e, Card f, Card g)
+                                 Card d, Card e, Card f, Card g)
     {
-        return Eval7Fast.valueOf(a, b, c, d, e, f, g);
+        return Eval7Faster.valueOf(a, b, c, d, e, f, g);
     }
 
 

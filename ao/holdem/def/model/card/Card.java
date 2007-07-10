@@ -1,11 +1,8 @@
 package ao.holdem.def.model.card;
 
-import ao.holdem.def.model.card.eval5.Eval5Lookup;
-
-
 /**
- * Ripped right out of
- *  http://www.suffecool.net/poker/evaluator.html
+ * Note that this given order of cards
+ *  is standard and will not be changed.
  */
 public enum Card
 {
@@ -74,11 +71,18 @@ public enum Card
                          suit.ordinal() * Rank.values().length ];
     }
 
+    public static Card byIndex(int index)
+    {
+        return values()[ index ];
+    }
+
+//    public static Card byInvertedIndex()
+
+
 
     //--------------------------------------------------------------------
     private final Rank RANK;
     private final Suit SUIT;
-    private final int  SIGNITURE;
     private final int  INDEX;
     private final int  INDEX_FAST;
 
@@ -86,18 +90,6 @@ public enum Card
     {
         RANK = rank;
         SUIT = suit;
-
-//        +--------+--------+--------+--------+
-//        |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
-//        +--------+--------+--------+--------+
-//        p = prime number of rank (deuce=2,trey=3,four=5,...,ace=41)
-//        r = rank of card (deuce=0,trey=1,four=2,five=3,...,ace=12)
-//        cdhs = suit of card (bit turned on based on suit of card)
-//        b = bit turned on depending on rank of card
-        SIGNITURE = RANK.MASK      << 16 |
-                    SUIT.mask()    << 12 |
-                    RANK.ordinal() << 8  |
-                    RANK.PRIME;
 
         INDEX      = ordinal() + 1;
         INDEX_FAST = RANK.ordinal() * Suit.values().length +
@@ -116,6 +108,8 @@ public enum Card
         return SUIT;
     }
 
+
+    //--------------------------------------------------------------------
     /* Card to integer conversions:
         2c =  1    2d = 14    2h = 27    2s = 40
         3c =  2    3d = 15    3h = 28    3s = 41
@@ -153,61 +147,20 @@ public enum Card
        Kc = 45    Kd = 46    Kh = 47    Ks = 48
        Ac = 49    Ad = 50    Ah = 51    As = 52
      */
-    public int indexFaster()
+    public int invertedIndex()
     {
         return INDEX_FAST;
     }
 
 
     //--------------------------------------------------------------------
-    // higher means better (unlike in original algorithm)
-    public static short handValue(Card... fiveCards)
-    {
-        assert fiveCards.length == 5;
-        return handValue(fiveCards[0], fiveCards[1], fiveCards[2],
-                        fiveCards[3], fiveCards[4]);
-    }
-    public static short handValue(
-            Card c1, Card c2, Card c3, Card c4, Card c5)
-    {
-        return handValue(c1.SIGNITURE, c2.SIGNITURE, c3.SIGNITURE,
-                         c4.SIGNITURE, c5.SIGNITURE);
-    }
-    public static short handValue(int c1, int c2, int c3, int c4, int c5)
-    {
-        return (short)(7462 - inverseValue(c1, c2, c3, c4, c5));
-    }
-    public static short inverseValue(int c1, int c2, int c3, int c4, int c5)
-    {
-        int index = (c1 | c2 | c3 | c4 | c5) >> 16;
+//    public static boolean suitsEqual(
+//            Card c1, Card c2, Card c3, Card c4, Card c5)
+//    {
+//        return suitsEqual(c1.SIGNITURE, c2.SIGNITURE, c3.SIGNITURE,
+//                          c4.SIGNITURE, c5.SIGNITURE);
+//    }
 
-        // check for flushes and straight flushes
-        if (suitsEqual(c1, c2, c3, c4, c5))
-        {
-            return Eval5Lookup.flushes( index );
-        }
-
-        // check for straights and high card hands
-        short high = Eval5Lookup.unique5( index );
-        if (high != 0) return high;
-
-        return Eval5Lookup.remainingHands(
-                (c1 & 0xff) * (c2 & 0xff) * (c3 & 0xff) *
-                (c4 & 0xff) * (c5 & 0xff));
-    }
-
-
-    public static boolean suitsEqual(
-            Card c1, Card c2, Card c3, Card c4, Card c5)
-    {
-        return suitsEqual(c1.SIGNITURE, c2.SIGNITURE, c3.SIGNITURE,
-                          c4.SIGNITURE, c5.SIGNITURE);
-    }
-    private static boolean suitsEqual(
-            int c1, int c2, int c3, int c4, int c5)
-    {
-        return (c1 & c2 & c3 & c4 & c5 & 0xf000) > 0;
-    }
 
 
     //--------------------------------------------------------------------
@@ -221,19 +174,15 @@ public enum Card
     //--------------------------------------------------------------------
     public enum Rank
     {
-        TWO(2, "2"),   THREE(3, "3"),  FOUR(5, "4"),   FIVE(7, "5"),
-        SIX(11, "6"),  SEVEN(13, "7"), EIGHT(17, "8"), NINE(19, "9"),
-        TEN(23, "10"), JACK(29, "J"),  QUEEN(31, "Q"), KING(37, "K"),
-        ACE(41, "A");
+        TWO("2"),  THREE("3"), FOUR("4"),  FIVE("5"),
+        SIX("6"),  SEVEN("7"), EIGHT("8"), NINE("9"),
+        TEN("10"), JACK("J"),  QUEEN("Q"), KING("K"),
+        ACE("A");
 
-        private final int    PRIME;
-        private final int    MASK;
         private final String NAME;
 
-        private Rank(int prime, String name)
+        private Rank(String name)
         {
-            PRIME = prime;
-            MASK  = 1 << ordinal();
             NAME  = name;
         }
 
@@ -250,14 +199,10 @@ public enum Card
         CLUBS("c"), DIAMONDS("d"), HEARTS("h"), SPADES("s");
 
         private final String NAME;
+
         private Suit(String name)
         {
             NAME = name;
-        }
-
-        private int mask()
-        {
-            return 1 << (3 - ordinal());
         }
 
         public String toString()

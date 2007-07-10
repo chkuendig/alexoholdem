@@ -1,6 +1,7 @@
 package ao.holdem.def.model.card.eval7;
 
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.model.card.eval5.Eval5;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.card.lookup.PersistentInts;
 import ao.holdem.def.model.card.lookup.PersistentLongs;
@@ -231,81 +232,28 @@ public class Eval7Faster
                 if (currentCard == 0) break;
                 numCards++;
 
-                // Cactus Kev Card Representation
-                // +--------+--------+--------+--------+
-                // |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
-                // +--------+--------+--------+--------+
-                // p    = prime number of rank (deuce = 2, trey = 3, four = 5, five = 7,..., ace = 41)
-                // r    = rank of card         (deuce = 0, trey = 1, four = 2, five = 3,..., ace = 12)
-                // cdhs = suit of card
-                // b    = bit turned on depending on rank of card
-
                 // extract suit and rank from 8-bit packed representation
                 rank = (currentCard >>> 4) - 1; // 0..12
                 suit = currentCard & 0xF; //0..4, 0 = don't care.
 
-//                if (suit == 0)
-//                {
-//                    do
-//                    {
-//                        checkup[cardIndex] =
-//                                Card.values()[ (lastDontCare - 1)*13 + rank ];
-//
-//                        lastDontCare = (lastDontCare + 1) % 5;
-//                        if (lastDontCare == 0) lastDontCare = 1;
-//                    }
-//                    while (contains(checkup, cardIndex - 1, checkup[cardIndex]));
-//                }
-//                else
-//                {
-//                    checkup[cardIndex] =
-//                            Card.values()[ (suit - 1)*13 + rank ];
-//                }
-
                 // change card representation to Cactus Kev Representation
-                hand[cardIndex] = primes[rank] | (rank << 8) | (1 << (suit + 11)) | (1 << (16 + rank));
+                hand[cardIndex] = Eval5.asCactusKevsFormat(rank, suit);
             }
 
             switch (numCards) {
                 case 5 :
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4]);
-//                    if (handRank !=
-//                            EvalSlow.valueOf(
-//                                    checkup[0],checkup[1],checkup[2],
-//                                    checkup[3],checkup[4]);//)
-//                    {
-//                        System.out.println("### WTF?!!??!");
-//                    }
-
                     break;
 
                 case 6 :
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
-//                    handRank = EvalSlow.valueOf(
-//                            checkup[0],checkup[1],checkup[2],
-//                            checkup[3],checkup[4],checkup[5]);
                     break;
 
                 case 7 :
-//                    handRank =
-//                            EvalSlow.valueOf(
-//                                    checkup[0],checkup[1],checkup[2],
-//                                    checkup[3],checkup[4],checkup[5],
-//                                    checkup[6]);
-
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
-//                    if (handRank !=
-//                            EvalSlow.valueOf(
-//                                    checkup[0],checkup[1],checkup[2],
-//                                    checkup[3],checkup[4],checkup[5],
-//                                    checkup[6]))
-//                    {
-//                        System.out.println("### WTF?!!??!");
-//                    }
-
                     break;
 
                 default :
@@ -315,19 +263,7 @@ public class Eval7Faster
         }
         return handRank;
 	}
-
-    private static boolean contains(Card cards[], int upToIndex, Card card)
-    {
-        for (int i = 0; i <= upToIndex; i++)
-        {
-            if (cards[i] == card)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    
 		
     //--------------------------------------------------------------------
 	private static void generateTables() {
@@ -386,45 +322,7 @@ public class Eval7Faster
             stopTimer = System.currentTimeMillis();
             System.out.printf("done.\n\n%35s %f seconds\n\n", "Time Required:", ((stopTimer - startTimer) / 1000.0));
         }
-
-//        overwriteValues();
     }
-
-    /**
-     * honestly, i have no fucking clue why i need to do this.
-     */
-//    private static void overwriteValues()
-//    {
-//        System.out.println("overwriting values");
-//        final Card cards[] = Card.values();
-//        for (int c0 = 1; c0 < 53; c0++) {
-//            for (int c1 = c0 + 1; c1 < 53; c1++) {
-//                for (int c2 = c1 + 1; c2 < 53; c2++) {
-//                    for (int c3 = c2 + 1; c3 < 53; c3++) {
-//                        for (int c4 = c3 + 1; c4 < 53; c4++) {
-//                            for (int c5 = c4 + 1; c5 < 53; c5++) {
-//                                for (int c6 = c5 + 1; c6 < 53; c6++) {
-//                                    FastIntCombiner c =
-//                                            new FastIntCombiner(new int[]{c0, c1, c2, c3, c4, c5, c6});
-//                                    final short value =
-//                                            EvalSlow.valueOf(cards[c0-1], cards[c1-1], cards[c2-1],
-//                                                             cards[c3-1], cards[c4-1], cards[c5-1],
-//                                                             cards[c6-1]);
-//
-//                                    c.combine(new FastIntCombiner.CombinationVisitor7() {
-//                                        public void visit(int i0, int i1, int i2, int i3, int i4, int i5, int i6)
-//                                        {
-//                                            handRanks[finalIndexOf(i0, i1, i2, i3, i4, i5, i6)] = value;
-//                                        }
-//                                    });
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
 
     //--------------------------------------------------------------------
@@ -438,9 +336,9 @@ public class Eval7Faster
             Card c1, Card c2, Card c3, Card c4,
             Card c5, Card c6, Card c7)
     {
-        return valueOf(c1.indexFaster(), c2.indexFaster(), c3.indexFaster(),
-                       c4.indexFaster(), c5.indexFaster(), c6.indexFaster(),
-                       c7.indexFaster());
+        return valueOf(c1.invertedIndex(), c2.invertedIndex(), c3.invertedIndex(),
+                       c4.invertedIndex(), c5.invertedIndex(), c6.invertedIndex(),
+                       c7.invertedIndex());
     }
     public static short valueOf(
             int index1, int index2, int index3, int index4,
@@ -461,10 +359,6 @@ public class Eval7Faster
             int index1, int index2, int index3, int index4,
             int index5, int index6, int index7)
     {
-//        return handRanks[handRanks[handRanks[
-//                handRanks[handRanks[handRanks[
-//                    53 + index1] + index2] + index3] + index4] +
-//                           index5] + index6] + index7;
         return handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
                     53 + index1] + index2] + index3] + index4] +
