@@ -54,7 +54,7 @@ public class Main
 //            System.out.println(Arrays.toString(c.nextElement()));
 //        }
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1; i++)
         {
 //            runHoldemGame();
 //            runNetCode();
@@ -177,13 +177,13 @@ public class Main
     {
         Community c = new Community();
         OddFinder f = new ApproximateOddFinder();
-        for (int opps = 2; opps <= 10; opps++)
+        for (int opps = 1; opps <= 3; opps++)
         {
             for (Card holes[] : new Combiner<Card>(Card.values(), 2))
             {
                 Odds odds =
                         f.compute(new Hole(holes[0], holes[1]), c, opps);
-                
+
                 System.out.println(
                         "lookup[" + opps + "]" +
                               "[" + holes[0].ordinal() + "]" +

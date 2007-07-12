@@ -208,8 +208,6 @@ public class Eval7Faster
     //--------------------------------------------------------------------
 	// Determines the relative strength of a hand (the hand is given by its unique key value).
 	private static int getHandRank(long key) {
-//        return 1;
-
         // The following method implements a modified version of "Cactus Kev's Five-Card
 		// Poker Hand Evaluator" to determine the relative strength of two five-card hands.
 		// Reference: http://www.suffecool.net/poker/evaluator.html
@@ -221,14 +219,22 @@ public class Eval7Faster
 		int suit;
 		int numCards = 0;
 
-        Card checkup[] = new Card[7];
-        final int[] primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41};
+        int mainsuit     = 420;
+        int suititerator = 1;
 
         if (key != 0) {
-            int lastDontCare = 1;
-            for (cardIndex = 0; cardIndex < 7; cardIndex++) {
-            	currentCard = (int)((key >>> (8 * cardIndex)) & 0xFF);
+//            Card handCards[] = new Card[7];
 
+            for (cardIndex = 0; cardIndex < 7; cardIndex++) {
+                currentCard = (int)((key >>> (8 * cardIndex)) & 0xFF);
+                if ((suit = currentCard & 0xf) != 0) {
+                    mainsuit = suit;
+                }
+            }
+
+            for (cardIndex = 0; cardIndex < 7; cardIndex++) {
+
+                currentCard = (int)((key >>> (8 * cardIndex)) & 0xFF);
                 if (currentCard == 0) break;
                 numCards++;
 
@@ -236,24 +242,61 @@ public class Eval7Faster
                 rank = (currentCard >>> 4) - 1; // 0..12
                 suit = currentCard & 0xF; //0..4, 0 = don't care.
 
+                // covert suit to ordinal() 0..3
+                if (suit == 0) {		// if suit wasn't significant though...
+                    suit = suititerator++;   // Cactus Kev needs a suit!
+                    if (suititerator == 5)	 // loop through available suits
+                        suititerator = 1;
+                    if (suit == mainsuit) {   // if it was the sigificant suit...  Don't want extras!!
+                        suit = suititerator++;    // skip it
+                        if (suititerator == 5)	  // roll 1-4
+                            suititerator = 1;
+                    }
+                }
+
                 // change card representation to Cactus Kev Representation
-                hand[cardIndex] = Eval5.asCactusKevsFormat(rank, suit);
+                hand[cardIndex] = Eval5.asCactusKevsFormat(rank, suit-1);
+//                handCards[cardIndex] =
+//                        Card.valueOf(Card.Rank.values()[rank],
+//                                     Card.Suit.values()[suit-1]);
+//                if (! lastCardIsUnique(handCards, cardIndex))
+//                {
+//                    System.out.println("!!WTF: not unique");
+//                }
             }
 
             switch (numCards) {
                 case 5 :
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4]);
+//                    if (handRank != EvalSlow.valueOf(
+//                            handCards[0], handCards[1],
+//                            handCards[2], handCards[3], handCards[4]))
+//                    {
+//                        System.out.println("!!WTF: unequal 5 value");
+//                    }
                     break;
 
                 case 6 :
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
+//                    if (handRank != EvalSlow.valueOf(
+//                            handCards[0], handCards[1], handCards[2],
+//                            handCards[3], handCards[4], handCards[5]))
+//                    {
+//                        System.out.println("!!WTF: unequal 6 value");
+//                    }
                     break;
 
                 case 7 :
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
+//                    if (handRank != EvalSlow.valueOf(
+//                            handCards[0], handCards[1], handCards[2],
+//                            handCards[3], handCards[4], handCards[5], handCards[6]))
+//                    {
+//                        System.out.println("!!WTF: unequal 7 value");
+//                    }
                     break;
 
                 default :
@@ -263,7 +306,21 @@ public class Eval7Faster
         }
         return handRank;
 	}
-    
+
+//    private static boolean lastCardIsUnique(
+//            Card cards[], int atIndex)
+//    {
+//        Card unique = cards[ atIndex ];
+//        for (int i = 0; i < atIndex; i++)
+//        {
+//            if (unique == cards[i])
+//            {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
 		
     //--------------------------------------------------------------------
 	private static void generateTables() {

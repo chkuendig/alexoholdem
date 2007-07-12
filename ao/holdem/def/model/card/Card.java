@@ -65,11 +65,15 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-//    public static Card valueOf(Rank rank, Suit suit)
-//    {
-//        return values()[ rank.ordinal() +
-//                         suit.ordinal() * Rank.values().length ];
-//    }
+    public static Card valueOf(Rank rank, Suit suit)
+    {                       
+        return values()[ rank.ordinal() +
+                         suit.ordinal() * Rank.values().length ];
+    }
+    public static Card valueOf(int index)
+    {
+        return values()[ index - 1 ];
+    }
 
 
     //--------------------------------------------------------------------
