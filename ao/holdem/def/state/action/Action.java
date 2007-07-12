@@ -25,6 +25,8 @@ package ao.holdem.def.state.action;
  *
  * At any point in the game, all of the following actions
  *  are valid moves.
+ *
+ * See TakenAction.
  */
 public enum Action
 {
