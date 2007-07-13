@@ -1,5 +1,7 @@
 package ao.holdem.history;
 
+import java.util.List;
+
 /**
  *
  */
@@ -10,7 +12,7 @@ public class PlayerHandle
         return null;
     }
 
-    public PlayerHistory history()
+    public List<HandHistory> hands()
     {
         return null;
     }

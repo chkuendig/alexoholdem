@@ -170,8 +170,8 @@ public class Main
     {
 //        doRun52c7();
 //        doRunHandsOf5();
-        doRunHandsOf7();
-//        doRunOdds();
+//        doRunHandsOf7();
+        doRunOdds();
     }
     public static void doRunOdds()
     {
@@ -349,11 +349,11 @@ public class Main
 //                }
 //            });
 
-//            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
-//            {
-//                System.out.println("WTF!!!!!\t" + value + "\t" +
-//                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
-//            }
+            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
+            {
+                System.out.println("WTF!!!!!\t" + value + "\t" +
+                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
+            }
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
             exactFrequency[ value ]++;
         }
