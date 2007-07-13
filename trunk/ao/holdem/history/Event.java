@@ -7,7 +7,7 @@ import ao.holdem.def.state.env.TakenAction;
  */
 public class Event
 {
-    public PlayerHandle player()
+    public PlayerHandle2 player()
     {
         return null;
     }

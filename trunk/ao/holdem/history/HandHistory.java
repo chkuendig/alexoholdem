@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class HandHistory
 {
     //--------------------------------------------------------------------
-    private List<PlayerHandle> players = new ArrayList<PlayerHandle>();
-    private List<PlayerHandle> winners = new ArrayList<PlayerHandle>();
+    private List<PlayerHandle2> players = new ArrayList<PlayerHandle2>();
+    private List<PlayerHandle2> winners = new ArrayList<PlayerHandle2>();
 
     private List<Event> preflop = new ArrayList<Event>();
     private List<Event> flop    = new ArrayList<Event>();
@@ -22,12 +22,12 @@ public class HandHistory
 
     //--------------------------------------------------------------------
     //in order of cards received
-    public void addPlayer(PlayerHandle player)
+    public void addPlayer(PlayerHandle2 player)
     {
         players.add( player );
     }
 
-    public void addWinner(PlayerHandle winner)
+    public void addWinner(PlayerHandle2 winner)
     {
         winners.add( winner );
     }
@@ -47,7 +47,7 @@ public class HandHistory
 
     //--------------------------------------------------------------------
     //in order of cards received
-    public List<PlayerHandle> players()
+    public List<PlayerHandle2> players()
     {
         return null;
     }
@@ -58,7 +58,7 @@ public class HandHistory
         return null;
     }
 
-    public List<PlayerHandle> winners()
+    public List<PlayerHandle2> winners()
     {
         return null;
     }
