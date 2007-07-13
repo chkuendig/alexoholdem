@@ -5,7 +5,7 @@ import java.util.List;
 /**
  *
  */
-public class PlayerHandle
+public class PlayerHandle2
 {
     public String name()
     {
