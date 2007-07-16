@@ -54,7 +54,7 @@ public class HoldemImpl implements Holdem
     private       int         button = -1;
 //    private       int         numPlayers;
 //    private       LocalBotProvider botProvider;
-    private List<Bot> bots;
+    private List<BotHandle> bots;
 
 
     //--------------------------------------------------------------------
@@ -62,14 +62,14 @@ public class HoldemImpl implements Holdem
 
 
     //-------------------------------------------------------------------
-    public void configure(List<Bot> players)
+    public void configure(List<BotHandle> players)
     {
         shutDown();
 
         bots = players;
-        for (Bot bot : bots)
+        for (BotHandle bot : bots)
         {
-            bot.introduce();
+            bot.bot().introduce();
         }
     }
 
@@ -77,13 +77,21 @@ public class HoldemImpl implements Holdem
     {
         if (bots != null)
         {
-            for (Bot bot : bots)
+            for (BotHandle bot : bots)
             {
-                bot.retire();
+                bot.bot().retire();
             }
             bots.clear();
         }
     }
+
+
+    //--------------------------------------------------------------------
+//    public Outcome play(HandHistory            startingFrom,
+//                        Map<PlayerHandle, Bot> players)
+//    {
+//        return null;
+//    }
 
 
     //--------------------------------------------------------------------

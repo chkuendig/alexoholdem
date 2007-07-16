@@ -2,11 +2,15 @@ package ao.holdem.def.model.cards.community;
 
 import ao.holdem.def.model.card.Card;
 
+import java.io.Serializable;
+
 
 /**
  *
  */
-public class Turn extends Flop
+public class Turn
+        extends Flop
+        implements Serializable
 {
     //--------------------------------------------------------------------
     private final Card FOURTH;

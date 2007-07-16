@@ -2,11 +2,13 @@ package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
 
+import java.io.Serializable;
+
 
 /**
  *
  */
-public class Hole
+public class Hole implements Serializable
 {
     //--------------------------------------------------------------------
     private final Card FIRST;

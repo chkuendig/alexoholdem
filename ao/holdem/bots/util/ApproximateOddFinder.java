@@ -4,7 +4,6 @@ import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
 import ao.util.rand.MersenneTwisterFast;
-import ao.util.stats.FastIntCombiner;
 
 /**
  * Threadsafe!!
@@ -104,52 +103,6 @@ public class ApproximateOddFinder implements OddFinder
         }
 
         return odds;
-    }
-
-    private static class CommunityVisitor5
-            implements FastIntCombiner.CombinationVisitor5
-    {
-        private Card cards[];
-        private int  indexes[];
-        private int  activeOpponents;
-        private Odds odds = new Odds();
-        private MersenneTwisterFast rand;
-
-        public CommunityVisitor5(
-                int  activeOpps,
-                int  indexes[],
-                Card cards[],
-                MersenneTwisterFast rand)
-        {
-            activeOpponents = activeOpps;
-            this.indexes    = indexes;
-            this.cards      = cards;
-            this.rand       = rand;
-        }
-
-        public void visit(int a, int b, int c, int d, int e)
-        {
-            GeneralOddFinder.swap(indexes, a, GeneralOddFinder.COM_A);
-            GeneralOddFinder.swap(indexes, b, GeneralOddFinder.COM_B);
-            GeneralOddFinder.swap(indexes, c, GeneralOddFinder.COM_C);
-            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
-
-            odds = odds.plus(
-                    computeOppOdds(
-                                activeOpponents, indexes, cards, rand));
-
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
-            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
-            GeneralOddFinder.swap(indexes, c, GeneralOddFinder.COM_C);
-            GeneralOddFinder.swap(indexes, b, GeneralOddFinder.COM_B);
-            GeneralOddFinder.swap(indexes, a, GeneralOddFinder.COM_A);
-        }
-
-        public Odds odds()
-        {
-            return odds;
-        }
     }
 
     private static Odds computeOppOdds(

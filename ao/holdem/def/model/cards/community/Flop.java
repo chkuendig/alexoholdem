@@ -2,10 +2,12 @@ package ao.holdem.def.model.cards.community;
 
 import ao.holdem.def.model.card.Card;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class Flop //extends Hole
+public class Flop implements Serializable
 {
     //--------------------------------------------------------------------
     private final Card FIRST;

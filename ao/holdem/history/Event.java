@@ -1,25 +1,86 @@
 package ao.holdem.history;
 
+import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.history.persist.Base;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  *
  */
-public class Event
+@Entity
+public class Event extends Base
 {
-    public PlayerHandle2 player()
+    //----------------------------------------------------------
+    public Event() {}
+
+    public Event(PlayerHandle player,
+                 BettingRound round,
+                 TakenAction action)
     {
-        return null;
+        setPlayer( player );
+        setRound(  round  );
+        setAction( action );
     }
 
-    public TakenAction action()
+
+    //----------------------------------------------------------
+    private PlayerHandle player;
+
+    public PlayerHandle getPlayer()
     {
-        return null;
+        return player;
+    }
+    
+    public void setPlayer(PlayerHandle player)
+    {
+        this.player = player;
     }
 
-    // position of player (starting at 1, in order of cards received)
-    public int position()
+
+    //----------------------------------------------------------
+    private TakenAction action;
+
+    public TakenAction getAction()
     {
-        return 0;
+        return action;
+    }
+
+    public void setAction(TakenAction action)
+    {
+        this.action = action;
+    }
+
+
+    //----------------------------------------------------------
+    private BettingRound round;
+
+    public BettingRound getRound()
+    {
+        return round;
+    }
+
+    public void setRound(BettingRound round)
+    {
+        this.round = round;
+    }
+
+
+    //----------------------------------------------------------
+    private HandHistory hand;
+
+    @ManyToOne
+    @JoinColumn(name="hand_fk")
+    public HandHistory getHand()
+    {
+        return hand;
+    }
+
+    public void setHand(HandHistory hand)
+    {
+        this.hand = hand;
     }
 }
