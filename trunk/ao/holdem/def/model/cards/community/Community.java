@@ -2,12 +2,13 @@ package ao.holdem.def.model.cards.community;
 
 import ao.holdem.def.model.card.Card;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Immutable.
  */
-public class Community
+public class Community implements Serializable
 {
     //--------------------------------------------------------------------
     private final Flop  FLOP;

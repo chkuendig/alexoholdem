@@ -3,12 +3,16 @@ package ao.holdem.game.impl;
 import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.LocalBot;
 import ao.holdem.def.model.cards.Deck;
+import ao.holdem.def.model.cards.community.Community;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.domain.Domain;
 import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.game.Outcome;
+import ao.holdem.history.HandHistory;
+import ao.holdem.history.PlayerHandle;
+import ao.holdem.history.Event;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -28,13 +32,14 @@ public class HandPlay
 
     //--------------------------------------------------------------------
     private Deck      deck;
-    private List<Bot> bots;
-    private HandState state;
+    private List<BotHandle> bots;
+//    private HandState state;
+    private HandHistory state;
     private Outcome   outcome;
 
 
     //--------------------------------------------------------------------
-    public HandPlay(List<Bot> players)
+    public HandPlay(List<BotHandle> players)
     {
         assert players.size() >= 2;
 
@@ -42,7 +47,8 @@ public class HandPlay
         deck = new Deck();
         bots = players;
 
-        state   = new HandState( players.size() );
+//        state   = new HandState( players.size() );
+        state   = new HandHistory(players);
         outcome = new Outcome(   players.size() );
     }
 
@@ -51,16 +57,20 @@ public class HandPlay
     public void dealHoleCards()
     {
         log.debug("dealing hole cards.");
-        for (int i = 0; i < state.players(); i++)
+//        for (int i = 0; i < state.players(); i++)
+//        {
+//            state.dealHoleCards(i, deck.nextHole());
+//        }
+        for (PlayerHandle player : state.getPlayers())
         {
-            state.dealHoleCards(i, deck.nextHole());
+            state.addHole( player, deck.nextHole() );
         }
     }
 
     public void designateBlinds()
     {
-        log.debug("designating blinds.");
-        state.designateBlinds();
+//        log.debug("designating blinds.");
+//        state.designateBlinds();
     }
 
 
@@ -117,9 +127,9 @@ public class HandPlay
     public boolean roundOfBetting()
     {
         log.debug("starting round of betting.");
-        List<Integer> active =
-                state.activeByAwayFromDealerInActionOrder();
-        state.replenishBets( 4 );
+//        List<Integer> active =
+//                state.activeByAwayFromDealerInActionOrder();
+//        state.replenishBets( 4 );
 
         int previousRaiser = -1;
         round_circle:
