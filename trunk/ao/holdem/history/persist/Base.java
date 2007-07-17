@@ -31,7 +31,13 @@ public class Base implements Serializable
         if (o == null || getClass() != o.getClass()) return false;
 
         Base base = (Base) o;
-        return !(id != null ? !id.equals(base.id) : base.id != null);
+        if (id != null && base.id != null)
+        {
+            return id.equals( base.id );
+        }
+        return id      == null &&
+               base.id == null &&
+               this    == base;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package ao.holdem.def.bot;
 
 import ao.holdem.def.state.action.Action;
-import ao.holdem.history.Spanshot;
+import ao.holdem.def.state.env.Environment;
 
 /**
  * Texus Hold'em limit game bot.
@@ -14,7 +14,8 @@ public interface Bot
 
 
     //--------------------------------------------------------------------
-    public Action act(Spanshot env);
+//    public Action act(Snapshot env);
+    public Action act(Environment env);
 
 
     //--------------------------------------------------------------------

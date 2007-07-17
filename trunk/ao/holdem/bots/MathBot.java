@@ -20,11 +20,6 @@ public class MathBot extends AbstractBot
     //--------------------------------------------------------------------
     public Action act(Environment env)
     {
-//        if (env.opponentCount() != 1)
-//        {
-//            return Action.CHECK_OR_FOLD;
-//        }
-
         Hole      hole      = env.hole();
         Community community = env.community();
 
@@ -37,11 +32,15 @@ public class MathBot extends AbstractBot
                 ((double) env.toCall()) /
                 (env.toCall() + env.pot());
 
-        System.out.println(
-                "odds: " + odds +
-                " with " + hole +
-                " on " + community +
-                " vs [" + Math.round(potOdds * 100) + "]");
+//        if (odds.winPercent() <= potOdds)
+//        {
+//            System.out.println(
+//                "odds: " + odds +
+//                " with " + hole +
+//                " on " + community +
+//                " vs [" + Math.round(potOdds * 100) + "]");
+//        }
+
         return (odds.winPercent() > potOdds)
                 ? Action.RAISE_OR_CALL
                 : Action.CHECK_OR_FOLD;

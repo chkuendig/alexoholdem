@@ -1,10 +1,7 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.LooseSklanskyBot;
-import ao.holdem.bots.MathBot;
-import ao.holdem.bots.MathTightBot;
-import ao.holdem.bots.PokerTipsBot;
+import ao.holdem.bots.*;
 import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
 import ao.holdem.bots.util.Odds;
@@ -56,9 +53,9 @@ public class Main
 
         for (int i = 0; i < 1; i++)
         {
-//            runHoldemGame();
+            runHoldemGame();
 //            runNetCode();
-            runPoker();
+//            runPoker();
         }
     }
 
@@ -134,8 +131,8 @@ public class Main
 
 //        provider.add(
 //                BotFactory.Impl.fromClass(RandomBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(PokerTipsBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(PokerTipsBot.class));
 //        provider.add(
 //                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
         provider.add(
@@ -146,7 +143,7 @@ public class Main
                 BotFactory.Impl.fromClass(MathTightBot.class));
 
         Tourney tourney = new Tourney( provider );
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
         {
 //            tourney.runRandom();
             tourney.run(10, 10);

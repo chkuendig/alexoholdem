@@ -45,6 +45,7 @@ public class Winnings implements Comparable<Winnings>
     {
         winnings   += addend.winnings;
         confidence += addend.confidence;
+        avgWins     = winnings / confidence;
     }
 
 
@@ -59,7 +60,8 @@ public class Winnings implements Comparable<Winnings>
     @Override
     public int compareTo(Winnings o)
     {
-        return Double.compare(avgWins, o.avgWins);
+//        return Double.compare(avgWins, o.avgWins);
+        return Double.compare(winnings, o.winnings);
     }
 
 
@@ -67,6 +69,7 @@ public class Winnings implements Comparable<Winnings>
     @Override
     public String toString()
     {
-        return Double.toString( avgWins );
+//        return Double.toString( avgWins );
+        return Double.toString( winnings );
     }
 }

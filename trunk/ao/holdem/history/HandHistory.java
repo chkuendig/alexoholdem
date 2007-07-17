@@ -1,12 +1,11 @@
 package ao.holdem.history;
 
+import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.community.Community;
 import ao.holdem.def.model.cards.community.Flop;
-import ao.holdem.def.model.cards.community.Turn;
 import ao.holdem.def.model.cards.community.River;
-import ao.holdem.def.model.card.Card;
-import ao.holdem.game.impl.BotHandle;
+import ao.holdem.def.model.cards.community.Turn;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
@@ -16,10 +15,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -34,11 +30,18 @@ public class HandHistory extends Base
 
     //--------------------------------------------------------------------
     public HandHistory() {}
-    public HandHistory(List<BotHandle> botHandles)
+//    public HandHistory(List<BotHandle> botHandles)
+//    {
+//        for (BotHandle botHandle : botHandles)
+//        {
+//            addPlayer( botHandle.handle() );
+//        }
+//    }
+    public HandHistory(Collection<PlayerHandle> players)
     {
-        for (BotHandle botHandle : botHandles)
+        for (PlayerHandle playerHandle : players)
         {
-            addPlayer( botHandle.handle() );
+            addPlayer( playerHandle );
         }
     }
 
@@ -49,9 +52,9 @@ public class HandHistory extends Base
 
     @ManyToMany(
         cascade={CascadeType.PERSIST, CascadeType.MERGE},
-        mappedBy="hands",
-        targetEntity=PlayerHandle.class)
-    @IndexColumn(name = "position")
+//        mappedBy="hands",
+        targetEntity = PlayerHandle.class)
+    @IndexColumn(name = "position", base = 0)
     public List<PlayerHandle> getPlayers()
     {
         return (tempPlayers.isEmpty())
@@ -72,7 +75,10 @@ public class HandHistory extends Base
     
     public void commitHandToPlayers()
     {
-        for (PlayerHandle player : tempPlayers)
+        List<PlayerHandle> tempPlayerBuffer =
+                new ArrayList<PlayerHandle>(tempPlayers);
+        tempPlayers.clear();
+        for (PlayerHandle player : tempPlayerBuffer)
         {
             player.addHand( this );
         }
@@ -85,7 +91,7 @@ public class HandHistory extends Base
 
     @ManyToMany(
         cascade={CascadeType.PERSIST, CascadeType.MERGE},
-        mappedBy="hands_won",
+        mappedBy="handsWon",
         targetEntity=PlayerHandle.class)
     public List<PlayerHandle> getWinners()
     {
@@ -126,11 +132,11 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    @CollectionOfElements(targetElement = Hole.class)
-    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     private Map<PlayerHandle, Hole> holes =
             new HashMap<PlayerHandle, Hole>();
 
+    @CollectionOfElements(targetElement = Hole.class)
+    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Hole> getHoles()
     {
         return holes;
@@ -178,7 +184,7 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    public Spanshot spanshot(Event asOf)
+    public Snapshot snapshot(Event asOf)
     {
         List<Event> toCapture = new ArrayList<Event>();
 
@@ -191,7 +197,7 @@ public class HandHistory extends Base
             }
         }
 
-        return new Spanshot(players, toCapture);
+        return new Snapshot(getPlayers(), toCapture);
     }
 }
 

@@ -11,8 +11,8 @@ import ao.util.rand.MersenneTwisterFast;
 public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int FLOP_ITR = 4000;
-    private static final int HOLE_ITR = 500;
+    private static final int FLOP_ITR = 500; //4000
+    private static final int HOLE_ITR = 100;  //500
 
 
     //--------------------------------------------------------------------
