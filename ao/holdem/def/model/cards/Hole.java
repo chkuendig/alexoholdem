@@ -2,17 +2,18 @@ package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
 
-import java.io.Serializable;
+import javax.persistence.Embeddable;
 
 
 /**
  *
  */
-public class Hole implements Serializable
+@Embeddable
+public class Hole
 {
     //--------------------------------------------------------------------
-    private final Card FIRST;
-    private final Card SECOND;
+    private Card FIRST;
+    private Card SECOND;
 
 
     //--------------------------------------------------------------------
@@ -20,6 +21,31 @@ public class Hole implements Serializable
     {
         FIRST  = (first != null ? first : second);
         SECOND = (first == null ? null  : second);
+    }
+
+
+    //--------------------------------------------------------------------
+    public Hole()
+    {
+        this(null, null);
+    }
+
+    public void setFirst(Card first)
+    {
+        FIRST = first;
+    }
+    public Card getFirst()
+    {
+        return FIRST;
+    }
+
+    public void setSecond(Card second)
+    {
+        SECOND = second;
+    }
+    public Card getSecond()
+    {
+        return SECOND;
     }
 
 

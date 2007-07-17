@@ -15,6 +15,14 @@ import java.util.List;
 public class PlayerHandle extends Base
 {
     //----------------------------------------------------------
+    public PlayerHandle() {}
+    public PlayerHandle(String name)
+    {
+        setName( name );
+    }
+
+
+    //----------------------------------------------------------
     private String name;
 
     public String getName()            { return name;      }
@@ -22,7 +30,7 @@ public class PlayerHandle extends Base
 
 
     //----------------------------------------------------------
-    private Collection<HandHistory> hands =
+    private List<HandHistory> hands =
             new ArrayList<HandHistory>();
 
     @ManyToMany(
@@ -34,12 +42,12 @@ public class PlayerHandle extends Base
         joinColumns={@JoinColumn(name="PLAYER_ID")},
         inverseJoinColumns={@JoinColumn(name="HAND_ID")}
     )
-    public Collection<HandHistory> getHands()
+    public List<HandHistory> getHands()
     {
         return hands;
     }
 
-    public void setHands(Collection<HandHistory> hands)
+    public void setHands(List<HandHistory> hands)
     {
         this.hands = hands;
     }
@@ -49,6 +57,7 @@ public class PlayerHandle extends Base
         getHands().add( hand );
         hand.getPlayers().add( this );
     }
+
 
     //----------------------------------------------------------
     private List<HandHistory> handsWon =

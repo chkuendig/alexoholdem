@@ -5,7 +5,6 @@ import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
@@ -73,7 +72,7 @@ public class Event extends Base
     private HandHistory hand;
 
     @ManyToOne
-    @JoinColumn(name="hand_fk")
+    //@JoinColumn()//name="hand_fk"
     public HandHistory getHand()
     {
         return hand;

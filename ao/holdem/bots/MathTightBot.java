@@ -17,15 +17,14 @@ public class MathTightBot extends AbstractBot
     //--------------------------------------------------------------------
     public Action act(Environment env)
     {
-//        if (env.opponentCount() != 1)
+//        if (env.bettingRound() == BettingRound.PREFLOP)
 //        {
-//            return Action.CHECK_OR_FOLD;
+//            return new LooseSklanskyBot().act(env);
 //        }
-
+        
         Hole hole      = env.hole();
         Community community = env.community();
 
-//        HeadsUpOddFinder oddFinder = new HeadsUpOddFinder();
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
                         hole, community, env.activeOpponents());
@@ -34,11 +33,11 @@ public class MathTightBot extends AbstractBot
                 ((double) env.toCall()) /
                 (env.toCall() + env.pot());
 
-        System.out.println(
-                "odds: " + odds +
-                " with " + hole +
-                " on " + community +
-                " vs [" + Math.round(potOdds * 100) + "] (strength)");
+//        System.out.println(
+//                "odds: " + odds +
+//                " with " + hole +
+//                " on " + community +
+//                " vs [" + Math.round(potOdds * 100) + "] (strength)");
         Action act = odds.strengthVsRandom() > potOdds
                      ? Action.RAISE_OR_CALL
                      : Action.CHECK_OR_FOLD;

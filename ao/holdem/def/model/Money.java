@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class Money implements Serializable
 {
     //--------------------------------------------------------------------
+    public static final Money ZERO        = new Money(0);
     public static final Money SMALL_BLIND = new Money(1);
     public static final Money BIG_BLIND   = new Money(2);
     public static final Money SMALL_BET   = BIG_BLIND;
@@ -51,6 +52,14 @@ public class Money implements Serializable
 
 
     //--------------------------------------------------------------------
+    @Override
+    public String toString()
+    {
+        return smallBlinds + " small blinds";
+    }
+
+
+    //--------------------------------------------------------------------
     public Money plus(Money addend)
     {
         return new Money(smallBlinds + addend.smallBlinds);
@@ -59,5 +68,21 @@ public class Money implements Serializable
     public Money minus(Money subtractor)
     {
         return new Money(smallBlinds - subtractor.smallBlinds);
+    }
+
+
+    //--------------------------------------------------------------------
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Money money = (Money) o;
+        return smallBlinds == money.smallBlinds;
+    }
+
+    public int hashCode()
+    {
+        return smallBlinds;
     }
 }

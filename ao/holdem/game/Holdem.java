@@ -1,7 +1,7 @@
 package ao.holdem.game;
 
+import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.LocalBot;
-import ao.holdem.game.impl.BotHandle;
 
 import java.util.List;
 
@@ -19,7 +19,8 @@ public interface Holdem
 //    public void configure( int         numPlayers,
 //                           LocalBotProvider botProvider );
 
-    public void configure(List<BotHandle> players);
+//    public void configure(List<BotHandle> players);
+    public void configure(List<Bot> players);
     public void shutDown();
 
 
