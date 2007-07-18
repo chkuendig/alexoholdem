@@ -398,29 +398,54 @@ public class Eval7Faster
                        c7.invertedIndex());
     }
     public static short valueOf(
-            int index1, int index2, int index3, int index4,
-            int index5, int index6, int index7)
+            int invIndex1, int invIndex2, int invIndex3, int invIndex4,
+            int invIndex5, int invIndex6, int invIndex7)
     {
 //        HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
 
         return (short) handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
-                    53 + index1] + index2] + index3] + index4] +
-                           index5] + index6] + index7];
+                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
+                           invIndex5] + invIndex6] + invIndex7];
 //        return (short) handRanks[handRanks[handRanks[handRanks[
 //                index1 * 140660 - index2 * 2704 + index3 * 52 - index4] +
 //                           index5] + index6] + index7];
     }
 
-    public static int finalIndexOf(
-            int index1, int index2, int index3, int index4,
-            int index5, int index6, int index7)
+    //--------------------------------------------------------------------
+    public static int shortcutFor(
+            Card c1, Card c2,
+            Card c3, Card c4, Card c5)
     {
-        return handRanks[handRanks[handRanks[
-                handRanks[handRanks[handRanks[
-                    53 + index1] + index2] + index3] + index4] +
-                           index5] + index6] + index7;
+        return shortcutFor(c1.invertedIndex(),
+                           c2.invertedIndex(), c3.invertedIndex(),
+                           c4.invertedIndex(), c5.invertedIndex());
     }
+
+    public static int shortcutFor(
+            int invIndex1, int invIndex2,
+            int invIndex3, int invIndex4, int invIndex5)
+    {
+        return handRanks[handRanks[
+                handRanks[handRanks[handRanks[
+                    53 + invIndex1] + invIndex2] +
+                         invIndex3] + invIndex4] + invIndex5];
+    }
+
+    public static short valueOf(
+            int shortcut, int invIndex6, int invIndex7)
+    {
+        return (short) handRanks[handRanks[handRanks[
+                shortcut + invIndex6] + invIndex7]];
+    }
+
+    public static short valueOf(
+            int shortcut, Card c6, Card c7)
+    {
+        return valueOf(shortcut,
+                       c6.invertedIndex(), c7.invertedIndex());
+    }
+
 
     //--------------------------------------------------------------------
 	public static void main(String [] args) {

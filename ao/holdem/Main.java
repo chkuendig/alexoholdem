@@ -53,9 +53,9 @@ public class Main
 
         for (int i = 0; i < 1; i++)
         {
-            runHoldemGame();
+//            runHoldemGame();
 //            runNetCode();
-//            runPoker();
+            runPoker();
         }
     }
 
@@ -172,8 +172,21 @@ public class Main
     }
     public static void doRunOdds()
     {
-        Community c = new Community();
-        OddFinder f = new ApproximateOddFinder();
+        for (int flops = 1; flops < 2118760; flops += 20)
+        {
+            for (long holes = 1; holes < 20000; holes += 50)
+            {
+                String prefix = flops + "\t" + holes;
+                OddFinder f =
+                        new ApproximateOddFinder(
+                                flops, holes);
+                doRunOddsWith(prefix, f);
+            }
+        }
+
+
+//        Community c = new Community();
+//        OddFinder f = new ApproximateOddFinder();
 //        OddFinder f = new GeneralOddFinder();
 //        for (int opps = 10; opps <= 10; opps++)
 //        {
@@ -219,22 +232,39 @@ public class Main
 //                    pocketPair + "\t" +
 //                    f.compute(pocketPair, c, 9));
 //        }
-        for (Card.Rank ranks[] :
-                new Combiner<Card.Rank>(Card.Rank.values(), 2))
+//        for (Card.Rank ranks[] :
+//                new Combiner<Card.Rank>(Card.Rank.values(), 2))
+//        {
+//            Hole suited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+//                                   Card.valueOf(ranks[1], Card.Suit.CLUBS));
+//            Hole unsuited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+//                                     Card.valueOf(ranks[1], Card.Suit.DIAMONDS));
+//
+//            System.out.println(
+//                "suited\t" + suited + "\t" +
+//                f.compute(suited, c, 10));
+//            System.out.println(
+//                "unsuited\t" + unsuited + "\t" +
+//                f.compute(unsuited, c, 10));
+//        }
+    }
+    public static void doRunOddsWith(String prefix, OddFinder f)
+    {
+        Community c = new Community();
+        for (Card.Rank rank : Card.Rank.values())
         {
-            Hole suited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
-                                   Card.valueOf(ranks[1], Card.Suit.CLUBS));
-            Hole unsuited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
-                                     Card.valueOf(ranks[1], Card.Suit.DIAMONDS));
+            Hole pocketPair =
+                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
+                             Card.valueOf(rank, Card.Suit.CLUBS));
 
             System.out.println(
-                "suited\t" + suited + "\t" +
-                f.compute(suited, c, 10));
-            System.out.println(
-                "unsuited\t" + unsuited + "\t" +
-                f.compute(unsuited, c, 10));
+                    prefix     + "\t" +
+                    pocketPair + "\t" +
+                    f.compute(pocketPair, c, 9));
         }
     }
+
+
     public static void doRun52c7()
     {
         Combiner<Card> permuter =

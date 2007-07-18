@@ -33,11 +33,11 @@ public class MathTightBot extends AbstractBot
                 ((double) env.toCall()) /
                 (env.toCall() + env.pot());
 
-        System.out.println(
-                "odds: " + odds +
-                " with " + hole +
-                " on " + community +
-                " vs [" + Math.round(potOdds * 100) + "] (strength)");
+//        System.out.println(
+//                "odds: " + odds +
+//                " with " + hole +
+//                " on " + community +
+//                " vs [" + Math.round(potOdds * 100) + "] (strength)");
         Action act = odds.strengthVsRandom() > potOdds// ||
                         //Rand.nextDouble() < 0.2
                      ? Action.RAISE_OR_CALL
