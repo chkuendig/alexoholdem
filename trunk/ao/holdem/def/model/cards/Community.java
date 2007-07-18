@@ -1,14 +1,17 @@
-package ao.holdem.def.model.cards.community;
+package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
+import ao.holdem.def.state.domain.BettingRound;
 
-import java.io.Serializable;
+import javax.persistence.Embeddable;
+import javax.persistence.Enumerated;
 import java.util.Arrays;
 
 /**
  * Immutable.
  */
-public class Community implements Serializable
+@Embeddable
+public class Community
 {
     //--------------------------------------------------------------------
     private Card FLOP_A;
@@ -28,17 +31,12 @@ public class Community implements Serializable
         this(flopA, flopB, flopC, null, null);
     }
 
-    public Community(Turn turn)
+    public Community(Card flopA, Card flopB, Card flopC, Card turn)
     {
-        this(turn, turn, null);
+        this(flopA, flopB, flopC, turn, null);
     }
 
-    public Community(River river)
-    {
-        this(river, river, river);
-    }
-
-    private Community(
+    public Community(
             Card flopA,
             Card flopB,
             Card flopC,
@@ -50,6 +48,105 @@ public class Community implements Serializable
         FLOP_C = flopC;
         TURN = turn;
         RIVER = river;
+    }
+
+
+    //--------------------------------------------------------------------
+    // used for persistance purposes.
+    @Enumerated
+    public Card getFlopA()
+    {
+        return FLOP_A;
+    }
+    public void setFlopA(Card flopA)
+    {
+        FLOP_A = flopA;
+    }
+
+    @Enumerated
+    public Card getFlopB()
+    {
+        return FLOP_B;
+    }
+    public void setFlopB(Card flopB)
+    {
+        FLOP_B = flopB;
+    }
+
+    @Enumerated
+    public Card getFlopC()
+    {
+        return FLOP_C;
+    }
+    public void setFlopC(Card flopC)
+    {
+        FLOP_C = flopC;
+    }
+
+    @Enumerated
+    public Card getTurn()
+    {
+        return TURN;
+    }
+    public void setTurn(Card turn)
+    {
+        TURN = turn;
+    }
+    
+    @Enumerated
+    public Card getRiver()
+    {
+        return RIVER;
+    }
+    public void setRiver(Card river)
+    {
+        RIVER = river;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Card flopA()
+    {
+        return FLOP_A;
+    }
+    public Card flopB()
+    {
+        return FLOP_B;
+    }
+    public Card flopC()
+    {
+        return FLOP_C;
+    }
+    public Card turn()
+    {
+        return TURN;
+    }
+    public Card river()
+    {
+        return RIVER;
+    }
+
+    public BettingRound round()
+    {
+        return hasRiver()
+                ? BettingRound.RIVER
+                : hasTurn()
+                   ? BettingRound.TURN
+                   : hasFlop()
+                      ? BettingRound.FLOP
+                      : BettingRound.PREFLOP;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Community addTurn(Card turn)
+    {
+        return new Community(FLOP_A, FLOP_B, FLOP_C, turn);
+    }
+
+    public Community addRiver(Card river)
+    {
+        return new Community(FLOP_A, FLOP_B, FLOP_C, TURN, river);
     }
 
 

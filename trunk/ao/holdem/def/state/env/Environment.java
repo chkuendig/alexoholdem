@@ -1,7 +1,7 @@
 package ao.holdem.def.state.env;
 
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.domain.BettingRound;
 
 /**
@@ -11,7 +11,7 @@ public class Environment
 {
     //--------------------------------------------------------------------
     private final Hole         HOLE;
-    private final Community    COMMUNITY;
+    private final Community COMMUNITY;
     private final Player       BY_POSITION[];
     private final int          POSITION;
     private final int          TO_CALL;

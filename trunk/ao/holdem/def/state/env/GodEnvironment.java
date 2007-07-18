@@ -1,7 +1,7 @@
 package ao.holdem.def.state.env;
 
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.domain.BettingRound;
 
 /**

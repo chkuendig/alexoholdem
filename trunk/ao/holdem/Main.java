@@ -1,10 +1,10 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.*;
+import ao.holdem.bots.LooseSklanskyBot;
+import ao.holdem.bots.MathTightBot;
 import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
-import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
@@ -13,7 +13,7 @@ import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
@@ -137,8 +137,8 @@ public class Main
 //                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(LooseSklanskyBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(MathBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(MathBot.class));
         provider.add(
                 BotFactory.Impl.fromClass(MathTightBot.class));
 
@@ -174,23 +174,24 @@ public class Main
     {
         Community c = new Community();
         OddFinder f = new ApproximateOddFinder();
-        for (int opps = 1; opps <= 3; opps++)
-        {
-            for (Card holes[] : new Combiner<Card>(Card.values(), 2))
-            {
-                Odds odds =
-                        f.compute(new Hole(holes[0], holes[1]), c, opps);
-
-                System.out.println(
-                        "lookup[" + opps + "]" +
-                              "[" + holes[0].ordinal() + "]" +
-                              "[" + holes[1].ordinal() + "] = " + odds + ";");
-                System.out.println(
-                        "lookup[" + opps + "]" +
-                              "[" + holes[1].ordinal() + "]" +
-                              "[" + holes[0].ordinal() + "] = " + odds + ";");
-            }
-        }
+//        OddFinder f = new GeneralOddFinder();
+//        for (int opps = 10; opps <= 10; opps++)
+//        {
+//            for (Card holes[] : new Combiner<Card>(Card.values(), 2))
+//            {
+//                Odds odds =
+//                        f.compute(new Hole(holes[0], holes[1]), c, opps);
+//
+//                System.out.println(
+//                        "lookup[" + opps + "]" +
+//                              "[" + holes[0].ordinal() + "]" +
+//                              "[" + holes[1].ordinal() + "] = " + odds + ";");
+//                System.out.println(
+//                        "lookup[" + opps + "]" +
+//                              "[" + holes[1].ordinal() + "]" +
+//                              "[" + holes[0].ordinal() + "] = " + odds + ";");
+//            }
+//        }
 
 //        for (Card.Suit suitA : Card.Suit.values())
 //        {
@@ -199,7 +200,6 @@ public class Main
 //                Hole twoThree =
 //                        new Hole(Card.valueOf(Card.Rank.TWO,   suitA),
 //                                 Card.valueOf(Card.Rank.THREE, suitB));
-//                Community c = new Community();
 //
 //                System.out.println(
 //                        twoThree + "\t" +
@@ -219,23 +219,21 @@ public class Main
 //                    pocketPair + "\t" +
 //                    f.compute(pocketPair, c, 9));
 //        }
-//        for (Card.Rank ranks[] :
-//                new Combiner<Card.Rank>(Card.Rank.values(), 2))
-//        {
-//            Hole suited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
-//                                   Card.valueOf(ranks[1], Card.Suit.CLUBS));
-//            Hole unsuited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
-//                                     Card.valueOf(ranks[1], Card.Suit.DIAMONDS));
-//
-//            Community c = new Community();
-//
-//            System.out.println(
-//                "suited\t" + suited + "\t" +
-//                f.compute(suited, c, 1));
-//            System.out.println(
-//                "unsuited\t" + unsuited + "\t" +
-//                f.compute(unsuited, c, 1));
-//        }
+        for (Card.Rank ranks[] :
+                new Combiner<Card.Rank>(Card.Rank.values(), 2))
+        {
+            Hole suited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+                                   Card.valueOf(ranks[1], Card.Suit.CLUBS));
+            Hole unsuited = new Hole(Card.valueOf(ranks[0], Card.Suit.CLUBS),
+                                     Card.valueOf(ranks[1], Card.Suit.DIAMONDS));
+
+            System.out.println(
+                "suited\t" + suited + "\t" +
+                f.compute(suited, c, 10));
+            System.out.println(
+                "unsuited\t" + unsuited + "\t" +
+                f.compute(unsuited, c, 10));
+        }
     }
     public static void doRun52c7()
     {

@@ -2,10 +2,7 @@ package ao.holdem.history;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
-import ao.holdem.def.model.cards.community.Flop;
-import ao.holdem.def.model.cards.community.River;
-import ao.holdem.def.model.cards.community.Turn;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
@@ -160,27 +157,23 @@ public class HandHistory extends Base
     {
         return community;
     }
-
     public void setCommunity(Community community)
     {
         this.community = community;
     }
 
-    public void dealFlop(Flop flop)
+    public void dealFlop(Community flop)
     {
-        setCommunity(new Community( flop ));
+        setCommunity(flop);
     }
     public void dealTurn(Card turn)
     {
-        setCommunity(new Community(
-                        new Turn(getCommunity().flop(), turn)));
+        setCommunity(getCommunity().addTurn(turn));
     }
     public void dealRiver(Card river)
     {
-        setCommunity(new Community(
-                        new River(getCommunity().turn(), river)));
+        setCommunity(getCommunity().addRiver(river));
     }
-
 
 
     //--------------------------------------------------------------------

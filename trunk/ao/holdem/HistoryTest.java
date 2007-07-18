@@ -8,7 +8,6 @@ import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 import ao.holdem.history.persist.HibernateUtil;
-import ao.holdem.history.persist.PlayerHandleLookup;
 import org.hibernate.Session;
 
 import java.util.HashMap;
@@ -29,17 +28,22 @@ public class HistoryTest
 
         Map<PlayerHandle, HistoryBot> bots =
                 new HashMap<PlayerHandle, HistoryBot>(){{
-//                    PlayerHandle a = new PlayerHandle("a");
-//                    PlayerHandle b = new PlayerHandle("b");
+                    PlayerHandle a = new PlayerHandle("a");
+                    PlayerHandle b = new PlayerHandle("b");
 
-//                    session.save( a );
-//                    session.save( b );
+                    session.save( a );
+                    session.save( b );
 
-                    put(PlayerHandleLookup.lookup("a"), new DummyBot());
-                    put(PlayerHandleLookup.lookup("b"), new DummyBot());
+                    put(a, new DummyBot());
+                    put(b, new DummyBot());
+
+//                    put(PlayerHandleLookup.lookup("a"), new DummyBot());
+//                    put(PlayerHandleLookup.lookup("b"), new DummyBot());
                 }};
 
         HandHistory hand = new HandHistory(bots.keySet());
+        session.save( hand );
+
         Event       e    = null;
         Snapshot    s    = hand.snapshot(e);
         do
@@ -75,7 +79,7 @@ public class HistoryTest
                         break;
                 }
                 e = new Event(p, s.round(), act);
-//                session.save( e );
+                session.save( e );
                 
                 hand.addEvent( e );
                 s = hand.snapshot( e );
@@ -84,7 +88,7 @@ public class HistoryTest
         while (! s.isGameOver());
 
         hand.commitHandToPlayers();
-        session.save( hand );
+        session.saveOrUpdate( hand );
 
         session.getTransaction().commit();
         HibernateUtil.getSessionFactory().close();

@@ -2,10 +2,7 @@ package ao.holdem.game.impl;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
-import ao.holdem.def.model.cards.community.Flop;
-import ao.holdem.def.model.cards.community.River;
-import ao.holdem.def.model.cards.community.Turn;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.domain.DealerDistance;
@@ -129,13 +126,7 @@ public class HandState
     }
     public BettingRound domainBettingRound()
     {
-        return community.flop() == null
-                ? BettingRound.PREFLOP
-                : community.turn() == null
-                   ? BettingRound.FLOP
-                   : community.river() == null
-                      ? BettingRound.TURN
-                      : BettingRound.RIVER;
+        return community.round();
     }
 
     public boolean canCheck(int awayFromDealer)
@@ -268,34 +259,22 @@ public class HandState
 
 
     //--------------------------------------------------------------------
-    public void dealFlop(Flop flop)
+    public void dealFlop(Community flop)
     {
         log.debug("updating community with flop.");
-        community = new Community( flop );
+        community = flop;
     }
 
     public void dealTurn(Card turn)
     {
         log.debug("updating community with turn.");
-        community = new Community(
-                        new Turn(community.flop(), turn));
-    }
-    public void dealTurn(Turn turn)
-    {
-        log.debug("updating community with turn.");
-        community = new Community(turn);
+        community = community.addTurn(turn);
     }
 
     public void dealRiver(Card river)
     {
         log.debug("updating community with river.");
-        community = new Community(
-                        new River(community.turn(), river));
-    }
-    public void dealRiver(River river)
-    {
-        log.debug("updating community with river.");
-        community = new Community(river);
+        community = community.addRiver(river);
     }
 
 
@@ -317,12 +296,12 @@ public class HandState
     //--------------------------------------------------------------------
     public boolean preFlop()
     {
-        return community.flop() == null;
+        return !community.hasFlop();
     }
 
     public boolean preTurn()
     {
-        return community.turn() == null;
+        return !community.hasTurn();
     }
 
     public boolean headsUp()

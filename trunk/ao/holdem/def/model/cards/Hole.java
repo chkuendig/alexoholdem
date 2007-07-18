@@ -3,6 +3,7 @@ package ao.holdem.def.model.cards;
 import ao.holdem.def.model.card.Card;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Enumerated;
 
 
 /**
@@ -30,22 +31,24 @@ public class Hole
         this(null, null);
     }
 
-    public void setFirst(Card first)
-    {
-        FIRST = first;
-    }
+    @Enumerated
     public Card getFirst()
     {
         return FIRST;
     }
-
-    public void setSecond(Card second)
+    public void setFirst(Card first)
     {
-        SECOND = second;
+        FIRST = first;
     }
+
+    @Enumerated
     public Card getSecond()
     {
         return SECOND;
+    }
+    public void setSecond(Card second)
+    {
+        SECOND = second;
     }
 
 

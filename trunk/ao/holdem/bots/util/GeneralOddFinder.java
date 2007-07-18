@@ -3,12 +3,14 @@ package ao.holdem.bots.util;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.util.stats.FastIntCombiner;
 import sun.plugin.dom.exception.InvalidStateException;
 
 /**
- *
+ * does NOT match numbers from:
+ *  http://wizardofodds.com/holdem/2players.html
+ * wtf?!?!
  */
 public class GeneralOddFinder implements OddFinder
 {
@@ -273,15 +275,15 @@ public class GeneralOddFinder implements OddFinder
         switch (community.knownCount())
         {
             case 5:
-                swap(cards, community.turn().fourth().ordinal(), COM_E);
+                swap(cards, community.river().ordinal(), COM_E);
 
             case 4:
-                swap(cards, community.turn().fourth().ordinal(), COM_D);
+                swap(cards, community.turn().ordinal(),  COM_D);
 
             case 3:
-                swap(cards, community.flop().third().ordinal(),  COM_C);
-                swap(cards, community.flop().second().ordinal(), COM_B);
-                swap(cards, community.flop().first().ordinal(),  COM_A);
+                swap(cards, community.flopC().ordinal(), COM_C);
+                swap(cards, community.flopB().ordinal(), COM_B);
+                swap(cards, community.flopA().ordinal(), COM_A);
         }
     }
 
