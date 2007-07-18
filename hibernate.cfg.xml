@@ -7,6 +7,7 @@
     <session-factory name="history">
         <!-- DB connection settings -->
         <property name="connection.driver_class">
+            
             org.apache.derby.jdbc.EmbeddedDriver
         </property>
         <property name="connection.url">
@@ -35,5 +36,6 @@
         <mapping class="ao.holdem.history.Event"/>
         <mapping class="ao.holdem.history.HandHistory"/>
         <mapping class="ao.holdem.def.model.cards.Hole"/>
+        <mapping class="ao.holdem.def.model.cards.Community"/>
     </session-factory>
 </hibernate-configuration>

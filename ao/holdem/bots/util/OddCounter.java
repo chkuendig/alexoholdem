@@ -1,6 +1,6 @@
 package ao.holdem.bots.util;
 
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.util.stats.Combiner;
 
 /**

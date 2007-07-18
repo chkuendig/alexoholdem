@@ -2,8 +2,9 @@ package ao.holdem.bots.util;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.util.rand.MersenneTwisterFast;
+import ao.util.stats.FastIntCombiner;
 
 /**
  * Threadsafe!!
@@ -12,7 +13,7 @@ public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
     private static final int FLOP_ITR = 500; //4000
-    private static final int HOLE_ITR = 100;  //500
+    private static final int HOLE_ITR = 300;  //500
 
 
     //--------------------------------------------------------------------
@@ -66,45 +67,133 @@ public class ApproximateOddFinder implements OddFinder
                     GeneralOddFinder.swap(indexes, xComA, GeneralOddFinder.COM_A);
                 }
                 break;
-            case 3:
-                for (int i = 0; i < FLOP_ITR; i++)
-                {
-                    int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
-                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
-                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+            case 3:{
+                int unknownCount = 52 - 2 - 3;
+                FastIntCombiner fc =
+                    new FastIntCombiner(indexes, unknownCount);
 
-                    odds = odds.plus(computeOppOdds(
-                                activeOpponents, indexes, cards, rand));
-
-                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
-                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
-                }
-                break;
-            case 4:
-                for (int i = 0; i < FLOP_ITR; i++)
-                {
-                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
-
-                    odds = odds.plus(computeOppOdds(
-                                activeOpponents, indexes, cards, rand));
-
-                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
-                }
-                break;
+                TurnCommunityVisitor turn =
+                        new TurnCommunityVisitor(
+                                activeOpponents, indexes, cards, rand);
+                fc.combine(turn);
+                odds = turn.odds();
+//                for (int i = 0; i < FLOP_ITR; i++)
+//                {
+//                    int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
+//                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+//                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
+//                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//
+//                    odds = odds.plus(computeOppOdds(
+//                                activeOpponents, indexes, cards, rand));
+//
+//                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//                    GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+//                }
+                break;}
+            case 4:{
+                int unknownCount = 52 - 2 - 4;
+                FastIntCombiner fc =
+                    new FastIntCombiner(indexes, unknownCount);
+                
+                RiverCommunityVisitor river =
+                        new RiverCommunityVisitor(
+                                activeOpponents, indexes, cards, rand);
+                fc.combine(river);
+                odds = river.odds();
+//                for (int i = 0; i < FLOP_ITR; i++)
+//                {
+//                    int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
+//                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//
+//                    odds = odds.plus(computeOppOdds(
+//                                activeOpponents, indexes, cards, rand));
+//
+//                    GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//                }
+                break;}
             case 5:
-                for (int i = 0; i < FLOP_ITR; i++)
-                {
-                    odds = odds.plus(computeOppOdds(
-                                activeOpponents, indexes, cards, rand));
-                }
+                odds = computeOppOdds(
+                            activeOpponents, indexes, cards, rand);
                 break;
         }
 
         return odds;
     }
 
+
+    //--------------------------------------------------------------------
+    private static class TurnCommunityVisitor
+            implements FastIntCombiner.CombinationVisitor2
+    {
+        private Card cards[];
+        private int  indexes[];
+        private int  activeOpponents;
+        private Odds odds = new Odds();
+        private MersenneTwisterFast rand;
+
+        public TurnCommunityVisitor(
+                int  activeOpps,
+                int  indexes[],
+                Card cards[],
+                MersenneTwisterFast rand)
+        {
+            activeOpponents = activeOpps;
+            this.indexes    = indexes;
+            this.cards      = cards;
+            this.rand       = rand;
+        }
+        public void visit(int d, int e)
+        {
+            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
+            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+
+            odds = odds.plus(
+                    computeOppOdds(
+                                activeOpponents, indexes, cards, rand));
+
+            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
+        }
+        public Odds odds() {  return odds;  }
+    }
+
+    private static class RiverCommunityVisitor
+            implements FastIntCombiner.CombinationVisitor1
+    {
+        private Card cards[];
+        private int  indexes[];
+        private int  activeOpponents;
+        private Odds odds = new Odds();
+        private MersenneTwisterFast rand;
+
+        public RiverCommunityVisitor(
+                int  activeOpps,
+                int  indexes[],
+                Card cards[],
+                MersenneTwisterFast rand)
+        {
+            activeOpponents = activeOpps;
+            this.indexes    = indexes;
+            this.cards      = cards;
+            this.rand       = rand;
+        }
+        public void visit(int e)
+        {
+            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+
+            odds = odds.plus(
+                    computeOppOdds(
+                                activeOpponents, indexes, cards, rand));
+
+            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+        }
+        public Odds odds() {  return odds;  }
+    }
+
+
+
+    //--------------------------------------------------------------------
     private static Odds computeOppOdds(
             int  activeOpps,
             int  indexes[],

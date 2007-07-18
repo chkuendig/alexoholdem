@@ -5,7 +5,7 @@ import ao.holdem.bots.util.OddFinder;
 import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.Environment;
 
@@ -33,12 +33,13 @@ public class MathTightBot extends AbstractBot
                 ((double) env.toCall()) /
                 (env.toCall() + env.pot());
 
-//        System.out.println(
-//                "odds: " + odds +
-//                " with " + hole +
-//                " on " + community +
-//                " vs [" + Math.round(potOdds * 100) + "] (strength)");
-        Action act = odds.strengthVsRandom() > potOdds
+        System.out.println(
+                "odds: " + odds +
+                " with " + hole +
+                " on " + community +
+                " vs [" + Math.round(potOdds * 100) + "] (strength)");
+        Action act = odds.strengthVsRandom() > potOdds// ||
+                        //Rand.nextDouble() < 0.2
                      ? Action.RAISE_OR_CALL
                      : Action.CHECK_OR_FOLD;
 

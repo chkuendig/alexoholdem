@@ -2,7 +2,6 @@ package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
-import ao.holdem.def.model.cards.community.River;
 import ao.util.stats.Combiner;
 
 /**
@@ -23,12 +22,12 @@ public class Hand implements Comparable<Hand>
         CARDS = sevenCards;
         VALUE = bestFiveRank();
     }
-    public Hand(Hole hole, River community)
+    public Hand(Hole hole, Community community)
     {
         this(hole.first(), hole.second(),
-             community.first(), community.second(),
-             community.third(), community.fourth(),
-             community.fifth());
+             community.flopA(), community.flopB(),
+             community.flopC(), community.turn(),
+             community.river());
     }
 
 
@@ -75,8 +74,8 @@ public class Hand implements Comparable<Hand>
     public String toString()
     {
         return new Hole(CARDS[0], CARDS[1]) + ", " +
-               new River(CARDS[2], CARDS[3], CARDS[4],
-                         CARDS[5], CARDS[6]);
+               new Community(CARDS[2], CARDS[3], CARDS[4],
+                             CARDS[5], CARDS[6]);
     }
 
 

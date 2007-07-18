@@ -1,7 +1,7 @@
 package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.community.Flop;
+import ao.holdem.def.model.cards.Community;
 import ao.util.rand.Rand;
 
 /**
@@ -35,9 +35,9 @@ public class Deck
 
 
     //--------------------------------------------------------------------
-    public Flop nextFlop()
+    public Community nextFlop()
     {
-        return new Flop(nextCard(), nextCard(), nextCard());
+        return new Community(nextCard(), nextCard(), nextCard());
     }
 
 

@@ -4,7 +4,7 @@ import ao.holdem.def.bot.LocalBot;
 import ao.holdem.def.bot.Team;
 import ao.holdem.def.model.cards.Hand;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.community.Community;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;
@@ -76,7 +76,7 @@ public class Outcome
         {
             Hole hole = lastEnv.holeOfAbs( awayFromDealer );
 
-            Hand hand = new Hand(hole, community.river());
+            Hand hand = new Hand(hole, community);
             if (hand.value() > maxVal)
             {
                 maxVal = hand.value();
