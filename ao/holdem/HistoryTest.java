@@ -1,6 +1,7 @@
 package ao.holdem;
 
 import ao.holdem.def.bot.history.HistoryBot;
+import ao.holdem.def.model.cards.Deck;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.Event;
@@ -8,8 +9,10 @@ import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 import ao.holdem.history.persist.HibernateUtil;
+import ao.holdem.history.persist.PlayerHandleLookup;
 import org.hibernate.Session;
 
+import java.sql.BatchUpdateException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,27 +28,32 @@ public class HistoryTest
                 HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
 
-
+                                                            
         Map<PlayerHandle, HistoryBot> bots =
                 new HashMap<PlayerHandle, HistoryBot>(){{
-                    PlayerHandle a = new PlayerHandle("a");
-                    PlayerHandle b = new PlayerHandle("b");
+//                    PlayerHandle a = new PlayerHandle("a");
+//                    PlayerHandle b = new PlayerHandle("b");
+//
+//                    session.save( a );
+//                    session.save( b );
+//
+//                    put(a, new DummyBot());
+//                    put(b, new DummyBot());
 
-                    session.save( a );
-                    session.save( b );
-
-                    put(a, new DummyBot());
-                    put(b, new DummyBot());
-
-//                    put(PlayerHandleLookup.lookup("a"), new DummyBot());
-//                    put(PlayerHandleLookup.lookup("b"), new DummyBot());
+                    put(PlayerHandleLookup.lookup("a"), new DummyBot());
+                    put(PlayerHandleLookup.lookup("b"), new DummyBot());
                 }};
 
+        Deck        deck = new Deck();
         HandHistory hand = new HandHistory(bots.keySet());
+        for (PlayerHandle player : bots.keySet())
+        {
+            hand.addHole(player, deck.nextHole());
+        }
         session.save( hand );
 
-        Event       e    = null;
-        Snapshot    s    = hand.snapshot(e);
+        Event    e = null;
+        Snapshot s = hand.snapshot(e);
         do
         {
             boolean startOfRound = true;
@@ -78,10 +86,10 @@ public class HistoryTest
                                 : TakenAction.CALL;
                         break;
                 }
-                e = new Event(p, s.round(), act);
+                e = hand.addEvent(p, s.round(), act);
                 session.save( e );
-                
-                hand.addEvent( e );
+//                session.saveOrUpdate( e );
+
                 s = hand.snapshot( e );
             }
         }
@@ -108,6 +116,18 @@ public class HistoryTest
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
-        new HistoryTest().historyTest();
+        try
+        {
+            new HistoryTest().historyTest();
+        }
+        catch (Exception e)
+        {
+            if (e.getCause() instanceof BatchUpdateException)
+            {
+                ((BatchUpdateException) e.getCause())
+                        .getNextException()
+                        .printStackTrace();
+            }
+        }
     }
 }

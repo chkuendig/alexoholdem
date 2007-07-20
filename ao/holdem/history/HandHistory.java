@@ -3,15 +3,14 @@ package ao.holdem.history;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.Community;
+import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.MapKeyManyToMany;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.*;
 
 /**
@@ -109,22 +108,27 @@ public class HandHistory extends Base
     //--------------------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(mappedBy = "hand")
-    @IndexColumn(name   = "hand_index")
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name="HAND_ID")
+    @IndexColumn(name="EVENT_INDEX")
     public List<Event> getEvents()
     {
         return events;
     }
-
     public void setEvents(List<Event> events)
     {
         this.events = events;
     }
-
-    public void addEvent(Event event)
+    public Event addEvent(PlayerHandle player,
+                          BettingRound round,
+                          TakenAction action)
     {
-        getEvents().add( event );
-        event.setHand( this );
+        Event e = new Event();
+        player.addEvent( e );
+        e.setRound(  round  );
+        e.setAction( action );
+        getEvents().add( e  );
+        return e;
     }
 
 

@@ -4,13 +4,14 @@ import ao.holdem.def.model.card.Card;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 
 /**
  *
  */
 @Embeddable
-public class Hole
+public class Hole implements Serializable
 {
     //--------------------------------------------------------------------
     private Card FIRST;

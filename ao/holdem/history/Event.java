@@ -4,9 +4,7 @@ import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  *
@@ -30,6 +28,8 @@ public class Event extends Base
     //--------------------------------------------------------------------
     private PlayerHandle player;
 
+    @ManyToOne
+    @JoinColumn(name="player_id")
     public PlayerHandle getPlayer()
     {
         return player;
@@ -69,16 +69,20 @@ public class Event extends Base
 
 
     //--------------------------------------------------------------------
-    private HandHistory hand;
-
-    @ManyToOne
-    //@JoinColumn()//name="hand_fk"
-    public HandHistory getHand()
-    {
-        return hand;
-    }
-    public void setHand(HandHistory hand)
-    {
-        this.hand = hand;
-    }
+//    private HandHistory hand;
+//
+//    @ManyToOne
+//    //@JoinColumn(name="hand_id", updatable = false, insertable = false)
+//    @JoinColumn(name="hand_id",
+//                nullable = false,
+//                updatable = false,
+//                insertable = false)
+//    public HandHistory getHand()
+//    {
+//        return hand;
+//    }
+//    public void setHand(HandHistory hand)
+//    {
+//        this.hand = hand;
+//    }
 }
