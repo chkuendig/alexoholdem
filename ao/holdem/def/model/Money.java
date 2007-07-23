@@ -1,10 +1,12 @@
 package ao.holdem.def.model;
 
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
  *
  */
+@Embeddable
 public class Money implements Serializable
 {
     //--------------------------------------------------------------------
@@ -16,9 +18,26 @@ public class Money implements Serializable
 
 
     //--------------------------------------------------------------------
-    private final int smallBlinds;
+    private int smallBlinds;
 
+    public Money()
+    {
+        this(0);
+    }
     public Money(int smallBlinds)
+    {
+        this.smallBlinds = smallBlinds;
+    }
+
+
+    //--------------------------------------------------------------------
+    // for persitance purposes
+    public int getSmallBlinds()
+    {
+        return smallBlinds;
+    }
+
+    public void setSmallBlinds(int smallBlinds)
     {
         this.smallBlinds = smallBlinds;
     }
@@ -68,6 +87,20 @@ public class Money implements Serializable
     public Money minus(Money subtractor)
     {
         return new Money(smallBlinds - subtractor.smallBlinds);
+    }
+
+    public Money split(int into)
+    {
+        return new Money(smallBlinds / into);
+    }
+    public Money remainder(int afterSplittingInto)
+    {
+        return minus( split(afterSplittingInto)
+                        .times(afterSplittingInto) );
+    }
+    private Money times(int factor)
+    {
+        return new Money(smallBlinds * factor);
     }
 
 

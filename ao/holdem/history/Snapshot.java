@@ -71,7 +71,7 @@ public class Snapshot
 
 
     //--------------------------------------------------------------------
-    private void addNextEvent(Event event)
+    public Snapshot addNextEvent(Event event)
     {
         assert nextToAct.equals( event.getPlayer() );
         if (isRoundDone())
@@ -108,6 +108,8 @@ public class Snapshot
                 defineLatestRoundStaker( event.getPlayer() );
                 break;
         }
+
+        return this;
     }
 
     private void advanceRound()
