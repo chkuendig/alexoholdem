@@ -83,13 +83,13 @@ public class Odds
     @Override
     public String toString()
     {
-//        return "[win: "    + WIN   +
-//                " (" + Math.round(winPercent()  * 100) + ")" +
-//               ", lose: "  + LOSE  +
-//                " (" + Math.round(losePercent() * 100) + ")" +
-//               ", split: " + SPLIT +
-//               " (" + Math.round(splitPercent() * 100) + ")" + "]";
+        return "[win: "    + WIN   +
+                " (" + Math.round(winPercent()  * 100) + ")" +
+               ", lose: "  + LOSE  +
+                " (" + Math.round(losePercent() * 100) + ")" +
+               ", split: " + SPLIT +
+               " (" + Math.round(splitPercent() * 100) + ")" + "]";
 //        return "new Odds(" + WIN + ", " + LOSE + ", " + SPLIT + ")";
-        return WIN + "\t" + LOSE + "\t" + SPLIT;
+//        return WIN + "\t" + LOSE + "\t" + SPLIT;
     }
 }

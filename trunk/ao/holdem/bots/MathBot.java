@@ -28,9 +28,11 @@ public class MathBot extends AbstractBot
         Odds odds = oddFinder.compute(
                         hole, community, env.activeOpponents());
 
+        double toCall = env.remainingBets() * env.toCall();// +
+//                        (3 - env.bettingRound().ordinal());
         double potOdds =
-                ((double) env.toCall()) /
-                (env.toCall() + env.pot());
+                (toCall) /
+                (toCall + env.pot());
 
 //        if (odds.winPercent() <= potOdds)
 //        {
@@ -43,7 +45,7 @@ public class MathBot extends AbstractBot
 
         return (odds.winPercent() > potOdds)
                 ? Action.RAISE_OR_CALL
-                : Action.CHECK_OR_FOLD;
+                : Action.CHECK_OR_CALL;
     }
 
 

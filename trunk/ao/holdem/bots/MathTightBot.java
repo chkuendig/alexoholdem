@@ -22,7 +22,7 @@ public class MathTightBot extends AbstractBot
 //            return new LooseSklanskyBot().act(env);
 //        }
         
-        Hole hole      = env.hole();
+        Hole      hole      = env.hole();
         Community community = env.community();
 
         OddFinder oddFinder = new ApproximateOddFinder();

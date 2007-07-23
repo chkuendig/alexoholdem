@@ -3,6 +3,8 @@ package ao.holdem.history.persist;
 import ao.holdem.history.PlayerHandle;
 import org.hibernate.Session;
 
+import java.util.List;
+
 /**
  *
  */
@@ -18,23 +20,32 @@ public class PlayerHandleLookup
 
 
     //--------------------------------------------------------------------
-    public static PlayerHandle lookup(String fromName)
+    public static PlayerHandle lookup(
+            String domain, String name)
     {
         Session session =
-                HibernateUtil.getSessionFactory().getCurrentSession();
+                HibernateUtil.getSessionFactory()
+                        .getCurrentSession();
+        session.beginTransaction();
 
-        return (PlayerHandle) session.createQuery(
+        String fullName = domain + "." + name;
+        List matches = session.createQuery(
                 "from PlayerHandle where name = ?")
-                .setString(0, fromName)
-                .list().get(0);
+                .setString(0, fullName)
+                .list();
 
-//        PlayerHandle existing = HANDLES.get(fromName);
-//        if (existing == null)
-//        {
-//            PlayerHandle player = new PlayerHandle();
-//            HANDLES.put(fromName, player);
-//            return player;
-//        }
-//        return existing;
+        if (matches.isEmpty())
+        {
+            PlayerHandle player = new PlayerHandle(fullName);
+            session.save( player );
+            session.getTransaction().commit();
+
+            return player;
+        }
+        return (PlayerHandle) matches.get(0);
+    }
+    public static PlayerHandle lookup(String fromName)
+    {
+        return lookup("local", fromName);
     }
 }

@@ -14,7 +14,7 @@ import ao.util.stats.FastIntCombiner;
 public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int  DEFAULT_FLOP_ITR = 500;
+    private static final int  DEFAULT_FLOP_ITR = 300;
     private static final long DEFAULT_HOLE_ITR = 200;
 
     private final int  FLOP_ITR;

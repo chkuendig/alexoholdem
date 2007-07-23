@@ -40,6 +40,7 @@
 
         <!-- Drop and re-create the database schema on startup -->
         <!--<property name="hbm2ddl.auto">create</property>-->
+
         
         <!-- Mappings -->
         <mapping class="ao.holdem.history.PlayerHandle"/>
@@ -47,5 +48,6 @@
         <mapping class="ao.holdem.history.HandHistory"/>
         <mapping class="ao.holdem.def.model.cards.Hole"/>
         <mapping class="ao.holdem.def.model.cards.Community"/>
+        <mapping class="ao.holdem.def.model.Money"/>
     </session-factory>
 </hibernate-configuration>

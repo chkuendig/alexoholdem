@@ -11,7 +11,7 @@ public class Environment
 {
     //--------------------------------------------------------------------
     private final Hole         HOLE;
-    private final Community COMMUNITY;
+    private final Community    COMMUNITY;
     private final Player       BY_POSITION[];
     private final int          POSITION;
     private final int          TO_CALL;

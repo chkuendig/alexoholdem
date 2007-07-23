@@ -1,8 +1,9 @@
 package ao.holdem.history;
 
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.Community;
+import ao.holdem.def.model.cards.Hole;
+import ao.holdem.def.model.Money;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
@@ -82,26 +83,25 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    private List<PlayerHandle> winners =
-            new ArrayList<PlayerHandle>();
+    private Map<PlayerHandle, Money> deltas =
+            new HashMap<PlayerHandle, Money>();
 
-    @ManyToMany(
-        cascade={CascadeType.PERSIST, CascadeType.MERGE},
-        mappedBy="handsWon",
-        targetEntity=PlayerHandle.class)
-    public List<PlayerHandle> getWinners()
+//    @Transient
+    @CollectionOfElements(targetElement = Money.class)
+    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
+    public Map<PlayerHandle, Money> getDeltas()
     {
-        return winners;
+        return deltas;
     }
 
-    public void setWinners(List<PlayerHandle> winners)
+    public void setDeltas(Map<PlayerHandle, Money> deltas)
     {
-        this.winners = winners;
+        this.deltas = deltas;
     }
 
-    public void addWinner(PlayerHandle winner)
+    public void setDelta(PlayerHandle player, Money delta)
     {
-        winner.addHandWon( this );
+        getDeltas().put(player, delta);
     }
 
 
@@ -155,7 +155,7 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    private Community community;
+    private Community community = new Community();
 
     public Community getCommunity()
     {
