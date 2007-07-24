@@ -436,7 +436,7 @@ public class Eval7Faster
             int shortcut, int invIndex6, int invIndex7)
     {
         return (short) handRanks[handRanks[
-                shortcut + invIndex6] + invIndex7];
+                        shortcut + invIndex6] + invIndex7];
     }
 
     public static short valueOf(

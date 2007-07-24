@@ -1,9 +1,10 @@
 package ao.holdem.history.persist;
 
 import ao.holdem.history.PlayerHandle;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.wideplay.warp.persist.Transactional;
 import org.hibernate.Session;
-
-import java.util.List;
 
 /**
  *
@@ -11,44 +12,63 @@ import java.util.List;
 public class PlayerHandleLookup
 {
     //--------------------------------------------------------------------
-//    private static final Map<String, PlayerHandle> HANDLES =
-//            new HashMap<String, PlayerHandle>();
+    @Inject PlayerHandleAccess playerAccess;
+    @Inject Provider<Session>  session;
 
 
     //--------------------------------------------------------------------
-    private PlayerHandleLookup() {}
-
-
-    //--------------------------------------------------------------------
-    public static PlayerHandle lookup(
+    @Transactional
+    public PlayerHandle lookup(
             String domain, String name)
     {
-        Session session =
-                HibernateUtil.getSessionFactory()
-                        .getCurrentSession();
-        session.beginTransaction();
-
         String fullName = domain + "." + name;
-        List matches = session.createQuery(
-                "from PlayerHandle where name = ?")
-                .setString(0, fullName)
-                .list();
 
-        PlayerHandle player;
-        if (matches.isEmpty())
+        PlayerHandle player = playerAccess.find(fullName);
+        if (player == null)
         {
             player = new PlayerHandle(fullName);
-            session.save( player );
+            session.get().saveOrUpdate( player );
         }
-        else
-        {
-            player = (PlayerHandle) matches.get(0);
-        }
-        session.getTransaction().commit();
+
         return player;
     }
-    public static PlayerHandle lookup(String fromName)
+
+    public PlayerHandle lookup(String name)
     {
-        return lookup("local", fromName);
+        return lookup("local", name);
     }
+
+
+    //--------------------------------------------------------------------
+//    public static PlayerHandle lookup(
+//            String domain, String name)
+//    {
+//        Session session =
+//                HibernateUtil.getSessionFactory()
+//                        .getCurrentSession();
+//        session.beginTransaction();
+//
+//        String fullName = domain + "." + name;
+//        List matches = session.createQuery(
+//                "from PlayerHandle where name = ?")
+//                .setString(0, fullName)
+//                .list();
+//
+//        PlayerHandle player;
+//        if (matches.isEmpty())
+//        {
+//            player = new PlayerHandle(fullName);
+//            session.save( player );
+//        }
+//        else
+//        {
+//            player = (PlayerHandle) matches.get(0);
+//        }
+//        session.getTransaction().commit();
+//        return player;
+//    }
+//    public static PlayerHandle lookup(String fromName)
+//    {
+//        return lookup("local", fromName);
+//    }
 }

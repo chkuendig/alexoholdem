@@ -1,10 +1,11 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.DuaneBot;
-import ao.holdem.bots.MathBot;
+import ao.holdem.bots.LooseSklanskyBot;
+import ao.holdem.bots.MathTightBot;
 import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
+import ao.holdem.bots.util.Odds;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
@@ -19,7 +20,7 @@ import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -53,9 +54,9 @@ public class Main
 
         for (int i = 0; i < 1; i++)
         {
-            runHoldemGame();
+//            runHoldemGame();
 //            runNetCode();
-//            runPoker();
+            runPoker();
         }
     }
 
@@ -131,22 +132,22 @@ public class Main
 
 //        provider.add(
 //                BotFactory.Impl.fromClass(RandomBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(DuaneBot.class));
+//        provider.add(
+//                BotFactory.Impl.fromClass(PokerTipsBot.class));
 //        provider.add(
 //                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
-//        provider.add(
-//                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
         provider.add(
-                BotFactory.Impl.fromClass(MathBot.class));
+                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
 //        provider.add(
-//                BotFactory.Impl.fromClass(MathTightBot.class));
+//                BotFactory.Impl.fromClass(MathBot.class));
+        provider.add(
+                BotFactory.Impl.fromClass(MathTightBot.class));
 
         Tourney tourney = new Tourney( provider );
         for (int i = 0; i < 50; i++)
         {
 //            tourney.runRandom();
-            tourney.run(2, 10);
+            tourney.run(10, 10);
         }
         tourney.tabDelimitedReport( System.out );
 
@@ -172,17 +173,37 @@ public class Main
     }
     public static void doRunOdds()
     {
-//        for (int flops = 1; flops < 2118760; flops += 20)
-//        {
-//            for (long holes = 1; holes < 20000; holes += 50)
-//            {
-//                String prefix = flops + "\t" + holes;
-//                OddFinder f =
-//                        new ApproximateOddFinder(
-//                                flops, holes);
-//                doRunOddsWith(prefix, f);
-//            }
-//        }
+        PrintStream output;
+        try
+        {
+            // before it was the 10th NOT the 9th
+            //  (contrary to what the filename stated).
+            File outFile = new File("8_player_pairs_approx.txt");
+            outFile.createNewFile();
+            output = new PrintStream(
+                        new BufferedOutputStream(
+                            new FileOutputStream(outFile)),
+                        false);
+        }
+        catch (IOException e)
+        {
+            throw new Error( e );
+        }
+
+        doRunOddsWith("default", new ApproximateOddFinder(), output);
+        for (int flops = 1; flops < 2118760; flops += 50)
+        {
+            for (long holes = 1; holes < 10000; holes += 50)
+            {
+                String prefix = flops + "\t" + holes;
+                OddFinder f =
+                        new ApproximateOddFinder(
+                                flops, holes);
+
+                if (! doRunOddsWith(prefix, f, output)) break;
+            }
+            System.out.println("");
+        }
 
 
 //        Community c = new Community();
@@ -221,21 +242,17 @@ public class Main
 //        }
 
 
-        for (int i = 1; i <= 9; i++)
-        {
-            for (Card.Rank rank : Card.Rank.values())
-            {
-                Hole pocketPair =
-                        new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
-                                 Card.valueOf(rank, Card.Suit.CLUBS));
-                Community c = new Community();
-
-                System.out.println(
-                        pocketPair + "\t" +
-                        new ApproximateOddFinder()
-                                .compute(pocketPair, c, i) + "\t" + i);
-            }
-        }
+//        for (Card.Rank rank : Card.Rank.values())
+//        {
+//            Hole pocketPair =
+//                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
+//                             Card.valueOf(rank, Card.Suit.CLUBS));
+//            Community c = new Community();
+//
+//            System.out.println(
+//                    pocketPair + "\t" +
+//                    f.compute(pocketPair, c, 9));
+//        }
 //        for (Card.Rank ranks[] :
 //                new Combiner<Card.Rank>(Card.Rank.values(), 2))
 //        {
@@ -252,7 +269,10 @@ public class Main
 //                f.compute(unsuited, c, 10));
 //        }
     }
-    public static void doRunOddsWith(String prefix, OddFinder f)
+    public static boolean doRunOddsWith(
+            String      prefix,
+            OddFinder   f,
+            PrintStream outputTo)
     {
         Community c = new Community();
         for (Card.Rank rank : Card.Rank.values())
@@ -261,11 +281,21 @@ public class Main
                     new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
                              Card.valueOf(rank, Card.Suit.CLUBS));
 
-            System.out.println(
+            long before = System.currentTimeMillis();
+            Odds odds   = f.compute(pocketPair, c, 7);
+            long delta  = (System.currentTimeMillis() - before);
+            
+            outputTo.println(
                     prefix     + "\t" +
                     pocketPair + "\t" +
-                    f.compute(pocketPair, c, 9));
+                    odds       + "\t" +
+                    delta);
+
+            if (delta > 600) return false;
         }
+        outputTo.flush();
+        System.out.print(".");
+        return true;
     }
 
 

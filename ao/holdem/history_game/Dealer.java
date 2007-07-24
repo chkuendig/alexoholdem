@@ -11,7 +11,9 @@ import ao.holdem.history.Event;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
-import ao.holdem.history.persist.HibernateUtil;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.wideplay.warp.persist.Transactional;
 import org.hibernate.Session;
 
 import java.util.ArrayList;
@@ -24,6 +26,10 @@ import java.util.Map;
  */
 public class Dealer
 {
+    //--------------------------------------------------------------------
+    @Inject Provider<Session> session;
+
+
     //--------------------------------------------------------------------
     private List<PlayerHandle>            playerHandels;
     private Map<PlayerHandle, HistoryBot> byHandle;
@@ -47,13 +53,9 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
+    @Transactional
     public HandHistory play()
     {
-        final Session session =
-                HibernateUtil.getSessionFactory()
-                             .getCurrentSession();
-        session.beginTransaction();
-
         Deck        deck = new Deck();
         HandHistory hand = new HandHistory(playerHandels);
 
@@ -62,7 +64,7 @@ public class Dealer
         {
             hand.addHole(player, deck.nextHole());
         }
-        session.save( hand );
+        session.get().save( hand );
 
         Event e = null;
         Snapshot s = hand.snapshot(e);
@@ -99,7 +101,7 @@ public class Dealer
                         break;
                 }
                 e = hand.addEvent(p, s.round(), act);
-                session.save( e );
+                session.get().save( e );
 
                 s = s.addNextEvent( e );
             }
@@ -111,8 +113,7 @@ public class Dealer
         assignDeltas( hand, s );
 
         hand.commitHandToPlayers();
-        session.saveOrUpdate( hand );
-        session.getTransaction().commit();
+        session.get().saveOrUpdate( hand );
 
         return hand;
     }

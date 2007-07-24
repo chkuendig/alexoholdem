@@ -1,7 +1,6 @@
 package ao.holdem.def.history_bot;
 
 import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.persist.PlayerHandleLookup;
 
 /**
  *
@@ -14,11 +13,11 @@ public class BotHandle
 
 
     //--------------------------------------------------------------------
-    public BotHandle(String playerName, HistoryBot bot)
-    {
-        HANDLE = PlayerHandleLookup.lookup(playerName);
-        BOT    = bot;
-    }
+//    public BotHandle(String playerName, HistoryBot bot)
+//    {
+//        HANDLE = PlayerHandleLookup.lookup(playerName);
+//        BOT    = bot;
+//    }
 
     public BotHandle(PlayerHandle handle, HistoryBot bot)
     {
