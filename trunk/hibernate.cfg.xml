@@ -31,6 +31,9 @@
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>
+        <property name="transaction.factory_class">
+            org.hibernate.transaction.JDBCTransactionFactory
+        </property>
 
         <!-- Disable the second-level cache  -->
         <property name="cache.provider_class">

@@ -7,10 +7,9 @@ import ao.holdem.history.Event;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
-import ao.holdem.history.persist.HibernateUtil;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.Dealer;
-import org.hibernate.Session;
+import com.google.inject.Inject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,10 +23,9 @@ import java.util.Map;
 public class IrcHistorian
 {
     //--------------------------------------------------------------------
-    public IrcHistorian()
-    {
+    @Inject PlayerHandleLookup players;
+//    @Inject Provider<Session>  session;
 
-    }
 
     //--------------------------------------------------------------------
     public List<HandHistory> fromSnapshot(String dirName)
@@ -62,31 +60,24 @@ public class IrcHistorian
                 gameAction(playerActions, handles, hand.timestamp());
         if (action == null) return null;
 
-        Session session =
-                HibernateUtil.getSessionFactory()
-                             .getCurrentSession();
-        session.beginTransaction();
-
         HandHistory hist = new HandHistory(handles);
 
         addHoles(hist, handles, action);
         hist.setCommunity( hand.community() );
         
-        session.save(hist);
+//        session.get().save(hist);
         Dealer.assignDeltas(
                 hist,
-                addEvents(hist, action, session));
+                addEvents(hist, action));
 
         hist.commitHandToPlayers();
-        session.getTransaction().commit();
 
         return hist;
     }
 
     private Snapshot addEvents(
             HandHistory     hist,
-            List<IrcAction> action,
-            Session         session)
+            List<IrcAction> action)
     {
         List<Map<BettingRound, List<TakenAction>>> actionStack =
                 stackActions(hist, action);
@@ -117,7 +108,7 @@ public class IrcHistorian
                                     hist.getPlayers().get(i),
                                     round,
                                     roundActions.remove(0));
-                        session.save(e);
+//                        session.get().save(e);
                         actionPerformed = true;
                     }
                 }
@@ -261,7 +252,7 @@ public class IrcHistorian
 
     private PlayerHandle ircPlayer(String name)
     {
-        return PlayerHandleLookup.lookup("irc", name);
+        return players.lookup("irc", name);
     }
 
 

@@ -185,32 +185,36 @@ public class GeneralOddFinder implements OddFinder
              comD = cards[ indexes[COM_D] ],
              comE = cards[ indexes[COM_E] ];
 
-        short myVal = evalHand(comA, comB, comC, comD, comE,
-                               cards[ indexes[HOLE_A] ],
-                               cards[ indexes[HOLE_B] ]);
+        int shortcut =
+                Eval7Faster.shortcutFor(comA, comB, comC, comD, comE);
+
+//        short myVal = evalHand(comA, comB, comC, comD, comE,
+//                               cards[ indexes[HOLE_A] ],
+//                               cards[ indexes[HOLE_B] ]);
+        short myVal = Eval7Faster.valueOf(shortcut,
+                                          cards[ indexes[HOLE_A] ],
+                                          cards[ indexes[HOLE_B] ]);
 
         FastIntCombiner fc = new FastIntCombiner(indexes, 52 - 2 - 5);
         switch (activeOpps)
         {
             case 1:
+//                HeadsUpVisitor huv =
+//                        new HeadsUpVisitor(cards, myVal,
+//                                           comA, comB, comC, comD, comE);
                 HeadsUpVisitor huv =
-                        new HeadsUpVisitor(cards, myVal,
-                                           comA, comB, comC, comD, comE);
+                        new HeadsUpVisitor(cards, myVal, shortcut);
                 fc.combine(huv);
                 return huv.odds();
 
             case 2:
-                break;
-
             case 3:
-                break;
-
             default:
                 throw new InvalidStateException(
                         "intractable # of opponents: " + activeOpps);
         }
 
-        return null;
+//        return null;
     }
 
     //--------------------------------------------------------------------
@@ -220,25 +224,29 @@ public class GeneralOddFinder implements OddFinder
     {
         private final short myVal;
         private final Card  cards[];
-        private final Card  comA, comB, comC, comD, comE;
+        //private final Card  comA, comB, comC, comD, comE;
+        private final int shortcut;
         private int wins, losses, splits;
 
         public HeadsUpVisitor(Card  cards[],
                               short vsVal,
-                              Card  comA, Card comB,
-                              Card  comC, Card comD, Card comE)
+                              int   shortcut)
+//                              Card  comA, Card comB,
+//                              Card  comC, Card comD, Card comE)
         {
-            this.cards = cards;
-            this.myVal = vsVal;
-
-            this.comA = comA; this.comB = comB;
-            this.comC = comC; this.comD = comD; this.comE = comE;
+            this.cards    = cards;
+            this.myVal    = vsVal;
+            this.shortcut = shortcut;
+//            this.comA = comA; this.comB = comB;
+//            this.comC = comC; this.comD = comD; this.comE = comE;
         }
 
         public void visit(int a, int b)
         {
-            short oppVal = evalHand(comA, comB, comC, comD, comE,
-                                    cards[ a ], cards[ b ]);
+//            short oppVal = evalHand(comA, comB, comC, comD, comE,
+//                                    cards[ a ], cards[ b ]);
+            short oppVal = Eval7Faster.valueOf(
+                                shortcut, cards[ a ], cards[ b ]);
 
             if      (myVal > oppVal) { wins++;   }
             else if (myVal < oppVal) { losses++; }
