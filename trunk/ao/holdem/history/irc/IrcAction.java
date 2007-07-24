@@ -2,6 +2,7 @@ package ao.holdem.history.irc;
 
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
+import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 
 import java.util.Arrays;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
      column 11       amount of pot won by player
      column 12+      pocket cards of player (if revealed at showdown)
  */
-public class IrcPlayer
+public class IrcAction
 {
     //--------------------------------------------------------------------
     // Marzon    766303976  8  1 Bc  bc    kc    kf      12653  300    0
@@ -66,12 +67,12 @@ public class IrcPlayer
 
 
     //--------------------------------------------------------------------
-    public IrcPlayer(String line)
+    public IrcAction(String line)
     {
         Matcher m = pat.matcher(line);
         if (! m.matches())
         {
-            throw new Error("IrcPlayer can't match: " + line);
+            throw new Error("IrcAction can't match: " + line);
         }
 
         name       = m.group(1);
@@ -180,6 +181,7 @@ public class IrcPlayer
         return position;
     }
 
+    //--------------------------------------------------------------------
     public TakenAction[] preflop()
     {
         return preflop;
@@ -197,6 +199,20 @@ public class IrcPlayer
         return onRiver;
     }
 
+    public TakenAction[] action(BettingRound during)
+    {
+        switch (during)
+        {
+            case PREFLOP: return preflop();
+            case FLOP:    return onFlop();
+            case TURN:    return onTurn();
+            case RIVER:   return onRiver();
+        }
+        return null;
+    }
+
+    
+    //--------------------------------------------------------------------
     public int startingBankroll()
     {
         return startingBankroll;

@@ -34,7 +34,7 @@ public class IrcReader
     //--------------------------------------------------------------------
     private final List<IrcHand>   hands;
     private final List<IrcRoster> roster;
-    private final List<IrcPlayer> players;
+    private final List<IrcAction> players;
 
 
     //--------------------------------------------------------------------
@@ -95,10 +95,10 @@ public class IrcReader
         return rosterList;
     }
 
-    private List<IrcPlayer> readPlayers(File playerDir)
+    private List<IrcAction> readPlayers(File playerDir)
             throws IOException
     {
-        List<IrcPlayer> playerList = new ArrayList<IrcPlayer>();
+        List<IrcAction> playerList = new ArrayList<IrcAction>();
 
         for (File playerFile : playerDir.listFiles())
         {
@@ -108,7 +108,7 @@ public class IrcReader
             String handLine;
             while ((handLine = handReader.readLine()) != null)
             {
-                playerList.add( new IrcPlayer(handLine) );
+                playerList.add( new IrcAction(handLine) );
             }
         }
 
@@ -127,7 +127,7 @@ public class IrcReader
         return roster;
     }
 
-    public List<IrcPlayer> players()
+    public List<IrcAction> actions()
     {
         return players;
     }
@@ -136,9 +136,14 @@ public class IrcReader
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        IrcReader r =
-                new IrcReader(new File(
-                    "C:\\alex\\data\\limit_holdem\\holdem\\199504"));
-        r.hands();
+        IrcHistorian historian = new IrcHistorian();
+
+        historian.fromSnapshot(
+                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
+
+//        IrcReader r =
+//                new IrcReader(new File(
+//                    "C:\\alex\\data\\limit_holdem\\holdem\\199504"));
+//        r.hands();
     }
 }

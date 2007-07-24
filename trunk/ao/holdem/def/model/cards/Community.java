@@ -149,6 +149,22 @@ public class Community
         return new Community(FLOP_A, FLOP_B, FLOP_C, TURN, river);
     }
 
+    public Community asOf(BettingRound round)
+    {
+        switch (round)
+        {
+            case PREFLOP:
+                return new Community();
+            case FLOP:
+                return new Community(FLOP_A, FLOP_B, FLOP_C);
+            case TURN:
+                return new Community(FLOP_A, FLOP_B, FLOP_C, TURN);
+            case RIVER:
+                return new Community(FLOP_A, FLOP_B, FLOP_C, TURN, RIVER);
+        }
+        return null;
+    }
+
 
     //--------------------------------------------------------------------
     public int knownCount()
