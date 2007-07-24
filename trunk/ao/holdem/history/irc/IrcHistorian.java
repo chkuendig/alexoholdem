@@ -10,6 +10,9 @@ import ao.holdem.history.Snapshot;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.Dealer;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.wideplay.warp.persist.Transactional;
+import org.hibernate.Session;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ public class IrcHistorian
 {
     //--------------------------------------------------------------------
     @Inject PlayerHandleLookup players;
-//    @Inject Provider<Session>  session;
+    @Inject Provider<Session>  session;
 
 
     //--------------------------------------------------------------------
@@ -48,7 +51,8 @@ public class IrcHistorian
         return histories;
     }
 
-    private HandHistory toHistory(
+    @Transactional
+    public HandHistory toHistory(
             IrcHand                            hand,
             Map<PlayerHandle, List<IrcAction>> playerActions,
             Map<Long, IrcRoster>               rosters)
@@ -65,7 +69,7 @@ public class IrcHistorian
         addHoles(hist, handles, action);
         hist.setCommunity( hand.community() );
         
-//        session.get().save(hist);
+        session.get().save(hist);
         Dealer.assignDeltas(
                 hist,
                 addEvents(hist, action));
@@ -74,6 +78,7 @@ public class IrcHistorian
 
         return hist;
     }
+
 
     private Snapshot addEvents(
             HandHistory     hist,
@@ -104,10 +109,18 @@ public class IrcHistorian
                     if (roundActions != null &&
                             !roundActions.isEmpty())
                     {
-                        Event e = hist.addEvent(
-                                    hist.getPlayers().get(i),
-                                    round,
-                                    roundActions.remove(0));
+                        Event e = new Event();
+
+                        hist.getPlayers().get(i).addEvent( e );
+                        e.setRound(  round  );
+                        e.setAction( roundActions.remove(0) );
+                        hist.getEvents().add( e  );
+                        session.get().save(e);
+
+//                        Event e = hist.addEvent(
+//                                    hist.getPlayers().get(i),
+//                                    round,
+//                                    roundActions.remove(0));
 //                        session.get().save(e);
                         actionPerformed = true;
                     }

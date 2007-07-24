@@ -25,5 +25,7 @@ public class HoldemStarter
         injector.getInstance(PersistenceService.class).start();
 
         injector.getInstance(HistoryTest.class).historyTest();
+//        injector.getInstance(IrcRunner.class).run(
+//                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
     }
 }

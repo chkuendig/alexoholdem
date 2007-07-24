@@ -86,7 +86,6 @@ public class HandHistory extends Base
     private Map<PlayerHandle, Money> deltas =
             new HashMap<PlayerHandle, Money>();
 
-//    @Transient
     @CollectionOfElements(targetElement = Money.class)
     @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Money> getDeltas()
@@ -108,7 +107,9 @@ public class HandHistory extends Base
     //--------------------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade={CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="HAND_ID")
     @IndexColumn(name="EVENT_INDEX")
     public List<Event> getEvents()
