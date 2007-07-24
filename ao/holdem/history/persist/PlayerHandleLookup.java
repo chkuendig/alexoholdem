@@ -34,15 +34,18 @@ public class PlayerHandleLookup
                 .setString(0, fullName)
                 .list();
 
+        PlayerHandle player;
         if (matches.isEmpty())
         {
-            PlayerHandle player = new PlayerHandle(fullName);
+            player = new PlayerHandle(fullName);
             session.save( player );
-            session.getTransaction().commit();
-
-            return player;
         }
-        return (PlayerHandle) matches.get(0);
+        else
+        {
+            player = (PlayerHandle) matches.get(0);
+        }
+        session.getTransaction().commit();
+        return player;
     }
     public static PlayerHandle lookup(String fromName)
     {

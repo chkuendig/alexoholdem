@@ -1,6 +1,7 @@
 package ao.holdem.history;
 
 import ao.holdem.history.persist.Base;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class PlayerHandle extends Base
     //----------------------------------------------------------
     private String name;
 
+    @Index(name="name_index")
     public String getName()            { return name;      }
     public void   setName(String name) { this.name = name; }
 
@@ -56,7 +58,8 @@ public class PlayerHandle extends Base
 
     @ManyToMany(
         targetEntity=HandHistory.class,
-        mappedBy = "players"
+        mappedBy = "players",
+        fetch    = FetchType.LAZY
     )
     public List<HandHistory> getHands()
     {

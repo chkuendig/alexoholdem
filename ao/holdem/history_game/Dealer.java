@@ -25,7 +25,7 @@ import java.util.Map;
 public class Dealer
 {
     //--------------------------------------------------------------------
-    private List<PlayerHandle> playerHandels;
+    private List<PlayerHandle>            playerHandels;
     private Map<PlayerHandle, HistoryBot> byHandle;
 
 
@@ -144,7 +144,7 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
-    private void assignDeltas(
+    public static void assignDeltas(
             HandHistory hand,
             Snapshot    finalSnapshot)
     {
@@ -158,7 +158,7 @@ public class Dealer
         }
     }
 
-    private void assignShowdownDeltas(
+    private static void assignShowdownDeltas(
             HandHistory hand,
             Snapshot    finalSnapshot)
     {
@@ -209,7 +209,7 @@ public class Dealer
                                     topWinners.size()) ));
     }
 
-    private void assignSingleWinnerDeltas(
+    private static void assignSingleWinnerDeltas(
             HandHistory hand,
             Snapshot    finalSnapshot)
     {

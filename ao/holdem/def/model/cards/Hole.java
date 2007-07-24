@@ -100,6 +100,11 @@ public class Hole implements Serializable
         return FIRST != null && SECOND != null;
     }
 
+    public boolean aCardIsVisible()
+    {
+        return FIRST != null || SECOND != null; 
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()
