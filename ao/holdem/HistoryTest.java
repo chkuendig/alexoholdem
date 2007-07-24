@@ -10,7 +10,6 @@ import ao.holdem.history_game.Dealer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import java.sql.BatchUpdateException;
 import java.util.Arrays;
 
 /**
@@ -46,24 +45,24 @@ public class HistoryTest
 
 
     //--------------------------------------------------------------------
-    public static void main(String args[]) throws Exception
-    {
-        try
-        {
-            new HistoryTest().historyTest();
-        }
-        catch (Exception e)
-        {
-            if (e.getCause() instanceof BatchUpdateException)
-            {
-                ((BatchUpdateException) e.getCause())
-                        .getNextException()
-                        .printStackTrace();
-            }
-            else
-            {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public static void main(String args[]) throws Exception
+//    {
+//        try
+//        {
+//            new HistoryTest().historyTest();
+//        }
+//        catch (Exception e)
+//        {
+//            if (e.getCause() instanceof BatchUpdateException)
+//            {
+//                ((BatchUpdateException) e.getCause())
+//                        .getNextException()
+//                        .printStackTrace();
+//            }
+//            else
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }

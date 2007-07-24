@@ -63,6 +63,7 @@ public class Dealer
         for (PlayerHandle player : playerHandels)
         {
             hand.addHole(player, deck.nextHole());
+            session.get().saveOrUpdate( player );
         }
         session.get().save( hand );
 

@@ -7,11 +7,13 @@
     <session-factory name="history">
         <!-- DB connection settings -->
         <!--org.apache.derby.jdbc.EmbeddedDriver-->
+        <!--org.postgresql.Driver-->
         <property name="connection.driver_class">
             org.postgresql.Driver
         </property>
 
         <!--jdbc:derby:history_db;create=true-->
+        <!--jdbc:postgresql:holdem-->
         <property name="connection.url">
             jdbc:postgresql:holdem
         </property>
@@ -25,6 +27,7 @@
         
         <!-- SQL settings -->
         <!--org.hibernate.dialect.DerbyDialect-->
+        <!--org.hibernate.dialect.PostgreSQLDialect-->
         <property name="dialect">
             org.hibernate.dialect.PostgreSQLDialect
         </property>
@@ -36,16 +39,18 @@
         </property>
 
         <!-- Disable the second-level cache  -->
-        <property name="cache.provider_class">
-            org.hibernate.cache.HashtableCacheProvider
+        <!--<property name="cache.provider_class">-->
+            <!--org.hibernate.cache.HashtableCacheProvider-->
             <!--org.hibernate.cache.NoCacheProvider-->
-        </property>
+        <!--</property>-->
 
         <!-- Echo all executed SQL to stdout -->
-        <!--<property name="show_sql">true</property>-->
+        <property name="show_sql">true</property>
 
         <!-- Drop and re-create the database schema on startup -->
-        <property name="hbm2ddl.auto">create</property>
+        <!--<property name="hbm2ddl.auto">-->
+            <!--create-->
+        <!--</property>-->
 
         
         <!-- Mappings -->

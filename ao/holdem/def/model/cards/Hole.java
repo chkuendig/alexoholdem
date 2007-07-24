@@ -33,21 +33,21 @@ public class Hole implements Serializable
     }
 
     @Enumerated
-    public Card getFirst()
+    public Card getFirstCard()
     {
         return FIRST;
     }
-    public void setFirst(Card first)
+    public void setFirstCard(Card first)
     {
         FIRST = first;
     }
 
     @Enumerated
-    public Card getSecond()
+    public Card getSecondCard()
     {
         return SECOND;
     }
-    public void setSecond(Card second)
+    public void setSecondCard(Card second)
     {
         SECOND = second;
     }

@@ -33,8 +33,7 @@ public class PlayerHandle extends Base
     //----------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(cascade  = CascadeType.ALL,
-               mappedBy = "player",
+    @OneToMany(mappedBy = "player",
                fetch    = FetchType.LAZY)
     public List<Event> getEvents()
     {
