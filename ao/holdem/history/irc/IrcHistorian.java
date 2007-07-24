@@ -75,6 +75,7 @@ public class IrcHistorian
                 addEvents(hist, action));
 
         hist.commitHandToPlayers();
+        session.get().saveOrUpdate(hist);
 
         return hist;
     }
@@ -177,6 +178,10 @@ public class IrcHistorian
             PlayerHandle handle = handles.get(i);
             IrcAction    act    = action.get(i);
             Hole         hole   = act.holes();
+
+            // this will make sure that
+            //  the PlayerHandle is in the current session.
+            session.get().saveOrUpdate( handle );
 
             if (hole.aCardIsVisible())
             {
