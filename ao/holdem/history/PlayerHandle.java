@@ -49,7 +49,6 @@ public class PlayerHandle extends Base
         event.setPlayer( this );
     }
 
-    
 
     //----------------------------------------------------------
     private List<HandHistory> hands =
@@ -74,5 +73,13 @@ public class PlayerHandle extends Base
     {
         getHands().add( hand );
         hand.getPlayers().add( this );
+    }
+
+    
+    //----------------------------------------------------------
+    @Override
+    public String toString()
+    {
+        return name;
     }
 }

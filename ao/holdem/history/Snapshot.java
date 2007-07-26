@@ -73,11 +73,14 @@ public class Snapshot
     //--------------------------------------------------------------------
     public Snapshot addNextEvent(Event event)
     {
-        assert nextToAct.equals( event.getPlayer() );
         if (isRoundDone())
         {
             advanceRound();
         }
+
+        assert nextToAct.equals( event.getPlayer() )
+                : "expected " + nextToAct +
+                  " on " + event;
         nextToAct = nextActive( nextToAct );
 
         actions.get( event.getPlayer() ).add( event.getAction() );
@@ -118,6 +121,7 @@ public class Snapshot
 
         remainingBets = 4;
         round = BettingRound.values()[ round.ordinal() + 1 ];
+        nextToAct = firstToActPostFlop();
     }
 
     private void defineLatestRoundStaker(PlayerHandle player)
@@ -187,6 +191,17 @@ public class Snapshot
             int          index  = cursor % players.size();
             PlayerHandle player = players.get(index);
             if (activePlayers.contains( player ))
+            {
+                return player;
+            }
+        }
+        return null;
+    }
+    public PlayerHandle firstToActPostFlop()
+    {
+        for (PlayerHandle player : players)
+        {
+            if (activePlayers.contains(player))
             {
                 return player;
             }

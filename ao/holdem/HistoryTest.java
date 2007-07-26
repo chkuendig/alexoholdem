@@ -35,34 +35,11 @@ public class HistoryTest
 
 
     //--------------------------------------------------------------------
-    private static class DummyBot implements HistoryBot
+    public static class DummyBot implements HistoryBot
     {
         public Action act(HandHistory hand, Snapshot env)
         {
             return Action.CHECK_OR_CALL;
         }
     }
-
-
-    //--------------------------------------------------------------------
-//    public static void main(String args[]) throws Exception
-//    {
-//        try
-//        {
-//            new HistoryTest().historyTest();
-//        }
-//        catch (Exception e)
-//        {
-//            if (e.getCause() instanceof BatchUpdateException)
-//            {
-//                ((BatchUpdateException) e.getCause())
-//                        .getNextException()
-//                        .printStackTrace();
-//            }
-//            else
-//            {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 }
