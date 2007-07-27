@@ -184,4 +184,17 @@ public class IrcHand
     {
         return community;
     }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public String toString()
+    {
+        return  totalPlayers    + "\t" +
+                flopPlayers     + "\t" +
+                turnPlayers     + "\t" +
+                riverPlayers    + "\t" +
+                showdownPlayers + "\t" +
+                community;
+    }
 }

@@ -86,6 +86,7 @@ public class HandHistory extends Base
     private Map<PlayerHandle, Money> deltas =
             new HashMap<PlayerHandle, Money>();
 
+    @SuppressWarnings({"JpaModelErrorInspection"})
     @CollectionOfElements(targetElement = Money.class)
     @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Money> getDeltas()
@@ -137,6 +138,7 @@ public class HandHistory extends Base
     private Map<PlayerHandle, Hole> holes =
             new HashMap<PlayerHandle, Hole>();
 
+    @SuppressWarnings({"JpaModelErrorInspection"})
     @CollectionOfElements(targetElement = Hole.class)
     @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Hole> getHoles()
@@ -195,7 +197,9 @@ public class HandHistory extends Base
             }
         }
 
-        return new Snapshot(getPlayers(), toCapture);
+        Snapshot s = new Snapshot(getPlayers());
+        return s.populate( toCapture )
+                ? s : null;
     }
 }
 

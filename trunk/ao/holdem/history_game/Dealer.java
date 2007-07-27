@@ -146,10 +146,12 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
-    public static void assignDeltas(
+    public static boolean assignDeltas(
             HandHistory hand,
             Snapshot    finalSnapshot)
     {
+        if (finalSnapshot.activePlayers().size() == 0) return false;
+
         if (finalSnapshot.activePlayers().size() == 1)
         {
             assignSingleWinnerDeltas(hand, finalSnapshot);
@@ -158,6 +160,7 @@ public class Dealer
         {
             assignShowdownDeltas(hand, finalSnapshot);
         }
+        return true;
     }
 
     private static void assignShowdownDeltas(

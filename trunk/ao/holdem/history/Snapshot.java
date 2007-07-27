@@ -3,6 +3,8 @@ package ao.holdem.history;
 import ao.holdem.def.model.Money;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import java.util.*;
 
@@ -11,6 +13,15 @@ import java.util.*;
  */
 public class Snapshot
 {
+    //--------------------------------------------------------------------
+    private final static Logger log =
+            Logger.getLogger(Snapshot.class.getName());
+    static
+    {
+        log.setLevel(Level.WARN);
+    }
+
+
     //--------------------------------------------------------------------
     private List<PlayerHandle> players       = new ArrayList<PlayerHandle>();
     private Set<PlayerHandle>  activePlayers = new HashSet<PlayerHandle>();
@@ -31,8 +42,7 @@ public class Snapshot
 
 
     //--------------------------------------------------------------------
-    public Snapshot(List<PlayerHandle> players,
-                    List<Event>        events)
+    public Snapshot(List<PlayerHandle> players)
     {
         this.players.addAll( players );
         activePlayers.addAll( players );
@@ -45,16 +55,8 @@ public class Snapshot
             commitment.put(player, Money.ZERO);
         }
 
-        if (isHeadsUp())
-        {
-            smallBlind = players.get(1); // dealer
-            bigBlind   = players.get(0);
-        }
-        else
-        {
-            smallBlind = players.get(0);
-            bigBlind   = players.get(1);
-        }
+        designateBlinds(players);
+
         remainingBets = 3;
         commitment.put(smallBlind, Money.SMALL_BLIND);
         commitment.put(bigBlind,   Money.BIG_BLIND  );
@@ -62,15 +64,46 @@ public class Snapshot
         pot       = Money.SMALL_BLIND.plus( Money.BIG_BLIND );
         round     = BettingRound.PREFLOP;
         nextToAct = nextActive( bigBlind );
-
-        for (Event event : events)
-        {
-            addNextEvent( event );
-        }
     }
 
+    private void designateBlinds(List<PlayerHandle> players)
+    {
+        // this makes logical sense, however it is NOT how the
+        //  irc database records things.
+        //  xxx todo: check which way pokerstars does it!!
+//        if (isHeadsUp())
+//        {
+//            smallBlind = players.get(1); // dealer
+//            bigBlind   = players.get(0);
+//        }
+//        else
+//        {
+//            smallBlind = players.get(0);
+//            bigBlind   = players.get(1);
+//        }
+        
+        smallBlind = players.get(0);
+        bigBlind   = players.get(1);
+    }
 
     //--------------------------------------------------------------------
+    public boolean populate(List<Event> events)
+    {
+        for (Event event : events)
+        {
+            try
+            {
+                addNextEvent( event );
+            }
+            catch (Error e)
+            {
+                log.warn(e.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Snapshot addNextEvent(Event event)
     {
         if (isRoundDone())
@@ -78,9 +111,11 @@ public class Snapshot
             advanceRound();
         }
 
-        assert nextToAct.equals( event.getPlayer() )
-                : "expected " + nextToAct +
-                  " on " + event;
+        if (! nextToAct.equals( event.getPlayer() ))
+        {
+            throw new Error("expected " + nextToAct +
+                            " on "      + event);
+        }
         nextToAct = nextActive( nextToAct );
 
         actions.get( event.getPlayer() ).add( event.getAction() );
@@ -91,6 +126,11 @@ public class Snapshot
                 break;
 
             case RAISE:
+                if (remainingBets == 0)
+                {
+                    throw new Error("no more than 4 raises!");
+                }
+
                 stakes = stakes.plus( betSize() );
                 commitment.put(event.getPlayer(),
                                stakes);
@@ -115,13 +155,19 @@ public class Snapshot
         return this;
     }
 
-    private void advanceRound()
+    private boolean advanceRound()
     {
-        assert round != BettingRound.RIVER;
+        if (round == BettingRound.RIVER)
+        {
+            throw new Error("cannot advance after RIVER");
+        }
 
         remainingBets = 4;
         round = BettingRound.values()[ round.ordinal() + 1 ];
         nextToAct = firstToActPostFlop();
+        latestRoundStaker = null;
+
+        return true;
     }
 
     private void defineLatestRoundStaker(PlayerHandle player)
@@ -142,8 +188,7 @@ public class Snapshot
     
     public boolean isRoundDone()
     {
-        return remainingBets == 0 ||
-               nextToAct().equals( latestRoundStaker );
+        return nextToAct().equals( latestRoundStaker );
     }
 
     public boolean isGameOver()
