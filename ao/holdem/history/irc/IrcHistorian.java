@@ -15,10 +15,7 @@ import com.wideplay.warp.persist.Transactional;
 import org.hibernate.Session;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -31,49 +28,6 @@ public class IrcHistorian
 
     @Inject Provider<Dealer> dealerProvider;
 
-    
-    //--------------------------------------------------------------------
-//    public List<HandHistory> fromSnapshot(String dirName)
-//    {
-//        IrcReader r = new IrcReader(new File(dirName));
-//
-//        Map<PlayerHandle, List<IrcAction>> players = groupPlayers(r);
-//        Map<Long, IrcRoster>               rosters = groupRosters(r);
-//
-//        test(r.hands().get(0), players, rosters);
-//
-//        return null;
-//    }
-
-//    public void test(IrcHand                            hand,
-//                     Map<PlayerHandle, List<IrcAction>> playerActions,
-//                     Map<Long, IrcRoster>               rosters)
-//    {
-//        IrcRoster          roster  = rosters.get(hand.timestamp());
-//        List<PlayerHandle> handles = handHandles(roster);
-//        if (handles == null) return;
-//        List<IrcAction> action =
-//                gameAction(playerActions, handles, hand.timestamp());
-//        if (action == null) return;
-//
-//        doTest(hand, roster, handles, action);
-//    }
-
-//    @Transactional
-//    protected void doTest(IrcHand            hand,
-//                       IrcRoster          roster,
-//                       List<PlayerHandle> handles,
-//                       List<IrcAction>    action)
-//    {
-//        for (PlayerHandle p : handles)
-//        {
-//            session.get().saveOrUpdate( p );
-//        }
-//
-//        HandHistory hist = new HandHistory(handles);
-//        session.get().saveOrUpdate( hist );
-//    }
-
 
     //--------------------------------------------------------------------
     public List<HandHistory> fromSnapshot(String dirName)
@@ -83,14 +37,23 @@ public class IrcHistorian
         Map<PlayerHandle, List<IrcAction>> players = groupPlayers(r);
         Map<Long, IrcRoster>               rosters = groupRosters(r);
 
+        int count = 0;
         List<HandHistory> histories = new ArrayList<HandHistory>();
         for (IrcHand hand : r.hands())
         {
-            HandHistory hist = toHistory(hand, players, rosters);
+            if (hand.numberOfPlayers() <= 2 ||
+                    hand.numberOfPlayers() > 10) continue;
+
+            count++;
+            HandHistory hist = toHistory(hand, players, rosters, false);
             if (hist != null)
             {
-                System.out.println(".");
                 histories.add( hist );
+            }
+            else
+            {
+                System.out.println(count);
+                toHistory(hand, players, rosters, true);
             }
         }
         return histories;
@@ -99,23 +62,64 @@ public class IrcHistorian
     private HandHistory toHistory(
             IrcHand                            hand,
             Map<PlayerHandle, List<IrcAction>> playerActions,
-            Map<Long, IrcRoster>               rosters)
+            Map<Long, IrcRoster>               rosters,
+            boolean                            forDisplay)
     {
         IrcRoster          roster  = rosters.get(hand.timestamp());
+//        System.out.println(roster);
         List<PlayerHandle> handles = handHandles(roster);
         if (handles == null) return null;
         List<IrcAction> action =
                 gameAction(playerActions, handles, hand.timestamp());
-        if (action == null) return null;
+        if (action == null ||
+            handles.size() != action.size()) return null;
 
-        return addHistory(hand, handles, action);
+        sortByPosition(handles, action);
+        try
+        {
+            if (forDisplay)
+            {
+                displayHand(hand, action);
+                return null;
+            }
+            else
+            {
+                return addHistory(hand, handles, action);
+            }
+        }
+        catch (BadHandException e)
+        {
+            return null;
+        }
     }
 
+    private void sortByPosition(
+            List<PlayerHandle> handles,
+            List<IrcAction>    action)
+    {
+        List<IrcAction> sortedAction = new ArrayList<IrcAction>(action);
+        Collections.sort(sortedAction, new Comparator<IrcAction>() {
+            public int compare(IrcAction a, IrcAction b) {
+                return Double.compare(a.position(), b.position());
+            }
+        });
+
+        for (int i = 0; i < action.size(); i++)
+        {
+            int originalIndex = action.indexOf( sortedAction.get(i) );
+
+            Collections.swap(action,  i, originalIndex);
+            Collections.swap(handles, i, originalIndex);
+        }
+    }
+
+
+    //--------------------------------------------------------------------
     @Transactional
     protected HandHistory addHistory(
             IrcHand            hand,
             List<PlayerHandle> handles,
-            List<IrcAction>    action)
+            List<IrcAction>    action) throws BadHandException
     {
         for (PlayerHandle p : handles)
         {
@@ -132,12 +136,24 @@ public class IrcHistorian
         session.get().saveOrUpdate(hist);
 
         Snapshot s = addEvents(hist, action);
-        Dealer.assignDeltas(hist, s);
+        if (s == null) throw new BadHandException();
+        if (!Dealer.assignDeltas(hist, s)) throw new BadHandException();
 
         hist.commitHandToPlayers();
         session.get().saveOrUpdate(hist);
 
         return hist;
+    }
+
+    private void displayHand(
+            IrcHand         hand,
+            List<IrcAction> action)
+    {
+        System.out.println(hand);
+        for (IrcAction act : action)
+        {
+            System.out.println(act);
+        }
     }
 
 
@@ -171,15 +187,6 @@ public class IrcHistorian
                     if (roundActions != null &&
                             !roundActions.isEmpty())
                     {
-//                        Event e = new Event();
-//
-//                        hist.getPlayers().get(i).addEvent( e );
-//                        e.setPlayer( hist.getPlayers().get(i) );
-//                        e.setRound(  round  );
-//                        e.setAction( roundActions.remove(0) );
-//                        hist.getEvents().add( e  );
-//                        session.get().save(e);
-
                         Event e = hist.addEvent(
                                     hist.getPlayers().get(i),
                                     round,
@@ -230,7 +237,6 @@ public class IrcHistorian
         return actionStack;
     }
 
-
     private void addHoles(HandHistory        hist,
                           List<PlayerHandle> handles,
                           List<IrcAction>    action)
@@ -241,14 +247,7 @@ public class IrcHistorian
             IrcAction    act    = action.get(i);
             Hole         hole   = act.holes();
 
-//            if (hole.aCardIsVisible())
-//            {
-                hist.addHole(handle, hole);
-//            }
-
-            // this will make sure that
-            //  the PlayerHandle is in the current session.
-//            session.get().saveOrUpdate( handle );
+            hist.addHole(handle, hole);
         }
     }
 

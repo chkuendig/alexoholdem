@@ -65,6 +65,8 @@ public class IrcAction
     private final int  potWon;
     private final Hole revealedHole;
 
+    private final String asIs;
+
 
     //--------------------------------------------------------------------
     public IrcAction(String line)
@@ -80,16 +82,20 @@ public class IrcAction
         numPlayers = Integer.parseInt( m.group(3) );
         position   = Integer.parseInt( m.group(4) );
 
-        preflop = parseActions( m.group(5) );
-        onFlop  = parseActions( m.group(6) );
-        onTurn  = parseActions( m.group(7) );
-        onRiver = parseActions( m.group(8) );
+        preflop = parseActions( m.group(5), false );
+        onFlop  = parseActions( m.group(6),
+                                hasFolded(preflop) );
+        onTurn  = parseActions( m.group(7),
+                                hasFolded(preflop, onFlop) );
+        onRiver = parseActions( m.group(8),
+                                hasFolded(preflop, onFlop, onTurn) );
 
         startingBankroll = Integer.parseInt( m.group(9)  );
         totalAction      = Integer.parseInt( m.group(10) );
         potWon           = Integer.parseInt( m.group(11) );
 
         revealedHole = parseHole( m.group(12) );
+        asIs = line;
     }
 
 
@@ -119,12 +125,15 @@ public class IrcAction
          K       kicked from game
      */
     private TakenAction[] parseActions(
-            String actionString)
+            String actionString, boolean hasFolded)
     {
+        if (hasFolded) return new TakenAction[0];
+
         TakenAction[] actions =
                 new TakenAction[ actionString.length() ];
 
         int nextIndex = 0;
+        char_loop:
         for (char actionChar : actionString.toCharArray())
         {
             switch (actionChar)
@@ -137,7 +146,7 @@ public class IrcAction
                 case 'Q':
                 case 'K':
                     actions[ nextIndex++ ] = TakenAction.FOLD;
-                    break;
+                    break char_loop;
 
                 case 'k':
                     actions[ nextIndex++ ] = TakenAction.CHECK;
@@ -160,6 +169,21 @@ public class IrcAction
         }
 
         return Arrays.copyOf(actions, nextIndex);
+    }
+
+    private boolean hasFolded(TakenAction[] ... actions)
+    {
+        for (TakenAction[] actionSet : actions)
+        {
+            for (TakenAction act : actionSet)
+            {
+                if (act == TakenAction.FOLD)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -228,5 +252,22 @@ public class IrcAction
     public Hole holes()
     {
         return revealedHole;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public String toString()
+    {
+//        return  name     + "\t" +
+//                position + "\t" +
+//                Arrays.toString(preflop) + "\t" +
+//                Arrays.toString(onFlop)  + "\t" +
+//                Arrays.toString(onTurn)  + "\t" +
+//                Arrays.toString(onRiver) + "\t" +
+//                totalAction + "\t" +
+//                potWon      + "\t" +
+//                revealedHole;
+        return asIs;
     }
 }

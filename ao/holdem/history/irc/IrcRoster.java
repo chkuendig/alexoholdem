@@ -1,7 +1,8 @@
 package ao.holdem.history.irc;
 
-import java.util.regex.Pattern;
+import java.util.Arrays;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ROSTER INFORMATION (in hroster file)
@@ -49,5 +50,12 @@ public class IrcRoster
     public String[] names()
     {
         return names;
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return Arrays.toString( names );
     }
 }

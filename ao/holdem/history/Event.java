@@ -69,20 +69,11 @@ public class Event extends Base
 
 
     //--------------------------------------------------------------------
-//    private HandHistory hand;
-//
-//    @ManyToOne
-//    //@JoinColumn(name="hand_id", updatable = false, insertable = false)
-//    @JoinColumn(name="hand_id",
-//                nullable = false,
-//                updatable = false,
-//                insertable = false)
-//    public HandHistory getHand()
-//    {
-//        return hand;
-//    }
-//    public void setHand(HandHistory hand)
-//    {
-//        this.hand = hand;
-//    }
+    @Override
+    public String toString()
+    {
+        return getPlayer() + "\t" +
+               getAction() + "\t" +
+               getRound();
+    }
 }
