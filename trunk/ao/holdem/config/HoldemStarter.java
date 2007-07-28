@@ -33,7 +33,7 @@ public class HoldemStarter
 
 //        injector.getInstance(HistoryTest.class).historyTest();
         injector.getInstance(IrcRunner.class).run(
-                "C:\\alex\\data\\limit_holdem\\holdem\\199505");
+                "C:\\alex\\data\\irc_poker\\holdem\\199506");
 //        injector.getInstance(IrcRunner.class).run(
 //                "C:\\alex\\data\\limit_holdem\\hand_test");
     }
