@@ -139,7 +139,6 @@ public class ApproximateOddFinder implements OddFinder
                 indexes, hole, community);
 
         MersenneTwisterFast rand = new MersenneTwisterFast();
-
         switch (community.knownCount())
         {
             case 0:

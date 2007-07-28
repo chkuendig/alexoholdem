@@ -303,7 +303,7 @@ public class GeneralOddFinder implements OddFinder
     public static int[] cardIndexes()
     {
         int  indexes[] = new int[52];
-        for (int i = 0; i < 52; i++) {  indexes[i] = i; }
+        for (int i = 0; i < 52; i++) {  indexes[i] = i;  }
         return indexes;
     }
 
