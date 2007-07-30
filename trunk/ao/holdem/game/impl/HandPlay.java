@@ -173,11 +173,11 @@ public class HandPlay
                         state.called( awayFromDealer );
                         break;
 
-                    case CHECK:
-//                        log.debug(awayFromDealer +
-//                                    " clockwise from dealer checks.");
-                        state.checked( awayFromDealer );
-                        break;
+//                    case CHECK:
+////                        log.debug(awayFromDealer +
+////                                    " clockwise from dealer checks.");
+//                        state.checked( awayFromDealer );
+//                        break;
                 }
             }
             if (! raiseOccurred) break;
@@ -220,14 +220,18 @@ public class HandPlay
         switch (fuzzyAction)
         {
             case CHECK_OR_FOLD:
+//                return state.canCheck(awayFromDealer)
+//                        ? TakenAction.CHECK
+//                        : TakenAction.FOLD;
                 return state.canCheck(awayFromDealer)
-                        ? TakenAction.CHECK
+                        ? TakenAction.CALL
                         : TakenAction.FOLD;
 
             case CHECK_OR_CALL:
-                return state.canCheck(awayFromDealer)
-                        ? TakenAction.CHECK
-                        : TakenAction.CALL;
+//                return state.canCheck(awayFromDealer)
+//                        ? TakenAction.CHECK
+//                        : TakenAction.CALL;
+            return TakenAction.CALL;
 
             case RAISE_OR_CALL:
                 return state.canRaise()

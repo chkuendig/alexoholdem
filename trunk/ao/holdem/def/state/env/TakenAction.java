@@ -11,7 +11,7 @@ public enum TakenAction
 //    DOES_NOT_ACT,
 //    YET_TO_ACT,
     FOLD,
-    CHECK,
+//    CHECK,
     CALL,
     RAISE
 }

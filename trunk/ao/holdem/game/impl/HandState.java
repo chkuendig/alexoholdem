@@ -165,7 +165,8 @@ public class HandState
     {
         log.debug(awayFromDealer + " clockwise from dealer checks.");
 
-        actions[ awayFromDealer ] = TakenAction.CHECK;
+//        actions[ awayFromDealer ] = TakenAction.CHECK;
+        actions[ awayFromDealer ] = TakenAction.CALL;
     }
 
     public void called(int awayFromDealer)
