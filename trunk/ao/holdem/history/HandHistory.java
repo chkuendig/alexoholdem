@@ -111,7 +111,7 @@ public class HandHistory extends Base
     @OneToMany(
             fetch = FetchType.EAGER,
             cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name="HAND_ID")
+//    @JoinColumn(name="HAND_ID")
     @IndexColumn(name="EVENT_INDEX")
     public List<Event> getEvents()
     {

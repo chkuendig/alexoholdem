@@ -29,7 +29,7 @@ public class Event extends Base
     private PlayerHandle player;
 
     @ManyToOne
-    @JoinColumn(name="player_id")
+//    @JoinColumn(name="player_id")
     public PlayerHandle getPlayer()
     {
         return player;
