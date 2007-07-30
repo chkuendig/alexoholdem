@@ -147,9 +147,9 @@ public class Snapshot
                 defineLatestRoundStaker( event.getPlayer() );
                 break;
 
-            case CHECK:
-                defineLatestRoundStaker( event.getPlayer() );
-                break;
+//            case CHECK:
+//                defineLatestRoundStaker( event.getPlayer() );
+//                break;
         }
 
         return this;

@@ -1,6 +1,7 @@
 package ao.holdem.config;
 
 import ao.holdem.HistoryTest;
+import ao.holdem.bots.opp_model.OppModelTest;
 import ao.holdem.history.irc.IrcRunner;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import com.google.inject.AbstractModule;
@@ -20,5 +21,6 @@ public class HoldemConfig extends AbstractModule
         bind(PlayerHandleLookup.class);
         bind(HistoryTest.class);
         bind(IrcRunner.class);
+        bind(OppModelTest.class);
     }
 }

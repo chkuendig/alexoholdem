@@ -1,6 +1,6 @@
 package ao.holdem.config;
 
-import ao.holdem.history.irc.IrcRunner;
+import ao.holdem.bots.opp_model.OppModelTest;
 import ao.holdem.history.persist.PlayerHandleAccess;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -31,9 +31,11 @@ public class HoldemStarter
                         new HoldemConfig());
         injector.getInstance(PersistenceService.class).start();
 
+
+        injector.getInstance(OppModelTest.class).testOpponentModeling();
 //        injector.getInstance(HistoryTest.class).historyTest();
-        injector.getInstance(IrcRunner.class).run(
-                "C:\\alex\\data\\irc_poker\\holdem\\199507");
+//        injector.getInstance(IrcRunner.class).run(
+//                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
 //        injector.getInstance(IrcRunner.class).run(
 //                "C:\\alex\\data\\limit_holdem\\hand_test");
     }

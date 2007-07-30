@@ -28,7 +28,7 @@ public class Event extends Base
     //--------------------------------------------------------------------
     private PlayerHandle player;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="player_id")
     public PlayerHandle getPlayer()
     {

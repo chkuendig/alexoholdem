@@ -84,14 +84,18 @@ public class Dealer
                 switch (a)
                 {
                     case CHECK_OR_CALL:
-                        act = (s.canCheck())
-                                ? TakenAction.CHECK
-                                : TakenAction.CALL;
+//                        act = (s.canCheck())
+//                                ? TakenAction.CHECK
+//                                : TakenAction.CALL;
+                        act = TakenAction.CALL;
                         break;
 
                     case CHECK_OR_FOLD:
+//                        act = (s.canCheck())
+//                                ? TakenAction.CHECK
+//                                : TakenAction.FOLD;
                         act = (s.canCheck())
-                                ? TakenAction.CHECK
+                                ? TakenAction.CALL
                                 : TakenAction.FOLD;
                         break;
 
@@ -238,6 +242,4 @@ public class Dealer
             }
         }
     }
-
-
 }

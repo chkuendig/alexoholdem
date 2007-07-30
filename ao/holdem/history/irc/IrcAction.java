@@ -149,7 +149,8 @@ public class IrcAction
                     break char_loop;
 
                 case 'k':
-                    actions[ nextIndex++ ] = TakenAction.CHECK;
+//                    actions[ nextIndex++ ] = TakenAction.CHECK;
+                    actions[ nextIndex++ ] = TakenAction.CALL;
                     break;
 
                 case 'c':
