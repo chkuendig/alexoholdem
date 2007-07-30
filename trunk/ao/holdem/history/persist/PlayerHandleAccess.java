@@ -1,5 +1,7 @@
 package ao.holdem.history.persist;
 
+import ao.holdem.history.Event;
+import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import com.google.inject.name.Named;
 import com.wideplay.warp.persist.dao.Finder;
@@ -25,4 +27,11 @@ public interface PlayerHandleAccess
                   "from PlayerHandle p " +
                   "order by p.hands.size desc ")
     List<PlayerHandle> byPrevalence(@MaxResults int max);
+
+    @Finder(query="select e " +
+                  "from Event e " +
+                  "where e.player = :player and " +
+                        "e.hand   = :hand")
+    List<Event> action(@Named("player") PlayerHandle of,
+                       @Named("hand")   HandHistory in);
 }

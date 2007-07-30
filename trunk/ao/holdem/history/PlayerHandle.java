@@ -57,8 +57,7 @@ public class PlayerHandle extends Base
     @ManyToMany(
         targetEntity=HandHistory.class,
         mappedBy = "players",
-        fetch    = FetchType.LAZY
-    )
+        fetch    = FetchType.LAZY)
     public List<HandHistory> getHands()
     {
         return hands;
