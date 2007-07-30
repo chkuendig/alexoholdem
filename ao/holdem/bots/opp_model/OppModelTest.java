@@ -33,7 +33,14 @@ public class OppModelTest
         for (HandHistory h : p.getHands())
         {
             int myMoves = 0;
-            for (Event e : h.getEvents())
+//            for (Event e : h.getEvents())
+//            {
+//                if (p.equals( e.getPlayer() ))
+//                {
+//                    myMoves++;
+//                }
+//            }
+            for (Event e : playerAccess.action(p, h))
             {
                 if (p.equals( e.getPlayer() ))
                 {

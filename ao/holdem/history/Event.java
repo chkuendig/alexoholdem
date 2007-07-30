@@ -41,6 +41,21 @@ public class Event extends Base
 
 
     //--------------------------------------------------------------------
+    private HandHistory hand;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="player_id")
+    public HandHistory getHand()
+    {
+        return hand;
+    }
+    public void setHand(HandHistory hand)
+    {
+        this.hand = hand;
+    }
+
+
+    //--------------------------------------------------------------------
     private TakenAction action;
 
     @Enumerated
