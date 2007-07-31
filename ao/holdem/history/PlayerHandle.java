@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 public class PlayerHandle extends Base
 {
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     public PlayerHandle() {}
     public PlayerHandle(String name)
     {
@@ -22,7 +22,7 @@ public class PlayerHandle extends Base
     }
 
 
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     private String name;
 
     @Index(name="name_index")
@@ -30,7 +30,7 @@ public class PlayerHandle extends Base
     public void   setName(String name) { this.name = name; }
 
 
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
     @OneToMany(mappedBy = "player",
@@ -50,7 +50,7 @@ public class PlayerHandle extends Base
     }
 
 
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     private List<HandHistory> hands =
             new ArrayList<HandHistory>();
 
@@ -75,7 +75,7 @@ public class PlayerHandle extends Base
     }
 
     
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {
