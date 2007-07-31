@@ -44,7 +44,6 @@ public class Event extends Base
     private HandHistory hand;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="player_id")
     public HandHistory getHand()
     {
         return hand;

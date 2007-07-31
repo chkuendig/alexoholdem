@@ -30,17 +30,12 @@ public class OppModelTest
     {
         System.out.println("analyzing " + p.getName());
 
+//        AnjiNet net = new AnjiNet();
+
         for (HandHistory h : p.getHands())
         {
             int myMoves = 0;
-//            for (Event e : h.getEvents())
-//            {
-//                if (p.equals( e.getPlayer() ))
-//                {
-//                    myMoves++;
-//                }
-//            }
-            for (Event e : playerAccess.action(p, h))
+            for (Event e : h.getEvents())
             {
                 if (p.equals( e.getPlayer() ))
                 {
