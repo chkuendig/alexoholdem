@@ -6,24 +6,24 @@ import java.util.*;
 /**
  * Properties based on which to make predictions:
  *
- * Immedate pot odds.
- * Bet Ratio: bets/(bets+calls).
- * Pot Ratio: amount_in / pot_size.
- * Last-Bets-To-Call > 0
- * Last-Action == BET/RAISE
+ * Immedate pot odds. (20/2)
+ * Bet Ratio: bets/(bets+calls). (20/2)
+ * Pot Ratio: amount_in / pot_size. (20/2)
+ * Last-Bets-To-Call > 0. (2)
+ * Last-Action == BET/RAISE (2)
  *
- * Ace on Board
- * King on Board
- * (#AKQ on Board) / (# Board Cards)
+ * Ace on Board (2)
+ * King on Board (2)
+ * (#AKQ on Board) / (# Board Cards). (20/2)
  * 
- * Number of opponents.
- * Number of active opponents.
- * Number of unacted opponents.
- * Position (in card reciept order).
- * Position within active opponents.
- * Betting round.
- * Remaining bets in round.
- * Pot size.
+ * Number of opponents. (1..9 = 9)
+ * Nplaumber of active opponents. (1..9 = 9)
+ * Number of unacted opponents. (1..9 = 9)
+ * Position (in card reciept order). (0..9 = 10)
+ * Position within active opponents. (0..9 = 10)
+ * Betting round. (4)
+ * Remaining bets in round. (0..4 = 5)
+ * Pot size. ()
  * Stakes.
  * Money to call.
  * Previouse action (0..4).

@@ -54,9 +54,9 @@ public class Main
 
         for (int i = 0; i < 1; i++)
         {
-//            runHoldemGame();
+            runHoldemGame();
 //            runNetCode();
-            runPoker();
+//            runPoker();
         }
     }
 

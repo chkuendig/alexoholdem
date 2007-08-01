@@ -41,17 +41,17 @@ public class Event extends Base
 
 
     //--------------------------------------------------------------------
-    private HandHistory hand;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    public HandHistory getHand()
-    {
-        return hand;
-    }
-    public void setHand(HandHistory hand)
-    {
-        this.hand = hand;
-    }
+//    private HandHistory hand;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    public HandHistory getHand()
+//    {
+//        return hand;
+//    }
+//    public void setHand(HandHistory hand)
+//    {
+//        this.hand = hand;
+//    }
 
 
     //--------------------------------------------------------------------

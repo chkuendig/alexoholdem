@@ -21,15 +21,12 @@ public class PlayerHandleLookup
     public PlayerHandle lookup(
             String domain, String name)
     {
-        String fullName = domain + "." + name;
-
-        PlayerHandle player = playerAccess.find(fullName);
+        PlayerHandle player = playerAccess.find(domain, name);
         if (player == null)
         {
-            player = new PlayerHandle(fullName);
+            player = new PlayerHandle(domain, name);
             session.get().saveOrUpdate( player );
         }
-
         return player;
     }
 
@@ -37,38 +34,4 @@ public class PlayerHandleLookup
     {
         return lookup("local", name);
     }
-
-
-    //--------------------------------------------------------------------
-//    public static PlayerHandle lookup(
-//            String domain, String name)
-//    {
-//        Session session =
-//                HibernateUtil.getSessionFactory()
-//                        .getCurrentSession();
-//        session.beginTransaction();
-//
-//        String fullName = domain + "." + name;
-//        List matches = session.createQuery(
-//                "from PlayerHandle where name = ?")
-//                .setString(0, fullName)
-//                .list();
-//
-//        PlayerHandle player;
-//        if (matches.isEmpty())
-//        {
-//            player = new PlayerHandle(fullName);
-//            session.save( player );
-//        }
-//        else
-//        {
-//            player = (PlayerHandle) matches.get(0);
-//        }
-//        session.getTransaction().commit();
-//        return player;
-//    }
-//    public static PlayerHandle lookup(String fromName)
-//    {
-//        return lookup("local", fromName);
-//    }
 }

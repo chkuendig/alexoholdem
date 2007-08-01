@@ -13,8 +13,12 @@ import java.util.List;
  */
 public interface PlayerHandleAccess
 {
-    @Finder(query="from PlayerHandle where name = :player_name")
-    PlayerHandle find(@Named("player_name") String name);
+    @Finder(query="from PlayerHandle " +
+                  "where domain = :player_domain and " +
+                        "name   = :player_name")
+    PlayerHandle find(
+            @Named("player_domain") String domain,
+            @Named("player_name")   String name);
 
     /**
      * @return lits of player handles sorted in decreasing
