@@ -16,9 +16,10 @@ public class PlayerHandle extends Base
 {
     //--------------------------------------------------------------------
     public PlayerHandle() {}
-    public PlayerHandle(String name)
+    public PlayerHandle(String domain, String name)
     {
-        setName( name );
+        setDomain( domain );
+        setName(   name   );
     }
 
 
@@ -28,6 +29,14 @@ public class PlayerHandle extends Base
     @Index(name="name_index")
     public String getName()            { return name;      }
     public void   setName(String name) { this.name = name; }
+
+
+    //--------------------------------------------------------------------
+    private String domain;
+
+    @Index(name="domain_index")
+    public String getDomain()              { return domain;        }
+    public void   setDomain(String domain) { this.domain = domain; }
 
 
     //--------------------------------------------------------------------

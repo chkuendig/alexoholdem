@@ -21,7 +21,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc.derek"));
+        modelOpponet(playerAccess.find("irc", "derek"));
     }
 
 

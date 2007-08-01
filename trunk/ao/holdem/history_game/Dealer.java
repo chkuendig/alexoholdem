@@ -150,6 +150,18 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
+    public void tallyDeltas(HandHistory hand)
+    {
+        Map<PlayerHandle, Money> deltas = hand.getDeltas();
+
+        for (Map.Entry<PlayerHandle, HistoryBot> ph :
+                byHandle.entrySet())
+        {
+            ph.getValue().tally(
+                    deltas.get( ph.getKey() ));
+        }
+    }
+
     public static boolean assignDeltas(
             HandHistory hand,
             Snapshot    finalSnapshot)
@@ -234,6 +246,7 @@ public class Dealer
                 hand.setDelta(player,
                               finalSnapshot.pot().minus(
                                       commit));
+//                byHandle.get(player)
             }
             else
             {
