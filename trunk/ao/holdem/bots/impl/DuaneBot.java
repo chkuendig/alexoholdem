@@ -1,4 +1,4 @@
-package ao.holdem.bots;
+package ao.holdem.bots.impl;
 
 import ao.holdem.bots.util.Util;
 import ao.holdem.def.bot.AbstractBot;

@@ -1,8 +1,8 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.LooseSklanskyBot;
-import ao.holdem.bots.MathTightBot;
+import ao.holdem.bots.impl.LooseSklanskyBot;
+import ao.holdem.bots.impl.MathTightBot;
 import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;
 import ao.holdem.bots.util.Odds;

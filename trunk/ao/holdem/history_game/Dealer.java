@@ -116,6 +116,7 @@ public class Dealer
         while (! s.isGameOver());
 
         assignDeltas( hand, s );
+        tallyDeltas(hand);
 
         hand.commitHandToPlayers();
         session.get().saveOrUpdate( hand );
