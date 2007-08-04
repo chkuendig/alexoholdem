@@ -1,4 +1,4 @@
-package ao.holdem.bots;
+package ao.holdem.bots.impl;
 
 import ao.holdem.bots.util.ApproximateOddFinder;
 import ao.holdem.bots.util.OddFinder;

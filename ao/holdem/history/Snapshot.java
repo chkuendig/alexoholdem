@@ -24,7 +24,7 @@ public class Snapshot
 
     //--------------------------------------------------------------------
     private List<PlayerHandle> players       = new ArrayList<PlayerHandle>();
-    private Set<PlayerHandle>  activePlayers = new HashSet<PlayerHandle>();
+    private Set<PlayerHandle>  activePlayers = new LinkedHashSet<PlayerHandle>();
     private PlayerHandle       nextToAct;
     private BettingRound       round;
 
@@ -210,6 +210,19 @@ public class Snapshot
         return new ArrayList<PlayerHandle>( activePlayers );
     }
 
+    public List<PlayerHandle> opponents()
+    {
+        List<PlayerHandle> opps = players();
+        opps.remove( nextToAct );
+        return opps;
+    }
+    public List<PlayerHandle> activeOpponents()
+    {
+        List<PlayerHandle> opps = activePlayers();
+        opps.remove( nextToAct );
+        return opps;
+    }
+
     public boolean isActive(PlayerHandle handle)
     {
         return activePlayers.contains( handle );
@@ -271,15 +284,15 @@ public class Snapshot
         return players.get( players.size() - 1 );
     }
 
-    public PlayerHandle underTheGun()
-    {
-        return null;
-    }
-
-    public PlayerHandle cutoff()
-    {
-        return null;
-    }
+//    public PlayerHandle underTheGun()
+//    {
+//        return null;
+//    }
+//
+//    public PlayerHandle cutoff()
+//    {
+//        return null;
+//    }
 
 
     //--------------------------------------------------------------------

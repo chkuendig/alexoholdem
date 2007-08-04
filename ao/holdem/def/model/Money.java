@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  */
 @Embeddable
-public class Money implements Serializable
+public class Money implements Comparable<Money>, Serializable
 {
     //--------------------------------------------------------------------
     public static final Money ZERO        = new Money(0);
@@ -101,6 +101,14 @@ public class Money implements Serializable
     private Money times(int factor)
     {
         return new Money(smallBlinds * factor);
+    }
+
+
+    //--------------------------------------------------------------------
+    public int compareTo(Money o)
+    {
+        return (smallBlinds < o.smallBlinds) ? -1 :
+               (smallBlinds > o.smallBlinds) ?  1 : 0;
     }
 
 

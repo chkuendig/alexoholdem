@@ -189,8 +189,16 @@ public class Community
         return FLOP_A == card ||
                FLOP_B == card ||
                FLOP_C == card ||
-               TURN == card ||
+               TURN == card   ||
                RIVER == card;
+    }
+
+    public boolean contains(Card.Rank rank)
+    {
+        return contains(Card.valueOf(rank, Card.Suit.CLUBS)) ||
+               contains(Card.valueOf(rank, Card.Suit.DIAMONDS)) ||
+               contains(Card.valueOf(rank, Card.Suit.HEARTS)) ||
+               contains(Card.valueOf(rank, Card.Suit.SPADES));
     }
 
 

@@ -1,7 +1,9 @@
 package ao.holdem.config;
 
 import ao.holdem.bots.opp_model.OppModelTest;
+import ao.holdem.bots.opp_model.predict.PredictEvolver;
 import ao.holdem.history.persist.PlayerHandleAccess;
+import com.anji.util.Properties;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.wideplay.warp.persist.PersistenceService;
@@ -15,8 +17,17 @@ import org.apache.log4j.Logger;
  */
 public class HoldemStarter
 {
-    public static void main(String args[])
+    public static void main(String args[]) throws Exception
     {
+        Properties props = new Properties("dpbalance.properties");
+		PredictEvolver evolver = new PredictEvolver();
+		evolver.init( props );
+		evolver.run();
+		System.exit( 0 );
+
+//        DoublePoleBalanceEvaluator.main(
+//                new String[]{"dpbalance.properties"});
+
         // configure log4j logging
         BasicConfigurator.configure();
         Logger.getLogger("org.hibernate").setLevel(Level.ERROR);

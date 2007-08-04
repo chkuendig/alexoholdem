@@ -1,27 +1,27 @@
-package ao.holdem.bots;
+package ao.holdem.bots.impl;
 
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.Environment;
-import ao.util.rand.Rand;
-
 
 /**
  *
  */
-public class RandomBot extends AbstractBot
+public class AlwaysRaiseBot extends AbstractBot
 {
     //--------------------------------------------------------------------
     public Action act(Environment env)
     {
-        return Rand.fromArray( Action.values() );
+//        System.out.println(
+//                "aways raising shane styles" +
+//                " with " + env.hole() + " on " + env.community());
+        return Action.RAISE_OR_CALL;
     }
 
 
     //--------------------------------------------------------------------
-//    @Override
 //    public String toString()
 //    {
-//        return "RandomBot";
+//        return "AlwaysRaiseBot";
 //    }
 }
