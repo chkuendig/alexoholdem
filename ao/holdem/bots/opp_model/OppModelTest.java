@@ -1,9 +1,11 @@
 package ao.holdem.bots.opp_model;
 
-import ao.holdem.history.Event;
+import ao.holdem.bots.opp_model.predict.AnjiPredictFitness;
+import ao.holdem.bots.opp_model.predict.PredictEvolver;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
+import com.anji.util.Properties;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -21,7 +23,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "derek"));
+        modelOpponet(playerAccess.find("irc", "dtm"));
     }
 
 
@@ -30,20 +32,31 @@ public class OppModelTest
     {
         System.out.println("analyzing " + p.getName());
 
-//        AnjiNet net = new AnjiNet();
+        try
+        {
+            doModelOpponet( p );
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void doModelOpponet(PlayerHandle p) throws Exception
+    {
+        Properties props = new Properties("anji_predict.properties");
+
+        AnjiPredictFitness ff = new AnjiPredictFitness( p );
+        ff.init( props );
 
         for (HandHistory h : p.getHands())
         {
-            int myMoves = 0;
-            for (Event e : h.getEvents())
-            {
-                if (p.equals( e.getPlayer() ))
-                {
-                    myMoves++;
-                }
-            }
-            System.out.println("my moves in hand: " + myMoves);
+            ff.addHand( h );
         }
+
+        PredictEvolver evolver = new PredictEvolver(ff);
+        evolver.init( props );
+        evolver.run();
     }
 
 

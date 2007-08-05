@@ -115,7 +115,7 @@ public class IrcHistorian
 
 
     //--------------------------------------------------------------------
-    @Transactional
+    @Transactional(rollbackOn = BadHandException.class)
     protected HandHistory addHistory(
             IrcHand            hand,
             List<PlayerHandle> handles,
@@ -165,7 +165,7 @@ public class IrcHistorian
                 stackActions(hist, action);
 
         PlayerHandle firstToAct =
-                hist.snapshot(null).nextToAct();
+                hist.snapshot().nextToAct();
         int fistToActIndex =
                 hist.getPlayers().indexOf( firstToAct );
 

@@ -201,12 +201,36 @@ public class Community
                contains(Card.valueOf(rank, Card.Suit.SPADES));
     }
 
+    public boolean flushPossible()
+    {
+        int suits[] = new int[4];
+
+        for (Card c : asArray())
+        {
+            if (c == null)
+            {
+                suits[0]++; suits[1]++; suits[2]++; suits[3]++;
+            }
+            else
+            {
+                suits[ c.suit().ordinal() ]++;
+            }
+        }
+
+        return suits[0] >= 3 || suits[1] >= 3 ||
+               suits[2] >= 3 || suits[3] >= 3;
+    }
+
 
     //--------------------------------------------------------------------
     public Card[] known()
     {
-        Card known[] = new Card[5];
+        return Arrays.copyOf(asArray(), knownCount());
+    }
 
+    private Card[] asArray()
+    {
+        Card known[] = new Card[5];
         switch (knownCount())
         {
             case 5: known[4] = RIVER;
@@ -215,8 +239,7 @@ public class Community
                     known[1] = FLOP_B;
                     known[0] = FLOP_A;
         }
-
-        return Arrays.copyOf(known, knownCount());
+        return known;
     }
 
 

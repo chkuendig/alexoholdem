@@ -56,13 +56,21 @@ public class Money implements Comparable<Money>, Serializable
 
     public int smallBets()
     {
-        return bigBets();
+        return bigBlinds();
     }
 
     public int bigBets()
     {
         return (smallBets() + 1) >> 1;
     }
+
+    // true for small bets, false for big bets
+    public int bets(boolean smallOrBig)
+    {
+        return (smallOrBig) ? smallBets()
+                            : bigBets();
+    }
+
 
     public int chips(int smallBlind)
     {

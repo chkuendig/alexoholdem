@@ -3,27 +3,28 @@ package ao.holdem.bots.opp_model.predict;
 import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.history.Snapshot;
 
 /**
  * ONLY WORKS FOR POST-FLOP!!
  *
  * Immedate pot odds.
- * Bet Ratio: bets/(bets+calls). (not in yet)
+ * Bet Ratio: bets/(bets+calls).
  * Pot Ratio: amount_in / pot_size.
- * Committed in this Round. (not in yet)
- * Bets-To-Call == 0 (not in yet)
- * Bets-To-Call == 1 (not in yet)
- * Bets-To-Call >= 2 (not in yet)
- * Stage == FLOP (not in yet)
- * Stage == TURN (not in yet)
- * Stage == RIVER (not in yet)
+ * Committed in this Round.
+ * Bets-To-Call == 0.
+ * Bets-To-Call == 1.
+ * Bets-To-Call >= 2.
+ * Stage == FLOP.
+ * Stage == TURN.
+ * Stage == RIVER.
  * Last-Bets-To-Call > 0.
  * Last-Action == BET/RAISE.
  *
  * Number of opponents.
  * Number of active opponents.
- * Number of unacted opponents. (not in yet)
+ * Number of unacted opponents.
  * Flush Possible. (not in yet)
  * Ace on Board.
  * King on Board.
@@ -36,14 +37,25 @@ public class PredictionCase
 {
     //--------------------------------------------------------------------
     private double immedatePotOdds;
+    private double betRatio;
     private double potRatio;
+    private double committedThisRoundBool;
+    private double zeroBetsToCallBool;
+    private double oneBetToCallBool;
+    private double manyBetsToCallBool;
+    private double flopStageBool;
+    private double turnStageBool;
+    private double riverStageBool;
     private double lastBetsToCallBool;
     private double lastActRaiseBool;
+    private double numOppsFraction;
+    private double numActiveOppsFraction;
+    private double numUnactedOppsFraction;
+    private double flushPossibleBool;
     private double aceOnBoardBool;
     private double kingOnBoardBool;
     private double aceQueenKingPercent;
-    private double numOppsFraction;
-    private double numActiveOppsFraction;
+
     private double position;
     private double activePosition;
 //    private double
@@ -63,31 +75,47 @@ public class PredictionCase
                 (curr.toCall().smallBlinds() +
                     curr.pot().smallBlinds());
 
+        double raises = 4 - curr.remainingRaises();
+        betRatio = raises / (raises + curr.numCalls() + 0.001);
         potRatio =
-                (double) curr.stakes().smallBlinds() /
-                         curr.pot().smallBlinds();
+                ((double) curr.stakes().smallBlinds()) /
+                          curr.pot().smallBlinds();
+        committedThisRoundBool =
+                asDouble(curr.latestRoundCommitment().smallBlinds() > 0);
+
+        zeroBetsToCallBool =
+                asDouble(curr.toCall().bets( curr.isSmallBet() ) == 0);
+        oneBetToCallBool =
+                asDouble(curr.toCall().bets( curr.isSmallBet() ) == 1);
+        manyBetsToCallBool =
+                asDouble(curr.toCall().bets( curr.isSmallBet() ) >= 2);
+
+        flopStageBool  = asDouble(curr.round() == BettingRound.FLOP);
+        turnStageBool  = asDouble(curr.round() == BettingRound.TURN);
+        riverStageBool = asDouble(curr.round() == BettingRound.RIVER);
 
         lastBetsToCallBool =
                 (prev.toCall().smallBlinds() > 0)
                 ? 1.0 : 0.0;
-
         lastActRaiseBool =
                 (prevAct == TakenAction.RAISE)
                 ? 1.0 : 0.0;
 
-        aceOnBoardBool =  asDouble(community.contains(Card.Rank.ACE));
-        kingOnBoardBool = asDouble(community.contains(Card.Rank.KING));
+        numOppsFraction = curr.opponents().size() / 9.0;
+        numActiveOppsFraction = curr.activeOpponents().size() / 9.0;
+        numUnactedOppsFraction = curr.unactedThisRound() / 10.0;
+
+        flushPossibleBool   = asDouble(community.flushPossible());
+        aceOnBoardBool      = asDouble(community.contains(Card.Rank.ACE));
+        kingOnBoardBool     = asDouble(community.contains(Card.Rank.KING));
         aceQueenKingPercent =
                 (asDouble(community.contains(Card.Rank.ACE)) +
                  asDouble(community.contains(Card.Rank.KING)) +
                  asDouble(community.contains(Card.Rank.QUEEN))) /
                         (community.knownCount());
 
-        numOppsFraction = curr.opponents().size() / 9.0;
-        numActiveOppsFraction = curr.activeOpponents().size() / 9.0;
-
-        position = (curr.players().indexOf( curr.nextToAct() ) + 1) / 10.0;
-        activePosition = (curr.activePlayers().indexOf( curr.nextToAct() ) + 1) / 10.0;
+        position = (curr.players().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
+        activePosition = (curr.activePlayers().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
 
         action = currAct;
     }
@@ -101,17 +129,26 @@ public class PredictionCase
     {
         return new double[] {
                 immedatePotOdds,
+                betRatio,
                 potRatio,
+                committedThisRoundBool,
+                zeroBetsToCallBool,
+                oneBetToCallBool,
+                manyBetsToCallBool,
+                flopStageBool,
+                turnStageBool,
+                riverStageBool,
                 lastBetsToCallBool,
                 lastActRaiseBool,
+                numOppsFraction,
+                numActiveOppsFraction,
+                numUnactedOppsFraction,
+                flushPossibleBool,
                 aceOnBoardBool,
                 kingOnBoardBool,
                 aceQueenKingPercent,
-                numOppsFraction,
-                numActiveOppsFraction,
                 position,
                 activePosition,
-
                 1 // bias
         };
     }

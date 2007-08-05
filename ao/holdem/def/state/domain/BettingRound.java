@@ -8,5 +8,10 @@ public enum BettingRound
     PREFLOP,
     FLOP,
     TURN,
-    RIVER
+    RIVER;
+
+    public BettingRound previous()
+    {
+        return values()[ ordinal() - 1 ];
+    }
 }

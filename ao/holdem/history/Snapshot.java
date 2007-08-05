@@ -2,9 +2,8 @@ package ao.holdem.history;
 
 import ao.holdem.def.model.Money;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -14,8 +13,7 @@ import java.util.*;
 public class Snapshot
 {
     //--------------------------------------------------------------------
-    private final static Logger log =
-            Logger.getLogger(Snapshot.class.getName());
+    private final static Logger log = Logger.getLogger(Snapshot.class);
     static
     {
         log.setLevel(Level.WARN);
@@ -31,14 +29,17 @@ public class Snapshot
     private Money        stakes;
     private Money        pot;
 
+    private int          numCalls;
     private int          remainingBets;
     private PlayerHandle smallBlind;
     private PlayerHandle bigBlind;
 
+    private Map<BettingRound, Money>             roundCommitment;
     private Map<PlayerHandle, Money>             commitment;
-    private Map<PlayerHandle, List<TakenAction>> actions;
+//    private Map<PlayerHandle, List<TakenAction>> actions;
 
     private PlayerHandle latestRoundStaker = null;
+    private int          unactedThisRound;
 
 
     //--------------------------------------------------------------------
@@ -48,10 +49,11 @@ public class Snapshot
         activePlayers.addAll( players );
 
         commitment = new HashMap<PlayerHandle, Money>();
-        actions = new HashMap<PlayerHandle, List<TakenAction>>();
+        roundCommitment = new HashMap<BettingRound, Money>();
+//        actions = new HashMap<PlayerHandle, List<TakenAction>>();
         for (PlayerHandle player : players)
         {
-            actions.put(player, new ArrayList<TakenAction>());
+//            actions.put(player, new ArrayList<TakenAction>());
             commitment.put(player, Money.ZERO);
         }
 
@@ -64,6 +66,9 @@ public class Snapshot
         pot       = Money.SMALL_BLIND.plus( Money.BIG_BLIND );
         round     = BettingRound.PREFLOP;
         nextToAct = nextActive( bigBlind );
+
+        roundCommitment.put(round, Money.BIG_BLIND);
+        unactedThisRound = players.size();
     }
 
     private void designateBlinds(List<PlayerHandle> players)
@@ -118,7 +123,7 @@ public class Snapshot
         }
         nextToAct = nextActive( nextToAct );
 
-        actions.get( event.getPlayer() ).add( event.getAction() );
+//        actions.get( event.getPlayer() ).add( event.getAction() );
         switch (event.getAction())
         {
             case FOLD:
@@ -134,6 +139,7 @@ public class Snapshot
                 stakes = stakes.plus( betSize() );
                 commitment.put(event.getPlayer(),
                                stakes);
+                roundCommitment.put(round, stakes);
                 pot    = pot.plus( betSize() );
                 latestRoundStaker = event.getPlayer();
                 remainingBets--;
@@ -144,13 +150,16 @@ public class Snapshot
                                 commitment.get(event.getPlayer()));
                 pot = pot.plus(delta);
                 commitment.put(event.getPlayer(), stakes);
+                roundCommitment.put(round, stakes);
                 defineLatestRoundStaker( event.getPlayer() );
+                numCalls++;
                 break;
 
 //            case CHECK:
 //                defineLatestRoundStaker( event.getPlayer() );
 //                break;
         }
+        if (unactedThisRound > 0) unactedThisRound--;
 
         return this;
     }
@@ -166,6 +175,7 @@ public class Snapshot
         round = BettingRound.values()[ round.ordinal() + 1 ];
         nextToAct = firstToActPostFlop();
         latestRoundStaker = null;
+        unactedThisRound  = activePlayers.size();
 
         return true;
     }
@@ -178,12 +188,16 @@ public class Snapshot
         }
     }
     
-    private Money betSize()
+    public Money betSize()
     {
-        return round == BettingRound.PREFLOP ||
-               round == BettingRound.FLOP
+        return isSmallBet()
                 ? Money.SMALL_BET
                 : Money.BIG_BET;
+    }
+    public boolean isSmallBet()
+    {
+        return round == BettingRound.PREFLOP ||
+               round == BettingRound.FLOP;
     }
     
     public boolean isRoundDone()
@@ -233,6 +247,13 @@ public class Snapshot
         return nextToAct;
     }
 
+    public PlayerHandle nextToActLookahead()
+    {
+        return isRoundDone()
+                ? firstToActPostFlop()
+                : nextToAct;
+    }
+
     public boolean isHeadsUp()
     {
         return players.size() == 2;
@@ -265,6 +286,11 @@ public class Snapshot
             }
         }
         return null;
+    }
+
+    public int unactedThisRound()
+    {
+        return unactedThisRound;
     }
 
 
@@ -344,6 +370,21 @@ public class Snapshot
         return commitment( nextToAct() );
     }
 
+    public Money latestRoundCommitment(PlayerHandle player)
+    {
+        Money prevRoundCommitment = Money.ZERO;
+        if (round != BettingRound.PREFLOP)
+        {
+            prevRoundCommitment =
+                    roundCommitment.get(round.previous());
+        }
+        return commitment(player).minus( prevRoundCommitment );
+    }
+    public Money latestRoundCommitment()
+    {
+        return latestRoundCommitment( nextToAct() );
+    }
+
 
     //--------------------------------------------------------------------
     public int raises()
@@ -355,8 +396,40 @@ public class Snapshot
         return remainingBets;
     }
 
-    public List<TakenAction> actions(PlayerHandle by)
+    public int numCalls()
     {
-        return actions.get( by );
+        return numCalls;
+    }
+
+//    public List<TakenAction> actions(PlayerHandle by)
+//    {
+//        return actions.get( by );
+//    }
+
+
+    //--------------------------------------------------------------------
+    public Snapshot prototype()
+    {
+        Snapshot proto = new Snapshot(players);
+
+        proto.activePlayers.addAll( activePlayers );
+        proto.nextToAct = nextToAct;
+        proto.round     = round;
+
+        proto.stakes = stakes;
+        proto.pot    = pot;
+
+        proto.numCalls      = numCalls;
+        proto.remainingBets = remainingBets;
+        proto.smallBlind    = smallBlind;
+        proto.bigBlind      = bigBlind;
+
+        proto.roundCommitment.putAll( roundCommitment );
+        proto.commitment.putAll( commitment );
+        proto.latestRoundStaker = latestRoundStaker;
+        proto.unactedThisRound  = unactedThisRound;
+
+        return proto;
     }
 }
+
