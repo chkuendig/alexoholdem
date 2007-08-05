@@ -133,6 +133,19 @@ public class HandHistory extends Base
         return e;
     }
 
+    public List<Event> getEvents(PlayerHandle forPlayer)
+    {
+        List<Event> playerEvents = new ArrayList<Event>();
+        for (Event e : getEvents())
+        {
+            if (e.getPlayer().equals( forPlayer ))
+            {
+                playerEvents.add( e );
+            }
+        }
+        return playerEvents;
+    }
+
 
     //--------------------------------------------------------------------
     private Map<PlayerHandle, Hole> holes =
@@ -184,16 +197,23 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
+    public Snapshot snapshot()
+    {
+        return snapshot(null);
+    }
     public Snapshot snapshot(Event asOf)
     {
         List<Event> toCapture = new ArrayList<Event>();
 
-        for (Event event : getEvents())
+        if (asOf != null)
         {
-            toCapture.add( event );
-            if (event.equals(asOf))
+            for (Event event : getEvents())
             {
-                break;
+                toCapture.add( event );
+                if (event.equals(asOf))
+                {
+                    break;
+                }
             }
         }
 

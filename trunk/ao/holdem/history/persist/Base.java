@@ -28,16 +28,14 @@ public class Base implements Serializable
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+
+        // getClass() != o.getClass() doesn't work
+        //  due to CGLib instrumentation by Hibernate.
+        if (o == null || !(o instanceof Base)) return false;
 
         Base base = (Base) o;
-        if (id != null && base.id != null)
-        {
-            return id.equals( base.id );
-        }
-        return id      == null &&
-               base.id == null &&
-               this    == base;
+        return getId() != null && base.getId() != null &&
+               getId().equals(base.getId());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package ao.holdem.bots.opp_model.mix;
 
 import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.bots.opp_model.mix.Classification;
 
 /**
  * Randomized Mixed Action.
@@ -31,6 +30,11 @@ public class MixedAction extends Classification<TakenAction>
         add( TakenAction.FOLD,  foldWeight  );
     }
 
+    public MixedAction(double triplet[])
+    {
+        this( triplet[0], triplet[1], triplet[2] );
+    }
+
 
     //--------------------------------------------------------------------
     public double raiseProbability()
@@ -46,6 +50,23 @@ public class MixedAction extends Classification<TakenAction>
     public double foldProability()
     {
         return probabilityOf( TakenAction.FOLD );
+    }
+
+    public TakenAction mostProbable()
+    {
+        double raise = raiseProbability();
+        double call  = callProbability();
+        double fold  = foldProability();
+
+        if (raise >= call && raise >= fold)
+        {
+            return TakenAction.RAISE;
+        }
+        else if (call >= raise && call >= fold)
+        {
+            return TakenAction.CALL;
+        }
+        return TakenAction.FOLD;
     }
 }
 
