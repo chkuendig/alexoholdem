@@ -9,25 +9,28 @@ import ao.holdem.def.state.env.TakenAction;
 public class MixedAction extends Classification<TakenAction>
 {
     //--------------------------------------------------------------------
-    public MixedAction(double raiseProbability,
-                       double callProbability)
+    public MixedAction()
     {
         super( TakenAction.class );
-
-        add( TakenAction.RAISE, raiseProbability );
-        add( TakenAction.CALL,  callProbability );
-        add( TakenAction.FOLD,  1.0 - callProbability - callProbability );
     }
 
-    public MixedAction(double raiseWeight,
-                       double callWeight,
-                       double foldWeight)
+    public MixedAction(double foldProbability,
+                       double callProbability)
     {
-        super( TakenAction.class );
+        this();
+        add( TakenAction.FOLD,  foldProbability );
+        add( TakenAction.CALL,  callProbability );
+        add( TakenAction.RAISE, 1.0 - callProbability - callProbability );
+    }
 
-        add( TakenAction.RAISE, raiseWeight );
-        add( TakenAction.CALL,  callWeight  );
+    public MixedAction(double foldWeight,
+                       double callWeight,
+                       double raiseWeight)
+    {
+        this();
         add( TakenAction.FOLD,  foldWeight  );
+        add( TakenAction.CALL,  callWeight  );
+        add( TakenAction.RAISE, raiseWeight );
     }
 
     public MixedAction(double triplet[])
@@ -35,8 +38,19 @@ public class MixedAction extends Classification<TakenAction>
         this( triplet[0], triplet[1], triplet[2] );
     }
 
+    public MixedAction(TakenAction act)
+    {
+        this();
+        add(act, 1.0);
+    }
+
 
     //--------------------------------------------------------------------
+    public double foldProability()
+    {
+        return probabilityOf( TakenAction.FOLD );
+    }
+
     public double raiseProbability()
     {
         return probabilityOf( TakenAction.RAISE );
@@ -45,28 +59,6 @@ public class MixedAction extends Classification<TakenAction>
     public double callProbability()
     {
         return probabilityOf( TakenAction.CALL );
-    }
-
-    public double foldProability()
-    {
-        return probabilityOf( TakenAction.FOLD );
-    }
-
-    public TakenAction mostProbable()
-    {
-        double raise = raiseProbability();
-        double call  = callProbability();
-        double fold  = foldProability();
-
-        if (raise >= call && raise >= fold)
-        {
-            return TakenAction.RAISE;
-        }
-        else if (call >= raise && call >= fold)
-        {
-            return TakenAction.CALL;
-        }
-        return TakenAction.FOLD;
     }
 }
 

@@ -1,12 +1,6 @@
 package ao.holdem.bots.opp_model.predict;
 
 import ao.holdem.bots.opp_model.mix.MixedAction;
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Event;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 import com.anji.integration.Activator;
 import com.anji.integration.ActivatorTranscriber;
@@ -17,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.jgap.BulkFitnessFunction;
 import org.jgap.Chromosome;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,67 +28,15 @@ public class AnjiPredictFitness
 
 
     //--------------------------------------------------------------------
-    private final PlayerHandle         player;
-    private final List<PredictionCase> cases;
+    private final PredictionSet predictions;
 
     private ActivatorTranscriber factory;
 
 
     //--------------------------------------------------------------------
-    public AnjiPredictFitness(PlayerHandle forPlayer)
+    public AnjiPredictFitness(PredictionSet predictions)
     {
-        player = forPlayer;
-        cases  = new ArrayList<PredictionCase>();
-    }
-
-    public void addHand(HandHistory hand)
-    {
-//        System.out.println(++count);
-        cases.addAll( casesFor(hand) );
-    }
-
-    private List<PredictionCase> casesFor(HandHistory hand)
-    {
-        List<PredictionCase> handCases = new ArrayList<PredictionCase>();
-
-        Snapshot prev = null;
-        TakenAction prevAct = null;
-
-        Snapshot cursor = hand.snapshot();
-        for (Event e : hand.getEvents())
-        {
-            if (e.getPlayer().equals( player ))
-            {
-                assert cursor.nextToActLookahead().equals( player );
-                Snapshot curr = cursor.prototype();
-
-                if (prev != null &&
-                        e.getRound() != BettingRound.PREFLOP)
-                {
-                    TakenAction currAct = e.getAction();
-                    Community community = hand.getCommunity().asOf( e.getRound() );
-
-                    handCases.add( new PredictionCase(prev, prevAct,
-                                                      curr, currAct,
-                                                      community) );
-                }
-
-                prev    = curr;
-                prevAct = e.getAction();
-            }
-
-            try
-            {
-                cursor.addNextEvent( e );
-            }
-            catch (Error ex)
-            {
-                log.warn(ex);
-                return new ArrayList<PredictionCase>();
-            }
-        }
-
-        return handCases;
+        this.predictions = predictions;
     }
 
 
@@ -122,7 +63,7 @@ public class AnjiPredictFitness
         }
 
         int fitness = 0;
-        for (PredictionCase predictionCase : cases)
+        for (PredictionCase predictionCase : predictions.cases())
         {
             fitness += accuracyOf( activator, predictionCase );
         }
@@ -132,7 +73,7 @@ public class AnjiPredictFitness
     private int accuracyOf(Activator activator, PredictionCase c)
     {
         MixedAction prediction =
-                new MixedAction(activator.next( c.asNeatInput() ));
+                new MixedAction(activator.next( c.asNeuralInput() ));
 
 //        return (int) Math.round(
 //                prediction.probabilityOf( c.outputAction() )
@@ -145,7 +86,7 @@ public class AnjiPredictFitness
     //--------------------------------------------------------------------
     public int getMaxFitnessValue()
     {
-        return cases.size() * ACTION_WEIGHT;
+        return predictions.cases().size() * ACTION_WEIGHT;
     }
 
     public void init(Properties props) throws Exception

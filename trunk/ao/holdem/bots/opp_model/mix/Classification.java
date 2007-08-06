@@ -63,6 +63,31 @@ public class Classification<T extends Enum>
         return null;
     }
 
+    //--------------------------------------------------------------------
+    public T mostProbable()
+    {
+        T      heaviestValue  = null;
+        double heaviestWeight = Double.MIN_VALUE;
+
+        for (int i = 0; i < weights.length; i++)
+        {
+            if (heaviestWeight < weights[i])
+            {
+                heaviestWeight = weights[i];
+                heaviestValue  = vals[i];
+            }
+        }
+
+        return heaviestValue;
+    }
+
+
+    //--------------------------------------------------------------------
+    public double[] weights()
+    {
+        return weights.clone();
+    }
+
 
     //--------------------------------------------------------------------
     @Override

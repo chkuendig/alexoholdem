@@ -1,9 +1,10 @@
 package ao.holdem.bots.opp_model.predict;
 
-import ao.holdem.def.model.cards.Community;
+import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.Snapshot;
 
 /**
@@ -125,7 +126,7 @@ public class PredictionCase
         return bool ? 1.0 : 0.0;
     }
 
-    public double[] asNeatInput()
+    public double[] asNeuralInput()
     {
         return new double[] {
                 immedatePotOdds,
@@ -147,9 +148,9 @@ public class PredictionCase
                 aceOnBoardBool,
                 kingOnBoardBool,
                 aceQueenKingPercent,
-                position,
-                activePosition,
-                1 // bias
+//                position,
+//                activePosition,
+//                1 // bias
         };
     }
 
@@ -157,5 +158,9 @@ public class PredictionCase
     public TakenAction outputAction()
     {
         return action;
+    }
+    public double[] neuralOutput()
+    {
+        return new MixedAction(action).weights(); 
     }
 }
