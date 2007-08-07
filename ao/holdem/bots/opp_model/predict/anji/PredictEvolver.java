@@ -1,4 +1,4 @@
-package ao.holdem.bots.opp_model.predict;
+package ao.holdem.bots.opp_model.predict.anji;
 
 import com.anji.integration.LogEventListener;
 import com.anji.integration.PersistenceEventListener;
@@ -67,6 +67,7 @@ public class PredictEvolver implements Configurable
 
     /**
      * ctor; must call <code>init()</code> before using this object
+     * @param ff ...
      */
     public PredictEvolver(BulkFitnessFunction ff) {
         super();

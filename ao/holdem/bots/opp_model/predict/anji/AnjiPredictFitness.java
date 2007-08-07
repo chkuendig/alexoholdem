@@ -1,13 +1,13 @@
-package ao.holdem.bots.opp_model.predict;
+package ao.holdem.bots.opp_model.predict.anji;
 
 import ao.holdem.bots.opp_model.mix.MixedAction;
-import ao.holdem.history.Snapshot;
+import ao.holdem.bots.opp_model.predict.PredictionCase;
+import ao.holdem.bots.opp_model.predict.PredictionSet;
 import com.anji.integration.Activator;
 import com.anji.integration.ActivatorTranscriber;
 import com.anji.integration.TranscriberException;
 import com.anji.util.Configurable;
 import com.anji.util.Properties;
-import org.apache.log4j.Logger;
 import org.jgap.BulkFitnessFunction;
 import org.jgap.Chromosome;
 
@@ -21,7 +21,7 @@ public class AnjiPredictFitness
                    Configurable
 {
     //-------------------------------------------------------------------
-    private final static Logger log = Logger.getLogger(Snapshot.class);
+//    private final static Logger log = Logger.getLogger(Snapshot.class);
 
     private static final int ACTION_WEIGHT = 1000;
 //    private static int count = 0;
