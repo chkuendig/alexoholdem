@@ -1,12 +1,9 @@
 package ao.holdem.bots.opp_model;
 
-import ao.holdem.bots.opp_model.predict.AnjiPredictFitness;
-import ao.holdem.bots.opp_model.predict.PredictEvolver;
-import ao.holdem.bots.opp_model.predict.PredictionSet;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
+import ao.holdem.bots.opp_model.predict.PredictionSet;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
-import com.anji.util.Properties;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -24,7 +21,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "Wood"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
     }
 
 
@@ -52,17 +49,17 @@ public class OppModelTest
         backprop( predictions );
     }
 
-    private void anji(PredictionSet predictions) throws Exception
-    {
-        Properties props = new Properties("anji_predict.properties");
-
-        AnjiPredictFitness ff = new AnjiPredictFitness( predictions );
-        ff.init( props );
-
-        PredictEvolver evolver = new PredictEvolver(ff);
-        evolver.init( props );
-        evolver.run();
-    }
+//    private void anji(PredictionSet predictions) throws Exception
+//    {
+//        Properties props = new Properties("anji_predict.properties");
+//
+//        AnjiPredictFitness ff = new AnjiPredictFitness( predictions );
+//        ff.init( props );
+//
+//        PredictEvolver evolver = new PredictEvolver(ff);
+//        evolver.init( props );
+//        evolver.run();
+//    }
 
     // see http://www.jooneworld.com/docs/sampleEngine.html
     private void backprop(PredictionSet predictions)
@@ -73,16 +70,16 @@ public class OppModelTest
 
 
     //--------------------------------------------------------------------
-    /*  Barrister :: 3760
-        Voyeur :: 3088
-        BlackBart :: 2903
-        pcktkings :: 2517
-        BruceZ :: 2051
-        beernutz :: 2024
-        holdemgod :: 2000
-        Wood :: 1840
-        Shrink2 :: 1832
-        frenchy :: 1742 */
+    /*  sagerbot :: 2785
+        gsr :: 2515
+        oejack4 :: 2293
+        Shazbot :: 1934
+        alfalfa :: 1861
+        pliu :: 1650
+        num :: 1596
+        jb :: 1586
+        bmk :: 1470
+        perfecdoh :: 1461 */
     private void retrieveMostPrevalent()
     {
         for (PlayerHandle p : playerAccess.byPrevalence(100))

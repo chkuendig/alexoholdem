@@ -64,13 +64,11 @@ public class PredictionCase
 
     private double position;
     private double activePosition;
-//    private double
 
     private TakenAction action;
 
 
     //--------------------------------------------------------------------
-    //Pot Ratio: amount_in / pot_size.
     public PredictionCase(
             Snapshot prev, TakenAction prevAct,
             Snapshot curr, TakenAction currAct,
@@ -152,13 +150,13 @@ public class PredictionCase
                 riverStageBool,
                 lastBetsToCallBool,
                 lastActRaiseBool,
-//                numOppsFraction,
+                numOppsFraction,
                 numActiveOppsFraction,
                 numUnactedOppsFraction,
-//                flushPossibleBool,
-//                aceOnBoardBool,
-//                kingOnBoardBool,
-//                aceQueenKingPercent,
+                flushPossibleBool,
+                aceOnBoardBool,
+                kingOnBoardBool,
+                aceQueenKingPercent,
                 position,
                 activePosition,
 //                winPercent,

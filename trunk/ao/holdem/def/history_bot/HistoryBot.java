@@ -18,7 +18,7 @@ public interface HistoryBot
     //--------------------------------------------------------------------
     public Action act(
             HandHistory hand,
-            Snapshot env);
+            Snapshot    env);
 
 
     //--------------------------------------------------------------------
