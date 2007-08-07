@@ -1,8 +1,12 @@
 package ao.holdem.bots.opp_model.predict;
 
 import ao.holdem.bots.opp_model.mix.MixedAction;
+import ao.holdem.bots.util.ApproximateOddFinder;
+import ao.holdem.bots.util.OddFinder;
+import ao.holdem.bots.util.Odds;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Community;
+import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.Snapshot;
@@ -56,6 +60,7 @@ public class PredictionCase
     private double aceOnBoardBool;
     private double kingOnBoardBool;
     private double aceQueenKingPercent;
+    private double winPercent;
 
     private double position;
     private double activePosition;
@@ -69,7 +74,8 @@ public class PredictionCase
     public PredictionCase(
             Snapshot prev, TakenAction prevAct,
             Snapshot curr, TakenAction currAct,
-            Community community)
+            Community   community,
+            Hole        hole)
     {
         immedatePotOdds =
                 ((double) curr.toCall().smallBlinds()) /
@@ -118,6 +124,11 @@ public class PredictionCase
         position = (curr.players().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
         activePosition = (curr.activePlayers().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
 
+        OddFinder oddFinder = new ApproximateOddFinder();
+        Odds odds = oddFinder.compute(
+                        hole, community, curr.activeOpponents().size());
+        winPercent = odds.strengthVsRandom();
+
         action = currAct;
     }
 
@@ -141,15 +152,16 @@ public class PredictionCase
                 riverStageBool,
                 lastBetsToCallBool,
                 lastActRaiseBool,
-                numOppsFraction,
+//                numOppsFraction,
                 numActiveOppsFraction,
                 numUnactedOppsFraction,
-                flushPossibleBool,
-                aceOnBoardBool,
-                kingOnBoardBool,
-                aceQueenKingPercent,
-//                position,
-//                activePosition,
+//                flushPossibleBool,
+//                aceOnBoardBool,
+//                kingOnBoardBool,
+//                aceQueenKingPercent,
+                position,
+                activePosition,
+//                winPercent,
 //                1 // bias
         };
     }
