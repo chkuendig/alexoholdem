@@ -1,6 +1,7 @@
 package ao.holdem.bots.opp_model.predict;
 
 import ao.holdem.def.model.cards.Community;
+import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.Event;
@@ -37,6 +38,8 @@ public class PredictionSet
     {
         for (HandHistory h : p.getHands())
         {
+            Hole hole = h.getHoles().get(p);
+            if (hole == null || !hole.bothCardsVisible()) continue;
             cases.addAll( casesFor(p, h) );
         }
     }
@@ -64,9 +67,12 @@ public class PredictionSet
                     TakenAction currAct = e.getAction();
                     Community community = hand.getCommunity().asOf( e.getRound() );
 
-                    handCases.add( new PredictionCase(prev, prevAct,
-                                                      curr, currAct,
-                                                      community) );
+                    handCases.add(
+                            new PredictionCase(
+                                    prev, prevAct,
+                                    curr, currAct,
+                                    community,
+                                    hand.getHoles().get(player)) );
                 }
 
                 prev    = curr;
@@ -92,5 +98,22 @@ public class PredictionSet
     public List<PredictionCase> cases()
     {
         return cases;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int numCases()
+    {
+        return cases.size();
+    }
+
+    public int caseInputSize()
+    {
+        return cases.get(0).asNeuralInput().length;
+    }
+
+    public int caseOutputSize()
+    {
+        return cases.get(0).neuralOutput().length;
     }
 }
