@@ -6,7 +6,8 @@ import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 /**
  *
  */
-public class Retrodiction
+public class Retrodiction<C extends PredictionContext,
+                          O extends Observation>
         implements PredictionContext,
                    Observation
 {
@@ -17,8 +18,8 @@ public class Retrodiction
 
     //--------------------------------------------------------------------
     public Retrodiction(
-            PredictionContext context,
-            Observation       observation)
+            C context,
+            O observation)
     {
         CONTEXT_DELEGET     = context;
         OBSERVATION_DELEGET = observation;
