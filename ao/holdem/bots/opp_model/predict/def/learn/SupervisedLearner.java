@@ -14,5 +14,7 @@ public interface SupervisedLearner<C extends PredictionContext,
 {
     public void add(List<Retrodiction<C, O>> data);
 
+//    public void learn(int iterations, int timeoutMillis);
+    
     public O    predict(C context);
 }
