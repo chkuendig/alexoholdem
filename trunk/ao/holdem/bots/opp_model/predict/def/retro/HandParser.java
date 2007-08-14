@@ -8,7 +8,6 @@ import ao.holdem.bots.opp_model.predict.def.context.postflop.HoleBlindPostflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleAwarePreflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleBlindPreflop;
 import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
-import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
@@ -30,12 +29,12 @@ public class HandParser
 
 
     //-------------------------------------------------------------------
-    public RetroSet casesFor(
+    public HoldemRetroSet casesFor(
             HandHistory  hand,
             PlayerHandle player)
     {
-        RetroSet cases = new RetroSet();
-        Hole     hole  = extractHole(hand, player);
+        HoldemRetroSet cases = new HoldemRetroSet();
+        Hole           hole  = extractHole(hand, player);
 
         Snapshot    prev    = null;
         TakenAction prevAct = null;
@@ -45,11 +44,11 @@ public class HandParser
         {
             if (e.getPlayer().equals( player ))
             {
-                assert cursor.nextToActLookahead().equals( player );
+                assert cursor.nextToAct().equals( player );
                 Snapshot curr = cursor.prototype();
 
-                BettingRound round       = e.getRound();
-                Observation  observation =
+                BettingRound      round       = e.getRound();
+                HoldemObservation observation =
                         new HoldemObservation(e.getAction());
 
                 addCase(cases,
@@ -65,21 +64,21 @@ public class HandParser
                 prevAct = e.getAction();
             }
 
-            if (! tryAddEvent(cursor, e)) return new RetroSet();
+            if (! tryAddEvent(cursor, e)) return new HoldemRetroSet();
         }
 
         return cases;
     }
 
     private void addCase(
-            RetroSet     cases,
+            HoldemRetroSet cases,
             Snapshot     prev,
             TakenAction  prevAct,
             Snapshot     curr,
             Community    community,
             Hole         hole,
             BettingRound round,
-            Observation  observation)
+            HoldemObservation observation)
     {
         if (hole == null)
         {
@@ -153,7 +152,7 @@ public class HandParser
         {
             if (e.getPlayer().equals( nextToAct ))
             {
-                assert cursor.nextToActLookahead().equals( nextToAct );
+                assert cursor.nextToAct().equals( nextToAct );
 
                 prev    = cursor.prototype();
                 prevAct = e.getAction();
@@ -162,7 +161,7 @@ public class HandParser
             if (! tryAddEvent(cursor, e)) return null;
         }
 
-        assert cursor.nextToActLookahead().equals( nextToAct );
+        assert cursor.nextToAct().equals( nextToAct );
         return nextToActContext(
                 prev, prevAct, cursor,
                 hand.getCommunity());

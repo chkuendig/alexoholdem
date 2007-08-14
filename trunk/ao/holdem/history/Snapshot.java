@@ -21,8 +21,11 @@ public class Snapshot
 
 
     //--------------------------------------------------------------------
-    private List<PlayerHandle> players       = new ArrayList<PlayerHandle>();
-    private Set<PlayerHandle>  activePlayers = new LinkedHashSet<PlayerHandle>();
+    private List<PlayerHandle> players       =
+            new ArrayList<PlayerHandle>();
+    private Set<PlayerHandle>  activePlayers =
+            new LinkedHashSet<PlayerHandle>();
+
     private PlayerHandle       nextToAct;
     private BettingRound       round;
 
@@ -202,7 +205,7 @@ public class Snapshot
     
     public boolean isRoundDone()
     {
-        return nextToAct().equals( latestRoundStaker );
+        return blindNextToAct().equals( latestRoundStaker );
     }
 
     public boolean isGameOver()
@@ -242,12 +245,12 @@ public class Snapshot
         return activePlayers.contains( handle );
     }
 
-    public PlayerHandle nextToAct()
+    public PlayerHandle blindNextToAct()
     {
         return nextToAct;
     }
 
-    public PlayerHandle nextToActLookahead()
+    public PlayerHandle nextToAct()
     {
         return isRoundDone()
                 ? firstToActPostFlop()
@@ -338,7 +341,7 @@ public class Snapshot
     }
     public Money toCall()
     {
-        return toCall( nextToAct() );
+        return toCall( blindNextToAct() );
     }
 
 //    public Money bankRoll(PlayerHandle player)
@@ -367,7 +370,7 @@ public class Snapshot
     }
     public Money commitment()
     {
-        return commitment( nextToAct() );
+        return commitment( blindNextToAct() );
     }
 
     public Money latestRoundCommitment(PlayerHandle player)
@@ -382,7 +385,7 @@ public class Snapshot
     }
     public Money latestRoundCommitment()
     {
-        return latestRoundCommitment( nextToAct() );
+        return latestRoundCommitment( blindNextToAct() );
     }
 
 

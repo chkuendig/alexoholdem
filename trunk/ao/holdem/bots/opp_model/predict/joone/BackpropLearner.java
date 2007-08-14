@@ -17,7 +17,8 @@ import java.util.List;
  */
 public class BackpropLearner<C extends PredictionContext,
                              O extends Observation>
-        implements SupervisedLearner<C, O>, NeuralNetListener
+        implements SupervisedLearner<C, O>,
+                   NeuralNetListener
 {
     //--------------------------------------------------------------------
     private final LinkedList<Retrodiction<C, O>> DATA;
@@ -31,6 +32,10 @@ public class BackpropLearner<C extends PredictionContext,
 
 
     //--------------------------------------------------------------------
+    public BackpropLearner()
+    {
+        this(1000);
+    }
     public BackpropLearner(int horizon)
     {
         DATA    = new LinkedList<Retrodiction<C,O>>();
@@ -162,28 +167,9 @@ public class BackpropLearner<C extends PredictionContext,
 
 
     //--------------------------------------------------------------------
-    public void netStarted(NeuralNetEvent event)
-    {
-
-    }
-
-    public void cicleTerminated(NeuralNetEvent event)
-    {
-
-    }
-
-    public void netStopped(NeuralNetEvent event)
-    {
-
-    }
-
-    public void errorChanged(NeuralNetEvent event)
-    {
-
-    }
-
-    public void netStoppedError(NeuralNetEvent event, String s)
-    {
-
-    }
+    public void netStarted(NeuralNetEvent event) {}
+    public void cicleTerminated(NeuralNetEvent event) {}
+    public void netStopped(NeuralNetEvent event) {}
+    public void errorChanged(NeuralNetEvent event) {}
+    public void netStoppedError(NeuralNetEvent event, String s) {}
 }

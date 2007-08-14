@@ -165,7 +165,7 @@ public class IrcHistorian
                 stackActions(hist, action);
 
         PlayerHandle firstToAct =
-                hist.snapshot().nextToAct();
+                hist.snapshot().blindNextToAct();
         int fistToActIndex =
                 hist.getPlayers().indexOf( firstToAct );
 
