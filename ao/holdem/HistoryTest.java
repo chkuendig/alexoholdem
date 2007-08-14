@@ -2,8 +2,9 @@ package ao.holdem;
 
 import ao.holdem.def.history_bot.BotHandle;
 import ao.holdem.def.history_bot.HistoryBot;
-import ao.holdem.def.state.action.Action;
 import ao.holdem.def.model.Money;
+import ao.holdem.def.state.action.Action;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.Snapshot;
 import ao.holdem.history.persist.PlayerHandleLookup;
@@ -38,9 +39,15 @@ public class HistoryTest
     //--------------------------------------------------------------------
     public static class DummyBot implements HistoryBot
     {
-        public void introduce()             {}
-        public void retire()                {}
-        public void tally(Money stackDelta) {}
+        public void introduce() {}
+        public void retire()    {}
+
+        public void opponentToAct(HandHistory hand, Snapshot env) {}
+        public void opponentActed(
+                HandHistory hand, Snapshot env, TakenAction act)  {}
+
+        public void handEnded(
+                HandHistory atEndOfHand, Money stackDelta) {}
 
         public Action act(HandHistory hand, Snapshot env)
         {

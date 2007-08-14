@@ -119,8 +119,8 @@ public class PredictionCase
                  asDouble(community.contains(Card.Rank.QUEEN))) /
                         (community.knownCount());
 
-        position = (curr.players().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
-        activePosition = (curr.activePlayers().indexOf( curr.nextToActLookahead() ) + 1) / 10.0;
+        position = (curr.players().indexOf( curr.nextToAct() ) + 1) / 10.0;
+        activePosition = (curr.activePlayers().indexOf( curr.nextToAct() ) + 1) / 10.0;
 
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(

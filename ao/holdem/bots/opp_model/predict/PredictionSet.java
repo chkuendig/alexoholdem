@@ -58,7 +58,7 @@ public class PredictionSet
         {
             if (e.getPlayer().equals( player ))
             {
-                assert cursor.nextToActLookahead().equals( player );
+                assert cursor.nextToAct().equals( player );
                 Snapshot curr = cursor.prototype();
 
                 if (prev != null &&

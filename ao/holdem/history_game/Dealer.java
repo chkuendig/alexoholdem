@@ -76,7 +76,7 @@ public class Dealer
             {
                 startOfRound = false;
 
-                PlayerHandle p = s.nextToAct();
+                PlayerHandle p = s.blindNextToAct();
                 HistoryBot   b = byHandle.get( p );
 
                 TakenAction act = null;
@@ -158,8 +158,8 @@ public class Dealer
         for (Map.Entry<PlayerHandle, HistoryBot> ph :
                 byHandle.entrySet())
         {
-            ph.getValue().tally(
-                    deltas.get( ph.getKey() ));
+            ph.getValue().handEnded(
+                    hand, deltas.get( ph.getKey() ));
         }
     }
 

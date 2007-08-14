@@ -37,10 +37,10 @@ public class HoldemPreact extends AbstractContext
 
         double position =
                 (curr.players().indexOf(
-                        curr.nextToActLookahead() ) + 1) / 10.0;
+                        curr.nextToAct() ) + 1) / 10.0;
         double activePosition =
                 (curr.activePlayers().indexOf(
-                        curr.nextToActLookahead() ) + 1) / 10.0;
+                        curr.nextToAct() ) + 1) / 10.0;
 
         addNeuralInput(
                 immedatePotOdds,
