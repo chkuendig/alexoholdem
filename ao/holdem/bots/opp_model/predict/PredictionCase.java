@@ -106,8 +106,8 @@ public class PredictionCase
                 (prevAct == TakenAction.RAISE)
                 ? 1.0 : 0.0;
 
-        numOppsFraction = curr.opponents().size() / 9.0;
-        numActiveOppsFraction = curr.activeOpponents().size() / 9.0;
+        numOppsFraction        = curr.opponents().size() / 9.0;
+        numActiveOppsFraction  = curr.activeOpponents().size() / 9.0;
         numUnactedOppsFraction = curr.unactedThisRound() / 10.0;
 
         flushPossibleBool   = asDouble(community.flushPossible());
