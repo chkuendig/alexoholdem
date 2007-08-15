@@ -2,8 +2,7 @@ package ao.holdem.history_game;
 
 import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
 import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
-import ao.holdem.bots.opp_model.predict.def.retro.Predictor;
-import ao.holdem.bots.opp_model.predict.def.retro.PredictorLookup;
+import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
 import ao.holdem.def.history_bot.HistoryBot;
 import ao.holdem.def.model.Money;
 import ao.holdem.def.state.action.Action;
@@ -17,11 +16,6 @@ import ao.holdem.history.Snapshot;
  */
 public class PredictorBot implements HistoryBot
 {
-    //--------------------------------------------------------------------
-    private PredictorLookup predictors =
-                new PredictorLookup();
-
-
     //--------------------------------------------------------------------
     public void introduce() {}
     public void retire()    {}
@@ -56,10 +50,9 @@ public class PredictorBot implements HistoryBot
             HoldemRetroSet cases =
                     parser.casesFor(atEndOfHand, p);
 
-            Predictor predictor =
-                    predictors.predictor( p.getId() );
+            LearnerSet learner = p.getLearner();
 
-            cases.train( predictor );
+            cases.train( learner, 100, 1000 );
 //            predictor.
             
 //            predictor.

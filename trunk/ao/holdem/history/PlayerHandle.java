@@ -1,9 +1,13 @@
 package ao.holdem.history;
 
+import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +87,16 @@ public class PlayerHandle extends Base
         hand.getPlayers().add( this );
     }
 
-    
+
+    //--------------------------------------------------------------------
+    private LearnerSet learner = new LearnerSet();
+
+    public LearnerSet getLearner()
+    {  return learner; }
+    public void       setLearner(LearnerSet learnerSet)
+    {  this.learner = learnerSet; }
+
+
     //--------------------------------------------------------------------
     @Override
     public String toString()
