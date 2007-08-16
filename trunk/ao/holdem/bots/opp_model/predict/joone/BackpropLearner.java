@@ -171,7 +171,10 @@ public class BackpropLearner<C extends PredictionContext>
         {
             assembleNet();
         }
-        updateData();
+        else
+        {
+            updateData();
+        }
         dataAdded = true;
     }
 
@@ -186,6 +189,7 @@ public class BackpropLearner<C extends PredictionContext>
         monitor.setTotCicles( iterations );
         monitor.setLearning(  true      );
         nnet.go();
+        monitor.Go();
         dataAdded = false;
     }
 
@@ -200,9 +204,25 @@ public class BackpropLearner<C extends PredictionContext>
 
 
     //--------------------------------------------------------------------
-    public void netStarted(NeuralNetEvent event) {}
-    public void cicleTerminated(NeuralNetEvent event) {}
-    public void netStopped(NeuralNetEvent event) {}
+    public void netStarted(NeuralNetEvent event)
+    {
+        System.out.println("Training started");
+    }
+    public void cicleTerminated(NeuralNetEvent event)
+    {
+        Monitor mon = (Monitor)event.getSource();
+        long c = mon.getCurrentCicle();
+
+        if (c % 100 == 0)
+        {
+            System.out.println(c + " epochs remaining - RMSE = " +
+                                    mon.getGlobalError());
+        }
+    }
+    public void netStopped(NeuralNetEvent event)
+    {
+        System.out.println("Training finished");
+    }
     public void errorChanged(NeuralNetEvent event) {}
     public void netStoppedError(NeuralNetEvent event, String s) {}
 }

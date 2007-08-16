@@ -67,7 +67,7 @@ public class MixedAction extends Classification<TakenAction>
     {
         return weights()[0] + "\t" +
                weights()[1] + "\t" +
-               weights()[2] + "\t";
+               weights()[2];
     }
 }
 
