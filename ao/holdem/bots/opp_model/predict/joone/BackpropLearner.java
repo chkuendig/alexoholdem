@@ -2,6 +2,7 @@ package ao.holdem.bots.opp_model.predict.joone;
 
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
 import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
+import ao.holdem.bots.opp_model.predict.def.learn.RandomPredictor;
 import ao.holdem.bots.opp_model.predict.def.learn.SupervisedLearner;
 import ao.holdem.bots.opp_model.predict.def.retro.Retrodiction;
 import org.joone.engine.*;
@@ -9,43 +10,66 @@ import org.joone.engine.learning.TeachingSynapse;
 import org.joone.io.MemoryInputSynapse;
 import org.joone.net.NeuralNet;
 
+import javax.persistence.Entity;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
  */
+@Entity
 public class BackpropLearner<C extends PredictionContext>
         implements SupervisedLearner<C>,
                    NeuralNetListener
 {
     //--------------------------------------------------------------------
-    private final LinkedList<Retrodiction<C>> DATA;
-    private final int                         HORIZON;
+    private List<Retrodiction<C>> DATA;
+//    private int                   HORIZON;
 
-    private MemoryInputSynapse in;
-    private MemoryInputSynapse out;
-    private NeuralNet          nnet;
-    private Monitor            monitor;
-    private int                updatedDataCount;
+    private transient MemoryInputSynapse in;
+    private transient MemoryInputSynapse out;
+    private           NeuralNet          nnet;
+    private transient Monitor            monitor;
+    private transient int                updatedDataCount;
+    private transient boolean            dataAdded;
 
 
     //--------------------------------------------------------------------
-    public BackpropLearner()
-    {
-        this(1000);
-    }
-    public BackpropLearner(int horizon)
+//    public BackpropLearner()
+//    {
+////        this(1000);
+//    }
+    public BackpropLearner(/*int horizon*/)
     {
         DATA    = new LinkedList<Retrodiction<C>>();
-        HORIZON = horizon;
+//        HORIZON = horizon;
+    }
+
+
+    //--------------------------------------------------------------------
+    public List<Retrodiction<C>> getData()
+    {
+        return DATA;
+    }
+    public void setDATA(List<Retrodiction<C>> data)
+    {
+        this.DATA = data;
+    }
+
+    public NeuralNet getNeuralNet()
+    {
+        return nnet;
+    }
+    public void setNeuralNet(NeuralNet net)
+    {
+        this.nnet = net;
     }
 
 
     //--------------------------------------------------------------------
     private void assembleNet()
     {
-        Retrodiction<C> first = DATA.getFirst();
+        Retrodiction<C> first = DATA.get(0);
 
         LinearLayer  input  = new LinearLayer();
         SigmoidLayer hidden = new SigmoidLayer();
@@ -94,6 +118,8 @@ public class BackpropLearner<C extends PredictionContext>
 	    nnet.addLayer(output, NeuralNet.OUTPUT_LAYER);
         nnet.setTeacher( trainer );
 
+//        nnet.
+
         monitor = nnet.getMonitor();
 	    monitor.setLearningRate(0.4);
 	    monitor.setMomentum(0.5);
@@ -107,11 +133,11 @@ public class BackpropLearner<C extends PredictionContext>
 
         double inputCases[][]  =
                 new double[ DATA.size() ]
-                          [ DATA.getFirst().neuralInputSize() ];
+                          [ DATA.get(0).neuralInputSize() ];
 
         double outputCases[][] =
                 new double[ DATA.size() ]
-                          [ DATA.getFirst().neuralOutputSize() ];
+                          [ DATA.get(0).neuralOutputSize() ];
 
         int index = 0;
         for (Retrodiction c : DATA)
@@ -131,12 +157,14 @@ public class BackpropLearner<C extends PredictionContext>
     //--------------------------------------------------------------------
     public synchronized void add(List<Retrodiction<C>> data)
     {
+        if (data.isEmpty()) return;
         boolean assembel = (DATA.isEmpty());
 
         DATA.addAll( data );
-        while (DATA.size() > HORIZON)
+        while (DATA.size() > 1000)
         {
-            DATA.removeFirst();
+//            DATA.subList(DATA.size() - 1001, DATA.size() - 1);
+            DATA.remove(0);
         }
 
         if (assembel)
@@ -144,23 +172,30 @@ public class BackpropLearner<C extends PredictionContext>
             assembleNet();
         }
         updateData();
+        dataAdded = true;
     }
+
 
     //--------------------------------------------------------------------
     public synchronized void learn(int iterations, int timeoutMillis)
     {
+        if (nnet == null || (!dataAdded)) return;
+
         nnet.stop();
         monitor.setTrainingPatterns( updatedDataCount );
         monitor.setTotCicles( iterations );
         monitor.setLearning(  true      );
         nnet.go();
+        dataAdded = false;
     }
 
 
     //--------------------------------------------------------------------
-    public synchronized Predictor<C> predictorInstance()
+    public synchronized Predictor<C> predictor()
     {
-        return null;
+        return (nnet == null)
+                ? new RandomPredictor<C>()
+                : new BackpropPredictor<C>(nnet);
     }
 
 

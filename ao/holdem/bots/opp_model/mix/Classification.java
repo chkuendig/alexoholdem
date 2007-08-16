@@ -2,12 +2,14 @@ package ao.holdem.bots.opp_model.mix;
 
 import ao.util.rand.Rand;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  *
  */
 public class Classification<T extends Enum>
+        implements Serializable
 {
     //--------------------------------------------------------------------
     private double totalWeight = 0;

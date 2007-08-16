@@ -169,6 +169,27 @@ public class HoldemRetroSet
                 holeBlindPostflop, interations, timeout);
     }
 
+    //--------------------------------------------------------------------
+    public List<Retrodiction<?>> holeAware()
+    {
+        List<Retrodiction<?>> holeAware =
+                new ArrayList<Retrodiction<?>>();
+        holeAware.addAll(holeAwareFirstact);
+        holeAware.addAll(holeAwarePreflop);
+        holeAware.addAll(holeAwarePostflop);
+        return holeAware;
+    }
+
+    public List<Retrodiction<?>> holeBlind()
+    {
+        List<Retrodiction<?>> holeBlind =
+                new ArrayList<Retrodiction<?>>();
+        holeBlind.addAll(holeBlindFirstact);
+        holeBlind.addAll(holeBlindPreflop);
+        holeBlind.addAll(holeBlindPostflop);
+        return holeBlind;
+    }
+
 
     //--------------------------------------------------------------------
 //    @SuppressWarnings("unchecked")

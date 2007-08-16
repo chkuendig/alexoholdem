@@ -12,11 +12,13 @@ public class Retrodiction<C extends PredictionContext>
                    Observation
 {
     //--------------------------------------------------------------------
-    private final PredictionContext CONTEXT_DELEGET;
-    private final HoldemObservation OBSERVATION_DELEGET;
+    private PredictionContext CONTEXT_DELEGET;
+    private HoldemObservation OBSERVATION_DELEGET;
 
 
     //--------------------------------------------------------------------
+//    public Retrodiction() {}
+
     public Retrodiction(
             C                 context,
             HoldemObservation observation)
@@ -27,13 +29,32 @@ public class Retrodiction<C extends PredictionContext>
 
 
     //--------------------------------------------------------------------
-//    public Class<? extends PredictionContext> contextClass()
+//    public PredictionContext getContext()
 //    {
-//        return CONTEXT_DELEGET.getClass();
+//        return CONTEXT_DELEGET;
+//    }
+//    public void setContext(PredictionContext context)
+//    {
+//        this.CONTEXT_DELEGET = context;
+//    }
+//
+//    public HoldemObservation getObservation()
+//    {
+//        return OBSERVATION_DELEGET;
+//    }
+//    public void setObservation(HoldemObservation observation)
+//    {
+//        this.OBSERVATION_DELEGET = observation;
 //    }
 
 
     //--------------------------------------------------------------------
+
+    public Class<? extends PredictionContext> predictionType()
+    {
+        return CONTEXT_DELEGET.predictionType();
+    }
+
     public double[] neuralInput()
     {
         return CONTEXT_DELEGET.neuralInput();

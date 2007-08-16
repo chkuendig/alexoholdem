@@ -1,5 +1,7 @@
 package ao.holdem.bots.opp_model.predict.def.observation;
 
+import java.util.Arrays;
+
 /**
  *
  */
@@ -25,5 +27,13 @@ public class ObservationImpl implements Observation
     public int neuralOutputSize()
     {
         return values.length;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public String toString()
+    {
+        return Arrays.toString(values);
     }
 }

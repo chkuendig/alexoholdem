@@ -1,7 +1,14 @@
 package ao.holdem.bots.opp_model;
 
+import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
 import ao.holdem.bots.opp_model.predict.PredictionSet;
+import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
+import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
+import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
+import ao.holdem.bots.opp_model.predict.def.retro.PredictorSet;
+import ao.holdem.bots.opp_model.predict.def.retro.Retrodiction;
+import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
 import com.google.inject.Inject;
@@ -42,30 +49,33 @@ public class OppModelTest
 
     private void doModelOpponet(PlayerHandle p) throws Exception
     {
-        PredictionSet predictions = new PredictionSet();
-        predictions.addPlayerHands( p );
+        int count = 0;
 
-//        anji( predictions );
-        backprop( predictions );
+        LearnerSet learners = new LearnerSet();
+        for (HandHistory hand : p.getHands())
+        {
+            System.out.println("====\t" + (++count));
+            HoldemRetroSet retros     = hand.casesFor(p);
+            PredictorSet   predictors = learners.predictors();
+
+            for (Retrodiction<?> retro : retros.holeBlind())
+            {
+                HoldemObservation prediction =
+                        predictors.predict(retro);
+
+                System.out.println(retro.predictionType() + "\t" +
+                                   prediction + "\tvs\t" +
+                                   new MixedAction(retro.neuralOutput()));
+            }
+
+            retros.train(learners, 200, 1000);
+        }
     }
-
-//    private void anji(PredictionSet predictions) throws Exception
-//    {
-//        Properties props = new Properties("anji_predict.properties");
-//
-//        AnjiPredictFitness ff = new AnjiPredictFitness( predictions );
-//        ff.init( props );
-//
-//        PredictEvolver evolver = new PredictEvolver(ff);
-//        evolver.init( props );
-//        evolver.run();
-//    }
 
     // see http://www.jooneworld.com/docs/sampleEngine.html
     private void backprop(PredictionSet predictions)
     {
         new BackpropPredictor().trainOn( predictions );
-//        new BackpropPredictor().trainXor();
     }
 
 
@@ -82,11 +92,10 @@ public class OppModelTest
         perfecdoh :: 1461 */
     private void retrieveMostPrevalent()
     {
-        for (PlayerHandle p : playerAccess.byPrevalence(100))
+        for (PlayerHandle p : playerAccess.byPrevalence(200))
         {
             System.out.println(
                     p.getName() + " :: " + p.getHands().size());
         }
     }
-
 }

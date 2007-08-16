@@ -1,11 +1,8 @@
 package ao.holdem.bots.opp_model.predict.def.retro;
 
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.context.firstact.HoleAwareFirstact;
 import ao.holdem.bots.opp_model.predict.def.context.firstact.HoleBlindFirstact;
-import ao.holdem.bots.opp_model.predict.def.context.postflop.HoleAwarePostflop;
 import ao.holdem.bots.opp_model.predict.def.context.postflop.HoleBlindPostflop;
-import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleAwarePreflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleBlindPreflop;
 import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
 import ao.holdem.def.model.cards.Community;
@@ -51,6 +48,7 @@ public class HandParser
                 HoldemObservation observation =
                         new HoldemObservation(e.getAction());
 
+                assert curr.comingRound() == round;
                 addCase(cases,
                         prev,
                         prevAct,
@@ -80,60 +78,56 @@ public class HandParser
             BettingRound round,
             HoldemObservation observation)
     {
-        if (hole == null)
+        // hole blind
+        if (round == BettingRound.PREFLOP)
         {
-            // hole blind
-
-            if (round == BettingRound.PREFLOP)
+            if (prev == null)
             {
-                if (prev == null)
-                {
-                    cases.addHoleBlindFirstact(
-                            new HoleBlindFirstact(curr),
-                            observation);
-                }
-                else
-                {
-                    cases.addHoleBlindPreflop(
-                            new HoleBlindPreflop(prev, prevAct, curr),
-                            observation);
-                }
+                cases.addHoleBlindFirstact(
+                        new HoleBlindFirstact(curr),
+                        observation);
             }
             else
             {
-                cases.addHoleBlindPostflop(
-                        new HoleBlindPostflop(
-                                prev, prevAct, curr, community),
+                cases.addHoleBlindPreflop(
+                        new HoleBlindPreflop(prev, prevAct, curr),
                         observation);
             }
         }
         else
         {
-            // hole aware
+            cases.addHoleBlindPostflop(
+                    new HoleBlindPostflop(
+                            prev, prevAct, curr, community),
+                    observation);
+        }
 
-            if (round == BettingRound.PREFLOP)
-            {
-                if (prev == null)
-                {
-                    cases.addHoleAwareFirstact(
-                        new HoleAwareFirstact(curr, hole),
-                        observation);
-                }
-                else
-                {
-                    cases.addHoleAwarePreflop(
-                            new HoleAwarePreflop(
-                                    prev, prevAct, curr, hole),
-                            observation);
-                }
-            }
-            else
-            {
-                cases.addHoleAwarePostflop(
-                        new HoleAwarePostflop(
-                                prev, prevAct, curr, community, hole),
-                        observation);
-            }
+        // hole aware
+        if (hole != null)
+        {
+//            if (round == BettingRound.PREFLOP)
+//            {
+//                if (prev == null)
+//                {
+//                    cases.addHoleAwareFirstact(
+//                        new HoleAwareFirstact(curr, hole),
+//                        observation);
+//                }
+//                else
+//                {
+//                    cases.addHoleAwarePreflop(
+//                            new HoleAwarePreflop(
+//                                    prev, prevAct, curr, hole),
+//                            observation);
+//                }
+//            }
+//            else
+//            {
+//                cases.addHoleAwarePostflop(
+//                        new HoleAwarePostflop(
+//                                prev, prevAct, curr, community, hole),
+//                        observation);
+//            }
         }
     }
 

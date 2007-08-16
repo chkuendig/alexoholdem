@@ -353,6 +353,12 @@ public class Snapshot
     {
         return round;
     }
+    public BettingRound comingRound()
+    {
+        return isRoundDone()
+                ? round.next()
+                : round;
+    }
 
     public Money pot()
     {

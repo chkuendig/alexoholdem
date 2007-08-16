@@ -21,89 +21,89 @@ public class LearnerSet extends Base
 {
     //--------------------------------------------------------------------
     private SupervisedLearner<HoleAwareFirstact>
-            holeAwareFirstactLearner;
+            holeAwareFirstact;
     private SupervisedLearner<HoleBlindFirstact>
-            holeBlindFirstactLearner;
+            holeBlindFirstact;
 
     private SupervisedLearner<HoleAwarePreflop>
-            holeAwarePreflopLearner;
+            holeAwarePreflop;
     private SupervisedLearner<HoleBlindPreflop>
-            holeBlindPreflopLearner;
+            holeBlindPreflop;
 
     private SupervisedLearner<HoleAwarePostflop>
-            holeAwarePostflopLearner;
+            holeAwarePostflop;
     private SupervisedLearner<HoleBlindPostflop>
-            holeBlindPostflopLearner;
+            holeBlindPostflop;
 
 
     //--------------------------------------------------------------------
     public LearnerSet()
     {
-        holeAwareFirstactLearner =
+        holeAwareFirstact =
                 new BackpropLearner<HoleAwareFirstact>();
-        holeBlindFirstactLearner =
+        holeBlindFirstact =
                 new BackpropLearner<HoleBlindFirstact>();
 
-        holeAwarePreflopLearner =
+        holeAwarePreflop =
                 new BackpropLearner<HoleAwarePreflop>();
-        holeBlindPreflopLearner =
+        holeBlindPreflop =
                 new BackpropLearner<HoleBlindPreflop>();
 
-        holeAwarePostflopLearner =
+        holeAwarePostflop =
                 new BackpropLearner<HoleAwarePostflop>();
-        holeBlindPostflopLearner =
+        holeBlindPostflop =
                 new BackpropLearner<HoleBlindPostflop>();
     }
 
 
     //--------------------------------------------------------------------
     // used for persistance via hybernate
-    public SupervisedLearner<HoleAwareFirstact> getHoleAwareFirstactLearner() {
-        return holeAwareFirstactLearner;
+    public SupervisedLearner<HoleAwareFirstact> getHoleAwareFirstact() {
+        return holeAwareFirstact;
     }
-    public void setHoleAwareFirstactLearner
-            (SupervisedLearner<HoleAwareFirstact> holeAwareFirstactLearner) {
-        this.holeAwareFirstactLearner = holeAwareFirstactLearner;
-    }
-
-    public SupervisedLearner<HoleBlindFirstact> getHoleBlindFirstactLearner() {
-        return holeBlindFirstactLearner;
-    }
-    public void setHoleBlindFirstactLearner(
-            SupervisedLearner<HoleBlindFirstact> holeBlindFirstactLearner) {
-        this.holeBlindFirstactLearner = holeBlindFirstactLearner;
+    public void setHoleAwareFirstact
+            (SupervisedLearner<HoleAwareFirstact> holeAwareFirstact) {
+        this.holeAwareFirstact = holeAwareFirstact;
     }
 
-    public SupervisedLearner<HoleAwarePreflop> getHoleAwarePreflopLearner() {
-        return holeAwarePreflopLearner;
+    public SupervisedLearner<HoleBlindFirstact> getHoleBlindFirstact() {
+        return holeBlindFirstact;
     }
-    public void setHoleAwarePreflopLearner(
-            SupervisedLearner<HoleAwarePreflop> holeAwarePreflopLearner) {
-        this.holeAwarePreflopLearner = holeAwarePreflopLearner;
-    }
-
-    public SupervisedLearner<HoleBlindPreflop> getHoleBlindPreflopLearner() {
-        return holeBlindPreflopLearner;
-    }
-    public void setHoleBlindPreflopLearner(
-            SupervisedLearner<HoleBlindPreflop> holeBlindPreflopLearner) {
-        this.holeBlindPreflopLearner = holeBlindPreflopLearner;
+    public void setHoleBlindFirstact(
+            SupervisedLearner<HoleBlindFirstact> holeBlindFirstact) {
+        this.holeBlindFirstact = holeBlindFirstact;
     }
 
-    public SupervisedLearner<HoleAwarePostflop> getHoleAwarePostflopLearner() {
-        return holeAwarePostflopLearner;
+    public SupervisedLearner<HoleAwarePreflop> getHoleAwarePreflop() {
+        return holeAwarePreflop;
     }
-    public void setHoleAwarePostflopLearner(
-            SupervisedLearner<HoleAwarePostflop> holeAwarePostflopLearner) {
-        this.holeAwarePostflopLearner = holeAwarePostflopLearner;
+    public void setHoleAwarePreflop(
+            SupervisedLearner<HoleAwarePreflop> holeAwarePreflop) {
+        this.holeAwarePreflop = holeAwarePreflop;
     }
 
-    public SupervisedLearner<HoleBlindPostflop> getHoleBlindPostflopLearner() {
-        return holeBlindPostflopLearner;
+    public SupervisedLearner<HoleBlindPreflop> getHoleBlindPreflop() {
+        return holeBlindPreflop;
     }
-    public void setHoleBlindPostflopLearner(
-            SupervisedLearner<HoleBlindPostflop> holeBlindPostflopLearner) {
-        this.holeBlindPostflopLearner = holeBlindPostflopLearner;
+    public void setHoleBlindPreflop(
+            SupervisedLearner<HoleBlindPreflop> holeBlindPreflop) {
+        this.holeBlindPreflop = holeBlindPreflop;
+    }
+
+    public SupervisedLearner<HoleAwarePostflop> getHoleAwarePostflop() {
+        return holeAwarePostflop;
+    }
+    public void setHoleAwarePostflop(
+            SupervisedLearner<HoleAwarePostflop> holeAwarePostflop) {
+        this.holeAwarePostflop = holeAwarePostflop;
+    }
+
+    public SupervisedLearner<HoleBlindPostflop> getHoleBlindPostflop() {
+        return holeBlindPostflop;
+    }
+    public void setHoleBlindPostflop(
+            SupervisedLearner<HoleBlindPostflop> holeBlindPostflop) {
+        this.holeBlindPostflop = holeBlindPostflop;
     }
 
 
@@ -112,44 +112,58 @@ public class LearnerSet extends Base
             List<Retrodiction<HoleAwareFirstact>> data,
             int iterations, int millis)
     {
-        getHoleAwareFirstactLearner().add(data);
-        getHoleAwareFirstactLearner().learn(iterations, millis);
+        getHoleAwareFirstact().add(data);
+        getHoleAwareFirstact().learn(iterations, millis);
     }
     public void trainHoleBlindFirstact(
             List<Retrodiction<HoleBlindFirstact>> data,
             int iterations, int millis)
     {
-        getHoleBlindFirstactLearner().add(data);
-        getHoleBlindFirstactLearner().learn(iterations, millis);
+        getHoleBlindFirstact().add(data);
+        getHoleBlindFirstact().learn(iterations, millis);
     }
     public void trainHoleAwarePreflop(
             List<Retrodiction<HoleAwarePreflop>> data,
             int iterations, int millis)
     {
-        getHoleAwarePreflopLearner().add(data);
-        getHoleAwarePreflopLearner().learn(iterations, millis);
+        getHoleAwarePreflop().add(data);
+        getHoleAwarePreflop().learn(iterations, millis);
     }
     public void trainHoleBlindPreflop(
             List<Retrodiction<HoleBlindPreflop>> data,
             int iterations, int millis)
     {
-        getHoleBlindPreflopLearner().add(data);
-        getHoleBlindPreflopLearner().learn(iterations, millis);
+        getHoleBlindPreflop().add(data);
+        getHoleBlindPreflop().learn(iterations, millis);
     }
     public void trainHoleAwarePostflop(
             List<Retrodiction<HoleAwarePostflop>> data,
             int iterations, int millis)
     {
-        getHoleAwarePostflopLearner().add(data);
-        getHoleAwarePostflopLearner().learn(iterations, millis);
+        getHoleAwarePostflop().add(data);
+        getHoleAwarePostflop().learn(iterations, millis);
     }
     public void trainHoleBlindPostflop(
             List<Retrodiction<HoleBlindPostflop>> data,
             int iterations, int millis)
     {
-        getHoleBlindPostflopLearner().add(data);
-        getHoleBlindPostflopLearner().learn(iterations, millis);
+        getHoleBlindPostflop().add(data);
+        getHoleBlindPostflop().learn(iterations, millis);
     }
+
+
+    //--------------------------------------------------------------------
+    public PredictorSet predictors()
+    {
+        return new PredictorSet(
+                getHoleAwareFirstact().predictor(),
+                getHoleBlindFirstact().predictor(),
+                getHoleAwarePreflop().predictor(),
+                getHoleBlindPreflop().predictor(),
+                getHoleAwarePostflop().predictor(),
+                getHoleBlindPostflop().predictor());
+    }
+
 
 
     //--------------------------------------------------------------------

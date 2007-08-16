@@ -1,6 +1,5 @@
 package ao.holdem.history;
 
-import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.Index;
 
@@ -89,12 +88,12 @@ public class PlayerHandle extends Base
 
 
     //--------------------------------------------------------------------
-    private LearnerSet learner = new LearnerSet();
-
-    public LearnerSet getLearner()
-    {  return learner; }
-    public void       setLearner(LearnerSet learnerSet)
-    {  this.learner = learnerSet; }
+//    private LearnerSet learner = new LearnerSet();
+//
+//    public LearnerSet getLearner()
+//    {  return learner; }
+//    public void       setLearner(LearnerSet learnerSet)
+//    {  this.learner = learnerSet; }
 
 
     //--------------------------------------------------------------------

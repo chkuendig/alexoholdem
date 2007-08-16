@@ -14,5 +14,5 @@ public interface SupervisedLearner<C extends PredictionContext>
 
     public void learn(int iterations, int timeoutMillis);
 
-    public Predictor<C> predictorInstance();
+    public Predictor<C> predictor();
 }

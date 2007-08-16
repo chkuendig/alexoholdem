@@ -31,7 +31,8 @@ public class HoldemStarter
                         new HoldemConfig());
         injector.getInstance(PersistenceService.class).start();
 
-
+//        injector.getInstance(
+//                PredictPersistTest.class).testPredictionPersistance();
         injector.getInstance(OppModelTest.class).testOpponentModeling();
 //        injector.getInstance(HistoryTest.class).historyTest();
 //        injector.getInstance(IrcRunner.class).run(
