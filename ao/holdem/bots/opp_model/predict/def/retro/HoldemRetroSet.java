@@ -155,16 +155,16 @@ public class HoldemRetroSet
     public void train(LearnerSet predictor,
                       int interations, int timeout)
     {
-        predictor.trainHoleAwareFirstact(
-                holeAwareFirstact, interations, timeout);
-        predictor.trainHoleBlindFirstact(
-                holeBlindFirstact, interations, timeout);
-        predictor.trainHoleAwarePreflop(
-                holeAwarePreflop, interations, timeout);
-        predictor.trainHoleBlindPreflop(
-                holeBlindPreflop, interations, timeout);
-        predictor.trainHoleAwarePostflop(
-                holeAwarePostflop, interations, timeout);
+//        predictor.trainHoleAwareFirstact(
+//                holeAwareFirstact, interations, timeout);
+//        predictor.trainHoleBlindFirstact(
+//                holeBlindFirstact, interations, timeout);
+//        predictor.trainHoleAwarePreflop(
+//                holeAwarePreflop, interations, timeout);
+//        predictor.trainHoleBlindPreflop(
+//                holeBlindPreflop, interations, timeout);
+//        predictor.trainHoleAwarePostflop(
+//                holeAwarePostflop, interations, timeout);
         predictor.trainHoleBlindPostflop(
                 holeBlindPostflop, interations, timeout);
     }

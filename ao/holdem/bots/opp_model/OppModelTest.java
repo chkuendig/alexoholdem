@@ -28,7 +28,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "sagerbot"));
+        modelOpponet(playerAccess.find("irc", "TeaGeePea"));
     }
 
 
@@ -49,12 +49,12 @@ public class OppModelTest
 
     private void doModelOpponet(PlayerHandle p) throws Exception
     {
-        int count = 0;
+//        int count = 0;
 
         LearnerSet learners = new LearnerSet();
         for (HandHistory hand : p.getHands())
         {
-            System.out.println("====\t" + (++count));
+//            System.out.println("====\t" + (++count));
             HoldemRetroSet retros     = hand.casesFor(p);
             PredictorSet   predictors = learners.predictors();
 
@@ -64,11 +64,11 @@ public class OppModelTest
                         predictors.predict(retro);
 
                 System.out.println(retro.predictionType() + "\t" +
-                                   prediction + "\tvs\t" +
+                                   prediction + "\t" +
                                    new MixedAction(retro.neuralOutput()));
             }
 
-            retros.train(learners, 200, 1000);
+            retros.train(learners, 10000, 1000);
         }
     }
 

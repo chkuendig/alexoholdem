@@ -26,6 +26,6 @@ public class HoldemObservation extends ObservationImpl
     {
         return neuralOutput()[0] + "\t" +
                neuralOutput()[1] + "\t" +
-               neuralOutput()[2] + "\t";
+               neuralOutput()[2];
     }
 }
