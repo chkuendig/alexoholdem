@@ -14,4 +14,9 @@ public enum BettingRound
     {
         return values()[ ordinal() - 1 ];
     }
+
+    public BettingRound next()
+    {
+        return values()[ ordinal() + 1 ];
+    }
 }

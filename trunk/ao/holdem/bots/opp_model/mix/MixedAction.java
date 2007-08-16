@@ -60,5 +60,14 @@ public class MixedAction extends Classification<TakenAction>
     {
         return probabilityOf( TakenAction.CALL );
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return weights()[0] + "\t" +
+               weights()[1] + "\t" +
+               weights()[2] + "\t";
+    }
 }
 

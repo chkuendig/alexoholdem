@@ -1,9 +1,12 @@
 package ao.holdem.history;
 
+import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
+import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
+import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
+import ao.holdem.def.model.Money;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.Money;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
@@ -11,7 +14,10 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.MapKeyManyToMany;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.*;
 
 /**
@@ -109,7 +115,7 @@ public class HandHistory extends Base
     private List<Event> events = new ArrayList<Event>();
 
     @OneToMany(
-            fetch = FetchType.EAGER,
+//            fetch = FetchType.EAGER,
             cascade={CascadeType.PERSIST, CascadeType.MERGE})
 //    @JoinColumn(name="HAND_ID")
     @IndexColumn(name="EVENT_INDEX")
@@ -179,7 +185,10 @@ public class HandHistory extends Base
     }
     public void setCommunity(Community community)
     {
-        this.community = community;
+        this.community =
+                (community == null)
+                ? new Community()
+                : community;
     }
 
     public void dealFlop(Community flop)
@@ -201,6 +210,10 @@ public class HandHistory extends Base
     {
         return snapshot(null);
     }
+    public Snapshot nextToActSnapshot()
+    {
+        return snapshot( getEvents().get(getEvents().size() - 1) );
+    }
     public Snapshot snapshot(Event asOf)
     {
         List<Event> toCapture = new ArrayList<Event>();
@@ -220,6 +233,25 @@ public class HandHistory extends Base
         Snapshot s = new Snapshot(getPlayers());
         return s.populate( toCapture )
                 ? s : null;
+    }
+
+
+    //--------------------------------------------------------------------
+    public HoldemRetroSet casesFor(PlayerHandle p)
+    {
+        return new HandParser().casesFor(this, p);
+    }
+    public PredictionContext nextToActContext()
+    {
+        return new HandParser().nextToActContext(
+                this, nextToActSnapshot().nextToAct());
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return "History for: " + getPlayers().toString();
     }
 }
 

@@ -7,6 +7,7 @@ import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.Snapshot;
+import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.Dealer;
 import com.google.inject.Inject;
@@ -43,9 +44,12 @@ public class HistoryTest
         public void retire()    {}
 
         public void opponentToAct(HandHistory hand, Snapshot env) {}
+
         public void opponentActed(
+                PlayerHandle opponent,
                 HandHistory hand, Snapshot env, TakenAction act)  {}
 
+        public void handStarted() {}
         public void handEnded(
                 HandHistory atEndOfHand, Money stackDelta) {}
 

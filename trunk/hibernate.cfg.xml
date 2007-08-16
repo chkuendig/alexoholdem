@@ -60,6 +60,7 @@
         <mapping class="ao.holdem.def.model.cards.Hole"/>
         <mapping class="ao.holdem.def.model.cards.Community"/>
         <mapping class="ao.holdem.def.model.Money"/>
-        <mapping class="ao.holdem.bots.opp_model.predict.def.retro.LearnerSet"/>
+        <!--<mapping class="ao.holdem.bots.opp_model.predict.def.retro.LearnerSet"/>-->
+        <!--<mapping class="ao.holdem.bots.opp_model.predict.joone.BackpropLearner"/>-->
     </session-factory>
 </hibernate-configuration>

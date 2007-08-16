@@ -18,14 +18,14 @@ public abstract class HoldemPostflop extends HoldemPostact
             Snapshot    curr)
     {
         super(prev, prevAct, curr);
-        assert curr.round() != BettingRound.PREFLOP;
+        assert curr.comingRound() != BettingRound.PREFLOP;
 
         double flopStageBool  =
-                asDouble(curr.round() == BettingRound.FLOP);
+                asDouble(curr.comingRound() == BettingRound.FLOP);
         double turnStageBool  =
-                asDouble(curr.round() == BettingRound.TURN);
+                asDouble(curr.comingRound() == BettingRound.TURN);
         double riverStageBool =
-                asDouble(curr.round() == BettingRound.RIVER);
+                asDouble(curr.comingRound() == BettingRound.RIVER);
 
         addNeuralInput(flopStageBool,
                        turnStageBool,

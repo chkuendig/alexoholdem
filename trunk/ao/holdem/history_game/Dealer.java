@@ -64,6 +64,8 @@ public class Dealer
         {
             hand.addHole(player, deck.nextHole());
             session.get().saveOrUpdate( player );
+
+            byHandle.get( player ).handStarted();
         }
         session.get().save( hand );
 
@@ -80,6 +82,7 @@ public class Dealer
                 HistoryBot   b = byHandle.get( p );
 
                 TakenAction act = null;
+                alertOpponentsOfImpendingAction(p, hand, s);
                 Action a = b.act(hand, s);
                 switch (a)
                 {
@@ -109,6 +112,7 @@ public class Dealer
                 session.get().save( e );
 
                 s = s.addNextEvent( e );
+                alertOpponentsOfAction(p, hand, s, act);
             }
 
             assignCommunity(hand, s, deck);
@@ -122,6 +126,36 @@ public class Dealer
         session.get().saveOrUpdate( hand );
 
         return hand;
+    }
+
+    private void alertOpponentsOfImpendingAction(
+            PlayerHandle aboutToAct,
+            HandHistory  hand,
+            Snapshot     snapshot)
+    {
+        for (Map.Entry<PlayerHandle, HistoryBot> ph :
+                byHandle.entrySet())
+        {
+            if (! ph.getKey().equals( aboutToAct ))
+            {
+                ph.getValue().opponentToAct(hand, snapshot);
+            }
+        }
+    }
+    private void alertOpponentsOfAction(
+            PlayerHandle actor,
+            HandHistory  hand,
+            Snapshot     snapshot,
+            TakenAction  act)
+    {
+        for (Map.Entry<PlayerHandle, HistoryBot> ph :
+                byHandle.entrySet())
+        {
+            if (! ph.getKey().equals( actor ))
+            {
+                ph.getValue().opponentActed(actor, hand, snapshot, act);
+            }
+        }
     }
 
 
