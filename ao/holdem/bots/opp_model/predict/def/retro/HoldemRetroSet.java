@@ -8,48 +8,29 @@ import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleAwarePreflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleBlindPreflop;
 import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  */
 public class HoldemRetroSet
 {
     //--------------------------------------------------------------------
-    private List<Retrodiction<HoleAwareFirstact>>
-            holeAwareFirstact;
-    private List<Retrodiction<HoleBlindFirstact>>
-            holeBlindFirstact;
-
-    private List<Retrodiction<HoleAwarePreflop>>
-            holeAwarePreflop;
-    private List<Retrodiction<HoleBlindPreflop>>
-            holeBlindPreflop;
-
-    private List<Retrodiction<HoleAwarePostflop>>
-            holeAwarePostflop;
-    private List<Retrodiction<HoleBlindPostflop>>
-            holeBlindPostflop;
+    private RetroSet<HoleAwareFirstact> holeAwareFirstact;
+    private RetroSet<HoleBlindFirstact> holeBlindFirstact;
+    private RetroSet<HoleAwarePreflop>  holeAwarePreflop;
+    private RetroSet<HoleBlindPreflop>  holeBlindPreflop;
+    private RetroSet<HoleAwarePostflop> holeAwarePostflop;
+    private RetroSet<HoleBlindPostflop> holeBlindPostflop;
 
 
     //--------------------------------------------------------------------
     public HoldemRetroSet()
     {
-        holeAwareFirstact =
-                new ArrayList<Retrodiction<HoleAwareFirstact>>();
-        holeBlindFirstact =
-                new ArrayList<Retrodiction<HoleBlindFirstact>>();
-
-        holeAwarePreflop  =
-                new ArrayList<Retrodiction<HoleAwarePreflop>>();
-        holeBlindPreflop  =
-                new ArrayList<Retrodiction<HoleBlindPreflop>>();
-
-        holeAwarePostflop =
-                new ArrayList<Retrodiction<HoleAwarePostflop>>();
-        holeBlindPostflop =
-                new ArrayList<Retrodiction<HoleBlindPostflop>>();
+        holeAwareFirstact = new RetroSet<HoleAwareFirstact>();
+        holeBlindFirstact = new RetroSet<HoleBlindFirstact>();
+        holeAwarePreflop  = new RetroSet<HoleAwarePreflop>();
+        holeBlindPreflop  = new RetroSet<HoleBlindPreflop>();
+        holeAwarePostflop = new RetroSet<HoleAwarePostflop>();
+        holeBlindPostflop = new RetroSet<HoleBlindPostflop>();
     }
 
 
@@ -80,6 +61,18 @@ public class HoldemRetroSet
 //        mutableCases(retrodiction.contextClass())
 //                .add(retrodiction);
 //    }
+
+
+    //--------------------------------------------------------------------
+    public void add(HoldemRetroSet addend)
+    {
+        holeAwareFirstact.add( addend.holeAwareFirstact );
+        holeBlindFirstact.add( addend.holeBlindFirstact );
+        holeAwarePreflop.add(  addend.holeAwarePreflop );
+        holeBlindPreflop.add(  addend.holeBlindPreflop );
+        holeAwarePostflop.add( addend.holeAwarePostflop );
+        holeBlindPostflop.add( addend.holeBlindPostflop );
+    }
 
 
     //--------------------------------------------------------------------
@@ -157,36 +150,43 @@ public class HoldemRetroSet
     {
 //        predictor.trainHoleAwareFirstact(
 //                holeAwareFirstact, interations, timeout);
+//        holeAwareFirstact.clear();
 //        predictor.trainHoleBlindFirstact(
 //                holeBlindFirstact, interations, timeout);
+//        holeBlindFirstact.clear();
 //        predictor.trainHoleAwarePreflop(
 //                holeAwarePreflop, interations, timeout);
+//        holeAwarePreflop.clear();
 //        predictor.trainHoleBlindPreflop(
 //                holeBlindPreflop, interations, timeout);
+//        holeBlindPreflop.clear();
 //        predictor.trainHoleAwarePostflop(
 //                holeAwarePostflop, interations, timeout);
+//        holeAwarePostflop.clear();
+
         predictor.trainHoleBlindPostflop(
                 holeBlindPostflop, interations, timeout);
+        holeBlindPostflop.clear();
     }
 
     //--------------------------------------------------------------------
-    public List<Retrodiction<?>> holeAware()
+    @SuppressWarnings("unchecked")
+    public RetroSet<?> holeAware()
     {
-        List<Retrodiction<?>> holeAware =
-                new ArrayList<Retrodiction<?>>();
-        holeAware.addAll(holeAwareFirstact);
-        holeAware.addAll(holeAwarePreflop);
-        holeAware.addAll(holeAwarePostflop);
+        RetroSet holeAware = new RetroSet();
+        holeAware.add(holeAwareFirstact);
+        holeAware.add(holeAwarePreflop);
+        holeAware.add(holeAwarePostflop);
         return holeAware;
     }
 
-    public List<Retrodiction<?>> holeBlind()
+    @SuppressWarnings("unchecked")
+    public RetroSet<?> holeBlind()
     {
-        List<Retrodiction<?>> holeBlind =
-                new ArrayList<Retrodiction<?>>();
-        holeBlind.addAll(holeBlindFirstact);
-        holeBlind.addAll(holeBlindPreflop);
-        holeBlind.addAll(holeBlindPostflop);
+        RetroSet holeBlind = new RetroSet();
+        holeBlind.add(holeBlindFirstact);
+        holeBlind.add(holeBlindPreflop);
+        holeBlind.add(holeBlindPostflop);
         return holeBlind;
     }
 

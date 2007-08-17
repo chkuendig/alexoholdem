@@ -25,7 +25,7 @@ public class BackpropPredictor<C extends PredictionContext>
     public BackpropPredictor(NeuralNet copyNet)
     {
         predictor = copyNet.cloneNet();
-        //predictor.removeAllListeners();
+        predictor.removeAllListeners();
 
         Layer input = predictor.getInputLayer();
         input.removeAllInputs();

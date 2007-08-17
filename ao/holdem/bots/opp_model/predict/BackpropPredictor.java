@@ -5,6 +5,8 @@ import org.joone.engine.learning.TeachingSynapse;
 import org.joone.io.MemoryInputSynapse;
 import org.joone.net.NeuralNet;
 
+import java.util.List;
+
 /**
  *
  */
@@ -20,75 +22,141 @@ public class BackpropPredictor implements NeuralNetListener
     //--------------------------------------------------------------------
     public void trainOn(PredictionSet predictions)
     {
-        LinearLayer  input  = new LinearLayer();
-        SigmoidLayer hidden = new SigmoidLayer();
-        SigmoidLayer output = new SigmoidLayer(); // SoftmaxLayer
+        Layer input  = inputLayer(predictions.caseInputSize());
+        Layer hidden = hiddenLayer(48);
+        Layer output = outputLayer(predictions.caseOutputSize());
 
-        input.setLayerName("input");
-        hidden.setLayerName("hidden");
-        output.setLayerName("output");
+        connectLayers(input, hidden, output);
 
-        input.setRows(predictions.caseInputSize());
-        hidden.setRows(48);
-        output.setRows(predictions.caseOutputSize());
+        feedInput(predictions, input);
+        TeachingSynapse teacher =
+                feedOutput(predictions, output);
 
-        FullSynapse synapse_IH = new FullSynapse(); /* Input  -> Hidden conn. */
-	    FullSynapse synapse_HO = new FullSynapse(); /* Hidden -> Output conn. */
-        synapse_IH.setName("IH");
-        synapse_HO.setName("HO");
-        
-        input.addOutputSynapse(synapse_IH);
-	    hidden.addInputSynapse(synapse_IH);
-
-        hidden.addOutputSynapse(synapse_HO);
-	    output.addInputSynapse(synapse_HO);
+        NeuralNet nnet = setupNet(input, hidden, output, teacher);
+        setupMonitor(nnet.getMonitor(), predictions);
 
         //------------------------------------------------------
-        double inputCases[][]  = new double[ predictions.cases().size() ][ predictions.caseInputSize() ];
-        double outputCases[][] = new double[ predictions.cases().size() ][ predictions.caseOutputSize() ];
-        for (int i = 0; i < predictions.cases().size(); i++)
+        for (int i = 0; i < 20; i++)
         {
-            PredictionCase c = predictions.cases().get(i);
-            inputCases[  i ] = c.asNeuralInput();
-            outputCases[ i ] = c.neuralOutput();
+            nnet.go(true, true);
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    private NeuralNet setupNet(
+            Layer input, Layer hidden, Layer output,
+            TeachingSynapse teacher)
+    {
+        NeuralNet nnet = new NeuralNet();
+
+	    nnet.addLayer(input,  NeuralNet.INPUT_LAYER);
+	    nnet.addLayer(hidden, NeuralNet.HIDDEN_LAYER);
+	    nnet.addLayer(output, NeuralNet.OUTPUT_LAYER);
+        nnet.setTeacher( teacher );
+
+        return nnet;
+    }
+
+    private void setupMonitor(
+            Monitor       monitor,
+            PredictionSet predictions)
+    {
+	    monitor.setLearningRate(0.4);
+	    monitor.setMomentum(0.5);
+
+        monitor.removeAllListeners();
+        monitor.addNeuralNetListener(this);
+
+        monitor.setTrainingPatterns( predictions.cases().size() );
+        monitor.setTotCicles( 200 );
+        monitor.setLearning(  true  );
+    }
+
+
+    //--------------------------------------------------------------------
+    private void feedInput(PredictionSet predictions, Layer input)
+    {
+        List<PredictionCase> cases = predictions.cases();
+        double inputCases[][]  =
+                new double[ predictions.numCases() ]
+                          [ predictions.caseInputSize() ];
+
+        for (int i = 0; i < predictions.numCases(); i++)
+        {
+            inputCases[ i ] = cases.get(i).asNeuralInput();
         }
 
         MemoryInputSynapse in = new MemoryInputSynapse();
         in.setInputArray( inputCases );
         in.setAdvancedColumnSelector("1-" + predictions.caseInputSize());
         input.addInputSynapse(in);
+    }
+    private TeachingSynapse feedOutput(
+            PredictionSet predictions, Layer output)
+    {
+        List<PredictionCase> cases = predictions.cases();
+        double outputCases[][] =
+                new double[ predictions.numCases() ]
+                          [ predictions.caseOutputSize() ];
 
-        TeachingSynapse trainer = new TeachingSynapse();
+        for (int i = 0; i < predictions.numCases(); i++)
+        {
+            PredictionCase c = cases.get(i);
+            outputCases[ i ] = c.neuralOutput();
+        }
+
         MemoryInputSynapse out  = new MemoryInputSynapse();
         out.setAdvancedColumnSelector("1-" + predictions.caseOutputSize());
         out.setInputArray(outputCases);
+
+        TeachingSynapse trainer = new TeachingSynapse();
         trainer.setDesired( out );
-
-//        FileOutputSynapse error = new FileOutputSynapse();
-//        error.setFileName("C:\\alex\\dev\\workspace_idea\\holdem\\joone_errors.txt");
-//        //error.setBuffered(false);
-//        trainer.addResultSynapse( error );
-
         output.addOutputSynapse( trainer );
-        
-        //------------------------------------------------------
-        NeuralNet nnet = new NeuralNet();
 
-	    nnet.addLayer(input,  NeuralNet.INPUT_LAYER);
-	    nnet.addLayer(hidden, NeuralNet.HIDDEN_LAYER);
-	    nnet.addLayer(output, NeuralNet.OUTPUT_LAYER);
-        nnet.setTeacher( trainer );
+        return trainer;
+    }
 
-        Monitor monitor = nnet.getMonitor();
-	    monitor.setLearningRate(0.4);
-	    monitor.setMomentum(0.5);
 
-        monitor.addNeuralNetListener(this);
+    //--------------------------------------------------------------------
+    private void connectLayers(
+            Layer input, Layer hidden, Layer output)
+    {
+        FullSynapse synapse_IH = new FullSynapse();
+	    FullSynapse synapse_HO = new FullSynapse();
 
-        monitor.setTrainingPatterns( inputCases.length );
-        monitor.setTotCicles( 10000 );
-        monitor.setLearning(  true  );
-        nnet.go();
+        synapse_IH.setName("input2hidden");
+        synapse_HO.setName("hidden2output");
+
+        input.addOutputSynapse(synapse_IH);
+	    hidden.addInputSynapse(synapse_IH);
+
+        hidden.addOutputSynapse(synapse_HO);
+	    output.addInputSynapse(synapse_HO);
+    }
+
+
+    //--------------------------------------------------------------------
+    private Layer inputLayer( int numRows )
+    {
+        LinearLayer input = new LinearLayer();
+        input.setLayerName("input");
+        input.setRows(numRows);
+        return input;
+    }
+    private Layer hiddenLayer( int numRows )
+    {
+        SigmoidLayer hidden = new SigmoidLayer();
+        hidden.setLayerName("hidden");
+        hidden.setRows(numRows);
+        return hidden;
+    }
+    private Layer outputLayer( int numRows )
+    {
+        SigmoidLayer output = new SigmoidLayer(); // SoftmaxLayer
+        output.setLayerName("output");
+        output.setRows(numRows);
+        return output;
     }
 
     
