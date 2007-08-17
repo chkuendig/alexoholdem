@@ -28,7 +28,8 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "TeaGeePea"));
+        modelOpponet(playerAccess.find("irc", "doc_doc"));
+//        backprop(playerAccess.find("irc", "doc_doc"));
     }
 
 
@@ -49,7 +50,7 @@ public class OppModelTest
 
     private void doModelOpponet(PlayerHandle p) throws Exception
     {
-//        int count = 0;
+//        HoldemRetroSet allRetros = new HoldemRetroSet();
 
         LearnerSet learners = new LearnerSet();
         for (HandHistory hand : p.getHands())
@@ -58,7 +59,7 @@ public class OppModelTest
             HoldemRetroSet retros     = hand.casesFor(p);
             PredictorSet   predictors = learners.predictors();
 
-            for (Retrodiction<?> retro : retros.holeBlind())
+            for (Retrodiction<?> retro : retros.holeBlind().cases())
             {
                 HoldemObservation prediction =
                         predictors.predict(retro);
@@ -68,14 +69,18 @@ public class OppModelTest
                                    new MixedAction(retro.neuralOutput()));
             }
 
-            retros.train(learners, 10000, 1000);
+            retros.train(learners, 1000, 1000000);
+//            allRetros.add( retros );
         }
     }
 
     // see http://www.jooneworld.com/docs/sampleEngine.html
-    private void backprop(PredictionSet predictions)
+    private void backprop(PlayerHandle p)
     {
+        PredictionSet predictions = new PredictionSet();
+        predictions.addPlayerHands(p);
         new BackpropPredictor().trainOn( predictions );
+        System.out.println("at end of backprop");
     }
 
 

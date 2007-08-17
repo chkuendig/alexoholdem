@@ -11,7 +11,6 @@ import ao.holdem.bots.opp_model.predict.joone.BackpropLearner;
 import ao.holdem.history.persist.Base;
 
 import javax.persistence.Entity;
-import java.util.List;
 
 /**
  *
@@ -109,42 +108,42 @@ public class LearnerSet extends Base
 
     //--------------------------------------------------------------------
     public void trainHoleAwareFirstact(
-            List<Retrodiction<HoleAwareFirstact>> data,
+            RetroSet<HoleAwareFirstact> data,
             int iterations, int millis)
     {
         getHoleAwareFirstact().add(data);
         getHoleAwareFirstact().learn(iterations, millis);
     }
     public void trainHoleBlindFirstact(
-            List<Retrodiction<HoleBlindFirstact>> data,
+            RetroSet<HoleBlindFirstact> data,
             int iterations, int millis)
     {
         getHoleBlindFirstact().add(data);
         getHoleBlindFirstact().learn(iterations, millis);
     }
     public void trainHoleAwarePreflop(
-            List<Retrodiction<HoleAwarePreflop>> data,
+            RetroSet<HoleAwarePreflop> data,
             int iterations, int millis)
     {
         getHoleAwarePreflop().add(data);
         getHoleAwarePreflop().learn(iterations, millis);
     }
     public void trainHoleBlindPreflop(
-            List<Retrodiction<HoleBlindPreflop>> data,
+            RetroSet<HoleBlindPreflop> data,
             int iterations, int millis)
     {
         getHoleBlindPreflop().add(data);
         getHoleBlindPreflop().learn(iterations, millis);
     }
     public void trainHoleAwarePostflop(
-            List<Retrodiction<HoleAwarePostflop>> data,
+            RetroSet<HoleAwarePostflop> data,
             int iterations, int millis)
     {
         getHoleAwarePostflop().add(data);
         getHoleAwarePostflop().learn(iterations, millis);
     }
     public void trainHoleBlindPostflop(
-            List<Retrodiction<HoleBlindPostflop>> data,
+            RetroSet<HoleBlindPostflop> data,
             int iterations, int millis)
     {
         getHoleBlindPostflop().add(data);
