@@ -148,21 +148,32 @@ public class HoldemRetroSet
     public void train(LearnerSet predictor,
                       int interations, int timeout)
     {
-        predictor.trainHoleAwareFirstact(
-                holeAwareFirstact, interations, timeout);
-        holeAwareFirstact.clear();
-        predictor.trainHoleBlindFirstact(
-                holeBlindFirstact, interations, timeout);
-        holeBlindFirstact.clear();
-        predictor.trainHoleAwarePreflop(
-                holeAwarePreflop, interations, timeout);
-        holeAwarePreflop.clear();
-        predictor.trainHoleBlindPreflop(
-                holeBlindPreflop, interations, timeout);
-        holeBlindPreflop.clear();
-        predictor.trainHoleAwarePostflop(
-                holeAwarePostflop, interations, timeout);
-        holeAwarePostflop.clear();
+//        System.out.println("training holeAwareFirstact");
+//        predictor.trainHoleAwareFirstact(
+//                holeAwareFirstact, interations, timeout);
+//        holeAwareFirstact.clear();
+//
+//        System.out.println("training holeBlindFirstact");
+//        predictor.trainHoleBlindFirstact(
+//                holeBlindFirstact, interations, timeout);
+//        holeBlindFirstact.clear();
+//
+//        System.out.println("training holeAwarePreflop");
+//        predictor.trainHoleAwarePreflop(
+//                holeAwarePreflop, interations, timeout);
+//        holeAwarePreflop.clear();
+//
+//        System.out.println("training holeBlindPreflop");
+//        predictor.trainHoleBlindPreflop(
+//                holeBlindPreflop, interations, timeout);
+//        holeBlindPreflop.clear();
+//
+//        System.out.println("training holeAwarePostflop");
+//        predictor.trainHoleAwarePostflop(
+//                holeAwarePostflop, interations, timeout);
+//        holeAwarePostflop.clear();
+
+        System.out.println("training holeBlindPostflop");
         predictor.trainHoleBlindPostflop(
                 holeBlindPostflop, interations, timeout);
         holeBlindPostflop.clear();

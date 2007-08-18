@@ -1,12 +1,12 @@
 package ao.holdem.bots.opp_model.predict.def.learn;
 
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
+import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 
 /**
  *
  */
 public interface Predictor<C extends PredictionContext>
 {
-    public HoldemObservation predict(C context);
+    public Observation predict(C context);
 }

@@ -38,20 +38,12 @@ public class LearnerSet extends Base
     //--------------------------------------------------------------------
     public LearnerSet()
     {
-        holeAwareFirstact =
-                new BackpropLearner<HoleAwareFirstact>();
-        holeBlindFirstact =
-                new BackpropLearner<HoleBlindFirstact>();
-
-        holeAwarePreflop =
-                new BackpropLearner<HoleAwarePreflop>();
-        holeBlindPreflop =
-                new BackpropLearner<HoleBlindPreflop>();
-
-        holeAwarePostflop =
-                new BackpropLearner<HoleAwarePostflop>();
-        holeBlindPostflop =
-                new BackpropLearner<HoleBlindPostflop>();
+        holeAwareFirstact = new BackpropLearner<HoleAwareFirstact>(3);
+        holeBlindFirstact = new BackpropLearner<HoleBlindFirstact>(3);
+        holeAwarePreflop  = new BackpropLearner<HoleAwarePreflop>(3);
+        holeBlindPreflop  = new BackpropLearner<HoleBlindPreflop>(3);
+        holeAwarePostflop = new BackpropLearner<HoleAwarePostflop>(3);
+        holeBlindPostflop = new BackpropLearner<HoleBlindPostflop>(3);
     }
 
 
