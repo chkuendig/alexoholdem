@@ -28,8 +28,8 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "doc_doc"));
-//        backprop(playerAccess.find("irc", "doc_doc"));
+        modelOpponet(playerAccess.find("irc", "Barrister"));
+//        backprop(playerAccess.find("irc", "Barrister"));
     }
 
 
@@ -69,7 +69,7 @@ public class OppModelTest
                                    new MixedAction(retro.neuralOutput()));
             }
 
-            retros.train(learners, 1000, 1000000);
+            retros.train(learners, 200, 2000000);
 //            allRetros.add( retros );
         }
     }
