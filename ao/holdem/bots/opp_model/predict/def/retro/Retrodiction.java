@@ -1,7 +1,6 @@
 package ao.holdem.bots.opp_model.predict.def.retro;
 
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
 import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 
 /**
@@ -12,16 +11,16 @@ public class Retrodiction<C extends PredictionContext>
                    Observation
 {
     //--------------------------------------------------------------------
-    private PredictionContext CONTEXT_DELEGET;
-    private HoldemObservation OBSERVATION_DELEGET;
+    private C           CONTEXT_DELEGET;
+    private Observation OBSERVATION_DELEGET;
 
 
     //--------------------------------------------------------------------
 //    public Retrodiction() {}
 
     public Retrodiction(
-            C                 context,
-            HoldemObservation observation)
+            C           context,
+            Observation observation)
     {
         CONTEXT_DELEGET     = context;
         OBSERVATION_DELEGET = observation;
@@ -75,5 +74,12 @@ public class Retrodiction<C extends PredictionContext>
     public int neuralOutputSize()
     {
         return OBSERVATION_DELEGET.neuralOutputSize();
+    }
+
+
+    //--------------------------------------------------------------------
+    public  Retrodiction<C> asObserved(Observation observation)
+    {
+        return new Retrodiction<C>(CONTEXT_DELEGET, observation);
     }
 }

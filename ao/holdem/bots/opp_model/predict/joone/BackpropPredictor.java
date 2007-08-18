@@ -2,8 +2,8 @@ package ao.holdem.bots.opp_model.predict.joone;
 
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
 import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
-import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
-import ao.holdem.bots.opp_model.mix.MixedAction;
+import ao.holdem.bots.opp_model.predict.def.observation.Observation;
+import ao.holdem.bots.opp_model.predict.def.observation.ObservationImpl;
 import org.joone.engine.DirectSynapse;
 import org.joone.engine.Layer;
 import org.joone.engine.Pattern;
@@ -16,7 +16,6 @@ public class BackpropPredictor<C extends PredictionContext>
         implements Predictor<C>
 {
     //--------------------------------------------------------------------
-    private final NeuralNet     predictor;
     private final DirectSynapse memInp;
     private final DirectSynapse memOut; 
 
@@ -24,7 +23,7 @@ public class BackpropPredictor<C extends PredictionContext>
     //--------------------------------------------------------------------
     public BackpropPredictor(NeuralNet copyNet)
     {
-        predictor = copyNet.cloneNet();
+        NeuralNet predictor = copyNet.cloneNet();
         predictor.removeAllListeners();
 
         memInp      = new DirectSynapse();
@@ -43,7 +42,7 @@ public class BackpropPredictor<C extends PredictionContext>
 
 
     //--------------------------------------------------------------------
-    public HoldemObservation predict(C context)
+    public Observation predict(C context)
     {
 //        predictor.go();
 
@@ -55,11 +54,7 @@ public class BackpropPredictor<C extends PredictionContext>
 //        predictor.singleStepForward(iPattern);
 
         Pattern pattern = memOut.fwdGet();
-        HoldemObservation prediction =
-                new HoldemObservation(
-                        new MixedAction(
-                                pattern.getArray()));
-//        predictor.stop();
-        return prediction;
+        //        predictor.stop();
+        return new ObservationImpl(pattern.getArray());
     }
 }

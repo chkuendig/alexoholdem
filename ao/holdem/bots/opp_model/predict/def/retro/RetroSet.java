@@ -3,6 +3,7 @@ package ao.holdem.bots.opp_model.predict.def.retro;
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -50,15 +51,15 @@ public class RetroSet<C extends PredictionContext>
 
 
     //--------------------------------------------------------------------
-    public List<Retrodiction<C>> cases()
+    public Collection<Retrodiction<C>> cases()
     {
         return cases;
     }
 
-    public Retrodiction<C> get(int index)
-    {
-        return cases.get( index );
-    }
+//    public Retrodiction<C> get(int index)
+//    {
+//        return cases.get( index );
+//    }
 
 
     //--------------------------------------------------------------------

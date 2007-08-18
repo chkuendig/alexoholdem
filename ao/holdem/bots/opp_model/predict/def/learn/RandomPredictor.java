@@ -1,8 +1,8 @@
 package ao.holdem.bots.opp_model.predict.def.learn;
 
-import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
+import ao.holdem.bots.opp_model.predict.def.observation.Observation;
+import ao.holdem.bots.opp_model.predict.def.observation.ObservationImpl;
 import ao.util.rand.Rand;
 
 /**
@@ -11,11 +11,21 @@ import ao.util.rand.Rand;
 public class RandomPredictor<C extends PredictionContext>
         implements Predictor<C>
 {
-    public HoldemObservation predict(C context)
+    private final int observationCount;
+
+    public RandomPredictor(int count)
     {
-        return new HoldemObservation(
-                new MixedAction(Rand.nextDouble(),
-                                Rand.nextDouble(),
-                                Rand.nextDouble()));
+        observationCount = count;
+    }
+
+    public Observation predict(C context)
+    {
+        double ob[] = new double[ observationCount ];
+        for (int i = 0; i < ob.length; i++)
+        {
+            ob[i] = Rand.nextDouble();
+        }
+
+        return new ObservationImpl(ob);
     }
 }

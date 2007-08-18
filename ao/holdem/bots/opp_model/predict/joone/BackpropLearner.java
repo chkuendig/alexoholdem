@@ -5,6 +5,7 @@ import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
 import ao.holdem.bots.opp_model.predict.def.learn.RandomPredictor;
 import ao.holdem.bots.opp_model.predict.def.learn.SupervisedLearner;
 import ao.holdem.bots.opp_model.predict.def.retro.RetroSet;
+import ao.holdem.bots.opp_model.predict.def.retro.Retrodiction;
 import ao.util.rand.Rand;
 import org.joone.engine.*;
 import org.joone.engine.learning.TeachingSynapse;
@@ -35,11 +36,14 @@ public class BackpropLearner<C extends PredictionContext>
     private double inputCases[][];
     private double outputCases[][];
 
+    private int outputParams;
+
 
     //--------------------------------------------------------------------
-    public BackpropLearner()
+    public BackpropLearner(int outputParamCount)
     {
         DATA = new RetroSet<C>();
+        outputParams = outputParamCount;
     }
 
 
@@ -119,11 +123,13 @@ public class BackpropLearner<C extends PredictionContext>
             in.setInputArray( inputCases );
         }
 
-        for (int i = 0; i < data.size(); i++)
+        int index = 0;
+        for (Retrodiction<C> retrodiction : data.cases())
         {
-            inputCases[ i ] = data.get(i).neuralInput();
+            inputCases[ index++ ] = retrodiction.neuralInput();
         }
     }
+
     private void feedOutput(RetroSet<C> data)
     {
         if (outputCases == null)
@@ -142,11 +148,13 @@ public class BackpropLearner<C extends PredictionContext>
             out.setInputArray(outputCases);
         }
 
-        for (int i = 0; i < data.size(); i++)
+        int index = 0;
+        for (Retrodiction<C> retrodiction : data.cases())
         {
-            outputCases[ i ] = data.get(i).neuralOutput();
+            outputCases[ index++ ] = retrodiction.neuralOutput();
         }
     }
+    
     private void padIoCases(
             double in[][],
             double out[][],
@@ -248,31 +256,31 @@ public class BackpropLearner<C extends PredictionContext>
     public synchronized Predictor<C> predictor()
     {
         return (nnet == null || DATA.isEmpty())
-                ? new RandomPredictor<C>()
+                ? new RandomPredictor<C>(outputParams)
                 : new BackpropPredictor<C>(nnet);
-//        return new RandomPredictor<C>();
+//        return new RandomPredictor<C>(outputParams);
     }
 
 
     //--------------------------------------------------------------------
     public void netStarted(NeuralNetEvent event)
     {
-//        System.out.println("Training started");
+        System.out.println("Training started");
     }
     public void cicleTerminated(NeuralNetEvent event)
     {
-//        Monitor mon = (Monitor)event.getSource();
-//        long c = mon.getCurrentCicle();
-//
-//        if (c % 20 == 0)
-//        {
-//            System.out.println(c + " epochs remaining - RMSE = " +
-//                                    mon.getGlobalError());
-//        }
+        Monitor mon = (Monitor)event.getSource();
+        long c = mon.getCurrentCicle();
+
+        if (c % 100 == 0)
+        {
+            System.out.println(c + " epochs remaining - RMSE = " +
+                                    mon.getGlobalError());
+        }
     }
     public void netStopped(NeuralNetEvent event)
     {
-//        System.out.println("Training finished");
+        System.out.println("Training finished");
     }
     public void errorChanged(NeuralNetEvent event) {}
     public void netStoppedError(NeuralNetEvent event, String s)

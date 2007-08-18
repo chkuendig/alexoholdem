@@ -8,7 +8,7 @@ import ao.holdem.bots.opp_model.predict.def.context.postflop.HoleBlindPostflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleAwarePreflop;
 import ao.holdem.bots.opp_model.predict.def.context.preflop.HoleBlindPreflop;
 import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
-import ao.holdem.bots.opp_model.predict.def.observation.HoldemObservation;
+import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 
 
 /**
@@ -74,7 +74,7 @@ public class PredictorSet
 
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    public HoldemObservation predict(PredictionContext context)
+    public Observation predict(PredictionContext context)
     {
         return ((Predictor) predictor(context.predictionType()))
                                 .predict(context);
