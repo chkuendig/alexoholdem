@@ -27,26 +27,25 @@ public class BackpropPredictor<C extends PredictionContext>
         predictor = copyNet.cloneNet();
         predictor.removeAllListeners();
 
+        memInp      = new DirectSynapse();
         Layer input = predictor.getInputLayer();
         input.removeAllInputs();
-
-        Layer output = predictor.getOutputLayer();
-        output.removeAllOutputs();
-
-        memOut = new DirectSynapse();
-        output.addOutputSynapse(memOut);
-        
-        memInp = new DirectSynapse();
         input.addInputSynapse(memInp);
 
+        memOut       = new DirectSynapse();
+        Layer output = predictor.getOutputLayer();
+        output.removeAllOutputs();
+        output.addOutputSynapse(memOut);
+
         predictor.getMonitor().setLearning( false );
+        predictor.go();
     }
 
 
     //--------------------------------------------------------------------
     public HoldemObservation predict(C context)
     {
-        predictor.go();
+//        predictor.go();
 
         Pattern iPattern =
                 new Pattern(context.neuralInput());
@@ -60,7 +59,7 @@ public class BackpropPredictor<C extends PredictionContext>
                 new HoldemObservation(
                         new MixedAction(
                                 pattern.getArray()));
-        predictor.stop();
+//        predictor.stop();
         return prediction;
     }
 }

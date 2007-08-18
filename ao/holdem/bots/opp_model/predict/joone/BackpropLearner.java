@@ -5,6 +5,7 @@ import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
 import ao.holdem.bots.opp_model.predict.def.learn.RandomPredictor;
 import ao.holdem.bots.opp_model.predict.def.learn.SupervisedLearner;
 import ao.holdem.bots.opp_model.predict.def.retro.RetroSet;
+import ao.util.rand.Rand;
 import org.joone.engine.*;
 import org.joone.engine.learning.TeachingSynapse;
 import org.joone.io.MemoryInputSynapse;
@@ -23,9 +24,16 @@ public class BackpropLearner<C extends PredictionContext>
                    NeuralNetListener
 {
     //--------------------------------------------------------------------
+    private static final int HORIZON = 200;
+
+
+    //--------------------------------------------------------------------
     private RetroSet<C> DATA;
     private NeuralNet   nnet;
     private boolean     dataAdded;
+
+    private double inputCases[][];
+    private double outputCases[][];
 
 
     //--------------------------------------------------------------------
@@ -41,8 +49,8 @@ public class BackpropLearner<C extends PredictionContext>
         if (data.isEmpty()) return;
         if (nnet == null) initNet(data);
 
-        DATA.add(       data );
-        DATA.removeOld( 1000 );
+        DATA.add(       data    );
+        DATA.removeOld( HORIZON );
 
         dataAdded = true;
     }
@@ -53,9 +61,11 @@ public class BackpropLearner<C extends PredictionContext>
     {
         if (nnet == null || (!dataAdded)) return;
 
+        nnet.stop();
         updateTrainingData(DATA);
 
-        nnet.getMonitor().setTotCicles( iterations );
+        int realItr = (int)(((double)iterations) * DATA.size() / HORIZON + 1);
+        nnet.getMonitor().setTotCicles( realItr );
         try
         {
             Executors.newSingleThreadExecutor().submit(new Runnable() {
@@ -87,68 +97,70 @@ public class BackpropLearner<C extends PredictionContext>
 
         feedInput(data);
         feedOutput(data);
+        padIoCases(inputCases, outputCases, data.size());
 
-        nnet.getMonitor().setTrainingPatterns( data.size() );
+//        System.out.println("setting " + data.size() + " patterns.");
+//        nnet.getMonitor().setTrainingPatterns( HORIZON );
     }
 
 
     //--------------------------------------------------------------------
     private void feedInput(RetroSet<C> data)
     {
-        double inputCases[][]  =
-                new double[ data.size() ]
+        if (inputCases == null)
+        {
+            inputCases =
+                new double[ HORIZON              ]
                           [ data.caseInputSize() ];
+
+            MemoryInputSynapse in = new MemoryInputSynapse();
+            in.setAdvancedColumnSelector("1-" + data.caseInputSize());
+            nnet.getInputLayer().addInputSynapse(in);
+            in.setInputArray( inputCases );
+        }
+
         for (int i = 0; i < data.size(); i++)
         {
             inputCases[ i ] = data.get(i).neuralInput();
         }
-
-        MemoryInputSynapse in;
-        if (nnet.getInputLayer().getAllInputs() == null ||
-                nnet.getInputLayer().getAllInputs().isEmpty())
-        {
-            in = new MemoryInputSynapse();
-            in.setAdvancedColumnSelector("1-" + data.caseInputSize());
-
-            nnet.getInputLayer().addInputSynapse(in);
-        }
-        else
-        {
-            in = (MemoryInputSynapse)
-                    nnet.getInputLayer().getAllInputs().get(0);
-        }
-        in.setInputArray( inputCases );
     }
     private void feedOutput(RetroSet<C> data)
     {
-        double outputCases[][] =
-                new double[ data.size() ]
+        if (outputCases == null)
+        {
+            outputCases =
+                new double[ HORIZON               ]
                           [ data.caseOutputSize() ];
-        for (int i = 0; i < data.size(); i++)
-        {
-            outputCases[ i ] = data.get(i).neuralOutput();
-        }
 
-        MemoryInputSynapse out;
-        if (nnet.getOutputLayer().getAllOutputs() == null ||
-                nnet.getOutputLayer().getAllOutputs().isEmpty())
-        {
-            out = new MemoryInputSynapse();
+            MemoryInputSynapse out = new MemoryInputSynapse();
             out.setAdvancedColumnSelector("1-" + data.caseOutputSize());
 
             TeachingSynapse teacher = new TeachingSynapse();
             teacher.setDesired( out );
             nnet.setTeacher( teacher );
-
             nnet.getOutputLayer().addOutputSynapse( teacher );
+            out.setInputArray(outputCases);
         }
-        else
+
+        for (int i = 0; i < data.size(); i++)
         {
-            out = (MemoryInputSynapse)((TeachingSynapse)
-                    nnet.getOutputLayer().getAllOutputs().get(0))
-                        .getDesired();
+            outputCases[ i ] = data.get(i).neuralOutput();
         }
-        out.setInputArray(outputCases);
+    }
+    private void padIoCases(
+            double in[][],
+            double out[][],
+            int    startingAt)
+    {
+        for (int index = startingAt; index < HORIZON; index++)
+        {
+            int    padIndex = Rand.nextInt(startingAt);
+            double inPad[]  = in[padIndex];
+            double outPad[] = out[padIndex];
+            
+            in[index]  = inPad;
+            out[index] = outPad;
+        }
     }
 
 
@@ -172,7 +184,9 @@ public class BackpropLearner<C extends PredictionContext>
 	    monitor.setLearningRate(0.4);
 	    monitor.setMomentum(0.5);
         monitor.addNeuralNetListener(this);
+
         monitor.setLearning(true);
+        nnet.getMonitor().setTrainingPatterns( HORIZON );
     }
 
     private NeuralNet setupNet(
@@ -233,32 +247,32 @@ public class BackpropLearner<C extends PredictionContext>
     //--------------------------------------------------------------------
     public synchronized Predictor<C> predictor()
     {
-//        return (nnet == null)
-//                ? new RandomPredictor<C>()
-//                : new BackpropPredictor<C>(nnet);
-        return new RandomPredictor<C>();
+        return (nnet == null || DATA.isEmpty())
+                ? new RandomPredictor<C>()
+                : new BackpropPredictor<C>(nnet);
+//        return new RandomPredictor<C>();
     }
 
 
     //--------------------------------------------------------------------
     public void netStarted(NeuralNetEvent event)
     {
-        System.out.println("Training started");
+//        System.out.println("Training started");
     }
     public void cicleTerminated(NeuralNetEvent event)
     {
-        Monitor mon = (Monitor)event.getSource();
-        long c = mon.getCurrentCicle();
-
-        if (c % 100 == 0)
-        {
-            System.out.println(c + " epochs remaining - RMSE = " +
-                                    mon.getGlobalError());
-        }
+//        Monitor mon = (Monitor)event.getSource();
+//        long c = mon.getCurrentCicle();
+//
+//        if (c % 20 == 0)
+//        {
+//            System.out.println(c + " epochs remaining - RMSE = " +
+//                                    mon.getGlobalError());
+//        }
     }
     public void netStopped(NeuralNetEvent event)
     {
-        System.out.println("Training finished");
+//        System.out.println("Training finished");
     }
     public void errorChanged(NeuralNetEvent event) {}
     public void netStoppedError(NeuralNetEvent event, String s)
