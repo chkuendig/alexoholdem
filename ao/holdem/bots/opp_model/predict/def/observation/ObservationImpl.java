@@ -1,6 +1,6 @@
 package ao.holdem.bots.opp_model.predict.def.observation;
 
-import java.util.Arrays;
+import ao.util.text.Arr;
 
 /**
  *
@@ -34,6 +34,6 @@ public class ObservationImpl implements Observation
     @Override
     public String toString()
     {
-        return Arrays.toString(values);
+        return Arr.join(values, "\t");
     }
 }

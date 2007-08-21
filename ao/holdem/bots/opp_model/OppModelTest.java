@@ -1,13 +1,13 @@
 package ao.holdem.bots.opp_model;
 
+import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
 import ao.holdem.bots.opp_model.predict.PredictionSet;
+import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
 import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
 import ao.holdem.bots.opp_model.predict.def.retro.PredictorSet;
 import ao.holdem.bots.opp_model.predict.def.retro.Retrodiction;
-import ao.holdem.bots.opp_model.predict.def.observation.Observation;
-import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
@@ -28,7 +28,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "ChrisLinn"));
+        modelOpponet(playerAccess.find("irc", "timlo"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -50,24 +50,25 @@ public class OppModelTest
 
     private void doModelOpponet(PlayerHandle p) throws Exception
     {
+        LearnerSet learners = new LearnerSet();
+
         HoldemRetroSet trainRetros = new HoldemRetroSet();
         HoldemRetroSet validRetros = new HoldemRetroSet();
 
         int i = 0;
-        LearnerSet learners = new LearnerSet();
         for (HandHistory hand : p.getHands())
         {
-            HoldemRetroSet retros   = hand.casesFor(p);
+            HoldemRetroSet retros = hand.casesFor(p);
 
-            if (i++ < 100) {
+            if (i++ < 10000) {
                 trainRetros.add( retros );
             } else {
                 validRetros.add( retros );
             }
         }
-        trainRetros.train(learners, 500, 20000000);
+        trainRetros.train(learners, 2000, 20000000);
         PredictorSet predictors = learners.predictors();
-        for (Retrodiction<?> retro : validRetros.holeBlind().cases())
+        for (Retrodiction<?> retro : trainRetros.holeBlind().cases())
         {
             Observation prediction = predictors.predict(retro);
 
@@ -80,19 +81,18 @@ public class OppModelTest
 //        {
 ////            System.out.println("====\t" + (++count));
 //            HoldemRetroSet retros     = hand.casesFor(p);
-//            PredictorSet   predictors = learners.predictors();
+//            PredictorSet predictors = learners.predictors();
 //
 //            for (Retrodiction<?> retro : retros.holeBlind().cases())
 //            {
-//                Observation prediction =
-//                        predictors.predict(retro);
+//                Observation prediction = predictors.predict(retro);
 //
 //                System.out.println(retro.predictionType() + "\t" +
 //                                   prediction + "\t" +
 //                                   new MixedAction(retro.neuralOutput()));
 //            }
 //
-//            retros.train(learners, 200, 2000000);
+//            retros.train(learners, 100, 100000);
 ////            allRetros.add( retros );
 //        }
     }

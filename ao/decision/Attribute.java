@@ -1,4 +1,4 @@
-package ao.holdem.bots.opp_model.decision;
+package ao.decision;
 
 import java.util.Set;
 
