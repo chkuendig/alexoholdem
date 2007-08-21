@@ -25,7 +25,7 @@ public class BackpropLearner<C extends PredictionContext>
                    NeuralNetListener
 {
     //--------------------------------------------------------------------
-    private static final int HORIZON = 200;
+    private static final int HORIZON = 1000;
 
 
     //--------------------------------------------------------------------
@@ -176,7 +176,7 @@ public class BackpropLearner<C extends PredictionContext>
     private void initNet(RetroSet<C> data)
     {
         Layer input  = inputLayer(data.caseInputSize());
-        Layer hidden = hiddenLayer(48);
+        Layer hidden = hiddenLayer(32);
         Layer output = outputLayer(data.caseOutputSize());
 
         connectLayers(input, hidden, output);
@@ -189,12 +189,17 @@ public class BackpropLearner<C extends PredictionContext>
     //--------------------------------------------------------------------
     private void setupMonitor(Monitor monitor)
     {
-	    monitor.setLearningRate(0.4);
-	    monitor.setMomentum(0.5);
+        monitor.setLearningRate(0.2);
+//        monitor.setLearningRate(1.0);
+//        monitor.setBatchSize(HORIZON);
+//        monitor.addLearner(0, "org.joone.engine.RpropLearner");
+//        monitor.setLearningMode(0);
+                
+        monitor.setMomentum(0.5);
         monitor.addNeuralNetListener(this);
 
         monitor.setLearning(true);
-        nnet.getMonitor().setTrainingPatterns( HORIZON );
+        monitor.setTrainingPatterns( HORIZON );
     }
 
     private NeuralNet setupNet(

@@ -4,9 +4,9 @@ import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
 import ao.holdem.bots.opp_model.predict.def.learn.Predictor;
 import ao.holdem.bots.opp_model.predict.def.observation.Observation;
 import ao.holdem.bots.opp_model.predict.def.observation.ObservationImpl;
-import org.joone.engine.DirectSynapse;
 import org.joone.engine.Layer;
-import org.joone.engine.Pattern;
+import org.joone.io.MemoryInputSynapse;
+import org.joone.io.MemoryOutputSynapse;
 import org.joone.net.NeuralNet;
 
 /**
@@ -16,45 +16,63 @@ public class BackpropPredictor<C extends PredictionContext>
         implements Predictor<C>
 {
     //--------------------------------------------------------------------
-    private final DirectSynapse memInp;
-    private final DirectSynapse memOut; 
+    private double input[][];
+
+    private NeuralNet           predictor;
+    private MemoryInputSynapse  memInp;
+    private MemoryOutputSynapse memOut;
 
 
     //--------------------------------------------------------------------
     public BackpropPredictor(NeuralNet copyNet)
     {
-        NeuralNet predictor = copyNet.cloneNet();
+        predictor = copyNet.cloneNet();
         predictor.removeAllListeners();
-
-        memInp      = new DirectSynapse();
-        Layer input = predictor.getInputLayer();
-        input.removeAllInputs();
-        input.addInputSynapse(memInp);
-
-        memOut       = new DirectSynapse();
-        Layer output = predictor.getOutputLayer();
-        output.removeAllOutputs();
-        output.addOutputSynapse(memOut);
-
-        predictor.getMonitor().setLearning( false );
-        predictor.go();
     }
 
 
     //--------------------------------------------------------------------
-    public Observation predict(C context)
+    private void initPredictor(C context)
     {
-//        predictor.go();
+        input = new double[][]{ context.neuralInput() };
 
-        Pattern iPattern =
-                new Pattern(context.neuralInput());
-        iPattern.setCount(1);
+        memInp = new MemoryInputSynapse();
+        memInp.setFirstRow(1);
+        memInp.setAdvancedColumnSelector(
+                "1-" + context.neuralInputSize());
+        memInp.setInputArray( input );
 
-        memInp.fwdPut(iPattern);
-//        predictor.singleStepForward(iPattern);
+        Layer input = predictor.getInputLayer();
+        input.removeAllInputs();
+        input.addInputSynapse(memInp);
 
-        Pattern pattern = memOut.fwdGet();
-        //        predictor.stop();
-        return new ObservationImpl(pattern.getArray());
+        memOut       = new MemoryOutputSynapse();
+        Layer output = predictor.getOutputLayer();
+        output.removeAllOutputs();
+        output.addOutputSynapse(memOut);
+
+        predictor.getMonitor().setTotCicles( 1 );
+        predictor.getMonitor().setTrainingPatterns( 1 );
+        predictor.getMonitor().setLearning( false );
+    }
+
+
+    //--------------------------------------------------------------------
+    public synchronized Observation predict(C context)
+    {
+//        if (input == null)
+//        {
+            initPredictor(context);
+//        }
+//        else
+//        {
+//            input[0] = context.neuralInput();
+//        }
+
+        predictor.go(true, true);
+        Observation prediction =
+                new ObservationImpl(memOut.getNextPattern());
+        predictor.stop();
+        return prediction;
     }
 }

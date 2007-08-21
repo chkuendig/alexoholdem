@@ -44,6 +44,13 @@ public class LearnerSet extends Base
         holeBlindPreflop  = new BackpropLearner<HoleBlindPreflop>(3);
         holeAwarePostflop = new BackpropLearner<HoleAwarePostflop>(3);
         holeBlindPostflop = new BackpropLearner<HoleBlindPostflop>(3);
+
+//        holeAwareFirstact = new HoldemLearner<HoleAwareFirstact>();
+//        holeBlindFirstact = new HoldemLearner<HoleBlindFirstact>();
+//        holeAwarePreflop  = new HoldemLearner<HoleAwarePreflop>();
+//        holeBlindPreflop  = new HoldemLearner<HoleBlindPreflop>();
+//        holeAwarePostflop = new HoldemLearner<HoleAwarePostflop>();
+//        holeBlindPostflop = new HoldemLearner<HoleBlindPostflop>();
     }
 
 

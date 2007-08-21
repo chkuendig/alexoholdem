@@ -173,10 +173,10 @@ public class HoldemRetroSet
 //                holeAwarePostflop, interations, timeout);
 //        holeAwarePostflop.clear();
 
-        System.out.println("training holeBlindPostflop");
+//        System.out.println("training holeBlindPostflop");
         predictor.trainHoleBlindPostflop(
                 holeBlindPostflop, interations, timeout);
-        holeBlindPostflop.clear();
+//        holeBlindPostflop.clear();
     }
 
     //--------------------------------------------------------------------
@@ -194,8 +194,8 @@ public class HoldemRetroSet
     public RetroSet<?> holeBlind()
     {
         RetroSet holeBlind = new RetroSet();
-        holeBlind.add(holeBlindFirstact);
-        holeBlind.add(holeBlindPreflop);
+//        holeBlind.add(holeBlindFirstact);
+//        holeBlind.add(holeBlindPreflop);
         holeBlind.add(holeBlindPostflop);
         return holeBlind;
     }

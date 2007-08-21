@@ -19,6 +19,7 @@ import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
+import ao.util.text.Arr;
 
 import java.io.*;
 import java.net.DatagramPacket;
@@ -421,23 +422,7 @@ public class Main
 
         System.out.println("total: " + total);
         System.out.println(Arrays.toString(frequency));
-        System.out.println(join(exactFrequency, "\t"));
-    }
-
-    public static String join(int vals[], String with)
-    {
-        StringBuilder str = new StringBuilder();
-
-        for (int i = 0; i < vals.length; i++)
-        {
-            if (i != 0)
-            {
-                str.append( with );
-            }
-            str.append( vals[i] );
-        }
-
-        return str.toString();
+        System.out.println(Arr.join(exactFrequency, "\t"));
     }
 
 
