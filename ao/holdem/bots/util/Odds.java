@@ -87,7 +87,7 @@ public class Odds
                 " (" + Math.round(winPercent()  * 100) + ")" +
                ", lose: "  + LOSE  +
                 " (" + Math.round(losePercent() * 100) + ")" +
-               ", split: " + SPLIT +
+               ", values: " + SPLIT +
                " (" + Math.round(splitPercent() * 100) + ")" + "]";
 //        return "new Odds(" + WIN + ", " + LOSE + ", " + SPLIT + ")";
 //        return WIN + "\t" + LOSE + "\t" + SPLIT;

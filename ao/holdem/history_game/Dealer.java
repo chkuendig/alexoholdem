@@ -257,7 +257,7 @@ public class Dealer
             hand.setDelta(winner, winnings);
         }
 
-        // uneven split pot
+        // uneven values pot
         hand.setDelta(topWinners.get(0),
                       hand.getDeltas().get(
                               topWinners.get(0))
