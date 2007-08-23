@@ -110,7 +110,7 @@ public class Outcome
 
     /**
      * @return A list of winning teams.  More than one team wins
-     *          if there is a split pot.
+     *          if there is a values pot.
      *          Each team consists of the bots that make it up, they are
      *          listed in action order.
      *         Note that if everybody folds to the big blind, then
