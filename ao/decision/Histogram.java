@@ -26,8 +26,9 @@ public class Histogram<T>
     //--------------------------------------------------------------------
     public void count(Attribute<T> attribute)
     {
-        int count = hist.get(attribute);
-        hist.put(attribute, ++count);
+        Integer count = hist.get(attribute);
+        hist.put(attribute,
+                 (count == null ? 1 : ++count));
         total++;
     }
 

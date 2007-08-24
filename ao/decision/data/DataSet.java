@@ -50,8 +50,8 @@ public class DataSet<T>
         if (! data.isEmpty())
         {
             assert targetSet().typeEquals( example.target().set() );
-            assert anExample().attributes().containsAll(
-                        example.attributes()) &&
+            assert anExample().attributeSets().containsAll(
+                        example.attributeSets()) &&
                     anExample().attributes().size() ==
                         example.attributes().size();
         }
@@ -124,8 +124,9 @@ public class DataSet<T>
         Map<Object, Integer> counts = new HashMap<Object, Integer>();
         for (Example datum : data)
         {
-            int val = counts.get( datum.target().value() );
-            counts.put( datum.target().value(), ++val );
+            Integer val = counts.get( datum.target().value() );
+            counts.put( datum.target().value(),
+                        (val == null ? 1 : ++val) );
         }                    
 
 		double[] data = new double[counts.keySet().size()];

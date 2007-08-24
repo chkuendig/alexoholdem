@@ -14,13 +14,13 @@ import java.util.ArrayList;
 public class Context
 {
     //--------------------------------------------------------------------
-    private Map<Object, Attribute<?>> ctx;
+    private Map<Object, Attribute> ctx;
 
 
     //--------------------------------------------------------------------
     public Context(Collection<Attribute> attributes)
     {
-        ctx = new HashMap<Object, Attribute<?>>();
+        ctx = new HashMap<Object, Attribute>();
         for (Attribute<?> attr : attributes)
         {
             if (ctx.put(attr.set().type(), attr) != null)
@@ -32,7 +32,14 @@ public class Context
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute<?>> attributes()
+    public <T> Example<T> withTarget(Attribute<T> targetAttribute)
+    {
+        return new Example<T>(attributes(), targetAttribute);
+    }
+
+
+    //--------------------------------------------------------------------
+    public Collection<Attribute> attributes()
     {
         return ctx.values();
     }
