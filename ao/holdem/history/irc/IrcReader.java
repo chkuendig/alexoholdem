@@ -48,7 +48,7 @@ public class IrcReader
         {
             hands   = readHands(handFile);
             roster  = readRoster(rosterFile);
-            players = readPlayers(playerDir);
+            players = readPlays(playerDir);
         }
         catch (IOException e)
         {
@@ -95,7 +95,7 @@ public class IrcReader
         return rosterList;
     }
 
-    private List<IrcAction> readPlayers(File playerDir)
+    private List<IrcAction> readPlays(File playerDir)
             throws IOException
     {
         List<IrcAction> playerList = new ArrayList<IrcAction>();

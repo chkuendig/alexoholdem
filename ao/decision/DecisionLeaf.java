@@ -22,7 +22,7 @@ public class DecisionLeaf<T>
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> DecisionTree<?, T>
+    public static <T> DecisionTree<T>
             newInstance(Histogram<T> hist)
     {
         return new DecisionLeaf<T>( hist );
@@ -39,6 +39,11 @@ public class DecisionLeaf<T>
 
     //--------------------------------------------------------------------
     public Histogram<T> predict(Context basedOn)
+    {
+        return prediction;
+    }
+
+    public Histogram<T> frequencies()
     {
         return prediction;
     }

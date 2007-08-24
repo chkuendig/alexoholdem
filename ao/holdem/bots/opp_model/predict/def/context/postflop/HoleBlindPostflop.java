@@ -1,10 +1,8 @@
 package ao.holdem.bots.opp_model.predict.def.context.postflop;
 
 import static ao.holdem.bots.opp_model.predict.def.NeuralUtils.asDouble;
+import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Snapshot;
 
 /**
  *
@@ -12,25 +10,21 @@ import ao.holdem.history.Snapshot;
 public class HoleBlindPostflop extends HoldemPostflop
 {
     //--------------------------------------------------------------------
-    public HoleBlindPostflop(
-            Snapshot    prev,
-            TakenAction prevAct,
-            Snapshot    curr,
-            Community   community)
+    public HoleBlindPostflop(GenericContext ctx)
     {
-        super(prev, prevAct, curr);
+        super(ctx);
         
         double flushPossibleBool   =
-                asDouble(community.flushPossible());
+                asDouble(ctx.community().flushPossible());
         double aceOnBoardBool      =
-                asDouble(community.contains(Card.Rank.ACE));
+                asDouble(ctx.community().contains(Card.Rank.ACE));
         double kingOnBoardBool     =
-                asDouble(community.contains(Card.Rank.KING));
+                asDouble(ctx.community().contains(Card.Rank.KING));
         double aceQueenKingPercent =
-                (asDouble(community.contains(Card.Rank.ACE)) +
-                 asDouble(community.contains(Card.Rank.KING)) +
-                 asDouble(community.contains(Card.Rank.QUEEN))) /
-                        (community.knownCount());
+                (asDouble(ctx.community().contains(Card.Rank.ACE)) +
+                 asDouble(ctx.community().contains(Card.Rank.KING)) +
+                 asDouble(ctx.community().contains(Card.Rank.QUEEN))) /
+                        (ctx.community().knownCount());
 
         addNeuralInput(
                 flushPossibleBool,

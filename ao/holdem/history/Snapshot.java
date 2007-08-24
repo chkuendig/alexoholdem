@@ -119,9 +119,11 @@ public class Snapshot
             advanceRound();
         }
 
-        if (! nextToAct.equals( event.getPlayer() ))
+        if (!(nextToAct.equals( event.getPlayer() ) &&
+                round().equals( event.getRound() )))
         {
             throw new Error("expected " + nextToAct +
+                            " at "      + round() +
                             " on "      + event);
         }
         nextToAct = nextActive( nextToAct );

@@ -68,7 +68,8 @@ public class BackpropLearner<C extends PredictionContext>
         nnet.stop();
         updateTrainingData(DATA);
 
-        int realItr = (int)(((double)iterations) * DATA.size() / HORIZON + 1);
+        int realItr =
+                (int)(((double)iterations) * DATA.size() / HORIZON + 1);
         nnet.getMonitor().setTotCicles( realItr );
         try
         {

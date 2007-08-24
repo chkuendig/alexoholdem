@@ -1,5 +1,10 @@
 package ao.holdem.bots.opp_model;
 
+import ao.decision.DecisionLearner;
+import ao.decision.Histogram;
+import ao.decision.data.DataSet;
+import ao.decision.data.Example;
+import ao.decision.domain.DecisionSetup;
 import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
 import ao.holdem.bots.opp_model.predict.PredictionSet;
@@ -8,11 +13,14 @@ import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
 import ao.holdem.bots.opp_model.predict.def.retro.LearnerSet;
 import ao.holdem.bots.opp_model.predict.def.retro.PredictorSet;
 import ao.holdem.bots.opp_model.predict.def.retro.Retrodiction;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
+
+import java.util.List;
 
 /**
  *
@@ -28,7 +36,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "timlo"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -40,11 +48,48 @@ public class OppModelTest
 
         try
         {
-            doModelOpponet( p );
+//            doModelOpponet( p );
+            doDecisionModelOpponet( p );
         }
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+    private void doDecisionModelOpponet(PlayerHandle p)
+    {
+        DecisionSetup decisionSetup = new DecisionSetup();
+
+        DataSet<TakenAction> trainingSet   = new DataSet<TakenAction>();
+        DataSet<TakenAction> validationSet = new DataSet<TakenAction>();
+
+        int i = 0;
+        for (HandHistory hand : p.getHands())
+        {
+            List<Example<TakenAction>> handExamples =
+                    decisionSetup.postflopExamples(hand, p);
+
+            if (i++ < 2000) {
+                trainingSet.addAll( handExamples );
+            } else {
+                validationSet.addAll( handExamples );
+            }
+        }
+
+        System.out.println("building model");
+        DecisionLearner<TakenAction> learner =
+                new DecisionLearner<TakenAction>();
+        learner.train( trainingSet );
+        
+        for (Example<TakenAction> example : validationSet.examples())
+        {
+            Histogram<TakenAction> prediction =
+                    learner.predict( example );
+            System.out.println(
+                    example.target().value() + "\t" +
+                    prediction + "\t" +
+                    prediction.probabilityOf(
+                            example.target().value()));
         }
     }
 

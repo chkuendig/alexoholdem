@@ -1,5 +1,6 @@
 package ao.holdem.bots.opp_model.predict.def.retro;
 
+import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
 import ao.holdem.bots.opp_model.predict.def.context.firstact.HoleBlindFirstact;
 import ao.holdem.bots.opp_model.predict.def.context.postflop.HoleBlindPostflop;
@@ -14,6 +15,10 @@ import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -30,7 +35,75 @@ public class HandParser
             HandHistory  hand,
             PlayerHandle player)
     {
-        HoldemRetroSet cases = new HoldemRetroSet();
+        HoldemRetroSet       retros = new HoldemRetroSet();
+        List<GenericContext> cases  = genericCasesFor(hand, player);
+
+        for (GenericContext ctx : cases)
+        {
+            HoldemObservation observation =
+                        new HoldemObservation(ctx.currAct());
+
+            // hole blind
+            if (ctx.round() == BettingRound.PREFLOP)
+            {
+                if (ctx.isHistAware())
+                {
+                    retros.addHoleBlindFirstact(
+                        new HoleBlindFirstact(ctx),
+                        observation);
+                }
+            else
+            {
+                retros.addHoleBlindPreflop(
+                        new HoleBlindPreflop(ctx),
+                        observation);
+            }
+        }
+        else
+        {
+            retros.addHoleBlindPostflop(
+                    new HoleBlindPostflop(ctx),
+                    observation);
+        }
+
+//            // hole aware
+//            if (hole != null)
+//            {
+//                if (round == BettingRound.PREFLOP)
+//                {
+//                    if (prev == null)
+//                    {
+//                        retros.addHoleAwareFirstact(
+//                            new HoleAwareFirstact(curr, hole),
+//                            observation);
+//                    }
+//                    else
+//                    {
+//                        retros.addHoleAwarePreflop(
+//                                new HoleAwarePreflop(
+//                                        prev, prevAct, curr, hole),
+//                                observation);
+//                    }
+//                }
+//                else
+//                {
+//                    retros.addHoleAwarePostflop(
+//                            new HoleAwarePostflop(
+//                                    prev, prevAct, curr, community, hole),
+//                            observation);
+//                }
+//            }
+        }
+
+        return retros;
+    }
+
+    public List<GenericContext> genericCasesFor(
+            HandHistory  hand,
+            PlayerHandle player)
+    {
+        List<GenericContext> cases =
+                new ArrayList<GenericContext>();
         Hole           hole  = extractHole(hand, player);
 
         Snapshot    prev    = null;
@@ -44,91 +117,37 @@ public class HandParser
                 assert cursor.nextToAct().equals( player );
                 Snapshot curr = cursor.prototype();
 
-                BettingRound      round       = e.getRound();
-                HoldemObservation observation =
-                        new HoldemObservation(e.getAction());
-
+                BettingRound round = e.getRound();
                 assert curr.comingRound() == round;
                 addCase(cases,
                         prev,
                         prevAct,
                         curr,
+                        e.getAction(),
                         hand.getCommunity().asOf( round ),
-                        hole,
-                        round,
-                        observation);
+                        hole);
 
                 prev    = curr;
                 prevAct = e.getAction();
             }
 
-            if (! tryAddEvent(cursor, e)) return new HoldemRetroSet();
+            if (! tryAddEvent(cursor, e)) return Collections.emptyList();
         }
 
         return cases;
     }
 
     private void addCase(
-            HoldemRetroSet cases,
+            List<GenericContext> cases,
             Snapshot     prev,
             TakenAction  prevAct,
             Snapshot     curr,
+            TakenAction  currAct,
             Community    community,
-            Hole         hole,
-            BettingRound round,
-            HoldemObservation observation)
+            Hole         hole)
     {
-        // hole blind
-        if (round == BettingRound.PREFLOP)
-        {
-            if (prev == null)
-            {
-                cases.addHoleBlindFirstact(
-                        new HoleBlindFirstact(curr),
-                        observation);
-            }
-            else
-            {
-                cases.addHoleBlindPreflop(
-                        new HoleBlindPreflop(prev, prevAct, curr),
-                        observation);
-            }
-        }
-        else
-        {
-            cases.addHoleBlindPostflop(
-                    new HoleBlindPostflop(
-                            prev, prevAct, curr, community),
-                    observation);
-        }
-
-        // hole aware
-        if (hole != null)
-        {
-//            if (round == BettingRound.PREFLOP)
-//            {
-//                if (prev == null)
-//                {
-//                    cases.addHoleAwareFirstact(
-//                        new HoleAwareFirstact(curr, hole),
-//                        observation);
-//                }
-//                else
-//                {
-//                    cases.addHoleAwarePreflop(
-//                            new HoleAwarePreflop(
-//                                    prev, prevAct, curr, hole),
-//                            observation);
-//                }
-//            }
-//            else
-//            {
-//                cases.addHoleAwarePostflop(
-//                        new HoleAwarePostflop(
-//                                prev, prevAct, curr, community, hole),
-//                        observation);
-//            }
-        }
+        cases.add(new GenericContext(
+                prev, prevAct, curr, currAct, community, hole));
     }
 
 
@@ -167,22 +186,23 @@ public class HandParser
             Snapshot    curr,
             Community   community)
     {
-        if (curr.round() == BettingRound.PREFLOP)
+        GenericContext ctx = new GenericContext(
+                prev, prevAct, curr, null, community, null);
+
+        if (ctx.round() == BettingRound.PREFLOP)
         {
-            if (prev == null)
+            if (ctx.isHistAware())
             {
-                return new HoleBlindFirstact(curr);
+                return new HoleBlindFirstact(ctx);
             }
             else
             {
-                return new HoleBlindPreflop(
-                        prev, prevAct, curr);
+                return new HoleBlindPreflop(ctx);
             }
         }
         else
         {
-            return new HoleBlindPostflop(
-                    prev, prevAct, curr, community);
+            return new HoleBlindPostflop(ctx);
         }
     }
 

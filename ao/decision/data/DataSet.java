@@ -45,6 +45,13 @@ public class DataSet<T>
 
 
     //--------------------------------------------------------------------
+    public void addAll(List<Example<T>> examples)
+    {
+        for (Example<T> example : examples)
+        {
+            add( example );
+        }
+    }
     public void add(Example<T> example)
     {
         if (! data.isEmpty())
@@ -79,6 +86,13 @@ public class DataSet<T>
             hist.count( e.target() );
         }
         return hist;
+    }
+
+
+    //--------------------------------------------------------------------
+    public List<Example<T>> examples()
+    {
+        return data;
     }
 
 

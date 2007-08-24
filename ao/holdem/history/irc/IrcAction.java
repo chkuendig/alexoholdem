@@ -140,6 +140,8 @@ public class IrcAction
             {
                 case '-':
                 case 'B':
+                case 'A': // indicates all-in, comes up
+                          // as rA so A can be ignored.
                     break;
 
                 case 'f':
@@ -159,7 +161,6 @@ public class IrcAction
 
                 case 'b':
                 case 'r':
-                case 'A':
                     actions[ nextIndex++ ] = TakenAction.RAISE;
                     break;
 
