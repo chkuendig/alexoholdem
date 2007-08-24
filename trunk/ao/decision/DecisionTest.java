@@ -2,9 +2,11 @@ package ao.decision;
 
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributePool;
+import ao.decision.data.Context;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -27,24 +29,29 @@ public class DecisionTest
                 new DecisionLearner<Boolean>();
         learner.train( data );
 
-        learner.predict();
+        System.out.println(
+                learner.predict(context(attr, true, false)));
     }
 
     private Example<Boolean> function(
             AttributePool attr,
             Boolean...    vars)
     {
+        return context(attr, Arrays.copyOf(vars, vars.length - 1)).
+                withTarget(attr.fromTyped(vars[ vars.length - 1 ]));
+    }
+
+    private Context context(
+            AttributePool attr,
+            Boolean...    vars)
+    {
         LinkedList<Attribute> varAttributes =
                 new LinkedList<Attribute>();
-
         Integer type = 0;
         for (Boolean var : vars)
         {
             varAttributes.add( attr.fromUntyped(type++, var) );
         }
-        Attribute<Boolean> target = varAttributes.removeLast();
-
-        return new Example<Boolean>(varAttributes, target);
+        return new Context(varAttributes);
     }
-
 }

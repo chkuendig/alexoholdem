@@ -30,4 +30,30 @@ public class Attribute<T>
     {
         return value;
     }
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+//        return attributeSet.type() + " :: " + value.toString();
+        return value.toString();
+    }
+
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Attribute attribute = (Attribute) o;
+
+        return attributeSet.equals(attribute.attributeSet) &&
+               value.equals(attribute.value);
+    }
+
+    public int hashCode()
+    {
+        int result;
+        result = value.hashCode();
+        result = 31 * result + attributeSet.hashCode();
+        return result;
+    }
 }

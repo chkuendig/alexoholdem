@@ -22,6 +22,7 @@ public class DecisionLearner<T>
     public void train(DataSet<T> ds)
     {
         tree = induce(ds, ds.contextAttributes());
+        System.out.println(tree);
     }
 
     private DecisionTree<?, T> induce(

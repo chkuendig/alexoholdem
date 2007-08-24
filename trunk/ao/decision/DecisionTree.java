@@ -3,6 +3,7 @@ package ao.decision;
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributeSet;
 import ao.decision.data.Context;
+import ao.util.text.Txt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,4 +56,33 @@ public class DecisionTree<A, T>
         }
         return subTree.predict( basedOn );
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return toString(1, new StringBuilder());
+    }
+
+    public String toString(int depth, StringBuilder buf)
+    {
+		if (attrSet != null)
+        {
+			buf.append(Txt.nTimes("\t", depth));
+			buf.append("***");
+            buf.append(attrSet.type()).append(" \n");
+
+            for (Attribute<?> attribute : nodes.keySet())
+            {
+				buf.append(Txt.nTimes("\t", depth + 1));
+                buf.append("+").append(attribute);
+				buf.append("\n");
+				DecisionTree child = nodes.get(attribute);
+				buf.append(child.toString(depth + 1,
+                                          new StringBuilder()));
+			}
+		}
+
+		return buf.toString();
+	}
 }
