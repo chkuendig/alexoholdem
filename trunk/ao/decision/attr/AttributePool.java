@@ -23,7 +23,8 @@ public class AttributePool
     public <T extends Enum<T>>
             Attribute<T> fromEnum(T enumValue)
     {
-        return fromUntyped(enumValue.getDeclaringClass(), enumValue);
+        return fromUntyped(enumValue.getDeclaringClass().getSimpleName(),
+                           enumValue);
     }
 
     public <T> Attribute<T> fromTyped(T value)

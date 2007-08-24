@@ -15,7 +15,7 @@ import java.util.Map;
 public class DecisionLearner<T>
 {
     //--------------------------------------------------------------------
-    private DecisionTree<?, T> tree;
+    private DecisionTree<T> tree;
 
 
     //--------------------------------------------------------------------
@@ -25,7 +25,7 @@ public class DecisionLearner<T>
         System.out.println(tree);
     }
 
-    private DecisionTree<?, T> induce(
+    private DecisionTree<T> induce(
             DataSet<T>                  ds,
             Collection<AttributeSet<?>> attributes)
     {
@@ -35,8 +35,8 @@ public class DecisionLearner<T>
         }
         AttributeSet<?>    splitOn   =
                 chooseAttribute(ds, attributes);
-        DecisionTree<?, T> splitTree =
-                new DecisionTree<Object, T>(splitOn);
+        DecisionTree<T> splitTree =
+                new DecisionTree<T>(splitOn);
 
         Collection<AttributeSet<?>> newAttribs =
                 new ArrayList<AttributeSet<?>>(attributes);
@@ -45,7 +45,7 @@ public class DecisionLearner<T>
         for (Map.Entry<Attribute, DataSet<T>> splitPlane :
                 ds.split( splitOn ).entrySet())
         {
-            DecisionTree<?, T> subTree =
+            DecisionTree<T> subTree =
                     induce(splitPlane.getValue(), newAttribs);
             splitTree.addNode(splitPlane.getKey(), subTree);
 		}

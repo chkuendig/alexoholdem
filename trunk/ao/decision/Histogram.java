@@ -33,6 +33,17 @@ public class Histogram<T>
     }
 
     //--------------------------------------------------------------------
+    public double probabilityOf(T attributeValue)
+    {
+        for (Map.Entry<Attribute<T>, Integer> entry : hist.entrySet())
+        {
+            if (entry.getKey().value().equals( attributeValue ))
+            {
+                return entry.getValue() / total;
+            }
+        }
+        return 0;
+    }
     public double probabilityOf(Attribute<T> attribute)
     {
         return hist.get(attribute) / total;

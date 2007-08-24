@@ -1,7 +1,6 @@
 package ao.holdem.bots.opp_model.predict.def.context;
 
 import static ao.holdem.bots.opp_model.predict.def.NeuralUtils.asDouble;
-import ao.holdem.history.Snapshot;
 
 /**
  *
@@ -9,38 +8,28 @@ import ao.holdem.history.Snapshot;
 public class HoldemPreact extends AbstractContext
 {
     //--------------------------------------------------------------------
-    public HoldemPreact(Snapshot curr)
+    public HoldemPreact(GenericContext ctx)
     {
-        double immedatePotOdds =
-                ((double) curr.toCall().smallBlinds()) /
-                (curr.toCall().smallBlinds() +
-                    curr.pot().smallBlinds());
+        double immedatePotOdds = ctx.immedatePotOdds();
 
-        double raises = 4 - curr.remainingRaises();
-        double betRatio = raises / (raises + curr.numCalls() + 0.001);
-        double potRatio =
-                ((double) curr.stakes().smallBlinds()) /
-                          curr.pot().smallBlinds();
+        double betRatio = ctx.betRatio();
+        double potRatio = ctx.potRatio();
         double committedThisRoundBool =
-                asDouble(curr.latestRoundCommitment().smallBlinds() > 0);
+                asDouble(ctx.committedThisRound());
 
         double zeroBetsToCallBool =
-                asDouble(curr.toCall().bets( curr.isSmallBet() ) == 0);
+                asDouble(ctx.betsToCall() == 0);
         double oneBetToCallBool =
-                asDouble(curr.toCall().bets( curr.isSmallBet() ) == 1);
+                asDouble(ctx.betsToCall() == 1);
         double manyBetsToCallBool =
-                asDouble(curr.toCall().bets( curr.isSmallBet() ) >= 2);
+                asDouble(ctx.betsToCall() >= 2);
 
-        double numOppsFraction = curr.opponents().size() / 9.0;
-        double numActiveOppsFraction = curr.activeOpponents().size() / 9.0;
-        double numUnactedOppsFraction = curr.unactedThisRound() / 10.0;
+        double numOppsFraction = ctx.numOpps() / 9.0;
+        double numActiveOppsFraction = ctx.numActiveOpps() / 9.0;
+        double numUnactedOppsFraction = ctx.numUnactedThisRound() / 10.0;
 
-        double position =
-                (curr.players().indexOf(
-                        curr.nextToAct() ) + 1) / 10.0;
-        double activePosition =
-                (curr.activePlayers().indexOf(
-                        curr.nextToAct() ) + 1) / 10.0;
+        double position = ctx.position() / 10.0;
+        double activePosition = ctx.activePosition() / 10.0;
 
         addNeuralInput(
                 immedatePotOdds,

@@ -11,24 +11,24 @@ import java.util.Map;
 /**
  *
  */
-public class DecisionTree<A, T>
+public class DecisionTree</*A,*/ T>
 {
     //--------------------------------------------------------------------
-    private Map<Attribute<?>, DecisionTree<?, T>> nodes;
-    private AttributeSet<?>                       attrSet;
+    private Map<Attribute<?>, DecisionTree<T>> nodes;
+    private AttributeSet<?>                    attrSet;
 
 
     //--------------------------------------------------------------------
     public DecisionTree(AttributeSet<?> attributeSet)
     {
-        nodes   = new HashMap<Attribute<?>, DecisionTree<?,T>>();
+        nodes   = new HashMap<Attribute<?>, DecisionTree<T>>();
         attrSet = attributeSet;
     }
 
 
     //--------------------------------------------------------------------
-    public void addNode(Attribute<?>       attribute,
-                        DecisionTree<?, T> tree)
+    public void addNode(Attribute<?>    attribute,
+                        DecisionTree<T> tree)
     {
         assert !nodes.containsKey( attribute );
         nodes.put(attribute, tree);
@@ -39,6 +39,8 @@ public class DecisionTree<A, T>
     // minumum number of bits needed to encode the graph.
     public double codingComplexity()
     {
+
+        
         return 0;
     }
 
@@ -46,8 +48,8 @@ public class DecisionTree<A, T>
     //--------------------------------------------------------------------
     public Histogram<T> predict(Context basedOn)
     {
-        Attribute<?>       attribute = basedOn.attribute(attrSet);
-        DecisionTree<?, T> subTree   = nodes.get( attribute );
+        Attribute<?>    attribute = basedOn.attribute(attrSet);
+        DecisionTree<T> subTree   = nodes.get( attribute );
         if (subTree == null)
         {
             // predicting based on an attribute that was never seen before
@@ -61,28 +63,37 @@ public class DecisionTree<A, T>
     //--------------------------------------------------------------------
     public String toString()
     {
-        return toString(1, new StringBuilder());
+        StringBuilder b = new StringBuilder();
+        appendTree(1, b);
+        return b.toString();
     }
 
-    public String toString(int depth, StringBuilder buf)
+    private void appendTree(int depth, StringBuilder buf)
     {
 		if (attrSet != null)
         {
 			buf.append(Txt.nTimes("\t", depth));
 			buf.append("***");
-            buf.append(attrSet.type()).append(" \n");
+            buf.append(attrSet.type()).append("\n");
 
             for (Attribute<?> attribute : nodes.keySet())
             {
 				buf.append(Txt.nTimes("\t", depth + 1));
                 buf.append("+").append(attribute);
-				buf.append("\n");
+
 				DecisionTree child = nodes.get(attribute);
-				buf.append(child.toString(depth + 1,
-                                          new StringBuilder()));
+                if (child instanceof DecisionLeaf)
+                {
+                    buf.append(" ");
+                    buf.append( ((DecisionLeaf)child).frequencies() );
+                    buf.append("\n");
+                }
+                else
+                {
+                    buf.append("\n");
+                    child.appendTree(depth + 1, buf);
+                }
 			}
 		}
-
-		return buf.toString();
 	}
 }

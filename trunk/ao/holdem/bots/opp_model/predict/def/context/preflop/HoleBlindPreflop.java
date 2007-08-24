@@ -1,8 +1,7 @@
 package ao.holdem.bots.opp_model.predict.def.context.preflop;
 
+import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Snapshot;
 
 /**
  *
@@ -10,12 +9,9 @@ import ao.holdem.history.Snapshot;
 public class HoleBlindPreflop extends HoldemPreflop
 {
     //--------------------------------------------------------------------
-    public HoleBlindPreflop(
-            Snapshot    prev,
-            TakenAction prevAct,
-            Snapshot    curr)
+    public HoleBlindPreflop(GenericContext ctx)
     {
-        super(prev, prevAct, curr);
-        assert curr.round() == BettingRound.PREFLOP;
+        super(ctx);
+        assert ctx.round() == BettingRound.PREFLOP;
     }
 }

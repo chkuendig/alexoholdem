@@ -1,7 +1,7 @@
 package ao.holdem.bots.opp_model.predict.def.context;
 
+import static ao.holdem.bots.opp_model.predict.def.NeuralUtils.asDouble;
 import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Snapshot;
 
 /**
  *
@@ -9,20 +9,15 @@ import ao.holdem.history.Snapshot;
 public class HoldemPostact extends HoldemPreact
 {
     //--------------------------------------------------------------------
-    public HoldemPostact(
-            Snapshot    prev,
-            TakenAction prevAct,
-            Snapshot    curr)
+    public HoldemPostact(GenericContext ctx)
     {
-        super(curr);
+        super(ctx);
 
         double lastBetsToCallBool =
-                (prev.toCall().smallBlinds() > 0)
-                ? 1.0 : 0.0;
+                asDouble(ctx.lastBetsToCalled() > 0);
 
         double lastActRaiseBool =
-                (prevAct == TakenAction.RAISE)
-                ? 1.0 : 0.0;
+                asDouble(ctx.lastAct() == TakenAction.RAISE);
 
         addNeuralInput(
                 lastBetsToCallBool,
