@@ -2,6 +2,7 @@ package ao.decision;
 
 import ao.decision.attr.Attribute;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,24 @@ public class Histogram<T>
 
 
     //--------------------------------------------------------------------
-    public void count(Attribute<T> attribute)
+    public int numClasses()
+    {
+        return hist.size();
+    }
+
+    public int total()
+    {
+        return (int) total;
+    }
+
+    public Collection<Attribute<T>> attributes()
+    {
+        return hist.keySet();
+    }
+
+
+    //--------------------------------------------------------------------
+    public void add(Attribute<T> attribute)
     {
         Integer count = hist.get(attribute);
         hist.put(attribute,
@@ -46,7 +64,11 @@ public class Histogram<T>
     }
     public double probabilityOf(Attribute<T> attribute)
     {
-        return hist.get(attribute) / total;
+        return countOf(attribute) / total;
+    }
+    public int countOf(Attribute<T> attribute)
+    {
+        return hist.get(attribute);
     }
 
 

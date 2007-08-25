@@ -1,8 +1,10 @@
 package ao.decision.data;
 
+import ao.decision.DecisionTree;
+import ao.decision.Histogram;
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributeSet;
-import ao.decision.Histogram;
+import ao.util.stats.Info;
 
 import java.util.*;
 
@@ -83,7 +85,7 @@ public class DataSet<T>
         Histogram<T> hist = new Histogram<T>();
         for (Example<T> e : data)
         {
-            hist.count( e.target() );
+            hist.add( e.target() );
         }
         return hist;
     }
@@ -102,10 +104,10 @@ public class DataSet<T>
         Map<Attribute, DataSet<T>> split = split(forSplittingOn);
 
         double remainder = 0.0;
-		for (Attribute<?> attribute : split.keySet())
+        for (DataSet<T> splitData : split.values())
         {
-            DataSet attrData = split.get(attribute);
-			remainder += (attrData.size() / size()) * attrData.entropy();
+			remainder += (splitData.size() / (double)size())
+                            * splitData.entropy();
 		}
 		return entropy() - remainder;
     }
@@ -131,6 +133,22 @@ public class DataSet<T>
 
 
     //--------------------------------------------------------------------
+    public double codingLength(DecisionTree<T> givenTheory)
+    {
+        double length = 0;
+        for (Example<T> e : data)
+        {
+            Histogram<T> frequencies = givenTheory.predict( e );
+            double p = frequencies.probabilityOf( e.target() );
+            length -= (p == 0)
+                        ? -24
+                        : Info.log2(p);
+        }
+        return length;
+    }
+
+
+    //--------------------------------------------------------------------
     public double entropy()
     {
         if (data.isEmpty()) return 0;
@@ -148,40 +166,8 @@ public class DataSet<T>
 		for (int i = 0; i < data.length; i++) {
 			data[i] = iter.next();
 		}
-		return entropy(normalize(data));
+		return Info.entropy(Info.normalize(data));
     }
-
-
-    //--------------------------------------------------------------------
-    private static double entropy(double[] probabilities)
-    {
-        double total = 0;
-		for (double d : probabilities)
-        {
-            total -= log2(d) * d; // log2(d)*d is negative
-		}
-		return total;
-    }
-
-    private static double[] normalize(double[] data)
-    {
-        double total = 0;
-        for (double datum : data) total += datum;
-        if (total == 0) return null;
-
-        double normal[] = new double[ data.length ];
-        for (int i = 0; i < normal.length; i++)
-        {
-            normal[ i ] = data[i] / total;
-        }
-        return normal;
-    }
-
-    private static double log2(double d)
-    {
-        return Math.log(d) / Math.log(2);
-    }
-
 
     //--------------------------------------------------------------------
     private Example<T> anExample()
