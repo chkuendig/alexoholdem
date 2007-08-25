@@ -63,6 +63,8 @@ public class Context
     @SuppressWarnings("unchecked")
     public <T> Attribute<T> attribute(AttributeSet<T> ofType)
     {
-        return (Attribute<T>) attribute( ofType.type() );
+        return (ofType == null)
+                ? null
+                : (Attribute<T>) attribute( ofType.type() );
     }
 }

@@ -3,16 +3,18 @@ package ao.decision.attr;
 /**
  *
  */
-public class Attribute<T>
+public class Attribute<T> implements Comparable<Attribute>
 {
     //--------------------------------------------------------------------
-    private T               value;
-    private AttributeSet<T> attributeSet;
+    private final int             key;
+    private final T               value;
+    private final AttributeSet<T> attributeSet;
 
 
     //--------------------------------------------------------------------
-    public Attribute(AttributeSet<T> valSet, T val)
+    public Attribute(AttributeSet<T> valSet, T val, int id)
     {
+        key          = id;
         value        = val;
         attributeSet = valSet;
     }
@@ -31,6 +33,15 @@ public class Attribute<T>
         return value;
     }
 
+
+    //--------------------------------------------------------------------
+    public int compareTo(Attribute o)
+    {
+        return (key < o.key) ? -1 :
+                (key > o.key) ? 1 : 0;
+    }
+
+
     //--------------------------------------------------------------------
     public String toString()
     {
@@ -44,7 +55,6 @@ public class Attribute<T>
         if (o == null || getClass() != o.getClass()) return false;
 
         Attribute attribute = (Attribute) o;
-
         return attributeSet.equals(attribute.attributeSet) &&
                value.equals(attribute.value);
     }

@@ -11,6 +11,7 @@ public class DescreteAttributeSet<T>
     //--------------------------------------------------------------------
     private final Object               type;
     private final Map<T, Attribute<T>> attributes;
+    private       int                  nextId = 0;
 
 
     //--------------------------------------------------------------------
@@ -27,7 +28,7 @@ public class DescreteAttributeSet<T>
         if (! attributes.containsKey(val))
         {
             attributes.put( val,
-                            new Attribute<T>(this, val));
+                            new Attribute<T>(this, val, nextId++));
         }
     }
 
