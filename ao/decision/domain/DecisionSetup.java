@@ -6,8 +6,8 @@ import ao.decision.data.Context;
 import ao.decision.data.Example;
 import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
-import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 
@@ -74,6 +74,19 @@ public class DecisionSetup
         attrs.add(pool.fromEnum(
                 ActiveOpponents.fromActiveOpps(
                         ctx.numActiveOpps())));
+
+//        attrs.add(pool.fromUntyped(
+//                "Flush Possible",
+//                ctx.community().flushPossible()));
+//        attrs.add(pool.fromUntyped(
+//                "Ace On Board",
+//                ctx.community().contains(Card.Rank.ACE)));
+//        attrs.add(pool.fromUntyped(
+//                "King On Board",
+//                ctx.community().contains(Card.Rank.KING)));
+//        attrs.add(pool.fromEnum(
+//                AceQueenKing.fromCommunity(
+//                        ctx.community())));
 
         return new Context(attrs);
     }

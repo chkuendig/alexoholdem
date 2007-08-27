@@ -37,11 +37,16 @@ public class DecisionTree</*A,*/ T>
         data = null;
         if (! isLeaf())
         {
-            for (DecisionTree<T> child : nodes.values())
+            for (DecisionTree<T> child : kids())
             {
                 child.freeze();
             }
         }
+    }
+
+    public DataSet<T> trainingData()
+    {
+        return data;
     }
 
 
@@ -80,6 +85,11 @@ public class DecisionTree</*A,*/ T>
         this.parent = parent;
     }
 
+    public Collection<DecisionTree<T>> kids()
+    {
+        return nodes.values();
+    }
+
     public Collection<DecisionTree<T>> leafs()
     {
         List<DecisionTree<T>> leafs = new ArrayList<DecisionTree<T>>();
@@ -90,7 +100,7 @@ public class DecisionTree</*A,*/ T>
         }
         else
         {
-            for (DecisionTree<T> child : nodes.values())
+            for (DecisionTree<T> child : kids())
             {
                 leafs.addAll( child.leafs() );
             }
@@ -146,7 +156,7 @@ public class DecisionTree</*A,*/ T>
         double length = typeLength(numAttributes);
         return length + (isInternal()
                          ? attributeAndChildLength(numAttributes)
-                         : categoryLength(1));
+                         : categoryLength(0.3));
     }
 
     private double attributeAndChildLength(int numAttributes)
@@ -159,7 +169,7 @@ public class DecisionTree</*A,*/ T>
         //is zero.
         double length = Info.log2( numAttributes );
 
-        for (DecisionTree<T> child : nodes.values())
+        for (DecisionTree<T> child : kids())
         {
             length += child.codingComplexity(numAttributes - 1);
         }
@@ -170,8 +180,6 @@ public class DecisionTree</*A,*/ T>
     //and in the first j things of a category, i[m] have had class m,
     // the class of the (j + l)th thing is encoded assigning a probability
     //  q[m] = (i[m] + alpha)/(j + M * alpha)
-    // Note that this can be much improved on
-    //  by just storing the histogram counts.
     private double categoryLength(double alpha)
     {
         int numClasses = hist.numClasses();
@@ -190,6 +198,17 @@ public class DecisionTree</*A,*/ T>
         }
         return length;
     }
+//    private double categoryLength(double alpha)
+//    {
+//        int numClasses = hist.numClasses();
+//
+//        double length = Info.log2( numClasses );
+//        for (Attribute<T> clazz : hist.attributes())
+//        {
+//            length += Info.log2( hist.countOf(clazz) );
+//        }
+//        return length;
+//    }
 
 
     private double typeLength(int numAttributes)
@@ -205,7 +224,7 @@ public class DecisionTree</*A,*/ T>
         return isInternalLength(
                 1.0 / (isRoot()
                        ? (double) numAttributes
-                       : (double) parent.nodes.size()));
+                       : (double) parent.kids().size()));
     }
 
     //we expect 1s to occur with some fixed probability p independent of preceding digits. Coding
@@ -232,7 +251,7 @@ public class DecisionTree</*A,*/ T>
 
     private boolean isLeaf()
     {
-        return nodes.isEmpty();
+        return kids().isEmpty();
     }
 
 
