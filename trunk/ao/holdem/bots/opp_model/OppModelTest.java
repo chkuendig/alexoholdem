@@ -89,7 +89,9 @@ public class OppModelTest
                     example.target().value() + "\t" +
                     prediction + "\t" +
                     prediction.probabilityOf(
-                            example.target().value()));
+                            example.target().value()) + "\t" +
+                    (prediction.mostProbable().equals(
+                            example.target()) ? 1 : 0));
         }
     }
 
