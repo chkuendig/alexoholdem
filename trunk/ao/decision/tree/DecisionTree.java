@@ -1,9 +1,11 @@
-package ao.decision;
+package ao.decision.tree;
 
+import ao.decision.Predictor;
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributeSet;
 import ao.decision.data.Context;
 import ao.decision.data.DataSet;
+import ao.decision.data.Histogram;
 import ao.util.stats.Info;
 import ao.util.text.Txt;
 
@@ -12,7 +14,7 @@ import java.util.*;
 /**
  *
  */
-public class DecisionTree</*A,*/ T>
+public class DecisionTree<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
     private DecisionTree<T>                    parent;
@@ -161,12 +163,12 @@ public class DecisionTree</*A,*/ T>
 
     private double attributeAndChildLength(int numAttributes)
     {
-        //if there are n attributes, the length of the code for the attribute labelling
-        //the root is logn, but the codes for attributes labelling deeper nodes will be shorter. At any
-        //node, only those discrete attributes that have not appeared in the path from the root to
-        //the node are eligible to label the node. Thus, the length of "X" in the above message is
-        //log 3 bits, the length of the first "Y" is log 2 = 1 bit, and the length of the second "Y"
-        //is zero.
+        //if there are n attributes, the length of the code for the
+        //  attribute labelling the root is logn, but the codes for
+        //  attributes labelling deeper nodes will be shorter. At any
+        //  node, only those discrete attributes that have not appeared
+        //  in the path from the root to the node are eligible to label
+        //  the node.
         double length = Info.log2( numAttributes );
 
         for (DecisionTree<T> child : kids())
@@ -213,23 +215,27 @@ public class DecisionTree</*A,*/ T>
 
     private double typeLength(int numAttributes)
     {
-        //The probability that the root is a leaf remains to be determined. Since in practice we
-        //hope to get a useful tree, this probability should be low. We have taken it as the reciprocal
-        //of the number of attributes, on the grounds that the more attributes there are, the better
-        //is the chance of finding one that is useful.
-        //use for each
-        //p = the reciprocal of the arity of the parent of the node. Thus,
-        //in a uniform b-ary tree, each node other than the root is regarded as having probability
-        //1/b of not being a leaf.
+        //The probability that the root is a leaf remains to be
+        //  determined. Since in practice we hope to get a useful
+        //  tree, this probability should be low. We have taken it as
+        //  the reciprocal of the number of attributes, on the grounds
+        //  that the more attributes there are, the better is the
+        //  chance of finding one that is useful.
+        // Use for each p = the reciprocal of the arity of the parent
+        //  of the node. Thus, in a uniform b-ary tree, each node other
+        //  than the root is regarded as having probability 1/b of not
+        //  being a leaf.
         return isInternalLength(
                 1.0 / (isRoot()
                        ? (double) numAttributes
                        : (double) parent.kids().size()));
     }
 
-    //we expect 1s to occur with some fixed probability p independent of preceding digits. Coding
-    //techniques exist in effect allowing each 1 to be coded with (—logp) bits, and each 0 with
-    //(-log(l - p)) bits, and such a code is optimal if indeed the probability of Is is p.
+    //we expect 1s to occur with some fixed probability p independent
+    //  of preceding digits. Coding techniques exist in effect allowing
+    //  each 1 to be coded with (—logp) bits, and each 0 with
+    //  (-log(l - p)) bits, and such a code is optimal if indeed the
+    //  probability of Is is p.
     private double isInternalLength(double p)
     {
         return -(isInternal()

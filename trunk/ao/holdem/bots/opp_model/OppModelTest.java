@@ -1,7 +1,7 @@
 package ao.holdem.bots.opp_model;
 
-import ao.decision.DecisionLearner;
-import ao.decision.Histogram;
+import ao.decision.tree.DecisionTreeLearner;
+import ao.decision.data.Histogram;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
 import ao.decision.domain.DecisionSetup;
@@ -78,7 +78,7 @@ public class OppModelTest
 
         System.out.println("building model");
         DecisionLearner<TakenAction> learner =
-                new DecisionLearner<TakenAction>();
+                new DecisionTreeLearner<TakenAction>();
         learner.train( trainingSet );
         
         for (Example<TakenAction> example : validationSet.examples())

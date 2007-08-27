@@ -1,7 +1,6 @@
 package ao.decision.data;
 
-import ao.decision.DecisionTree;
-import ao.decision.Histogram;
+import ao.decision.Predictor;
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributeSet;
 import ao.util.stats.Info;
@@ -133,7 +132,7 @@ public class DataSet<T>
 
 
     //--------------------------------------------------------------------
-    public double codingLength(DecisionTree<T> givenTheory)
+    public double codingLength(Predictor<T> givenTheory)
     {
         double length = 0;
         for (Example<T> e : data)

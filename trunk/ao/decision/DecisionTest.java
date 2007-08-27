@@ -5,6 +5,7 @@ import ao.decision.attr.AttributePool;
 import ao.decision.data.Context;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
+import ao.decision.tree.DecisionTreeLearner;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ public class DecisionTest
         data.add( function(attr, true,  true,  false) );
 
         DecisionLearner<Boolean> learner =
-                new DecisionLearner<Boolean>();
+                new DecisionTreeLearner<Boolean>();
         learner.train( data );
 
         System.out.println(
