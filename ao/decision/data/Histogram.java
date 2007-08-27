@@ -1,4 +1,4 @@
-package ao.decision;
+package ao.decision.data;
 
 import ao.decision.attr.Attribute;
 
