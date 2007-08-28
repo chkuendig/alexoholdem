@@ -19,7 +19,7 @@ public class DataSet<T>
     //--------------------------------------------------------------------
     public DataSet()
     {
-        data = new ArrayList<Example<T>>();
+        data = new LinkedList<Example<T>>();
     }
 
 
@@ -46,10 +46,15 @@ public class DataSet<T>
 
 
     //--------------------------------------------------------------------
+    public void addAll(DataSet<T> addend)
+    {
+        addAll(addend.data);
+    }
     public void addAll(List<Example<T>> examples)
     {
         for (Example<T> example : examples)
         {
+//            if (size() > 300) data.remove(0);
             add( example );
         }
     }

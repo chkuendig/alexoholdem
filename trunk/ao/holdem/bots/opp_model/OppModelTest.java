@@ -1,10 +1,11 @@
 package ao.holdem.bots.opp_model;
 
-import ao.decision.tree.DecisionTreeLearner;
-import ao.decision.data.Histogram;
+import ao.decision.DecisionLearner;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
+import ao.decision.data.Histogram;
 import ao.decision.domain.DecisionSetup;
+import ao.decision.tree.DecisionTreeLearner;
 import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
 import ao.holdem.bots.opp_model.predict.PredictionSet;
@@ -17,6 +18,7 @@ import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
+import ao.util.rand.Rand;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -36,7 +38,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "Barrister"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -83,6 +85,12 @@ public class OppModelTest
         
         for (Example<TakenAction> example : validationSet.examples())
         {
+            trainingSet.add( example );
+            if (Rand.nextDouble() < (1/20.0))
+            {
+                learner.train( trainingSet );
+            }
+            
             Histogram<TakenAction> prediction =
                     learner.predict( example );
             System.out.println(

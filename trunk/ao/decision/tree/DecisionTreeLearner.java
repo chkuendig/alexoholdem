@@ -25,7 +25,7 @@ public class DecisionTreeLearner<T> implements DecisionLearner<T>
 //        tree = new DecisionTree<T>(ds);
 //        induce(ds.contextAttributes(), tree);
 
-        System.out.println(tree);
+//        System.out.println(tree);
     }
 
     private DecisionTree<T> induce(DataSet<T> ds)

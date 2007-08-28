@@ -5,8 +5,7 @@ import ao.decision.attr.AttributeSet;
 /**
  *
  */
-public class SplitPoint<T>
-        //implements Comparable<SplitPoint<T>>
+public class SplitPoint<T> implements GraphTransform
 {
     //--------------------------------------------------------------------
     private double           length;
@@ -30,13 +29,6 @@ public class SplitPoint<T>
         length = leaf.root().messageLength();
         unapply();
     }
-
-
-    //--------------------------------------------------------------------
-//    public boolean leafEquals(DecisionGraph<T> graph)
-//    {
-//        return leaf.equals( graph );
-//    }
 
 
     //--------------------------------------------------------------------
@@ -70,8 +62,4 @@ public class SplitPoint<T>
     {
         return length < cutoff;
     }
-//    public int compareTo(SplitPoint<T> o)
-//    {
-//        return Double.compare(length, o.length);
-//    }
 }

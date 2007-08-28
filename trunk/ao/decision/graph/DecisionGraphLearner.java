@@ -20,14 +20,11 @@ public class DecisionGraphLearner<T>
 
 
     //--------------------------------------------------------------------
-    public DecisionGraphLearner()
-    {
-
-    }
+    public DecisionGraphLearner() {}
 
 
     //--------------------------------------------------------------------
-    public void train(DataSet<T> ds)
+    public synchronized void train(DataSet<T> ds)
     {
         graph = induce(ds);
         System.out.println("graph = " + graph);
@@ -52,59 +49,39 @@ public class DecisionGraphLearner<T>
             }
             if (splits.shortest() == null) break;
 
-
-            double           jMml        = Double.MAX_VALUE;
-            DecisionGraph<T> jMmlCombo[] = null;
+            JoinSet<T> joins = new JoinSet<T>(splits);
             for (int joinBy = 2; joinBy <= leafs.size(); joinBy++)
             {
-                Combiner<DecisionGraph<T>> joinCombos =
-                        new Combiner<DecisionGraph<T>>(
-                                leafs.toArray(
-                                    (DecisionGraph<T>[])new Object[0]),
-                                joinBy);
-                for (DecisionGraph<T> tryJoin[] : joinCombos)
+                for (DecisionGraph<T> tryJoin[] :
+                        leafPermute(leafs, joinBy))
                 {
-                    if (! splits.savingsOnIdenticalAttributes(tryJoin) )
-                    {
-                        continue;
-                    }
-
-                    DecisionGraph.join( tryJoin );
-
-                    double tentativeLength = root.messageLength();
-                    if (jMml > tentativeLength)
-                    {
-                        jMml      = tentativeLength;
-                        jMmlCombo = tryJoin;
-                    }
-
-                    DecisionGraph.unjoin(tryJoin);
+                    joins.add( tryJoin );
                 }
             }
 
-            if (cutoffLength > mml)
-            {
-                assert mmlLeaf != null; // to get rid of warning
-
-                cutoffLength = mml;
-                mmlLeaf.split( mmlAttr );
-            }
-            else break;
+            ((joins.shortestUseful() == null)
+                    ? splits.shortest()
+                    : joins.shortestUseful()).apply();
+            cutoffLength = root.messageLength();
         }
 
         root.freeze();
         return root;
     }
 
-//    private Map<Double, >
+    @SuppressWarnings("unchecked")
+    private Iterable<DecisionGraph<T>[]> leafPermute(
+            List<DecisionGraph<T>> leafs, int by)
+    {
+        return new Combiner<DecisionGraph<T>>(
+                    leafs.toArray((DecisionGraph<T>[])new Object[0]), by);
+    }
 
 
 
     //--------------------------------------------------------------------
     public Histogram<T> predict(Context context)
     {
-        return null;
+        return graph.predict( context );
     }
-
-
 }
