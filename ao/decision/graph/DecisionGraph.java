@@ -193,9 +193,47 @@ public class DecisionGraph<T> implements Predictor<T>
             newJoins.addAll( subTree(root, nodes) );
             length += root.treeMessageLength();
 
+            if (!(newJoins.isEmpty() && oldJoins.isEmpty()))
+            {
+                List<Collection<DecisionGraph<T>>> comboPatterns =
+                        extractComboPatterns(oldJoins, newJoins);
+                List<Collection<DecisionGraph<T>>> oldCombos =
+                        new ArrayList<Collection<DecisionGraph<T>>>();
+                List<Collection<DecisionGraph<T>>> newCombos =
+                        new ArrayList<Collection<DecisionGraph<T>>>();
+
+                for (Collection<DecisionGraph<T>> combo : comboPatterns)
+                {
+                    openRoots.add( combo.iterator().next().joinNode );
+
+                    Collection<DecisionGraph<T>> oldCombo =
+                        new ArrayList<DecisionGraph<T>>();
+                    oldCombos.add( oldCombo );
+
+                    Collection<DecisionGraph<T>> newCombo =
+                            new ArrayList<DecisionGraph<T>>();
+                    newCombos.add( newCombo );
+
+                    for (DecisionGraph<T> aJoin : combo)
+                    {
+                        if (oldJoins.remove( aJoin ))
+                        {
+                            oldCombo.add( aJoin );
+                        }
+                        else
+                        {
+                            newJoins.remove( aJoin );
+                            newCombo.add( aJoin );
+                        }
+                    }
+                }
+
+                length += 0;
+            }
+
             double n = newJoins.size();
             double q = oldJoins.size();
-            length += Info.log2(Math.min(n, (n+q)/2.0));
+            length += Info.log2(Math.min(n, (n+q)/2.0));// transmit M
 
 
             for (Collection<DecisionGraph<T>> combo :
@@ -223,8 +261,10 @@ public class DecisionGraph<T> implements Predictor<T>
     }
 
     private double comboPatternLength(
-            List<DecisionGraph<T>> oldCombo,
-            List<DecisionGraph<T>> newCombo)
+            List<Collection<DecisionGraph<T>>> oldCombos,
+            List<Collection<DecisionGraph<T>>> newCombos,
+            List<DecisionGraph<T>>             remainOldJoins,
+            List<DecisionGraph<T>>             remainNewJoins)
     {
         int n = newCombo.size();
         int q = oldCombo.size();
