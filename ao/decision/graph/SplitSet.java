@@ -62,7 +62,7 @@ public class SplitSet<T>
 
 
     //--------------------------------------------------------------------
-    public boolean savingsOnIdenticalAttributes(
+    public boolean isJoinUseful(
             DecisionGraph<T> leafs[])
     {
         Set<AttributeSet<?>> common = null;

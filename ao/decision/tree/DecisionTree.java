@@ -150,7 +150,7 @@ public class DecisionTree<T> implements Predictor<T>
         assert data != null : "cannot count length of frozen tree";
         return codingComplexity(
                         data.contextAttributes().size()) +
-                data.codingLength( root() );
+                data.codingLength( root() )*0;
     }
 
     public double codingComplexity(int numAttributes)

@@ -19,6 +19,7 @@ public class DecisionGraph<T> implements Predictor<T>
     //--------------------------------------------------------------------
     private List<DecisionGraph<T>>              parents;
     private Map<Attribute<?>, DecisionGraph<T>> nodes;
+    private DecisionGraph<T>                    joinNode;
     private AttributeSet<?>                     attrSet;
     private Histogram<T>                        hist;
     private DataSet<T>                          data;
@@ -79,21 +80,25 @@ public class DecisionGraph<T> implements Predictor<T>
     //--------------------------------------------------------------------
     public static <T> void join(DecisionGraph<T>[] graphs)
     {
+        DataSet<T> joinedData = new DataSet<T>();
+        for (DecisionGraph<T> toJoin : graphs)
+        {
+            joinedData.addAll(toJoin.data);
+        }
 
+        DecisionGraph<T> joined = new DecisionGraph<T>(joinedData);
+        for (DecisionGraph<T> toJoin : graphs)
+        {
+            toJoin.joinTo( joined );
+        }
     }
     public static <T> void unjoin(DecisionGraph<T>[] graphs)
     {
-
+        for (DecisionGraph<T> toDisjoin : graphs)
+        {
+            toDisjoin.joinNode = null;
+        }
     }
-//    public void join(Collection<DecisionGraph<T>> with)
-//    {
-//
-//    }
-//
-//    public void unjoin()
-//    {
-//
-//    }
 
 
     //--------------------------------------------------------------------
@@ -101,11 +106,6 @@ public class DecisionGraph<T> implements Predictor<T>
     {
         return isRoot()
                ? this : aParent().root();
-    }
-
-    protected void addParent(DecisionGraph<T> parent)
-    {
-        parents.add(parent);
     }
 
     private DecisionGraph<T> aParent()
@@ -160,14 +160,117 @@ public class DecisionGraph<T> implements Predictor<T>
                          DecisionGraph<T> tree)
     {
         assert !nodes.containsKey( attribute );
-        nodes.put(attribute, tree);
-        tree.addParent( this );
-    }
+        assert joinNode == null;
 
+        nodes.put(attribute, tree);
+        tree.parents.add( this );
+    }
+    private void joinTo(DecisionGraph<T> tree)
+    {
+        assert joinNode == null;
+        assert nodes.isEmpty();
+
+        joinNode = tree;
+        tree.parents.add( this );
+    }
 
 
     //--------------------------------------------------------------------
     public double messageLength()
+    {
+        double length = 0;
+        Queue<DecisionGraph<T>> openRoots =
+                new LinkedList<DecisionGraph<T>>();
+        List<DecisionGraph<T>> oldJoins =
+                new ArrayList<DecisionGraph<T>>();
+        List<DecisionGraph<T>> newJoins =
+                new ArrayList<DecisionGraph<T>>();
+
+        openRoots.add( new DecisionGraph<T>(data) );
+        while (! openRoots.isEmpty())
+        {
+            DecisionGraph<T> root = openRoots.poll();
+            newJoins.addAll( subTree(root, nodes) );
+            length += root.treeMessageLength();
+
+            double n = newJoins.size();
+            double q = oldJoins.size();
+            length += Info.log2(Math.min(n, (n+q)/2.0));
+
+
+            for (Collection<DecisionGraph<T>> combo :
+                    extractComboPatterns(oldJoins, newJoins))
+            {
+                openRoots.add( combo.iterator().next().joinNode );
+
+                List<DecisionGraph<T>> oldCombo =
+                        new ArrayList<DecisionGraph<T>>();
+                List<DecisionGraph<T>> newCombo =
+                        new ArrayList<DecisionGraph<T>>();
+                for (DecisionGraph<T> aJoin : combo)
+                {
+                    if (oldJoins.remove( aJoin )) oldCombo.add( aJoin );
+                    if (newJoins.remove( aJoin )) newCombo.add( aJoin );
+                }
+                length += comboPatternLength( oldCombo, newCombo);
+            }
+
+            oldJoins.addAll( newJoins );
+            newJoins.clear();
+        }
+
+        return length;
+    }
+
+    private double comboPatternLength(
+            List<DecisionGraph<T>> oldCombo,
+            List<DecisionGraph<T>> newCombo)
+    {
+        int n = newCombo.size();
+        int q = oldCombo.size();
+
+        
+        return 0;
+    }
+
+    private List<Collection<DecisionGraph<T>>>
+                extractComboPatterns(List<DecisionGraph<T>> oldJoins,
+                                     List<DecisionGraph<T>> newJoins)
+    {
+        return null;
+    }
+
+    private List<DecisionGraph<T>>
+                subTree(DecisionGraph<T>                    root,
+                        Map<Attribute<?>, DecisionGraph<T>> branches)
+    {
+        List<DecisionGraph<T>> openJoins =
+                new ArrayList<DecisionGraph<T>>();
+
+        for (Map.Entry<Attribute<?>, DecisionGraph<T>> branch :
+                branches.entrySet())
+        {
+            DecisionGraph<T> subRoot =
+                    new DecisionGraph<T>(branch.getValue().data);
+            if (branch.getValue().isJoin())
+            {
+                openJoins.add( branch.getValue() );
+
+                // to indicate that its a join and not a leaf
+                subRoot.parents.add( subRoot );
+            }
+
+            root.addNode(branch.getKey(), subRoot);
+            openJoins.addAll(
+                    subTree(subRoot, branch.getValue().nodes));
+        }
+
+        return openJoins;
+    }
+
+
+    //--------------------------------------------------------------------
+    public double treeMessageLength()
     {
         assert data != null : "cannot count length of frozen tree";
         return codingComplexity(
@@ -180,7 +283,7 @@ public class DecisionGraph<T> implements Predictor<T>
         double length = typeLength(numAttributes);
         return length + (isInternal()
                          ? attributeAndChildLength(numAttributes)
-                         : categoryLength(0.3));
+                         : categoryLength(0.5));
     }
 
     private double attributeAndChildLength(int numAttributes)
@@ -234,12 +337,14 @@ public class DecisionGraph<T> implements Predictor<T>
     {
         return parents.isEmpty();
     }
-
+    private boolean isJoin()
+    {
+        return parents.size() > 1;
+    }
     private boolean isInternal()
     {
         return !isLeaf();
     }
-
     private boolean isLeaf()
     {
         return kids().isEmpty();
