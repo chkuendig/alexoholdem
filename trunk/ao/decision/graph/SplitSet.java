@@ -21,7 +21,7 @@ public class SplitSet<T>
         cutoff   = cutoffLength;
         savings  = new HashMap<DecisionGraph<T>,
                               Collection<AttributeSet<?>>>();
-        shortest = new SplitPoint<T>();
+        shortest = null;
     }
 
 
@@ -32,7 +32,7 @@ public class SplitSet<T>
         SplitPoint<T> split = new SplitPoint<T>(leaf, attr);
         if (split.shorterThan( cutoff ))
         {
-            if (split.shorterThan(shortest))
+            if (shortest == null || split.shorterThan(shortest))
             {
                 shortest = split;
             }

@@ -284,30 +284,29 @@ public class DecisionTree<T> implements Predictor<T>
 
     private void appendTree(int depth, StringBuilder buf)
     {
-		if (attrSet != null)
+		if (attrSet == null) return;
+
+        buf.append(Txt.nTimes("\t", depth));
+        buf.append("***");
+        buf.append(attrSet.type()).append("\n");
+
+        for (Attribute<?> attribute : nodes.keySet())
         {
-			buf.append(Txt.nTimes("\t", depth));
-			buf.append("***");
-            buf.append(attrSet.type()).append("\n");
+            buf.append(Txt.nTimes("\t", depth + 1));
+            buf.append("+").append(attribute);
 
-            for (Attribute<?> attribute : nodes.keySet())
+            DecisionTree child = nodes.get(attribute);
+            if (child.isLeaf())
             {
-				buf.append(Txt.nTimes("\t", depth + 1));
-                buf.append("+").append(attribute);
-
-				DecisionTree child = nodes.get(attribute);
-                if (child.isLeaf())
-                {
-                    buf.append(" ");
-                    buf.append( child.hist );
-                    buf.append("\n");
-                }
-                else
-                {
-                    buf.append("\n");
-                    child.appendTree(depth + 1, buf);
-                }
-			}
-		}
+                buf.append(" ");
+                buf.append( child.hist );
+                buf.append("\n");
+            }
+            else
+            {
+                buf.append("\n");
+                child.appendTree(depth + 1, buf);
+            }
+        }
 	}
 }
