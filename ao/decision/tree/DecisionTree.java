@@ -12,7 +12,7 @@ import ao.util.text.Txt;
 import java.util.*;
 
 /**
- *
+ * see "Coding Decision Trees" WALLACE & PATRICK (1993)
  */
 public class DecisionTree<T> implements Predictor<T>
 {
@@ -150,7 +150,7 @@ public class DecisionTree<T> implements Predictor<T>
         assert data != null : "cannot count length of frozen tree";
         return codingComplexity(
                         data.contextAttributes().size()) +
-                data.codingLength( root() )*0;
+                data.codingLength( root() );
     }
 
     public double codingComplexity(int numAttributes)

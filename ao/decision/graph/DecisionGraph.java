@@ -12,7 +12,7 @@ import ao.util.text.Txt;
 import java.util.*;
 
 /**
- * 
+ * see Tan & Dowe (2003)
  */
 public class DecisionGraph<T> implements Predictor<T>
 {
@@ -26,12 +26,22 @@ public class DecisionGraph<T> implements Predictor<T>
 
 
     //--------------------------------------------------------------------
-    public DecisionGraph(DataSet<T> ds)
+    private DecisionGraph()
     {
         nodes   = new TreeMap<Attribute<?>, DecisionGraph<T>>();
         parents = new ArrayList<DecisionGraph<T>>();
-        hist    = ds.frequencies();
-        data    = ds;
+    }
+    public DecisionGraph(DataSet<T> ds)
+    {
+        this();
+        hist = ds.frequencies();
+        data = ds;
+    }
+    private DecisionGraph(DecisionGraph<T> copyDataFrom)
+    {
+        this();
+        hist = copyDataFrom.hist;
+        data = copyDataFrom.data;
     }
 
 
@@ -138,6 +148,26 @@ public class DecisionGraph<T> implements Predictor<T>
         return leafs;
     }
 
+    private List<DecisionGraph<T>> joins()
+    {
+        List<DecisionGraph<T>> joins =
+                new ArrayList<DecisionGraph<T>>();
+
+        if (isJoin())
+        {
+            joins.add( this );
+        }
+        else
+        {
+            for (DecisionGraph<T> child : kids())
+            {
+                joins.addAll( child.joins() );
+            }
+        }
+
+        return joins;
+    }
+
     public Collection<AttributeSet<?>> unsplitContexts()
     {
         Set<AttributeSet<?>> contexts =
@@ -189,14 +219,14 @@ public class DecisionGraph<T> implements Predictor<T>
         openRoots.add( new DecisionGraph<T>(data) );
         while (! openRoots.isEmpty())
         {
-            DecisionGraph<T> root = openRoots.poll();
-            newJoins.addAll( subTree(root, root.nodes) );
+            DecisionGraph<T> root = subTree(openRoots.poll());
+            newJoins.addAll( root.joins() );
             length += root.treeMessageLength();
 
             if (newJoins.isEmpty() && oldJoins.isEmpty()) break;
 
-            double n = newJoins.size();
-            double q = oldJoins.size();
+            int n = newJoins.size();
+            int q = oldJoins.size();
             length += Info.log2(Math.min(n, (n+q)/2.0));// transmit M
 
             List<Collection<DecisionGraph<T>>> comboPatterns =
@@ -232,7 +262,8 @@ public class DecisionGraph<T> implements Predictor<T>
                     }
                 }
             }
-            length += comboPatternLength(oldCombos, newCombos,
+            length += comboPatternLength(n, q,
+                                         oldCombos, newCombos,
                                          oldJoins,  newJoins);
         }
 
@@ -242,11 +273,30 @@ public class DecisionGraph<T> implements Predictor<T>
     }
 
     private double comboPatternLength(
+            int n, int q,
             List<Collection<DecisionGraph<T>>> oldCombos,
             List<Collection<DecisionGraph<T>>> newCombos,
             List<DecisionGraph<T>>             remainOldJoins,
             List<DecisionGraph<T>>             remainNewJoins)
-    {        
+    {
+        // # of childred of joins, already transmitted.
+        int m = oldCombos.size();
+
+        // pending nodes not involved in any join
+        int p = remainOldJoins.size() + remainNewJoins.size();
+
+        // # of nodes in each group of joining leafs
+        int j[] = new int[ m ];
+        for (int i = 0; i < m; i++)
+        {
+            j[ i ] = oldCombos.get(i).size() +
+                     newCombos.get(i).size();
+        }
+
+        // 
+        int y;
+        
+
         return 0;
     }
 
@@ -254,43 +304,67 @@ public class DecisionGraph<T> implements Predictor<T>
                 extractComboPatterns(List<DecisionGraph<T>> oldJoins,
                                      List<DecisionGraph<T>> newJoins)
     {
-        return null;
+        List<DecisionGraph<T>> joins = new ArrayList<DecisionGraph<T>>();
+        joins.addAll( oldJoins );
+        joins.addAll( newJoins );
+
+        List<Collection<DecisionGraph<T>>> combos =
+                new ArrayList<Collection<DecisionGraph<T>>>();
+        while (! joins.isEmpty())
+        {
+            DecisionGraph<T> aJoin = joins.get( joins.size()-1 );
+            Collection<DecisionGraph<T>> combo =
+                    new ArrayList<DecisionGraph<T>>();
+
+            DecisionGraph<T> joinDest = aJoin.joinNode;
+            for (DecisionGraph<T> partner : joins)
+            {
+                if (partner.joinNode.equals( joinDest ))
+                {
+                    combo.add( partner );
+                }
+            }
+
+            if (combo.size() == joinDest.parents.size())
+            {
+                combos.add( combo );
+            }
+            joins.removeAll( combo );
+        }
+        return combos;
     }
+
 
     /**
      * Takes a graph, and extracts a tree from it treating join
-     *  nodes as leaves.
+     *  nodes as leaves.  The internal nodes are rebuilt,
+     *  however the leafs and joins are left intact, still pointing
+     *  to their former parents.
      *
-     * @param root
-     * @param branches
-     * @return list of join nodes (as leaves)
+     * @param copyRoot graph to extract tree from.
+     * @return the extracted tree.
      */
-    private List<DecisionGraph<T>>
-                subTree(DecisionGraph<T>                    root,
-                        Map<Attribute<?>, DecisionGraph<T>> branches)
+    private DecisionGraph<T> subTree(DecisionGraph<T> copyRoot)
     {
-        List<DecisionGraph<T>> openJoins =
-                new ArrayList<DecisionGraph<T>>();
+        DecisionGraph<T> root = new DecisionGraph<T>( copyRoot );
 
-        for (Map.Entry<Attribute<?>, DecisionGraph<T>> branch :
-                branches.entrySet())
+        for (Map.Entry<Attribute<?>, DecisionGraph<T>> attribute :
+                copyRoot.nodes.entrySet())
         {
-            DecisionGraph<T> subRoot =
-                    new DecisionGraph<T>(branch.getValue().data);
-            if (branch.getValue().isJoin())
+            DecisionGraph<T> attrBranch = attribute.getValue();
+
+            if (attrBranch.isInternal())
             {
-                openJoins.add( branch.getValue() );
-
-                // to indicate that its a join and not a leaf
-                subRoot.parents.add( subRoot );
+                root.addNode(attribute.getKey(),
+                             subTree(attrBranch));
             }
-
-            root.addNode(branch.getKey(), subRoot);
-            openJoins.addAll(
-                    subTree(subRoot, branch.getValue().nodes));
+            else
+            {
+                root.nodes.put(attribute.getKey(), attrBranch);
+            }
         }
 
-        return openJoins;
+        return root;
     }
 
 
@@ -368,7 +442,7 @@ public class DecisionGraph<T> implements Predictor<T>
     }
     private boolean isInternal()
     {
-        return !isLeaf();
+        return !(isLeaf() || isJoin());
     }
     private boolean isLeaf()
     {
