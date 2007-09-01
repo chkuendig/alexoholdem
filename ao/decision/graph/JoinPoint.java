@@ -16,6 +16,7 @@ public class JoinPoint<T> implements GraphTransform
         joined = leafs;
 
         apply();
+        joined[0].root().toString();
         length = joined[0].root().messageLength();
         unapply();
     }

@@ -22,9 +22,10 @@ public class JoinSet<T>
     //--------------------------------------------------------------------
     public void add(DecisionGraph<T> leafs[])
     {
+        if (! splits.isJoinUseful(leafs)) return;
+
         JoinPoint<T> point = new JoinPoint<T>(leafs);
         if (! point.shorterThan( cutoff )) return;
-        if (! point.isUseful(    splits )) return;
 
         if (shortest == null || point.shorterThan(shortest))
         {
