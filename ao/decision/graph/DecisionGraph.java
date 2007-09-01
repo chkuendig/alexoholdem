@@ -190,73 +190,54 @@ public class DecisionGraph<T> implements Predictor<T>
         while (! openRoots.isEmpty())
         {
             DecisionGraph<T> root = openRoots.poll();
-            newJoins.addAll( subTree(root, nodes) );
+            newJoins.addAll( subTree(root, root.nodes) );
             length += root.treeMessageLength();
 
-            if (!(newJoins.isEmpty() && oldJoins.isEmpty()))
-            {
-                List<Collection<DecisionGraph<T>>> comboPatterns =
-                        extractComboPatterns(oldJoins, newJoins);
-                List<Collection<DecisionGraph<T>>> oldCombos =
-                        new ArrayList<Collection<DecisionGraph<T>>>();
-                List<Collection<DecisionGraph<T>>> newCombos =
-                        new ArrayList<Collection<DecisionGraph<T>>>();
-
-                for (Collection<DecisionGraph<T>> combo : comboPatterns)
-                {
-                    openRoots.add( combo.iterator().next().joinNode );
-
-                    Collection<DecisionGraph<T>> oldCombo =
-                        new ArrayList<DecisionGraph<T>>();
-                    oldCombos.add( oldCombo );
-
-                    Collection<DecisionGraph<T>> newCombo =
-                            new ArrayList<DecisionGraph<T>>();
-                    newCombos.add( newCombo );
-
-                    for (DecisionGraph<T> aJoin : combo)
-                    {
-                        if (oldJoins.remove( aJoin ))
-                        {
-                            oldCombo.add( aJoin );
-                        }
-                        else
-                        {
-                            newJoins.remove( aJoin );
-                            newCombo.add( aJoin );
-                        }
-                    }
-                }
-
-                length += 0;
-            }
+            if (newJoins.isEmpty() && oldJoins.isEmpty()) break;
 
             double n = newJoins.size();
             double q = oldJoins.size();
             length += Info.log2(Math.min(n, (n+q)/2.0));// transmit M
 
+            List<Collection<DecisionGraph<T>>> comboPatterns =
+                    extractComboPatterns(oldJoins, newJoins);
+            List<Collection<DecisionGraph<T>>> oldCombos =
+                    new ArrayList<Collection<DecisionGraph<T>>>();
+            List<Collection<DecisionGraph<T>>> newCombos =
+                    new ArrayList<Collection<DecisionGraph<T>>>();
 
-            for (Collection<DecisionGraph<T>> combo :
-                    extractComboPatterns(oldJoins, newJoins))
+            for (Collection<DecisionGraph<T>> combo : comboPatterns)
             {
                 openRoots.add( combo.iterator().next().joinNode );
 
-                List<DecisionGraph<T>> oldCombo =
+                Collection<DecisionGraph<T>> oldCombo =
+                    new ArrayList<DecisionGraph<T>>();
+                oldCombos.add( oldCombo );
+
+                Collection<DecisionGraph<T>> newCombo =
                         new ArrayList<DecisionGraph<T>>();
-                List<DecisionGraph<T>> newCombo =
-                        new ArrayList<DecisionGraph<T>>();
+                newCombos.add( newCombo );
+
                 for (DecisionGraph<T> aJoin : combo)
                 {
-                    if (oldJoins.remove( aJoin )) oldCombo.add( aJoin );
-                    if (newJoins.remove( aJoin )) newCombo.add( aJoin );
+                    if (oldJoins.contains( aJoin ))
+                    {
+                        oldJoins.remove( aJoin );
+                        oldCombo.add( aJoin );
+                    }
+                    else
+                    {
+                        newJoins.remove( aJoin );
+                        newCombo.add( aJoin );
+                    }
                 }
-                length += comboPatternLength( oldCombo, newCombo);
             }
-
-            oldJoins.addAll( newJoins );
-            newJoins.clear();
+            length += comboPatternLength(oldCombos, newCombos,
+                                         oldJoins,  newJoins);
         }
 
+        oldJoins.addAll( newJoins );
+        newJoins.clear();
         return length;
     }
 
@@ -265,11 +246,7 @@ public class DecisionGraph<T> implements Predictor<T>
             List<Collection<DecisionGraph<T>>> newCombos,
             List<DecisionGraph<T>>             remainOldJoins,
             List<DecisionGraph<T>>             remainNewJoins)
-    {
-        int n = newCombo.size();
-        int q = oldCombo.size();
-
-        
+    {        
         return 0;
     }
 
@@ -280,6 +257,14 @@ public class DecisionGraph<T> implements Predictor<T>
         return null;
     }
 
+    /**
+     * Takes a graph, and extracts a tree from it treating join
+     *  nodes as leaves.
+     *
+     * @param root
+     * @param branches
+     * @return list of join nodes (as leaves)
+     */
     private List<DecisionGraph<T>>
                 subTree(DecisionGraph<T>                    root,
                         Map<Attribute<?>, DecisionGraph<T>> branches)
