@@ -18,7 +18,6 @@ import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleAccess;
-import ao.util.rand.Rand;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -38,7 +37,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "sagerbot"));
+        modelOpponet(playerAccess.find("irc", "Barrister"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -86,10 +85,10 @@ public class OppModelTest
         for (Example<TakenAction> example : validationSet.examples())
         {
             trainingSet.add( example );
-            if (Rand.nextDouble() < (1/20.0))
-            {
-                learner.train( trainingSet );
-            }
+//            if (Rand.nextDouble() < (1/20.0))
+//            {
+//                learner.train( trainingSet );
+//            }
             
             Histogram<TakenAction> prediction =
                     learner.predict( example );
