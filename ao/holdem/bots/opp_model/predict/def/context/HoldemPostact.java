@@ -14,7 +14,7 @@ public class HoldemPostact extends HoldemPreact
         super(ctx);
 
         double lastBetsToCallBool =
-                asDouble(ctx.lastBetsToCalled() > 0);
+                asDouble(ctx.lastBetsToCall() > 0);
 
         double lastActRaiseBool =
                 asDouble(ctx.lastAct() == TakenAction.RAISE);

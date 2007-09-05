@@ -1,6 +1,7 @@
 package ao.decision.data;
 
 import ao.decision.attr.Attribute;
+import ao.util.stats.Info;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -118,6 +119,7 @@ public class Histogram<T>
     @Override
     public String toString()
     {
-        return hist.toString();
+        return hist.toString() + "\t" +
+               Info.cost(probabilityOf(mostProbable()));
     }
 }

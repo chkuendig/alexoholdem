@@ -23,7 +23,7 @@ public class GenericContext
     private int     numUnactedThisRound;
     private int     position;
     private int     activePosition;
-    private int lastBetsToCalled;
+    private int lastBetsToCall;
     private double  winPercent;
 
     private TakenAction act;
@@ -77,7 +77,7 @@ public class GenericContext
                         curr.nextToAct() ) + 1);
 
         // false warning "possible null" warning.
-        lastBetsToCalled =
+        lastBetsToCall =
                 isHistAware
                 ? prev.toCall().bets( curr.isSmallBet() ) : -1;
         lastAct = prevAct;
@@ -107,7 +107,7 @@ public class GenericContext
     public int     numUnactedThisRound() { return numUnactedThisRound; }
     public int     position()            { return position; }
     public int     activePosition()      { return activePosition; }
-    public int     lastBetsToCalled()    { return lastBetsToCalled; }
+    public int     lastBetsToCall()      { return lastBetsToCall; }
     public double  winPercent()          { return winPercent; }
     public boolean isHoleAware()         { return isHoleAware; }
     public boolean isHistAware()         { return isHistAware; }
