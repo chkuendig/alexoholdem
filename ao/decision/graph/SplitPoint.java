@@ -62,4 +62,11 @@ public class SplitPoint<T> implements GraphTransform
     {
         return length < cutoff;
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return String.valueOf(Math.round(length));
+    }
 }

@@ -37,8 +37,8 @@ public class DecisionGraphLearner<T>
 
         while (true)
         {
-            System.out.println("---------------------------------------");
-            System.out.println("progress " + root + " : " + cutoffLength);
+//            System.out.println("---------------------------------------");
+//            System.out.println("progress " + root + " : " + cutoffLength);
             SplitSet<T> splits = new SplitSet<T>( cutoffLength );
 
             List<DecisionGraph<T>> leafs = root.leafs();
@@ -53,7 +53,7 @@ public class DecisionGraphLearner<T>
 
             JoinSet<T> joins = new JoinSet<T>(splits);
             for (int joinBy = 2;
-                     joinBy <= Math.min(leafs.size(), 5);
+                     joinBy <= Math.min(leafs.size(), 6);
                      joinBy++)
             {
                 for (DecisionGraph<T> tryJoin[] :

@@ -18,6 +18,10 @@ import java.util.*;
 public class DecisionGraph<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
+    private static final double DEFAULT_LEAF_PROB = 0.8;
+    private static final double ALPHA             = 0.5;
+    private static final double ZERO_PROB         = 0.01;
+
     private static int nextId = 0;
 
 
@@ -29,6 +33,9 @@ public class DecisionGraph<T> implements Predictor<T>
     private AttributeSet<?>                     attrSet;
     private Histogram<T>                        hist;
     private DataSet<T>                          data;
+
+    private int leafNonInternals;
+    private int forwardNonInternals;
 
 
     //--------------------------------------------------------------------
@@ -44,13 +51,16 @@ public class DecisionGraph<T> implements Predictor<T>
         hist = ds.frequencies();
         data = ds;
     }
-    private DecisionGraph(DecisionGraph<T> copyDataFrom)
+    private DecisionGraph(DecisionGraph<T> copyNonKids)
     {
         this();
-        id      = copyDataFrom.id;
-        hist    = copyDataFrom.hist;
-        data    = copyDataFrom.data;
-        attrSet = copyDataFrom.attrSet;
+        id      = copyNonKids.id;
+        hist    = copyNonKids.hist;
+        data    = copyNonKids.data;
+        attrSet = copyNonKids.attrSet;
+
+        leafNonInternals    = copyNonKids.leafNonInternals;
+        forwardNonInternals = copyNonKids.forwardNonInternals;
     }
 
 
@@ -157,7 +167,7 @@ public class DecisionGraph<T> implements Predictor<T>
         return leafs;
     }
 
-    private List<DecisionGraph<T>> forewards()
+    private List<DecisionGraph<T>> forwards()
     {
         List<DecisionGraph<T>> forewards =
                 new ArrayList<DecisionGraph<T>>();
@@ -170,7 +180,7 @@ public class DecisionGraph<T> implements Predictor<T>
         {
             for (DecisionGraph<T> child : kids())
             {
-                forewards.addAll( child.forewards() );
+                forewards.addAll( child.forwards() );
             }
         }
 
@@ -219,10 +229,14 @@ public class DecisionGraph<T> implements Predictor<T>
     {
         return graphCodingLength() +
                data.codingLength( root() );
+//        return graphCodingLength();
     }
 
     private double graphCodingLength()
     {
+        leafNonInternals    = 0;
+        forwardNonInternals = 0;
+
         double length = 0;
         Queue<DecisionGraph<T>> openRoots =
                 new LinkedList<DecisionGraph<T>>();
@@ -235,7 +249,7 @@ public class DecisionGraph<T> implements Predictor<T>
         while (! openRoots.isEmpty())
         {
             DecisionGraph<T> root = subTree(openRoots.poll());
-            newForewards.addAll( root.forewards() );
+            newForewards.addAll( root.forwards() );
             length += root.treeCodingLength();
 
             if (newForewards.isEmpty() && oldJoins.isEmpty()) break;
@@ -480,35 +494,65 @@ public class DecisionGraph<T> implements Predictor<T>
     {
         assert data != null : "cannot count length of frozen tree";
         return codingComplexity(
-                        data.contextAttributes().size(), null);
+                        data.contextAttributes().size(), null, this);
     }
 
-    public double codingComplexity(
-            int              numAttributes,
-            DecisionGraph<T> parent)
+    private double codingComplexity(
+            int              availAttributes,
+            DecisionGraph<T> parent,
+            DecisionGraph<T> root)
     {
-        if (isForward())
+        double type   = typeLength(availAttributes, parent, root);
+        double struct = structureLength(availAttributes, root);
+        return type + struct;
+    }
+
+
+    //--------------------------------------------------------------------
+    private double structureLength(
+            int              availAttributes,
+            DecisionGraph<T> root)
+    {
+        if (isInternal())
         {
-            return joinNode.codingComplexity(numAttributes, parent);
+            return attributeAndChildLength(availAttributes, root);
         }
-
-        double length = typeLength(numAttributes);
-        return length + (isInternal()
-                         ? attributeAndChildLength(numAttributes)
-                         : isJoinLength(parent) +
-                           (isLeaf() ? categoryLength(0.5) : 0));
+        else if (isLeaf())
+        {
+//            return categoryLength(ALPHA);
+            return 0;
+        }
+        else /* if (isForward()) */
+        {
+            // already accounted for by appending lengths
+            //  of decomposed sub-trees to the graph's length.
+            return 0;
+        }
     }
 
-    private double attributeAndChildLength(int numAttributes)
-    {
-        double length = Info.log2( numAttributes );
 
+    private double attributeAndChildLength(
+            int              availAttributes,
+            DecisionGraph<T> root)
+    {
+        double attrTypeLength = Info.log2( availAttributes );
+
+        double childLengthSum = 0;
         for (DecisionGraph<T> child : kids())
         {
-            length += child.codingComplexity(
-                                numAttributes - 1, this);
+            childLengthSum += child.codingComplexity(
+                                availAttributes - 1, this, root);
+
+            if (child.isForward())
+            {
+                root.forwardNonInternals++;
+            }
+            else if (child.isLeaf())
+            {
+                root.leafNonInternals++;
+            }
         }
-        return length;
+        return attrTypeLength + childLengthSum;
     }
 
     private double categoryLength(double alpha)
@@ -530,41 +574,68 @@ public class DecisionGraph<T> implements Predictor<T>
         return length;
     }
 
-    private double isJoinLength(DecisionGraph<T> parent)
-    {
-//        if (parent == null) return 0;
-//
-//        int numJoins = 0;
-//        int numNonInternals = 0;
-//
-//        for (DecisionGraph<T> sibling : parent.kids())
-//        {
-//            if (! sibling.isInternal())
-//            {
-//                if (sibling.isJoin()) numJoins++;
-//                numNonInternals++;
-//            }
-//        }
-//
-//        double joinProb = (numNonInternals == 0)
-//                           ? 0.5 : numJoins / ((double) numNonInternals);
-//        return -(isJoin() ? Info.log2(      joinProb)
-//                          : Info.log2(1.0 - joinProb));
-        return 0;
-    }
-    private double typeLength(int numAttributes)
-    {
-        return isInternalLength(
-                1.0 / (isRoot()
-                       ? (double) numAttributes
-                       : (double) aParent().kids().size()));
-    }
 
-    private double isInternalLength(double p)
+    //--------------------------------------------------------------------
+    private double typeLength(
+            int              availAttributes,
+            DecisionGraph<T> parent,
+            DecisionGraph<T> root)
     {
-        return -(isInternal()
-                 ? Info.log2(      p)
-                 : Info.log2(1.0 - p));
+        return Info.cost( typeProbability(availAttributes,
+                                          parent,
+                                          root) );
+    }
+    private double typeProbability(
+            int              availAttributes,
+            DecisionGraph<T> parent,
+            DecisionGraph<T> root)
+    {
+        if (isRoot() || isJoin())
+        {
+            double leafProb = 1.0/((double) availAttributes);
+
+            if (isLeaf())
+            {
+                return leafProb;
+            }
+            else /* if (isInternal()) */
+            {
+                return 1.0 - leafProb;
+            }
+        }
+        else
+        {
+            double internalProb = 1.0/((double) parent.kids().size());
+
+            if (isInternal())
+            {
+                return internalProb;
+            }
+            else
+            {
+                double nonInternalProb  = 1.0 - internalProb;
+                return leafVsForwardProb(root) *
+                        nonInternalProb;
+            }
+        }
+    }
+    private double leafVsForwardProb(DecisionGraph<T> root)
+    {
+        int nonInternalCount =
+                    root.forwardNonInternals + root.leafNonInternals;
+        if (nonInternalCount == 0)
+        {
+            return (isLeaf() ? DEFAULT_LEAF_PROB
+                             : 1.0 - DEFAULT_LEAF_PROB);
+        }
+
+        int particularCount =
+                isLeaf() ? root.leafNonInternals
+                         : root.forwardNonInternals;
+        return particularCount == 0
+                ? ZERO_PROB
+                : particularCount /
+                    ((double) nonInternalCount);
     }
 
 
@@ -583,7 +654,7 @@ public class DecisionGraph<T> implements Predictor<T>
     }
     private boolean isInternal()
     {
-        return !(isForward() || isLeaf() || isJoin());
+        return !(kids().isEmpty() || isForward() || isJoin());
     }
     private boolean isLeaf()
     {
@@ -622,7 +693,7 @@ public class DecisionGraph<T> implements Predictor<T>
             DecisionGraph<T> root = subTree(openRoots.poll());
             closedRoots.add( root );
 
-            forewards.addAll( root.forewards() );
+            forewards.addAll( root.forwards() );
             if (forewards.isEmpty()) break;
 
             List<Collection<DecisionGraph<T>>> comboPatterns =
@@ -639,14 +710,15 @@ public class DecisionGraph<T> implements Predictor<T>
         for (DecisionGraph<T> root : closedRoots)
         {
             b.append("root ").append(root.id).append("\n");
-            appendTree(1, b);
+            root.appendTree(1, b);
         }
         return b.toString();
     }
 
     private void appendTree(int depth, StringBuilder buf)
     {
-        if (attrSet == null)
+        if (attrSet == null ||
+                isForward() && kids().isEmpty())
         {
             buf.append( hist );
             return;
