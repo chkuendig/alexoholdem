@@ -5,7 +5,7 @@ import ao.decision.data.DataSet;
 import ao.decision.data.Example;
 import ao.decision.data.Histogram;
 import ao.decision.domain.DecisionSetup;
-import ao.decision.graph.DecisionGraphLearner;
+import ao.decision.tree.DecisionTreeLearner;
 import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
 import ao.holdem.bots.opp_model.predict.PredictionSet;
@@ -38,7 +38,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "Grizzler"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -71,7 +71,7 @@ public class OppModelTest
             List<Example<TakenAction>> handExamples =
                     decisionSetup.postflopExamples(hand, p);
 
-            if (i++ < 300) {
+            if (i++ < 2000) {
                 trainingSet.addAll( handExamples );
             } else {
                 validationSet.addAll( handExamples );
@@ -80,7 +80,7 @@ public class OppModelTest
 
         System.out.println("building model");
         DecisionLearner<TakenAction> learner =
-                new DecisionGraphLearner<TakenAction>();
+                new DecisionTreeLearner<TakenAction>();
         learner.train( trainingSet );
         
         for (Example<TakenAction> example : validationSet.examples())

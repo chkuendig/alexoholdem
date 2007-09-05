@@ -158,7 +158,7 @@ public class DecisionTree<T> implements Predictor<T>
         double length = typeLength(numAttributes);
         return length + (isInternal()
                          ? attributeAndChildLength(numAttributes)
-                         : categoryLength(0.3));
+                         : /*categoryLength(0.3)*/0);
     }
 
     private double attributeAndChildLength(int numAttributes)

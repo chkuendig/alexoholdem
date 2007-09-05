@@ -16,7 +16,6 @@ public class JoinPoint<T> implements GraphTransform
         joined = leafs;
 
         apply();
-        joined[0].root().toString();
         length = joined[0].root().messageLength();
         unapply();
     }
@@ -52,5 +51,12 @@ public class JoinPoint<T> implements GraphTransform
     public boolean shorterThan(SplitPoint<T> split)
     {
         return !split.shorterThan( length );
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return String.valueOf(Math.round(length));
     }
 }

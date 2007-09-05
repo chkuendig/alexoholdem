@@ -70,7 +70,7 @@ public class Classification<T extends Enum>
     public T mostProbable()
     {
         T      heaviestValue  = null;
-        double heaviestWeight = Double.MIN_VALUE;
+        double heaviestWeight = -99999999999999D;
 
         for (int i = 0; i < weights.length; i++)
         {
