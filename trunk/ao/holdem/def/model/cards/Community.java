@@ -266,4 +266,28 @@ public class Community
     {
         return Arrays.toString( known() );
     }
+
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Community community = (Community) o;
+        return FLOP_A == community.FLOP_A &&
+               FLOP_B == community.FLOP_B &&
+               FLOP_C == community.FLOP_C &&
+               RIVER == community.RIVER &&
+               TURN == community.TURN;
+    }
+
+    public int hashCode()
+    {
+        int result;
+        result = (FLOP_A != null ? FLOP_A.hashCode() : 0);
+        result = 31 * result + (FLOP_B != null ? FLOP_B.hashCode() : 0);
+        result = 31 * result + (FLOP_C != null ? FLOP_C.hashCode() : 0);
+        result = 31 * result + (TURN != null ? TURN.hashCode() : 0);
+        result = 31 * result + (RIVER != null ? RIVER.hashCode() : 0);
+        return result;
+    }
 }

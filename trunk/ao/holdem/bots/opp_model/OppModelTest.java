@@ -37,7 +37,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "JohnR"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
 //        backprop(playerAccess.find("irc", "Barrister"));
     }
 
@@ -70,7 +70,7 @@ public class OppModelTest
             List<Example<TakenAction>> handExamples =
                     decisionSetup.postflopExamples(hand, p);
 
-            if (i++ < 200) {
+            if (i++ < 2000) {
                 trainingSet.addAll( handExamples );
             } else {
                 validationSet.addAll( handExamples );

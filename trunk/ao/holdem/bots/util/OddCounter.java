@@ -1,7 +1,7 @@
 package ao.holdem.bots.util;
 
 import ao.holdem.def.model.cards.Community;
-import ao.util.stats.Combiner;
+import ao.util.stats.Combo;
 
 /**
  *
@@ -20,6 +20,6 @@ public class OddCounter
         int knownCount       = 2 + community.knownCount();
         int unknownCount     = 52 - knownCount;
 
-        return Combiner.choose(unknownCount, choose);
+        return Combo.choose(unknownCount, choose);
     }
 }

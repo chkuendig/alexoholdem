@@ -1,7 +1,9 @@
-package ao.holdem.history_game;
+package ao.holdem.bots.hist;
 
-import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
+import ao.decision.data.DataSet;
+import ao.decision.data.Example;
+import ao.decision.domain.DecisionSetup;
+import ao.holdem.bots.opp_model.decision.ModelPool;
 import ao.holdem.bots.util.Util;
 import ao.holdem.def.history_bot.HistoryBot;
 import ao.holdem.def.model.Money;
@@ -12,11 +14,18 @@ import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 
+import java.util.List;
+
 /**
  *
  */
 public class PredictorBot implements HistoryBot
 {
+    //--------------------------------------------------------------------
+    private ModelPool model = new ModelPool();
+    private DecisionSetup decisionSetup = new DecisionSetup();
+
+
     //--------------------------------------------------------------------
     public void introduce() {}
     public void retire()    {}
@@ -27,10 +36,10 @@ public class PredictorBot implements HistoryBot
             HandHistory handFromHisPov,
             Snapshot    envFromHisPov)
     {
-        HandParser parser = new HandParser();
-        PredictionContext ctx =
-                parser.nextToActContext(
-                        handFromHisPov, envFromHisPov.nextToAct());
+//        HandParser parser = new HandParser();
+//        PredictionContext ctx =
+//                parser.nextToActContext(
+//                        handFromHisPov, envFromHisPov.nextToAct());
 
 //        LearnerSet learners =
 //                envFromHisPov.nextToAct().getLearner();
@@ -47,6 +56,9 @@ public class PredictorBot implements HistoryBot
             Snapshot     envAfterAction,
             TakenAction  action)
     {
+//        model.
+        
+
         System.out.println("action = " + action);
     }
 
@@ -76,6 +88,21 @@ public class PredictorBot implements HistoryBot
     public void handEnded(HandHistory atEndOfHand,
                           Money       stackDelta)
     {
+        model.add( atEndOfHand );
+        
+        DataSet<TakenAction> history = new DataSet<TakenAction>();
+
+
+        for (PlayerHandle player : atEndOfHand.getPlayers())
+        {
+            List<Example<TakenAction>> handExamples =
+                    decisionSetup.postflopExamples(
+                            atEndOfHand, player);
+
+        }
+
+
+
 //        HandParser parser = new HandParser();
 //
 //        for (PlayerHandle p : atEndOfHand.getPlayers())

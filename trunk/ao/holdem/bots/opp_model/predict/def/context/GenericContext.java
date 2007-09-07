@@ -23,7 +23,7 @@ public class GenericContext
     private int     numUnactedThisRound;
     private int     position;
     private int     activePosition;
-    private int lastBetsToCall;
+    private int     lastBetsToCall;
     private double  winPercent;
 
     private TakenAction act;

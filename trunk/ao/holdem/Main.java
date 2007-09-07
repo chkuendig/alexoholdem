@@ -169,8 +169,9 @@ public class Main
     {
 //        doRun52c7();
 //        doRunHandsOf5();
+        doRunHandsOf6();
 //        doRunHandsOf7();
-        doRunOdds();
+//        doRunOdds();
     }
     public static void doRunOdds()
     {
@@ -426,6 +427,39 @@ public class Main
     }
 
 
+    public static void doRunHandsOf6()
+    {
+        Combiner<Card> permuter =
+                new Combiner<Card>(Card.values(), 6);
+
+        long start = System.currentTimeMillis();
+
+        int count       = 0;
+        int frequency[] = new int[ Hand.HandRank.values().length ];
+        while (permuter.hasMoreElements())
+        {
+//            if (count   % 10000000 == 0) System.out.println();
+//            if (count++ % 1000000  == 0) System.out.print(".");
+
+            Card hand[] = permuter.nextElement();
+
+//            int value = EvalSlow.valueOf(hand);
+            int value = Eval7Faster.valueOf(
+                            hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
+            if (value != EvalSlow.valueOf(hand))
+            {
+                System.out.println(Arrays.toString(hand) + "\t" +
+                                   value + "\t" + EvalSlow.valueOf(hand));
+                Eval7Faster.valueOf(
+                            hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
+            }
+
+            frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+        }
+
+        System.out.println(Arrays.toString(frequency));
+        System.out.println("took: " + (System.currentTimeMillis() - start));
+    }
     public static void doRunHandsOf5()
     {
         Combiner<Card> permuter =
@@ -440,42 +474,16 @@ public class Main
             if (count   % 10000000 == 0) System.out.println();
             if (count++ % 1000000  == 0) System.out.print(".");
 
-            int value = EvalSlow.valueOf(permuter.nextElement());
+            Card hand[] = permuter.nextElement();
+
+            int value = EvalSlow.valueOf(hand);
+//            int value = Eval7Faster.valueOf(
+//                            hand[0], hand[1], hand[2], hand[3], hand[4]);
             frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
         }
 
         System.out.println(Arrays.toString(frequency));
         System.out.println("took: " + (System.currentTimeMillis() - start));
-
-//        System.out.println(Card.valueOf(
-//                Card.ACE_OF_HEARTS,
-//                Card.KING_OF_HEARTS,
-//                Card.QUEEN_OF_HEARTS,
-//                Card.TEN_OF_HEARTS,
-//                Card.SEVEN_OF_HEARTS));
-//
-//        System.out.println(Card.valueOf(
-//                Card.ACE_OF_HEARTS,
-//                Card.KING_OF_HEARTS,
-//                Card.QUEEN_OF_HEARTS,
-//                Card.TEN_OF_HEARTS,
-//                Card.SIX_OF_HEARTS));
-//
-//        Hand a = new Hand(Card.FIVE_OF_HEARTS,
-//                          Card.SIX_OF_HEARTS,
-//                          Card.ACE_OF_HEARTS,
-//                          Card.KING_OF_HEARTS,
-//                          Card.QUEEN_OF_HEARTS,
-//                          Card.TEN_OF_HEARTS,
-//                          Card.TWO_OF_HEARTS);
-//        Hand b = new Hand(Card.SEVEN_OF_HEARTS,
-//                          Card.NINE_OF_SPADES,
-//                          Card.ACE_OF_HEARTS,
-//                          Card.KING_OF_HEARTS,
-//                          Card.QUEEN_OF_HEARTS,
-//                          Card.TEN_OF_HEARTS,
-//                          Card.TWO_OF_HEARTS);
-//        System.out.println(a.compareTo( b ));
     }
 }
 

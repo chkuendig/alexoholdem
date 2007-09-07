@@ -4,6 +4,7 @@ package ao.holdem.def.model.card.eval7;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.card.eval_567.EvalSlow;
 import ao.util.stats.Combiner;
+import ao.util.stats.Combo;
 
 import java.io.*;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class Eval7Fast
 
 
     //--------------------------------------------------------------------
-    private static final int NUM_HANDS = (int) Combiner.choose(52, 7);
+    private static final int NUM_HANDS = (int) Combo.choose(52, 7);
 
 //    private static final AtomicReference<short[][]> values =
 //            new AtomicReference<short[][]>();

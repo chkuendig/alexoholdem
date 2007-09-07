@@ -3,7 +3,7 @@ package ao.holdem.bots.opp_model.predict;
 import ao.holdem.def.history_bot.BotHandle;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.Dealer;
-import ao.holdem.history_game.PredictorBot;
+import ao.holdem.bots.hist.PredictorBot;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

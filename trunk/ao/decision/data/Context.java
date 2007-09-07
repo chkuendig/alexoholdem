@@ -3,10 +3,10 @@ package ao.decision.data;
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributeSet;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -14,19 +14,23 @@ import java.util.ArrayList;
 public class Context
 {
     //--------------------------------------------------------------------
-    private Map<Object, Attribute> ctx;
+    private Map<Object, Attribute> ctx = new HashMap<Object, Attribute>();
 
 
     //--------------------------------------------------------------------
+    public Context() {}
     public Context(Collection<Attribute> attributes)
     {
-        ctx = new HashMap<Object, Attribute>();
-        for (Attribute<?> attr : attributes)
+        for (Attribute<?> attr : attributes) add( attr );
+    }
+
+
+    //--------------------------------------------------------------------
+    protected void add(Attribute<?> attr)
+    {
+        if (ctx.put(attr.set().type(), attr) != null)
         {
-            if (ctx.put(attr.set().type(), attr) != null)
-            {
-                throw new Error("duplicate type " + attr.set().type());
-            }
+            throw new Error("duplicate type " + attr.set().type());
         }
     }
 

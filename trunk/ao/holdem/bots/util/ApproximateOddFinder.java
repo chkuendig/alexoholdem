@@ -5,7 +5,7 @@ import ao.holdem.def.model.card.eval7.Eval7Faster;
 import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.model.cards.Hole;
 import ao.util.rand.MersenneTwisterFast;
-import ao.util.stats.Combiner;
+import ao.util.stats.Combo;
 import ao.util.stats.FastIntCombiner;
 
 /**
@@ -95,7 +95,7 @@ public class ApproximateOddFinder implements OddFinder
     {
         // community
         long communities =
-                Combiner.choose(52 - 2 - community.knownCount(),
+                Combo.choose(52 - 2 - community.knownCount(),
                                 community.unknownCount());
         return (int)(communities * fraction);
     }
@@ -104,15 +104,15 @@ public class ApproximateOddFinder implements OddFinder
     {
         // opponent cards
         long oppHoles =
-                Combiner.choose(52 - 2 - 5,
+                Combo.choose(52 - 2 - 5,
                                 activeOpponents * 2);
 
         // how many unique ways to group them by two
         long holeGroups =
-                Combiner.choose(activeOpponents * 2, 2);
+                Combo.choose(activeOpponents * 2, 2);
         // unique ways to assign two hole cards
         long holeDistributions =
-                Combiner.choose((int)holeGroups, activeOpponents);
+                Combo.choose((int)holeGroups, activeOpponents);
 
         long oppHoleChoices = oppHoles * holeDistributions;
         return (long)(oppHoleChoices * fraction);
@@ -368,7 +368,7 @@ public class ApproximateOddFinder implements OddFinder
                         comA, comB, comC, comD, comE);
 
         short myVal =
-                Eval7Faster.valueOf(shortcut,
+                Eval7Faster.fastValueOf(shortcut,
                         cards[ indexes[GeneralOddFinder.HOLE_A] ],
                         cards[ indexes[GeneralOddFinder.HOLE_B] ]);
 
@@ -411,7 +411,7 @@ public class ApproximateOddFinder implements OddFinder
         Card oppA = cards[ indexes[holeDestA] ];
         Card oppB = cards[ indexes[holeDestB] ];
 
-        short oppVal = Eval7Faster.valueOf(
+        short oppVal = Eval7Faster.fastValueOf(
                 communityShortcut, oppA, oppB);
 
         short maxOtherOppVal =

@@ -17,7 +17,7 @@ import java.util.*;
 public class DecisionTree<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
-    private static final double ALPHA = 0.5;
+    private static final double ALPHA = 0.3;//0.3
 
 
     //--------------------------------------------------------------------
