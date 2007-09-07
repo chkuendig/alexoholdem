@@ -17,6 +17,10 @@ import java.util.*;
 public class DecisionTree<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
+    private static final double ALPHA = 0.5;
+
+
+    //--------------------------------------------------------------------
     private DecisionTree<T>                    parent;
     private Map<Attribute<?>, DecisionTree<T>> nodes;
     private AttributeSet<?>                    attrSet;
@@ -148,9 +152,11 @@ public class DecisionTree<T> implements Predictor<T>
     public double messageLength()
     {
         assert data != null : "cannot count length of frozen tree";
+//        return codingComplexity(
+//                        data.contextAttributes().size()) +
+//                data.codingLength( root() );
         return codingComplexity(
-                        data.contextAttributes().size()) +
-                data.codingLength( root() );
+                        data.contextAttributes().size());
     }
 
     public double codingComplexity(int numAttributes)
@@ -158,7 +164,7 @@ public class DecisionTree<T> implements Predictor<T>
         double length = typeLength(numAttributes);
         return length + (isInternal()
                          ? attributeAndChildLength(numAttributes)
-                         : /*categoryLength(0.3)*/0);
+                         : categoryLength(ALPHA));
     }
 
     private double attributeAndChildLength(int numAttributes)
