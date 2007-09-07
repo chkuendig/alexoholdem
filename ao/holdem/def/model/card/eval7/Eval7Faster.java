@@ -268,7 +268,7 @@ public class Eval7Faster
             switch (numCards) {
                 case 5 :
                     handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4]);
+                            hand[0], hand[1], hand[2], hand[3], hand[4]);
 //                    if (handRank != EvalSlow.valueOf(
 //                            handCards[0], handCards[1],
 //                            handCards[2], handCards[3], handCards[4]))
@@ -281,8 +281,8 @@ public class Eval7Faster
                     handRank = EvalSlow.valueOf(
                             hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
 //                    if (handRank != EvalSlow.valueOf(
-//                            handCards[0], handCards[1], handCards[2],
-//                            handCards[3], handCards[4], handCards[5]))
+//                            hand[0], hand[1], hand[2],
+//                            hand[3], hand[4], hand[5]))
 //                    {
 //                        System.out.println("!!WTF: unequal 6 value");
 //                    }
@@ -383,6 +383,27 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
+    public static short valueOf(
+            Card c1, Card c2, Card c3, Card c4, Card c5, Card c6)
+    {
+        return valueOf(c1.invertedIndex(), c2.invertedIndex(),
+                       c3.invertedIndex(), c4.invertedIndex(),
+                       c5.invertedIndex(), c6.invertedIndex());
+    }
+    public static short valueOf(
+            int invIndex1, int invIndex2, int invIndex3,
+            int invIndex4, int invIndex5, int invIndex6)
+    {
+//        return (short) (handRanks[handRanks[handRanks[handRanks[
+//                handRanks[handRanks[handRanks[
+//                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
+//                           invIndex5] + invIndex6]]);
+        return (short) (handRanks[handRanks[handRanks[handRanks[
+                handRanks[handRanks[handRanks[
+                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
+                           invIndex5] + invIndex6]]);
+    }
+
     public static short valueOf(Card... sevenCards)
     {
         return valueOf(sevenCards[0], sevenCards[1], sevenCards[2],
@@ -414,36 +435,79 @@ public class Eval7Faster
 
     //--------------------------------------------------------------------
     public static int shortcutFor(
-            Card c1, Card c2,
-            Card c3, Card c4, Card c5)
+            Card c1, Card c2, Card c3, Card c4, Card c5)
     {
         return shortcutFor(c1.invertedIndex(),
                            c2.invertedIndex(), c3.invertedIndex(),
                            c4.invertedIndex(), c5.invertedIndex());
+    }
+    public static int shortcutFor(
+            Card c1, Card c2, Card c3, Card c4)
+    {
+        return shortcutFor(c1.invertedIndex(), c2.invertedIndex(),
+                           c3.invertedIndex(), c4.invertedIndex());
+    }
+    public static int shortcutFor(
+            Card c1, Card c2, Card c3)
+    {
+        return shortcutFor(c1.invertedIndex(),
+                           c2.invertedIndex(), c3.invertedIndex());
+    }
+    public static int shortcutFor(
+            Card[] threeToFiveCards)
+    {
+        switch (threeToFiveCards.length)
+        {
+            case 3: return shortcutFor(
+                        threeToFiveCards[0],
+                        threeToFiveCards[1], threeToFiveCards[2]);
+            case 4: return shortcutFor(
+                        threeToFiveCards[0], threeToFiveCards[1],
+                        threeToFiveCards[2], threeToFiveCards[3]);
+            case 5: return shortcutFor(
+                        threeToFiveCards[0],
+                        threeToFiveCards[1], threeToFiveCards[2],
+                        threeToFiveCards[3], threeToFiveCards[4]);
+            default:
+                throw new Error("must give 3..5 cards!!");
+        }
     }
 
     public static int shortcutFor(
             int invIndex1, int invIndex2,
             int invIndex3, int invIndex4, int invIndex5)
     {
-        return handRanks[handRanks[
-                handRanks[handRanks[handRanks[
-                    53 + invIndex1] + invIndex2] +
-                         invIndex3] + invIndex4] + invIndex5];
+        return handRanks[
+                shortcutFor(invIndex1, invIndex2, invIndex3, invIndex4) +
+                    invIndex5];
+    }
+    public static int shortcutFor(
+            int invIndex1, int invIndex2,
+            int invIndex3, int invIndex4)
+    {
+        return handRanks[shortcutFor(invIndex1, invIndex2, invIndex3) +
+                            invIndex4];
+    }
+    public static int shortcutFor(
+            int invIndex1, int invIndex2, int invIndex3)
+    {
+        return handRanks[handRanks[handRanks[
+                    53 + invIndex1] + invIndex2] + invIndex3];
     }
 
-    public static short valueOf(
-            int shortcut, int invIndex6, int invIndex7)
+
+    //--------------------------------------------------------------------
+    public static short fastValueOf(
+            int shortcut, Card cardA, Card cardB)
+    {
+        return fastValueOf(shortcut,
+                           cardA.invertedIndex(), cardB.invertedIndex());
+    }
+    public static short fastValueOf(
+            int shortcut, int invIndexA, int invIndexB)
     {
         return (short) handRanks[handRanks[
-                        shortcut + invIndex6] + invIndex7];
-    }
-
-    public static short valueOf(
-            int shortcut, Card c6, Card c7)
-    {
-        return valueOf(shortcut,
-                       c6.invertedIndex(), c7.invertedIndex());
+                        shortcut + invIndexA] + invIndexB];
     }
 
 

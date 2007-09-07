@@ -19,6 +19,11 @@ public class EvalSlow
             return valueOf(cards[0], cards[1], cards[2],
                            cards[3], cards[4]);
         }
+        else if (cards.length == 6)
+        {
+            return valueOf(cards[0], cards[1], cards[2],
+                           cards[3], cards[4], cards[5]);
+        }
         else if (cards.length == 7)
         {
             return valueOf(cards[0], cards[1], cards[2],

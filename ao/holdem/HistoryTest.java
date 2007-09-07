@@ -1,13 +1,8 @@
 package ao.holdem;
 
+import ao.holdem.bots.hist.BlindBot;
+import ao.holdem.bots.hist.PredictorBot;
 import ao.holdem.def.history_bot.BotHandle;
-import ao.holdem.def.history_bot.HistoryBot;
-import ao.holdem.def.model.Money;
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.Snapshot;
-import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.Dealer;
 import com.google.inject.Inject;
@@ -30,32 +25,11 @@ public class HistoryTest
     {        
         Dealer dealer = dealerProvider.get();
         dealer.configure(Arrays.<BotHandle>asList(
-                new BotHandle(players.lookup("a"), new DummyBot()),
-                new BotHandle(players.lookup("b"), new DummyBot())));
+                new BotHandle(players.lookup("a"), new BlindBot()),
+                new BotHandle(players.lookup("b"), new PredictorBot())));
 
         dealer.play();
     }
 
 
-    //--------------------------------------------------------------------
-    public static class DummyBot implements HistoryBot
-    {
-        public void introduce() {}
-        public void retire()    {}
-
-        public void opponentToAct(HandHistory hand, Snapshot env) {}
-
-        public void opponentActed(
-                PlayerHandle opponent,
-                HandHistory hand, Snapshot env, TakenAction act)  {}
-
-        public void handStarted() {}
-        public void handEnded(
-                HandHistory atEndOfHand, Money stackDelta) {}
-
-        public Action act(HandHistory hand, Snapshot env)
-        {
-            return Action.CHECK_OR_CALL;
-        }
-    }
 }

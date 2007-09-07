@@ -6,6 +6,7 @@ import ao.decision.data.Context;
 import ao.decision.data.Example;
 import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
+import ao.holdem.bots.util.CommunityMeasure;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
@@ -20,8 +21,36 @@ import java.util.List;
  */
 public class DecisionSetup
 {
-    private AttributePool pool = new AttributePool();
+    //--------------------------------------------------------------------
+    private AttributePool    pool       = new AttributePool();
+    private CommunityMeasure thermostat = new CommunityMeasure();
 
+
+    //--------------------------------------------------------------------
+    public Context runningContext(
+            HandHistory hand, PlayerHandle player)
+    {
+        return null;
+    }
+
+    
+    //--------------------------------------------------------------------
+    public Example<TakenAction> firstActExample(
+            HandHistory hand, PlayerHandle player)
+    {
+        return null;
+    }
+
+
+    //--------------------------------------------------------------------
+    public List<Example<TakenAction>> preActExample(
+            HandHistory hand, PlayerHandle player)
+    {
+        return null;
+    }
+
+
+    //--------------------------------------------------------------------
     public List<Example<TakenAction>> postflopExamples(
             HandHistory hand,
             PlayerHandle player)
@@ -47,6 +76,7 @@ public class DecisionSetup
     }
 
 
+    //--------------------------------------------------------------------
     public Context asDecisionContext(GenericContext ctx)
     {
         Collection<Attribute> attrs = new ArrayList<Attribute>();
@@ -61,14 +91,17 @@ public class DecisionSetup
         attrs.add(pool.fromEnum( ctx.round() ));
 
         attrs.add(pool.fromUntyped(
-                "Last Bets Called > 1",
-                ctx.lastBetsToCall() > 1));
+                "Last Bets Called > 0",
+                ctx.lastBetsToCall() > 0));
 //        attrs.add(pool.fromUntyped(
 //                "Last Bets Called",
 //                ctx.lastBetsToCall()));
 
+//        attrs.add(pool.fromUntyped(
+//                "Last Action", ctx.lastAct()));
         attrs.add(pool.fromUntyped(
-                "Last Action", ctx.lastAct()));
+                "Last Act: Bet/Raise",
+                ctx.lastAct() == TakenAction.RAISE));
 
         attrs.add(pool.fromEnum(
                 ActivePosition.fromPosition(
@@ -77,6 +110,20 @@ public class DecisionSetup
         attrs.add(pool.fromEnum(
                 ActiveOpponents.fromActiveOpps(
                         ctx.numActiveOpps())));
+
+        attrs.add(pool.fromEnum(
+                BetRatio.fromBetRatio(
+                        ctx.betRatio())));
+        attrs.add(pool.fromEnum(
+                PotOdds.fromPotOdds(
+                        ctx.immedatePotOdds())));
+        attrs.add(pool.fromEnum(
+                PotRatio.fromPotRatio(
+                        ctx.potRatio())));
+
+        attrs.add(pool.fromEnum(
+                Heat.fromHeat(
+                        thermostat.heat(ctx.community()))));
 
 //        attrs.add(pool.fromUntyped(
 //                "Flush Possible",

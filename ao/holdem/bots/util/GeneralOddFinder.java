@@ -191,7 +191,7 @@ public class GeneralOddFinder implements OddFinder
 //        short myVal = evalHand(comA, comB, comC, comD, comE,
 //                               cards[ indexes[HOLE_A] ],
 //                               cards[ indexes[HOLE_B] ]);
-        short myVal = Eval7Faster.valueOf(shortcut,
+        short myVal = Eval7Faster.fastValueOf(shortcut,
                                           cards[ indexes[HOLE_A] ],
                                           cards[ indexes[HOLE_B] ]);
 
@@ -245,7 +245,7 @@ public class GeneralOddFinder implements OddFinder
         {
 //            short oppVal = evalHand(comA, comB, comC, comD, comE,
 //                                    cards[ a ], cards[ b ]);
-            short oppVal = Eval7Faster.valueOf(
+            short oppVal = Eval7Faster.fastValueOf(
                                 shortcut, cards[ a ], cards[ b ]);
 
             if      (myVal > oppVal) { wins++;   }
