@@ -5,7 +5,7 @@ import ao.decision.attr.AttributePool;
 import ao.decision.data.Context;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
-import ao.decision.tree.DecisionTreeLearner;
+import ao.decision.graph.DecisionGraphLearner;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,18 +20,37 @@ public class DecisionTest
         AttributePool    attr = new AttributePool();
         DataSet<Boolean> data = new DataSet<Boolean>();
 
-        // a XOR b
-        data.add( function(attr, false, false, false) );
-        data.add( function(attr, false, true,   true) );
-        data.add( function(attr, true,  false,  true) );
-        data.add( function(attr, true,  true,  false) );
+        // (a ^ b) v (c ^ d)
+        for (int i = 0; i < 20; i++)
+        {
+            boolean yesNo[] = new boolean[]{true, false};
+            for (boolean a : yesNo)
+            {
+                for (boolean b : yesNo)
+                {
+                    for (boolean c : yesNo)
+                    {
+                        for (boolean d : yesNo)
+                        {
+                            boolean func = (a && b) || (c && d);
+//                            if (Rand.nextDouble() < 0.1) // introduce noice
+//                            {
+//                                func = !func;
+//                            }
+
+                            data.add( function(attr, a, b, c, d, func) );
+                        }
+                    }
+                }
+            }
+        }
 
         DecisionLearner<Boolean> learner =
-                new DecisionTreeLearner<Boolean>();
+                new DecisionGraphLearner<Boolean>();
         learner.train( data );
 
         System.out.println(
-                learner.predict(context(attr, true, false)));
+                learner.predict(context(attr, true, false, true, true)));
     }
 
     private Example<Boolean> function(

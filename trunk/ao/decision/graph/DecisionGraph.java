@@ -19,7 +19,7 @@ public class DecisionGraph<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
     private static final double DEFAULT_LEAF_PROB = 0.8;
-    private static final double ALPHA             = 0.5;
+    private static final double ALPHA             = 0.01;
     private static final double ZERO_PROB         = 0.01;
 
     private static int nextId = 0;
@@ -149,7 +149,14 @@ public class DecisionGraph<T> implements Predictor<T>
 
     public List<DecisionGraph<T>> leafs()
     {
-        List<DecisionGraph<T>> leafs =
+        Collection<DecisionGraph<T>> leafs   = recursiveLeafs();
+        Set<DecisionGraph<T>>        leafSet =
+                new HashSet<DecisionGraph<T>>(leafs);
+        return new ArrayList<DecisionGraph<T>>(leafSet);
+    }
+    private Collection<DecisionGraph<T>> recursiveLeafs()
+    {
+        Collection<DecisionGraph<T>> leafs =
                 new ArrayList<DecisionGraph<T>>();
 
         if (isLeaf())
@@ -158,9 +165,16 @@ public class DecisionGraph<T> implements Predictor<T>
         }
         else
         {
-            for (DecisionGraph<T> child : kids())
+            if (isForward())
             {
-                leafs.addAll( child.leafs() );
+                leafs.addAll( joinNode.leafs() );
+            }
+            else
+            {
+                for (DecisionGraph<T> child : kids())
+                {
+                    leafs.addAll( child.leafs() );
+                }
             }
         }
 
@@ -227,9 +241,9 @@ public class DecisionGraph<T> implements Predictor<T>
     //--------------------------------------------------------------------
     public double messageLength()
     {
-        return graphCodingLength() +
-               data.codingLength( root() );
-//        return graphCodingLength();
+//        return graphCodingLength() +
+//               data.codingLength( root() );
+        return graphCodingLength();
     }
 
     private double graphCodingLength()
@@ -519,8 +533,8 @@ public class DecisionGraph<T> implements Predictor<T>
         }
         else if (isLeaf())
         {
-//            return categoryLength(ALPHA);
-            return 0;
+            return categoryLength(ALPHA);
+//            return 0;
         }
         else /* if (isForward()) */
         {
@@ -557,7 +571,8 @@ public class DecisionGraph<T> implements Predictor<T>
 
     private double categoryLength(double alpha)
     {
-        int numClasses = hist.numClasses();
+        //int numClasses = hist.numClasses();
+        int numClasses = hist.mostProbable().set().values().size();
 
         int    j      = 0;
         double length = 0;

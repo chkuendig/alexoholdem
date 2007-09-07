@@ -53,7 +53,7 @@ public class DecisionGraphLearner<T>
 
             JoinSet<T> joins = new JoinSet<T>(splits);
             for (int joinBy = 2;
-                     joinBy <= Math.min(leafs.size(), 6);
+                     joinBy <= Math.min(leafs.size(), 12);
                      joinBy++)
             {
                 for (DecisionGraph<T> tryJoin[] :

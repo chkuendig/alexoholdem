@@ -6,7 +6,7 @@ package ao.decision.graph;
 public class JoinSet<T>
 {
     //--------------------------------------------------------------------
-    private SplitPoint<T> cutoff;
+//    private SplitPoint<T> cutoff;
     private SplitSet<T>   splits;
     private JoinPoint<T>  shortest;
 
@@ -14,7 +14,7 @@ public class JoinSet<T>
     //--------------------------------------------------------------------
     public JoinSet(SplitSet<T> splitSet)
     {
-        cutoff = splitSet.shortest();
+//        cutoff = splitSet.shortest();
         splits = splitSet;
     }
 
@@ -25,9 +25,11 @@ public class JoinSet<T>
         if (! splits.isJoinUseful(leafs)) return;
 
         JoinPoint<T> point = new JoinPoint<T>(leafs);
-        if (! point.shorterThan( cutoff )) return;
+        //if (! point.shorterThan( cutoff )) return;
+        if (! point.savesLength()) return;
 
-        if (shortest == null || point.shorterThan(shortest))
+        //if (shortest == null || point.shorterThan(shortest))
+        if (shortest == null || point.savesMoreThan(shortest))
         {
             shortest = point;
         }

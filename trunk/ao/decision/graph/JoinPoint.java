@@ -8,6 +8,7 @@ public class JoinPoint<T> implements GraphTransform
     //--------------------------------------------------------------------
     private DecisionGraph<T> joined[];
     private double           length;
+    private double           lengthSavings;
 
 
     //--------------------------------------------------------------------
@@ -15,9 +16,11 @@ public class JoinPoint<T> implements GraphTransform
     {
         joined = leafs;
 
+        double lengthBefore = joined[0].root().messageLength();
         apply();
         length = joined[0].root().messageLength();
         unapply();
+        lengthSavings = lengthBefore - length;
     }
 
 
@@ -40,6 +43,10 @@ public class JoinPoint<T> implements GraphTransform
 
 
     //--------------------------------------------------------------------
+    public boolean savesMoreThan(JoinPoint<T> point)
+    {
+        return lengthSavings > point.lengthSavings;
+    }
     public boolean shorterThan(JoinPoint<T> point)
     {
         return shorterThan(point.length);
@@ -51,6 +58,11 @@ public class JoinPoint<T> implements GraphTransform
     public boolean shorterThan(SplitPoint<T> split)
     {
         return !split.shorterThan( length );
+    }
+
+    public boolean savesLength()
+    {
+        return lengthSavings > 0;
     }
 
 

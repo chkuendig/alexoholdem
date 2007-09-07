@@ -60,12 +60,12 @@ public class DecisionSetup
 
         attrs.add(pool.fromEnum( ctx.round() ));
 
-//        attrs.add(pool.fromUntyped(
-//                "Last Bets Called > 1",
-//                ctx.lastBetsToCalled() > 1));
         attrs.add(pool.fromUntyped(
-                "Last Bets Called",
-                ctx.lastBetsToCall()));
+                "Last Bets Called > 1",
+                ctx.lastBetsToCall() > 1));
+//        attrs.add(pool.fromUntyped(
+//                "Last Bets Called",
+//                ctx.lastBetsToCall()));
 
         attrs.add(pool.fromUntyped(
                 "Last Action", ctx.lastAct()));

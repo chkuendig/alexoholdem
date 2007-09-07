@@ -67,6 +67,6 @@ public class SplitPoint<T> implements GraphTransform
     //--------------------------------------------------------------------
     public String toString()
     {
-        return String.valueOf(Math.round(length));
+        return String.valueOf(Math.round(length*100)/100.0);
     }
 }
