@@ -1,7 +1,7 @@
 package ao.decision;
 
-import ao.decision.data.Histogram;
 import ao.decision.data.Context;
+import ao.decision.data.Histogram;
 
 /**
  *

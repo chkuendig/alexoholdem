@@ -54,22 +54,33 @@ public class Histogram<T>
     //--------------------------------------------------------------------
     public double probabilityOf(T attributeValue)
     {
-        for (Map.Entry<Attribute<T>, Integer> entry : hist.entrySet())
-        {
-            if (entry.getKey().value().equals( attributeValue ))
-            {
-                return entry.getValue() / total;
-            }
-        }
-        return 0;
+        return probabilityOf(attributeOf(attributeValue));
     }
     public double probabilityOf(Attribute<T> attribute)
     {
-        return countOf(attribute) / total;
+        return (attribute == null)
+                ? 0 : countOf(attribute) / total;
+    }
+
+    public int countOf(T attribute)
+    {
+        return countOf(attributeOf(attribute));
     }
     public int countOf(Attribute<T> attribute)
     {
         return hist.get(attribute);
+    }
+
+    private Attribute<T> attributeOf(T value)
+    {
+        for (Attribute<T> attr : hist.keySet())
+        {
+            if (attr.value().equals( value ))
+            {
+                return attr;
+            }
+        }
+        return null;
     }
 
 
@@ -113,9 +124,20 @@ public class Histogram<T>
 //    {
 //        return weights.clone();
 //    }
+
+    
+    //--------------------------------------------------------------------
+//    public MixedAction toMixedAction()
+//    {
+//        double fold = Stats.accountForStatisticalError(
 //
+//        );
 //
-//    //--------------------------------------------------------------------
+//        return null;
+//    }
+
+
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {

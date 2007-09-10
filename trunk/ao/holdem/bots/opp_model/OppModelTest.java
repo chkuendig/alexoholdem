@@ -4,7 +4,7 @@ import ao.decision.DecisionLearner;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
 import ao.decision.data.Histogram;
-import ao.decision.domain.DecisionSetup;
+import ao.decision.domain.HoldemHandParser;
 import ao.decision.tree.DecisionTreeLearner;
 import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.opp_model.predict.BackpropPredictor;
@@ -59,7 +59,7 @@ public class OppModelTest
     }
     private void doDecisionModelOpponet(PlayerHandle p)
     {
-        DecisionSetup decisionSetup = new DecisionSetup();
+        HoldemHandParser decisionSetup = new HoldemHandParser();
 
         DataSet<TakenAction> trainingSet   = new DataSet<TakenAction>();
         DataSet<TakenAction> validationSet = new DataSet<TakenAction>();

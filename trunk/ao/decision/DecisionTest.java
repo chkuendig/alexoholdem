@@ -2,7 +2,7 @@ package ao.decision;
 
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributePool;
-import ao.decision.data.Context;
+import ao.decision.data.ContextImpl;
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
 import ao.decision.graph.DecisionGraphLearner;
@@ -61,7 +61,7 @@ public class DecisionTest
                 withTarget(attr.fromTyped(vars[ vars.length - 1 ]));
     }
 
-    private Context context(
+    private ContextImpl context(
             AttributePool attr,
             Boolean...    vars)
     {
@@ -72,6 +72,6 @@ public class DecisionTest
         {
             varAttributes.add( attr.fromUntyped(type++, var) );
         }
-        return new Context(varAttributes);
+        return new ContextImpl(varAttributes);
     }
 }

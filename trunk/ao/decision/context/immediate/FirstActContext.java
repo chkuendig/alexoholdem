@@ -1,33 +1,24 @@
-package ao.decision.context;
+package ao.decision.context.immediate;
 
 import ao.decision.attr.AttributePool;
-import ao.decision.data.Context;
+import ao.decision.context.ContextDomain;
+import ao.decision.context.HoldemContext;
+import ao.decision.data.ContextImpl;
 import ao.decision.domain.*;
 import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 
 /**
  *
  */
-public class FirstActContext extends Context
+public class FirstActContext
+        extends ContextImpl
+        implements HoldemContext
 {
+    //--------------------------------------------------------------------
     public FirstActContext(AttributePool pool, GenericContext ctx)
     {
-//        add(pool.fromUntyped(
-//                "Committed This Round",
-//                ctx.committedThisRound()));
-
         add(pool.fromEnum(
                 BetsToCall.fromBets(ctx.betsToCall())));
-
-//        add(pool.fromEnum( ctx.round() ));
-
-//        add(pool.fromUntyped(
-//                "Last Bets Called > 0",
-//                ctx.lastBetsToCall() > 0));
-
-//        add(pool.fromUntyped(
-//                "Last Act: Bet/Raise",
-//                ctx.lastAct() == TakenAction.RAISE));
 
         add(pool.fromEnum(
                 ActivePosition.fromPosition(
@@ -46,9 +37,12 @@ public class FirstActContext extends Context
         add(pool.fromEnum(
                 PotRatio.fromPotRatio(
                         ctx.potRatio())));
+    }
 
-//        add(pool.fromEnum(
-//                Heat.fromHeat(
-//                        thermostat.heat(ctx.community()))));
+    
+    //--------------------------------------------------------------------
+    public ContextDomain domain()
+    {
+        return ContextDomain.FIRST_ACT;
     }
 }
