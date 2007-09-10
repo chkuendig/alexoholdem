@@ -52,19 +52,19 @@ public class HandParser
                         new HoleBlindFirstact(ctx),
                         observation);
                 }
+                else
+                {
+                    retros.addHoleBlindPreflop(
+                            new HoleBlindPreflop(ctx),
+                            observation);
+                }
+            }
             else
             {
-                retros.addHoleBlindPreflop(
-                        new HoleBlindPreflop(ctx),
+                retros.addHoleBlindPostflop(
+                        new HoleBlindPostflop(ctx),
                         observation);
             }
-        }
-        else
-        {
-            retros.addHoleBlindPostflop(
-                    new HoleBlindPostflop(ctx),
-                    observation);
-        }
 
 //            // hole aware
 //            if (hole != null)
@@ -98,6 +98,8 @@ public class HandParser
         return retros;
     }
 
+
+    //-------------------------------------------------------------------
     public List<GenericContext> genericCasesFor(
             HandHistory  hand,
             PlayerHandle player)
@@ -152,8 +154,8 @@ public class HandParser
 
 
     //-------------------------------------------------------------------
-    public PredictionContext
-            nextToActContext(
+    public GenericContext
+            genericNextToActContext(
                 HandHistory  hand,
                 PlayerHandle nextToAct)
     {
@@ -175,29 +177,33 @@ public class HandParser
         }
 
         assert cursor.nextToAct().equals( nextToAct );
-        return nextToActContext(
-                prev, prevAct, cursor,
-                hand.getCommunity());
+        return new GenericContext(
+                prev, prevAct, cursor, null, hand.getCommunity(), null);
     }
 
-    private PredictionContext nextToActContext(
-            Snapshot    prev,
-            TakenAction prevAct,
-            Snapshot    curr,
-            Community   community)
-    {
-        GenericContext ctx = new GenericContext(
-                prev, prevAct, curr, null, community, null);
 
+    //-------------------------------------------------------------------
+    public PredictionContext
+            nextToActContext(
+                HandHistory  hand,
+                PlayerHandle nextToAct)
+    {
+        GenericContext ctx = genericNextToActContext(hand, nextToAct);
+        return fromGeneric(ctx);
+    }
+
+    private PredictionContext fromGeneric(GenericContext ctx)
+    {
+        // hole blind
         if (ctx.round() == BettingRound.PREFLOP)
         {
             if (ctx.isHistAware())
             {
-                return new HoleBlindFirstact(ctx);
+                return new HoleBlindPreflop(ctx);
             }
             else
             {
-                return new HoleBlindPreflop(ctx);
+                return new HoleBlindFirstact(ctx);
             }
         }
         else
@@ -206,7 +212,8 @@ public class HandParser
         }
     }
 
-    
+
+
     //-------------------------------------------------------------------
     private boolean tryAddEvent(
             Snapshot cursor,

@@ -2,7 +2,7 @@ package ao.holdem.bots.hist;
 
 import ao.decision.data.DataSet;
 import ao.decision.data.Example;
-import ao.decision.domain.DecisionSetup;
+import ao.decision.domain.HoldemHandParser;
 import ao.holdem.bots.opp_model.decision.ModelPool;
 import ao.holdem.bots.util.Util;
 import ao.holdem.def.history_bot.HistoryBot;
@@ -23,7 +23,7 @@ public class PredictorBot implements HistoryBot
 {
     //--------------------------------------------------------------------
     private ModelPool model = new ModelPool();
-    private DecisionSetup decisionSetup = new DecisionSetup();
+    private HoldemHandParser decisionSetup = new HoldemHandParser();
 
 
     //--------------------------------------------------------------------

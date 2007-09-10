@@ -2,7 +2,12 @@ package ao.decision.domain;
 
 import ao.decision.attr.Attribute;
 import ao.decision.attr.AttributePool;
-import ao.decision.data.Context;
+import ao.decision.context.HoldemContext;
+import ao.decision.context.HoldemExampleSet;
+import ao.decision.context.immediate.FirstActContext;
+import ao.decision.context.immediate.PostFlopContext;
+import ao.decision.context.immediate.PreFlopContext;
+import ao.decision.data.ContextImpl;
 import ao.decision.data.Example;
 import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
 import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
@@ -19,34 +24,54 @@ import java.util.List;
 /**
  *
  */
-public class DecisionSetup
+public class HoldemHandParser
 {
     //--------------------------------------------------------------------
     private AttributePool    pool       = new AttributePool();
     private CommunityMeasure thermostat = new CommunityMeasure();
+    private HandParser       parser     = new HandParser();
 
 
     //--------------------------------------------------------------------
-    public Context runningContext(
+    public HoldemContext nextToActContext(
             HandHistory hand, PlayerHandle player)
     {
-        return null;
+        GenericContext ctx = parser.genericNextToActContext(hand, player);
+        return fromGeneric(ctx);
+    }
+
+    private HoldemContext fromGeneric(GenericContext ctx)
+    {
+        if (ctx.round() == BettingRound.PREFLOP)
+        {
+            if (ctx.isHistAware())
+            {
+                return new PreFlopContext(pool, ctx);
+            }
+            else
+            {
+                return new FirstActContext(pool, ctx);
+            }
+        }
+        else
+        {
+            return new PostFlopContext(pool, ctx);
+        }
     }
 
     
     //--------------------------------------------------------------------
-    public Example<TakenAction> firstActExample(
-            HandHistory hand, PlayerHandle player)
+    public HoldemExampleSet examples(
+            HandHistory inHand, PlayerHandle forPlayer)
     {
-        return null;
-    }
-
-
-    //--------------------------------------------------------------------
-    public List<Example<TakenAction>> preActExample(
-            HandHistory hand, PlayerHandle player)
-    {
-        return null;
+        HoldemExampleSet examples = new HoldemExampleSet();
+        for (GenericContext ctx :
+                parser.genericCasesFor(inHand, forPlayer))
+        {
+            examples.add(fromGeneric(ctx),
+                         pool.fromEnum( ctx.currAct() ));
+        }
+        return examples;
     }
 
 
@@ -65,7 +90,7 @@ public class DecisionSetup
             if (! ctx.isHistAware()) continue;
             if (ctx.round() == BettingRound.PREFLOP) continue;
 
-            Context decisionContext = asDecisionContext(ctx);
+            ContextImpl decisionContext = asDecisionContext(ctx);
             Example<TakenAction> decisionExample =
                     decisionContext.withTarget(
                             pool.fromEnum( ctx.currAct() ));
@@ -77,7 +102,7 @@ public class DecisionSetup
 
 
     //--------------------------------------------------------------------
-    public Context asDecisionContext(GenericContext ctx)
+    public ContextImpl asDecisionContext(GenericContext ctx)
     {
         Collection<Attribute> attrs = new ArrayList<Attribute>();
 
@@ -138,7 +163,7 @@ public class DecisionSetup
 //                AceQueenKing.fromCommunity(
 //                        ctx.community())));
 
-        return new Context(attrs);
+        return new ContextImpl(attrs);
     }
 
 }
