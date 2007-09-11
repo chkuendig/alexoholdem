@@ -69,7 +69,7 @@ public class ModelPool
             }
             changed.add( key );
 
-            if (Rand.nextBoolean(1/20.0)) updateOne();
+            if (Rand.nextBoolean(20)) updateOne();
         }
     }
 
@@ -94,17 +94,26 @@ public class ModelPool
             changed.remove( key );
         }
 
-        DecisionLearner<TakenAction> firstActLearner =
-                new DecisionTreeLearner<TakenAction>();
-        firstActLearner.train( newFirstActs );
+        DecisionLearner<TakenAction> firstActLearner = null;
+        if (! newFirstActs.isEmpty())
+        {
+            firstActLearner = new DecisionTreeLearner<TakenAction>();
+            firstActLearner.train( newFirstActs );
+        }
 
-        DecisionLearner<TakenAction> preFlopLearner =
-                new DecisionTreeLearner<TakenAction>();
-        preFlopLearner.train( newPreFlops );
+        DecisionLearner<TakenAction> preFlopLearner = null;
+        if (! newPreFlops.isEmpty())
+        {
+            preFlopLearner = new DecisionTreeLearner<TakenAction>();
+            preFlopLearner.train( newPreFlops );
+        }
 
-        DecisionLearner<TakenAction> postFlopLearner =
-                new DecisionTreeLearner<TakenAction>();
-        postFlopLearner.train( newPostFlops );
+        DecisionLearner<TakenAction> postFlopLearner = null;
+        if (! newPostFlops.isEmpty())
+        {
+            postFlopLearner = new DecisionTreeLearner<TakenAction>();
+            postFlopLearner.train( newPostFlops );
+        }
 
         synchronized (this)
         {

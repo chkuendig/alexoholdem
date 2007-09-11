@@ -70,7 +70,7 @@ public class Dealer
         session.get().save( hand );
 
         Event e = null;
-        Snapshot s = hand.snapshot(e);
+        Snapshot s = hand.snapshot();
         do
         {
             boolean startOfRound = true;

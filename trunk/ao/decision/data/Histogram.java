@@ -68,7 +68,8 @@ public class Histogram<T>
     }
     public int countOf(Attribute<T> attribute)
     {
-        return hist.get(attribute);
+        Integer count = hist.get(attribute);
+        return count == null ? 0 : count;
     }
 
     private Attribute<T> attributeOf(T value)

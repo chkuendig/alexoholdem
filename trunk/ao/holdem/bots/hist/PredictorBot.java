@@ -1,9 +1,9 @@
 package ao.holdem.bots.hist;
 
-import ao.decision.data.DataSet;
-import ao.decision.data.Example;
+import ao.decision.context.HoldemContext;
 import ao.decision.domain.HoldemHandParser;
 import ao.holdem.bots.opp_model.decision.ModelPool;
+import ao.holdem.bots.opp_model.mix.MixedAction;
 import ao.holdem.bots.util.Util;
 import ao.holdem.def.history_bot.HistoryBot;
 import ao.holdem.def.model.Money;
@@ -14,15 +14,13 @@ import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
 
-import java.util.List;
-
 /**
  *
  */
 public class PredictorBot implements HistoryBot
 {
     //--------------------------------------------------------------------
-    private ModelPool model = new ModelPool();
+    private ModelPool        model         = new ModelPool();
     private HoldemHandParser decisionSetup = new HoldemHandParser();
 
 
@@ -36,18 +34,13 @@ public class PredictorBot implements HistoryBot
             HandHistory handFromHisPov,
             Snapshot    envFromHisPov)
     {
-//        HandParser parser = new HandParser();
-//        PredictionContext ctx =
-//                parser.nextToActContext(
-//                        handFromHisPov, envFromHisPov.nextToAct());
+        PlayerHandle  nextToAct = envFromHisPov.nextToAct();
+        HoldemContext ctx =
+                decisionSetup.nextToActContext(
+                        handFromHisPov, nextToAct);
+        MixedAction prediction = model.predict(nextToAct, ctx);
 
-//        LearnerSet learners =
-//                envFromHisPov.nextToAct().getLearner();
-//        PredictorSet predictors =
-//                learners.predictors();
-//
-//        HoldemObservation prediction = predictors.predict( ctx );
-//        System.out.println("prediction = " + prediction);
+        System.out.println("prediction = " + prediction);
     }
 
     public void opponentActed(
@@ -56,9 +49,6 @@ public class PredictorBot implements HistoryBot
             Snapshot     envAfterAction,
             TakenAction  action)
     {
-//        model.
-        
-
         System.out.println("action = " + action);
     }
 
@@ -89,30 +79,5 @@ public class PredictorBot implements HistoryBot
                           Money       stackDelta)
     {
         model.add( atEndOfHand );
-        
-        DataSet<TakenAction> history = new DataSet<TakenAction>();
-
-
-        for (PlayerHandle player : atEndOfHand.getPlayers())
-        {
-            List<Example<TakenAction>> handExamples =
-                    decisionSetup.postflopExamples(
-                            atEndOfHand, player);
-
-        }
-
-
-
-//        HandParser parser = new HandParser();
-//
-//        for (PlayerHandle p : atEndOfHand.getPlayers())
-//        {
-//            HoldemRetroSet cases =
-//                    parser.casesFor(atEndOfHand, p);
-//
-//            LearnerSet learner = p.getLearner();
-//
-//            cases.train( learner, 100, 1000 );
-//        }
     }
 }

@@ -25,11 +25,12 @@ public class HistoryTest
     {        
         Dealer dealer = dealerProvider.get();
         dealer.configure(Arrays.<BotHandle>asList(
-                new BotHandle(players.lookup("a"), new BlindBot()),
-                new BotHandle(players.lookup("b"), new PredictorBot())));
+                new BotHandle(players.lookup("blind"), new BlindBot()),
+                new BotHandle(players.lookup("predictor"), new PredictorBot())));
 
-        dealer.play();
+        for (int i = 0; i < 2000; i++)
+        {
+            dealer.play();
+        }
     }
-
-
 }
