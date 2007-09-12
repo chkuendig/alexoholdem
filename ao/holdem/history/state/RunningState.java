@@ -8,7 +8,7 @@ import java.util.List;
 /**
  *
  */
-public class CumulativeState
+public class RunningState
 {
     //--------------------------------------------------------------------
     private HoldemState endState;
@@ -17,12 +17,14 @@ public class CumulativeState
 
 
     //--------------------------------------------------------------------
-    public CumulativeState(
+    private RunningState() {}
+
+    public RunningState(
             List<PlayerHandle> clockwiseDealerLast)
     {
         endState = new HoldemState(clockwiseDealerLast);
     }
-    public CumulativeState(
+    public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
             PlayerHandle       smallBlind,
             PlayerHandle       bigBlind)
@@ -56,8 +58,12 @@ public class CumulativeState
 
 
     //--------------------------------------------------------------------
-    public CumulativeState prototype()
+    public RunningState prototype()
     {
-        return null;
+        RunningState proto = new RunningState();
+        proto.endState = endState;
+        proto.events   = events;
+        proto.cards    = cards.prototype();
+        return proto;
     }
 }

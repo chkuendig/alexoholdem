@@ -7,5 +7,5 @@ import ao.holdem.def.state.env.RealAction;
  */
 public interface StatePlayer
 {
-    public RealAction act(CumulativeState state);
+    public RealAction act(RunningState env);
 }

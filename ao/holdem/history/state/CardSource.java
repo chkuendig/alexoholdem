@@ -9,11 +9,13 @@ import ao.holdem.history.PlayerHandle;
  */
 public interface CardSource
 {
-    Hole holeFor(PlayerHandle player);
+    public Hole holeFor(PlayerHandle player);
 
-    Community flop();
+    public Community flop();
 
-    Community turn();
+    public Community turn();
 
-    Community river();
+    public Community river();
+
+    public CardSource prototype();
 }
