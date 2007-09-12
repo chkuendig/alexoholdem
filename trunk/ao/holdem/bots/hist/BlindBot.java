@@ -8,6 +8,7 @@ import ao.holdem.def.model.cards.Hole;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.Snapshot;
 import ao.holdem.history.PlayerHandle;
+import ao.holdem.history.state.HoldemState;
 import ao.holdem.bots.util.Util;
 
 /**
@@ -28,9 +29,9 @@ public class BlindBot implements HistoryBot
     public void handEnded(
             HandHistory atEndOfHand, Money stackDelta) {}
 
-    public Action act(HandHistory hand, Snapshot env)
+    public Action act(HandHistory hand, HoldemState env)
     {
-        Hole hole = hand.getHoles().get( env.nextToAct() );
+        Hole hole = hand.getHoles().get( env.nextToAct().handle() );
         int group = Util.sklanskyGroup( hole );
 
         if (group <= 4)

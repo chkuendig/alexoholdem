@@ -69,7 +69,7 @@ public class Dealer
         }
         session.get().save( hand );
 
-        Event e = null;
+        Event    e;
         Snapshot s = hand.snapshot();
         do
         {
