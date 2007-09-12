@@ -66,4 +66,11 @@ public class DeckCardSource implements CardSource
         }
         return river;
     }
+
+
+    //--------------------------------------------------------------------
+    public CardSource prototype()
+    {
+        return null;
+    }
 }

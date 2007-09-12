@@ -10,6 +10,7 @@ public class PlayerState
 {
     //--------------------------------------------------------------------
     private final boolean      isActive;
+    private final boolean      isFolded;
     private final boolean      isUnacted;
     private final boolean      isSmallBlind;
     private final boolean      isBigBlind;
@@ -20,6 +21,7 @@ public class PlayerState
     //--------------------------------------------------------------------
     public PlayerState(
             boolean      active,
+            boolean      folded,
             boolean      unacted,
             boolean      smallBlind,
             boolean      bigBlind,
@@ -27,6 +29,7 @@ public class PlayerState
             PlayerHandle playerHandle)
     {
         isActive     = active;
+        isFolded     = folded;
         isUnacted    = unacted;
         isSmallBlind = smallBlind;
         isBigBlind   = bigBlind;
@@ -39,6 +42,11 @@ public class PlayerState
     public boolean isActive()
     {
         return isActive;
+    }
+
+    public boolean isFolded()
+    {
+        return isFolded;
     }
 
     public boolean isUnacted()

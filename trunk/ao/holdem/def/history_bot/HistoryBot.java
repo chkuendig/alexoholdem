@@ -6,7 +6,6 @@ import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
-import ao.holdem.history.state.HoldemState;
 
 /**
  *
@@ -48,7 +47,7 @@ public interface HistoryBot
     //--------------------------------------------------------------------
     public Action act(
             HandHistory hand,
-            HoldemState env);
+            Snapshot env);
 
 
     //--------------------------------------------------------------------

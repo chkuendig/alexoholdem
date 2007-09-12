@@ -16,7 +16,8 @@ public class HoldemState
     //--------------------------------------------------------------------
     private final BettingRound round;
     private final PlayerState  players[];
-    
+    private final int          nextToAct;
+
 
     //--------------------------------------------------------------------
     public HoldemState(List<PlayerHandle> clockwiseDealerLast)
@@ -38,8 +39,11 @@ public class HoldemState
             players[i] = initStateOf(clockwiseDealerLast.get(i),
                                      smallBlind, bigBlind);
         }
+
+        nextToAct = nextActive(1);
     }
 
+    //--------------------------------------------------------------------
     private PlayerState initStateOf(
             PlayerHandle player,
             PlayerHandle smallBlind,
@@ -62,12 +66,11 @@ public class HoldemState
         }
 
         return new PlayerState(
-                        true, true,
+                        true, false, true,
                         isSmallBlind, isBigBlind,
                         commitment,
                         player);
     }
-
 
     //--------------------------------------------------------------------
     private static PlayerHandle smallBlind(
@@ -83,11 +86,42 @@ public class HoldemState
 
 
     //--------------------------------------------------------------------
-    public HoldemState advance(RealAction act)
+    public HoldemState advance(PlayerHandle player, RealAction act)
     {
         assert !atEndOfHand();
+        assert nextToAct().handle().equals( player );
+
+        BettingRound nextRound     = nextBettingRound(act);
+        int          nextNextToAct = 0;
+
 
         return null;
+    }
+
+    private BettingRound nextBettingRound(RealAction act)
+    {
+        return raiseToContinueRound()
+                ? (act == RealAction.RAISE ||
+                   act == RealAction.RAISE_ALL_IN)
+                    ? round == BettingRound.RIVER
+                       ? null
+                       : round.next()
+                    : round
+                : round;
+    }
+
+
+    //--------------------------------------------------------------------
+    private int nextActive(int after)
+    {
+        for (int cursor = after + 1;; cursor++)
+        {
+            int index = cursor % players.length;
+            if (players[ index ].isActive())
+            {
+                return index;
+            }
+        }
     }
 
 
@@ -105,6 +139,11 @@ public class HoldemState
     public PlayerState nextToAct()
     {
         return null;
+    }
+
+    public boolean nextToActCanCheck()
+    {
+        return false;
     }
 
     public boolean nextToActCanRaise()

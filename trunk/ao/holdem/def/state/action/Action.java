@@ -1,5 +1,8 @@
 package ao.holdem.def.state.action;
 
+import ao.holdem.def.state.env.RealAction;
+import ao.holdem.history.state.HoldemState;
+
 /**
  * In Holdem, there are four possible actions:
  *  fold, check, call, raise.
@@ -30,7 +33,39 @@ package ao.holdem.def.state.action;
  */
 public enum Action
 {
+    //--------------------------------------------------------------------
     CHECK_OR_FOLD,
     CHECK_OR_CALL,
-    RAISE_OR_CALL
+    RAISE_OR_CALL;
+
+
+    //--------------------------------------------------------------------
+    public RealAction toRealAction(HoldemState state)
+    {
+        return toRealAction(state.nextToActCanCheck(),
+                            state.nextToActCanRaise());
+    }
+    public RealAction toRealAction(
+            boolean canCheck,
+            boolean canRaise)
+    {
+        switch (this)
+        {
+            case CHECK_OR_CALL:
+                return canCheck
+                        ? RealAction.CHECK
+                        : RealAction.CALL;
+
+            case CHECK_OR_FOLD:
+                return canCheck
+                        ? RealAction.CHECK
+                        : RealAction.FOLD;
+
+            case RAISE_OR_CALL:
+                return canRaise
+                        ? RealAction.RAISE
+                        : RealAction.CALL;
+        }
+        throw new Error("can't be here");
+    }
 }

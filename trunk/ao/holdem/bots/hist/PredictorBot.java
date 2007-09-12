@@ -13,7 +13,6 @@ import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.Snapshot;
-import ao.holdem.history.state.HoldemState;
 
 /**
  *
@@ -55,9 +54,9 @@ public class PredictorBot implements HistoryBot
 
 
     //--------------------------------------------------------------------
-    public Action act(HandHistory hand, HoldemState env)
+    public Action act(HandHistory hand, Snapshot env)
     {
-        Hole hole = hand.getHoles().get( env.nextToAct().handle() );
+        Hole hole = hand.getHoles().get( env.nextToAct() );
         int group = Util.sklanskyGroup( hole );
 
         if (group <= 4)
