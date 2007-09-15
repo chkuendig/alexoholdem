@@ -17,6 +17,12 @@ public class HoldemState
     private final BettingRound round;
     private final PlayerState  players[];
     private final int          nextToAct;
+    private final Money        stakes;
+    private final Money        pot;
+    private final int          remainingBets;
+    private final int          latestRoundStaker;
+    private final int          smallBlind;
+    private final int          bigBlind;
 
 
     //--------------------------------------------------------------------
@@ -36,38 +42,47 @@ public class HoldemState
         players = new PlayerState[ clockwiseDealerLast.size() ];
         for (int i = 0; i < players.length; i++)
         {
-            players[i] = initStateOf(clockwiseDealerLast.get(i),
-                                     smallBlind, bigBlind);
+            players[i] = initStateOf(clockwiseDealerLast.get(i));//,
+                                     //smallBlind, bigBlind);
         }
 
         nextToAct = nextActive(1);
+        stakes    = Money.BIG_BLIND;
+//        pot       = (smallBlind == null
+//                     ? Money.ZERO : Money.SMALL_BLIND)
+//                        .plus(bigBlind == null
+//                              ? Money.ZERO : Money.BIG_BLIND);
+        pot       = Money.SMALL_BLIND.plus( Money.BIG_BLIND );
+
+        remainingBets     = 3;
+        latestRoundStaker = -1;
     }
 
     //--------------------------------------------------------------------
     private PlayerState initStateOf(
-            PlayerHandle player,
-            PlayerHandle smallBlind,
-            PlayerHandle bigBlind)
+            PlayerHandle player)//,
+//            PlayerHandle smallBlind,
+//            PlayerHandle bigBlind)
     {
         Money   commitment   = Money.ZERO;
-        boolean isSmallBlind = false;
-        boolean isBigBlind   = false;
+        //boolean isSmallBlind = false;
+        //boolean isBigBlind   = false;
 
-        if (player.equals( smallBlind ))
-        {
-            isSmallBlind = true;
-            isBigBlind   = false;
-            commitment   = Money.SMALL_BLIND;
-        }
-        else if (player.equals( bigBlind ))
-        {
-            isBigBlind = true;
-            commitment = Money.BIG_BLIND;
-        }
+//        if (player.equals( smallBlind ))
+//        {
+//            isSmallBlind = true;
+//            isBigBlind   = false;
+//            commitment   = Money.SMALL_BLIND;
+//        }
+//        else if (player.equals( bigBlind ))
+//        {
+//            isBigBlind = true;
+//            commitment = Money.BIG_BLIND;
+//        }
 
         return new PlayerState(
                         true, false, true,
-                        isSmallBlind, isBigBlind,
+                        //isSmallBlind, isBigBlind,
                         commitment,
                         player);
     }
@@ -91,7 +106,9 @@ public class HoldemState
         assert !atEndOfHand();
         assert nextToAct().handle().equals( player );
 
-        BettingRound nextRound     = nextBettingRound(act);
+        BettingRound nextRound    = nextBettingRound(act);
+        boolean      isRoundEnder = (round != nextRound);
+
         int          nextNextToAct = 0;
 
 

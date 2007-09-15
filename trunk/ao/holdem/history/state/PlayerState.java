@@ -10,10 +10,10 @@ public class PlayerState
 {
     //--------------------------------------------------------------------
     private final boolean      isActive;
+    //private final boolean      isSmallBlind;
+    //private final boolean      isBigBlind;
     private final boolean      isFolded;
     private final boolean      isUnacted;
-    private final boolean      isSmallBlind;
-    private final boolean      isBigBlind;
     private final Money        commitment;
     private final PlayerHandle handle;
 
@@ -23,16 +23,16 @@ public class PlayerState
             boolean      active,
             boolean      folded,
             boolean      unacted,
-            boolean      smallBlind,
-            boolean      bigBlind,
+            //boolean      smallBlind,
+            //boolean      bigBlind,
             Money        totalCommitment,
             PlayerHandle playerHandle)
     {
         isActive     = active;
         isFolded     = folded;
         isUnacted    = unacted;
-        isSmallBlind = smallBlind;
-        isBigBlind   = bigBlind;
+        //isSmallBlind = smallBlind;
+        //isBigBlind   = bigBlind;
         commitment   = totalCommitment;
         handle       = playerHandle;
     }
@@ -54,15 +54,15 @@ public class PlayerState
         return isUnacted;
     }
 
-    public boolean isSmallBlind()
-    {
-        return isSmallBlind;
-    }
-
-    public boolean isBigBlind()
-    {
-        return isBigBlind;
-    }
+//    public boolean isSmallBlind()
+//    {
+//        return isSmallBlind;
+//    }
+//
+//    public boolean isBigBlind()
+//    {
+//        return isBigBlind;
+//    }
 
     public Money commitment()
     {
