@@ -3,6 +3,7 @@ package ao.holdem.history.irc;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.RealAction;
 import ao.holdem.def.state.env.TakenAction;
 
 import java.util.Arrays;
@@ -55,10 +56,10 @@ public class IrcAction
     private final int    numPlayers;
     private final int    position;
 
-    private final TakenAction[] preflop;
-    private final TakenAction[] onFlop;
-    private final TakenAction[] onTurn;
-    private final TakenAction[] onRiver;
+    private final RealAction[] preflop;
+    private final RealAction[] onFlop;
+    private final RealAction[] onTurn;
+    private final RealAction[] onRiver;
 
     private final int  startingBankroll;
     private final int  totalAction;
@@ -124,13 +125,13 @@ public class IrcAction
          Q       quits game
          K       kicked from game
      */
-    private TakenAction[] parseActions(
+    private RealAction[] parseActions(
             String actionString, boolean hasFolded)
     {
-        if (hasFolded) return new TakenAction[0];
+        if (hasFolded) return new RealAction[0];
 
-        TakenAction[] actions =
-                new TakenAction[ actionString.length() ];
+        RealAction[] actions =
+                new RealAction[ actionString.length() ];
 
         int nextIndex = 0;
         char_loop:
@@ -140,28 +141,37 @@ public class IrcAction
             {
                 case '-':
                 case 'B':
+                    break;
+
                 case 'A': // indicates all-in, comes up
                           // as rA so A can be ignored.
+                    actions[ nextIndex ] =
+                            actions[ nextIndex ].toAllIn();
                     break;
 
                 case 'f':
+                    actions[ nextIndex++ ] = RealAction.FOLD;
+                    break char_loop;
+
                 case 'Q':
                 case 'K':
-                    actions[ nextIndex++ ] = TakenAction.FOLD;
+                    actions[ nextIndex++ ] = RealAction.QUIT;
                     break char_loop;
 
                 case 'k':
-//                    actions[ nextIndex++ ] = TakenAction.CHECK;
-                    actions[ nextIndex++ ] = TakenAction.CALL;
+                    actions[ nextIndex++ ] = RealAction.CHECK;
                     break;
 
                 case 'c':
-                    actions[ nextIndex++ ] = TakenAction.CALL;
+                    actions[ nextIndex++ ] = RealAction.CALL;
                     break;
 
                 case 'b':
+                    actions[ nextIndex++ ] = RealAction.BET;
+                    break;
+
                 case 'r':
-                    actions[ nextIndex++ ] = TakenAction.RAISE;
+                    actions[ nextIndex++ ] = RealAction.RAISE;
                     break;
 
                 default:
@@ -173,13 +183,13 @@ public class IrcAction
         return Arrays.copyOf(actions, nextIndex);
     }
 
-    private boolean hasFolded(TakenAction[] ... actions)
+    private boolean hasFolded(RealAction[] ... actions)
     {
-        for (TakenAction[] actionSet : actions)
+        for (RealAction[] actionSet : actions)
         {
-            for (TakenAction act : actionSet)
+            for (RealAction act : actionSet)
             {
-                if (act == TakenAction.FOLD)
+                if (act.toTakenAction() == TakenAction.FOLD)
                 {
                     return true;
                 }
@@ -208,24 +218,24 @@ public class IrcAction
     }
 
     //--------------------------------------------------------------------
-    public TakenAction[] preflop()
+    public RealAction[] preflop()
     {
         return preflop;
     }
-    public TakenAction[] onFlop()
+    public RealAction[] onFlop()
     {
         return onFlop;
     }
-    public TakenAction[] onTurn()
+    public RealAction[] onTurn()
     {
         return onTurn;
     }
-    public TakenAction[] onRiver()
+    public RealAction[] onRiver()
     {
         return onRiver;
     }
 
-    public TakenAction[] action(BettingRound during)
+    public RealAction[] action(BettingRound during)
     {
         switch (during)
         {

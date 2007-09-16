@@ -1,7 +1,6 @@
 package ao.holdem.def.model.cards;
 
 import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Community;
 import ao.util.rand.Rand;
 
 /**
@@ -19,11 +18,17 @@ public class Deck
     {
         cards = Card.values().clone();
 
-        // Shuffle cards
-        for (int i = cards.length; i > 1; i--)
-        {
-            swap(cards, i-1, Rand.nextInt(i));
-        }
+//        // Shuffle cards
+//        for (int i = cards.length; i > 1; i--)
+//        {
+//            swap(cards, i-1, Rand.nextInt(i));
+//        }
+    }
+
+    private Deck(Card copyCards[], int copyNextIndex)
+    {
+        cards     = copyCards;
+        nextIndex = copyNextIndex;
     }
 
 
@@ -45,7 +50,20 @@ public class Deck
     public Card nextCard()
     {
         assert nextIndex < cards.length;
-        return cards[ nextIndex++ ];
+
+        int swapRange = cards.length - nextIndex;
+        int destIndex = swapRange - 1;
+        swap(cards, destIndex, Rand.nextInt(swapRange));
+
+        nextIndex++;
+        return cards[ destIndex ];
+    }
+
+
+    //--------------------------------------------------------------------
+    public Deck prototype()
+    {
+        return new Deck(cards.clone(), nextIndex);
     }
 
 

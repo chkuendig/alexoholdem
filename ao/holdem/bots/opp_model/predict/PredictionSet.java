@@ -64,7 +64,7 @@ public class PredictionSet
                 if (prev != null &&
                         e.getRound() != BettingRound.PREFLOP)
                 {
-                    TakenAction currAct = e.getAction();
+                    TakenAction currAct = e.takenAction();
                     Community community = hand.getCommunity().asOf( e.getRound() );
 
                     handCases.add(
@@ -76,7 +76,7 @@ public class PredictionSet
                 }
 
                 prev    = curr;
-                prevAct = e.getAction();
+                prevAct = e.takenAction();
             }
 
             try
