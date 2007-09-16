@@ -8,7 +8,7 @@ import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Community;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.def.state.env.RealAction;
 import ao.holdem.history.persist.Base;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
@@ -33,13 +33,6 @@ public class HandHistory extends Base
 
     //--------------------------------------------------------------------
     public HandHistory() {}
-//    public HandHistory(List<BotHandle> botHandles)
-//    {
-//        for (BotHandle botHandle : botHandles)
-//        {
-//            addPlayer( botHandle.handle() );
-//        }
-//    }
     public HandHistory(Collection<PlayerHandle> players)
     {
         for (PlayerHandle playerHandle : players)
@@ -129,14 +122,16 @@ public class HandHistory extends Base
     }
     public Event addEvent(PlayerHandle player,
                           BettingRound round,
-                          TakenAction action)
+                          RealAction   action)
     {
-        Event e = new Event();
-        player.addEvent( e );
-        e.setRound(  round  );
-        e.setAction( action );
-        getEvents().add( e  );
+        Event e = new Event(player, round, action);
+        addEvent( e );
         return e;
+    }
+    public void addEvent(Event event)
+    {
+        event.getPlayer().addEvent( event );
+        getEvents().add( event );
     }
 
     public List<Event> getEvents(PlayerHandle forPlayer)

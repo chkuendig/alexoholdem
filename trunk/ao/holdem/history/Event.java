@@ -1,10 +1,14 @@
 package ao.holdem.history;
 
 import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.RealAction;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.persist.Base;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -17,7 +21,7 @@ public class Event extends Base
 
     public Event(PlayerHandle player,
                  BettingRound round,
-                 TakenAction action)
+                 RealAction   action)
     {
         setPlayer( player );
         setRound(  round  );
@@ -55,16 +59,21 @@ public class Event extends Base
 
 
     //--------------------------------------------------------------------
-    private TakenAction action;
+    private RealAction action;
 
     @Enumerated
-    public TakenAction getAction()
+    public RealAction getAction()
     {
         return action;
     }
-    public void setAction(TakenAction action)
+    public void setAction(RealAction action)
     {
         this.action = action;
+    }
+
+    public TakenAction takenAction()
+    {
+        return getAction().toTakenAction();
     }
 
 

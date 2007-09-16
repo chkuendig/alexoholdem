@@ -17,6 +17,8 @@ public enum BettingRound
 
     public BettingRound next()
     {
-        return values()[ ordinal() + 1 ];
+        return (this == RIVER)
+                ? null
+                : values()[ ordinal() + 1 ];
     }
 }

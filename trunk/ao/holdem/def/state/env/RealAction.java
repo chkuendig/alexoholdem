@@ -13,6 +13,7 @@ public enum RealAction
     CALL_ALL_IN,
 
     BET,
+    BET_ALL_IN,
     RAISE,
     RAISE_ALL_IN,
 
@@ -21,12 +22,33 @@ public enum RealAction
 
     QUIT;
 
-    
+
+    //--------------------------------------------------------------------
+    public boolean isAllIn()
+    {
+        return this == CALL_ALL_IN  ||
+               this == RAISE_ALL_IN ||
+               this == BET_ALL_IN;
+    }
+
+    public RealAction toAllIn()
+    {
+        return (this == CALL)
+                ? CALL_ALL_IN
+                : (this == RAISE)
+                   ? RAISE_ALL_IN
+                   : (this == BET)
+                      ? BET_ALL_IN
+                      : this;
+    }
+
+
     //--------------------------------------------------------------------
     public TakenAction toTakenAction()
     {
         switch (this)
         {
+            case QUIT:
             case FOLD:
                 return TakenAction.FOLD;
 
@@ -42,7 +64,6 @@ public enum RealAction
 
             case SMALL_BLIND:
             case BIG_BLIND:
-            case QUIT:
             default:
                 return null;
         }

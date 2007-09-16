@@ -1,7 +1,10 @@
 package ao.holdem.history.state;
 
 import ao.holdem.def.model.Money;
+import ao.holdem.def.state.env.RealAction;
+import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.PlayerHandle;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -10,8 +13,6 @@ public class PlayerState
 {
     //--------------------------------------------------------------------
     private final boolean      isActive;
-    //private final boolean      isSmallBlind;
-    //private final boolean      isBigBlind;
     private final boolean      isFolded;
     private final boolean      isUnacted;
     private final Money        commitment;
@@ -20,21 +21,53 @@ public class PlayerState
 
     //--------------------------------------------------------------------
     public PlayerState(
-            boolean      active,
-            boolean      folded,
-            boolean      unacted,
-            //boolean      smallBlind,
-            //boolean      bigBlind,
-            Money        totalCommitment,
-            PlayerHandle playerHandle)
+                     boolean      active,
+                     boolean      folded,
+                     boolean      unacted,
+            @NotNull Money        totalCommitment,
+            @NotNull PlayerHandle playerHandle)
     {
         isActive     = active;
         isFolded     = folded;
         isUnacted    = unacted;
-        //isSmallBlind = smallBlind;
-        //isBigBlind   = bigBlind;
         commitment   = totalCommitment;
         handle       = playerHandle;
+    }
+
+
+    //--------------------------------------------------------------------
+    public PlayerState advance(
+            @NotNull RealAction  action,
+            @NotNull PlayerState prevActive,
+            @NotNull Money       betSize)
+    {
+        TakenAction takenAction = action.toTakenAction();
+        if (takenAction == TakenAction.FOLD) return fold();
+
+        boolean nextIsActive = !action.isAllIn();
+        return takenAction == TakenAction.CALL
+                ? call ( nextIsActive, prevActive          )
+                : raise( nextIsActive, prevActive, betSize );
+    }
+
+
+    //--------------------------------------------------------------------
+    private PlayerState fold()
+    {
+        return new PlayerState(false, true, false, commitment, handle);
+    }
+
+    private PlayerState call(boolean nextIsActive, PlayerState of)
+    {
+        return new PlayerState(
+                    nextIsActive, false, false, of.commitment, handle);
+    }
+
+    private PlayerState raise(
+            boolean nextIsActive, PlayerState player, Money money)
+    {
+        return new PlayerState(nextIsActive, false, false,
+                               player.commitment.plus(money), handle);
     }
 
 
@@ -53,16 +86,6 @@ public class PlayerState
     {
         return isUnacted;
     }
-
-//    public boolean isSmallBlind()
-//    {
-//        return isSmallBlind;
-//    }
-//
-//    public boolean isBigBlind()
-//    {
-//        return isBigBlind;
-//    }
 
     public Money commitment()
     {

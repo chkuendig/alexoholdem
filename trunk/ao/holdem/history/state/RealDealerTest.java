@@ -36,11 +36,11 @@ public class RealDealerTest
         brains.put(playerHandles.get(2), new StatePlayerImpl());
         brains.put(playerHandles.get(3), new StatePlayerImpl());
 
-        RunningState start  = new RunningState(playerHandles);
-        RealDealer   dealer = new RealDealer(start, brains);
-
         for (int i = 0; i < 2000; i++)
         {
+            RunningState start  = new RunningState(playerHandles);
+            RealDealer   dealer = new RealDealer(start, brains);
+            
             dealer.playOutHand();
         }
     }

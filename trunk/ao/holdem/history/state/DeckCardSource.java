@@ -17,7 +17,7 @@ public class DeckCardSource implements CardSource
     //--------------------------------------------------------------------
     private final Deck                    cards;
     private final Map<Serializable, Hole> holes;
-    private       Community               flop, turn, river;
+    private       Community               community;
 
 
     //--------------------------------------------------------------------
@@ -25,6 +25,15 @@ public class DeckCardSource implements CardSource
     {
         cards = new Deck();
         holes = new HashMap<Serializable, Hole>();
+    }
+
+    private DeckCardSource(Deck                    copyCards,
+                           Map<Serializable, Hole> copyHoles,
+                           Community               copyCommunity)
+    {
+        cards     = copyCards;
+        holes     = copyHoles;
+        community = copyCommunity;
     }
 
 
@@ -40,37 +49,43 @@ public class DeckCardSource implements CardSource
         return hole;
     }
 
-    public Community flop()
+
+    //--------------------------------------------------------------------
+    public Community community()
     {
-        if (flop == null)
-        {
-            flop = cards.nextFlop();
-        }
-        return flop;
+        return community;
     }
 
-    public Community turn()
+    public void flop()
     {
-        if (turn == null)
+        if (community == null)
         {
-            turn = flop().addTurn(cards.nextCard());
+            community = cards.nextFlop();
         }
-        return turn;
     }
 
-    public Community river()
+    public void turn()
     {
-        if (river == null)
+        if (! community.hasTurn())
         {
-            river = turn().addTurn(cards.nextCard());
+            community = community.addTurn( cards.nextCard() );
         }
-        return river;
+    }
+
+    public void river()
+    {
+        if (! community.hasRiver())
+        {
+            community = community.addRiver(cards.nextCard());
+        }
     }
 
 
     //--------------------------------------------------------------------
     public CardSource prototype()
     {
-        return null;
+        return new DeckCardSource(cards.prototype(),
+                                  new HashMap<Serializable, Hole>(holes),
+                                  community);
     }
 }

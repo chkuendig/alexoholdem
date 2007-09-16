@@ -108,7 +108,10 @@ public class Dealer
                                 : TakenAction.CALL;
                         break;
                 }
-                e = hand.addEvent(p, s.round(), act);
+                e = hand.addEvent(p, s.round(),
+                                  act.toRealAction(
+                                          s.toCall(),
+                                          s.remainingRaises() < 4));
                 session.get().save( e );
 
                 s = s.addNextEvent( e );

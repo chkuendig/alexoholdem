@@ -2,6 +2,7 @@ package ao.holdem.history.irc;
 
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.def.state.env.RealAction;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.Event;
 import ao.holdem.history.HandHistory;
@@ -161,7 +162,7 @@ public class IrcHistorian
             HandHistory     hist,
             List<IrcAction> action)
     {
-        List<Map<BettingRound, List<TakenAction>>> actionStack =
+        List<Map<BettingRound, List<RealAction>>> actionStack =
                 stackActions(hist, action);
 
         PlayerHandle firstToAct =
@@ -182,7 +183,7 @@ public class IrcHistorian
                 actionPerformed = false;
                 for (int i = firstOfRound; i < action.size(); i++)
                 {
-                    List<TakenAction> roundActions =
+                    List<RealAction> roundActions =
                             actionStack.get(i).get(round);
                     if (roundActions != null &&
                             !roundActions.isEmpty())
@@ -206,28 +207,28 @@ public class IrcHistorian
                         hist.getEvents().size() - 1));
     }
 
-    private List<Map<BettingRound, List<TakenAction>>> stackActions(
+    private List<Map<BettingRound, List<RealAction>>> stackActions(
             HandHistory     hist,
             List<IrcAction> action)
     {
-        List<Map<BettingRound, List<TakenAction>>> actionStack =
-                new ArrayList<Map<BettingRound, List<TakenAction>>>();
+        List<Map<BettingRound, List<RealAction>>> actionStack =
+                new ArrayList<Map<BettingRound, List<RealAction>>>();
 
         for (int i = 0; i < hist.getPlayers().size(); i++)
         {
-            Map<BettingRound, List<TakenAction>> stack =
-                    new HashMap<BettingRound, List<TakenAction>>();
+            Map<BettingRound, List<RealAction>> stack =
+                    new HashMap<BettingRound, List<RealAction>>();
             actionStack.add(stack);
 
             IrcAction toStack = action.get(i);
             betting_round:
             for (BettingRound round : BettingRound.values())
             {
-                stack.put(round, new ArrayList<TakenAction>());
-                for (TakenAction act : toStack.action(round))
+                stack.put(round, new ArrayList<RealAction>());
+                for (RealAction act : toStack.action(round))
                 {
                     stack.get(round).add(act);
-                    if (act == TakenAction.FOLD)
+                    if (act.toTakenAction() == TakenAction.FOLD)
                     {
                         break betting_round;
                     }

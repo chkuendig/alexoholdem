@@ -125,12 +125,12 @@ public class HandParser
                         prev,
                         prevAct,
                         curr,
-                        e.getAction(),
+                        e.takenAction(),
                         hand.getCommunity().asOf( round ),
                         hole);
 
                 prev    = curr;
-                prevAct = e.getAction();
+                prevAct = e.takenAction();
             }
 
             if (! tryAddEvent(cursor, e)) return Collections.emptyList();
@@ -170,7 +170,7 @@ public class HandParser
                 assert cursor.nextToAct().equals( nextToAct );
 
                 prev    = cursor.prototype();
-                prevAct = e.getAction();
+                prevAct = e.takenAction();
             }
 
             if (! tryAddEvent(cursor, e)) return null;
