@@ -287,10 +287,7 @@ public class HandState
 
     public TakenAction lastActionOf(int awayFromDealer)
     {
-        TakenAction action = actions[ awayFromDealer ];
-//        return (action == null) ? TakenAction.YET_TO_ACT
-//                                : action;
-        return action;
+        return actions[ awayFromDealer ];
     }
 
 
