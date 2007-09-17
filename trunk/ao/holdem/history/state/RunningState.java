@@ -17,9 +17,11 @@ import java.util.List;
 public class RunningState
 {
     //--------------------------------------------------------------------
-    private HoldemState endState;
+    private HoldemState head;
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
+
+    private boolean roundJustChanged;
 
 
     //--------------------------------------------------------------------
@@ -28,14 +30,14 @@ public class RunningState
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast)
     {
-        endState = new HoldemState(clockwiseDealerLast);
+        head = new HoldemState(clockwiseDealerLast);
     }
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
             PlayerHandle       smallBlind,
             PlayerHandle       bigBlind)
     {
-        endState = new HoldemState(clockwiseDealerLast,
+        head = new HoldemState(clockwiseDealerLast,
                                    smallBlind, bigBlind);
     }
 
@@ -52,16 +54,23 @@ public class RunningState
     {
         Event event = new Event(nextToAct(), head().round(), act);
 
-        HoldemState nextState = endState.advance(act);
+        HoldemState nextState = head.advance(act);
         process(act, nextState);
-        endState = nextState;
+        head = nextState;
 
         events.add( event );
     }
 
+
+    //--------------------------------------------------------------------
     private void process(RealAction act, HoldemState newState)
     {
+        roundJustChanged = (head.round() != newState.round());
+    }
 
+    public boolean roundJustChanged()
+    {
+        return roundJustChanged;
     }
 
 
@@ -118,7 +127,7 @@ public class RunningState
     //--------------------------------------------------------------------
     public HoldemState head()
     {
-        return endState;
+        return head;
     }
 
     public PlayerHandle nextToAct()
@@ -165,7 +174,7 @@ public class RunningState
     public RunningState continueFrom()
     {
         RunningState proto = new RunningState();
-        proto.endState     = endState;
+        proto.head = head;
         proto.cards        = cards.prototype();
         return proto;
     }

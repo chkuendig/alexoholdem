@@ -40,7 +40,8 @@ public class RealDealerTest
         {
             RunningState start  = new RunningState(playerHandles);
             RealDealer   dealer = new RealDealer(start, brains);
-            
+
+            System.out.println(i);
             dealer.playOutHand();
         }
     }
