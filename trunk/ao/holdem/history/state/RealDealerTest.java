@@ -42,7 +42,7 @@ public class RealDealerTest
             RealDealer   dealer = new RealDealer(start, brains);
 
             System.out.println(i);
-            dealer.playOutHand();
+            dealer.playOutHand().toHistory();
         }
     }
 }
