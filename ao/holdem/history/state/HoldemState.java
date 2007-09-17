@@ -122,10 +122,18 @@ public class HoldemState
 
         BettingRound nextRound = nextBettingRound(act);
 
+        PlayerState nextPlayers[] = players.clone();
+        nextPlayers[nextToAct] =
+                nextPlayers[nextToAct].advance(
+                        act,
+                        players[prevActive(nextToAct)],
+                        betSize());
+
         boolean isRoundEnder  = (round != nextRound);
-        int     nextNextToAct = isRoundEnder
-                                ? nextActive(players.length - 1)
-                                : nextActive(nextToAct);
+        int     nextNextToAct =
+                    isRoundEnder
+                    ? nextActive(nextPlayers, players.length - 1)
+                    : nextActive(nextPlayers, nextToAct);
 
         boolean isBetRaise = (act.toTakenAction() == TakenAction.RAISE);
         int nextRemainingBets = isRoundEnder
@@ -136,14 +144,8 @@ public class HoldemState
         int nextLatestRoundStaker = isRoundEnder
                                     ? -1
                                     : (isBetRaise
-                                       ? nextNextToAct
+                                       ? nextToAct
                                        : latestRoundStaker);
-        PlayerState nextPlayers[] = players.clone();
-        nextPlayers[nextToAct] =
-                nextPlayers[nextToAct].advance(
-                        act,
-                        players[prevActive(nextToAct)],
-                        betSize());
 
         return new HoldemState(nextRound,
                                nextPlayers,
@@ -271,10 +273,14 @@ public class HoldemState
     }
     private int nextActive(int after)
     {
+        return nextActive( players, after );
+    }
+    private int nextActive(PlayerState[] states, int after)
+    {
         for (int cursor = after + 1;; cursor++)
         {
-            int index = cursor % players.length;
-            if (players[ index ].isActive())
+            int index = cursor % states.length;
+            if (states[ index ].isActive())
             {
                 return index;
             }

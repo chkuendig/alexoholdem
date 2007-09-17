@@ -32,16 +32,23 @@ public class RealDealer
         RunningState state = start.continueFrom();
         do
         {
+            if (state.roundJustChanged())
+            {
+                switch (state.head().round())
+                {
+                    case FLOP:  state.cards().flop();  break;
+                    case TURN:  state.cards().turn();  break;
+                    case RIVER: state.cards().river(); break;
+                }
+            }
+            
             PlayerHandle player = state.nextToAct();
             RealAction   act    = players.get( player ).act( state );
-            state.advance( act );
 
-            switch (state.head().round())
-            {
-                case FLOP:  state.cards().flop();  break;
-                case TURN:  state.cards().turn();  break;
-                case RIVER: state.cards().river(); break;
-            }
+            System.out.println(player + ", " +
+                               state.head().round() +
+                               ", act: " + act);
+            state.advance( act );
         }
         while ( !state.winnersKnown() );
         return state;
