@@ -22,7 +22,8 @@ import java.util.regex.Pattern;
      column 1        player nickname
      column 2        timestamp of this hand (see HDB)
      column 3        number of player dealt cards
-     column 4        position of player (starting at 1, in order of cards received)
+     column 4        position of player (starting at 1,
+                            in order of cards received)
      column 5        betting action preflop (see below)
      column 6        betting action on flop (see below)
      column 7        betting action on turn (see below)
@@ -133,6 +134,7 @@ public class IrcAction
         RealAction[] actions =
                 new RealAction[ actionString.length() ];
 
+
         int nextIndex = 0;
         char_loop:
         for (char actionChar : actionString.toCharArray())
@@ -141,12 +143,13 @@ public class IrcAction
             {
                 case '-':
                 case 'B':
+                    actions[ nextIndex++ ] = RealAction.BLIND;
                     break;
 
                 case 'A': // indicates all-in, comes up
-                          // as rA so A can be ignored.
-                    actions[ nextIndex ] =
-                            actions[ nextIndex ].toAllIn();
+                          // as rA, cA, bA, BA 
+                    actions[ nextIndex - 1 ] =
+                            actions[ nextIndex - 1 ].toAllIn();
                     break;
 
                 case 'f':
@@ -218,7 +221,7 @@ public class IrcAction
     }
 
     //--------------------------------------------------------------------
-    public RealAction[] preflop()
+    public RealAction[] preFlop()
     {
         return preflop;
     }
@@ -239,7 +242,7 @@ public class IrcAction
     {
         switch (during)
         {
-            case PREFLOP: return preflop();
+            case PREFLOP: return preFlop();
             case FLOP:    return onFlop();
             case TURN:    return onTurn();
             case RIVER:   return onRiver();

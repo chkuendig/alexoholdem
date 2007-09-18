@@ -1,9 +1,7 @@
 package ao.holdem.history.irc;
 
-import ao.holdem.history.persist.PlayerHandleLookup;
-import ao.holdem.history_game.Dealer;
+import ao.holdem.history.HandHistory;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 /**
  *
@@ -11,14 +9,17 @@ import com.google.inject.Provider;
 public class IrcRunner
 {
     //--------------------------------------------------------------------
-    @Inject IrcHistorian historian;
-    @Inject Provider<Dealer> dealerProvider;
-    @Inject PlayerHandleLookup players;
+    @Inject IrcHistorian       historian;
+//    @Inject PlayerHandleLookup players;
 
 
     //--------------------------------------------------------------------
     public void run(String ircDir)
     {
-        historian.fromSnapshot(ircDir);
+        for (HandHistory hist :
+                historian.fromSnapshot(ircDir))
+        {
+            System.out.println("hist = " + hist);
+        }
     }
 }

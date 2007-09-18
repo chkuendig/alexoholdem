@@ -17,8 +17,13 @@ public enum RealAction
     RAISE,
     RAISE_ALL_IN,
 
+    BLIND, // resolved into SMALL_BLIND, or BIG_BLIND
+           // so never occurs naturally
+    BLIND_ALL_IN,
     SMALL_BLIND,
+    SMALL_BLIND_ALL_IN,
     BIG_BLIND,
+    BIG_BLIND_ALL_IN,
 
     QUIT;
 

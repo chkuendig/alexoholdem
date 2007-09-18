@@ -52,6 +52,11 @@ public class IrcRoster
         return names;
     }
 
+    public int size()
+    {
+        return names.length;
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()

@@ -58,7 +58,7 @@ public class PlayerHandle extends Base
     public void addEvent(Event event)
     {
         getEvents().add( event );
-        event.setPlayer( this );
+//        event.setPlayer( this );
     }
 
 
