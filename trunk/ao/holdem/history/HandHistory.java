@@ -77,6 +77,10 @@ public class HandHistory extends Base
         for (PlayerHandle player : tempPlayerBuffer)
         {
             player.addHand( this );
+            for (Event event : getEvents(player))
+            {
+                player.addEvent( event );
+            }
         }
     }
 
@@ -130,7 +134,7 @@ public class HandHistory extends Base
     }
     public void addEvent(Event event)
     {
-        event.getPlayer().addEvent( event );
+        //event.getPlayer().addEvent( event );
         getEvents().add( event );
     }
 

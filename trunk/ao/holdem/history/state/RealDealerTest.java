@@ -1,6 +1,8 @@
 package ao.holdem.history.state;
 
+import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
+import ao.holdem.history.persist.HandHistoryDao;
 import ao.holdem.history.persist.PlayerHandleLookup;
 import ao.holdem.history_game.RealDealer;
 import com.google.inject.Inject;
@@ -17,6 +19,7 @@ public class RealDealerTest
 {
     //--------------------------------------------------------------------
     @Inject PlayerHandleLookup players;
+    @Inject HandHistoryDao     hands;
 
 
     //--------------------------------------------------------------------
@@ -36,13 +39,15 @@ public class RealDealerTest
         brains.put(playerHandles.get(2), new StatePlayerImpl());
         brains.put(playerHandles.get(3), new StatePlayerImpl());
 
-        for (int i = 0; i < 2000; i++)
+        for (int i = 0; i < 100; i++)
         {
             RunningState start  = new RunningState(playerHandles);
             RealDealer   dealer = new RealDealer(start, brains);
 
             System.out.println(i);
-            dealer.playOutHand().toHistory();
+            RunningState run  = dealer.playOutHand();
+            HandHistory  hist = run.toHistory();
+//            hands.store(hist);
         }
     }
 }

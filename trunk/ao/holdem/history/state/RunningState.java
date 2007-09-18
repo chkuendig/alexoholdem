@@ -28,9 +28,26 @@ public class RunningState
     private RunningState() {}
 
     public RunningState(
+            List<PlayerHandle> clockwiseDealerLast,
+            CardSource         cards)
+    {
+        this(clockwiseDealerLast);
+        this.cards = cards;
+    }
+    public RunningState(
             List<PlayerHandle> clockwiseDealerLast)
     {
         head = new HoldemState(clockwiseDealerLast);
+    }
+
+    public RunningState(
+            List<PlayerHandle> clockwiseDealerLast,
+            PlayerHandle       smallBlind,
+            PlayerHandle       bigBlind,
+            CardSource         cards)
+    {
+        this(clockwiseDealerLast, smallBlind, bigBlind);
+        this.cards = cards;
     }
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
@@ -86,6 +103,8 @@ public class RunningState
             hist.addHole(   handle, cards.holeFor(handle) );
         }
 
+        hist.setCommunity( cards.community() );
+
         for (Event event : events)
         {
             hist.addEvent( event );
@@ -140,6 +159,12 @@ public class RunningState
         return head().atEndOfHand();
     }
 
+    // XXX TODO:
+    // need to account for different pot groups, when
+    //  somebody goes all-in in the middle of a hand
+    //  and then wins a portion of the final hand.
+    // so really, this should be List<List<PlayerState>>
+    //  grouping together splitting winners by commitment group
     public List<PlayerState> winners()
     {
         List<PlayerState>       winners   = new ArrayList<PlayerState>();
@@ -151,6 +176,9 @@ public class RunningState
         }
         else if (finalists.size() > 1)
         {
+            // for each commitment, from lowest to highest
+            //  this accoun
+
             short topHandRank = -1;
             for (PlayerState player : finalists)
             {

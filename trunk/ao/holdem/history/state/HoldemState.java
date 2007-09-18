@@ -192,10 +192,10 @@ public class HoldemState
     //--------------------------------------------------------------------
     public boolean atEndOfHand()
     {
-        return atShowdown() || onePlayerLeft();
+        return atShowdown() || oneActivePlayerLeft();
     }
 
-    private boolean onePlayerLeft()
+    private boolean oneActivePlayerLeft()
     {
         return nextToAct == nextActive(nextToAct);
     }
@@ -211,21 +211,17 @@ public class HoldemState
     {
         if (!atEndOfHand()) return Collections.emptyList();
 
-        Collection<PlayerState> condenters =
-                new ArrayList<PlayerState>();
-        if (onePlayerLeft())
+        Collection<PlayerState> condenters = new ArrayList<PlayerState>();
+
+        int firstUnfolded = nextUnfolded( nextToAct );
+        int cursor        = firstUnfolded;
+        do
         {
-            condenters.add( players[nextToAct] );
+            condenters.add( players[cursor] );
+            cursor = nextUnfolded(cursor);
         }
-        else
-        {
-            for (int cursor  = nextActive( nextToAct );
-                 cursor != nextToAct;
-                 cursor  = nextActive(cursor))
-            {
-                condenters.add( players[cursor] );
-            }
-        }
+        while (cursor != firstUnfolded);
+
         return condenters;
     }
 
@@ -281,6 +277,18 @@ public class HoldemState
         {
             int index = cursor % states.length;
             if (states[ index ].isActive())
+            {
+                return index;
+            }
+        }
+    }
+
+    private int nextUnfolded(int startingAt)
+    {
+        for (int cursor = startingAt;; cursor++)
+        {
+            int index = cursor % players.length;
+            if (! players[ index ].isFolded())
             {
                 return index;
             }
