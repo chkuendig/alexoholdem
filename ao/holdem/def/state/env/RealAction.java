@@ -17,9 +17,6 @@ public enum RealAction
     RAISE,
     RAISE_ALL_IN,
 
-    BLIND, // resolved into SMALL_BLIND, or BIG_BLIND
-           // so never occurs naturally
-    BLIND_ALL_IN,
     SMALL_BLIND,
     SMALL_BLIND_ALL_IN,
     BIG_BLIND,
@@ -31,20 +28,53 @@ public enum RealAction
     //--------------------------------------------------------------------
     public boolean isAllIn()
     {
-        return this == CALL_ALL_IN  ||
-               this == RAISE_ALL_IN ||
-               this == BET_ALL_IN;
+        return this == CALL_ALL_IN        ||
+               this == RAISE_ALL_IN       ||
+               this == BET_ALL_IN         ||
+               this == SMALL_BLIND_ALL_IN ||
+               this == BIG_BLIND_ALL_IN;
     }
 
     public RealAction toAllIn()
     {
-        return (this == CALL)
-                ? CALL_ALL_IN
-                : (this == RAISE)
-                   ? RAISE_ALL_IN
-                   : (this == BET)
-                      ? BET_ALL_IN
-                      : this;
+        switch (this)
+        {
+            case CALL:        return CALL_ALL_IN;
+            case RAISE:       return RAISE_ALL_IN;
+            case BET:         return BET_ALL_IN;
+            case SMALL_BLIND: return SMALL_BLIND_ALL_IN;
+            case BIG_BLIND:   return BIG_BLIND_ALL_IN;
+            default:          return null;
+        }
+    }
+
+    public boolean isBlind()
+    {
+        return this == SMALL_BLIND        ||
+               this == BIG_BLIND          ||
+               this == SMALL_BLIND_ALL_IN ||
+               this == BIG_BLIND_ALL_IN;
+    }
+
+
+    //--------------------------------------------------------------------
+    public RealAction asSmallBlind()
+    {
+        assert isBlind();
+        return this == BIG_BLIND
+               ? SMALL_BLIND
+               : this == BIG_BLIND_ALL_IN
+                 ? SMALL_BLIND_ALL_IN
+                 : this;
+    }
+    public RealAction asBigBlind()
+    {
+        assert isBlind();
+        return this == SMALL_BLIND
+               ? BIG_BLIND
+               : this == SMALL_BLIND_ALL_IN
+                 ? BIG_BLIND_ALL_IN
+                 : this;
     }
 
 
@@ -63,12 +93,15 @@ public enum RealAction
                 return TakenAction.CALL;
 
             case BET:
+            case BET_ALL_IN:
             case RAISE:
             case RAISE_ALL_IN:
                 return TakenAction.RAISE;
 
             case SMALL_BLIND:
+            case SMALL_BLIND_ALL_IN:
             case BIG_BLIND:
+            case BIG_BLIND_ALL_IN:
             default:
                 return null;
         }
