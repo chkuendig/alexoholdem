@@ -42,20 +42,20 @@ public class RunningState
 
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
-            PlayerHandle       smallBlind,
-            PlayerHandle       bigBlind,
+            int                smallBlindIndex,
+            int                bigBlindIndex,
             CardSource         cards)
     {
-        this(clockwiseDealerLast, smallBlind, bigBlind);
+        this(clockwiseDealerLast, smallBlindIndex, bigBlindIndex);
         this.cards = cards;
     }
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
-            PlayerHandle       smallBlind,
-            PlayerHandle       bigBlind)
+            int                smallBlindIndex,
+            int                bigBlindIndex)
     {
         head = new HoldemState(clockwiseDealerLast,
-                                   smallBlind, bigBlind);
+                                   smallBlindIndex, bigBlindIndex);
     }
 
 
@@ -205,5 +205,12 @@ public class RunningState
         proto.head = head;
         proto.cards        = cards.prototype();
         return proto;
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return head().toString();
     }
 }

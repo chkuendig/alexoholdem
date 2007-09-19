@@ -96,4 +96,11 @@ public class PlayerState
     {
         return handle;
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return handle.toString();
+    }
 }

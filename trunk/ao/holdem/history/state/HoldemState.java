@@ -28,6 +28,7 @@ public class HoldemState
     private final int          latestRoundStaker;
 //    private final int          smallBlind;
 //    private final int          bigBlind;
+    private final Money        stakes;
 
 
     //--------------------------------------------------------------------
@@ -44,12 +45,17 @@ public class HoldemState
         }
 
         round              = BettingRound.PREFLOP;
-        nextToAct          = nextActive(bigBlindIndex);
+        nextToAct          = nextActiveAfter(bigBlindIndex);
         remainingRoundBets = BETS_PER_ROUND
                              - ((bigBlindIndex >= 0) ? 1 : 0);
         latestRoundStaker  = -1;
 //        smallBlind         = smallBlindIndex;
 //        bigBlind           = bigBlindIndex;
+
+        stakes = players[ bigBlindIndex ].commitment().plus(
+                    (smallBlindIndex == -1)
+                     ? Money.ZERO
+                     : players[ smallBlindIndex ].commitment());
     }
 
     public HoldemState(List<PlayerHandle> clockwiseDealerLast)
@@ -73,13 +79,19 @@ public class HoldemState
                         PlayerState  copyPlayers[],
                         int          copyNextToAct,
                         int          copyRemainingRoundBets,
-                        int          copyLatestRoundStaker)
+                        int          copyLatestRoundStaker,
+                        Money        copyStakes)//,
+//                        int          copySmallBlind,
+//                        int          copyBigBlind)
     {
         round              = copyRound;
         players            = copyPlayers;
         nextToAct          = copyNextToAct;
         remainingRoundBets = copyRemainingRoundBets;
         latestRoundStaker  = copyLatestRoundStaker;
+//        smallBlind         = copySmallBlind;
+//        bigBlind           = copyBigBlind;
+        stakes             = copyStakes;
     }
 
 
@@ -119,6 +131,7 @@ public class HoldemState
     public HoldemState advance(PlayerHandle player, RealAction act)
     {
         validateNextAction(player, act);
+//        if (act.isBlind()) return advanceBlind(player, act);
 
         BettingRound nextRound = nextBettingRound(act);
 
@@ -132,8 +145,8 @@ public class HoldemState
         boolean isRoundEnder  = (round != nextRound);
         int     nextNextToAct =
                     isRoundEnder
-                    ? nextActive(nextPlayers, players.length - 1)
-                    : nextActive(nextPlayers, nextToAct);
+                    ? nextActiveAfter(nextPlayers, players.length - 1)
+                    : nextActiveAfter(nextPlayers, nextToAct);
 
         boolean isBetRaise = (act.toTakenAction() == TakenAction.RAISE);
         int nextRemainingBets = isRoundEnder
@@ -141,18 +154,41 @@ public class HoldemState
                                 : (isBetRaise
                                    ? remainingRoundBets - 1
                                    : remainingRoundBets);
-        int nextLatestRoundStaker = isRoundEnder
-                                    ? -1
-                                    : (isBetRaise
-                                       ? nextToAct
-                                       : latestRoundStaker);
+
+        int nextLatestRoundStaker =
+                isRoundEnder
+                ? -1
+                : (isBetRaise
+                   ? nextToAct
+                   : (latestRoundStaker == -1 && // when all players check
+                        act.toTakenAction() != TakenAction.FOLD)
+                      ? nextToAct
+                      : latestRoundStaker);
+
+        Money nextStakes = (isBetRaise)
+                            ? nextPlayers[nextToAct].commitment()
+                            : stakes;
 
         return new HoldemState(nextRound,
                                nextPlayers,
                                nextNextToAct,
                                nextRemainingBets,
-                               nextLatestRoundStaker);
+                               nextLatestRoundStaker,
+                               stakes);//,
+//                               smallBlind,
+//                               bigBlind);
     }
+
+//    private HoldemState advanceBlind(PlayerHandle player, RealAction act)
+//    {
+//        assert act.isBlind();
+//        boolean isSmall = act.asSmallBlind().equals( act );
+//        if (isSmall && smallBlind != indexOf(player))
+//            throw new HoldemRuleBreach("wrang blinds");
+//        if (!isSmall && bigBlind != indexOf(player))
+//            throw new HoldemRuleBreach("wrang blinds");
+//        return this;
+//    }
 
     public HoldemState advance(RealAction act)
     {
@@ -175,7 +211,9 @@ public class HoldemState
     // if it determines weather or not the Round is over.
     private boolean nextActionCritical()
     {
-        return latestRoundStaker == nextActive( nextToAct );
+        // need to add detection for when everybody so far
+        //  has checked
+        return latestRoundStaker == nextActiveAfter( nextToAct );
     }
 
     public BettingRound round()
@@ -192,13 +230,18 @@ public class HoldemState
     //--------------------------------------------------------------------
     public boolean atEndOfHand()
     {
-        return atShowdown() || oneActivePlayerLeft();
+        return atShowdown() ||
+               oneActivePlayerLeft() && !nextToActCanCheck();
     }
 
     private boolean oneActivePlayerLeft()
     {
-        return nextToAct == nextActive(nextToAct);
+        return nextToAct == nextActiveAfter(nextToAct);
     }
+//    private boolean oneUnfoldedPlayerLeft()
+//    {
+//        return nextToAct == nextUnfoldedAtOrAfter(nextToAct + 1);
+//    }
 
     private boolean atShowdown()
     {
@@ -213,12 +256,12 @@ public class HoldemState
 
         Collection<PlayerState> condenters = new ArrayList<PlayerState>();
 
-        int firstUnfolded = nextUnfolded( nextToAct );
+        int firstUnfolded = nextUnfoldedAtOrAfter( nextToAct );
         int cursor        = firstUnfolded;
         do
         {
             condenters.add( players[cursor] );
-            cursor = nextUnfolded(cursor);
+            cursor = nextUnfoldedAtOrAfter(cursor + 1);
         }
         while (cursor != firstUnfolded);
 
@@ -227,8 +270,7 @@ public class HoldemState
 
     public boolean nextToActCanCheck()
     {
-        return prevPlayer().commitment().equals(
-                nextToAct().commitment());
+        return stakes.equals( nextToAct().commitment() );
     }
 
     public boolean nextToActCanRaise()
@@ -245,15 +287,6 @@ public class HoldemState
 
 
     //--------------------------------------------------------------------
-//    private int indexOf(PlayerHandle player)
-//    {
-//        for (int i = 0; i < players.length; i++)
-//        {
-//            PlayerState state = players[i];
-//            if (state.handle().equals(player)) return i;
-//        }
-//        return -1;
-//    }
     private int prevActive(int before)
     {
         for (int cursor = before - 1;; cursor--)
@@ -267,13 +300,13 @@ public class HoldemState
             }
         }
     }
-    private int nextActive(int after)
+    private int nextActiveAfter(int playerIndex)
     {
-        return nextActive( players, after );
+        return nextActiveAfter( players, playerIndex );
     }
-    private int nextActive(PlayerState[] states, int after)
+    private int nextActiveAfter(PlayerState[] states, int playerIndex)
     {
-        for (int cursor = after + 1;; cursor++)
+        for (int cursor = playerIndex + 1;; cursor++)
         {
             int index = cursor % states.length;
             if (states[ index ].isActive())
@@ -283,9 +316,9 @@ public class HoldemState
         }
     }
 
-    private int nextUnfolded(int startingAt)
+    private int nextUnfoldedAtOrAfter(int playerIndex)
     {
-        for (int cursor = startingAt;; cursor++)
+        for (int cursor = playerIndex;; cursor++)
         {
             int index = cursor % players.length;
             if (! players[ index ].isFolded())
@@ -304,17 +337,25 @@ public class HoldemState
         return players[ nextToAct ];
     }
 
+//    private int indexOf(PlayerHandle handle)
+//    {
+//        for (int i = 0; i < players.length; i++)
+//        {
+//            if (players[ i ].handle().equals( handle )) return i;
+//        }
+//        return -1;
+//    }
+
 
     //--------------------------------------------------------------------
     private void validateNextAction(
             PlayerHandle player, RealAction act)
     {
-        if (act == RealAction.SMALL_BLIND ||
-                act == RealAction.BIG_BLIND)
-            throw new HoldemRuleBreach("blind acts not supported");
-
         if (atEndOfHand())
             throw new HoldemRuleBreach("the hand is already done");
+
+        if (act.isBlind())
+            throw new HoldemRuleBreach("blinds not supported");
 
         if (! nextToAct().handle().equals( player ))
             throw new HoldemRuleBreach(
@@ -324,5 +365,12 @@ public class HoldemState
         if (remainingRoundBets == 0 &&
                 act.toTakenAction() == TakenAction.RAISE)
             throw new HoldemRuleBreach("round betting cap exceeded");
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return nextToAct() + ", " + round;
     }
 }

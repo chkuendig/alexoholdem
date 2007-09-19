@@ -3,8 +3,9 @@ package ao.holdem.history.irc;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.persist.PlayerHandleLookup;
-import ao.holdem.history.state.StatePlayer;
+import ao.holdem.history.state.HoldemRuleBreach;
 import ao.holdem.history.state.RunningState;
+import ao.holdem.history.state.StatePlayer;
 import ao.holdem.history_game.RealDealer;
 
 import java.util.*;
@@ -32,8 +33,8 @@ public class HandItr implements Iterable<HandHistory>
                    List<IrcHand>                hands,
                    PlayerHandleLookup           playerLookup)
     {
-        init(players, rosters, hands);
         this.playerLookup = playerLookup;
+        init(players, rosters, hands);
     }
 
 
@@ -54,10 +55,10 @@ public class HandItr implements Iterable<HandHistory>
     //--------------------------------------------------------------------
     private void computeNextHistory()
     {
-        for (; nextHandIndex < hands.size();
-               nextHandIndex++)
+        while (nextHandIndex < hands.size())
         {
-            nextHistory = computeHistory(hands.get( nextHandIndex ));
+            System.out.println("nextHandIndex " + nextHandIndex);
+            nextHistory = computeHistory(hands.get( nextHandIndex++ ));
             if (nextHistory != null) break;
         }
     }
@@ -68,10 +69,11 @@ public class HandItr implements Iterable<HandHistory>
 
         List<String>    names  = Arrays.asList(roster.names());
         List<IrcAction> action = handAction(names, hand.timestamp());
-        assert action != null;
+        if (action == null) return null;
         assert roster.size() == action.size();
 
         sortByPosition(names, action);
+        int smallBig[] = extractBlinds(action);
 
         LiteralCardSource cards = new LiteralCardSource();
         cards.setCommunity( hand.community() );
@@ -90,9 +92,69 @@ public class HandItr implements Iterable<HandHistory>
             cards.putHole(handle, acts.holes());
         }
 
-        RunningState start  = new RunningState(playerHandles, cards);
+        RunningState start  = new RunningState(playerHandles,
+                                               smallBig[0], smallBig[1],
+                                               cards);
         RealDealer   dealer = new RealDealer(start, brains);
-        return dealer.playOutHand().toHistory();
+        try
+        {
+            RunningState out    = dealer.playOutHand();
+//            System.out.println("winners: " +
+//                           Arrays.deepToString(out.winners().toArray()));
+            return out.toHistory();
+        }
+        catch (HoldemRuleBreach e)
+        {
+            System.out.println(e.getMessage());
+            displayHand(hand, action);
+            return null;
+        }
+    }
+
+    private void displayHand(
+            IrcHand         hand,
+            List<IrcAction> action)
+    {
+        System.out.println(hand);
+        for (IrcAction act : action)
+        {
+            System.out.println(act);
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    private int[] extractBlinds(List<IrcAction> action)
+    {
+        int firstBlindIndex  = -1;
+        int secondBlindIndex = -1;
+        for (int i = 0; i < action.size(); i++)
+        {
+            if (action.get(i).preFlop()[0].isBlind())
+            {
+                if (firstBlindIndex == -1)
+                {
+                    firstBlindIndex = i;
+                }
+                else
+                {
+                    secondBlindIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (secondBlindIndex == -1)
+        {
+            action.get( firstBlindIndex ).removeBlind();
+            return new int[]{-1, firstBlindIndex};
+        }
+        else
+        {
+            action.get( firstBlindIndex ).removeBlind();
+            action.get( secondBlindIndex ).removeBlind();
+            return new int[]{firstBlindIndex, secondBlindIndex};
+        }
     }
 
 
@@ -128,6 +190,8 @@ public class HandItr implements Iterable<HandHistory>
         {
             List<IrcAction> playerAction = players.get( name );
             if (playerAction == null) return null;
+//                throw new Error("can't find " + name +
+//                                " among " + players.keySet());
 
             for (IrcAction singleAction : playerAction)
             {
@@ -137,7 +201,9 @@ public class HandItr implements Iterable<HandHistory>
                     continue roster_names;
                 }
             }
-            return null;
+
+            throw new Error("can't find timestamp " + timestamp +
+                            " among " + playerAction);
         }
 
         return action;

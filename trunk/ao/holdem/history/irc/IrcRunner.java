@@ -19,7 +19,7 @@ public class IrcRunner
         for (HandHistory hist :
                 historian.fromSnapshot(ircDir))
         {
-            System.out.println("hist = " + hist);
+//            System.out.println("hist = " + hist);
         }
     }
 }

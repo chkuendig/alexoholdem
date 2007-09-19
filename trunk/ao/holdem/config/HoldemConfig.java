@@ -19,6 +19,7 @@ public class HoldemConfig extends AbstractModule
                 .toInstance(new AnnotationConfiguration().configure());
 
         bind(PlayerHandleLookup.class);
+//        bind(IrcHistorian.class);
         bind(HistoryTest.class);
         bind(IrcRunner.class);
         bind(OppModelTest.class);

@@ -57,7 +57,7 @@ public class IrcAction
     private final int    numPlayers;
     private final int    position;
 
-    private final RealAction[] preflop;
+    private       RealAction[] preflop;
     private final RealAction[] onFlop;
     private final RealAction[] onTurn;
     private final RealAction[] onRiver;
@@ -141,9 +141,11 @@ public class IrcAction
         {
             switch (actionChar)
             {
-                case '-':
+                case '-': // don't do anything
+                    break;
+
                 case 'B':
-                    actions[ nextIndex++ ] = RealAction.BLIND;
+                    actions[ nextIndex++ ] = RealAction.BIG_BLIND;
                     break;
 
                 case 'A': // indicates all-in, comes up
@@ -250,7 +252,18 @@ public class IrcAction
         return null;
     }
 
-    
+
+    //--------------------------------------------------------------------
+    public void removeBlind()
+    {
+        assert preflop[0].isBlind();
+
+        RealAction newPreflop[] = new RealAction[preflop.length - 1];
+        System.arraycopy(preflop, 1, newPreflop, 0, newPreflop.length);
+        preflop = newPreflop;
+    }
+
+
     //--------------------------------------------------------------------
     public int startingBankroll()
     {

@@ -3,6 +3,7 @@ package ao.holdem.history.irc;
 import ao.holdem.def.state.env.RealAction;
 import ao.holdem.history.state.RunningState;
 import ao.holdem.history.state.StatePlayer;
+import ao.holdem.history.state.HoldemRuleBreach;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,11 @@ public class IrcPlayer implements StatePlayer
     //--------------------------------------------------------------------
     public RealAction act(RunningState env)
     {
+        if (acts.size() <= nextAction)
+        {
+            throw new HoldemRuleBreach("unexpected move on " + env);
+        }
+
         return acts.get( nextAction++ );
     }
 }
