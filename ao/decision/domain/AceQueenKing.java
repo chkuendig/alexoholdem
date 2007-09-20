@@ -1,6 +1,6 @@
 package ao.decision.domain;
 
-import static ao.holdem.bots.opp_model.predict.def.NeuralUtils.asDouble;
+import static ao.ai.opp_model.predict.def.NeuralUtils.asDouble;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Community;
 

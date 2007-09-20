@@ -5,7 +5,7 @@ import ao.decision.context.ContextDomain;
 import ao.decision.context.HoldemContext;
 import ao.decision.data.ContextImpl;
 import ao.decision.domain.*;
-import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
+import ao.ai.opp_model.predict.def.context.GenericContext;
 
 /**
  *

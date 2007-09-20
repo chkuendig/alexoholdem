@@ -1,8 +1,8 @@
 package ao.holdem.bots.impl;
 
-import ao.holdem.bots.util.ApproximateOddFinder;
-import ao.holdem.bots.util.OddFinder;
-import ao.holdem.bots.util.Odds;
+import ao.odds.ApproximateOddFinder;
+import ao.odds.OddFinder;
+import ao.odds.Odds;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.model.cards.Community;

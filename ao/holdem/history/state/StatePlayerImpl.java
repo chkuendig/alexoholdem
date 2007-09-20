@@ -1,6 +1,6 @@
 package ao.holdem.history.state;
 
-import ao.holdem.bots.util.Util;
+import ao.strategy.Sklansky;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.RealAction;
@@ -16,7 +16,7 @@ public class StatePlayerImpl implements StatePlayer
         Hole        hole  = env.cards().holeFor(
                                 state.nextToAct().handle() );
 
-        int group = Util.sklanskyGroup( hole );
+        int group = Sklansky.groupOf( hole );
 
         if (group <= 4)
         {

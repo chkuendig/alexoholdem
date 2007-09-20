@@ -3,7 +3,7 @@ package ao.holdem.bots.impl;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.Environment;
-import ao.holdem.bots.util.Util;
+import ao.strategy.Sklansky;
 
 /**
  * http://www.onlinepokercenter.com/articles/poker_strategy/sklanskys_hand_rankings.php
@@ -13,7 +13,7 @@ public class LooseSklanskyBot extends AbstractBot
 {
     public Action act(Environment env)
     {
-        int group = Util.sklanskyGroup( env.hole() );
+        int group = Sklansky.groupOf( env.hole() );
 
         if (group <= 5)
         {
