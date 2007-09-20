@@ -2,9 +2,9 @@ package ao.holdem.game;
 
 import ao.holdem.def.bot.LocalBot;
 import ao.holdem.def.bot.Team;
-import ao.holdem.def.model.cards.Hand;
-import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.Community;
+import ao.holdem.model.Hand;
+import ao.holdem.model.Hole;
+import ao.holdem.model.Community;
 import ao.holdem.def.state.env.Environment;
 import ao.holdem.def.state.env.GodEnvironment;
 import ao.holdem.def.state.env.TakenAction;

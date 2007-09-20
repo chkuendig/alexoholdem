@@ -1,7 +1,7 @@
 package ao.holdem.history.irc;
 
-import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Card;
+import ao.holdem.model.Hole;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.RealAction;
 import ao.holdem.def.state.env.TakenAction;

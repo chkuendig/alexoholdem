@@ -57,10 +57,10 @@
         <mapping class="ao.holdem.history.PlayerHandle"/>
         <mapping class="ao.holdem.history.Event"/>
         <mapping class="ao.holdem.history.HandHistory"/>
-        <mapping class="ao.holdem.def.model.cards.Hole"/>
-        <mapping class="ao.holdem.def.model.cards.Community"/>
-        <mapping class="ao.holdem.def.model.Money"/>
-        <!--<mapping class="ao.ai.opp_model.predict.def.retro.LearnerSet"/>-->
-        <!--<mapping class="ao.ai.opp_model.predict.joone.BackpropLearner"/>-->
+        <mapping class="ao.holdem.model.Hole"/>
+        <mapping class="ao.holdem.model.Community"/>
+        <mapping class="ao.holdem.model.Money"/>
+        <!--<mapping class="ao.ai.opp_model.neural.def.retro.LearnerSet"/>-->
+        <!--<mapping class="ao.ai.opp_model.neural.joone.BackpropLearner"/>-->
     </session-factory>
 </hibernate-configuration>

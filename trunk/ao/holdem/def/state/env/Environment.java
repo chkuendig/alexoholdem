@@ -1,7 +1,7 @@
 package ao.holdem.def.state.env;
 
-import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.Community;
+import ao.holdem.model.Hole;
+import ao.holdem.model.Community;
 import ao.holdem.def.state.domain.BettingRound;
 
 /**
@@ -30,7 +30,7 @@ public class Environment
              copyEnv.COMMIT, copyEnv.REMAINING_RAISES, copyEnv.ROUND,
              copyEnv.fromPositionToDistanceFromDealer);
     }
-    public Environment(Hole         hole,
+    public Environment(Hole hole,
                        Community    community,
                        Player       byPosition[],
                        int          youAwayFromFirstToAct,

@@ -1,7 +1,7 @@
 package ao.holdem.history.irc;
 
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
 import ao.holdem.history.PlayerHandle;
 import ao.holdem.history.state.CardSource;
 

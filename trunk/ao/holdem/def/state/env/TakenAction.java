@@ -1,6 +1,6 @@
 package ao.holdem.def.state.env;
 
-import ao.holdem.def.model.Money;
+import ao.holdem.model.Money;
 
 /**
  *

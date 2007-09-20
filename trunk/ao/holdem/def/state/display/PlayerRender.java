@@ -1,6 +1,6 @@
 package ao.holdem.def.state.display;
 
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Hole;
 import ao.holdem.def.state.env.Player;
 
 import javax.swing.*;
@@ -14,7 +14,7 @@ public class PlayerRender extends JPanel
     //--------------------------------------------------------------------
     public PlayerRender(
             Player toRender,
-            Hole   hole,
+            Hole hole,
             int    nextToActPosition,
             int    awayFromDealer)
     {

@@ -1,6 +1,6 @@
 package ao.holdem.def.history_bot;
 
-import ao.holdem.def.model.Money;
+import ao.holdem.model.Money;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;

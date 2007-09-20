@@ -1,6 +1,6 @@
 package ao.holdem.history.state;
 
-import ao.holdem.def.model.Money;
+import ao.holdem.model.Money;
 import ao.holdem.def.state.env.RealAction;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.PlayerHandle;

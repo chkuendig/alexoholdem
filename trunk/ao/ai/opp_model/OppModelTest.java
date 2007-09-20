@@ -1,19 +1,19 @@
 package ao.ai.opp_model;
 
-import ao.decision.DecisionLearner;
-import ao.decision.data.DataSet;
-import ao.decision.data.Example;
-import ao.decision.data.Histogram;
-import ao.decision.domain.HoldemHandParser;
-import ao.decision.tree.DecisionTreeLearner;
+import ao.ai.opp_model.decision.DecisionLearner;
+import ao.ai.opp_model.decision.data.DataSet;
+import ao.ai.opp_model.decision.data.Example;
+import ao.ai.opp_model.decision.data.Histogram;
+import ao.ai.opp_model.decision.domain.HoldemHandParser;
+import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 import ao.ai.opp_model.mix.MixedAction;
-import ao.ai.opp_model.predict.BackpropPredictor;
-import ao.ai.opp_model.predict.PredictionSet;
-import ao.ai.opp_model.predict.def.observation.Observation;
-import ao.ai.opp_model.predict.def.retro.HoldemRetroSet;
-import ao.ai.opp_model.predict.def.retro.LearnerSet;
-import ao.ai.opp_model.predict.def.retro.PredictorSet;
-import ao.ai.opp_model.predict.def.retro.Retrodiction;
+import ao.ai.opp_model.neural.BackpropPredictor;
+import ao.ai.opp_model.neural.PredictionSet;
+import ao.ai.opp_model.neural.def.observation.Observation;
+import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
+import ao.ai.opp_model.neural.def.retro.LearnerSet;
+import ao.ai.opp_model.neural.def.retro.PredictorSet;
+import ao.ai.opp_model.neural.def.retro.Retrodiction;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;
 import ao.holdem.history.PlayerHandle;
@@ -139,7 +139,7 @@ public class OppModelTest
 //
 //            for (Retrodiction<?> retro : retros.holeBlind().cases())
 //            {
-//                Observation prediction = predictors.predict(retro);
+//                Observation prediction = predictors.neural(retro);
 //
 //                System.out.println(retro.predictionType() + "\t" +
 //                                   prediction + "\t" +
