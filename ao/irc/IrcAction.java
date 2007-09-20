@@ -1,10 +1,10 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.holdem.model.Card;
 import ao.holdem.model.Hole;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.act.RealAction;
-import ao.holdem.def.state.domain.BettingRound;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

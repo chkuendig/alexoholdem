@@ -1,4 +1,4 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.holdem.model.Card;
 import ao.holdem.model.Community;

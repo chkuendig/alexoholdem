@@ -2,7 +2,7 @@ package ao.ai.opp_model.neural;
 
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;

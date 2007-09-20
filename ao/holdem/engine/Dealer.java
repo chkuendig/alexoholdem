@@ -1,4 +1,4 @@
-package ao.holdem.history_game;
+package ao.holdem.engine;
 
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  *
  */
-public class RealDealer
+public class Dealer
 {
     //--------------------------------------------------------------------
     private final Context start;
@@ -18,7 +18,7 @@ public class RealDealer
 
 
     //--------------------------------------------------------------------
-    public RealDealer(Context startFrom,
+    public Dealer(Context startFrom,
                       Map<PlayerHandle, Player> brains)
     {
         start   = startFrom;

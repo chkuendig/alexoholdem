@@ -1,8 +1,8 @@
 package ao.state;
 
-import ao.holdem.history.state.CardSource;
-import ao.holdem.history.state.DeckCardSource;
-import ao.holdem.history.state.HoldemState;
+import ao.holdem.model.CardSource;
+import ao.holdem.engine.DeckCardSource;
+import ao.state.HoldemState;
 import ao.holdem.model.Hand;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;

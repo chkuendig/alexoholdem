@@ -1,16 +1,16 @@
-package ao.holdem.history.state;
+package ao.state;
 
+import ao.holdem.model.BettingRound;
+import ao.holdem.engine.HoldemRuleBreach;
 import ao.holdem.model.Money;
-import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.act.RealAction;
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
-import ao.state.PlayerState;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * immutable.

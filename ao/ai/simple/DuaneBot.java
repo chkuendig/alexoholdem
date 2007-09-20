@@ -1,7 +1,7 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
-import ao.holdem.history.state.HoldemState;
+import ao.state.HoldemState;
 import ao.holdem.model.Hole;
 import ao.holdem.model.act.EasyAction;
 import ao.state.Context;

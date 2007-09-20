@@ -2,7 +2,7 @@ package ao.ai.opp_model.neural.def.context.preflop;
 
 import ao.ai.opp_model.neural.def.context.GenericContext;
 import ao.ai.opp_model.neural.def.context.HoldemPostact;
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 
 /**
  *
