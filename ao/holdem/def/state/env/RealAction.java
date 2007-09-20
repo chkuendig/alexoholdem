@@ -1,6 +1,13 @@
 package ao.holdem.def.state.env;
 
 /**
+ * isAllIn
+ * isBlind
+ * isQuit
+ *
+ * isBetRaise
+ * isCheckCall
+ * isFold
  *
  */
 public enum RealAction
@@ -44,8 +51,8 @@ public enum RealAction
             case BET:         return BET_ALL_IN;
             case SMALL_BLIND: return SMALL_BLIND_ALL_IN;
             case BIG_BLIND:   return BIG_BLIND_ALL_IN;
-            default:          return null;
         }
+        throw new Error("can't convert " + this + " to all-in");
     }
 
     public boolean isBlind()

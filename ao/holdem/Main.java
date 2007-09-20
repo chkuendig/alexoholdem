@@ -167,9 +167,9 @@ public class Main
     //----------------------------------------------------------
     public static void runPoker()
     {
-//        doRun52c7();
+        doRun52c7();
 //        doRunHandsOf5();
-        doRunHandsOf6();
+//        doRunHandsOf6();
 //        doRunHandsOf7();
 //        doRunOdds();
     }

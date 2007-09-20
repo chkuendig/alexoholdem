@@ -16,6 +16,11 @@ public class Money implements Comparable<Money>, Serializable
     public static final Money SMALL_BET   = BIG_BLIND;
     public static final Money BIG_BET     = new Money(4);
 
+    public static Money blind(boolean isSmall)
+    {
+        return isSmall ? SMALL_BLIND : BIG_BLIND;
+    }
+
 
     //--------------------------------------------------------------------
     private int smallBlinds;
