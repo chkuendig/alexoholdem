@@ -1,26 +1,19 @@
 package ao.ai.simple;
 
-import ao.holdem.def.bot.AbstractBot;
-import ao.holdem.model.act.Action;
+import ao.ai.AbstractPlayer;
+import ao.holdem.history.state.HoldemState;
+import ao.state.Context;
+import ao.holdem.model.act.EasyAction;
+import ao.holdem.model.Hole;
 
 /**
  *
  */
-public class AlwaysRaiseBot extends AbstractBot
+public class AlwaysRaiseBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public Action act(Environment env)
+    protected EasyAction act(Context env, HoldemState state, Hole hole)
     {
-//        System.out.println(
-//                "aways raising shane styles" +
-//                " with " + env.hole() + " on " + env.community());
-        return Action.RAISE_OR_CALL;
+        return EasyAction.RAISE_OR_CALL;
     }
-
-
-    //--------------------------------------------------------------------
-//    public String toString()
-//    {
-//        return "AlwaysRaiseBot";
-//    }
 }

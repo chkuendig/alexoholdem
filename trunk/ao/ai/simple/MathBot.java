@@ -1,34 +1,33 @@
 package ao.ai.simple;
 
+import ao.ai.AbstractPlayer;
+import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
+import ao.holdem.model.act.EasyAction;
+import ao.holdem.history.state.HoldemState;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
-import ao.holdem.def.bot.AbstractBot;
-import ao.holdem.model.Hole;
-import ao.holdem.model.Community;
-import ao.holdem.model.act.Action;
+import ao.state.Context;
 
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Designed for heads up play.
  */
-public class MathBot extends AbstractBot
+public class MathBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public Action act(Environment env)
+    protected EasyAction act(Context env, HoldemState state, Hole hole)
     {
-        Hole      hole      = env.hole();
-        Community community = env.community();
+        Community community = env.cards().community();
 
-//        HeadsUpOddFinder oddFinder = new HeadsUpOddFinder();
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
-                        hole, community, env.activeOpponents());
+                        hole, community, state.numPlayersIn()-1);
 
-        double toCall = env.remainingBets() * env.toCall();// +
-//                        (3 - env.bettingRound().ordinal());
+        double toCall = state.remainingBetsInRound() * state.betsToCall();
         double potOdds =
                 (toCall) /
                 (toCall + env.pot());
@@ -43,8 +42,8 @@ public class MathBot extends AbstractBot
 //        }
 
         return (odds.winPercent() > potOdds)
-                ? Action.RAISE_OR_CALL
-                : Action.CHECK_OR_CALL;
+                ? EasyAction.RAISE_OR_CALL
+                : EasyAction.CHECK_OR_CALL;
     }
 
 

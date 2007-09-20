@@ -1,8 +1,11 @@
-package ao.holdem.history.state;
+package ao.state;
 
-import ao.holdem.model.act.RealAction;
+import ao.holdem.history.state.CardSource;
+import ao.holdem.history.state.DeckCardSource;
+import ao.holdem.history.state.HoldemState;
 import ao.holdem.model.Hand;
 import ao.holdem.model.Money;
+import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -14,33 +17,33 @@ import java.util.List;
 /**
  *
  */
-public class RunningState
+public class Context
 {
     //--------------------------------------------------------------------
     private HoldemState head;
     private List<Event> events = new ArrayList<Event>();
-    private CardSource  cards  = new DeckCardSource();
+    private CardSource cards  = new DeckCardSource();
 
     private boolean roundJustChanged;
 
 
     //--------------------------------------------------------------------
-    private RunningState() {}
+    private Context() {}
 
-    public RunningState(
+    public Context(
             List<PlayerHandle> clockwiseDealerLast,
             CardSource         cards)
     {
         this(clockwiseDealerLast);
         this.cards = cards;
     }
-    public RunningState(
+    public Context(
             List<PlayerHandle> clockwiseDealerLast)
     {
         head = new HoldemState(clockwiseDealerLast);
     }
 
-    public RunningState(
+    public Context(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds,
             CardSource         cards)
@@ -48,7 +51,7 @@ public class RunningState
         this(clockwiseDealerLast, autoPostBlinds);
         this.cards = cards;
     }
-    public RunningState(
+    public Context(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds)
     {
@@ -198,9 +201,9 @@ public class RunningState
 
 
     //--------------------------------------------------------------------
-    public RunningState continueFrom()
+    public Context continueFrom()
     {
-        RunningState proto = new RunningState();
+        Context proto = new Context();
         proto.head = head;
         proto.cards        = cards.prototype();
         return proto;

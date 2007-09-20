@@ -5,6 +5,9 @@ import ao.persist.PlayerHandle;
 import ao.persist.dao.HandHistoryDao;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.holdem.history_game.RealDealer;
+import ao.holdem.model.Player;
+import ao.state.StatePlayerImpl;
+import ao.state.Context;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
@@ -33,8 +36,8 @@ public class RealDealerTest
         playerHandles.add( players.lookup("real.C") );
         playerHandles.add( players.lookup("real.D") );
 
-        Map<PlayerHandle, StatePlayer> brains =
-                new HashMap<PlayerHandle, StatePlayer>();
+        Map<PlayerHandle, Player> brains =
+                new HashMap<PlayerHandle, Player>();
         brains.put(playerHandles.get(0), new StatePlayerImpl());
         brains.put(playerHandles.get(1), new StatePlayerImpl());
         brains.put(playerHandles.get(2), new StatePlayerImpl());
@@ -42,11 +45,11 @@ public class RealDealerTest
 
         for (int i = 0; i < 100; i++)
         {
-            RunningState start  = new RunningState(playerHandles);
+            Context start  = new Context(playerHandles);
             RealDealer   dealer = new RealDealer(start, brains);
 
             System.out.println(i);
-            RunningState run  = dealer.playOutHand();
+            Context run  = dealer.playOutHand();
             HandHistory  hist = run.toHistory();
 //            hands.store(hist);
         }

@@ -1,8 +1,8 @@
 package ao.holdem.history.irc;
 
 import ao.holdem.model.act.RealAction;
-import ao.holdem.history.state.RunningState;
-import ao.holdem.history.state.StatePlayer;
+import ao.state.Context;
+import ao.holdem.model.Player;
 import ao.holdem.history.state.HoldemRuleBreach;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  *
  */
-public class IrcPlayer implements StatePlayer
+public class IrcPlayer implements Player
 {
     //--------------------------------------------------------------------
     private List<RealAction> acts;
@@ -33,7 +33,7 @@ public class IrcPlayer implements StatePlayer
 
 
     //--------------------------------------------------------------------
-    public RealAction act(RunningState env)
+    public RealAction act(Context env)
     {
         if (acts.size() <= nextAction)
         {

@@ -4,8 +4,8 @@ import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.holdem.history.state.HoldemRuleBreach;
-import ao.holdem.history.state.RunningState;
-import ao.holdem.history.state.StatePlayer;
+import ao.state.Context;
+import ao.holdem.model.Player;
 import ao.holdem.history_game.RealDealer;
 
 import java.util.*;
@@ -81,8 +81,8 @@ public class HandItr implements Iterable<HandHistory>
         cards.setCommunity( hand.community() );
 
         List<PlayerHandle> playerHandles = new ArrayList<PlayerHandle>();
-        Map<PlayerHandle, StatePlayer> brains =
-                new HashMap<PlayerHandle, StatePlayer>();
+        Map<PlayerHandle, Player> brains =
+                new HashMap<PlayerHandle, Player>();
         for (int i = 0; i < names.size(); i++)
         {
             String       name   = names.get(i);
@@ -94,11 +94,11 @@ public class HandItr implements Iterable<HandHistory>
             cards.putHole(handle, acts.holes());
         }
 
-        RunningState start  = new RunningState(playerHandles, cards);
+        Context start  = new Context(playerHandles, cards);
         RealDealer   dealer = new RealDealer(start, brains);
         try
         {
-            RunningState out    = dealer.playOutHand();
+            Context out    = dealer.playOutHand();
 //            System.out.println("winners: " +
 //                           Arrays.deepToString(out.winners().toArray()));
             return out.toHistory();

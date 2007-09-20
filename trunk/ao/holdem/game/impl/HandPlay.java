@@ -3,7 +3,7 @@ package ao.holdem.game.impl;
 import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.LocalBot;
 import ao.holdem.model.Deck;
-import ao.holdem.model.act.Action;
+import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.Domain;
 import ao.holdem.game.Outcome;
@@ -203,7 +203,7 @@ public class HandPlay
                   awayFromDealer + " clockwise from dealer.");
 
         GodEnvironment env    = state.envFor(awayFromDealer);
-        Action         action = notNullAction(bot, env);
+        EasyAction action = notNullAction(bot, env);
         log.debug(awayFromDealer + " clockwise from dealer " +
                   "made choice of: " + action + ".");
 
@@ -213,7 +213,7 @@ public class HandPlay
     }
 
     private SimpleAction concreteAction(
-            int awayFromDealer, Action fuzzyAction)
+            int awayFromDealer, EasyAction fuzzyAction)
     {
         switch (fuzzyAction)
         {
@@ -240,11 +240,11 @@ public class HandPlay
         }
     }
 
-    private Action notNullAction(Bot bot, Environment env)
+    private EasyAction notNullAction(Bot bot, Environment env)
     {
-        Action action = bot.act( env );
+        EasyAction action = bot.act( env );
         return action == null
-                ? Action.CHECK_OR_FOLD
+                ? EasyAction.CHECK_OR_FOLD
                 : action;
     }
 
