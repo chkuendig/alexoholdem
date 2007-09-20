@@ -1,6 +1,6 @@
 package ao.ai;
 
-import ao.holdem.history.state.HoldemState;
+import ao.state.HoldemState;
 import ao.state.Context;
 import ao.holdem.model.Hole;
 import ao.holdem.model.Player;

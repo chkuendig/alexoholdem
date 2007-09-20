@@ -1,7 +1,5 @@
 package ao.holdem.tourney;
 
-import ao.holdem.def.bot.LocalBot;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.IOException;

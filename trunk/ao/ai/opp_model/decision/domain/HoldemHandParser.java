@@ -12,7 +12,7 @@ import ao.ai.opp_model.decision.data.Example;
 import ao.ai.opp_model.neural.def.context.GenericContext;
 import ao.ai.opp_model.neural.def.retro.HandParser;
 import ao.odds.CommunityMeasure;
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;

@@ -1,4 +1,4 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.persist.HandHistory;
 import com.google.inject.Inject;

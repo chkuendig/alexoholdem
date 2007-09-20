@@ -1,6 +1,6 @@
 package ao.holdem.config;
 
-import ao.holdem.history.irc.IrcRunner;
+import ao.irc.IrcRunner;
 import ao.persist.dao.PlayerHandleAccess;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -31,7 +31,7 @@ public class HoldemStarter
                         new HoldemConfig());
         injector.getInstance(PersistenceService.class).start();
 
-//        injector.getInstance(RealDealerTest.class).realDealerTest();
+//        injector.getInstance(DealerTest.class).realDealerTest();
 //        injector.getInstance(DecisionTest.class).testDecisionTree();
 //        injector.getInstance(
 //                PredictPersistTest.class).testPredictionPersistance();

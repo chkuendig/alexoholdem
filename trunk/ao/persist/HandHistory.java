@@ -2,7 +2,7 @@ package ao.persist;
 
 import ao.ai.opp_model.neural.def.retro.HandParser;
 import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.Card;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;

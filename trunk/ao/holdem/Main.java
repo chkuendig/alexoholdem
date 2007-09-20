@@ -4,8 +4,6 @@ package ao.holdem;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
-import ao.holdem.def.bot.BotFactory;
-import ao.holdem.def.bot.BotProvider;
 import ao.holdem.model.Card;
 import ao.hand_eval.eval7.Eval7FastLookup;
 import ao.hand_eval.eval7.Eval7Faster;

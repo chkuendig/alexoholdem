@@ -4,7 +4,7 @@ import ao.ai.AbstractPlayer;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
 import ao.holdem.model.act.EasyAction;
-import ao.holdem.history.state.HoldemState;
+import ao.state.HoldemState;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;

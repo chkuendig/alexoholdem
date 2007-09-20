@@ -1,4 +1,4 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -130,20 +130,5 @@ public class IrcReader
     public List<IrcAction> actions()
     {
         return players;
-    }
-    
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        IrcHistorian historian = new IrcHistorian();
-
-        historian.fromSnapshot(
-                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
-
-//        IrcReader r =
-//                new IrcReader(new File(
-//                    "C:\\alex\\data\\limit_holdem\\holdem\\199504"));
-//        r.hands();
     }
 }

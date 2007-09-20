@@ -1,12 +1,13 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleLookup;
-import ao.holdem.history.state.HoldemRuleBreach;
+import ao.holdem.engine.HoldemRuleBreach;
+import ao.holdem.engine.LiteralCardSource;
 import ao.state.Context;
 import ao.holdem.model.Player;
-import ao.holdem.history_game.RealDealer;
+import ao.holdem.engine.Dealer;
 
 import java.util.*;
 
@@ -95,7 +96,7 @@ public class HandItr implements Iterable<HandHistory>
         }
 
         Context start  = new Context(playerHandles, cards);
-        RealDealer   dealer = new RealDealer(start, brains);
+        Dealer dealer = new Dealer(start, brains);
         try
         {
             Context out    = dealer.playOutHand();

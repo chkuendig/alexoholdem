@@ -1,4 +1,4 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.persist.HandHistory;
 import ao.persist.dao.PlayerHandleLookup;
@@ -16,8 +16,7 @@ import java.util.Map;
 public class IrcHistorian
 {
     //--------------------------------------------------------------------
-    @Inject
-    PlayerHandleLookup playerLookup;
+    @Inject PlayerHandleLookup playerLookup;
 
 
     //--------------------------------------------------------------------

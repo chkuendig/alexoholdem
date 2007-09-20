@@ -1,11 +1,5 @@
 package ao.holdem.tourney;
 
-import ao.holdem.def.bot.BotProvider;
-import ao.holdem.def.bot.LocalBot;
-import ao.holdem.def.bot.Team;
-import ao.holdem.game.Holdem;
-import ao.holdem.game.Outcome;
-import ao.holdem.game.impl.HoldemImpl;
 import ao.util.rand.Rand;
 
 import java.io.IOException;

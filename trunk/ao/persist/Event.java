@@ -1,6 +1,6 @@
 package ao.persist;
 
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.Base;

@@ -1,9 +1,9 @@
-package ao.holdem.history.irc;
+package ao.holdem.engine;
 
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
 import ao.persist.PlayerHandle;
-import ao.holdem.history.state.CardSource;
+import ao.holdem.model.CardSource;
 
 import java.util.Map;
 import java.util.HashMap;

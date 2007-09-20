@@ -1,6 +1,6 @@
 package ao.holdem.model;
 
-import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.BettingRound;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;

@@ -1,6 +1,6 @@
 package ao.holdem.model.act;
 
-import ao.holdem.history.state.HoldemState;
+import ao.state.HoldemState;
 
 /**
  * In Holdem, there are four possible actions:

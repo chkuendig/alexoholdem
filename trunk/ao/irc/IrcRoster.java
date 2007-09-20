@@ -1,4 +1,4 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

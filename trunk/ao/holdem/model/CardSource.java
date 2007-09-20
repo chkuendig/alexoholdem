@@ -1,4 +1,4 @@
-package ao.holdem.history.state;
+package ao.holdem.model;
 
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;

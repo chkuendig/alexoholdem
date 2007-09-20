@@ -1,4 +1,4 @@
-package ao.holdem.def.state.domain;
+package ao.holdem.model;
 
 /**
  * 

@@ -1,9 +1,9 @@
-package ao.holdem.history.irc;
+package ao.irc;
 
 import ao.holdem.model.act.RealAction;
 import ao.state.Context;
 import ao.holdem.model.Player;
-import ao.holdem.history.state.HoldemRuleBreach;
+import ao.holdem.engine.HoldemRuleBreach;
 
 import java.util.ArrayList;
 import java.util.Arrays;
