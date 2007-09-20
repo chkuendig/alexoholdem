@@ -1,8 +1,8 @@
 package ao.holdem.history;
 
-import ao.holdem.bots.opp_model.predict.def.context.PredictionContext;
-import ao.holdem.bots.opp_model.predict.def.retro.HandParser;
-import ao.holdem.bots.opp_model.predict.def.retro.HoldemRetroSet;
+import ao.ai.opp_model.predict.def.context.PredictionContext;
+import ao.ai.opp_model.predict.def.retro.HandParser;
+import ao.ai.opp_model.predict.def.retro.HoldemRetroSet;
 import ao.holdem.def.model.Money;
 import ao.holdem.def.model.card.Card;
 import ao.holdem.def.model.cards.Community;

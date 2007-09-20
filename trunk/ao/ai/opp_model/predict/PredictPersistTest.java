@@ -1,4 +1,4 @@
-package ao.holdem;
+package ao.ai.opp_model.predict;
 
 import ao.holdem.def.history_bot.BotHandle;
 import ao.holdem.history.persist.PlayerHandleLookup;
@@ -11,22 +11,27 @@ import java.util.Arrays;
 /**
  *
  */
-public class HistoryTest
+public class PredictPersistTest
 {
     //--------------------------------------------------------------------
-    @Inject Provider<Dealer>   dealerProvider;
     @Inject PlayerHandleLookup players;
+    @Inject Provider<Dealer>   dealerProvider;
 
 
     //--------------------------------------------------------------------
-    public void historyTest()
-    {        
+    public void testPredictionPersistance()
+    {
         Dealer dealer = dealerProvider.get();
-        dealer.configure(Arrays.<BotHandle>asList(
-                new BotHandle(players.lookup("blind"), new BlindBot()),
-                new BotHandle(players.lookup("predictor"), new PredictorBot())));
 
-        for (int i = 0; i < 2000; i++)
+        dealer.configure(Arrays.<BotHandle>asList(
+                new BotHandle(
+                        players.lookup("test", "a"),
+                        new PredictorBot()),
+                new BotHandle(
+                        players.lookup("test", "b"),
+                        new PredictorBot())));
+
+        for (int i = 0; i < 1000; i++)
         {
             dealer.play();
         }

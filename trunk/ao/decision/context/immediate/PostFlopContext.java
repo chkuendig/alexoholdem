@@ -2,7 +2,7 @@ package ao.decision.context.immediate;
 
 import ao.decision.attr.AttributePool;
 import ao.decision.context.ContextDomain;
-import ao.holdem.bots.opp_model.predict.def.context.GenericContext;
+import ao.ai.opp_model.predict.def.context.GenericContext;
 
 /**
  *

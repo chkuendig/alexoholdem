@@ -3,9 +3,9 @@ package ao.holdem;
 
 import ao.holdem.bots.impl.LooseSklanskyBot;
 import ao.holdem.bots.impl.MathTightBot;
-import ao.holdem.bots.util.ApproximateOddFinder;
-import ao.holdem.bots.util.OddFinder;
-import ao.holdem.bots.util.Odds;
+import ao.odds.ApproximateOddFinder;
+import ao.odds.OddFinder;
+import ao.odds.Odds;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
 import ao.holdem.def.model.card.Card;
@@ -273,7 +273,7 @@ public class Main
     }
     public static boolean doRunOddsWith(
             String      prefix,
-            OddFinder   f,
+            OddFinder f,
             PrintStream outputTo)
     {
         Community c = new Community();

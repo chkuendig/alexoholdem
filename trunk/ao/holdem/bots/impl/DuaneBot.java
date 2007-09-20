@@ -1,6 +1,6 @@
 package ao.holdem.bots.impl;
 
-import ao.holdem.bots.util.Util;
+import ao.strategy.Sklansky;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.def.model.cards.Hole;
 import ao.holdem.def.state.action.Action;
@@ -16,7 +16,7 @@ public class DuaneBot extends AbstractBot
     public Action act(Environment env)
     {
         Hole hole = env.hole();
-        int group = Util.sklanskyGroup( hole );
+        int group = Sklansky.groupOf( hole );
 
         if (group <= 4)
         {
