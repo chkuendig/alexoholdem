@@ -1,9 +1,9 @@
 package ao.odds;
 
-import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.Eval7Faster;
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Card;
+import ao.hand_eval.eval7.Eval7Faster;
+import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
 import ao.util.rand.MersenneTwisterFast;
 import ao.util.stats.Combo;
 import ao.util.stats.FastIntCombiner;
@@ -124,7 +124,7 @@ public class ApproximateOddFinder implements OddFinder
 
     //--------------------------------------------------------------------
     public Odds compute(
-            Hole      hole,
+            Hole hole,
             Community community,
             int       activeOpponents)
     {

@@ -1,20 +1,20 @@
 package ao.holdem;
 
 
-import ao.holdem.bots.impl.LooseSklanskyBot;
-import ao.holdem.bots.impl.MathTightBot;
+import ao.ai.simple.LooseSklanskyBot;
+import ao.ai.simple.MathTightBot;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
 import ao.holdem.def.bot.BotFactory;
 import ao.holdem.def.bot.BotProvider;
-import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.card.eval7.Eval7FastLookup;
-import ao.holdem.def.model.card.eval7.Eval7Faster;
-import ao.holdem.def.model.card.eval_567.EvalSlow;
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.model.cards.Hand;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Card;
+import ao.hand_eval.eval7.Eval7FastLookup;
+import ao.hand_eval.eval7.Eval7Faster;
+import ao.hand_eval.eval_567.EvalSlow;
+import ao.holdem.model.Community;
+import ao.holdem.model.Hand;
+import ao.holdem.model.Hole;
 import ao.holdem.net.OverTheWireState;
 import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;

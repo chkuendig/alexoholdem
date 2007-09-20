@@ -1,7 +1,7 @@
 package ao.holdem.history.state;
 
 import ao.strategy.Sklansky;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Hole;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.env.RealAction;
 

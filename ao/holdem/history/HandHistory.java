@@ -1,12 +1,12 @@
 package ao.holdem.history;
 
-import ao.ai.opp_model.predict.def.context.PredictionContext;
-import ao.ai.opp_model.predict.def.retro.HandParser;
-import ao.ai.opp_model.predict.def.retro.HoldemRetroSet;
-import ao.holdem.def.model.Money;
-import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.model.cards.Hole;
+import ao.ai.opp_model.neural.def.context.PredictionContext;
+import ao.ai.opp_model.neural.def.retro.HandParser;
+import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
+import ao.holdem.model.Money;
+import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
+import ao.holdem.model.Card;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.env.RealAction;
 import ao.holdem.history.persist.Base;

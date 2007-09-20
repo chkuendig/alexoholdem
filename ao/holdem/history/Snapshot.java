@@ -1,6 +1,6 @@
 package ao.holdem.history;
 
-import ao.holdem.def.model.Money;
+import ao.holdem.model.Money;
 import ao.holdem.def.state.domain.BettingRound;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

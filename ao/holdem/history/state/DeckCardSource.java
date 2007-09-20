@@ -1,8 +1,8 @@
 package ao.holdem.history.state;
 
-import ao.holdem.def.model.cards.Community;
-import ao.holdem.def.model.cards.Deck;
-import ao.holdem.def.model.cards.Hole;
+import ao.holdem.model.Community;
+import ao.holdem.model.Deck;
+import ao.holdem.model.Hole;
 import ao.holdem.history.PlayerHandle;
 
 import java.io.Serializable;
@@ -27,7 +27,7 @@ public class DeckCardSource implements CardSource
         holes = new HashMap<Serializable, Hole>();
     }
 
-    private DeckCardSource(Deck                    copyCards,
+    private DeckCardSource(Deck copyCards,
                            Map<Serializable, Hole> copyHoles,
                            Community               copyCommunity)
     {

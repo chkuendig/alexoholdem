@@ -2,7 +2,7 @@ package ao.ai.opp_model.mix;
 
 import ao.holdem.def.state.env.TakenAction;
 import ao.util.rand.Rand;
-import ao.decision.data.Histogram;
+import ao.ai.opp_model.decision.data.Histogram;
 
 /**
  * Randomized Mixed Action.

@@ -2,7 +2,7 @@ package ao.holdem.game.impl;
 
 import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.LocalBot;
-import ao.holdem.def.model.cards.Deck;
+import ao.holdem.model.Deck;
 import ao.holdem.def.state.action.Action;
 import ao.holdem.def.state.domain.Domain;
 import ao.holdem.def.state.env.Environment;

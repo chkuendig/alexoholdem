@@ -1,14 +1,12 @@
 package ao.ai.opp_model.decision;
 
-import ao.decision.DecisionLearner;
-import ao.decision.Predictor;
-import ao.decision.context.ContextDomain;
-import ao.decision.context.HoldemContext;
-import ao.decision.context.HoldemExampleSet;
-import ao.decision.data.DataSet;
-import ao.decision.data.Histogram;
-import ao.decision.domain.HoldemHandParser;
-import ao.decision.tree.DecisionTreeLearner;
+import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.context.HoldemExampleSet;
+import ao.ai.opp_model.decision.data.DataSet;
+import ao.ai.opp_model.decision.data.Histogram;
+import ao.ai.opp_model.decision.domain.HoldemHandParser;
+import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.history.HandHistory;

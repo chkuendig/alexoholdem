@@ -1,7 +1,7 @@
 package ao.strategy;
 
-import static ao.holdem.def.model.card.Card.Rank.*;
-import ao.holdem.def.model.cards.Hole;
+import static ao.holdem.model.Card.Rank.*;
+import ao.holdem.model.Hole;
 
 /**
  *

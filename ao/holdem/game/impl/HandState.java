@@ -1,8 +1,8 @@
 package ao.holdem.game.impl;
 
-import ao.holdem.def.model.card.Card;
-import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.Community;
+import ao.holdem.model.Card;
+import ao.holdem.model.Hole;
+import ao.holdem.model.Community;
 import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.domain.DealerDistance;
@@ -32,7 +32,7 @@ public class HandState
     private Hole[]      holes;
     private int[]       commitment;
     private TakenAction actions[];
-    private Community   community;
+    private Community community;
     private boolean[]   folded;
     private int         toMatch;
     private int         remainingBets;

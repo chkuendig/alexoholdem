@@ -1,7 +1,7 @@
 package ao.holdem.def.state.env;
 
-import ao.holdem.def.model.cards.Hole;
-import ao.holdem.def.model.cards.Community;
+import ao.holdem.model.Hole;
+import ao.holdem.model.Community;
 import ao.holdem.def.state.domain.BettingRound;
 
 /**
@@ -30,7 +30,7 @@ public class GodEnvironment extends Environment
             int          commit,
             int          remainingRaises,
             BettingRound round,
-            Hole         holesByAwayFromDealer[],
+            Hole holesByAwayFromDealer[],
             int          fromPositionToDistanceFromDealer[])
     {
         super(holesByAwayFromDealer[

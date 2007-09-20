@@ -1,6 +1,5 @@
 package ao.holdem.config;
 
-import ao.holdem.HistoryTest;
 import ao.ai.opp_model.OppModelTest;
 import ao.holdem.history.irc.IrcRunner;
 import ao.holdem.history.persist.PlayerHandleLookup;
@@ -19,8 +18,6 @@ public class HoldemConfig extends AbstractModule
                 .toInstance(new AnnotationConfiguration().configure());
 
         bind(PlayerHandleLookup.class);
-//        bind(IrcHistorian.class);
-        bind(HistoryTest.class);
         bind(IrcRunner.class);
         bind(OppModelTest.class);
     }
