@@ -6,8 +6,7 @@ import ao.odds.Odds;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.model.Hole;
 import ao.holdem.model.Community;
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.Environment;
+import ao.holdem.model.act.Action;
 
 import java.io.InputStreamReader;
 import java.io.IOException;

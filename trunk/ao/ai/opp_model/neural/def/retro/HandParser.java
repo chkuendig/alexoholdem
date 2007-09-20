@@ -8,12 +8,11 @@ import ao.ai.opp_model.neural.def.context.preflop.HoleBlindPreflop;
 import ao.ai.opp_model.neural.def.observation.HoldemObservation;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Event;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.Snapshot;
+import ao.persist.Event;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class HandParser
 
     //-------------------------------------------------------------------
     public HoldemRetroSet casesFor(
-            HandHistory  hand,
+            HandHistory hand,
             PlayerHandle player)
     {
         HoldemRetroSet       retros = new HoldemRetroSet();
@@ -109,7 +108,7 @@ public class HandParser
         Hole           hole  = extractHole(hand, player);
 
         Snapshot    prev    = null;
-        TakenAction prevAct = null;
+        SimpleAction prevAct = null;
 
         Snapshot cursor = hand.snapshot();
         for (Event e : hand.getEvents())
@@ -142,9 +141,9 @@ public class HandParser
     private void addCase(
             List<GenericContext> cases,
             Snapshot     prev,
-            TakenAction  prevAct,
+            SimpleAction prevAct,
             Snapshot     curr,
-            TakenAction  currAct,
+            SimpleAction currAct,
             Community community,
             Hole         hole)
     {
@@ -160,7 +159,7 @@ public class HandParser
                 PlayerHandle nextToAct)
     {
         Snapshot    prev    = null;
-        TakenAction prevAct = null;
+        SimpleAction prevAct = null;
 
         Snapshot cursor = hand.snapshot();
         for (Event e : hand.getEvents())
@@ -217,7 +216,7 @@ public class HandParser
     //-------------------------------------------------------------------
     private boolean tryAddEvent(
             Snapshot cursor,
-            Event    e)
+            Event e)
     {
         try
         {

@@ -1,8 +1,7 @@
 package ao.ai.simple;
 
 import ao.holdem.def.bot.AbstractBot;
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.Environment;
+import ao.holdem.model.act.Action;
 import ao.strategy.Sklansky;
 
 /**

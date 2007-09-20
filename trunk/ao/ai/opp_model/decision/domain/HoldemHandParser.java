@@ -13,9 +13,9 @@ import ao.ai.opp_model.neural.def.context.GenericContext;
 import ao.ai.opp_model.neural.def.retro.HandParser;
 import ao.odds.CommunityMeasure;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
+import ao.holdem.model.act.SimpleAction;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,12 +76,12 @@ public class HoldemHandParser
 
 
     //--------------------------------------------------------------------
-    public List<Example<TakenAction>> postflopExamples(
+    public List<Example<SimpleAction>> postflopExamples(
             HandHistory hand,
             PlayerHandle player)
     {
-        List<Example<TakenAction>> examples =
-                new ArrayList<Example<TakenAction>>();
+        List<Example<SimpleAction>> examples =
+                new ArrayList<Example<SimpleAction>>();
 
         HandParser parser = new HandParser();
         for (GenericContext ctx :
@@ -91,7 +91,7 @@ public class HoldemHandParser
             if (ctx.round() == BettingRound.PREFLOP) continue;
 
             ContextImpl decisionContext = asDecisionContext(ctx);
-            Example<TakenAction> decisionExample =
+            Example<SimpleAction> decisionExample =
                     decisionContext.withTarget(
                             pool.fromEnum( ctx.currAct() ));
             examples.add( decisionExample );
@@ -126,7 +126,7 @@ public class HoldemHandParser
 //                "Last Action", ctx.lastAct()));
         attrs.add(pool.fromUntyped(
                 "Last Act: Bet/Raise",
-                ctx.lastAct() == TakenAction.RAISE));
+                ctx.lastAct() == SimpleAction.RAISE));
 
         attrs.add(pool.fromEnum(
                 ActivePosition.fromPosition(

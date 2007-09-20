@@ -7,9 +7,8 @@ import ao.odds.Odds;
 import ao.holdem.model.Card;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Snapshot;
 
 /**
  * ONLY WORKS FOR POST-FLOP!!
@@ -65,13 +64,13 @@ public class PredictionCase
     private double position;
     private double activePosition;
 
-    private TakenAction action;
+    private SimpleAction action;
 
 
     //--------------------------------------------------------------------
     public PredictionCase(
-            Snapshot prev, TakenAction prevAct,
-            Snapshot curr, TakenAction currAct,
+            Snapshot prev, SimpleAction prevAct,
+            Snapshot curr, SimpleAction currAct,
             Community community,
             Hole hole)
     {
@@ -103,7 +102,7 @@ public class PredictionCase
                 (prev.toCall().smallBlinds() > 0)
                 ? 1.0 : 0.0;
         lastActRaiseBool =
-                (prevAct == TakenAction.RAISE)
+                (prevAct == SimpleAction.RAISE)
                 ? 1.0 : 0.0;
 
         numOppsFraction        = curr.opponents().size() / 9.0;
@@ -165,7 +164,7 @@ public class PredictionCase
     }
 
 
-    public TakenAction outputAction()
+    public SimpleAction outputAction()
     {
         return action;
     }

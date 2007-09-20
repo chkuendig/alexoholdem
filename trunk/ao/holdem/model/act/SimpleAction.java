@@ -1,11 +1,12 @@
-package ao.holdem.def.state.env;
+package ao.holdem.model.act;
 
 import ao.holdem.model.Money;
+import ao.holdem.model.act.RealAction;
 
 /**
  *
  */
-public enum TakenAction
+public enum SimpleAction
 {
     //--------------------------------------------------------------------
     FOLD,

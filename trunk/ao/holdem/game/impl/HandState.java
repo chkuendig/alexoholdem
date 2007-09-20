@@ -3,14 +3,11 @@ package ao.holdem.game.impl;
 import ao.holdem.model.Card;
 import ao.holdem.model.Hole;
 import ao.holdem.model.Community;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.BetsToCall;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.holdem.def.state.domain.DealerDistance;
 import ao.holdem.def.state.domain.Opposition;
-import ao.holdem.def.state.env.GodEnvironment;
-import ao.holdem.def.state.env.Player;
-import ao.holdem.def.state.env.Position;
-import ao.holdem.def.state.env.TakenAction;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ public class HandState
     //--------------------------------------------------------------------
     private Hole[]      holes;
     private int[]       commitment;
-    private TakenAction actions[];
+    private SimpleAction actions[];
     private Community community;
     private boolean[]   folded;
     private int         toMatch;
@@ -49,7 +46,7 @@ public class HandState
         community  = new Community();
         folded     = new boolean[ numPlayers ];
         commitment = new int[ numPlayers ];
-        actions    = new TakenAction[ numPlayers ];
+        actions    = new SimpleAction[ numPlayers ];
 
 //        active = new ArrayList<Integer>( numPlayers );
     }
@@ -165,8 +162,8 @@ public class HandState
     {
         log.debug(awayFromDealer + " clockwise from dealer checks.");
 
-//        actions[ awayFromDealer ] = TakenAction.CHECK;
-        actions[ awayFromDealer ] = TakenAction.CALL;
+//        actions[ awayFromDealer ] = SimpleAction.CHECK;
+        actions[ awayFromDealer ] = SimpleAction.CALL;
     }
 
     public void called(int awayFromDealer)
@@ -174,7 +171,7 @@ public class HandState
         log.debug(awayFromDealer + " clockwise from dealer calls.");
 
         commit(awayFromDealer, toMatch);
-        actions[ awayFromDealer ] = TakenAction.CALL;
+        actions[ awayFromDealer ] = SimpleAction.CALL;
     }
 
     public void raised(int awayFromDealer)
@@ -194,7 +191,7 @@ public class HandState
         else
         {
             commit(awayFromDealer, toMatch + betSize());
-            actions[ awayFromDealer ] = TakenAction.RAISE;
+            actions[ awayFromDealer ] = SimpleAction.RAISE;
         }
     }
 
@@ -203,7 +200,7 @@ public class HandState
         log.debug(awayFromDealer + " clockwise from dealer folds.");
 
         folded[ awayFromDealer ] = true;
-        actions[ awayFromDealer ] = TakenAction.FOLD;
+        actions[ awayFromDealer ] = SimpleAction.FOLD;
     }
 
 
@@ -285,7 +282,7 @@ public class HandState
         return !folded[ awayFromDealer ];
     }
 
-    public TakenAction lastActionOf(int awayFromDealer)
+    public SimpleAction lastActionOf(int awayFromDealer)
     {
         return actions[ awayFromDealer ];
     }

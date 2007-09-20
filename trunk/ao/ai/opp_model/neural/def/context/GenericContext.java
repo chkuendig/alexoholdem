@@ -2,9 +2,8 @@ package ao.ai.opp_model.neural.def.context;
 
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.Snapshot;
 
 /**
  *
@@ -26,8 +25,8 @@ public class GenericContext
     private int     lastBetsToCall;
     private double  winPercent;
 
-    private TakenAction act;
-    private TakenAction lastAct;
+    private SimpleAction act;
+    private SimpleAction lastAct;
     private Community   currCommunity;
 
     private boolean      isHistAware = false;
@@ -38,9 +37,9 @@ public class GenericContext
     //--------------------------------------------------------------------
     public GenericContext(
             Snapshot    prev,
-            TakenAction prevAct,
+            SimpleAction prevAct,
             Snapshot    curr,
-            TakenAction currAct,
+            SimpleAction currAct,
             Community   community,
             Hole hole)
     {
@@ -113,8 +112,8 @@ public class GenericContext
     public boolean isHistAware()         { return isHistAware; }
 
     public BettingRound round()     { return round; }
-    public TakenAction  lastAct()   { return lastAct; }
-    public TakenAction  currAct()   { return act; }
+    public SimpleAction lastAct()   { return lastAct; }
+    public SimpleAction currAct()   { return act; }
     public Community community() { return currCommunity; }
 
 }

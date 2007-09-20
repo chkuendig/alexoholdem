@@ -1,11 +1,10 @@
 package ao.holdem.def.history_bot;
 
 import ao.holdem.model.Money;
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.Snapshot;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.act.SimpleAction;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
 
 /**
  *
@@ -41,7 +40,7 @@ public interface HistoryBot
             PlayerHandle opponent,
             HandHistory  hand,
             Snapshot     env,
-            TakenAction  act);
+            SimpleAction act);
 
 
     //--------------------------------------------------------------------

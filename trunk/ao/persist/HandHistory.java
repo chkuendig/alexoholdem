@@ -1,15 +1,13 @@
-package ao.holdem.history;
+package ao.persist;
 
-import ao.ai.opp_model.neural.def.context.PredictionContext;
 import ao.ai.opp_model.neural.def.retro.HandParser;
 import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
-import ao.holdem.model.Money;
+import ao.holdem.def.state.domain.BettingRound;
+import ao.holdem.model.Card;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
-import ao.holdem.model.Card;
-import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.RealAction;
-import ao.holdem.history.persist.Base;
+import ao.holdem.model.Money;
+import ao.holdem.model.act.RealAction;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.MapKeyManyToMany;
@@ -205,34 +203,34 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    public Snapshot snapshot()
-    {
-        return snapshot(null);
-    }
-    public Snapshot nextToActSnapshot()
-    {
-        return snapshot( getEvents().get(getEvents().size() - 1) );
-    }
-    public Snapshot snapshot(Event asOf)
-    {
-        List<Event> toCapture = new ArrayList<Event>();
-
-        if (asOf != null)
-        {
-            for (Event event : getEvents())
-            {
-                toCapture.add( event );
-                if (event.equals(asOf))
-                {
-                    break;
-                }
-            }
-        }
-
-        Snapshot s = new Snapshot(getPlayers());
-        return s.populate( toCapture )
-                ? s : null;
-    }
+//    public Snapshot snapshot()
+//    {
+//        return snapshot(null);
+//    }
+//    public Snapshot nextToActSnapshot()
+//    {
+//        return snapshot( getEvents().get(getEvents().size() - 1) );
+//    }
+//    public Snapshot snapshot(Event asOf)
+//    {
+//        List<Event> toCapture = new ArrayList<Event>();
+//
+//        if (asOf != null)
+//        {
+//            for (Event event : getEvents())
+//            {
+//                toCapture.add( event );
+//                if (event.equals(asOf))
+//                {
+//                    break;
+//                }
+//            }
+//        }
+//
+//        Snapshot s = new Snapshot(getPlayers());
+//        return s.populate( toCapture )
+//                ? s : null;
+//    }
 
 
     //--------------------------------------------------------------------
@@ -240,11 +238,11 @@ public class HandHistory extends Base
     {
         return new HandParser().casesFor(this, p);
     }
-    public PredictionContext nextToActContext()
-    {
-        return new HandParser().nextToActContext(
-                this, nextToActSnapshot().nextToAct());
-    }
+//    public PredictionContext nextToActContext()
+//    {
+//        return new HandParser().nextToActContext(
+//                this, nextToActSnapshot().nextToAct());
+//    }
 
 
     //--------------------------------------------------------------------

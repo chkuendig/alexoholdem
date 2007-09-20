@@ -5,9 +5,7 @@ import ao.holdem.def.bot.Team;
 import ao.holdem.model.Hand;
 import ao.holdem.model.Hole;
 import ao.holdem.model.Community;
-import ao.holdem.def.state.env.Environment;
-import ao.holdem.def.state.env.GodEnvironment;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,7 @@ public class Outcome
     //--------------------------------------------------------------------
     public void add(LocalBot       bot,
                     GodEnvironment env,
-                    TakenAction    action)
+                    SimpleAction action)
     {
         Step step = new Step(bot, env, action);
         STEPS.add( step );
@@ -190,12 +188,12 @@ public class Outcome
     {
         private final LocalBot       BOT;
         private final GodEnvironment ENV;
-        private final TakenAction    ACTION;
+        private final SimpleAction ACTION;
         private final boolean        IS_WINNER;
 
         public Step(LocalBot       bot,
                     GodEnvironment env,
-                    TakenAction    action)
+                    SimpleAction action)
         {
             BOT       = bot;
             ENV       = env;
@@ -218,7 +216,7 @@ public class Outcome
             return ENV;
         }
 
-        public TakenAction action()
+        public SimpleAction action()
         {
             return ACTION;
         }

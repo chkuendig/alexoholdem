@@ -1,6 +1,8 @@
-package ao.holdem.history;
+package ao.persist;
 
-import ao.holdem.history.persist.Base;
+import ao.persist.Base;
+import ao.persist.Event;
+import ao.persist.HandHistory;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Entity;

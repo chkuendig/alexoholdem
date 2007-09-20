@@ -1,4 +1,4 @@
-package ao.holdem.history.persist;
+package ao.persist.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

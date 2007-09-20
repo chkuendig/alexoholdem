@@ -1,4 +1,4 @@
-package ao.holdem.history.persist;
+package ao.persist;
 
 import ao.util.serial.Stringer;
 

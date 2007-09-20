@@ -1,7 +1,7 @@
 package ao.ai.opp_model.neural.def.context;
 
 import static ao.ai.opp_model.neural.def.NeuralUtils.asDouble;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 /**
  *
@@ -17,7 +17,7 @@ public class HoldemPostact extends HoldemPreact
                 asDouble(ctx.lastBetsToCall() > 0);
 
         double lastActRaiseBool =
-                asDouble(ctx.lastAct() == TakenAction.RAISE);
+                asDouble(ctx.lastAct() == SimpleAction.RAISE);
 
         addNeuralInput(
                 lastBetsToCallBool,

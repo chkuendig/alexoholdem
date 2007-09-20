@@ -8,9 +8,9 @@ import ao.ai.opp_model.decision.data.Histogram;
 import ao.ai.opp_model.decision.domain.HoldemHandParser;
 import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 import ao.ai.opp_model.mix.MixedAction;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
+import ao.holdem.model.act.SimpleAction;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
 import ao.util.rand.Rand;
 
 import java.io.Serializable;
@@ -28,9 +28,9 @@ public class ModelPool
     private HoldemHandParser                                parser;
     private Set<Serializable>                               changed;
     private Map<Serializable, HoldemExampleSet>             data;
-    private Map<Serializable, DecisionLearner<TakenAction>> firstActs;
-    private Map<Serializable, DecisionLearner<TakenAction>> preFlops;
-    private Map<Serializable, DecisionLearner<TakenAction>> postFlops;
+    private Map<Serializable, DecisionLearner<SimpleAction>> firstActs;
+    private Map<Serializable, DecisionLearner<SimpleAction>> preFlops;
+    private Map<Serializable, DecisionLearner<SimpleAction>> postFlops;
 
 
     //-------------------------------------------------------------------
@@ -40,11 +40,11 @@ public class ModelPool
         changed   = new LinkedHashSet<Serializable>();
         data      = new HashMap<Serializable, HoldemExampleSet>();
         firstActs = new HashMap<Serializable,
-                                DecisionLearner<TakenAction>>();
+                                DecisionLearner<SimpleAction>>();
         preFlops  = new HashMap<Serializable,
-                                DecisionLearner<TakenAction>>();
+                                DecisionLearner<SimpleAction>>();
         postFlops = new HashMap<Serializable,
-                                DecisionLearner<TakenAction>>();
+                                DecisionLearner<SimpleAction>>();
     }
 
 
@@ -76,9 +76,9 @@ public class ModelPool
     private void updateOne()
     {
         Serializable         key;
-        DataSet<TakenAction> newFirstActs = new DataSet<TakenAction>();
-        DataSet<TakenAction> newPreFlops  = new DataSet<TakenAction>();
-        DataSet<TakenAction> newPostFlops = new DataSet<TakenAction>();
+        DataSet<SimpleAction> newFirstActs = new DataSet<SimpleAction>();
+        DataSet<SimpleAction> newPreFlops  = new DataSet<SimpleAction>();
+        DataSet<SimpleAction> newPostFlops = new DataSet<SimpleAction>();
         synchronized (this)
         {
             if (changed.isEmpty()) return;
@@ -92,24 +92,24 @@ public class ModelPool
             changed.remove( key );
         }
 
-        DecisionLearner<TakenAction> firstActLearner = null;
+        DecisionLearner<SimpleAction> firstActLearner = null;
         if (! newFirstActs.isEmpty())
         {
-            firstActLearner = new DecisionTreeLearner<TakenAction>();
+            firstActLearner = new DecisionTreeLearner<SimpleAction>();
             firstActLearner.train( newFirstActs );
         }
 
-        DecisionLearner<TakenAction> preFlopLearner = null;
+        DecisionLearner<SimpleAction> preFlopLearner = null;
         if (! newPreFlops.isEmpty())
         {
-            preFlopLearner = new DecisionTreeLearner<TakenAction>();
+            preFlopLearner = new DecisionTreeLearner<SimpleAction>();
             preFlopLearner.train( newPreFlops );
         }
 
-        DecisionLearner<TakenAction> postFlopLearner = null;
+        DecisionLearner<SimpleAction> postFlopLearner = null;
         if (! newPostFlops.isEmpty())
         {
-            postFlopLearner = new DecisionTreeLearner<TakenAction>();
+            postFlopLearner = new DecisionTreeLearner<SimpleAction>();
             postFlopLearner.train( newPostFlops );
         }
 
@@ -126,17 +126,17 @@ public class ModelPool
     public synchronized MixedAction predict(
             PlayerHandle player, HoldemContext ctx)
     {
-        Predictor<TakenAction> predictor =
+        Predictor<SimpleAction> predictor =
                 predictor(player.getId(), ctx.domain());
         if (predictor == null) return MixedAction.randomInstance();
 
-        Histogram<TakenAction> prediction = predictor.predict( ctx );
+        Histogram<SimpleAction> prediction = predictor.predict( ctx );
 //        if (prediction.total() == 0) return MixedAction.randomInstance();
 
         return MixedAction.fromHistogram(prediction);
     }
 
-    private Predictor<TakenAction> predictor(
+    private Predictor<SimpleAction> predictor(
             Serializable key, ContextDomain forDomain)
     {
         switch (forDomain)

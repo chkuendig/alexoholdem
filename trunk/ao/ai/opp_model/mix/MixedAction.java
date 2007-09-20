@@ -1,6 +1,6 @@
 package ao.ai.opp_model.mix;
 
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 import ao.ai.opp_model.decision.data.Histogram;
 
@@ -8,7 +8,7 @@ import ao.ai.opp_model.decision.data.Histogram;
  * Randomized Mixed Action.
  * A probability distribution of actions.
  */
-public class MixedAction extends Classification<TakenAction>
+public class MixedAction extends Classification<SimpleAction>
 {
     //--------------------------------------------------------------------
     public static MixedAction randomInstance()
@@ -18,11 +18,11 @@ public class MixedAction extends Classification<TakenAction>
                                Rand.nextDouble());
     }
 
-    public static MixedAction fromHistogram(Histogram<TakenAction> hist)
+    public static MixedAction fromHistogram(Histogram<SimpleAction> hist)
     {
-        int fold  = hist.countOf(TakenAction.FOLD);
-        int call  = hist.countOf(TakenAction.CALL);
-        int raise = hist.countOf(TakenAction.RAISE);
+        int fold  = hist.countOf(SimpleAction.FOLD);
+        int call  = hist.countOf(SimpleAction.CALL);
+        int raise = hist.countOf(SimpleAction.RAISE);
         int total = fold + call + raise;
 
         double avg        = total / 3.0;
@@ -40,16 +40,16 @@ public class MixedAction extends Classification<TakenAction>
     //--------------------------------------------------------------------
     public MixedAction()
     {
-        super( TakenAction.class );
+        super( SimpleAction.class );
     }
 
     public MixedAction(double foldProbability,
                        double callProbability)
     {
         this();
-        add( TakenAction.FOLD,  foldProbability );
-        add( TakenAction.CALL,  callProbability );
-        add( TakenAction.RAISE, 1.0 - callProbability - callProbability );
+        add( SimpleAction.FOLD,  foldProbability );
+        add( SimpleAction.CALL,  callProbability );
+        add( SimpleAction.RAISE, 1.0 - callProbability - callProbability );
     }
 
     public MixedAction(double foldWeight,
@@ -57,9 +57,9 @@ public class MixedAction extends Classification<TakenAction>
                        double raiseWeight)
     {
         this();
-        add( TakenAction.FOLD,  foldWeight  );
-        add( TakenAction.CALL,  callWeight  );
-        add( TakenAction.RAISE, raiseWeight );
+        add( SimpleAction.FOLD,  foldWeight  );
+        add( SimpleAction.CALL,  callWeight  );
+        add( SimpleAction.RAISE, raiseWeight );
     }
 
     public MixedAction(double triplet[])
@@ -67,7 +67,7 @@ public class MixedAction extends Classification<TakenAction>
         this( triplet[0], triplet[1], triplet[2] );
     }
 
-    public MixedAction(TakenAction act)
+    public MixedAction(SimpleAction act)
     {
         this();
         add(act, 1.0);
@@ -77,17 +77,17 @@ public class MixedAction extends Classification<TakenAction>
     //--------------------------------------------------------------------
     public double foldProability()
     {
-        return probabilityOf( TakenAction.FOLD );
+        return probabilityOf( SimpleAction.FOLD );
     }
 
     public double raiseProbability()
     {
-        return probabilityOf( TakenAction.RAISE );
+        return probabilityOf( SimpleAction.RAISE );
     }
 
     public double callProbability()
     {
-        return probabilityOf( TakenAction.CALL );
+        return probabilityOf( SimpleAction.CALL );
     }
 
 

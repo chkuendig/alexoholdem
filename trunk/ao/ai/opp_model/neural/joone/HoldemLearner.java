@@ -9,7 +9,7 @@ import ao.ai.opp_model.neural.def.observation.Observation;
 import ao.ai.opp_model.neural.def.observation.HoldemObservation;
 import ao.ai.opp_model.neural.def.retro.RetroSet;
 import ao.ai.opp_model.neural.def.retro.Retrodiction;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 /**
  *
@@ -42,11 +42,11 @@ public class HoldemLearner<C extends PredictionContext>
         for (Retrodiction<C> retrodiction : data.cases())
         {
             foldData.add(retrodiction.asObserved(
-                    isAct(retrodiction, TakenAction.FOLD)));
+                    isAct(retrodiction, SimpleAction.FOLD)));
             callData.add(retrodiction.asObserved(
-                    isAct(retrodiction, TakenAction.CALL)));
+                    isAct(retrodiction, SimpleAction.CALL)));
             raiseData.add(retrodiction.asObserved(
-                    isAct(retrodiction, TakenAction.RAISE)));
+                    isAct(retrodiction, SimpleAction.RAISE)));
         }
 
         foldLearner.add(foldData);
@@ -56,7 +56,7 @@ public class HoldemLearner<C extends PredictionContext>
 
     private BooleanObservation isAct(
             Retrodiction<C> of,
-            TakenAction     equalTo)
+            SimpleAction equalTo)
     {
         return new BooleanObservation(
                 new MixedAction(of.neuralOutput())

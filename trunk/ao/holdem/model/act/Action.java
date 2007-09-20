@@ -1,6 +1,5 @@
-package ao.holdem.def.state.action;
+package ao.holdem.model.act;
 
-import ao.holdem.def.state.env.RealAction;
 import ao.holdem.history.state.HoldemState;
 
 /**
@@ -29,7 +28,7 @@ import ao.holdem.history.state.HoldemState;
  * At any point in the game, all of the following actions
  *  are valid moves.
  *
- * See TakenAction.
+ * See SimpleAction.
  */
 public enum Action
 {

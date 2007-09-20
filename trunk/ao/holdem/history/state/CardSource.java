@@ -2,7 +2,7 @@ package ao.holdem.history.state;
 
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
-import ao.holdem.history.PlayerHandle;
+import ao.persist.PlayerHandle;
 
 /**
  *

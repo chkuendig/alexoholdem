@@ -1,9 +1,9 @@
 package ao.holdem.history.state;
 
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.persist.HandHistoryDao;
-import ao.holdem.history.persist.PlayerHandleLookup;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
+import ao.persist.dao.HandHistoryDao;
+import ao.persist.dao.PlayerHandleLookup;
 import ao.holdem.history_game.RealDealer;
 import com.google.inject.Inject;
 
@@ -18,7 +18,8 @@ import java.util.Map;
 public class RealDealerTest
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleLookup players;
+    @Inject
+    PlayerHandleLookup players;
     @Inject HandHistoryDao     hands;
 
 

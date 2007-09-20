@@ -1,6 +1,7 @@
-package ao.holdem.history.persist;
+package ao.persist.dao;
 
-import ao.holdem.history.PlayerHandle;
+import ao.persist.PlayerHandle;
+import ao.persist.dao.PlayerHandleAccess;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.wideplay.warp.persist.Transactional;
@@ -12,7 +13,8 @@ import org.hibernate.Session;
 public class PlayerHandleLookup
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleAccess playerAccess;
+    @Inject
+    PlayerHandleAccess playerAccess;
     @Inject Provider<Session>  session;
 
 

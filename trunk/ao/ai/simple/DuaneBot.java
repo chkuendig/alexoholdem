@@ -3,8 +3,7 @@ package ao.ai.simple;
 import ao.strategy.Sklansky;
 import ao.holdem.def.bot.AbstractBot;
 import ao.holdem.model.Hole;
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.Environment;
+import ao.holdem.model.act.Action;
 
 /**
  * Strategy from

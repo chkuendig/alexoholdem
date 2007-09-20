@@ -1,7 +1,7 @@
 package ao.holdem.config;
 
 import ao.holdem.history.irc.IrcRunner;
-import ao.holdem.history.persist.PlayerHandleAccess;
+import ao.persist.dao.PlayerHandleAccess;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.wideplay.warp.persist.PersistenceService;
