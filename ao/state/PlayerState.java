@@ -1,4 +1,4 @@
-package ao.holdem.history.state;
+package ao.state;
 
 import ao.holdem.model.Money;
 import ao.holdem.model.act.SimpleAction;
@@ -74,6 +74,11 @@ public class PlayerState
     {
         return new PlayerState(nextIsAllIn, false, false,
                                stakes.plus(money), handle);
+    }
+
+    public boolean isIn()
+    {
+        return !(isAllIn() || isFolded());
     }
 
 

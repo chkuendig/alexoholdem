@@ -30,7 +30,7 @@ import ao.holdem.history.state.HoldemState;
  *
  * See SimpleAction.
  */
-public enum Action
+public enum EasyAction
 {
     //--------------------------------------------------------------------
     CHECK_OR_FOLD,

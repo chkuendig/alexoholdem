@@ -1,6 +1,6 @@
 package ao.holdem.def.bot;
 
-import ao.holdem.model.act.Action;
+import ao.holdem.model.act.EasyAction;
 
 /**
  * Texus Hold'em limit game bot.
@@ -14,7 +14,7 @@ public interface Bot
 
     //--------------------------------------------------------------------
 //    public Action act(Snapshot env);
-    public Action act(Environment env);
+    public EasyAction act(Environment env);
 
 
     //--------------------------------------------------------------------

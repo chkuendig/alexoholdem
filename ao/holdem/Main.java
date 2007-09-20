@@ -1,8 +1,6 @@
 package ao.holdem;
 
 
-import ao.ai.simple.LooseSklanskyBot;
-import ao.ai.simple.MathTightBot;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;

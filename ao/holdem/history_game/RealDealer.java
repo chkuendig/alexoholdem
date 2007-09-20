@@ -2,8 +2,8 @@ package ao.holdem.history_game;
 
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
-import ao.holdem.history.state.RunningState;
-import ao.holdem.history.state.StatePlayer;
+import ao.state.Context;
+import ao.holdem.model.Player;
 
 import java.util.Map;
 
@@ -13,13 +13,13 @@ import java.util.Map;
 public class RealDealer
 {
     //--------------------------------------------------------------------
-    private final RunningState                   start;
-    private final Map<PlayerHandle, StatePlayer> players;
+    private final Context start;
+    private final Map<PlayerHandle, Player> players;
 
 
     //--------------------------------------------------------------------
-    public RealDealer(RunningState startFrom,
-                      Map<PlayerHandle, StatePlayer> brains)
+    public RealDealer(Context startFrom,
+                      Map<PlayerHandle, Player> brains)
     {
         start   = startFrom;
         players = brains;
@@ -27,9 +27,9 @@ public class RealDealer
 
 
     //--------------------------------------------------------------------
-    public RunningState playOutHand()
+    public Context playOutHand()
     {
-        RunningState state = start.continueFrom();
+        Context state = start.continueFrom();
         do
         {
             if (state.roundJustChanged())

@@ -5,6 +5,7 @@ import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.def.state.domain.BettingRound;
 import ao.persist.PlayerHandle;
+import ao.state.PlayerState;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -188,6 +189,15 @@ public class HoldemState
         return players;
     }
 
+    public int numPlayersIn()
+    {
+        int count = 0;
+        for (PlayerState state : players)
+            if (state.isIn()) count++;
+        return count;
+    }
+
+
 
     //--------------------------------------------------------------------
     public boolean atEndOfHand()
@@ -234,17 +244,28 @@ public class HoldemState
     {
         return stakes.equals( nextToAct().commitment() );
     }
-
+    public int betsToCall()
+    {
+        return stakes.minus( nextToAct().commitment() )
+                        .bets( isSmallBet() );
+    }
     public boolean nextToActCanRaise()
     {
         return remainingRoundBets > 0;
     }
+    public int remainingBetsInRound()
+    {
+        return remainingRoundBets;
+    }
 
     private Money betSize()
     {
+        return isSmallBet() ? Money.SMALL_BET : Money.BIG_BET;
+    }
+    public boolean isSmallBet()
+    {
         return round == BettingRound.PREFLOP ||
-               round == BettingRound.FLOP
-                ? Money.SMALL_BET : Money.BIG_BET;
+               round == BettingRound.FLOP;
     }
 
 
@@ -256,19 +277,6 @@ public class HoldemState
                 : fromIndex % players.length;
     }
 
-//    private int prevActive(int before)
-//    {
-//        for (int cursor = before - 1;; cursor--)
-//        {
-//            int index = (cursor >= 0)
-//                        ? cursor
-//                        : cursor + players.length;
-//            if (players[ index ].isAllIn())
-//            {
-//                return index;
-//            }
-//        }
-//    }
     private int nextInAfter(int playerIndex)
     {
         return nextInAfter( players, playerIndex );
@@ -278,8 +286,7 @@ public class HoldemState
         for (int i = 1; i <= states.length; i++)
         {
             int index = index(playerIndex + i);
-            if (!(states[ index ].isAllIn() ||
-                  states[ index ].isFolded()))
+            if (states[ index ].isIn())
             {
                 return index;
             }

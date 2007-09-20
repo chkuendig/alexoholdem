@@ -1,7 +1,7 @@
 package ao.holdem.def.history_bot;
 
 import ao.holdem.model.Money;
-import ao.holdem.model.act.Action;
+import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -44,7 +44,7 @@ public interface HistoryBot
 
 
     //--------------------------------------------------------------------
-    public Action act(
+    public EasyAction act(
             HandHistory hand,
             Snapshot env);
 

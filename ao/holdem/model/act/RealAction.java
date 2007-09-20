@@ -1,6 +1,5 @@
 package ao.holdem.model.act;
 
-import ao.holdem.model.act.SimpleAction;
 
 /**
  * isAllIn
