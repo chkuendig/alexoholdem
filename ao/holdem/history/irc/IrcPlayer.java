@@ -1,6 +1,6 @@
 package ao.holdem.history.irc;
 
-import ao.holdem.def.state.env.RealAction;
+import ao.holdem.model.act.RealAction;
 import ao.holdem.history.state.RunningState;
 import ao.holdem.history.state.StatePlayer;
 import ao.holdem.history.state.HoldemRuleBreach;

@@ -1,10 +1,10 @@
 package ao.holdem.history.state;
 
 import ao.holdem.model.Money;
+import ao.holdem.model.act.SimpleAction;
+import ao.holdem.model.act.RealAction;
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.RealAction;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.PlayerHandle;
+import ao.persist.PlayerHandle;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -107,7 +107,7 @@ public class HoldemState
                     ? nextInAfter(nextPlayers, players.length - 1)
                     : nextInAfter(nextPlayers, nextToAct);
 
-        boolean isBetRaise = (act.toTakenAction() == TakenAction.RAISE);
+        boolean isBetRaise = (act.toTakenAction() == SimpleAction.RAISE);
         int nextRemainingBets = isRoundEnder
                                 ? 4 // bets per round
                                 : (isBetRaise
@@ -120,7 +120,7 @@ public class HoldemState
                 : (isBetRaise
                    ? nextToAct
                    : (latestRoundStaker == -1 && // when all players check
-                        act.toTakenAction() != TakenAction.FOLD)
+                        act.toTakenAction() != SimpleAction.FOLD)
                       ? nextToAct
                       : latestRoundStaker);
 
@@ -165,7 +165,7 @@ public class HoldemState
     {
         return nextActionCritical()
                 ? nextToActCanRaise()
-                    ? (act.toTakenAction() == TakenAction.RAISE)
+                    ? (act.toTakenAction() == SimpleAction.RAISE)
                         ? round
                         : round.next()
                     : round.next()
@@ -335,7 +335,7 @@ public class HoldemState
                                       player);
 
         if (remainingRoundBets == 0 &&
-                act.toTakenAction() == TakenAction.RAISE)
+                act.toTakenAction() == SimpleAction.RAISE)
             throw new HoldemRuleBreach("round betting cap exceeded");
     }
 

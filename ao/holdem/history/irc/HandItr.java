@@ -1,8 +1,8 @@
 package ao.holdem.history.irc;
 
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.persist.PlayerHandleLookup;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
+import ao.persist.dao.PlayerHandleLookup;
 import ao.holdem.history.state.HoldemRuleBreach;
 import ao.holdem.history.state.RunningState;
 import ao.holdem.history.state.StatePlayer;

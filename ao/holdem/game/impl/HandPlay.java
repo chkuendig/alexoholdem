@@ -3,11 +3,9 @@ package ao.holdem.game.impl;
 import ao.holdem.def.bot.Bot;
 import ao.holdem.def.bot.LocalBot;
 import ao.holdem.model.Deck;
-import ao.holdem.def.state.action.Action;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.def.state.domain.Domain;
-import ao.holdem.def.state.env.Environment;
-import ao.holdem.def.state.env.GodEnvironment;
-import ao.holdem.def.state.env.TakenAction;
 import ao.holdem.game.Outcome;
 import org.apache.log4j.Logger;
 
@@ -144,7 +142,7 @@ public class HandPlay
                     break round_circle;
                 }
 
-                TakenAction action = nextAction(awayFromDealer);
+                SimpleAction action = nextAction(awayFromDealer);
                 log.debug(awayFromDealer + " clockwise from dealer acts: "
                           + action + ".");
                 switch (action)
@@ -195,7 +193,7 @@ public class HandPlay
 
 
     //--------------------------------------------------------------------
-    private TakenAction nextAction(int awayFromDealer)
+    private SimpleAction nextAction(int awayFromDealer)
     {
         Domain domain = new Domain(state, awayFromDealer);
         //Bot bot = bots.forDomain( domain );
@@ -209,34 +207,34 @@ public class HandPlay
         log.debug(awayFromDealer + " clockwise from dealer " +
                   "made choice of: " + action + ".");
 
-        TakenAction taken = concreteAction(awayFromDealer, action);
+        SimpleAction taken = concreteAction(awayFromDealer, action);
         outcome.add(new LocalBot(bot, domain), env, taken);
         return taken;
     }
 
-    private TakenAction concreteAction(
+    private SimpleAction concreteAction(
             int awayFromDealer, Action fuzzyAction)
     {
         switch (fuzzyAction)
         {
             case CHECK_OR_FOLD:
 //                return state.canCheck(awayFromDealer)
-//                        ? TakenAction.CHECK
-//                        : TakenAction.FOLD;
+//                        ? SimpleAction.CHECK
+//                        : SimpleAction.FOLD;
                 return state.canCheck(awayFromDealer)
-                        ? TakenAction.CALL
-                        : TakenAction.FOLD;
+                        ? SimpleAction.CALL
+                        : SimpleAction.FOLD;
 
             case CHECK_OR_CALL:
 //                return state.canCheck(awayFromDealer)
-//                        ? TakenAction.CHECK
-//                        : TakenAction.CALL;
-            return TakenAction.CALL;
+//                        ? SimpleAction.CHECK
+//                        : SimpleAction.CALL;
+            return SimpleAction.CALL;
 
             case RAISE_OR_CALL:
                 return state.canRaise()
-                        ? TakenAction.RAISE
-                        : TakenAction.CALL;
+                        ? SimpleAction.RAISE
+                        : SimpleAction.CALL;
 
             default: return null;
         }

@@ -3,7 +3,7 @@ package ao.ai.opp_model.decision.context.immediate;
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.ContextDomain;
 import ao.ai.opp_model.neural.def.context.GenericContext;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 /**
  *
@@ -21,7 +21,7 @@ public class PreFlopContext extends FirstActContext
 
         add(pool.fromUntyped(
                 "Last Act: Bet/Raise",
-                ctx.lastAct() == TakenAction.RAISE));
+                ctx.lastAct() == SimpleAction.RAISE));
     }
 
 

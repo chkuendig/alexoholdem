@@ -2,7 +2,7 @@ package ao.ai.opp_model.decision.context;
 
 import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.data.HoldemExample;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class HoldemExampleSet
 
     //-------------------------------------------------------------------
     public void add(HoldemContext context,
-                    Attribute<TakenAction> targetAttribute)
+                    Attribute<SimpleAction> targetAttribute)
     {
         add(new HoldemExample(context, targetAttribute));
     }

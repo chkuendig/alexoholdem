@@ -14,10 +14,10 @@ import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
 import ao.ai.opp_model.neural.def.retro.LearnerSet;
 import ao.ai.opp_model.neural.def.retro.PredictorSet;
 import ao.ai.opp_model.neural.def.retro.Retrodiction;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.HandHistory;
-import ao.holdem.history.PlayerHandle;
-import ao.holdem.history.persist.PlayerHandleAccess;
+import ao.holdem.model.act.SimpleAction;
+import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
+import ao.persist.dao.PlayerHandleAccess;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -61,13 +61,13 @@ public class OppModelTest
     {
         HoldemHandParser decisionSetup = new HoldemHandParser();
 
-        DataSet<TakenAction> trainingSet   = new DataSet<TakenAction>();
-        DataSet<TakenAction> validationSet = new DataSet<TakenAction>();
+        DataSet<SimpleAction> trainingSet   = new DataSet<SimpleAction>();
+        DataSet<SimpleAction> validationSet = new DataSet<SimpleAction>();
 
         int i = 0;
         for (HandHistory hand : p.getHands())
         {
-            List<Example<TakenAction>> handExamples =
+            List<Example<SimpleAction>> handExamples =
                     decisionSetup.postflopExamples(hand, p);
 
             if (i++ < 2000) {
@@ -78,11 +78,11 @@ public class OppModelTest
         }
 
         System.out.println("building model");
-        DecisionLearner<TakenAction> learner =
-                new DecisionTreeLearner<TakenAction>();
+        DecisionLearner<SimpleAction> learner =
+                new DecisionTreeLearner<SimpleAction>();
         learner.train( trainingSet );
         
-        for (Example<TakenAction> example : validationSet.examples())
+        for (Example<SimpleAction> example : validationSet.examples())
         {
             trainingSet.add( example );
 //            if (Rand.nextDouble() < (1/20.0))
@@ -90,7 +90,7 @@ public class OppModelTest
 //                learner.train( trainingSet );
 //            }
             
-            Histogram<TakenAction> prediction =
+            Histogram<SimpleAction> prediction =
                     learner.predict( example );
             System.out.println(
                     example.target().value() + "\t" +

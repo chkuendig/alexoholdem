@@ -1,4 +1,6 @@
-package ao.holdem.def.state.env;
+package ao.holdem.model.act;
+
+import ao.holdem.model.act.SimpleAction;
 
 /**
  * isAllIn
@@ -86,24 +88,24 @@ public enum RealAction
 
 
     //--------------------------------------------------------------------
-    public TakenAction toTakenAction()
+    public SimpleAction toTakenAction()
     {
         switch (this)
         {
             case QUIT:
             case FOLD:
-                return TakenAction.FOLD;
+                return SimpleAction.FOLD;
 
             case CHECK:
             case CALL:
             case CALL_ALL_IN:
-                return TakenAction.CALL;
+                return SimpleAction.CALL;
 
             case BET:
             case BET_ALL_IN:
             case RAISE:
             case RAISE_ALL_IN:
-                return TakenAction.RAISE;
+                return SimpleAction.RAISE;
 
             case SMALL_BLIND:
             case SMALL_BLIND_ALL_IN:

@@ -1,7 +1,6 @@
 package ao.holdem.def.bot;
 
-import ao.holdem.def.state.action.Action;
-import ao.holdem.def.state.env.Environment;
+import ao.holdem.model.act.Action;
 
 /**
  * Texus Hold'em limit game bot.

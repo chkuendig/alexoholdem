@@ -1,8 +1,5 @@
 package ao.holdem.net;
 
-import ao.holdem.def.state.env.Environment;
-import ao.holdem.def.state.env.Player;
-
 /**
  *
  */

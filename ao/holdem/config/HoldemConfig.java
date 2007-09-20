@@ -2,7 +2,7 @@ package ao.holdem.config;
 
 import ao.ai.opp_model.OppModelTest;
 import ao.holdem.history.irc.IrcRunner;
-import ao.holdem.history.persist.PlayerHandleLookup;
+import ao.persist.dao.PlayerHandleLookup;
 import com.google.inject.AbstractModule;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;

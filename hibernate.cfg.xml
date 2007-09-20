@@ -54,9 +54,9 @@
 
         
         <!-- Mappings -->
-        <mapping class="ao.holdem.history.PlayerHandle"/>
-        <mapping class="ao.holdem.history.Event"/>
-        <mapping class="ao.holdem.history.HandHistory"/>
+        <mapping class="ao.persist.PlayerHandle"/>
+        <mapping class="ao.persist.Event"/>
+        <mapping class="ao.persist.HandHistory"/>
         <mapping class="ao.holdem.model.Hole"/>
         <mapping class="ao.holdem.model.Community"/>
         <mapping class="ao.holdem.model.Money"/>

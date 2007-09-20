@@ -1,9 +1,10 @@
-package ao.holdem.history;
+package ao.persist;
 
 import ao.holdem.def.state.domain.BettingRound;
-import ao.holdem.def.state.env.RealAction;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.persist.Base;
+import ao.holdem.model.act.RealAction;
+import ao.holdem.model.act.SimpleAction;
+import ao.persist.Base;
+import ao.persist.PlayerHandle;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -71,7 +72,7 @@ public class Event extends Base
         this.action = action;
     }
 
-    public TakenAction takenAction()
+    public SimpleAction takenAction()
     {
         return getAction().toTakenAction();
     }

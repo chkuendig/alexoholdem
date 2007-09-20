@@ -8,7 +8,7 @@ import ao.ai.opp_model.neural.def.context.preflop.HoleAwarePreflop;
 import ao.ai.opp_model.neural.def.context.preflop.HoleBlindPreflop;
 import ao.ai.opp_model.neural.def.learn.SupervisedLearner;
 import ao.ai.opp_model.neural.joone.BackpropLearner;
-import ao.holdem.history.persist.Base;
+import ao.persist.Base;
 
 import javax.persistence.Entity;
 

@@ -1,9 +1,9 @@
 package ao.holdem.history.state;
 
 import ao.holdem.model.Money;
-import ao.holdem.def.state.env.RealAction;
-import ao.holdem.def.state.env.TakenAction;
-import ao.holdem.history.PlayerHandle;
+import ao.holdem.model.act.SimpleAction;
+import ao.holdem.model.act.RealAction;
+import ao.persist.PlayerHandle;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,11 +41,11 @@ public class PlayerState
             @NotNull Money      stakes,
             @NotNull Money      betSize)
     {
-        TakenAction takenAction = action.toTakenAction();
-        if (takenAction == TakenAction.FOLD) return fold();
+        SimpleAction takenAction = action.toTakenAction();
+        if (takenAction == SimpleAction.FOLD) return fold();
 
         boolean nextIsAllIn = action.isAllIn();
-        return takenAction == TakenAction.CALL
+        return takenAction == SimpleAction.CALL
                 ? call ( nextIsAllIn, stakes          )
                 : raise( nextIsAllIn, stakes, betSize );
     }

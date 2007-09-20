@@ -1,7 +1,7 @@
 package ao.ai.opp_model.neural.def.observation;
 
 import ao.ai.opp_model.mix.MixedAction;
-import ao.holdem.def.state.env.TakenAction;
+import ao.holdem.model.act.SimpleAction;
 
 
 /**
@@ -10,7 +10,7 @@ import ao.holdem.def.state.env.TakenAction;
 public class HoldemObservation extends ObservationImpl
 {
     //--------------------------------------------------------------------
-    public HoldemObservation(TakenAction act)
+    public HoldemObservation(SimpleAction act)
     {
         super( new MixedAction(act).weights() );
     }

@@ -1,6 +1,6 @@
 package ao.holdem.def.history_bot;
 
-import ao.holdem.history.PlayerHandle;
+import ao.persist.PlayerHandle;
 
 /**
  *
