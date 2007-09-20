@@ -254,14 +254,24 @@ public class IrcAction
 
 
     //--------------------------------------------------------------------
-    public void removeBlind()
-    {
-        assert preflop[0].isBlind();
+//    public void removeBlind()
+//    {
+//        assert preflop[0].isBlind();
+//
+//        RealAction newPreflop[] = new RealAction[preflop.length - 1];
+//        System.arraycopy(preflop, 1, newPreflop, 0, newPreflop.length);
+//        preflop = newPreflop;
+//    }
 
-        RealAction newPreflop[] = new RealAction[preflop.length - 1];
-        System.arraycopy(preflop, 1, newPreflop, 0, newPreflop.length);
-        preflop = newPreflop;
+    public void shrinkBlind()
+    {
+        preflop[0] = preflop[0].asSmallBlind();
     }
+    public void growBlind()
+    {
+        preflop[0] = preflop[0].asBigBlind();
+    }
+
 
 
     //--------------------------------------------------------------------

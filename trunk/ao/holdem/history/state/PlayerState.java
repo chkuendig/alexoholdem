@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerState
 {
     //--------------------------------------------------------------------
-    private final boolean      isActive;
+    private final boolean      isAllIn;
     private final boolean      isFolded;
     private final boolean      isUnacted;
     private final Money        commitment;
@@ -21,33 +21,39 @@ public class PlayerState
 
     //--------------------------------------------------------------------
     public PlayerState(
-                     boolean      active,
+                     boolean      allIn,
                      boolean      folded,
                      boolean      unacted,
             @NotNull Money        totalCommitment,
             @NotNull PlayerHandle playerHandle)
     {
-        isActive     = active;
-        isFolded     = folded;
-        isUnacted    = unacted;
-        commitment   = totalCommitment;
-        handle       = playerHandle;
+        isAllIn    = allIn;
+        isFolded   = folded;
+        isUnacted  = unacted;
+        commitment = totalCommitment;
+        handle     = playerHandle;
     }
 
 
     //--------------------------------------------------------------------
     public PlayerState advance(
-            @NotNull RealAction  action,
-            @NotNull PlayerState prevActive,
-            @NotNull Money       betSize)
+            @NotNull RealAction action,
+            @NotNull Money      stakes,
+            @NotNull Money      betSize)
     {
         TakenAction takenAction = action.toTakenAction();
         if (takenAction == TakenAction.FOLD) return fold();
 
-        boolean nextIsActive = !action.isAllIn();
+        boolean nextIsAllIn = action.isAllIn();
         return takenAction == TakenAction.CALL
-                ? call ( nextIsActive, prevActive          )
-                : raise( nextIsActive, prevActive, betSize );
+                ? call ( nextIsAllIn, stakes          )
+                : raise( nextIsAllIn, stakes, betSize );
+    }
+
+    public PlayerState advanceBlind(RealAction act, Money betSize)
+    {
+        return new PlayerState(
+                    act.isAllIn(), false, true, betSize, handle);
     }
 
 
@@ -57,24 +63,24 @@ public class PlayerState
         return new PlayerState(false, true, false, commitment, handle);
     }
 
-    private PlayerState call(boolean nextIsActive, PlayerState of)
+    private PlayerState call(boolean nextIsAllIn, Money stakes)
     {
         return new PlayerState(
-                    nextIsActive, false, false, of.commitment, handle);
+                    nextIsAllIn, false, false, stakes, handle);
     }
 
     private PlayerState raise(
-            boolean nextIsActive, PlayerState player, Money money)
+            boolean nextIsAllIn, Money stakes, Money money)
     {
-        return new PlayerState(nextIsActive, false, false,
-                               player.commitment.plus(money), handle);
+        return new PlayerState(nextIsAllIn, false, false,
+                               stakes.plus(money), handle);
     }
 
 
     //--------------------------------------------------------------------
-    public boolean isActive()
+    public boolean isAllIn()
     {
-        return isActive;
+        return isAllIn;
     }
 
     public boolean isFolded()

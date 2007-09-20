@@ -42,20 +42,19 @@ public class RunningState
 
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
-            int                smallBlindIndex,
-            int                bigBlindIndex,
+            boolean            autoPostBlinds,
             CardSource         cards)
     {
-        this(clockwiseDealerLast, smallBlindIndex, bigBlindIndex);
+        this(clockwiseDealerLast, autoPostBlinds);
         this.cards = cards;
     }
     public RunningState(
             List<PlayerHandle> clockwiseDealerLast,
-            int                smallBlindIndex,
-            int                bigBlindIndex)
+            boolean            autoPostBlinds)
     {
-        head = new HoldemState(clockwiseDealerLast,
-                                   smallBlindIndex, bigBlindIndex);
+        head = autoPostBlinds
+               ? HoldemState.autoBlindInstance(clockwiseDealerLast)
+               : new HoldemState(clockwiseDealerLast);
     }
 
 

@@ -55,6 +55,7 @@ public class HandItr implements Iterable<HandHistory>
     //--------------------------------------------------------------------
     private void computeNextHistory()
     {
+        nextHistory = null;
         while (nextHandIndex < hands.size())
         {
             System.out.println("nextHandIndex " + nextHandIndex);
@@ -73,7 +74,8 @@ public class HandItr implements Iterable<HandHistory>
         assert roster.size() == action.size();
 
         sortByPosition(names, action);
-        int smallBig[] = extractBlinds(action);
+        sizeUpBlinds(action);
+//        displayHand(hand, action);
 
         LiteralCardSource cards = new LiteralCardSource();
         cards.setCommunity( hand.community() );
@@ -92,9 +94,7 @@ public class HandItr implements Iterable<HandHistory>
             cards.putHole(handle, acts.holes());
         }
 
-        RunningState start  = new RunningState(playerHandles,
-                                               smallBig[0], smallBig[1],
-                                               cards);
+        RunningState start  = new RunningState(playerHandles, cards);
         RealDealer   dealer = new RealDealer(start, brains);
         try
         {
@@ -124,7 +124,7 @@ public class HandItr implements Iterable<HandHistory>
 
 
     //--------------------------------------------------------------------
-    private int[] extractBlinds(List<IrcAction> action)
+    private void sizeUpBlinds(List<IrcAction> action)
     {
         int firstBlindIndex  = -1;
         int secondBlindIndex = -1;
@@ -146,14 +146,12 @@ public class HandItr implements Iterable<HandHistory>
 
         if (secondBlindIndex == -1)
         {
-            action.get( firstBlindIndex ).removeBlind();
-            return new int[]{-1, firstBlindIndex};
+            action.get( firstBlindIndex ).growBlind();
         }
         else
         {
-            action.get( firstBlindIndex ).removeBlind();
-            action.get( secondBlindIndex ).removeBlind();
-            return new int[]{firstBlindIndex, secondBlindIndex};
+            action.get( firstBlindIndex ).shrinkBlind();
+            action.get( secondBlindIndex ).growBlind();
         }
     }
 
