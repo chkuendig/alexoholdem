@@ -12,7 +12,6 @@ import ao.holdem.model.Community;
 import ao.holdem.model.Hand;
 import ao.holdem.model.Hole;
 import ao.holdem.net.OverTheWireState;
-import ao.holdem.tourney.Tourney;
 import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
 import ao.util.text.Arr;
@@ -118,45 +117,6 @@ public class Main
                 new DatagramPacket(buf, buf.length,
                                    address, 4445);
         to.send(packet);
-    }
-
-
-    //--------------------------------------------------------------------
-//    private static int counter = 0;
-    public static void runHoldemGame()
-    {
-        BotProvider provider = new BotProvider();
-
-//        provider.add(
-//                BotFactory.Impl.fromClass(RandomBot.class));
-//        provider.add(
-//                BotFactory.Impl.fromClass(PokerTipsBot.class));
-//        provider.add(
-//                BotFactory.Impl.fromClass(AlwaysRaiseBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(LooseSklanskyBot.class));
-//        provider.add(
-//                BotFactory.Impl.fromClass(MathBot.class));
-        provider.add(
-                BotFactory.Impl.fromClass(MathTightBot.class));
-
-        Tourney tourney = new Tourney( provider );
-        for (int i = 0; i < 50; i++)
-        {
-//            tourney.runRandom();
-            tourney.run(10, 10);
-        }
-        tourney.tabDelimitedReport( System.out );
-
-//        Holdem holdem = new HoldemImpl();
-//        holdem.configure(4, provider);
-//
-//        Outcome outcome = holdem.play();
-//        System.out.println("winners: " + outcome.winners());
-//        for (Outcome.Step step : outcome.log())
-//        {
-//            OutcomeStepRender.display( step );
-//        }
     }
 
 

@@ -9,8 +9,7 @@ import ao.ai.opp_model.decision.context.immediate.PostFlopContext;
 import ao.ai.opp_model.decision.context.immediate.PreFlopContext;
 import ao.ai.opp_model.decision.data.ContextImpl;
 import ao.ai.opp_model.decision.data.Example;
-import ao.ai.opp_model.neural.def.context.GenericContext;
-import ao.ai.opp_model.neural.def.retro.HandParser;
+import ao.ai.opp_model.decision.context.immediate.GenericContext;
 import ao.odds.CommunityMeasure;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
@@ -33,12 +32,12 @@ public class HoldemHandParser
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextToActContext(
-            HandHistory hand, PlayerHandle player)
-    {
-        GenericContext ctx = parser.genericNextToActContext(hand, player);
-        return fromGeneric(ctx);
-    }
+//    public HoldemContext nextToActContext(
+//            HandHistory hand, PlayerHandle player)
+//    {
+//        GenericContext ctx = parser.genericNextToActContext(hand, player);
+//        return fromGeneric(ctx);
+//    }
 
     private HoldemContext fromGeneric(GenericContext ctx)
     {
@@ -100,9 +99,7 @@ public class HoldemHandParser
         return examples;
     }
 
-
-    //--------------------------------------------------------------------
-    public ContextImpl asDecisionContext(GenericContext ctx)
+    private ContextImpl asDecisionContext(GenericContext ctx)
     {
         Collection<Attribute> attrs = new ArrayList<Attribute>();
 
@@ -166,4 +163,6 @@ public class HoldemHandParser
         return new ContextImpl(attrs);
     }
 
+    //--------------------------------------------------------------------
+//    for (GenericContext ctx
 }

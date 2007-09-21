@@ -6,14 +6,6 @@ import ao.ai.opp_model.decision.data.Example;
 import ao.ai.opp_model.decision.data.Histogram;
 import ao.ai.opp_model.decision.domain.HoldemHandParser;
 import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
-import ao.ai.opp_model.mix.MixedAction;
-import ao.ai.opp_model.neural.BackpropPredictor;
-import ao.ai.opp_model.neural.PredictionSet;
-import ao.ai.opp_model.neural.def.observation.Observation;
-import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
-import ao.ai.opp_model.neural.def.retro.LearnerSet;
-import ao.ai.opp_model.neural.def.retro.PredictorSet;
-import ao.ai.opp_model.neural.def.retro.Retrodiction;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -38,7 +30,6 @@ public class OppModelTest
     {
 //        retrieveMostPrevalent();
         modelOpponet(playerAccess.find("irc", "sagerbot"));
-//        backprop(playerAccess.find("irc", "Barrister"));
     }
 
 
@@ -49,7 +40,6 @@ public class OppModelTest
 
         try
         {
-//            doModelOpponet( p );
             doDecisionModelOpponet( p );
         }
         catch (Exception e)
@@ -100,64 +90,6 @@ public class OppModelTest
                     (prediction.mostProbable().equals(
                             example.target()) ? 1 : 0));
         }
-    }
-
-    private void doModelOpponet(PlayerHandle p) throws Exception
-    {
-        LearnerSet learners = new LearnerSet();
-
-        HoldemRetroSet trainRetros = new HoldemRetroSet();
-        HoldemRetroSet validRetros = new HoldemRetroSet();
-
-        int i = 0;
-        for (HandHistory hand : p.getHands())
-        {
-            HoldemRetroSet retros = hand.casesFor(p);
-
-            if (i++ < 10000) {
-                trainRetros.add( retros );
-            } else {
-                validRetros.add( retros );
-            }
-        }
-        trainRetros.train(learners, 2000, 20000000);
-        PredictorSet predictors = learners.predictors();
-        for (Retrodiction<?> retro : trainRetros.holeBlind().cases())
-        {
-            Observation prediction = predictors.predict(retro);
-
-            System.out.println(retro.predictionType() + "\t" +
-                               prediction + "\t" +
-                               new MixedAction(retro.neuralOutput()));
-        }
-
-//        for (HandHistory hand : p.getHands())
-//        {
-////            System.out.println("====\t" + (++count));
-//            HoldemRetroSet retros     = hand.casesFor(p);
-//            PredictorSet predictors = learners.predictors();
-//
-//            for (Retrodiction<?> retro : retros.holeBlind().cases())
-//            {
-//                Observation prediction = predictors.neural(retro);
-//
-//                System.out.println(retro.predictionType() + "\t" +
-//                                   prediction + "\t" +
-//                                   new MixedAction(retro.neuralOutput()));
-//            }
-//
-//            retros.train(learners, 100, 100000);
-////            allRetros.add( retros );
-//        }
-    }
-
-    // see http://www.jooneworld.com/docs/sampleEngine.html
-    private void backprop(PlayerHandle p)
-    {
-        PredictionSet predictions = new PredictionSet();
-        predictions.addPlayerHands(p);
-        new BackpropPredictor().trainOn( predictions );
-        System.out.println("at end of backprop");
     }
 
 

@@ -1,8 +1,7 @@
 package ao.state;
 
-import ao.holdem.model.CardSource;
 import ao.holdem.engine.DeckCardSource;
-import ao.state.HoldemState;
+import ao.holdem.model.CardSource;
 import ao.holdem.model.Hand;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
@@ -15,16 +14,38 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * pot ratio,
  *
+ * data types:
+ *      # bets/raises,
+ *      # checks,
+ *      # calls,
+ *      bet ratio,
+ *      pot ratio
+ *
+ * data context:
+ *      actual this round / max this round,
+ *      actual in prev rounds / max in prev rounds,
+ *      actual in all rounds / max in all brounds 
+ *
+ * data set:
+ *      for you,
+ *      for unfolded,
+ *      for unfolded - you,
+ *      for all,
+ *      for all - you
  */
 public class Context
 {
     //--------------------------------------------------------------------
     private HoldemState head;
     private List<Event> events = new ArrayList<Event>();
-    private CardSource cards  = new DeckCardSource();
+    private CardSource  cards  = new DeckCardSource();
 
     private boolean roundJustChanged;
+
+
+
 
 
     //--------------------------------------------------------------------
@@ -91,6 +112,14 @@ public class Context
     {
         return roundJustChanged;
     }
+    public double immediatePotOdds()
+    {
+        return ((double) head.toCall().smallBlinds()) /
+                (head.toCall().smallBlinds() +
+                    head.pot().smallBlinds());
+    }
+
+
 
 
     //--------------------------------------------------------------------
@@ -98,11 +127,16 @@ public class Context
     {
         HandHistory hist = new HandHistory();
 
+        List<PlayerState> winners = winners();
         for (PlayerState player : head().players())
         {
             PlayerHandle handle = player.handle();
-            hist.addPlayer( handle                        );
-            hist.addHole(   handle, cards.holeFor(handle) );
+            hist.addPlayer( handle );
+
+            if (winners.contains( player ))
+            {
+                hist.addHole( handle, cards.holeFor(handle) );
+            }
         }
 
         hist.setCommunity( cards.community() );
@@ -204,8 +238,8 @@ public class Context
     public Context continueFrom()
     {
         Context proto = new Context();
-        proto.head = head;
-        proto.cards        = cards.prototype();
+        proto.head    = head;
+        proto.cards   = cards.prototype();
         return proto;
     }
 

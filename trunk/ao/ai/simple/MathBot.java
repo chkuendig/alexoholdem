@@ -30,7 +30,7 @@ public class MathBot extends AbstractPlayer
         double toCall = state.remainingBetsInRound() * state.betsToCall();
         double potOdds =
                 (toCall) /
-                (toCall + env.pot());
+                (toCall + state.pot().smallBets());
 
 //        if (odds.winPercent() <= potOdds)
 //        {

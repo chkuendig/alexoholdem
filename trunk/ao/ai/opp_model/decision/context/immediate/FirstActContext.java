@@ -5,7 +5,6 @@ import ao.ai.opp_model.decision.context.ContextDomain;
 import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.data.ContextImpl;
 import ao.ai.opp_model.decision.domain.*;
-import ao.ai.opp_model.neural.def.context.GenericContext;
 
 /**
  *

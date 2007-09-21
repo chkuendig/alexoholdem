@@ -1,9 +1,10 @@
-package ao.ai.opp_model.neural.def.context;
+package ao.ai.opp_model.decision.context.immediate;
 
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
-import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
+import ao.state.HoldemState;
 
 /**
  *
@@ -36,15 +37,15 @@ public class GenericContext
 
     //--------------------------------------------------------------------
     public GenericContext(
-            Snapshot    prev,
+            HoldemState  prev,
             SimpleAction prevAct,
-            Snapshot    curr,
+            HoldemState  curr,
             SimpleAction currAct,
-            Community   community,
-            Hole hole)
+            Community    community,
+            Hole         hole)
     {
         act         = currAct;
-        round       = curr.comingRound();
+        round       = curr.round();
         isHoleAware = (hole != null);
         isHistAware = (prev != null);
 
@@ -53,7 +54,7 @@ public class GenericContext
                 (curr.toCall().smallBlinds() +
                     curr.pot().smallBlinds());
 
-        raisesThisRound = 4 - curr.remainingRaises();
+        raisesThisRound = 4 - curr.remainingBetsInRound();
         betRatio = raisesThisRound /
                    (raisesThisRound + curr.numCalls() + 0.001);
         potRatio =

@@ -1,7 +1,5 @@
 package ao.persist;
 
-import ao.ai.opp_model.neural.def.retro.HandParser;
-import ao.ai.opp_model.neural.def.retro.HoldemRetroSet;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Card;
 import ao.holdem.model.Community;
@@ -234,10 +232,10 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
-    public HoldemRetroSet casesFor(PlayerHandle p)
-    {
-        return new HandParser().casesFor(this, p);
-    }
+//    public HoldemRetroSet casesFor(PlayerHandle p)
+//    {
+//        return new HandParser().casesFor(this, p);
+//    }
 //    public PredictionContext nextToActContext()
 //    {
 //        return new HandParser().nextToActContext(
