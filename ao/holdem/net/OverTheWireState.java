@@ -74,25 +74,25 @@ public class OverTheWireState
 
 
     //--------------------------------------------------------------------
-    public Environment toEnvironment()
-    {
-        Player players[] = new Player[ playersInTable ];
-
-        // hole do i get my Hole cards?
-        // how do i get community cards?
-        // how do i get # of bets remaining?
-
-        return new Environment(null,
-                               null,
-                               players,
-                               0,
-                               0,
-                               0,
-                               0,
-                               -1,
-                               null,
-                               null);
-    }
+//    public Environment toEnvironment()
+//    {
+//        Player players[] = new Player[ playersInTable ];
+//
+//        // hole do i get my Hole cards?
+//        // how do i get community cards?
+//        // how do i get # of bets remaining?
+//
+//        return new Environment(null,
+//                               null,
+//                               players,
+//                               0,
+//                               0,
+//                               0,
+//                               0,
+//                               -1,
+//                               null,
+//                               null);
+//    }
 
 
     //--------------------------------------------------------------------

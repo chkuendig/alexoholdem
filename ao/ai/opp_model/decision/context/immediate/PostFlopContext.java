@@ -2,7 +2,7 @@ package ao.ai.opp_model.decision.context.immediate;
 
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.ContextDomain;
-import ao.ai.opp_model.neural.def.context.GenericContext;
+import ao.ai.opp_model.decision.context.immediate.GenericContext;
 
 /**
  *
