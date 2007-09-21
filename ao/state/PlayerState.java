@@ -41,7 +41,7 @@ public class PlayerState
             @NotNull Money      stakes,
             @NotNull Money      betSize)
     {
-        SimpleAction takenAction = action.toTakenAction();
+        SimpleAction takenAction = action.toSimpleAction();
         if (takenAction == SimpleAction.FOLD) return fold();
 
         boolean nextIsAllIn = action.isAllIn();

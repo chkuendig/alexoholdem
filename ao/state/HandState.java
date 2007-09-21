@@ -1,21 +1,21 @@
 package ao.state;
 
-import ao.holdem.model.BettingRound;
 import ao.holdem.engine.HoldemRuleBreach;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
+import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * immutable.
  */
-public class HoldemState
+public class HandState
 {
     //--------------------------------------------------------------------
     private static final int BETS_PER_ROUND = 4;
@@ -32,7 +32,7 @@ public class HoldemState
 
     //--------------------------------------------------------------------
     // expects blind actions
-    public HoldemState(List<PlayerHandle> clockwiseDealerLast)
+    public HandState(List<PlayerHandle> clockwiseDealerLast)
     {
         players = new PlayerState[ clockwiseDealerLast.size() ];
         for (int i = 0; i < players.length; i++)
@@ -55,16 +55,16 @@ public class HoldemState
     }
 
     // automatically posts blinds
-    public static HoldemState autoBlindInstance(
+    public static HandState autoBlindInstance(
             List<PlayerHandle> clockwiseDealerLast)
     {
-        return new HoldemState(clockwiseDealerLast)
+        return new HandState(clockwiseDealerLast)
                     .advanceBlind( RealAction.SMALL_BLIND )
                     .advanceBlind( RealAction.BIG_BLIND );
     }
 
     // copy constructor
-    private HoldemState(BettingRound copyRound,
+    private HandState(BettingRound copyRound,
                         PlayerState  copyPlayers[],
                         int          copyNextToAct,
                         int          copyRemainingRoundBets,
@@ -81,64 +81,108 @@ public class HoldemState
 
 
     //--------------------------------------------------------------------
-    public HoldemState advance(PlayerHandle player, RealAction act)
+    public HandState advance(PlayerHandle player, RealAction act)
     {
         validateNextAction(player, act);
         return act.isBlind()
                 ? advanceBlind(act)
                 : advanceVoluntary(act);
     }
-    public HoldemState advance(RealAction act)
+    public HandState advance(RealAction act)
     {
         return advance(nextToAct().handle(), act);
     }
 
-    // allow for asynchronouse folds
-    private HoldemState advanceVoluntary(RealAction act)
+
+    //--------------------------------------------------------------------
+    // TODO: allow for asynchronouse folds
+    private HandState advanceVoluntary(RealAction act)
     {
-        BettingRound nextRound = nextBettingRound(act);
+        BettingRound nextRound  = nextBettingRound(act);
+        boolean      roundEnder = (round != nextRound);
+        boolean      betRaise   =
+                        (act.toSimpleAction() == SimpleAction.RAISE);
 
-        PlayerState nextPlayers[] = players.clone();
-        nextPlayers[nextToAct] =
-                nextPlayers[nextToAct].advance(act, stakes, betSize());
+        PlayerState
+              nextPlayers[]     = nextPlayers(act);
+        int   nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
+        int   nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
+        Money nextStakes        = nextStakes(nextPlayers, betRaise);
+        int   nextRoundStaker   =
+                nextLatestRoundStaker(act, roundEnder, betRaise);
 
-        boolean isRoundEnder  = (round != nextRound);
-        int     nextNextToAct =
-                    isRoundEnder
-                    ? nextInAfter(nextPlayers, players.length - 1)
-                    : nextInAfter(nextPlayers, nextToAct);
-
-        boolean isBetRaise = (act.toTakenAction() == SimpleAction.RAISE);
-        int nextRemainingBets = isRoundEnder
-                                ? 4 // bets per round
-                                : (isBetRaise
-                                   ? remainingRoundBets - 1
-                                   : remainingRoundBets);
-
-        int nextLatestRoundStaker =
-                isRoundEnder
-                ? -1
-                : (isBetRaise
-                   ? nextToAct
-                   : (latestRoundStaker == -1 && // when all players check
-                        act.toTakenAction() != SimpleAction.FOLD)
-                      ? nextToAct
-                      : latestRoundStaker);
-
-        Money nextStakes = (isBetRaise)
-                            ? nextPlayers[nextToAct].commitment()
-                            : stakes;
-
-        return new HoldemState(nextRound,
+        return new HandState(nextRound,
                                nextPlayers,
                                nextNextToAct,
                                nextRemainingBets,
-                               nextLatestRoundStaker,
+                               nextRoundStaker,
                                nextStakes);
     }
 
+    public PlayerState[] nextPlayers(RealAction act)
+    {
+        PlayerState nextPlayers[] = players.clone();
+        nextPlayers[nextToAct] = nextPlayers[nextToAct]
+                                    .advance(act, stakes, betSize());
+        return nextPlayers;
+    }
 
-    private HoldemState advanceBlind(RealAction act)
+    private Money nextStakes(PlayerState[] nextPlayers, boolean betRaise)
+    {
+        return (betRaise)
+               ? nextPlayers[nextToAct].commitment()
+               : stakes;
+    }
+
+    private int nextNextToAct(
+            PlayerState[] nextPlayers, boolean roundEnder)
+    {
+        return roundEnder
+                ? nextInAfter(nextPlayers, players.length - 1)
+                : nextInAfter(nextPlayers, nextToAct);
+    }
+
+    private BettingRound nextBettingRound(RealAction act)
+    {
+        return nextActionCritical()
+                ? nextToActCanRaise()
+                    ? (act.toSimpleAction() == SimpleAction.RAISE)
+                        ? round
+                        : round.next()
+                    : round.next()
+                : round;
+    }
+    // it determines weather or not the next action can end the round.
+    private boolean nextActionCritical()
+    {
+        return latestRoundStaker == nextUnfoldedAfter( nextToAct );
+    }
+
+    private int nextLatestRoundStaker(
+            RealAction act, boolean roundEnder, boolean betRaise)
+    {
+        return roundEnder
+                ? -1
+                : (betRaise
+                   ? nextToAct
+                   : (latestRoundStaker == -1 && // when all players check
+                        act.toSimpleAction() != SimpleAction.FOLD)
+                      ? nextToAct
+                      : latestRoundStaker);
+    }
+
+    private int nextRemainingBets(boolean roundEnder, boolean betRaise)
+    {
+        return roundEnder
+               ? BETS_PER_ROUND
+               : (betRaise
+                   ? remainingRoundBets - 1
+                   : remainingRoundBets);
+    }
+
+
+    //--------------------------------------------------------------------
+    private HandState advanceBlind(RealAction act)
     {
         boolean isSmall = act.asSmallBlind().equals( act );
 
@@ -152,7 +196,7 @@ public class HoldemState
         nextPlayers[nextToAct]    =
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
 
-        return new HoldemState(round,
+        return new HandState(round,
                                nextPlayers,
                                index(nextToAct + 1),
                                remainingRoundBets,
@@ -162,22 +206,48 @@ public class HoldemState
 
 
     //--------------------------------------------------------------------
-    private BettingRound nextBettingRound(RealAction act)
+    public boolean atEndOfHand()
     {
-        return nextActionCritical()
-                ? nextToActCanRaise()
-                    ? (act.toTakenAction() == SimpleAction.RAISE)
-                        ? round
-                        : round.next()
-                    : round.next()
-                : round;
+        return atShowdown() ||
+               nextToActIsLastPlayerIn() && nextToActCanCheck();
+    }
+    private boolean nextToActIsLastPlayerIn()
+    {
+        return nextToAct == nextInAfter(nextToAct);
+    }
+    private boolean atShowdown()
+    {
+        return round == null;
     }
 
-    // if it determines weather or not the Round is over.
-    private boolean nextActionCritical()
+    public Money betSize()
     {
-        return latestRoundStaker == nextUnfoldedAfter( nextToAct );
+        return isSmallBet() ? Money.SMALL_BET : Money.BIG_BET;
     }
+    private boolean isSmallBet()
+    {
+        return round == BettingRound.PREFLOP ||
+               round == BettingRound.FLOP;
+    }
+
+    public RealAction toRealAction(EasyAction easyAction)
+    {
+        return easyAction.toRealAction(nextToActCanCheck(),
+                                       nextToActCanRaise());
+    }
+    private boolean nextToActCanCheck()
+    {
+        return stakes.equals( nextToAct().commitment() );
+    }
+    private boolean nextToActCanRaise()
+    {
+        return remainingRoundBets > 0;
+    }
+
+
+    //--------------------------------------------------------------------
+    // these functions are provided as convenience,
+    //  they are not actually used by state tracking.
 
     public BettingRound round()
     {
@@ -197,35 +267,8 @@ public class HoldemState
         return count;
     }
 
-
-
-    //--------------------------------------------------------------------
-    public boolean atEndOfHand()
+    public Collection<PlayerState> unfolded()
     {
-        return atShowdown() ||
-               nextToActIsLastPlayerIn() && nextToActCanCheck();
-    }
-
-    private boolean nextToActIsLastPlayerIn()
-    {
-        return nextToAct == nextInAfter(nextToAct);
-    }
-//    private boolean oneUnfoldedPlayerLeft()
-//    {
-//        return nextToAct == nextUnfoldedAtOrAfter(nextToAct + 1);
-//    }
-
-    private boolean atShowdown()
-    {
-        return round == null;
-    }
-
-
-    //--------------------------------------------------------------------
-    public Collection<PlayerState> finalists()
-    {
-        if (!atEndOfHand()) return Collections.emptyList();
-
         Collection<PlayerState> condenters = new ArrayList<PlayerState>();
 
         int firstUnfolded = nextUnfoldedAfter( nextToAct - 1 );
@@ -240,32 +283,31 @@ public class HoldemState
         return condenters;
     }
 
-    public boolean nextToActCanCheck()
+    public Money pot()
     {
-        return stakes.equals( nextToAct().commitment() );
+        Money pot = Money.ZERO;
+        for (PlayerState player : players)
+            pot = pot.plus( player.commitment() );
+        return pot;
     }
-    public int betsToCall()
+
+    public Money stakes()
     {
-        return stakes.minus( nextToAct().commitment() )
-                        .bets( isSmallBet() );
+        return stakes;
     }
-    public boolean nextToActCanRaise()
-    {
-        return remainingRoundBets > 0;
-    }
+
     public int remainingBetsInRound()
     {
         return remainingRoundBets;
     }
 
-    private Money betSize()
+    public Money toCall()
     {
-        return isSmallBet() ? Money.SMALL_BET : Money.BIG_BET;
+        return stakes.minus( nextToAct().commitment() );
     }
-    public boolean isSmallBet()
+    public int betsToCall()
     {
-        return round == BettingRound.PREFLOP ||
-               round == BettingRound.FLOP;
+        return toCall().bets( isSmallBet() );
     }
 
 
@@ -307,23 +349,10 @@ public class HoldemState
         return -1;
     }
 
-//    private PlayerState prevPlayer()
-//    {
-//        return players[ prevActive(nextToAct) ];
-//    }
     public PlayerState nextToAct()
     {
         return players[ nextToAct ];
     }
-
-//    private int indexOf(PlayerHandle handle)
-//    {
-//        for (int i = 0; i < players.length; i++)
-//        {
-//            if (players[ i ].handle().equals( handle )) return i;
-//        }
-//        return -1;
-//    }
 
 
     //--------------------------------------------------------------------
@@ -333,16 +362,13 @@ public class HoldemState
         if (atEndOfHand())
             throw new HoldemRuleBreach("the hand is already done");
 
-//        if (act.isBlind())
-//            throw new HoldemRuleBreach("blinds not supported");
-
         if (! nextToAct().handle().equals( player ))
             throw new HoldemRuleBreach(
                         "expected " + nextToAct().handle() + " not " +
                                       player);
 
         if (remainingRoundBets == 0 &&
-                act.toTakenAction() == SimpleAction.RAISE)
+                act.toSimpleAction() == SimpleAction.RAISE)
             throw new HoldemRuleBreach("round betting cap exceeded");
     }
 

@@ -4,7 +4,7 @@ import ao.holdem.model.BettingRound;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
 import ao.holdem.model.act.SimpleAction;
-import ao.state.HoldemState;
+import ao.state.HandState;
 
 /**
  *
@@ -37,9 +37,9 @@ public class GenericContext
 
     //--------------------------------------------------------------------
     public GenericContext(
-            HoldemState  prev,
+            HandState    prev,
             SimpleAction prevAct,
-            HoldemState  curr,
+            HandState    curr,
             SimpleAction currAct,
             Community    community,
             Hole         hole)
@@ -63,7 +63,7 @@ public class GenericContext
         committedThisRound =
                 (curr.latestRoundCommitment().smallBlinds() > 0);
 
-        betsToCall = curr.toCall().bets( curr.isSmallBet() );
+        betsToCall = curr.toCall().bets( curr.betSize() );
 
         numOpps = curr.opponents().size();
         numActiveOpps = curr.activeOpponents().size();
@@ -79,7 +79,7 @@ public class GenericContext
         // false warning "possible null" warning.
         lastBetsToCall =
                 isHistAware
-                ? prev.toCall().bets( curr.isSmallBet() ) : -1;
+                ? prev.toCall().bets( curr.betSize() ) : -1;
         lastAct = prevAct;
 
         currCommunity = community;

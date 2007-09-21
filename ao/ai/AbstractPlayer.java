@@ -1,7 +1,7 @@
 package ao.ai;
 
-import ao.state.HoldemState;
-import ao.state.Context;
+import ao.state.HandState;
+import ao.state.StateManager;
 import ao.holdem.model.Hole;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.EasyAction;
@@ -13,9 +13,9 @@ import ao.holdem.model.act.RealAction;
 public abstract class AbstractPlayer implements Player
 {
     //--------------------------------------------------------------------
-    public RealAction act(Context env)
+    public RealAction act(StateManager env)
     {
-        HoldemState state = env.head();
+        HandState state = env.head();
         return act(env,
                    state,
                    env.cards().holeFor(
@@ -24,7 +24,7 @@ public abstract class AbstractPlayer implements Player
     }
 
     protected abstract EasyAction act(
-            Context env, HoldemState state, Hole hole);
+            StateManager env, HandState state, Hole hole);
 
 
     //--------------------------------------------------------------------

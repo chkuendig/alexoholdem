@@ -17,6 +17,13 @@ public class CommunityMeasure
             COM_A  = 52 - 1, COM_B  = 52 - 2,
             COM_C  = 52 - 3, COM_D  = 52 - 4, COM_E  = 52 - 5;
 
+    private static final
+            CommunityMeasure instance = new CommunityMeasure();
+    public static double measure(Community of)
+    {
+        return instance.heat( of );
+    }
+
 
     //--------------------------------------------------------------------
     private Community prevCommunity;

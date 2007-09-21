@@ -74,7 +74,7 @@ public class Event extends Base
 
     public SimpleAction takenAction()
     {
-        return getAction().toTakenAction();
+        return getAction().toSimpleAction();
     }
 
 

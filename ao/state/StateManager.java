@@ -14,57 +14,34 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * pot ratio,
  *
- * data types:
- *      # bets/raises,
- *      # checks,
- *      # calls,
- *      bet ratio,
- *      pot ratio
- *
- * data context:
- *      actual this round / max this round,
- *      actual in prev rounds / max in prev rounds,
- *      actual in all rounds / max in all brounds 
- *
- * data set:
- *      for you,
- *      for unfolded,
- *      for unfolded - you,
- *      for all,
- *      for all - you
  */
-public class Context
+public class StateManager
 {
     //--------------------------------------------------------------------
-    private HoldemState head;
+    private HandState   head;
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
-
-    private boolean roundJustChanged;
-
-
-
+    private boolean     roundJustChanged;
 
 
     //--------------------------------------------------------------------
-    private Context() {}
+    private StateManager() {}
 
-    public Context(
+    public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
             CardSource         cards)
     {
         this(clockwiseDealerLast);
         this.cards = cards;
     }
-    public Context(
+    public StateManager(
             List<PlayerHandle> clockwiseDealerLast)
     {
-        head = new HoldemState(clockwiseDealerLast);
+        head = new HandState(clockwiseDealerLast);
     }
 
-    public Context(
+    public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds,
             CardSource         cards)
@@ -72,13 +49,13 @@ public class Context
         this(clockwiseDealerLast, autoPostBlinds);
         this.cards = cards;
     }
-    public Context(
+    public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds)
     {
         head = autoPostBlinds
-               ? HoldemState.autoBlindInstance(clockwiseDealerLast)
-               : new HoldemState(clockwiseDealerLast);
+               ? HandState.autoBlindInstance(clockwiseDealerLast)
+               : new HandState(clockwiseDealerLast);
     }
 
 
@@ -94,7 +71,7 @@ public class Context
     {
         Event event = new Event(nextToAct(), head().round(), act);
 
-        HoldemState nextState = head.advance(act);
+        HandState nextState = head.advance(act);
         process(act, nextState);
         head = nextState;
 
@@ -103,7 +80,7 @@ public class Context
 
 
     //--------------------------------------------------------------------
-    private void process(RealAction act, HoldemState newState)
+    private void process(RealAction act, HandState newState)
     {
         roundJustChanged = (head.round() != newState.round());
     }
@@ -118,8 +95,6 @@ public class Context
                 (head.toCall().smallBlinds() +
                     head.pot().smallBlinds());
     }
-
-
 
 
     //--------------------------------------------------------------------
@@ -180,7 +155,7 @@ public class Context
 
 
     //--------------------------------------------------------------------
-    public HoldemState head()
+    public HandState head()
     {
         return head;
     }
@@ -204,7 +179,7 @@ public class Context
     public List<PlayerState> winners()
     {
         List<PlayerState>       winners   = new ArrayList<PlayerState>();
-        Collection<PlayerState> finalists = head().finalists();
+        Collection<PlayerState> finalists = head().unfolded();
 
         if (finalists.size() == 1)
         {
@@ -235,9 +210,9 @@ public class Context
 
 
     //--------------------------------------------------------------------
-    public Context continueFrom()
+    public StateManager continueFrom()
     {
-        Context proto = new Context();
+        StateManager proto = new StateManager();
         proto.head    = head;
         proto.cards   = cards.prototype();
         return proto;

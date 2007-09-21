@@ -1,10 +1,10 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
-import ao.state.HoldemState;
+import ao.state.HandState;
 import ao.holdem.model.Hole;
 import ao.holdem.model.act.EasyAction;
-import ao.state.Context;
+import ao.state.StateManager;
 import ao.strategy.Sklansky;
 
 /**
@@ -14,7 +14,7 @@ import ao.strategy.Sklansky;
 public class DuaneBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    protected EasyAction act(Context env, HoldemState state, Hole hole)
+    protected EasyAction act(StateManager env, HandState state, Hole hole)
     {
         int group = Sklansky.groupOf( hole );
 

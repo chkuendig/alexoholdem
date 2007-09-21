@@ -2,7 +2,7 @@ package ao.holdem.engine;
 
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
-import ao.state.Context;
+import ao.state.StateManager;
 import ao.holdem.model.Player;
 
 import java.util.Map;
@@ -13,12 +13,12 @@ import java.util.Map;
 public class Dealer
 {
     //--------------------------------------------------------------------
-    private final Context start;
+    private final StateManager start;
     private final Map<PlayerHandle, Player> players;
 
 
     //--------------------------------------------------------------------
-    public Dealer(Context startFrom,
+    public Dealer(StateManager startFrom,
                       Map<PlayerHandle, Player> brains)
     {
         start   = startFrom;
@@ -27,9 +27,9 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
-    public Context playOutHand()
+    public StateManager playOutHand()
     {
-        Context state = start.continueFrom();
+        StateManager state = start.continueFrom();
         do
         {
             if (state.roundJustChanged())
