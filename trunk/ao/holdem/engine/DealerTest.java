@@ -6,7 +6,7 @@ import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.HandHistoryDao;
 import ao.persist.dao.PlayerHandleLookup;
-import ao.state.Context;
+import ao.state.StateManager;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
@@ -43,11 +43,11 @@ public class DealerTest
 
         for (int i = 0; i < 100; i++)
         {
-            Context start  = new Context(playerHandles);
+            StateManager start  = new StateManager(playerHandles);
             Dealer dealer = new Dealer(start, brains);
 
             System.out.println(i);
-            Context run  = dealer.playOutHand();
+            StateManager run  = dealer.playOutHand();
             HandHistory  hist = run.toHistory();
 //            hands.store(hist);
         }

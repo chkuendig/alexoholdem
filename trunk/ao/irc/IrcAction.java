@@ -194,7 +194,7 @@ public class IrcAction
         {
             for (RealAction act : actionSet)
             {
-                if (act.toTakenAction() == SimpleAction.FOLD)
+                if (act.toSimpleAction() == SimpleAction.FOLD)
                 {
                     return true;
                 }

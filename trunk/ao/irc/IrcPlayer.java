@@ -1,7 +1,7 @@
 package ao.irc;
 
 import ao.holdem.model.act.RealAction;
-import ao.state.Context;
+import ao.state.StateManager;
 import ao.holdem.model.Player;
 import ao.holdem.engine.HoldemRuleBreach;
 
@@ -33,7 +33,7 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public RealAction act(Context env)
+    public RealAction act(StateManager env)
     {
         if (acts.size() <= nextAction)
         {

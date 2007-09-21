@@ -1,6 +1,6 @@
 package ao.holdem.model.act;
 
-import ao.state.HoldemState;
+import ao.state.HandState;
 
 /**
  * In Holdem, there are four possible actions:
@@ -39,10 +39,9 @@ public enum EasyAction
 
 
     //--------------------------------------------------------------------
-    public RealAction toRealAction(HoldemState state)
+    public RealAction toRealAction(HandState state)
     {
-        return toRealAction(state.nextToActCanCheck(),
-                            state.nextToActCanRaise());
+        return state.toRealAction(this);
     }
     public RealAction toRealAction(
             boolean canCheck,

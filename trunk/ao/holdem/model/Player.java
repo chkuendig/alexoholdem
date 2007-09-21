@@ -1,12 +1,12 @@
 package ao.holdem.model;
 
 import ao.holdem.model.act.RealAction;
-import ao.state.Context;
+import ao.state.StateManager;
 
 /**
  *
  */
 public interface Player
 {
-    public RealAction act(Context env);
+    public RealAction act(StateManager env);
 }

@@ -5,7 +5,7 @@ import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.holdem.engine.HoldemRuleBreach;
 import ao.holdem.engine.LiteralCardSource;
-import ao.state.Context;
+import ao.state.StateManager;
 import ao.holdem.model.Player;
 import ao.holdem.engine.Dealer;
 
@@ -95,11 +95,11 @@ public class HandItr implements Iterable<HandHistory>
             cards.putHole(handle, acts.holes());
         }
 
-        Context start  = new Context(playerHandles, cards);
+        StateManager start  = new StateManager(playerHandles, cards);
         Dealer dealer = new Dealer(start, brains);
         try
         {
-            Context out    = dealer.playOutHand();
+            StateManager out    = dealer.playOutHand();
 //            System.out.println("winners: " +
 //                           Arrays.deepToString(out.winners().toArray()));
             return out.toHistory();

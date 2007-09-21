@@ -87,7 +87,7 @@ public enum RealAction
 
 
     //--------------------------------------------------------------------
-    public SimpleAction toTakenAction()
+    public SimpleAction toSimpleAction()
     {
         switch (this)
         {

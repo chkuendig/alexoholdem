@@ -4,11 +4,11 @@ import ao.ai.AbstractPlayer;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
 import ao.holdem.model.act.EasyAction;
-import ao.state.HoldemState;
+import ao.state.HandState;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
-import ao.state.Context;
+import ao.state.StateManager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 public class MathBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    protected EasyAction act(Context env, HoldemState state, Hole hole)
+    protected EasyAction act(StateManager env, HandState state, Hole hole)
     {
         Community community = env.cards().community();
 

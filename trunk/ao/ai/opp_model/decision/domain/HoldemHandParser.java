@@ -127,7 +127,7 @@ public class HoldemHandParser
 
         attrs.add(pool.fromEnum(
                 ActivePosition.fromPosition(
-                        ctx.numOpps(), ctx.activePosition())));
+                        ctx.numActiveOpps(), ctx.activePosition())));
 
         attrs.add(pool.fromEnum(
                 ActiveOpponents.fromActiveOpps(
@@ -146,19 +146,6 @@ public class HoldemHandParser
         attrs.add(pool.fromEnum(
                 Heat.fromHeat(
                         thermostat.heat(ctx.community()))));
-
-//        attrs.add(pool.fromUntyped(
-//                "Flush Possible",
-//                ctx.community().flushPossible()));
-//        attrs.add(pool.fromUntyped(
-//                "Ace On Board",
-//                ctx.community().contains(Card.Rank.ACE)));
-//        attrs.add(pool.fromUntyped(
-//                "King On Board",
-//                ctx.community().contains(Card.Rank.KING)));
-//        attrs.add(pool.fromEnum(
-//                AceQueenKing.fromCommunity(
-//                        ctx.community())));
 
         return new ContextImpl(attrs);
     }
