@@ -2,7 +2,7 @@ package ao.ai.opp_model.decision.context.immediate;
 
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.ContextDomain;
-import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.context.ActionContext;
 import ao.ai.opp_model.decision.data.ContextImpl;
 import ao.ai.opp_model.decision.domain.*;
 
@@ -11,7 +11,7 @@ import ao.ai.opp_model.decision.domain.*;
  */
 public class FirstActContext
         extends ContextImpl
-        implements HoldemContext
+        implements ActionContext
 {
     //--------------------------------------------------------------------
     public FirstActContext(AttributePool pool, GenericContext ctx)

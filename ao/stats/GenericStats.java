@@ -21,7 +21,7 @@ public class GenericStats implements CumulativeStatistic
     private HandState forefront;
     private Community currCommunity;
 
-
+            
     //--------------------------------------------------------------------
     public void init(HandState startOfHand)
     {
