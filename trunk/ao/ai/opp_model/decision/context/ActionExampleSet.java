@@ -1,7 +1,7 @@
 package ao.ai.opp_model.decision.context;
 
 import ao.ai.opp_model.decision.attr.Attribute;
-import ao.ai.opp_model.decision.data.HoldemExample;
+import ao.ai.opp_model.decision.data.ActionExample;
 import ao.holdem.model.act.SimpleAction;
 
 import java.util.ArrayList;
@@ -10,25 +10,25 @@ import java.util.List;
 /**
  *
  */
-public class HoldemExampleSet
+public class ActionExampleSet
 {
     //-------------------------------------------------------------------
-    private List<HoldemExample> firstActs;
-    private List<HoldemExample> preFlops;
-    private List<HoldemExample> postFlops;
+    private List<ActionExample> firstActs;
+    private List<ActionExample> preFlops;
+    private List<ActionExample> postFlops;
 
 
     //-------------------------------------------------------------------
-    public HoldemExampleSet()
+    public ActionExampleSet()
     {
-        firstActs = new ArrayList<HoldemExample>();
-        preFlops  = new ArrayList<HoldemExample>();
-        postFlops = new ArrayList<HoldemExample>();
+        firstActs = new ArrayList<ActionExample>();
+        preFlops  = new ArrayList<ActionExample>();
+        postFlops = new ArrayList<ActionExample>();
     }
 
 
     //-------------------------------------------------------------------
-    public void addAll(HoldemExampleSet data)
+    public void addAll(ActionExampleSet data)
     {
         firstActs.addAll( data.firstActs );
         preFlops.addAll(  data.preFlops );
@@ -37,12 +37,12 @@ public class HoldemExampleSet
 
 
     //-------------------------------------------------------------------
-    public void add(HoldemContext context,
+    public void add(ActionContext context,
                     Attribute<SimpleAction> targetAttribute)
     {
-        add(new HoldemExample(context, targetAttribute));
+        add(new ActionExample(context, targetAttribute));
     }
-    public void add(HoldemExample example)
+    public void add(ActionExample example)
     {
         switch (example.domain())
         {
@@ -54,15 +54,15 @@ public class HoldemExampleSet
 
 
     //-------------------------------------------------------------------
-    public List<HoldemExample> firstActs()
+    public List<ActionExample> firstActs()
     {
         return firstActs;
     }
-    public List<HoldemExample> preFlops()
+    public List<ActionExample> preFlops()
     {
         return preFlops;
     }
-    public List<HoldemExample> postFlops()
+    public List<ActionExample> postFlops()
     {
         return postFlops;
     }

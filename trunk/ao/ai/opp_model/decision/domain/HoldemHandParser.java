@@ -2,23 +2,21 @@ package ao.ai.opp_model.decision.domain;
 
 import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
-import ao.ai.opp_model.decision.context.HoldemContext;
-import ao.ai.opp_model.decision.context.HoldemExampleSet;
+import ao.ai.opp_model.decision.context.ActionContext;
+import ao.ai.opp_model.decision.context.ActionExampleSet;
 import ao.ai.opp_model.decision.context.immediate.FirstActContext;
+import ao.ai.opp_model.decision.context.immediate.GenericContext;
 import ao.ai.opp_model.decision.context.immediate.PostFlopContext;
 import ao.ai.opp_model.decision.context.immediate.PreFlopContext;
 import ao.ai.opp_model.decision.data.ContextImpl;
 import ao.ai.opp_model.decision.data.Example;
-import ao.ai.opp_model.decision.context.immediate.GenericContext;
-import ao.odds.CommunityMeasure;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
+import ao.odds.CommunityMeasure;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -32,14 +30,26 @@ public class HoldemHandParser
 
 
     //--------------------------------------------------------------------
-//    public HoldemContext nextToActContext(
+    public Map<PlayerHandle, ActionExampleSet>
+            examples(HandHistory inHand)
+    {
+        Map<PlayerHandle, ActionExampleSet> examples =
+                new HashMap<PlayerHandle, ActionExampleSet>();
+
+
+
+        return examples;
+    }
+
+    //--------------------------------------------------------------------
+//    public ActionContext nextToActContext(
 //            HandHistory hand, PlayerHandle player)
 //    {
 //        GenericContext ctx = parser.genericNextToActContext(hand, player);
 //        return fromGeneric(ctx);
 //    }
 
-    private HoldemContext fromGeneric(GenericContext ctx)
+    private ActionContext fromGeneric(GenericContext ctx)
     {
         if (ctx.round() == BettingRound.PREFLOP)
         {
@@ -58,12 +68,12 @@ public class HoldemHandParser
         }
     }
 
-    
+
     //--------------------------------------------------------------------
-    public HoldemExampleSet examples(
+    public ActionExampleSet examples(
             HandHistory inHand, PlayerHandle forPlayer)
     {
-        HoldemExampleSet examples = new HoldemExampleSet();
+        ActionExampleSet examples = new ActionExampleSet();
         for (GenericContext ctx :
                 parser.genericCasesFor(inHand, forPlayer))
         {

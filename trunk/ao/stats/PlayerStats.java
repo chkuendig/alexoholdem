@@ -3,6 +3,7 @@ package ao.stats;
 import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
@@ -20,9 +21,9 @@ public class PlayerStats implements CumulativeStatistic
 
 
     //--------------------------------------------------------------------
-    public PlayerStats(PlayerHandle player)
+    public PlayerStats(PlayerHandle player, Hole hole)
     {
-        stats = new SpecificStats( player, null );
+        stats = new SpecificStats( player, hole );
     }
 
 

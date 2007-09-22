@@ -8,6 +8,7 @@ import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
+import ao.stats.HandStats;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,9 +21,11 @@ public class StateManager
 {
     //--------------------------------------------------------------------
     private HandState   head;
+    private HandStats   stats;
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
     private boolean     roundJustChanged;
+//    private HandActionExamples
 
 
     //--------------------------------------------------------------------
@@ -56,6 +59,7 @@ public class StateManager
         head = autoPostBlinds
                ? HandState.autoBlindInstance(clockwiseDealerLast)
                : new HandState(clockwiseDealerLast);
+        stats = new HandStats(this);
     }
 
 
@@ -80,20 +84,20 @@ public class StateManager
 
 
     //--------------------------------------------------------------------
-    private void process(RealAction act, HandState newState)
+    private void process(RealAction act, HandState nextState)
     {
-        roundJustChanged = (head.round() != newState.round());
+        roundJustChanged = (head.round() != nextState.round());
+
+        stats.advance(head.nextToAct(),
+                      act,
+                      nextState,
+                      cards().community());
+//        stats.
     }
 
     public boolean roundJustChanged()
     {
         return roundJustChanged;
-    }
-    public double immediatePotOdds()
-    {
-        return ((double) head.toCall().smallBlinds()) /
-                (head.toCall().smallBlinds() +
-                    head.pot().smallBlinds());
     }
 
 
@@ -158,6 +162,11 @@ public class StateManager
     public HandState head()
     {
         return head;
+    }
+
+    public HandStats stats()
+    {
+        return stats;
     }
 
     public PlayerHandle nextToAct()
