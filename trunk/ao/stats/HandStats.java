@@ -1,6 +1,7 @@
 package ao.stats;
 
 import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
 import ao.state.CumulativeState;
@@ -26,9 +27,13 @@ public class HandStats implements CumulativeState
 
 
     //--------------------------------------------------------------------
-    public HandStats()
-    {
+    public HandStats() {}
 
+
+    //--------------------------------------------------------------------
+    public void reset()
+    {
+        common.reset();
     }
 
 
@@ -37,33 +42,38 @@ public class HandStats implements CumulativeState
             HandState   stateBeforeAct,
             PlayerState actor,
             RealAction  act,
-            Community   communityBeforeAct)
+            Community   communityBeforeAct,
+            Hole        hole)
     {
-        if (! stateBeforeAct.equals( prevState ))
+        if (! stateBeforeAct.handsEqual( prevState ))
         {
             for (PlayerState player : stateBeforeAct.players())
             {
                 PlayerHandle handle = player.handle();
-                if (! stats.containsKey( handle.getId() ))
+                PlayerStats  pStats = stats.get( handle.getId() );
+                if (pStats == null)
                 {
-                    stats.put( handle.getId(),
-                           new PlayerStats(handle,
-                                           communityBeforeAct.cards().holeFor(handle)));
+                    pStats = new PlayerStats(handle);
+                    stats.put(handle.getId(), pStats);
                 }
+                pStats.reset();
             }
         }
 
-        common.advance(stateBeforeAct, actor, act, communityBeforeAct);
+        common.advance(stateBeforeAct,
+                       actor, act, communityBeforeAct, hole);
         for (PlayerStats stat : stats.values())
         {
-            stat.advance(stateBeforeAct, actor, act, communityBeforeAct);
+            stat.advance(stateBeforeAct,
+                         actor, act, communityBeforeAct, hole);
         }
+        prevState = stateBeforeAct;
     }
 
 
     //--------------------------------------------------------------------
-    public Statistic forPlayer(PlayerHandle player)
+    public Statistic forPlayer(Serializable playerId)
     {
-        return new MultiStatistic(common, stats.get( player ));
+        return new MultiStatistic(common, stats.get( playerId ));
     }
 }

@@ -1,14 +1,12 @@
 package ao.stats;
 
-import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
-
-import java.util.Collection;
+import ao.ai.opp_model.decision.context.HoldemContext;
 
 /**
  *
  */
 public interface Statistic
 {
-    public Collection<Attribute<?>> stats(AttributePool pool);
+    public HoldemContext stats(AttributePool pool);
 }

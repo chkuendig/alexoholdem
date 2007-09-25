@@ -76,7 +76,7 @@ public class PlayerState
                                stakes.plus(money), handle);
     }
 
-    public boolean isIn()
+    public boolean isActive()
     {
         return !(isAllIn() || isFolded());
     }

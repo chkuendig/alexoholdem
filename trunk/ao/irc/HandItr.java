@@ -106,8 +106,11 @@ public class HandItr implements Iterable<HandHistory>
         }
         catch (HoldemRuleBreach e)
         {
-            System.out.println(e.getMessage());
-            displayHand(hand, action);
+            if (! e.getMessage().contains("round betting cap exceeded"))
+            {
+                System.out.println(e.getMessage());
+                displayHand(hand, action);
+            }
             return null;
         }
     }

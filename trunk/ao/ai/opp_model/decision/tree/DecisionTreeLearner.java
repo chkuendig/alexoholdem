@@ -1,18 +1,15 @@
 package ao.ai.opp_model.decision.tree;
 
-import ao.ai.opp_model.decision.DecisionLearner;
+import ao.ai.opp_model.decision.AbstractDecisionLearner;
 import ao.ai.opp_model.decision.attr.AttributeSet;
 import ao.ai.opp_model.decision.data.Context;
 import ao.ai.opp_model.decision.data.DataSet;
 import ao.ai.opp_model.decision.data.Histogram;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  *
  */
-public class DecisionTreeLearner<T> implements DecisionLearner<T>
+public class DecisionTreeLearner<T> extends AbstractDecisionLearner<T>
 {
     //--------------------------------------------------------------------
     private DecisionTree<T> tree;
@@ -71,43 +68,43 @@ public class DecisionTreeLearner<T> implements DecisionLearner<T>
     }
 
 
-    private void induce(
-            Collection<AttributeSet<?>> attributes,
-            DecisionTree<T>             into)
-    {
-        if (attributes.isEmpty()) return;
+//    private void induce(
+//            Collection<AttributeSet<?>> attributes,
+//            DecisionTree<T>             into)
+//    {
+//        if (attributes.isEmpty()) return;
+//
+//        AttributeSet<?> splitOn   =
+//                chooseAttribute(into.trainingData(), attributes);
+//        into.split( splitOn );
+//
+//        Collection<AttributeSet<?>> newAttribs =
+//                new ArrayList<AttributeSet<?>>(attributes);
+//        newAttribs.remove( splitOn );
+//
+//        for (DecisionTree<T> kid : into.kids())
+//        {
+//            induce(newAttribs, kid);
+//        }
+//    }
 
-        AttributeSet<?> splitOn   =
-                chooseAttribute(into.trainingData(), attributes);
-        into.split( splitOn );
-
-        Collection<AttributeSet<?>> newAttribs =
-                new ArrayList<AttributeSet<?>>(attributes);
-        newAttribs.remove( splitOn );
-
-        for (DecisionTree<T> kid : into.kids())
-        {
-            induce(newAttribs, kid);
-        }
-    }
-
-    private AttributeSet<?> chooseAttribute(
-            DataSet<T>                  ds,
-            Collection<AttributeSet<?>> attributes)
-    {
-        double          maxInfoGain          = -1;
-		AttributeSet<?> maxInfoGainAttribute = null;
-		for (AttributeSet<?> attr : attributes)
-        {
-            double messageLength = ds.informationGain(attr);
-			if (messageLength > maxInfoGain)
-            {
-				maxInfoGain          = messageLength;
-				maxInfoGainAttribute = attr;
-			}
-		}
-		return maxInfoGainAttribute;
-    }
+//    private AttributeSet<?> chooseAttribute(
+//            DataSet<T>                  ds,
+//            Collection<AttributeSet<?>> attributes)
+//    {
+//        double          maxInfoGain          = -1;
+//		AttributeSet<?> maxInfoGainAttribute = null;
+//		for (AttributeSet<?> attr : attributes)
+//        {
+//            double messageLength = ds.informationGain(attr);
+//			if (messageLength > maxInfoGain)
+//            {
+//				maxInfoGain          = messageLength;
+//				maxInfoGainAttribute = attr;
+//			}
+//		}
+//		return maxInfoGainAttribute;
+//    }
 
 
     //--------------------------------------------------------------------

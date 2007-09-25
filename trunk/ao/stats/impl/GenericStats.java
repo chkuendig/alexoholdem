@@ -1,17 +1,17 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
+import ao.ai.opp_model.decision.context.ContextBuilder;
+import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.context.ContextDomain;
 import ao.ai.opp_model.decision.domain.Heat;
 import ao.holdem.model.Community;
+import ao.holdem.model.Hole;
 import ao.holdem.model.act.RealAction;
 import ao.odds.CommunityMeasure;
 import ao.state.HandState;
 import ao.state.PlayerState;
 import ao.stats.CumulativeStatistic;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  *
@@ -24,15 +24,17 @@ public class GenericStats implements CumulativeStatistic
 
             
     //--------------------------------------------------------------------
-    public void init(HandState startOfHand)
+    public void reset()
     {
-        forefront = startOfHand;
+        forefront     = null;
+        currCommunity = null;
     }
     public void advance(
             HandState   stateBeforeAct,
             PlayerState actor,
             RealAction  act,
-            Community   communityBeforeAct)
+            Community   communityBeforeAct,
+            Hole        hole)
     {
         forefront     = stateBeforeAct;
         currCommunity = communityBeforeAct;
@@ -40,16 +42,17 @@ public class GenericStats implements CumulativeStatistic
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute<?>> stats(AttributePool pool)
+    public HoldemContext stats(AttributePool pool)
     {
-        Collection<Attribute<?>> stats = new ArrayList<Attribute<?>>();
+        ContextBuilder ctx = new ContextBuilder();
+        ctx.addDomains( ContextDomain.values() );
 
-        stats.add(pool.fromEnum( forefront.round() ));
+        ctx.add(pool.fromEnum( forefront.round() ));
 
-        stats.add(pool.fromEnum(
+        ctx.add(pool.fromEnum(
                 Heat.fromHeat(
                         CommunityMeasure.measure(currCommunity))));
 
-        return stats;
+        return ctx;
     }
 }

@@ -1,25 +1,18 @@
 package ao.ai.opp_model.decision.data;
 
 import ao.ai.opp_model.decision.attr.Attribute;
-import ao.ai.opp_model.decision.context.ActionContext;
-import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.holdem.model.act.SimpleAction;
 
 /**
  *
  */
 public class ActionExample
-        extends Example<SimpleAction>
-        implements ActionContext
+        extends HoldemExample<SimpleAction>
 {
-    public ActionExample(ActionContext context,
+    public ActionExample(HoldemContext context,
                          Attribute<SimpleAction> targetAttribute)
     {
         super(context, targetAttribute);
-    }
-
-    public ContextDomain domain()
-    {
-        return ((ActionContext) deleget()).domain();
     }
 }

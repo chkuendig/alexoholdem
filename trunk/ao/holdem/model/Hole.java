@@ -93,15 +93,19 @@ public class Hole implements Serializable
 
 
     //--------------------------------------------------------------------
+    public boolean incomplete()
+    {
+        return !bothCardsVisible();
+    }
     public boolean bothCardsVisible()
     {
         return FIRST != null && SECOND != null;
     }
 
-    public boolean aCardIsVisible()
-    {
-        return FIRST != null || SECOND != null; 
-    }
+//    public boolean aCardIsVisible()
+//    {
+//        return FIRST != null || SECOND != null;
+//    }
 
 
     //--------------------------------------------------------------------

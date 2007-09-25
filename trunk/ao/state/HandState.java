@@ -144,8 +144,8 @@ public class HandState
             PlayerState[] nextPlayers, boolean roundEnder)
     {
         return roundEnder
-                ? nextInAfter(nextPlayers, players.length - 1)
-                : nextInAfter(nextPlayers, nextToAct);
+                ? nextActiveAfter(nextPlayers, players.length - 1)
+                : nextActiveAfter(nextPlayers, nextToAct);
     }
 
     private BettingRound nextBettingRound(RealAction act)
@@ -161,7 +161,8 @@ public class HandState
     // it determines weather or not the next action can end the round.
     private boolean nextActionCritical()
     {
-        return latestRoundStaker == nextUnfoldedAfter( nextToAct );
+        return latestRoundStaker == nextStakingUnfoldedAfter( nextToAct );// ||
+                //nextToAct == nextActiveAfter( nextToAct );
     }
 
     private int nextLatestRoundStaker(
@@ -220,7 +221,7 @@ public class HandState
     }
     private boolean nextToActIsLastPlayerIn()
     {
-        return nextToAct == nextInAfter(nextToAct);
+        return nextToAct == nextActiveAfter(nextToAct);
     }
     private boolean atShowdown()
     {
@@ -270,7 +271,7 @@ public class HandState
     {
         int count = 0;
         for (PlayerState state : players)
-            if (state.isIn()) count++;
+            if (state.isActive()) count++;
         return count;
     }
 
@@ -326,16 +327,16 @@ public class HandState
                 : fromIndex % players.length;
     }
 
-    private int nextInAfter(int playerIndex)
+    private int nextActiveAfter(int playerIndex)
     {
-        return nextInAfter( players, playerIndex );
+        return nextActiveAfter( players, playerIndex );
     }
-    private int nextInAfter(PlayerState[] states, int playerIndex)
+    private int nextActiveAfter(PlayerState[] states, int playerIndex)
     {
         for (int i = 1; i <= states.length; i++)
         {
             int index = index(playerIndex + i);
-            if (states[ index ].isIn())
+            if (states[ index ].isActive())
             {
                 return index;
             }
@@ -343,6 +344,16 @@ public class HandState
         return -1;
     }
 
+    private int nextStakingUnfoldedAfter(int playerIndex)
+    {
+        int index = nextUnfoldedAfter(playerIndex);
+        while (players[ index ].isAllIn() &&
+               !players[ index ].commitment().equals( stakes ))
+        {
+            index = nextUnfoldedAfter(index);
+        }
+        return index;
+    }
     private int nextUnfoldedAfter(int playerIndex)
     {
         for (int i = 1; i <= players.length; i++)

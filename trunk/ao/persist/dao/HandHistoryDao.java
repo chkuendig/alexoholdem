@@ -2,6 +2,7 @@ package ao.persist.dao;
 
 import ao.persist.Event;
 import ao.persist.HandHistory;
+import ao.persist.PlayerHandle;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.wideplay.warp.persist.Transactional;
@@ -24,6 +25,11 @@ public class HandHistoryDao
     @Transactional
     public void store(HandHistory history)
     {
+        for (PlayerHandle player : history.getPlayers())
+        {
+            session.get().saveOrUpdate( player );
+        }
+
         history.commitHandToPlayers();
         for (Event event : history.getEvents())
         {

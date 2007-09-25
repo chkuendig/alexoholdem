@@ -3,6 +3,7 @@ package ao.state;
 import ao.holdem.engine.DeckCardSource;
 import ao.holdem.model.CardSource;
 import ao.holdem.model.Hand;
+import ao.holdem.model.Hole;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
@@ -25,7 +26,7 @@ public class StateManager
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
     private boolean     roundJustChanged;
-//    private HandActionExamples
+//    private HandExampleSet
 
 
     //--------------------------------------------------------------------
@@ -59,7 +60,7 @@ public class StateManager
         head = autoPostBlinds
                ? HandState.autoBlindInstance(clockwiseDealerLast)
                : new HandState(clockwiseDealerLast);
-        stats = new HandStats(this);
+        stats = new HandStats();
     }
 
 
@@ -201,6 +202,9 @@ public class StateManager
             short topHandRank = -1;
             for (PlayerState player : finalists)
             {
+                Hole hole = cards.holeFor(player.handle());
+                if (hole == null || hole.incomplete()) continue;
+
                 short handRank =
                     new Hand(cards.holeFor(player.handle()),
                              cards.community()).value();

@@ -5,10 +5,9 @@ import ao.persist.PlayerHandle;
 /**
  *
  */
-public class HandActionExamples
+public class HandExampleSet
 {
-    public ActionExampleSet actionExamplesFor(
-            PlayerHandle player)
+    public PlayerExampleSet examplesFor(PlayerHandle player)
     {
         return null;
     }
