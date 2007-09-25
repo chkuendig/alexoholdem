@@ -6,14 +6,20 @@ import ao.ai.opp_model.decision.data.Example;
 import ao.ai.opp_model.decision.data.Histogram;
 import ao.ai.opp_model.decision.domain.HoldemHandParser;
 import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
+import ao.holdem.engine.Dealer;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleAccess;
+import ao.state.StateManager;
+import ao.stats.HandStats;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -28,8 +34,8 @@ public class OppModelTest
     @Transactional
     public void testOpponentModeling()
     {
-//        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "sagerbot"));
+        retrieveMostPrevalent();
+//        modelOpponet(playerAccess.find("irc", "sagerbot"));
     }
 
 
@@ -49,22 +55,32 @@ public class OppModelTest
     }
     private void doDecisionModelOpponet(PlayerHandle p)
     {
-        HoldemHandParser decisionSetup = new HoldemHandParser();
-
-        DataSet<SimpleAction> trainingSet   = new DataSet<SimpleAction>();
-        DataSet<SimpleAction> validationSet = new DataSet<SimpleAction>();
+        HoldemHandParser decisionSetup   = new HoldemHandParser();
+        HandStats        trainingStats   = new HandStats();
+        HandStats        validationStats = new HandStats();
 
         int i = 0;
         for (HandHistory hand : p.getHands())
         {
-            List<Example<SimpleAction>> handExamples =
-                    decisionSetup.postflopExamples(hand, p);
+            System.out.println(i);
 
-            if (i++ < 2000) {
-                trainingSet.addAll( handExamples );
-            } else {
-                validationSet.addAll( handExamples );
+            HandStats stats = (i++ < 300)
+                              ? trainingStats
+                              : validationStats;
+
+            List<PlayerHandle> playerHandles =
+                    new ArrayList<PlayerHandle>();
+            playerHandles.addAll( hand.getPlayers() );
+
+            StateManager start = new StateManager(playerHandles);
+            Map<PlayerHandle, ModelPlayer> brains =
+                    new HashMap<PlayerHandle, ModelPlayer>();
+            for (PlayerHandle player : playerHandles)
+            {
+                brains.put(player, new ModelPlayer(hand, stats));
             }
+
+            new Dealer(start, brains).playOutHand();
         }
 
         System.out.println("building model");

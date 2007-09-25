@@ -1,4 +1,4 @@
-package ao.stats;
+package ao.stats.impl;
 
 /**
  * 

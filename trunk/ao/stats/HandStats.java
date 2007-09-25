@@ -6,7 +6,8 @@ import ao.persist.PlayerHandle;
 import ao.state.CumulativeState;
 import ao.state.HandState;
 import ao.state.PlayerState;
-import ao.state.StateManager;
+import ao.stats.impl.GenericStats;
+import ao.stats.impl.MultiStatistic;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -21,43 +22,41 @@ public class HandStats implements CumulativeState
     private Map<Serializable, PlayerStats> stats =
                     new HashMap<Serializable, PlayerStats>();
     private GenericStats common = new GenericStats();
+    private HandState    prevState;
 
 
     //--------------------------------------------------------------------
-    public HandStats(StateManager state)
+    public HandStats()
     {
-        for (PlayerState player : state.head().players())
-        {
-            PlayerHandle handle = player.handle();
-            stats.put( handle.getId(),
-                       new PlayerStats(handle,
-                                       state.cards().holeFor(handle)));
-        }
-        init( state.head() );
+
     }
 
 
     //--------------------------------------------------------------------
-    public void init(HandState startOfHand)
+    public void advance(
+            HandState   stateBeforeAct,
+            PlayerState actor,
+            RealAction  act,
+            Community   communityBeforeAct)
     {
-        common.init( startOfHand );
-        for (PlayerStats stat : stats.values())
+        if (! stateBeforeAct.equals( prevState ))
         {
-            stat.init( startOfHand );
+            for (PlayerState player : stateBeforeAct.players())
+            {
+                PlayerHandle handle = player.handle();
+                if (! stats.containsKey( handle.getId() ))
+                {
+                    stats.put( handle.getId(),
+                           new PlayerStats(handle,
+                                           communityBeforeAct.cards().holeFor(handle)));
+                }
+            }
         }
-    }
 
-
-    //--------------------------------------------------------------------
-    public void advance(PlayerState actor,
-                        RealAction  act,
-                        HandState   afterAct,
-                        Community   community)
-    {
-        common.advance( actor, act, afterAct, community);
+        common.advance(stateBeforeAct, actor, act, communityBeforeAct);
         for (PlayerStats stat : stats.values())
         {
-            stat.advance( actor, act, afterAct, community);
+            stat.advance(stateBeforeAct, actor, act, communityBeforeAct);
         }
     }
 
@@ -65,6 +64,6 @@ public class HandStats implements CumulativeState
     //--------------------------------------------------------------------
     public Statistic forPlayer(PlayerHandle player)
     {
-        return stats.get( player );
+        return new MultiStatistic(common, stats.get( player ));
     }
 }

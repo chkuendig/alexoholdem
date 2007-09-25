@@ -13,13 +13,13 @@ import java.util.Map;
 public class Dealer
 {
     //--------------------------------------------------------------------
-    private final StateManager start;
-    private final Map<PlayerHandle, Player> players;
+    private final StateManager                        start;
+    private final Map<PlayerHandle, ? extends Player> players;
 
 
     //--------------------------------------------------------------------
     public Dealer(StateManager startFrom,
-                      Map<PlayerHandle, Player> brains)
+                      Map<PlayerHandle, ? extends Player> brains)
     {
         start   = startFrom;
         players = brains;

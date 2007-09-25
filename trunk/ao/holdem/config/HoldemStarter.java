@@ -1,6 +1,6 @@
 package ao.holdem.config;
 
-import ao.irc.IrcRunner;
+import ao.ai.opp_model.OppModelTest;
 import ao.persist.dao.PlayerHandleAccess;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -35,11 +35,10 @@ public class HoldemStarter
 //        injector.getInstance(DecisionTest.class).testDecisionTree();
 //        injector.getInstance(
 //                PredictPersistTest.class).testPredictionPersistance();
-//        injector.getInstance(OppModelTest.class).testOpponentModeling();
-//        injector.getInstance(HistoryTest.class).historyTest();
-        injector.getInstance(IrcRunner.class).run(
-//                "C:\\alex\\data\\limit_holdem\\holdem\\199509");
-                "C:\\alex\\data\\irc_poker\\holdem2\\200010");
+        injector.getInstance(OppModelTest.class).testOpponentModeling();
+//        injector.getInstance(IrcRunner.class).run(
+////                "C:\\alex\\data\\limit_holdem\\holdem\\199509");
+//                "C:\\alex\\data\\irc_poker\\holdem2\\200010");
 //        injector.getInstance(IrcRunner.class).run(
 //                "C:\\alex\\data\\limit_holdem\\hand_test");
     }

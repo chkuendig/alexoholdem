@@ -1,4 +1,4 @@
-package ao.stats;
+package ao.stats.impl;
 
 import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
@@ -8,6 +8,7 @@ import ao.holdem.model.act.RealAction;
 import ao.odds.CommunityMeasure;
 import ao.state.HandState;
 import ao.state.PlayerState;
+import ao.stats.CumulativeStatistic;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,13 +29,13 @@ public class GenericStats implements CumulativeStatistic
         forefront = startOfHand;
     }
     public void advance(
+            HandState   stateBeforeAct,
             PlayerState actor,
             RealAction  act,
-            HandState   afterAct,
-            Community   community)
+            Community   communityBeforeAct)
     {
-        forefront     = afterAct;
-        currCommunity = community;
+        forefront     = stateBeforeAct;
+        currCommunity = communityBeforeAct;
     }
 
 

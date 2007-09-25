@@ -1,4 +1,4 @@
-package ao.stats;
+package ao.stats.impl;
 
 import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
@@ -12,6 +12,7 @@ import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.state.PlayerState;
+import ao.stats.CumulativeStatistic;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,21 +50,21 @@ public class SpecificStats implements CumulativeStatistic
 
 
     //--------------------------------------------------------------------
-    public void init(HandState startOfHand)
-    {
-//        advanceState(startOfHand);
-    }
+//    public void init(HandState startOfHand)
+//    {
+////        advanceState(startOfHand);
+//    }
 
 
     //--------------------------------------------------------------------
     public void advance(
+            HandState   stateBeforeAct,
             PlayerState actor,
             RealAction  act,
-            HandState   afterAct,
-            Community   community)
+            Community   communityBeforeAct)
     {
         advanceAct(actor, act);
-        advanceState(afterAct);
+        advanceState(stateBeforeAct);
     }
 
 
