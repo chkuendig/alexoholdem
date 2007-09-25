@@ -8,6 +8,7 @@ import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.state.PlayerState;
+import ao.stats.impl.SpecificStats;
 
 import java.util.Collection;
 
@@ -33,14 +34,19 @@ public class PlayerStats implements CumulativeStatistic
         stats.init(startOfHand);
     }
 
-    public void advance(PlayerState actor,
-                        RealAction  act,
-                        HandState   afterAct,
-                        Community   community)
+
+    //--------------------------------------------------------------------
+    public void advance(
+            HandState   stateBeforeAct,
+            PlayerState actor,
+            RealAction  act,
+            Community   communityBeforeAct)
     {
-        stats.advance(actor, act, afterAct, community);
+        stats.advance(stateBeforeAct, actor, act, communityBeforeAct);
     }
 
+
+    //--------------------------------------------------------------------
     public Collection<Attribute<?>> stats(AttributePool pool)
     {
         return stats.stats( pool );

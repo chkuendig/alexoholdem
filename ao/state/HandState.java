@@ -18,7 +18,8 @@ import java.util.List;
 public class HandState
 {
     //--------------------------------------------------------------------
-    private static final int BETS_PER_ROUND = 4;
+    private static final    int BETS_PER_ROUND = 4;
+    private static volatile int nextHandId = 0;
 
 
     //--------------------------------------------------------------------
@@ -28,6 +29,7 @@ public class HandState
     private final int          remainingRoundBets;
     private final int          latestRoundStaker;
     private final Money        stakes;
+    private final int          handId;
 
 
     //--------------------------------------------------------------------
@@ -45,6 +47,7 @@ public class HandState
         remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker  = -1;
         stakes             = Money.ZERO;
+        handId             = nextHandId++;
     }
     private PlayerState addInitPlayerState(
             List<PlayerHandle> clockwiseDealerLast,
@@ -69,7 +72,8 @@ public class HandState
                         int          copyNextToAct,
                         int          copyRemainingRoundBets,
                         int          copyLatestRoundStaker,
-                        Money        copyStakes)
+                        Money        copyStakes,
+                        int          copyHandId)
     {
         round              = copyRound;
         players            = copyPlayers;
@@ -77,6 +81,7 @@ public class HandState
         remainingRoundBets = copyRemainingRoundBets;
         latestRoundStaker  = copyLatestRoundStaker;
         stakes             = copyStakes;
+        handId             = copyHandId;
     }
 
 
@@ -112,11 +117,12 @@ public class HandState
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
         return new HandState(nextRound,
-                               nextPlayers,
-                               nextNextToAct,
-                               nextRemainingBets,
-                               nextRoundStaker,
-                               nextStakes);
+                             nextPlayers,
+                             nextNextToAct,
+                             nextRemainingBets,
+                             nextRoundStaker,
+                             nextStakes,
+                             nextHandId);
     }
 
     public PlayerState[] nextPlayers(RealAction act)
@@ -197,11 +203,12 @@ public class HandState
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
 
         return new HandState(round,
-                               nextPlayers,
-                               index(nextToAct + 1),
-                               remainingRoundBets,
-                               latestRoundStaker,
-                               betSize);
+                             nextPlayers,
+                             index(nextToAct + 1),
+                             remainingRoundBets,
+                             latestRoundStaker,
+                             betSize,
+                             nextHandId);
     }
 
 
@@ -377,5 +384,11 @@ public class HandState
     public String toString()
     {
         return nextToAct() + ", " + round;
+    }
+
+    public boolean handsEqual(HandState with)
+    {
+        return with != null &&
+               handId == with.handId;
     }
 }

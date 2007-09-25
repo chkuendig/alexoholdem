@@ -88,10 +88,9 @@ public class StateManager
     {
         roundJustChanged = (head.round() != nextState.round());
 
-        stats.advance(head.nextToAct(),
-                      act,
-                      nextState,
-                      cards().community());
+//        stats.advance(nextState, head.nextToAct(),
+//                      act,
+//                      cards().community());
 //        stats.
     }
 
