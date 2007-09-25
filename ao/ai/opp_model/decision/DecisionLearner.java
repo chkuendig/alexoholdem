@@ -1,5 +1,6 @@
 package ao.ai.opp_model.decision;
 
+import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.data.DataSet;
 
 /**
@@ -8,5 +9,7 @@ import ao.ai.opp_model.decision.data.DataSet;
 public interface DecisionLearner<T>
         extends Predictor<T>
 {
-    void train(DataSet<T> ds);
+    public AttributePool pool();
+
+    public void train(DataSet<T> ds);
 }

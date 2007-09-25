@@ -1,11 +1,9 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.attr.Attribute;
 import ao.ai.opp_model.decision.attr.AttributePool;
+import ao.ai.opp_model.decision.context.ContextBuilder;
+import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.stats.Statistic;
-
-import java.util.Collection;
-import java.util.ArrayList;
 
 /**
  *
@@ -24,16 +22,18 @@ public class MultiStatistic implements Statistic
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute<?>> stats(AttributePool pool)
+    public HoldemContext stats(AttributePool pool)
     {
-        Collection<Attribute<?>> attributes =
-                new ArrayList<Attribute<?>>();
+        ContextBuilder ctx = null;
 
         for (Statistic stat : delegets)
         {
-            attributes.addAll( stat.stats(pool) );
+            HoldemContext statCtx = stat.stats(pool);
+            ctx = (ctx == null)
+                    ? new ContextBuilder( statCtx )
+                    : ctx.merge(          statCtx );
         }
 
-        return attributes;
+        return ctx;
     }
 }

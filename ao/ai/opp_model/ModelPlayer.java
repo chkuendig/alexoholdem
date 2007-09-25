@@ -1,10 +1,13 @@
 package ao.ai.opp_model;
 
+import ao.ai.opp_model.decision.attr.AttributePool;
+import ao.ai.opp_model.decision.context.PlayerExampleSet;
+import ao.ai.opp_model.decision.data.ActionExample;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
-import ao.state.CumulativeState;
+import ao.persist.PlayerHandle;
 import ao.state.StateManager;
 
 import java.io.Serializable;
@@ -17,49 +20,43 @@ public class ModelPlayer implements Player
 {
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
-    private HandHistory            hist;
-    private CumulativeState        modelDeleget;
+    private PlayerExampleSet examples;
     private Serializable           playerId;
+    private AttributePool          pool;
 
 
     //--------------------------------------------------------------------
-    public ModelPlayer(HandHistory history, CumulativeState model)
+    public ModelPlayer(HandHistory      history,
+                       PlayerExampleSet addTo,
+                       PlayerHandle     player,
+                       AttributePool    attributePool)
     {
-        hist         = history;
-        acts         = new LinkedList<RealAction>();
-        modelDeleget = model;
+        acts     = new LinkedList<RealAction>();
+        playerId = player.getId();
+        examples = addTo;
+        pool     = attributePool;
+
+        for (Event event : history.getEvents( player ))
+        {
+            acts.add( event.getAction() );
+        }
     }
 
 
     //--------------------------------------------------------------------
     public RealAction act(StateManager env)
     {
-        if   (initNeeded()) init(env);
-        else                checkPlayer(env);
+        checkPlayer(env);
 
         RealAction act = nextAction();
-        modelDeleget.advance(env.head(),
-                             env.head().nextToAct(),
-                             act,
-                             env.cards().community());
+        examples.add(new ActionExample(
+                            env.stats().forPlayer(playerId).stats(pool),
+                            pool.fromEnum(act.toSimpleAction())));
         return act;
     }
 
 
     //--------------------------------------------------------------------
-    private boolean initNeeded()
-    {
-        return hist == null;
-    }
-    private void init(StateManager env)
-    {
-        for (Event event : hist.getEvents( env.nextToAct() ))
-        {
-            acts.add( event.getAction() );
-        }
-        hist     = null;
-        playerId = env.nextToAct().getId();
-    }
     private void checkPlayer(StateManager env)
     {
         assert playerId.equals( env.nextToAct().getId() );

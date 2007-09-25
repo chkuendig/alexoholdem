@@ -1,6 +1,6 @@
 package ao.ai.opp_model.decision.graph;
 
-import ao.ai.opp_model.decision.DecisionLearner;
+import ao.ai.opp_model.decision.AbstractDecisionLearner;
 import ao.ai.opp_model.decision.attr.AttributeSet;
 import ao.ai.opp_model.decision.data.Context;
 import ao.ai.opp_model.decision.data.DataSet;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  */
 public class DecisionGraphLearner<T>
-        implements DecisionLearner<T>
+        extends AbstractDecisionLearner<T>
 {
     //--------------------------------------------------------------------
     private DecisionGraph<T> graph;

@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- *
+ * One per decision tree.
  */
 public class AttributePool
 {

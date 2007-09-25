@@ -1,12 +1,13 @@
 package ao.holdem.engine;
 
+import ao.holdem.model.BettingRound;
+import ao.holdem.model.CardSource;
 import ao.holdem.model.Community;
 import ao.holdem.model.Hole;
 import ao.persist.PlayerHandle;
-import ao.holdem.model.CardSource;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -46,6 +47,10 @@ public class LiteralCardSource implements CardSource
     public Community community()
     {
         return community;
+    }
+    public Community community(BettingRound asOf)
+    {
+        return community.asOf( asOf );
     }
 
 
