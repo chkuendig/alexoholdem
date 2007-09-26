@@ -22,11 +22,11 @@ public class StateManager
 {
     //--------------------------------------------------------------------
     private HandState   head;
-    private HandStats   stats;
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
+    private HandStats   stats  = new HandStats();
     private boolean     roundJustChanged;
-//    private HandExampleSet
+
 
 
     //--------------------------------------------------------------------
@@ -43,6 +43,7 @@ public class StateManager
             List<PlayerHandle> clockwiseDealerLast)
     {
         head = new HandState(clockwiseDealerLast);
+        init();
     }
 
     public StateManager(
@@ -60,7 +61,12 @@ public class StateManager
         head = autoPostBlinds
                ? HandState.autoBlindInstance(clockwiseDealerLast)
                : new HandState(clockwiseDealerLast);
-        stats = new HandStats();
+        init();
+    }
+
+    private void init()
+    {
+        stats.advance(head);
     }
 
 
@@ -82,17 +88,32 @@ public class StateManager
 
         events.add( event );
     }
+    public void advanceQuitter(PlayerHandle quitter)
+    {
+        if (quitter.equals( nextToAct() ))
+        {
+            advance( RealAction.QUIT );
+        }
+        else
+        {
+            Event event =
+                    new Event(quitter, head().round(), RealAction.QUIT);
+
+            HandState nextState = head.advanceQuitter(quitter, events);
+            process(RealAction.QUIT, nextState);
+            head = nextState;
+
+            events.add( event );
+        }
+    }
 
 
     //--------------------------------------------------------------------
     private void process(RealAction act, HandState nextState)
     {
+        stats.advance(act, cards.community());
         roundJustChanged = (head.round() != nextState.round());
-
-//        stats.advance(nextState, head.nextToAct(),
-//                      act,
-//                      cards().community());
-//        stats.
+        stats.advance(nextState);
     }
 
     public boolean roundJustChanged()
@@ -224,9 +245,11 @@ public class StateManager
     //--------------------------------------------------------------------
     public StateManager continueFrom()
     {
-        StateManager proto = new StateManager();
-        proto.head    = head;
-        proto.cards   = cards.prototype();
+        StateManager proto     = new StateManager();
+        proto.head             = head;
+        proto.cards            = cards.prototype();
+        proto.stats            = stats.prototype();
+        proto.roundJustChanged = roundJustChanged;
         return proto;
     }
 

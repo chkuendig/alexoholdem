@@ -1,9 +1,10 @@
 package ao.holdem.engine;
 
+import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
+import ao.state.PlayerState;
 import ao.state.StateManager;
-import ao.holdem.model.Player;
 
 import java.util.Map;
 
@@ -41,10 +42,12 @@ public class Dealer
                     case RIVER: state.cards().river(); break;
                 }
             }
-            
+
+//            handleQuitters(state);
             PlayerHandle player = state.nextToAct();
             RealAction   act    = players.get( player ).act( state );
 
+            handleQuitters(state);
             state.advance( act );
         }
         while ( !state.winnersKnown() );
@@ -52,6 +55,17 @@ public class Dealer
         if (state.winners().isEmpty())
             throw new HoldemRuleBreach("winnerless hand");
         return state;
+    }
+
+    private void handleQuitters(StateManager state)
+    {
+        for (PlayerState pState : state.head().unfolded())
+        {
+            if (players.get( pState.handle() ).shiftQuitAction())
+            {
+                state.advanceQuitter( pState.handle() );
+            }
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
+import ao.persist.Event;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +39,7 @@ public class HandState
 {
     //--------------------------------------------------------------------
     private static final    int BETS_PER_ROUND = 4;
-    private static volatile int nextHandId     = 0;
+//    private static volatile int nextHandId     = 0;
 
 
     //--------------------------------------------------------------------
@@ -48,7 +49,7 @@ public class HandState
     private final int          remainingRoundBets;
     private final int          latestRoundStaker;
     private final Money        stakes;
-    private final int          handId;
+//    private final int          handId;
     private final HandState    startOfRound;
 
 
@@ -67,7 +68,7 @@ public class HandState
         remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker  = -1;
         stakes             = Money.ZERO;
-        handId             = nextHandId++;
+//        handId             = nextHandId++;
         startOfRound       = this;
     }
     private PlayerState addInitPlayerState(
@@ -75,7 +76,8 @@ public class HandState
             int                playerIndex)
     {
         PlayerHandle player = clockwiseDealerLast.get( playerIndex );
-        return new PlayerState(false, false, true, Money.ZERO, player);
+        return new PlayerState(
+                    false, false, /*true,*/ Money.ZERO, player);
     }
 
     // automatically posts blinds
@@ -94,7 +96,7 @@ public class HandState
                         int          copyRemainingRoundBets,
                         int          copyLatestRoundStaker,
                         Money        copyStakes,
-                        int          copyHandId,
+//                        int          copyHandId,
                         HandState    copyStartOfRound)
     {
         round              = copyRound;
@@ -103,7 +105,7 @@ public class HandState
         remainingRoundBets = copyRemainingRoundBets;
         latestRoundStaker  = copyLatestRoundStaker;
         stakes             = copyStakes;
-        handId             = copyHandId;
+//        handId             = copyHandId;
         startOfRound       = (copyStartOfRound == null)
                               ? this : copyStartOfRound;
     }
@@ -124,13 +126,11 @@ public class HandState
 
 
     //--------------------------------------------------------------------
-    // TODO: allow for asynchronouse folds
     private HandState advanceVoluntary(RealAction act)
     {
         BettingRound nextRound  = nextBettingRound(act);
         boolean      roundEnder = (round != nextRound);
-        boolean      betRaise   =
-                        (act.toSimpleAction() == SimpleAction.RAISE);
+        boolean      betRaise   = act.isBetRaise();
 
         PlayerState
               nextPlayers[]     = nextPlayers(act);
@@ -146,7 +146,7 @@ public class HandState
                              nextRemainingBets,
                              nextRoundStaker,
                              nextStakes,
-                             nextHandId,
+//                             nextHandId,
                              roundEnder ? null : startOfRound);
     }
 
@@ -216,7 +216,7 @@ public class HandState
     //--------------------------------------------------------------------
     private HandState advanceBlind(RealAction act)
     {
-        boolean isSmall = act.asSmallBlind().equals( act );
+        boolean isSmall = act.isSmallBlind();
 
         if ( isSmall && !stakes.equals( Money.ZERO ))
             throw new HoldemRuleBreach("Small Blind already in.");
@@ -230,8 +230,8 @@ public class HandState
 
         int nextNextToAct   = nextActiveAfter(nextPlayers, nextToAct);
         int nextRoundStaker =
-                !isSmall && act.isAllIn()
-                 ? nextToAct : latestRoundStaker;
+                act == RealAction.BIG_BLIND_ALL_IN
+                ? nextToAct : latestRoundStaker;
         
         return new HandState(round,
                              nextPlayers,
@@ -239,8 +239,62 @@ public class HandState
                              remainingRoundBets,
                              nextRoundStaker,
                              betSize,
-                             nextHandId,
+//                             nextHandId,
                              startOfRound);
+    }
+
+
+    //--------------------------------------------------------------------
+    // assert ! quitter.equals( nextToAct().handle() )
+    public HandState advanceQuitter(
+            PlayerHandle quitter, List<Event> events)
+    {
+        int index = indexOf(quitter);
+
+        PlayerState nextPlayers[] = players.clone();
+        nextPlayers[ index ] = nextPlayers[ index ].fold();
+
+        int perlimStaker   = roundStakerAfterQuit(index, false, events);
+        boolean roundEnder =
+                perlimStaker == nextStakingUnfoldedAfter( nextToAct );
+
+        int nextRoundStaker =
+                roundEnder
+                ? -1 : perlimStaker;
+
+        BettingRound nextRound = roundEnder ? round.next() : round;
+        int nextNextToAct =
+                roundEnder
+                ? nextActiveAfter(nextPlayers, players.length - 1)
+                : nextActiveAfter(nextPlayers, index(nextToAct - 1));
+        
+        return new HandState(nextRound,
+                             nextPlayers,
+                             nextNextToAct,
+                             nextRemainingBets(roundEnder, false),
+                             nextRoundStaker,
+                             stakes,
+                             roundEnder ? null : startOfRound);
+    }
+
+    private int roundStakerAfterQuit(
+            int index, boolean roundEnder, List<Event> events)
+    {
+        if (roundEnder)                 return -1;
+        if (latestRoundStaker != index) return latestRoundStaker;
+
+        for (int i = events.size() - 1; i < events.size(); i++)
+        {
+            Event      e   = events.get(i);
+            RealAction act = e.getAction();
+            if (e.getRound() != round) break;
+            if (act.isBetRaise() ||
+                    act == RealAction.BIG_BLIND_ALL_IN)
+            {
+                return indexOf( e.getPlayer() );
+            }
+        }
+        return -1;
     }
 
 
@@ -249,7 +303,8 @@ public class HandState
     {
         return atShowdown()    ||
                nextToAct == -1 ||
-               nextToActIsLastActivePlayer() && nextToActCanCheck();
+               nextToActIsLastActivePlayer() && nextToActCanCheck() ||
+               nextToAct == nextUnfoldedAfter(nextToAct);
     }
     private boolean nextToActIsLastActivePlayer()
     {
@@ -358,6 +413,14 @@ public class HandState
                 ? fromIndex + players.length
                 : fromIndex % players.length;
     }
+    private int indexOf(PlayerHandle player)
+    {
+        for (int i = 0; i < players.length; i++)
+        {
+            if (players[ i ].handle().equals( player )) return i;
+        }
+        return -1;
+    }
 
     private int nextActiveAfter(int playerIndex)
     {
@@ -430,9 +493,9 @@ public class HandState
         return nextToAct() + ", " + round;
     }
 
-    public boolean handsEqual(HandState with)
-    {
-        return with != null &&
-               handId == with.handId;
-    }
+//    public boolean handsEqual(HandState with)
+//    {
+//        return with != null &&
+//               handId == with.handId;
+//    }
 }

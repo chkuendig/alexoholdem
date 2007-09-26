@@ -32,8 +32,9 @@ public class OppModelTest
     @Transactional
     public void testOpponentModeling()
     {
-        retrieveMostPrevalent();
-//        modelOpponet(playerAccess.find("irc", "sagerbot"));
+//        retrieveMostPrevalent();
+        modelOpponet(playerAccess.find("irc", "elraiso"));
+//        modelOpponet(playerAccess.find("irc", "perfecto"));
     }
 
 
@@ -56,7 +57,6 @@ public class OppModelTest
         DecisionLearner<SimpleAction> learner =
                 new DecisionTreeLearner<SimpleAction>();
 
-//        HoldemHandParser decisionSetup   = new HoldemHandParser();
         PlayerExampleSet trainingStats   = new PlayerExampleSet();
         PlayerExampleSet validationStats = new PlayerExampleSet();
 

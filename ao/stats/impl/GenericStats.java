@@ -2,41 +2,43 @@ package ao.stats.impl;
 
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.ContextBuilder;
-import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.domain.Heat;
 import ao.holdem.model.Community;
-import ao.holdem.model.Hole;
 import ao.holdem.model.act.RealAction;
 import ao.odds.CommunityMeasure;
 import ao.state.HandState;
-import ao.state.PlayerState;
 import ao.stats.CumulativeStatistic;
 
 /**
  *
  */
-public class GenericStats implements CumulativeStatistic
+public class GenericStats implements CumulativeStatistic<GenericStats>
 {
     //--------------------------------------------------------------------
     private HandState forefront;
     private Community currCommunity;
 
-            
+
     //--------------------------------------------------------------------
-    public void reset()
+    public GenericStats() {}
+
+    private GenericStats(HandState copyForefront,
+                         Community copyCurrCommunity)
     {
-        forefront     = null;
-        currCommunity = null;
+        forefront     = copyForefront;
+        currCommunity = copyCurrCommunity;
     }
-    public void advance(
-            HandState   stateBeforeAct,
-            PlayerState actor,
-            RealAction  act,
-            Community   communityBeforeAct,
-            Hole        hole)
+
+
+    //--------------------------------------------------------------------
+    public void advance(HandState stateBeforeAct)
     {
-        forefront     = stateBeforeAct;
+        forefront = stateBeforeAct;
+    }
+    public void advance(RealAction act, Community communityBeforeAct)
+    {
         currCommunity = communityBeforeAct;
     }
 
@@ -54,5 +56,12 @@ public class GenericStats implements CumulativeStatistic
                         CommunityMeasure.measure(currCommunity))));
 
         return ctx;
+    }
+
+
+    //--------------------------------------------------------------------
+    public GenericStats prototype()
+    {
+        return new GenericStats(forefront, currCommunity);
     }
 }

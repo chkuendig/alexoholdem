@@ -1,13 +1,14 @@
 package ao.irc;
 
+import ao.holdem.engine.Dealer;
+import ao.holdem.engine.HoldemRuleBreach;
+import ao.holdem.engine.LiteralCardSource;
+import ao.holdem.model.Player;
+import ao.holdem.model.act.RealAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleLookup;
-import ao.holdem.engine.HoldemRuleBreach;
-import ao.holdem.engine.LiteralCardSource;
 import ao.state.StateManager;
-import ao.holdem.model.Player;
-import ao.holdem.engine.Dealer;
 
 import java.util.*;
 
@@ -59,7 +60,7 @@ public class HandItr implements Iterable<HandHistory>
         nextHistory = null;
         while (nextHandIndex < hands.size())
         {
-            System.out.println("nextHandIndex " + nextHandIndex);
+//            System.out.println("nextHandIndex " + nextHandIndex);
             nextHistory = computeHistory(hands.get( nextHandIndex++ ));
             if (nextHistory != null) break;
         }
@@ -73,6 +74,8 @@ public class HandItr implements Iterable<HandHistory>
         List<IrcAction> action = handAction(names, hand.timestamp());
         if (action == null) return null;
         assert roster.size() == action.size();
+        if (! hasQuitters(action)) return null;
+        System.out.println("nextHandIndex " + (nextHandIndex-1));
 
         sortByPosition(names, action);
         sizeUpBlinds(action);
@@ -124,6 +127,17 @@ public class HandItr implements Iterable<HandHistory>
         {
             System.out.println(act);
         }
+    }
+
+    private boolean hasQuitters(List<IrcAction> actions)
+    {
+        for (IrcAction acts : actions)
+        {
+            int quitIndex = Arrays.asList( acts.preFlop() )
+                                .indexOf( RealAction.QUIT );
+            if (quitIndex != -1) return true;
+        }
+        return false;
     }
 
 

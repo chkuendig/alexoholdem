@@ -3,49 +3,53 @@ package ao.stats;
 import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.holdem.model.Community;
-import ao.holdem.model.Hole;
 import ao.holdem.model.act.RealAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
-import ao.state.PlayerState;
 import ao.stats.impl.SpecificStats;
 
 /**
  *
  */
-public class PlayerStats implements CumulativeStatistic
+public class PlayerStats implements CumulativeStatistic<PlayerStats>
 {
     //--------------------------------------------------------------------
+    private PlayerHandle  subject;
     private SpecificStats stats;
+    private boolean       captureNext;
 
 
     //--------------------------------------------------------------------
     public PlayerStats(PlayerHandle player)
     {
-        stats = new SpecificStats( player );
+        stats   = new SpecificStats();
+        subject = player;
+    }
+    private PlayerStats(PlayerHandle  copySubject,
+                        SpecificStats copyStats,
+                        boolean       copyCaptureNext)
+    {
+        subject     = copySubject;
+        stats       = copyStats;
+        captureNext = copyCaptureNext;
     }
 
 
     //--------------------------------------------------------------------
-    public void reset()
+    public void advance(HandState stateBeforeAct)
     {
-        stats.reset();
+        captureNext = stateBeforeAct.nextToAct()
+                        .handle().equals( subject );
+        if (!captureNext) return;
+
+        stats.advance(stateBeforeAct);
     }
 
-
-    //--------------------------------------------------------------------
-    public void advance(
-            HandState   stateBeforeAct,
-            PlayerState actor,
-            RealAction  act,
-            Community   communityBeforeAct,
-            Hole        hole)
+    public void advance(RealAction act, Community communityBeforeAct)
     {
-        stats.advance(stateBeforeAct,
-                      actor,
-                      act,
-                      communityBeforeAct,
-                      hole);
+        if (!captureNext) return;
+
+        stats.advance(act, communityBeforeAct);
     }
 
 
@@ -53,5 +57,12 @@ public class PlayerStats implements CumulativeStatistic
     public HoldemContext stats(AttributePool pool)
     {
         return stats.stats( pool );
+    }
+
+
+    //--------------------------------------------------------------------
+    public PlayerStats prototype()
+    {
+        return new PlayerStats(subject, stats, captureNext);
     }
 }

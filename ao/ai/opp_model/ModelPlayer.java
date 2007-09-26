@@ -20,7 +20,7 @@ public class ModelPlayer implements Player
 {
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
-    private PlayerExampleSet examples;
+    private PlayerExampleSet       examples;
     private Serializable           playerId;
     private AttributePool          pool;
 
@@ -48,11 +48,19 @@ public class ModelPlayer implements Player
     {
         checkPlayer(env);
 
-        RealAction act = nextAction();
+        RealAction act = shiftAction();
         examples.add(new ActionExample(
                             env.stats().forPlayer(playerId).stats(pool),
                             pool.fromEnum(act.toSimpleAction())));
         return act;
+    }
+
+    public boolean shiftQuitAction()
+    {
+        boolean isQuit = !acts.isEmpty() &&
+                          acts.getFirst().equals( RealAction.QUIT );
+        if (isQuit) shiftAction();
+        return isQuit;
     }
 
 
@@ -61,7 +69,7 @@ public class ModelPlayer implements Player
     {
         assert playerId.equals( env.nextToAct().getId() );
     }
-    public RealAction nextAction()
+    private RealAction shiftAction()
     {
         return acts.removeFirst();
     }

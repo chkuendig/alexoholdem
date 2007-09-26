@@ -58,10 +58,26 @@ public enum RealAction
 
     public boolean isBlind()
     {
+        return isSmallBlind() || isBigBlind();
+    }
+    public boolean isSmallBlind()
+    {
         return this == SMALL_BLIND        ||
-               this == BIG_BLIND          ||
-               this == SMALL_BLIND_ALL_IN ||
+               this == SMALL_BLIND_ALL_IN;
+    }
+    public boolean isBigBlind()
+    {
+        return this == BIG_BLIND        ||
                this == BIG_BLIND_ALL_IN;
+    }
+
+    public boolean isCheckCall()
+    {
+        return toSimpleAction() == SimpleAction.CALL;
+    }
+    public boolean isBetRaise()
+    {
+        return toSimpleAction() == SimpleAction.RAISE;
     }
 
 
