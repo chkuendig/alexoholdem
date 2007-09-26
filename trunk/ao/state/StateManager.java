@@ -125,14 +125,14 @@ public class StateManager
             hist.addEvent( event );
         }
 
-        assignDeltas(hist);
+        assignDeltas(hist, winners);
         return hist;
     }
 
-    private void assignDeltas(HandHistory hist)
+    private void assignDeltas(
+            HandHistory       hist,
+            List<PlayerState> winners)
     {
-        List<PlayerState> winners = winners();
-
         Money totalLost = new Money();
         for (PlayerState player : head().players())
         {

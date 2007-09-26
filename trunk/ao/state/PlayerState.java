@@ -1,8 +1,8 @@
 package ao.state;
 
 import ao.holdem.model.Money;
-import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.act.RealAction;
+import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
 import org.jetbrains.annotations.NotNull;
 
