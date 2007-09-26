@@ -14,7 +14,7 @@ public class PlayerState
     //--------------------------------------------------------------------
     private final boolean      isAllIn;
     private final boolean      isFolded;
-    private final boolean      isUnacted;
+//    private final boolean      isUnacted;
     private final Money        commitment;
     private final PlayerHandle handle;
 
@@ -23,13 +23,13 @@ public class PlayerState
     public PlayerState(
                      boolean      allIn,
                      boolean      folded,
-                     boolean      unacted,
+//                     boolean      unacted,
             @NotNull Money        totalCommitment,
             @NotNull PlayerHandle playerHandle)
     {
         isAllIn    = allIn;
         isFolded   = folded;
-        isUnacted  = unacted;
+//        isUnacted  = unacted;
         commitment = totalCommitment;
         handle     = playerHandle;
     }
@@ -53,26 +53,27 @@ public class PlayerState
     public PlayerState advanceBlind(RealAction act, Money betSize)
     {
         return new PlayerState(
-                    act.isAllIn(), false, true, betSize, handle);
+                    act.isAllIn(), false, /*true,*/ betSize, handle);
     }
 
 
     //--------------------------------------------------------------------
-    private PlayerState fold()
+    public PlayerState fold()
     {
-        return new PlayerState(false, true, false, commitment, handle);
+        return new PlayerState(
+                isAllIn, true, /*false,*/ commitment, handle);
     }
 
     private PlayerState call(boolean nextIsAllIn, Money stakes)
     {
         return new PlayerState(
-                    nextIsAllIn, false, false, stakes, handle);
+                    nextIsAllIn, false, /*false,*/ stakes, handle);
     }
 
     private PlayerState raise(
             boolean nextIsAllIn, Money stakes, Money money)
     {
-        return new PlayerState(nextIsAllIn, false, false,
+        return new PlayerState(nextIsAllIn, false, /*false,*/
                                stakes.plus(money), handle);
     }
 
@@ -91,11 +92,6 @@ public class PlayerState
     public boolean isFolded()
     {
         return isFolded;
-    }
-
-    public boolean isUnacted()
-    {
-        return isUnacted;
     }
 
     public Money commitment()

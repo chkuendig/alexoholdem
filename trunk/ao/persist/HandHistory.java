@@ -167,6 +167,7 @@ public class HandHistory extends Base
 
     public void addHole(PlayerHandle player, Hole hole)
     {
+        if (hole == null || hole.incomplete()) return;
         getHoles().put(player, hole);
     }
 

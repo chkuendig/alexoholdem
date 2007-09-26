@@ -35,11 +35,26 @@ public class IrcPlayer implements Player
     //--------------------------------------------------------------------
     public RealAction act(StateManager env)
     {
-        if (acts.size() <= nextAction)
+        if (! nextActionInBounds())
         {
-            throw new HoldemRuleBreach("unexpected move on " + env);
+            throw new HoldemRuleBreach("unspecified move: " + env);
         }
 
         return acts.get( nextAction++ );
+    }
+
+    public boolean shiftQuitAction()
+    {
+        boolean isQuit = nextActionInBounds() &&
+                         acts.get(nextAction).equals( RealAction.QUIT );
+        if (isQuit) nextAction++;
+        return isQuit;
+    }
+
+
+    //--------------------------------------------------------------------
+    private boolean nextActionInBounds()
+    {
+        return acts.size() > nextAction;
     }
 }

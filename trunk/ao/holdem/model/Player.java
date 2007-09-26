@@ -9,4 +9,6 @@ import ao.state.StateManager;
 public interface Player
 {
     public RealAction act(StateManager env);
+
+    public boolean shiftQuitAction();
 }

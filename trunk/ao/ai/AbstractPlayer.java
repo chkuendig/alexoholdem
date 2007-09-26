@@ -28,6 +28,13 @@ public abstract class AbstractPlayer implements Player
 
 
     //--------------------------------------------------------------------
+    public boolean shiftQuitAction()
+    {
+        return false;
+    }
+
+
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {
