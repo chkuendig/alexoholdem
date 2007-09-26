@@ -25,7 +25,7 @@ public class MathBot extends AbstractPlayer
 
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
-                        hole, community, state.numPlayersIn()-1);
+                        hole, community, state.numActivePlayers()-1);
 
         double toCall = state.remainingBetsInRound() * state.betsToCall();
         double potOdds =

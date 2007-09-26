@@ -45,12 +45,12 @@ public class Dealer
             PlayerHandle player = state.nextToAct();
             RealAction   act    = players.get( player ).act( state );
 
-//            System.out.println(player + ", " +
-//                               state.head().round() +
-//                               ", act: " + act);
             state.advance( act );
         }
         while ( !state.winnersKnown() );
+        
+        if (state.winners().isEmpty())
+            throw new HoldemRuleBreach("winnerless hand");
         return state;
     }
 }

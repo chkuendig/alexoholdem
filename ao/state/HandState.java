@@ -13,13 +13,32 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * immutable.
+ * To handle the corner case:
+ *  unexpected move on burney, PREFLOP
+ *   2	0	0	2	2	[7d, 8c, 9d, Jd, 4d]
+ *   burney    812871541  2  1 B   -     -     -   1000    5    4 Js 4s
+ *   THyde     812871541  2  2 BA  -     -     -      1    1    2 5c 3d
+ * Awareness of bet quantities is needed, fortunetally
+ *  this corner case is irrelavent because no action is necessary.
+ *
+ * Also, handling cases such as:
+ *  unexpected move on bolt, PREFLOP
+ *   5	0	0	0	1	[]
+ *   bolt      813890996  5  1 B   -     -     -         2664    5   15
+ *   d-l       813890996  5  2 BQ  -     -     -         1560   10    0
+ *   MrX       813890996  5  3 fQ  -     -     -         1273    0    0 
+ *   Jupiler   813890996  5  4 f   -     -     -         1854    0    0
+ *   jester    813890996  5  5 f   -     -     -         1615    0    0
+ * Requires asynchronouse quitting actions, they are not currently
+ *  supported.  I will need to implement them if they are used by PS.
+ *
+ * Note, obects of this class are immutable.
  */
 public class HandState
 {
     //--------------------------------------------------------------------
     private static final    int BETS_PER_ROUND = 4;
-    private static volatile int nextHandId = 0;
+    private static volatile int nextHandId     = 0;
 
 
     //--------------------------------------------------------------------
@@ -30,6 +49,7 @@ public class HandState
     private final int          latestRoundStaker;
     private final Money        stakes;
     private final int          handId;
+    private final HandState    startOfRound;
 
 
     //--------------------------------------------------------------------
@@ -48,6 +68,7 @@ public class HandState
         latestRoundStaker  = -1;
         stakes             = Money.ZERO;
         handId             = nextHandId++;
+        startOfRound       = this;
     }
     private PlayerState addInitPlayerState(
             List<PlayerHandle> clockwiseDealerLast,
@@ -73,7 +94,8 @@ public class HandState
                         int          copyRemainingRoundBets,
                         int          copyLatestRoundStaker,
                         Money        copyStakes,
-                        int          copyHandId)
+                        int          copyHandId,
+                        HandState    copyStartOfRound)
     {
         round              = copyRound;
         players            = copyPlayers;
@@ -82,6 +104,8 @@ public class HandState
         latestRoundStaker  = copyLatestRoundStaker;
         stakes             = copyStakes;
         handId             = copyHandId;
+        startOfRound       = (copyStartOfRound == null)
+                              ? this : copyStartOfRound;
     }
 
 
@@ -122,7 +146,8 @@ public class HandState
                              nextRemainingBets,
                              nextRoundStaker,
                              nextStakes,
-                             nextHandId);
+                             nextHandId,
+                             roundEnder ? null : startOfRound);
     }
 
     public PlayerState[] nextPlayers(RealAction act)
@@ -203,23 +228,30 @@ public class HandState
         nextPlayers[nextToAct]    =
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
 
+        int nextNextToAct   = nextActiveAfter(nextPlayers, nextToAct);
+        int nextRoundStaker =
+                !isSmall && act.isAllIn()
+                 ? nextToAct : latestRoundStaker;
+        
         return new HandState(round,
                              nextPlayers,
-                             index(nextToAct + 1),
+                             nextNextToAct,
                              remainingRoundBets,
-                             latestRoundStaker,
+                             nextRoundStaker,
                              betSize,
-                             nextHandId);
+                             nextHandId,
+                             startOfRound);
     }
 
 
     //--------------------------------------------------------------------
     public boolean atEndOfHand()
     {
-        return atShowdown() ||
-               nextToActIsLastPlayerIn() && nextToActCanCheck();
+        return atShowdown()    ||
+               nextToAct == -1 ||
+               nextToActIsLastActivePlayer() && nextToActCanCheck();
     }
-    private boolean nextToActIsLastPlayerIn()
+    private boolean nextToActIsLastActivePlayer()
     {
         return nextToAct == nextActiveAfter(nextToAct);
     }
@@ -267,7 +299,7 @@ public class HandState
         return players;
     }
 
-    public int numPlayersIn()
+    public int numActivePlayers()
     {
         int count = 0;
         for (PlayerState state : players)
@@ -347,7 +379,8 @@ public class HandState
     private int nextStakingUnfoldedAfter(int playerIndex)
     {
         int index = nextUnfoldedAfter(playerIndex);
-        while (players[ index ].isAllIn() &&
+        while (startOfRound.players[ index ].isAllIn() ||
+                players[ index ].isAllIn() &&
                !players[ index ].commitment().equals( stakes ))
         {
             index = nextUnfoldedAfter(index);

@@ -45,9 +45,9 @@ public class HandItr implements Iterable<HandHistory>
                       List<IrcHand>                hands)
     {
         nextHandIndex = 0;
-        this.players = players;
-        this.rosters = rosters;
-        this.hands   = hands;
+        this.players  = players;
+        this.rosters  = rosters;
+        this.hands    = hands;
 
         computeNextHistory();
     }
