@@ -47,8 +47,8 @@ public class Dealer
             PlayerHandle player = state.nextToAct();
             RealAction   act    = players.get( player ).act( state );
 
-            handleQuitters(state);
             state.advance( act );
+            handleQuitters(state/*, player*/);
         }
         while ( !state.winnersKnown() );
         
@@ -57,11 +57,13 @@ public class Dealer
         return state;
     }
 
-    private void handleQuitters(StateManager state)
+    private void handleQuitters(StateManager state/*,
+                                PlayerHandle excluding*/)
     {
         for (PlayerState pState : state.head().unfolded())
         {
-            if (players.get( pState.handle() ).shiftQuitAction())
+            if (//!excluding.equals( pState.handle() ) &&
+                 players.get( pState.handle() ).shiftQuitAction())
             {
                 state.advanceQuitter( pState.handle() );
             }

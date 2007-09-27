@@ -218,8 +218,9 @@ public class HandItr implements Iterable<HandHistory>
                 }
             }
 
-            throw new Error("can't find timestamp " + timestamp +
-                            " among " + playerAction);
+            return null;
+//            throw new Error("can't find timestamp " + timestamp +
+//                            " among " + playerAction);
         }
 
         return action;
