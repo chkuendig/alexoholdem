@@ -79,6 +79,10 @@ public enum RealAction
     {
         return toSimpleAction() == SimpleAction.RAISE;
     }
+    public boolean isFold()
+    {
+        return toSimpleAction() == SimpleAction.FOLD;
+    }
 
 
     //--------------------------------------------------------------------

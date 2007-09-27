@@ -198,7 +198,7 @@ public class HandState
                 : (betRaise
                    ? nextToAct
                    : (latestRoundStaker == -1 && // when all players check
-                        act.toSimpleAction() != SimpleAction.FOLD)
+                        !act.isFold())
                       ? nextToAct
                       : latestRoundStaker);
     }
@@ -250,13 +250,16 @@ public class HandState
             PlayerHandle quitter, List<Event> events)
     {
         int index = indexOf(quitter);
+        if (players[ index ].isFolded()) return this;
 
         PlayerState nextPlayers[] = players.clone();
         nextPlayers[ index ] = nextPlayers[ index ].fold();
 
-        int perlimStaker   = roundStakerAfterQuit(index, false, events);
+        int perlimStaker   =
+                roundStakerAfterQuit(nextPlayers, index, events);
         boolean roundEnder =
-                perlimStaker == nextStakingUnfoldedAfter( nextToAct );
+                perlimStaker == nextStakingUnfoldedAfter(
+                                    nextPlayers, index(nextToAct - 1));
 
         int nextRoundStaker =
                 roundEnder
@@ -278,9 +281,10 @@ public class HandState
     }
 
     private int roundStakerAfterQuit(
-            int index, boolean roundEnder, List<Event> events)
+            PlayerState pStates[],
+            int         index,
+            List<Event> events)
     {
-        if (roundEnder)                 return -1;
         if (latestRoundStaker != index) return latestRoundStaker;
 
         for (int i = events.size() - 1; i < events.size(); i++)
@@ -294,7 +298,7 @@ public class HandState
                 return indexOf( e.getPlayer() );
             }
         }
-        return -1;
+        return nextUnfoldedAfter(pStates, 0);
     }
 
 
@@ -441,7 +445,12 @@ public class HandState
 
     private int nextStakingUnfoldedAfter(int playerIndex)
     {
-        int index = nextUnfoldedAfter(playerIndex);
+        return nextStakingUnfoldedAfter(players, playerIndex);
+    }
+    private int nextStakingUnfoldedAfter(
+            PlayerState[] pStates, int playerIndex)
+    {
+        int index = nextUnfoldedAfter(pStates, playerIndex);
         while (startOfRound.players[ index ].isAllIn() ||
                 players[ index ].isAllIn() &&
                !players[ index ].commitment().equals( stakes ))
@@ -450,12 +459,19 @@ public class HandState
         }
         return index;
     }
+
     private int nextUnfoldedAfter(int playerIndex)
     {
-        for (int i = 1; i <= players.length; i++)
+        return nextUnfoldedAfter(players, playerIndex);
+    }
+    private int nextUnfoldedAfter(
+            PlayerState pStates[],
+            int         playerIndex)
+    {
+        for (int i = 1; i <= pStates.length; i++)
         {
             int index = index(playerIndex + i);
-            if (! players[ index ].isFolded())
+            if (! pStates[ index ].isFolded())
             {
                 return index;
             }
