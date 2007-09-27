@@ -22,16 +22,13 @@ import java.util.List;
  * Awareness of bet quantities is needed, fortunetally
  *  this corner case is irrelavent because no action is necessary.
  *
- * Also, handling cases such as:
- *  unexpected move on bolt, PREFLOP
- *   5	0	0	0	1	[]
- *   bolt      813890996  5  1 B   -     -     -         2664    5   15
- *   d-l       813890996  5  2 BQ  -     -     -         1560   10    0
- *   MrX       813890996  5  3 fQ  -     -     -         1273    0    0 
- *   Jupiler   813890996  5  4 f   -     -     -         1854    0    0
- *   jester    813890996  5  5 f   -     -     -         1615    0    0
- * Requires asynchronouse quitting actions, they are not currently
- *  supported.  I will need to implement them if they are used by PS.
+ * Also, cases such as:
+ *   the hand is already done
+ *   2	0	0	0	0	[]
+ *   geg       797477841  2  1 BQ  -     -     -         2648   10   10
+ *   Liver     797477841  2  2 Q   -     -     -         2470    0    0
+ * Are not gonna get accepted from IRC because of timing issues.
+ *
  *
  * Note, obects of this class are immutable.
  */
@@ -292,6 +289,7 @@ public class HandState
             Event      e   = events.get(i);
             RealAction act = e.getAction();
             if (e.getRound() != round) break;
+            if (e.getPlayer().equals( pStates[index].handle() )) continue;
             if (act.isBetRaise() ||
                     act == RealAction.BIG_BLIND_ALL_IN)
             {
