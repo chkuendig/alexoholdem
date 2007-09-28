@@ -71,4 +71,17 @@ public class ContextImpl implements Context
                 ? null
                 : (Attribute<T>) attribute( ofType.type() );
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+        for (Attribute attr : attributes())
+        {
+            str.append(attr.toFullString());
+            str.append("\t");
+        }
+        return str.toString();
+    }
 }

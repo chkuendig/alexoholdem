@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * is Committed this round
  * bets to call
- * betting round
  * is last bets called > 0
  * is last act: bet/raise
  * immediate pot odds
