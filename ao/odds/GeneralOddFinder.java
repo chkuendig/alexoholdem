@@ -1,9 +1,9 @@
 package ao.odds;
 
-import ao.holdem.model.Card;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 import ao.hand_eval.eval7.Eval7Faster;
-import ao.holdem.model.Hole;
-import ao.holdem.model.Community;
 import ao.util.stats.FastIntCombiner;
 import ao.odds.Odds;
 import ao.odds.OddFinder;

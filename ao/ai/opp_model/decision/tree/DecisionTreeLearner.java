@@ -18,11 +18,13 @@ public class DecisionTreeLearner<T> extends AbstractDecisionLearner<T>
     //--------------------------------------------------------------------
     public synchronized void train(DataSet<T> ds)
     {
+        if (ds.isEmpty()) return;
+
         tree = induce(ds);
 //        tree = new DecisionTree<T>(ds);
 //        induce(ds.contextAttributes(), tree);
 
-        System.out.println(tree);
+//        System.out.println(tree);
     }
 
     private DecisionTree<T> induce(DataSet<T> ds)
@@ -110,6 +112,7 @@ public class DecisionTreeLearner<T> extends AbstractDecisionLearner<T>
     //--------------------------------------------------------------------
     public Histogram<T> predict(Context context)
     {
-        return tree.predict( context );
+        return (tree == null ?
+                null : tree.predict( context ));
     }
 }

@@ -1,9 +1,9 @@
 package ao.odds;
 
-import ao.holdem.model.Card;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 import ao.hand_eval.eval5.Eval5;
 import ao.hand_eval.eval_567.EvalSlow;
-import ao.holdem.model.Community;
 import ao.util.stats.FastCombiner;
 
 /**

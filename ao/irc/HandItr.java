@@ -80,8 +80,8 @@ public class HandItr implements Iterable<HandHistory>
         sizeUpBlinds(action);
 //        displayHand(hand, action);
 
-        LiteralCardSource cards = new LiteralCardSource();
-        cards.setCommunity( hand.community() );
+        LiteralCardSource cards =
+                new LiteralCardSource( hand.community() );
 
         List<PlayerHandle> playerHandles = new ArrayList<PlayerHandle>();
         Map<PlayerHandle, Player> brains =

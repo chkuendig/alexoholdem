@@ -4,7 +4,7 @@ import ao.ai.AbstractPlayer;
 import ao.state.HandState;
 import ao.state.StateManager;
 import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.Hole;
+import ao.holdem.model.card.Hole;
 
 /**
  *

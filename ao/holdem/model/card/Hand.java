@@ -1,4 +1,4 @@
-package ao.holdem.model;
+package ao.holdem.model.card;
 
 import ao.hand_eval.eval_567.EvalSlow;
 import ao.util.stats.Combiner;

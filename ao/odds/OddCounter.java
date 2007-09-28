@@ -1,6 +1,6 @@
 package ao.odds;
 
-import ao.holdem.model.Community;
+import ao.holdem.model.card.Community;
 import ao.util.stats.Combo;
 
 /**

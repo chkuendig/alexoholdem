@@ -1,7 +1,7 @@
 package ao.odds;
 
-import ao.holdem.model.Hole;
-import ao.holdem.model.Community;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.Community;
 import ao.odds.Odds;
 
 /**

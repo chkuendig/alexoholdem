@@ -8,5 +8,5 @@ import ao.ai.opp_model.decision.context.HoldemContext;
  */
 public interface Statistic
 {
-    public HoldemContext stats(AttributePool pool);
+    public HoldemContext nextActContext(AttributePool pool);
 }

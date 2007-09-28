@@ -57,8 +57,8 @@
         <mapping class="ao.persist.PlayerHandle"/>
         <mapping class="ao.persist.Event"/>
         <mapping class="ao.persist.HandHistory"/>
-        <mapping class="ao.holdem.model.Hole"/>
-        <mapping class="ao.holdem.model.Community"/>
+        <mapping class="ao.holdem.model.card.Hole"/>
+        <mapping class="ao.holdem.model.card.Community"/>
         <mapping class="ao.holdem.model.Money"/>
         <!--<mapping class="ao.ai.opp_model.neural.def.retro.LearnerSet"/>-->
         <!--<mapping class="ao.ai.opp_model.neural.joone.BackpropLearner"/>-->

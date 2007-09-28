@@ -1,6 +1,6 @@
 package ao.hand_eval.eval_567;
 
-import ao.holdem.model.Card;
+import ao.holdem.model.card.Card;
 import ao.hand_eval.eval5.Eval5;
 
 /**

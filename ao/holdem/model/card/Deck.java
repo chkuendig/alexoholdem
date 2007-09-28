@@ -1,6 +1,9 @@
-package ao.holdem.model;
+package ao.holdem.model.card;
 
 import ao.util.rand.Rand;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 
 /**
  * Random deck of cards.

@@ -50,7 +50,7 @@ public class DataSet<T>
     {
         addAll(addend.data);
     }
-    public void addAll(List<? extends Example<T>> examples)
+    public void addAll(List<Example<T>> examples)
     {
         for (Example<T> example : examples)
         {
