@@ -27,7 +27,9 @@ import java.util.List;
  *   2	0	0	0	0	[]
  *   geg       797477841  2  1 BQ  -     -     -         2648   10   10
  *   Liver     797477841  2  2 Q   -     -     -         2470    0    0
- * Are not gonna get accepted from IRC because of timing issues.
+ * Are not gonna get accepted from IRC because really they are
+ *  being interpreted correctly.  This error comes up because the Quits
+ *  are asynchronouse and IRC doesn't contain timing information.
  *
  *
  * Note, obects of this class are immutable.
@@ -36,7 +38,6 @@ public class HandState
 {
     //--------------------------------------------------------------------
     private static final    int BETS_PER_ROUND = 4;
-//    private static volatile int nextHandId     = 0;
 
 
     //--------------------------------------------------------------------
@@ -46,7 +47,6 @@ public class HandState
     private final int          remainingRoundBets;
     private final int          latestRoundStaker;
     private final Money        stakes;
-//    private final int          handId;
     private final HandState    startOfRound;
 
 
@@ -65,7 +65,6 @@ public class HandState
         remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker  = -1;
         stakes             = Money.ZERO;
-//        handId             = nextHandId++;
         startOfRound       = this;
     }
     private PlayerState addInitPlayerState(
@@ -93,7 +92,6 @@ public class HandState
                         int          copyRemainingRoundBets,
                         int          copyLatestRoundStaker,
                         Money        copyStakes,
-//                        int          copyHandId,
                         HandState    copyStartOfRound)
     {
         round              = copyRound;
@@ -102,7 +100,6 @@ public class HandState
         remainingRoundBets = copyRemainingRoundBets;
         latestRoundStaker  = copyLatestRoundStaker;
         stakes             = copyStakes;
-//        handId             = copyHandId;
         startOfRound       = (copyStartOfRound == null)
                               ? this : copyStartOfRound;
     }
@@ -143,7 +140,6 @@ public class HandState
                              nextRemainingBets,
                              nextRoundStaker,
                              nextStakes,
-//                             nextHandId,
                              roundEnder ? null : startOfRound);
     }
 
@@ -296,7 +292,8 @@ public class HandState
                 return indexOf( e.getPlayer() );
             }
         }
-        return nextUnfoldedAfter(pStates, 0);
+        //return nextUnfoldedAfter(pStates, 0);
+        return -1;
     }
 
 
