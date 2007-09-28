@@ -43,6 +43,11 @@ public class Attribute<T> implements Comparable<Attribute>
 
 
     //--------------------------------------------------------------------
+    public String toFullString()
+    {
+        return attributeSet.type() + " :: " + value.toString();
+    }
+
     public String toString()
     {
 //        return attributeSet.type() + " :: " + value.toString();

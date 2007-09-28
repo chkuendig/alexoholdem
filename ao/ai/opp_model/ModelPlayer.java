@@ -54,7 +54,7 @@ public class ModelPlayer implements Player
         {
             HoldemContext ctx =
                     env.stats().forPlayer(playerId).nextActContext(pool);
-            System.out.println(ctx);
+//            System.out.println(ctx);
             examples.add(new ActionExample(
                             ctx,
                             pool.fromEnum(act.toSimpleAction())));
