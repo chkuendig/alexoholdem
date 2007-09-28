@@ -4,10 +4,10 @@ import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.context.ContextBuilder;
 import ao.ai.opp_model.decision.context.ContextDomain;
 import ao.ai.opp_model.decision.context.HoldemContext;
-import ao.ai.opp_model.decision.domain.Heat;
-import ao.holdem.model.Community;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
-import ao.odds.CommunityMeasure;
+import ao.holdem.model.card.CommunitySource;
+import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.stats.CumulativeStatistic;
 
@@ -17,43 +17,47 @@ import ao.stats.CumulativeStatistic;
 public class GenericStats implements CumulativeStatistic<GenericStats>
 {
     //--------------------------------------------------------------------
-    private HandState forefront;
-    private Community currCommunity;
+    private HandState       forefront;
+    private CommunitySource community;
 
 
     //--------------------------------------------------------------------
-    public GenericStats() {}
-
-    private GenericStats(HandState copyForefront,
-                         Community copyCurrCommunity)
+    public GenericStats(CommunitySource communitySource)
     {
-        forefront     = copyForefront;
-        currCommunity = copyCurrCommunity;
+        community = communitySource;
+    }
+
+    private GenericStats(HandState       copyForefront,
+                         CommunitySource copyCommunity)
+    {
+        forefront = copyForefront;
+        community = copyCommunity;
     }
 
 
     //--------------------------------------------------------------------
-    public void advance(HandState stateBeforeAct)
+    public void advance(HandState    stateBeforeAct,
+                        PlayerHandle actor,
+                        RealAction   act,
+                        HandState    stateAfterAct)
     {
-        forefront = stateBeforeAct;
-    }
-    public void advance(RealAction act, Community communityBeforeAct)
-    {
-        currCommunity = communityBeforeAct;
+        forefront = stateAfterAct;
     }
 
 
     //--------------------------------------------------------------------
-    public HoldemContext stats(AttributePool pool)
+    public HoldemContext nextActContext(AttributePool pool)
     {
         ContextBuilder ctx = new ContextBuilder();
         ctx.addDomains( ContextDomain.values() );
 
-        ctx.add(pool.fromEnum( forefront.round() ));
+        BettingRound round = forefront.round();
+        ctx.add(pool.fromEnum( round ));
 
-        ctx.add(pool.fromEnum(
-                Heat.fromHeat(
-                        CommunityMeasure.measure(currCommunity))));
+//        ctx.add(pool.fromEnum(
+//                Heat.fromHeat(
+//                        CommunityMeasure.measure(
+//                                community.community().asOf(round)))));
 
         return ctx;
     }
@@ -62,6 +66,6 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
     //--------------------------------------------------------------------
     public GenericStats prototype()
     {
-        return new GenericStats(forefront, currCommunity);
+        return new GenericStats(forefront, community);
     }
 }

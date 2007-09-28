@@ -1,9 +1,10 @@
 package ao.holdem.engine;
 
 import ao.holdem.model.BettingRound;
-import ao.holdem.model.CardSource;
-import ao.holdem.model.Community;
-import ao.holdem.model.Hole;
+import ao.holdem.model.card.CardSource;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 
 import java.util.HashMap;
@@ -20,9 +21,15 @@ public class LiteralCardSource implements CardSource
 
 
     //--------------------------------------------------------------------
-    public LiteralCardSource()
+    public LiteralCardSource(HandHistory fromHistory)
     {
-        holes = new HashMap<PlayerHandle, Hole>();
+        this(fromHistory.getCommunity());
+        holes.putAll( fromHistory.getHoles() );
+    }
+    public LiteralCardSource(Community literalCommunity)
+    {
+        holes     = new HashMap<PlayerHandle, Hole>();
+        setCommunity(literalCommunity);
     }
 
 

@@ -1,7 +1,7 @@
 package ao.irc;
 
-import ao.holdem.model.Card;
-import ao.holdem.model.Community;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

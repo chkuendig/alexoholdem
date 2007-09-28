@@ -4,8 +4,10 @@ import ao.ai.opp_model.decision.DecisionLearner;
 import ao.ai.opp_model.decision.context.PlayerExampleSet;
 import ao.ai.opp_model.decision.data.Example;
 import ao.ai.opp_model.decision.data.Histogram;
+import ao.ai.opp_model.decision.data.HoldemExample;
 import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 import ao.holdem.engine.Dealer;
+import ao.holdem.engine.LiteralCardSource;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -63,17 +65,21 @@ public class OppModelTest
         int i = 0;
         for (HandHistory hand : p.getHands())
         {
-            System.out.println(i);
+            System.out.println(i++);
+            System.out.println(hand.summary());
 
-            PlayerExampleSet examples =
-                    (i++ < 300) ? trainingStats
-                                : validationStats;
+//            PlayerExampleSet examples =
+//                    (i++ < 300) ? trainingStats
+//                                : validationStats;
+            PlayerExampleSet examples = validationStats;
 
             List<PlayerHandle> playerHandles =
                     new ArrayList<PlayerHandle>();
             playerHandles.addAll( hand.getPlayers() );
 
-            StateManager start = new StateManager(playerHandles);
+            StateManager start =
+                    new StateManager(playerHandles,
+                                     new LiteralCardSource(hand));
             Map<PlayerHandle, ModelPlayer> brains =
                     new HashMap<PlayerHandle, ModelPlayer>();
             for (PlayerHandle player : playerHandles)
@@ -93,21 +99,21 @@ public class OppModelTest
         for (Example<SimpleAction> example :
                 validationStats.postFlops().examples())
         {
-//            trainingStats.add( example );
-//            if (Rand.nextDouble() < (1/20.0))
-//            {
-//                learner.train( trainingSet );
-//            }
-            
             Histogram<SimpleAction> prediction =
                     learner.predict( example );
+            if (prediction == null)
+                prediction = new Histogram<SimpleAction>();
+
             System.out.println(
                     example.target().value() + "\t" +
                     prediction + "\t" +
                     prediction.probabilityOf(
                             example.target().value()) + "\t" +
-                    (prediction.mostProbable().equals(
-                            example.target()) ? 1 : 0));
+                    (example.target().equals(
+                            prediction.mostProbable()) ? 1 : 0));
+
+            trainingStats.add( (HoldemExample<SimpleAction>) example );
+            learner.train( trainingStats.postFlops() );
         }
     }
 

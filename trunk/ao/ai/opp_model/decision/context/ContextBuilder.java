@@ -30,7 +30,7 @@ public class ContextBuilder
         super( context.attributes() );
         for (ContextDomain domain : ContextDomain.values())
         {
-            if (! context.isApplicableTo( domain ))
+            if (context.isApplicableTo( domain ))
             {
                 domains.add( domain );
             }
@@ -83,5 +83,12 @@ public class ContextBuilder
     public boolean isApplicableTo(ContextDomain domain)
     {
         return domains.contains( domain );
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return "Context Builder";
     }
 }

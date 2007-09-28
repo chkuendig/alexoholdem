@@ -1,11 +1,14 @@
 package ao.stats;
 
-import ao.holdem.model.Community;
 import ao.holdem.model.act.RealAction;
+import ao.persist.PlayerHandle;
 import ao.state.CumulativeState;
 import ao.state.HandState;
+import ao.state.PlayerState;
+import ao.state.StateManager;
 import ao.stats.impl.GenericStats;
 import ao.stats.impl.MultiStatistic;
+import ao.stats.impl.SpecificStats;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -17,21 +20,29 @@ import java.util.Map;
 public class HandStats implements CumulativeState
 {
     //--------------------------------------------------------------------
-    private Map<Serializable, PlayerStats> stats =
-                    new HashMap<Serializable, PlayerStats>();
-    private GenericStats common = new GenericStats();
-//    private HandState    prevState;
+    private Map<Serializable, SpecificStats> stats =
+                    new HashMap<Serializable, SpecificStats>();
+    private GenericStats common;
 
 
     //--------------------------------------------------------------------
-    public HandStats() {}
+    public HandStats(StateManager state)
+    {
+        common = new GenericStats( state.cards() );
 
-    private HandStats(GenericStats                   copyCommon,
-                      Map<Serializable, PlayerStats> shallowStats)
+        for (PlayerState pState : state.head().players())
+        {
+            stats.put(pState.handle().getId(),
+                      new SpecificStats( pState.handle() ));
+        }
+    }
+
+    private HandStats(GenericStats                     copyCommon,
+                      Map<Serializable, SpecificStats> shallowStats)
     {
         common = copyCommon;
 
-        for (Map.Entry<Serializable, PlayerStats> stat :
+        for (Map.Entry<Serializable, SpecificStats> stat :
                 shallowStats.entrySet())
         {
             stats.put( stat.getKey(), stat.getValue().prototype() );
@@ -39,50 +50,25 @@ public class HandStats implements CumulativeState
     }
 
 
-
     //--------------------------------------------------------------------
-    public void advance(HandState stateBeforeAct)
+    public void advance(HandState    stateBeforeAct,
+                        PlayerHandle actor,
+                        RealAction   act,
+                        HandState    stateAfterAct)
     {
+        common.advance(stateBeforeAct,
+                       actor,
+                       act,
+                       stateAfterAct );
 
+        for (SpecificStats pStats : stats.values())
+        {
+            pStats.advance(stateBeforeAct,
+                           actor,
+                           act,
+                           stateAfterAct);
+        }
     }
-    public void advance(RealAction act, Community communityBeforeAct)
-    {
-
-    }
-
-
-    //--------------------------------------------------------------------
-//    public void advance(
-//            HandState   stateBeforeAct,
-//            PlayerState actor,
-//            RealAction  act,
-//            Community   communityBeforeAct,
-//            Hole        hole)
-//    {
-//        if (! stateBeforeAct.handsEqual( prevState ))
-//        {
-//            for (PlayerState player : stateBeforeAct.players())
-//            {
-//                PlayerHandle handle = player.handle();
-//                PlayerStats  pStats = stats.get( handle.getId() );
-//                if (pStats == null)
-//                {
-//                    pStats = new PlayerStats(handle);
-//                    stats.put(handle.getId(), pStats);
-//                }
-//                pStats.reset();
-//            }
-//        }
-//
-//        common.advance(stateBeforeAct,
-//                       actor, act, communityBeforeAct, hole);
-//        for (PlayerStats stat : stats.values())
-//        {
-//            stat.advance(stateBeforeAct,
-//                         actor, act, communityBeforeAct, hole);
-//        }
-//        prevState = stateBeforeAct;
-//    }
 
 
     //--------------------------------------------------------------------

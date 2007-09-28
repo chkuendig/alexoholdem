@@ -7,12 +7,14 @@ import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.domain.BetsToCall;
 import ao.ai.opp_model.decision.domain.PotOdds;
 import ao.holdem.model.BettingRound;
-import ao.holdem.model.Community;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
+import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.stats.CumulativeStatistic;
+
+import java.io.Serializable;
 
 /**
  * is Committed this round
@@ -26,91 +28,102 @@ import ao.stats.CumulativeStatistic;
 public class SpecificStats implements CumulativeStatistic<SpecificStats>
 {
     //--------------------------------------------------------------------
-    private HandState  startOfRound;
-    private HandState  prevState;
-    private RealAction prevAct;
-    private HandState  currState;
-    private RealAction currAct;
+    private HandState    startOfRoundForNextAct;
+    private RealAction   prevAct;
+    private HandState    beforeCurrAct;
+    private RealAction   currAct;
+    private HandState    beforeNextAct;
+    private Serializable subjectId;
+    private boolean      isUnfolded;
 
 
     //--------------------------------------------------------------------
-    public SpecificStats()
+    public SpecificStats(PlayerHandle subject)
     {
-//        subjectId = subject.getId();
+        subjectId  = subject.getId();
+        isUnfolded = true;
     }
 
-    private SpecificStats(HandState  copyStartOfRound,
-                          HandState  copyPrevState,
-                          RealAction copyPrevAct,
-                          HandState  copyCurrState,
-                          RealAction copyCurrAct)
+    private SpecificStats(HandState    copyStartOfRound,
+                          HandState    copyPrevState,
+                          RealAction   copyPrevAct,
+                          HandState    copyCurrState,
+                          RealAction   copyCurrAct,
+                          Serializable copySubjectId,
+                          boolean      copyIsUnfolded)
     {
-        startOfRound = copyStartOfRound;
-        prevState    = copyPrevState;
-        prevAct      = copyPrevAct;
-        currState    = copyCurrState;
-        currAct      = copyCurrAct;
+        startOfRoundForNextAct = copyStartOfRound;
+        beforeCurrAct          = copyPrevState;
+        prevAct                = copyPrevAct;
+        beforeNextAct          = copyCurrState;
+        currAct                = copyCurrAct;
+        subjectId              = copySubjectId;
+        isUnfolded             = copyIsUnfolded;
     }
 
 
     //-------------------------------------------------------------------
-    public void advance(HandState stateBeforeAct)
+    public void advance(HandState    stateBeforeAct,
+                        PlayerHandle actor,
+                        RealAction   act,
+                        HandState    stateAfterAct)
     {
-        advanceState(stateBeforeAct);
-    }
-    public void advance(RealAction act, Community communityBeforeAct)
-    {
-        advanceAct(act);
-    }
+        if (!isUnfolded) return;
 
-
-    //--------------------------------------------------------------------
-    private void advanceAct(RealAction act)
-    {
-//        if (subjectId.equals( actor.handle().getId() ))
-//        {
-            prevAct = currAct;
-            currAct = act;
-//        }
-    }
-    private void advanceState(HandState forefront)
-    {
-//        if (subjectId.equals( forefront.nextToAct().handle().getId() ))
-//        {
-            prevState = currState;
-            currState = forefront;
-//        }
-        if (startOfRound.round() != forefront.round() &&
-               forefront.round() != null)
+        if (actor.getId().equals( subjectId ) &&
+                !act.isBlind())
         {
-            startOfRound = forefront;
+            if (act.isFold())
+            {
+                isUnfolded = false;
+                return;
+            }
+
+            prevAct       = currAct;
+            currAct       = act;
+            beforeCurrAct = stateBeforeAct;
+        }
+
+        if (stateAfterAct.nextToAct().handle()
+                .getId().equals( subjectId ))
+        {
+            beforeNextAct = stateAfterAct;
+        }
+
+        if (startOfRoundForNextAct == null ||
+                startOfRoundForNextAct.round() !=
+                        stateAfterAct.round() &&
+                stateAfterAct.round() != null)
+        {
+            startOfRoundForNextAct = stateAfterAct;
         }
     }
 
 
-
     //--------------------------------------------------------------------
-    public HoldemContext stats(AttributePool pool)
+    public HoldemContext nextActContext(AttributePool pool)
     {
+        assert isUnfolded;
+
         ContextBuilder ctx = new ContextBuilder();
         ctx.addDomain( ContextDomain.FIRST_ACT );
 
         ctx.add(pool.fromEnum(
                 PotOdds.fromPotOdds(
-                        ((double) currState.toCall().smallBlinds()) /
-                          (currState.toCall().smallBlinds() +
-                           currState.pot().smallBlinds()))));
+                        ((double) beforeNextAct.toCall().smallBlinds()) /
+                          (beforeNextAct.toCall().smallBlinds() +
+                           beforeNextAct.pot().smallBlinds()))));
 
-        Money roundCommit = currState.nextToAct().commitment().minus(
-                                startOfRound.stakes());
+        Money roundCommit = beforeNextAct.nextToAct().commitment().minus(
+                                startOfRoundForNextAct.stakes());
         ctx.add(pool.fromUntyped(
                 "Is Committed This Round",
                 roundCommit.compareTo( Money.ZERO ) > 0));
 
         ctx.add(pool.fromEnum(
-                BetsToCall.fromBets(currState.betsToCall())));
+                BetsToCall.fromBets(beforeNextAct.betsToCall())));
 
-        if (prevState != null && prevAct != null)
+        if (beforeCurrAct != null && prevAct != null)
         {
             ctx.add(pool.fromUntyped(
                     "Last Act: Bet/Raise",
@@ -118,9 +131,9 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
             ctx.add(pool.fromUntyped(
                     "Last Bets Called > 0",
-                    prevState.toCall().compareTo(Money.ZERO) > 0));
+                    beforeCurrAct.toCall().compareTo(Money.ZERO) > 0));
 
-            ctx.addDomain((currState.round() == BettingRound.PREFLOP)
+            ctx.addDomain((beforeNextAct.round() == BettingRound.PREFLOP)
                            ? ContextDomain.PRE_FLOP
                            : ContextDomain.POST_FLOP);
         }
@@ -132,8 +145,9 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
     //--------------------------------------------------------------------
     public SpecificStats prototype()
     {
-        return new SpecificStats(startOfRound,
-                                 prevState, prevAct,
-                                 currState, currAct);
+        return new SpecificStats(startOfRoundForNextAct,
+                                 beforeCurrAct, prevAct,
+                                 beforeNextAct, currAct,
+                                 subjectId, isUnfolded);
     }
 }

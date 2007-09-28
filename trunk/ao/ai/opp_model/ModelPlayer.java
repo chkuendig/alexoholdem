@@ -1,6 +1,7 @@
 package ao.ai.opp_model;
 
 import ao.ai.opp_model.decision.attr.AttributePool;
+import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.context.PlayerExampleSet;
 import ao.ai.opp_model.decision.data.ActionExample;
 import ao.holdem.model.Player;
@@ -49,9 +50,15 @@ public class ModelPlayer implements Player
         checkPlayer(env);
 
         RealAction act = shiftAction();
-        examples.add(new ActionExample(
-                            env.stats().forPlayer(playerId).stats(pool),
+        if (! act.isBlind())
+        {
+            HoldemContext ctx =
+                    env.stats().forPlayer(playerId).nextActContext(pool);
+            System.out.println(ctx);
+            examples.add(new ActionExample(
+                            ctx,
                             pool.fromEnum(act.toSimpleAction())));
+        }
         return act;
     }
 

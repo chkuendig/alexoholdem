@@ -1,9 +1,9 @@
 package ao.persist;
 
 import ao.holdem.model.BettingRound;
-import ao.holdem.model.Card;
-import ao.holdem.model.Community;
-import ao.holdem.model.Hole;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import org.hibernate.annotations.CollectionOfElements;
@@ -245,6 +245,28 @@ public class HandHistory extends Base
 
 
     //--------------------------------------------------------------------
+    public String summary()
+    {
+        StringBuilder str = new StringBuilder();
+        for (PlayerHandle player : getPlayers())
+        {
+            if (str.length() != 0) str.append('\n');
+
+            BettingRound round = BettingRound.PREFLOP;
+            str.append(player.getName()).append("\t");
+            for (Event e : getEvents(player))
+            {
+                if (e.getRound() != round)
+                {
+                    str.append("\t");
+                    round = e.getRound();
+                }
+                str.append( e.getAction().toString().charAt(0) );
+            }
+        }
+        return str.toString();
+    }
+
     public String toString()
     {
         return "History for: " + getPlayers().toString();

@@ -1,9 +1,9 @@
 package ao.state;
 
 import ao.holdem.engine.DeckCardSource;
-import ao.holdem.model.CardSource;
-import ao.holdem.model.Hand;
-import ao.holdem.model.Hole;
+import ao.holdem.model.card.CardSource;
+import ao.holdem.model.card.Hand;
+import ao.holdem.model.card.Hole;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
@@ -24,7 +24,7 @@ public class StateManager
     private HandState   head;
     private List<Event> events = new ArrayList<Event>();
     private CardSource  cards  = new DeckCardSource();
-    private HandStats   stats  = new HandStats();
+    private HandStats   stats;
     private boolean     roundJustChanged;
 
 
@@ -34,39 +34,38 @@ public class StateManager
 
     public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
-            CardSource         cards)
+            boolean            autoPostBlinds,
+            CardSource         cardSource)
     {
-        this(clockwiseDealerLast);
-        this.cards = cards;
-    }
-    public StateManager(
-            List<PlayerHandle> clockwiseDealerLast)
-    {
-        head = new HandState(clockwiseDealerLast);
+        head = autoPostBlinds
+               ? HandState.autoBlindInstance(clockwiseDealerLast)
+               : new HandState(clockwiseDealerLast);
+        cards = cardSource;
         init();
     }
 
     public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
-            boolean            autoPostBlinds,
-            CardSource         cards)
+            CardSource         cardSource)
     {
-        this(clockwiseDealerLast, autoPostBlinds);
-        this.cards = cards;
+        this(clockwiseDealerLast, false, cardSource);
+    }
+    public StateManager(
+            List<PlayerHandle> clockwiseDealerLast)
+    {
+        this(clockwiseDealerLast, false, new DeckCardSource());
     }
     public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds)
     {
-        head = autoPostBlinds
-               ? HandState.autoBlindInstance(clockwiseDealerLast)
-               : new HandState(clockwiseDealerLast);
-        init();
+        this(clockwiseDealerLast, autoPostBlinds, new DeckCardSource());
     }
 
     private void init()
     {
-        stats.advance(head);
+        stats = new HandStats(this);
+//        nextActContext.advance(head);
     }
 
 
@@ -80,10 +79,11 @@ public class StateManager
     //--------------------------------------------------------------------
     public void advance(RealAction act)
     {
-        Event event = new Event(nextToAct(), head().round(), act);
+        PlayerHandle actor = nextToAct();
+        Event        event = new Event(actor, head().round(), act);
 
         HandState nextState = head.advance(act);
-        process(act, nextState);
+        process(head, actor, act, nextState);
         head = nextState;
 
         events.add( event );
@@ -100,7 +100,7 @@ public class StateManager
                     new Event(quitter, head().round(), RealAction.QUIT);
 
             HandState nextState = head.advanceQuitter(quitter, events);
-            process(RealAction.QUIT, nextState);
+            process(head, quitter, RealAction.QUIT, nextState);
             head = nextState;
 
             events.add( event );
@@ -109,11 +109,15 @@ public class StateManager
 
 
     //--------------------------------------------------------------------
-    private void process(RealAction act, HandState nextState)
+    private void process(HandState    beforeAct,
+                         PlayerHandle actor,
+                         RealAction   act,
+                         HandState    afterAct)
     {
-        stats.advance(act, cards.community());
-        roundJustChanged = (head.round() != nextState.round());
-        stats.advance(nextState);
+        roundJustChanged = (beforeAct.round() != afterAct.round());
+
+        stats.advance(
+                beforeAct, actor, act, afterAct);
     }
 
     public boolean roundJustChanged()

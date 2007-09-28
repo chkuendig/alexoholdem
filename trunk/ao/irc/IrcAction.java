@@ -1,7 +1,7 @@
 package ao.irc;
 
-import ao.holdem.model.Card;
-import ao.holdem.model.Hole;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Hole;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.act.RealAction;

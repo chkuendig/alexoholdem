@@ -1,6 +1,7 @@
-package ao.holdem.model;
+package ao.holdem.model.card;
 
 import ao.holdem.model.BettingRound;
+import ao.holdem.model.card.Card;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;

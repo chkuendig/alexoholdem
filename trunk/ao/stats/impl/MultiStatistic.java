@@ -22,13 +22,13 @@ public class MultiStatistic implements Statistic
 
 
     //--------------------------------------------------------------------
-    public HoldemContext stats(AttributePool pool)
+    public HoldemContext nextActContext(AttributePool pool)
     {
         ContextBuilder ctx = null;
 
         for (Statistic stat : delegets)
         {
-            HoldemContext statCtx = stat.stats(pool);
+            HoldemContext statCtx = stat.nextActContext(pool);
             ctx = (ctx == null)
                     ? new ContextBuilder( statCtx )
                     : ctx.merge(          statCtx );

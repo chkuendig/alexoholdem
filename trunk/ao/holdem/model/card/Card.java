@@ -1,4 +1,4 @@
-package ao.holdem.model;
+package ao.holdem.model.card;
 
 /**
  * Note that this given order of cards
