@@ -74,8 +74,7 @@ public class HandItr implements Iterable<HandHistory>
         List<IrcAction> action = handAction(names, hand.timestamp());
         if (action == null) return null;
         assert roster.size() == action.size();
-        if (! hasQuitters(action)) return null;
-        System.out.println("nextHandIndex " + (nextHandIndex-1));
+//        if (! hasQuitters(action)) return null;
 
         sortByPosition(names, action);
         sizeUpBlinds(action);
@@ -111,6 +110,7 @@ public class HandItr implements Iterable<HandHistory>
         {
             if (! e.getMessage().contains("round betting cap exceeded"))
             {
+                System.out.println("nextHandIndex " + (nextHandIndex-1));
                 System.out.println(e.getMessage());
                 displayHand(hand, action);
             }
