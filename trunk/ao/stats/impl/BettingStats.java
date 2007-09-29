@@ -1,7 +1,7 @@
 package ao.stats.impl;
 
 /**
- * for: ??folded players??, unfolded players - you, you
+ * for: ??folded players??, active players - you, you
  *
  * # bet raises / # actions  (bet ratio)
  * # calls / # actions  (call ratio)

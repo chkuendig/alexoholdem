@@ -12,6 +12,7 @@ public interface Context
 {
     public Collection<Attribute> attributes();
 
+    // returns a modifiable copy
     public Collection<AttributeSet<?>> attributeSets();
 
     public Attribute<?> attribute(Object ofType);
