@@ -14,5 +14,5 @@ public interface AttributeSet<T>
 
     public Attribute<T> instanceOf(T value);
 
-    public Collection<Attribute<T>> values();
+    public Collection<? extends Attribute<T>> values();
 }

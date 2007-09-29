@@ -14,6 +14,7 @@ import ao.stats.CumulativeStatistic;
 /**
  * betting round
  * community heat
+ * 
  */
 public class GenericStats implements CumulativeStatistic<GenericStats>
 {

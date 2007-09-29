@@ -1,23 +1,49 @@
 package ao.ai.opp_model.decision.attr;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
- * Attributes for this Set must be equal() based on their
- *  granularity.  So if a ContinuousAttribute is 0.15 and
- *  another is 0.151 and the granularity is 0.01 then they
- *  are equal().
+ * Percentile based continuouse (numeric) attribute set.
  */
-public class ContinuousAttributeSet<T extends Number>
+public class ContinuousAttributeSet<T extends Comparable<T>>
         implements AttributeSet<T>
 {
     //--------------------------------------------------------------------
+    private final Object                            type;
+    private       SortedSet<ContinuousAttribute<T>> attributes;
+    private       ContinuousAttribute<T>            sorted[];
+    private final int                               percision;
 
     
     //--------------------------------------------------------------------
-    public ContinuousAttributeSet()
+    public ContinuousAttributeSet(Object attributeType)
     {
+        type       = attributeType;
+        attributes = new TreeSet<ContinuousAttribute<T>>();
+        percision  = 0;
+    }
 
+    private ContinuousAttributeSet(
+            Object                 attributeType,
+            ContinuousAttribute<T> inOrder[],
+            int                    percentilePercision)
+    {
+        type       = attributeType;
+        attributes = null;
+        sorted     = inOrder;
+        percision  = percentilePercision;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Collection<ContinuousAttributeSet<T>> partition(int folds)
+    {
+        for (int fold = 0; fold < folds; fold++)
+        {
+            double percentSpan = 1.0 / Math.pow(2, fold + 1);
+        }
+
+        return null;
     }
 
 
@@ -30,20 +56,26 @@ public class ContinuousAttributeSet<T extends Number>
     }
     public Object type()
     {
-        return null;
+        return type;
     }
 
 
     //--------------------------------------------------------------------
     public Attribute<T> instanceOf(T value)
     {
-        return null;
+        assert attributes != null;
+        if (sorted != null) sorted = null;
+
+        ContinuousAttribute<T> attr =
+                new ContinuousAttribute<T>(this, value);
+        attributes.add(attr);
+        return attr;
     }
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute<T>> values()
+    public Collection<ContinuousAttribute<T>> values()
     {
-        return null;
+        return attributes;
     }
 }

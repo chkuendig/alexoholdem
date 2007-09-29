@@ -14,27 +14,37 @@ import java.util.*;
 /**
  * see "Coding Decision Trees" WALLACE & PATRICK (1993)
  */
-public class DecisionTree<T> implements Predictor<T>
+public class NumericTree<T> implements Predictor<T>
 {
     //--------------------------------------------------------------------
     private static final double ALPHA = 0.3;//0.3
 
 
     //--------------------------------------------------------------------
-    private DecisionTree<T>                    parent;
-    private Map<Attribute<?>, DecisionTree<T>> nodes;
-    private AttributeSet<?>                    attrSet;
-    private Histogram<T>                       hist;
-    private DataSet<T>                         data;
+    private NumericTree<T>                    parent;
+    private Map<Attribute<?>, NumericTree<T>> nodes;
+    private AttributeSet<?>                   attrSet;
+    private Histogram<T>                      hist;
+    private DataSet<T>                        data;
+
+    private Collection<AttributeSet<?>>       availableAttributs;
 
 
     //--------------------------------------------------------------------
-    public DecisionTree(DataSet<T> ds)
+    public NumericTree(DataSet<T> ds)
     {
-        nodes = new TreeMap<Attribute<?>, DecisionTree<T>>();
+        this(ds, ds.contextAttributes());
+    }
+    private NumericTree(DataSet<T>                  ds,
+                        Collection<AttributeSet<?>> availAttributs)
+    {
+        nodes = new TreeMap<Attribute<?>, NumericTree<T>>();
         hist  = ds.frequencies();
         data  = ds;
+
+        availableAttributs = availAttributs;
     }
+
 
 
     //--------------------------------------------------------------------
@@ -43,7 +53,7 @@ public class DecisionTree<T> implements Predictor<T>
         data = null;
         if (! isLeaf())
         {
-            for (DecisionTree<T> child : kids())
+            for (NumericTree<T> child : kids())
             {
                 child.freeze();
             }
@@ -66,8 +76,8 @@ public class DecisionTree<T> implements Predictor<T>
         for (Map.Entry<Attribute, DataSet<T>> splitPlane :
                 data.split( on ).entrySet())
         {
-            DecisionTree<T> subTree =
-                    new DecisionTree<T>( splitPlane.getValue() );
+            NumericTree<T> subTree =
+                    new NumericTree<T>( splitPlane.getValue() );
             addNode(splitPlane.getKey(), subTree);
 		}
     }
@@ -80,25 +90,25 @@ public class DecisionTree<T> implements Predictor<T>
 
 
     //--------------------------------------------------------------------
-    public DecisionTree<T> root()
+    public NumericTree<T> root()
     {
         return isRoot()
                ? this : parent.root();
     }
 
-    protected void setParent(DecisionTree<T> parent)
+    protected void setParent(NumericTree<T> parent)
     {
         this.parent = parent;
     }
 
-    public Collection<DecisionTree<T>> kids()
+    public Collection<NumericTree<T>> kids()
     {
         return nodes.values();
     }
 
-    public Collection<DecisionTree<T>> leafs()
+    public Collection<NumericTree<T>> leafs()
     {
-        List<DecisionTree<T>> leafs = new ArrayList<DecisionTree<T>>();
+        List<NumericTree<T>> leafs = new ArrayList<NumericTree<T>>();
 
         if (isLeaf())
         {
@@ -106,7 +116,7 @@ public class DecisionTree<T> implements Predictor<T>
         }
         else
         {
-            for (DecisionTree<T> child : kids())
+            for (NumericTree<T> child : kids())
             {
                 leafs.addAll( child.leafs() );
             }
@@ -121,7 +131,7 @@ public class DecisionTree<T> implements Predictor<T>
                 new HashSet<AttributeSet<?>>(
                         data.contextAttributes());
 
-        DecisionTree<T> cursor = this;
+        NumericTree<T> cursor = this;
         while (cursor != null)
         {
             contexts.remove( cursor.attrSet );
@@ -133,8 +143,8 @@ public class DecisionTree<T> implements Predictor<T>
 
 
     //--------------------------------------------------------------------
-    private void addNode(Attribute<?>    attribute,
-                         DecisionTree<T> tree)
+    private void addNode(Attribute<?>   attribute,
+                         NumericTree<T> tree)
     {
         assert !nodes.containsKey( attribute );
         nodes.put(attribute, tree);
@@ -177,7 +187,7 @@ public class DecisionTree<T> implements Predictor<T>
         //  the node.
         double length = Info.log2( numAttributes );
 
-        for (DecisionTree<T> child : kids())
+        for (NumericTree<T> child : kids())
         {
             length += child.codingComplexity(numAttributes - 1);
         }
@@ -273,9 +283,9 @@ public class DecisionTree<T> implements Predictor<T>
         Attribute<?> attribute = basedOn.attribute(attrSet);
         if (attribute == null) return hist;
 
-        DecisionTree<T> subTree = nodes.get( attribute );
+        NumericTree<T> subTree = nodes.get( attribute );
         if (subTree == null)   return hist;
-        
+
         return subTree.predict( basedOn );
     }
 
@@ -301,7 +311,7 @@ public class DecisionTree<T> implements Predictor<T>
             buf.append(Txt.nTimes("\t", depth + 1));
             buf.append("+").append(attribute);
 
-            DecisionTree child = nodes.get(attribute);
+            NumericTree child = nodes.get(attribute);
             if (child.isLeaf())
             {
                 buf.append(" ");

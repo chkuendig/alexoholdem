@@ -45,9 +45,9 @@ public class AttributePool
 
 
     //--------------------------------------------------------------------
-    public Attribute<Double> fromContinuouse(Object type, double value)
+    public Attribute<Double> fromContinuous(Object type, double value)
     {
-        assert 0 <= value && value <= 1;
+        //assert 0 <= value && value <= 1;
 
         return null;
     }

@@ -39,7 +39,7 @@ public class DecisionTreeLearner<T> extends AbstractDecisionLearner<T>
             DecisionTree<T> mmlLeaf = null;
             for (DecisionTree<T> leaf : root.leafs())
             {
-                for (AttributeSet<?> attr : leaf.unsplitContexts())
+                for (AttributeSet<?> attr : leaf.availableContexts())
                 {
                     leaf.split(attr);
 
