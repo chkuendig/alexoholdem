@@ -280,19 +280,18 @@ public class HandState
     {
         if (latestRoundStaker != index) return latestRoundStaker;
 
+        PlayerHandle stakerHandle = pStates[index].handle();
         for (int i = events.size() - 1; i < events.size(); i++)
         {
-            Event      e   = events.get(i);
+            Event e = events.get(i);
+            if (e.getPlayer().equals( stakerHandle )) break;
+
             RealAction act = e.getAction();
-            if (e.getRound() != round) break;
-            if (e.getPlayer().equals( pStates[index].handle() )) continue;
-            if (act.isBetRaise() ||
-                    act == RealAction.BIG_BLIND_ALL_IN)
+            if (act.isCheckCall() || act.isBetRaise())
             {
                 return indexOf( e.getPlayer() );
             }
         }
-        //return nextUnfoldedAfter(pStates, 0);
         return -1;
     }
 
