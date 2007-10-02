@@ -5,6 +5,7 @@ import ao.holdem.model.card.Community;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Arrays;
 
 /**
  * timestamp      hand #     #players/starting potsize
@@ -30,19 +31,33 @@ public class IrcHand
     //--------------------------------------------------------------------
     // 766303976   1   455  8  6/600   6/1200  6/1800  3/2400  3s Jc Qd 5c Ah
     private final static Pattern pat =
-            Pattern.compile("(\\d+)\\s+" +
+            Pattern.compile(//"\\D*" +
                             "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
-                            "(\\d+)/"    +
-                            "(\\d+)\\s+" +
-                            "(\\d+)/"    +
                             "(\\d+)\\s+" +
                             "(\\d+)/"    +
                             "(\\d+)\\s+" +
                             "(\\d+)/"    +
                             "(\\d+)\\s+" +
+                            "(\\d+)/"    +
+                            "(\\d+)\\s+" +
+                            "(\\d+)/"    +
+                            "(\\d+)\\s*" +
                             "(.*)");
+
+    public static IrcHand fromLine(String line)
+    {
+        try
+        {
+            return new IrcHand( line.trim() );
+        }
+        catch (Error e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
 
     //--------------------------------------------------------------------
@@ -66,10 +81,13 @@ public class IrcHand
 
     //--------------------------------------------------------------------
     // 766303976   1   455  8  6/600   6/1200  6/1800  3/2400  3s Jc Qd 5c Ah
-    public IrcHand(String line)
+    private IrcHand(String line)
     {
         Matcher m = pat.matcher(line);
-        if (! m.matches()) throw new Error();
+        if (! m.matches())
+        {
+            throw new Error("irc hand can't match: " + line);
+        }
 
         timestamp  = Long.parseLong(  m.group(1));
         dealerSeat = Integer.parseInt(m.group(2));
@@ -118,7 +136,8 @@ public class IrcHand
                 return new Community(cards[0], cards[1],
                                      cards[2], cards[3], cards[4]);
         }
-        throw new Error("weird community cards: " + comm);
+        throw new Error("weird community cards: " + comm +
+                        " as " + Arrays.toString(cards));
     }
 
 

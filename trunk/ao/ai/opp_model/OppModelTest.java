@@ -4,7 +4,6 @@ import ao.ai.opp_model.decision.DecisionLearner;
 import ao.ai.opp_model.decision.context.PlayerExampleSet;
 import ao.ai.opp_model.decision.data.Example;
 import ao.ai.opp_model.decision.data.Histogram;
-import ao.ai.opp_model.decision.data.HoldemExample;
 import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
@@ -68,10 +67,10 @@ public class OppModelTest
             System.out.println(i++);
             System.out.println(hand.summary());
 
-//            PlayerExampleSet examples =
-//                    (i++ < 300) ? trainingStats
-//                                : validationStats;
-            PlayerExampleSet examples = validationStats;
+            PlayerExampleSet examples =
+                    (i++ < 300) ? trainingStats
+                                : validationStats;
+//            PlayerExampleSet examples = validationStats;
 
             List<PlayerHandle> playerHandles =
                     new ArrayList<PlayerHandle>();
@@ -112,8 +111,8 @@ public class OppModelTest
                     (example.target().equals(
                             prediction.mostProbable()) ? 1 : 0));
 
-            trainingStats.add( (HoldemExample<SimpleAction>) example );
-            learner.train( trainingStats.postFlops() );
+//            trainingStats.add( (HoldemExample<SimpleAction>) example );
+//            learner.train( trainingStats.postFlops() );
         }
     }
 

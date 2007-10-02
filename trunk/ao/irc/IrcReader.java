@@ -70,7 +70,11 @@ public class IrcReader
         String handLine;
         while ((handLine = handReader.readLine()) != null)
         {
-            handList.add( new IrcHand(handLine) );
+            IrcHand hand = IrcHand.fromLine(handLine);
+            if (hand != null)
+            {
+                handList.add( hand );
+            }
         }
 
         return handList;
@@ -89,7 +93,11 @@ public class IrcReader
         String handLine;
         while ((handLine = handReader.readLine()) != null)
         {
-            rosterList.add( new IrcRoster(handLine) );
+            IrcRoster ircRoster = IrcRoster.fromLine(handLine);
+            if (ircRoster != null)
+            {
+                rosterList.add( ircRoster );
+            }
         }
 
         return rosterList;
@@ -108,7 +116,11 @@ public class IrcReader
             String handLine;
             while ((handLine = handReader.readLine()) != null)
             {
-                playerList.add( new IrcAction(handLine) );
+                IrcAction ircAction = IrcAction.fromLine(handLine);
+                if (ircAction != null)
+                {
+                    playerList.add( ircAction );
+                }
             }
         }
 

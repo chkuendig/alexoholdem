@@ -14,9 +14,24 @@ public class IrcRoster
     //--------------------------------------------------------------------
     // 766303976  8  Marzon spiney doublebag neoncap maurer andrea zorak justin
     private final static Pattern pat =
-            Pattern.compile("(\\d+)\\s+" +
+            Pattern.compile(//"\\D*" +
+                            "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
                             "(.*)");
+
+    public static IrcRoster fromLine(String line)
+    {
+        try
+        {
+            return new IrcRoster(line.trim());
+        }
+        catch (Error e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
 
     //--------------------------------------------------------------------
     private final long   timestamp;
@@ -25,10 +40,13 @@ public class IrcRoster
 
 
     //--------------------------------------------------------------------
-    public IrcRoster(String line)
+    private IrcRoster(String line)
     {
         Matcher m = pat.matcher(line);
-        if (! m.matches()) throw new Error();
+        if (! m.matches())
+        {
+            throw new Error("can't match roster: " + line);
+        }
 
         timestamp  = Long.parseLong(   m.group(1));
         numPlayers = Integer.parseInt( m.group(2));
