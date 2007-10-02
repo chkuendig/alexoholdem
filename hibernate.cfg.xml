@@ -39,10 +39,10 @@
         </property>
 
         <!-- Disable the second-level cache  -->
-        <!--<property name="cache.provider_class">-->
-            <!--org.hibernate.cache.HashtableCacheProvider-->
+        <property name="cache.provider_class">
+            org.hibernate.cache.HashtableCacheProvider
             <!--org.hibernate.cache.NoCacheProvider-->
-        <!--</property>-->
+        </property>
 
         <!-- Echo all executed SQL to stdout -->
         <!--<property name="show_sql">true</property>-->

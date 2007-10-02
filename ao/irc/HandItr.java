@@ -75,7 +75,7 @@ public class HandItr implements Iterable<HandHistory>
         List<IrcAction> action = handAction(names, hand.timestamp());
         if (action == null) return null;
         assert roster.size() == action.size();
-        if (! hasQuitters(action)) return null;
+//        if (! hasQuitters(action)) return null;
 
         sortByPosition(names, action);
         sizeUpBlinds(action);

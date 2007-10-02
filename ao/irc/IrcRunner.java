@@ -36,10 +36,13 @@ public class IrcRunner
 
         for (File subdir : dir.listFiles())
         {
+            long start = System.currentTimeMillis();
             if (subdir.isDirectory())
             {
                 run( subdir.toString() );
             }
+            long end = System.currentTimeMillis();
+            System.out.println("took " + (end - start));
         }
     }
 }

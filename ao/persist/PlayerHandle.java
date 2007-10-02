@@ -1,8 +1,7 @@
 package ao.persist;
 
-import ao.persist.Base;
-import ao.persist.Event;
-import ao.persist.HandHistory;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Entity;
@@ -17,6 +16,7 @@ import java.util.List;
  *
  */
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PlayerHandle extends Base
 {
     //--------------------------------------------------------------------

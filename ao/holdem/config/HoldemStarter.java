@@ -36,11 +36,11 @@ public class HoldemStarter
 //        injector.getInstance(
 //                PredictPersistTest.class).testPredictionPersistqqance();
 //        injector.getInstance(OppModelTest.class).testOpponentModeling();
-        injector.getInstance(IrcRunner.class).run(
+//        injector.getInstance(IrcRunner.class).run(
 //                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
-                "C:\\alex\\data\\irc_poker\\holdem\\200104");
-//        injector.getInstance(IrcRunner.class).runOnSubdirs(
-//                "C:\\alex\\data\\irc_poker\\holdem");
+//                "C:\\alex\\data\\irc_poker\\holdem\\200104");
+        injector.getInstance(IrcRunner.class).runOnSubdirs(
+                "C:\\alex\\data\\irc_poker\\holdem3");
 //        injector.getInstance(IrcRunner.class).run(
 //                "C:\\alex\\data\\limit_holdem\\hand_test");
     }
