@@ -83,19 +83,23 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
             beforeCurrAct = stateBeforeAct;
         }
 
-        if (stateAfterAct.nextToAct().handle()
-                .getId().equals( subjectId ))
-        {
-            beforeNextAct = stateAfterAct;
-        }
+//        if (! stateAfterAct.atEndOfHand())
+//        {
+            if (//stateAfterAct.atEndOfHand() ||
+                    stateAfterAct.nextToAct().handle()
+                    .getId().equals( subjectId ))
+            {
+                beforeNextAct = stateAfterAct;
+            }
 
-        if (startOfRoundForNextAct == null ||
-                startOfRoundForNextAct.round() !=
-                        stateAfterAct.round() &&
-                stateAfterAct.round() != null)
-        {
-            startOfRoundForNextAct = stateAfterAct;
-        }
+            if (startOfRoundForNextAct == null ||
+                    startOfRoundForNextAct.round() !=
+                            stateAfterAct.round() &&
+                    stateAfterAct.round() != null)
+            {
+                startOfRoundForNextAct = stateAfterAct;
+            }
+//        }
     }
 
 

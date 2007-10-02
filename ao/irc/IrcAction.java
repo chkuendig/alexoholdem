@@ -38,7 +38,8 @@ public class IrcAction
     //--------------------------------------------------------------------
     // Marzon    766303976  8  1 Bc  bc    kc    kf      12653  300    0
     private final static Pattern pat =
-            Pattern.compile("([^\\s]+)\\s+" +
+            Pattern.compile(//"\\s*" +
+                            "(\\S+)\\s+" +
                             "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
@@ -48,8 +49,22 @@ public class IrcAction
                             "(\\S+)\\s+" +
                             "(\\d+)\\s+" +
                             "(\\d+)\\s+" +
-                            "(\\d+)\\s+" +
+                            "(\\d+)\\s*" +
                             "(.*)");
+
+    public static IrcAction fromLine(String line)
+    {
+        try
+        {
+            return new IrcAction(line.trim());
+        }
+        catch (Error e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
 
     //--------------------------------------------------------------------
     private final String name;
@@ -71,7 +86,7 @@ public class IrcAction
 
 
     //--------------------------------------------------------------------
-    public IrcAction(String line)
+    private IrcAction(String line)
     {
         Matcher m = pat.matcher(line);
         if (! m.matches())

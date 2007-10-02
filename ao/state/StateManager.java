@@ -116,8 +116,11 @@ public class StateManager
     {
         roundJustChanged = (beforeAct.round() != afterAct.round());
 
-        stats.advance(
+        if (! afterAct.atEndOfHand())
+        {
+            stats.advance(
                 beforeAct, actor, act, afterAct);
+        }
     }
 
     public boolean roundJustChanged()

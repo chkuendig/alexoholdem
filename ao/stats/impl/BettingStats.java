@@ -2,6 +2,7 @@ package ao.stats.impl;
 
 /**
  * for: ??folded players??, active players - you, you
+ * for: all preseding rounds, current round
  *
  * # bet raises / # actions  (bet ratio)
  * # calls / # actions  (call ratio)

@@ -69,15 +69,17 @@ public class HandItr implements Iterable<HandHistory>
     private HandHistory computeHistory(IrcHand hand)
     {
         IrcRoster roster = rosters.get( hand.timestamp() );
+        if (roster == null) return null;
 
         List<String>    names  = Arrays.asList(roster.names());
         List<IrcAction> action = handAction(names, hand.timestamp());
         if (action == null) return null;
         assert roster.size() == action.size();
-//        if (! hasQuitters(action)) return null;
+        if (! hasQuitters(action)) return null;
 
         sortByPosition(names, action);
         sizeUpBlinds(action);
+//        System.out.println("nextHandIndex " + (nextHandIndex-1));
 //        displayHand(hand, action);
 
         LiteralCardSource cards =
