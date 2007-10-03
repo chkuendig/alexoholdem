@@ -40,8 +40,7 @@ public class HoldemStarter
 //                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
 //                "C:\\alex\\data\\irc_poker\\holdem\\200104");
         injector.getInstance(IrcRunner.class).runOnSubdirs(
-                "C:\\alex\\data\\irc_poker\\holdem3");
-//        injector.getInstance(IrcRunner.class).run(
-//                "C:\\alex\\data\\limit_holdem\\hand_test");
+                "C:\\alex\\data\\limit_holdem\\holdem");
+//                "C:\\alex\\data\\irc_poker\\holdem3");
     }
 }
