@@ -8,6 +8,7 @@ import java.util.Collection;
 public interface AttributeSet<T>
 {
     public boolean isDescrete();
+    public double cutValueLength();
 
     public Object  type();
     public boolean typeEquals(AttributeSet<?> attributeSet);
