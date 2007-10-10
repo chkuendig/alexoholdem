@@ -177,22 +177,44 @@ public class NumericTree<T> implements Predictor<T>
                          : categoryLength(ALPHA));
     }
 
-    private double attributeAndChildLength(int numAttributes)
+    private double attributeAndChildLength(int availAttributes)
     {
-        //if there are n attributes, the length of the code for the
-        //  attribute labelling the root is logn, but the codes for
-        //  attributes labelling deeper nodes will be shorter. At any
-        //  node, only those discrete attributes that have not appeared
-        //  in the path from the root to the node are eligible to label
-        //  the node.
-        double length = Info.log2( numAttributes );
+        int nextAvailAttrs =
+                nextAvailableAttributes(availAttributes);
 
+        double childComplexity = 0;
         for (NumericTree<T> child : kids())
         {
-            length += child.codingComplexity(numAttributes - 1);
+            childComplexity +=
+                    child.codingComplexity( nextAvailAttrs );
         }
-        return length;
+        
+        return branchChoiceLength(availAttributes) +
+                Info.log2(availAttributes) +
+                childComplexity;
     }
+
+    // A discrete attribute cannot be tested by more than
+    //  one branch node in any path,  If a branch tests a
+    //  discrete attribute, A is decremented for each of
+    //  the child trees.
+    private int nextAvailableAttributes(int availAttributes)
+    {
+        return attrSet.isDescrete()
+                ? availAttributes - 1
+                : availAttributes;
+    }
+
+    // For each 'branch' codeward, we need to sate which of the
+    //  input attributes will be tested.  This requires
+    //  lg(A) bits, where A is the number of attributes able to
+    //  be tested at that branch.
+    private double branchChoiceLength(int availAttributes)
+    {
+        return Info.log2( availAttributes );
+    }
+
+
 
     //If there are M classes,
     //and in the first j things of a category, i[m] have had class m,
@@ -229,34 +251,36 @@ public class NumericTree<T> implements Predictor<T>
 //    }
 
 
+    // For each node we firstly need to state whether
+    //  it is a branch of a leaf.
     private double typeLength(int numAttributes)
     {
-        //The probability that the root is a leaf remains to be
-        //  determined. Since in practice we hope to get a useful
-        //  tree, this probability should be low. We have taken it as
-        //  the reciprocal of the number of attributes, on the grounds
-        //  that the more attributes there are, the better is the
-        //  chance of finding one that is useful.
-        // Use for each p = the reciprocal of the arity of the parent
-        //  of the node. Thus, in a uniform b-ary tree, each node other
-        //  than the root is regarded as having probability 1/b of not
-        //  being a leaf.
-        return isInternalLength(
-                1.0 / (isRoot()
-                       ? (double) numAttributes
-                       : (double) parent.kids().size()));
-    }
+        if (isRoot())
+        {
+            // At the root of the tree:
+            //   * a branch costs lg(n+1) - lg(n) bits
+            //	 * a leaf   costs lg(n+1)         bits
+            // where n is the number of input attributes.
 
-    //we expect 1s to occur with some fixed probability p independent
-    //  of preceding digits. Coding techniques exist in effect allowing
-    //  each 1 to be coded with (—logp) bits, and each 0 with
-    //  (-log(l - p)) bits, and such a code is optimal if indeed the
-    //  probability of Is is p.
-    private double isInternalLength(double p)
-    {
-        return -(isInternal()
-                 ? Info.log2(      p)
-                 : Info.log2(1.0 - p));
+            double log2nPlusOne = Info.log2(numAttributes + 1);
+            return isInternal()
+                    ? log2nPlusOne - Info.log2(numAttributes)
+                    : log2nPlusOne;
+        }
+        else
+        {
+            // For any non-root node, the codeward:
+            //	 * a branch requires lg(s) bits
+            //	 * a leaf requires -lg((s - 1)/s) bits
+            // where s represents the number of childred of
+            //  the node's parent (always greater than 1).
+
+            int parentKids = parent.kids().size();
+            return isInternal()
+                    ? Info.log2(parentKids)
+                    : Info.log2((parentKids - 1) /
+                                        parentKids);
+        }
     }
 
 

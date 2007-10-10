@@ -34,6 +34,11 @@ public class DescreteAttributeSet<T>
     //--------------------------------------------------------------------
     public boolean isDescrete() {  return true;  }
 
+    public double cutValueLength()
+    {
+        return 0;
+    }
+
     public boolean typeEquals(AttributeSet<?> attributeSet)
     {
         return type().equals( attributeSet.type() );

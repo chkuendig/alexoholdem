@@ -50,6 +50,12 @@ public class ContinuousAttributeSet<T extends Comparable<T>>
     //--------------------------------------------------------------------
     public boolean isDescrete() {  return false;  }
 
+    /// todo: calulate this!!
+    public double cutValueLength()
+    {
+        return 0;
+    }
+
     public boolean typeEquals(AttributeSet<?> attributeSet)
     {
         return type().equals( attributeSet.type() );
