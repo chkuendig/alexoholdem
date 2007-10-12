@@ -171,10 +171,10 @@ public class NumericTree<T> implements Predictor<T>
 
     public double codingComplexity(int numAttributes)
     {
-        double length = typeLength(numAttributes);
-        return length + (isInternal()
-                         ? attributeAndChildLength(numAttributes)
-                         : categoryLength(ALPHA));
+        return typeLength(numAttributes) +
+                (isInternal()
+                 ? attributeAndChildLength(numAttributes)
+                 : categoryLength(ALPHA));
     }
 
     private double attributeAndChildLength(int availAttributes)
@@ -190,7 +190,6 @@ public class NumericTree<T> implements Predictor<T>
         }
         
         return branchChoiceLength(availAttributes) +
-                Info.log2(availAttributes) +
                 childComplexity;
     }
 
@@ -209,12 +208,13 @@ public class NumericTree<T> implements Predictor<T>
     //  input attributes will be tested.  This requires
     //  lg(A) bits, where A is the number of attributes able to
     //  be tested at that branch.
+    // If the input attribute to be tested is continuous, we also
+    //  need to state the cut-point to be used.
     private double branchChoiceLength(int availAttributes)
     {
-        return Info.log2( availAttributes );
+        return Info.log2( availAttributes ) +
+                attrSet.cutValueLength();
     }
-
-
 
     //If there are M classes,
     //and in the first j things of a category, i[m] have had class m,
@@ -277,8 +277,8 @@ public class NumericTree<T> implements Predictor<T>
 
             int parentKids = parent.kids().size();
             return isInternal()
-                    ? Info.log2(parentKids)
-                    : Info.log2((parentKids - 1) /
+                    ?  Info.log2(parentKids)
+                    : -Info.log2((parentKids - 1) /
                                         parentKids);
         }
     }

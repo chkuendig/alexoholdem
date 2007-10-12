@@ -59,8 +59,8 @@ public class DescreteAttributeSet<T>
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute<T>> values()
+    public int valueCount()
     {
-        return attributes.values();
+        return attributes.values().size();
     }
 }

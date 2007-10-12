@@ -120,6 +120,11 @@ public class DataSet<T>
     {
         assert anExample().attribute( on ) != null;
 
+        // TODO: handle continuous values!!
+        return splitLiterally( on );
+    }
+    public Map<Attribute, DataSet<T>> splitLiterally(AttributeSet<?> on)
+    {
         Map<Attribute, DataSet<T>> split =
                 new HashMap<Attribute, DataSet<T>>();
         for (Example<T> e : data)
