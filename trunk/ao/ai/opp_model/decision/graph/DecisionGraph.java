@@ -572,7 +572,7 @@ public class DecisionGraph<T> implements Predictor<T>
     private double categoryLength(double alpha)
     {
         //int numClasses = hist.numClasses();
-        int numClasses = hist.mostProbable().set().values().size();
+        int numClasses = hist.mostProbable().set().valueCount();
 
         int    j      = 0;
         double length = 0;
