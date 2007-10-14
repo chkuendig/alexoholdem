@@ -120,6 +120,8 @@ public class DataSet<T>
     {
         assert anExample().attribute( on ) != null;
 
+        on.
+
         // TODO: handle continuous values!!
         return splitLiterally( on );
     }
