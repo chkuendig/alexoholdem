@@ -28,20 +28,11 @@ public class GeneralTreeTest
         LearningSet        examples = new LearningSet();
         GeneralTreeLearner learner  = new GeneralTreeLearner();
 
-        // 0.00 .. 0.33 => cold
-        // 0.33 .. 0.67 => warm
-        // 0.67 .. 1.00 => hot
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 20; i++)
         {
             double temp = Rand.nextDouble();
 
-            TempClass clazz =
-                    (temp < 0.33)
-                     ? TempClass.COLD
-                     : (temp < 0.67)
-                        ? TempClass.WARM
-                        : TempClass.HOT;
-
+            TempClass clazz = TempClass.fromTemp(temp);
             examples.add(
                     new Example(
                             new Context(Arrays.asList(
@@ -58,7 +49,22 @@ public class GeneralTreeTest
 
     private static enum TempClass
     {
-        COLD, WARM, HOT
+        COLD(0.33), WARM(0.66), HOT(1);
+
+        private final double lessThan;
+        private TempClass(double lt) {lessThan = lt;}
+
+        public static TempClass fromTemp(double temp)
+        {
+            for (TempClass tempClass : values())
+            {
+                if (temp < tempClass.lessThan)
+                {
+                    return tempClass;
+                }
+            }
+            return null;
+        }
     }
 
 
