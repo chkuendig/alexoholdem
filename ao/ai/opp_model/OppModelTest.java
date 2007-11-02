@@ -107,7 +107,7 @@ public class OppModelTest
                     example.target().value() + "\t" +
                     prediction + "\t" +
                     prediction.probabilityOf(
-                            example.target().value()) + "\t" +
+                            example.target()) + "\t" +
                     (example.target().equals(
                             prediction.mostProbable()) ? 1 : 0));
 
