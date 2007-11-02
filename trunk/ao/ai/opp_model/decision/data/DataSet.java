@@ -119,10 +119,6 @@ public class DataSet<T>
     public Map<Attribute, DataSet<T>> split(AttributeSet<?> on)
     {
         assert anExample().attribute( on ) != null;
-
-        on.
-
-        // TODO: handle continuous values!!
         return splitLiterally( on );
     }
     public Map<Attribute, DataSet<T>> splitLiterally(AttributeSet<?> on)

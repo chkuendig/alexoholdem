@@ -1,0 +1,92 @@
+package ao.ai.opp_model.decision2.tree;
+
+import ao.ai.opp_model.decision2.attribute.Attribute;
+import ao.ai.opp_model.decision2.classification.Classification;
+import ao.ai.opp_model.decision2.data.DataPool;
+import ao.ai.opp_model.decision2.example.Context;
+import ao.ai.opp_model.decision2.example.LearningSet;
+
+/**
+ *
+ */
+public class GeneralTreeLearner
+{
+    //--------------------------------------------------------------------
+    private DataPool    pool = new DataPool();
+    private GeneralTree tree;
+
+
+    //--------------------------------------------------------------------
+    public DataPool pool()
+    {
+        return pool;
+    }
+
+
+    //--------------------------------------------------------------------
+    public synchronized void train(LearningSet ls)
+    {
+        if (ls.isEmpty()) return;
+
+        tree = induce(ls);
+//        tree = new DecisionTree<T>(ds);
+//        induce(ds.contextAttributes(), tree);
+
+        System.out.println(tree);
+    }
+
+    private GeneralTree induce(LearningSet ls)
+    {
+        GeneralTree root          = new GeneralTree(ls);
+        double      messageLength = root.messageLength();
+
+        while (true)
+        {
+            double      mml     = Double.MAX_VALUE;
+            Attribute   mmlAttr = null;
+            GeneralTree mmlLeaf = null;
+            for (GeneralTree leaf : root.leaves())
+            {
+                for (Attribute attr : leaf.availableAttributes())
+                {
+                    for (Attribute attrView : attr.views())
+                    {
+                        leaf.split(attrView);
+
+                        double tentativeLength = root.messageLength();
+//                        System.out.println(root + "" +
+//                                           tentativeLength + "\n");
+                        if (mml > tentativeLength)
+                        {
+                            mml     = tentativeLength;
+                            mmlAttr = attrView;
+                            mmlLeaf = leaf;
+                        }
+
+                        leaf.unsplit();
+                    }
+                }
+            }
+
+            if (messageLength > mml)
+            {
+                assert mmlLeaf != null; // to get rid of warning
+
+                messageLength = mml;
+                mmlLeaf.split( mmlAttr );
+            }
+            else break;
+        }
+
+//        root.freeze();
+        return root;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Classification classify(Context context)
+    {
+        return (tree == null ?
+                null : tree.classify( context ));
+    }
+}

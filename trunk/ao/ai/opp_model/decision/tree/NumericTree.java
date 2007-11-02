@@ -46,7 +46,6 @@ public class NumericTree<T> implements Predictor<T>
     }
 
 
-
     //--------------------------------------------------------------------
     public void freeze()
     {

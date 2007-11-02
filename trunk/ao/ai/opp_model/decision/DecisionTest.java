@@ -5,7 +5,7 @@ import ao.ai.opp_model.decision.attr.AttributePool;
 import ao.ai.opp_model.decision.data.ContextImpl;
 import ao.ai.opp_model.decision.data.DataSet;
 import ao.ai.opp_model.decision.data.Example;
-import ao.ai.opp_model.decision.graph.DecisionGraphLearner;
+import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -46,7 +46,7 @@ public class DecisionTest
         }
 
         DecisionLearner<Boolean> learner =
-                new DecisionGraphLearner<Boolean>();
+                new DecisionTreeLearner<Boolean>();
         learner.train( data );
 
         System.out.println(

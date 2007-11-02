@@ -31,10 +31,10 @@ public class Histogram<T>
         return hist.size();
     }
 
-    public int total()
-    {
-        return (int) total;
-    }
+//    public int total()
+//    {
+//        return (int) total;
+//    }
 
     public Collection<Attribute<T>> attributes()
     {

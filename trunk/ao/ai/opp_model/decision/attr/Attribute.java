@@ -3,11 +3,16 @@ package ao.ai.opp_model.decision.attr;
 /**
  *
  */
-public class Attribute<T>// implements Comparable<Attribute>
+public class Attribute<T> implements Comparable<Attribute>
 {
+    //--------------------------------------------------------------------
+    private static volatile int nextKey = 0;
+
+
     //--------------------------------------------------------------------
     private final T               value;
     private final AttributeSet<T> attributeSet;
+    private final int             key;
 
 
     //--------------------------------------------------------------------
@@ -15,6 +20,7 @@ public class Attribute<T>// implements Comparable<Attribute>
     {
         value        = val;
         attributeSet = valSet;
+        key          = nextKey++;
     }
 
 
@@ -33,11 +39,11 @@ public class Attribute<T>// implements Comparable<Attribute>
 
 
     //--------------------------------------------------------------------
-//    public int compareTo(Attribute o)
-//    {
-//        return (key < o.key) ? -1 :
-//                (key > o.key) ? 1 : 0;
-//    }
+    public int compareTo(Attribute o)
+    {
+        return (key < o.key) ? -1 :
+                (key > o.key) ? 1 : 0;
+    }
 
 
     //--------------------------------------------------------------------
