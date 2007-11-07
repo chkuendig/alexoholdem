@@ -32,7 +32,7 @@ public class GeneralTreeLearner
 //        tree = new DecisionTree<T>(ds);
 //        induce(ds.contextAttributes(), tree);
 
-        System.out.println(tree);
+//        System.out.println(tree + "" + tree.messageLength());
     }
 
     private GeneralTree induce(LearningSet ls)
@@ -74,6 +74,8 @@ public class GeneralTreeLearner
 
                 messageLength = mml;
                 mmlLeaf.split( mmlAttr );
+//                System.out.println("MADE CHOICE!!!!!");
+//                System.out.println(root);
             }
             else break;
         }

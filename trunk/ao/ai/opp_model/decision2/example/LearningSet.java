@@ -87,6 +87,13 @@ public class LearningSet implements Iterable<Example>
 
 
     //--------------------------------------------------------------------
+    public void addAll(LearningSet addend)
+    {
+        data.addAll( addend.data );
+    }
+
+
+    //--------------------------------------------------------------------
     public Collection<Attribute> contextAttributes()
     {
         return isEmpty()

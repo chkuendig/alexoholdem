@@ -1,8 +1,7 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.attr.AttributePool;
-import ao.ai.opp_model.decision.context.ContextBuilder;
-import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.data.HoldemContext;
+import ao.ai.opp_model.decision2.data.DataPool;
 import ao.stats.Statistic;
 
 /**
@@ -22,16 +21,16 @@ public class MultiStatistic implements Statistic
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(AttributePool pool)
+    public HoldemContext nextActContext(DataPool pool)
     {
-        ContextBuilder ctx = null;
+        HoldemContext ctx = null;
 
         for (Statistic stat : delegets)
         {
             HoldemContext statCtx = stat.nextActContext(pool);
             ctx = (ctx == null)
-                    ? new ContextBuilder( statCtx )
-                    : ctx.merge(          statCtx );
+                    ? new HoldemContext( statCtx )
+                    : ctx.merge(         statCtx );
         }
 
         return ctx;

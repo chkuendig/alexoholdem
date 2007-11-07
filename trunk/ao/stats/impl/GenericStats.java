@@ -1,12 +1,12 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.attr.AttributePool;
-import ao.ai.opp_model.decision.context.ContextBuilder;
 import ao.ai.opp_model.decision.context.ContextDomain;
-import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.data.HoldemContext;
+import ao.ai.opp_model.decision2.data.DataPool;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.card.CommunitySource;
+import ao.odds.CommunityMeasure;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.stats.CumulativeStatistic;
@@ -48,18 +48,17 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(AttributePool pool)
+    public HoldemContext nextActContext(DataPool pool)
     {
-        ContextBuilder ctx = new ContextBuilder();
+        HoldemContext ctx = new HoldemContext();
         ctx.addDomains( ContextDomain.values() );
 
         BettingRound round = forefront.round();
         ctx.add(pool.fromEnum( round ));
 
-//        ctx.add(pool.fromEnum(
-//                Heat.fromHeat(
-//                        CommunityMeasure.measure(
-//                                community.community().asOf(round)))));
+        ctx.add(pool.newContinuous("Community Heat",
+                        CommunityMeasure.measure(
+                                community.community().asOf(round))));
 
         return ctx;
     }

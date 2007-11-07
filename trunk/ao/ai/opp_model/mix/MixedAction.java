@@ -1,14 +1,14 @@
 package ao.ai.opp_model.mix;
 
+import ao.ai.opp_model.decision2.classification.Histogram;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
-import ao.ai.opp_model.decision.data.Histogram;
 
 /**
  * Randomized Mixed Action.
  * A probability distribution of actions.
  */
-public class MixedAction extends Classification<SimpleAction>
+public class MixedAction
 {
     //--------------------------------------------------------------------
     public static MixedAction randomInstance()
@@ -18,12 +18,13 @@ public class MixedAction extends Classification<SimpleAction>
                                Rand.nextDouble());
     }
 
-    public static MixedAction fromHistogram(Histogram<SimpleAction> hist)
+    public static MixedAction fromHistogram(Histogram hist)
     {
-        int fold  = hist.countOf(SimpleAction.FOLD);
-        int call  = hist.countOf(SimpleAction.CALL);
-        int raise = hist.countOf(SimpleAction.RAISE);
+        int fold  = hist.countOfState(SimpleAction.FOLD);
+        int call  = hist.countOfState(SimpleAction.CALL);
+        int raise = hist.countOfState(SimpleAction.RAISE);
         int total = fold + call + raise;
+        if (total == 0) return new MixedAction(1, 1, 1);
 
         double avg        = total / 3.0;
         double error      = Math.sqrt(total + 1) - 1;
@@ -35,68 +36,61 @@ public class MixedAction extends Classification<SimpleAction>
 
         return new MixedAction(adjustedFold, adjustedCall, adjustedRaise);
     }
-    
+
 
     //--------------------------------------------------------------------
-    public MixedAction()
-    {
-        super( SimpleAction.class );
-    }
+    private final double foldProb;
+    private final double callProb;
+    private final double raiseProb;
 
-    public MixedAction(double foldProbability,
-                       double callProbability)
-    {
-        this();
-        add( SimpleAction.FOLD,  foldProbability );
-        add( SimpleAction.CALL,  callProbability );
-        add( SimpleAction.RAISE, 1.0 - callProbability - callProbability );
-    }
 
+    //--------------------------------------------------------------------
     public MixedAction(double foldWeight,
                        double callWeight,
                        double raiseWeight)
     {
-        this();
-        add( SimpleAction.FOLD,  foldWeight  );
-        add( SimpleAction.CALL,  callWeight  );
-        add( SimpleAction.RAISE, raiseWeight );
-    }
+        double total = foldWeight + callWeight + raiseWeight;
 
-    public MixedAction(double triplet[])
-    {
-        this( triplet[0], triplet[1], triplet[2] );
-    }
-
-    public MixedAction(SimpleAction act)
-    {
-        this();
-        add(act, 1.0);
+        foldProb  = foldWeight / total;
+        callProb  = callWeight / total;
+        raiseProb = raiseWeight / total;
     }
 
 
     //--------------------------------------------------------------------
     public double foldProability()
     {
-        return probabilityOf( SimpleAction.FOLD );
-    }
-
-    public double raiseProbability()
-    {
-        return probabilityOf( SimpleAction.RAISE );
+        return foldProb;
     }
 
     public double callProbability()
     {
-        return probabilityOf( SimpleAction.CALL );
+        return callProb;
+    }
+
+    public double raiseProbability()
+    {
+        return raiseProb;
     }
 
 
     //--------------------------------------------------------------------
+    public double probabilityOf(SimpleAction action)
+    {
+        return action == SimpleAction.FOLD
+               ? foldProb
+               : action == SimpleAction.CALL
+                 ? callProb
+                 : action == SimpleAction.RAISE
+                   ? raiseProb : 0;
+    }
+
+    //--------------------------------------------------------------------
     public String toString()
     {
-        return weights()[0] + "\t" +
-               weights()[1] + "\t" +
-               weights()[2];
+        return foldProb + "\t" +
+               callProb + "\t" +
+               raiseProb;
     }
 }
 

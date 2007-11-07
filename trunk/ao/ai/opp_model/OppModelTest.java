@@ -1,13 +1,14 @@
 package ao.ai.opp_model;
 
-import ao.ai.opp_model.decision.DecisionLearner;
 import ao.ai.opp_model.decision.context.PlayerExampleSet;
-import ao.ai.opp_model.decision.data.Example;
-import ao.ai.opp_model.decision.data.Histogram;
-import ao.ai.opp_model.decision.tree.DecisionTreeLearner;
+import ao.ai.opp_model.decision.data.ActionExample;
+import ao.ai.opp_model.decision2.classification.Histogram;
+import ao.ai.opp_model.decision2.data.State;
+import ao.ai.opp_model.decision2.example.Example;
+import ao.ai.opp_model.decision2.tree.GeneralTreeLearner;
+import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
-import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleAccess;
@@ -34,8 +35,8 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "elraiso"));
-//        modelOpponet(playerAccess.find("irc", "perfecto"));
+//        modelOpponet(playerAccess.find("irc", "fireman"));
+        modelOpponet(playerAccess.find("irc", "perfecto"));
     }
 
 
@@ -55,8 +56,8 @@ public class OppModelTest
     }
     private void doDecisionModelOpponet(PlayerHandle p)
     {
-        DecisionLearner<SimpleAction> learner =
-                new DecisionTreeLearner<SimpleAction>();
+        GeneralTreeLearner learner =
+                new GeneralTreeLearner();
 
         PlayerExampleSet trainingStats   = new PlayerExampleSet();
         PlayerExampleSet validationStats = new PlayerExampleSet();
@@ -64,13 +65,13 @@ public class OppModelTest
         int i = 0;
         for (HandHistory hand : p.getHands())
         {
-            System.out.println(i++);
-            System.out.println(hand.summary());
+            //System.out.println(i++);
+            //System.out.println(hand.summary());
 
-            PlayerExampleSet examples =
-                    (i++ < 300) ? trainingStats
-                                : validationStats;
-//            PlayerExampleSet examples = validationStats;
+//            PlayerExampleSet examples =
+//                    (i++ < 300) ? trainingStats
+//                                : validationStats;
+            PlayerExampleSet examples = validationStats;
 
             List<PlayerHandle> playerHandles =
                     new ArrayList<PlayerHandle>();
@@ -86,7 +87,8 @@ public class OppModelTest
                 brains.put(player,
                            new ModelPlayer(
                                    hand, examples, player,
-                                   learner.pool()));
+                                   learner.pool(),
+                                   player.equals( p )));
             }
 
             new Dealer(start, brains).playOutHand();
@@ -94,26 +96,43 @@ public class OppModelTest
 
         System.out.println("building model");
         learner.train( trainingStats.postFlops() );
-        
-        for (Example<SimpleAction> example :
-                validationStats.postFlops().examples())
+
+//        double cost         = 0;
+        int    exampleCount = 0;
+        for (Example example : validationStats.postFlops())
         {
-            Histogram<SimpleAction> prediction =
-                    learner.predict( example );
+            Histogram prediction =
+                    (Histogram)learner.classify( example );
             if (prediction == null)
-                prediction = new Histogram<SimpleAction>();
+                prediction = new Histogram();
 
+            MixedAction predictedAction =
+                    MixedAction.fromHistogram(prediction);
+
+//            double  probability =
+//                     predictedAction.probabilityOf( (SimpleAction)
+//                             ((State) example.target()).state());
+//
+            boolean isCorrent   = example.target().equals(
+                                    prediction.mostProbable());
+//            cost -= Info.log2(Math.max(0.01, probability));
+//            System.out.println(
+//                    ((State)example.target()).state() + "\t" +
+//                    prediction  + "\t" +
+//                    probability + "\t" +
+//                    (isCorrent ? 1 : 0));
             System.out.println(
-                    example.target().value() + "\t" +
-                    prediction + "\t" +
-                    prediction.probabilityOf(
-                            example.target()) + "\t" +
-                    (example.target().equals(
-                            prediction.mostProbable()) ? 1 : 0));
+                    ((State)example.target()).state() + "\t" +
+                    predictedAction  + "\t" +
+                    (isCorrent ? 1 : 0));
 
-//            trainingStats.add( (HoldemExample<SimpleAction>) example );
-//            learner.train( trainingStats.postFlops() );
+            trainingStats.add( (ActionExample) example );
+            if (exampleCount++ < 50 || (exampleCount % 50 == 0))
+            {
+                learner.train( trainingStats.postFlops() );
+            }
         }
+//        System.out.println("cost = " + cost);
     }
 
 

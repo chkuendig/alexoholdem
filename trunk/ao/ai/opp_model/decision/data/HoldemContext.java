@@ -1,18 +1,17 @@
-package ao.ai.opp_model.decision.context;
+package ao.ai.opp_model.decision.data;
 
-import ao.ai.opp_model.decision.data.ContextImpl;
-import ao.ai.opp_model.decision.attr.Attribute;
+import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.decision2.data.Datum;
+import ao.ai.opp_model.decision2.example.ContextImpl;
 
-import java.util.EnumSet;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  *
  */
-public class ContextBuilder
-        extends    ContextImpl
-        implements HoldemContext
+public class HoldemContext extends ContextImpl
 {
     //--------------------------------------------------------------------
     private EnumSet<ContextDomain> domains =
@@ -20,14 +19,14 @@ public class ContextBuilder
 
 
     //--------------------------------------------------------------------
-    public ContextBuilder() {}
-    public ContextBuilder(Collection<Attribute> attributes)
+    public HoldemContext() {}
+    public HoldemContext(Collection<Datum> attributes)
     {
         super( attributes );
     }
-    public ContextBuilder(HoldemContext context)
+    public HoldemContext(HoldemContext context)
     {
-        super( context.attributes() );
+        super( context.attributeData() );
         for (ContextDomain domain : ContextDomain.values())
         {
             if (context.isApplicableTo( domain ))
@@ -53,18 +52,18 @@ public class ContextBuilder
 
 
     //--------------------------------------------------------------------
-    public void add(Attribute<?> attr)
+    public void add(Datum attr)
     {
         super.add( attr );
     }
 
-    public ContextBuilder merge(HoldemContext with)
+    public HoldemContext merge(HoldemContext with)
     {
-        Collection<Attribute> attributes = new ArrayList<Attribute>();
-        attributes.addAll( attributes() );
-        attributes.addAll( with.attributes() );
+        Collection<Datum> attributes = new ArrayList<Datum>();
+        attributes.addAll( attributeData() );
+        attributes.addAll( with.attributeData() );
 
-        ContextBuilder merged = new ContextBuilder(attributes);
+        HoldemContext merged = new HoldemContext(attributes);
 
         merged.domains = domains.clone();
         for (ContextDomain domain : merged.domains)
@@ -84,11 +83,4 @@ public class ContextBuilder
     {
         return domains.contains( domain );
     }
-
-
-    //--------------------------------------------------------------------
-//    public String toString()
-//    {
-//        return super.toString();
-//    }
 }
