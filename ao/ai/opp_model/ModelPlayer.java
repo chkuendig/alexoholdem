@@ -1,9 +1,9 @@
 package ao.ai.opp_model;
 
-import ao.ai.opp_model.decision.attr.AttributePool;
-import ao.ai.opp_model.decision.context.HoldemContext;
 import ao.ai.opp_model.decision.context.PlayerExampleSet;
 import ao.ai.opp_model.decision.data.ActionExample;
+import ao.ai.opp_model.decision.data.HoldemContext;
+import ao.ai.opp_model.decision2.data.DataPool;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
@@ -23,19 +23,22 @@ public class ModelPlayer implements Player
     private LinkedList<RealAction> acts;
     private PlayerExampleSet       examples;
     private Serializable           playerId;
-    private AttributePool          pool;
+    private DataPool               pool;
+    private boolean                publish;
 
 
     //--------------------------------------------------------------------
     public ModelPlayer(HandHistory      history,
                        PlayerExampleSet addTo,
                        PlayerHandle     player,
-                       AttributePool    attributePool)
+                       DataPool         attributePool,
+                       boolean          publishActions)
     {
         acts     = new LinkedList<RealAction>();
         playerId = player.getId();
         examples = addTo;
         pool     = attributePool;
+        publish  = publishActions;
 
         for (Event event : history.getEvents( player ))
         {
@@ -50,7 +53,7 @@ public class ModelPlayer implements Player
         checkPlayer(env);
 
         RealAction act = shiftAction();
-        if (! act.isBlind())
+        if (! act.isBlind() && publish)
         {
             HoldemContext ctx =
                     env.stats().forPlayer(playerId).nextActContext(pool);

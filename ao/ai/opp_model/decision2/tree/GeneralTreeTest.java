@@ -2,9 +2,7 @@ package ao.ai.opp_model.decision2.tree;
 
 import ao.ai.opp_model.decision2.data.DataPool;
 import ao.ai.opp_model.decision2.data.Datum;
-import ao.ai.opp_model.decision2.example.Context;
-import ao.ai.opp_model.decision2.example.Example;
-import ao.ai.opp_model.decision2.example.LearningSet;
+import ao.ai.opp_model.decision2.example.*;
 import ao.util.rand.Rand;
 
 import java.util.Arrays;
@@ -28,14 +26,14 @@ public class GeneralTreeTest
         LearningSet        examples = new LearningSet();
         GeneralTreeLearner learner  = new GeneralTreeLearner();
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 40; i++)
         {
             double temp = Rand.nextDouble();
 
             TempClass clazz = TempClass.fromTemp(temp);
             examples.add(
-                    new Example(
-                            new Context(Arrays.asList(
+                    new ExampleImpl(
+                            new ContextImpl(Arrays.asList(
                                     learner.pool().newContinuous(
                                         "temp", temp))),
                             learner.pool().newMultistate("target", clazz)));
@@ -49,9 +47,9 @@ public class GeneralTreeTest
 
     private static enum TempClass
     {
-        COLD(0.33), WARM(0.66), HOT(1);
+        COLD(0.33), FRIDGIT(0.61), WARM(0.66), HOT(0.9), BOILING(1);
 
-        private final double lessThan;
+        private final double  lessThan;
         private TempClass(double lt) {lessThan = lt;}
 
         public static TempClass fromTemp(double temp)
@@ -126,6 +124,6 @@ public class GeneralTreeTest
             varAttributes.add(
                     attr.newMultistate(String.valueOf(type++), var) );
         }
-        return new Context(varAttributes);
+        return new ContextImpl(varAttributes);
     }
 }

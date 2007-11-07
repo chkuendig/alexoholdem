@@ -28,6 +28,13 @@ public class State extends Datum
 
 
     //--------------------------------------------------------------------
+    public Object state()
+    {
+        return STATE;
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return String.valueOf(STATE);

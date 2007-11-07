@@ -3,25 +3,14 @@ package ao.ai.opp_model.decision2.example;
 import ao.ai.opp_model.decision2.data.Datum;
 
 /**
- *
+ * Created by IntelliJ IDEA.
+ * User: aostrovs
+ * Date: Nov 6, 2007
+ * Time: 5:39:52 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class Example extends Context
+public interface Example extends Context
 {
     //--------------------------------------------------------------------
-    private Datum TARGET;
-
-
-    //--------------------------------------------------------------------
-    public Example(Context context, Datum target)
-    {
-        super(context);
-        TARGET = target;
-    }
-
-
-    //--------------------------------------------------------------------
-    public Datum target()
-    {
-        return TARGET;
-    }
+    Datum target();
 }

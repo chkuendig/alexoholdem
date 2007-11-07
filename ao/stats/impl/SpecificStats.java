@@ -1,11 +1,9 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.attr.AttributePool;
-import ao.ai.opp_model.decision.context.ContextBuilder;
 import ao.ai.opp_model.decision.context.ContextDomain;
-import ao.ai.opp_model.decision.context.HoldemContext;
+import ao.ai.opp_model.decision.data.HoldemContext;
 import ao.ai.opp_model.decision.domain.BetsToCall;
-import ao.ai.opp_model.decision.domain.PotOdds;
+import ao.ai.opp_model.decision2.data.DataPool;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
@@ -104,22 +102,21 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(AttributePool pool)
+    public HoldemContext nextActContext(DataPool pool)
     {
         assert isUnfolded;
 
-        ContextBuilder ctx = new ContextBuilder();
+        HoldemContext ctx = new HoldemContext();
         ctx.addDomain( ContextDomain.FIRST_ACT );
 
-        ctx.add(pool.fromEnum(
-                PotOdds.fromPotOdds(
+        ctx.add(pool.newContinuous("Pot Odds",
                         ((double) beforeNextAct.toCall().smallBlinds()) /
                           (beforeNextAct.toCall().smallBlinds() +
-                           beforeNextAct.pot().smallBlinds()))));
+                           beforeNextAct.pot().smallBlinds())));
 
         Money roundCommit = beforeNextAct.nextToAct().commitment().minus(
                                 startOfRoundForNextAct.stakes());
-        ctx.add(pool.fromUntyped(
+        ctx.add(pool.newMultistate(
                 "Is Committed This Round",
                 roundCommit.compareTo( Money.ZERO ) > 0));
 
@@ -128,11 +125,11 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         if (beforeCurrAct != null && prevAct != null)
         {
-            ctx.add(pool.fromUntyped(
+            ctx.add(pool.newMultistate(
                     "Last Act: Bet/Raise",
                     prevAct.toSimpleAction() == SimpleAction.RAISE));
 
-            ctx.add(pool.fromUntyped(
+            ctx.add(pool.newMultistate(
                     "Last Bets Called > 0",
                     beforeCurrAct.toCall().compareTo(Money.ZERO) > 0));
 

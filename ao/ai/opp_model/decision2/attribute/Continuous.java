@@ -15,7 +15,8 @@ import java.util.List;
 public class Continuous extends TypedAttribute
 {
     //--------------------------------------------------------------------
-    private static final int VIEW_FOLDS = 4;
+    private static final int    VIEW_FOLDS         = 5;
+    private static final double FOLD_LENGTH_WEIGHT = 1.0;
 
 
     //--------------------------------------------------------------------
@@ -128,6 +129,19 @@ public class Continuous extends TypedAttribute
         Arrays.sort(sorted);
         values = null;
 
+        // corrupt values for stable comparison
+        for (int i = 0; i < sorted.length - 1; i++)
+        {
+            if (sorted[i].equals( sorted[i + 1] ))
+            {
+                sorted[i + 1] = sorted[i + 1].corruptUpwards();
+            }
+            else if (sorted[i].compareTo( sorted[i + 1] ) > 0)
+            {
+                sorted[i + 1] = sorted[i].corruptUpwards();
+            }
+        }
+
         from      = 0;
         to        = sorted.length;
         percision = 0;
@@ -137,7 +151,7 @@ public class Continuous extends TypedAttribute
     //--------------------------------------------------------------------
     public double viewChoiceLength()
     {
-        return percision;
+        return percision * FOLD_LENGTH_WEIGHT;
     }
 
     private int valueCount()

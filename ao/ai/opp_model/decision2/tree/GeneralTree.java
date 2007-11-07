@@ -6,13 +6,13 @@ import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.data.ValueRange;
 import ao.ai.opp_model.decision2.example.Context;
 import ao.ai.opp_model.decision2.example.LearningSet;
-import ao.util.text.Txt;
 import ao.util.stats.Info;
+import ao.util.text.Txt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,7 +20,8 @@ import java.util.List;
 public class GeneralTree
 {
     //--------------------------------------------------------------------
-    private static final double ALPHA = 0.3;
+    private static final double ALPHA       = 0.3;
+    private static final double DATA_WEIGHT = 1.0;
 
 
     //--------------------------------------------------------------------
@@ -157,7 +158,8 @@ public class GeneralTree
         return typeLength(numAttributes) +
                 (isInternal()
                  ? attributeAndChildLength(numAttributes)
-                 : data.classify().transmissionCost(ALPHA));
+                 : data.classify().transmissionCost(ALPHA)
+                    * DATA_WEIGHT);
     }
 
     private double attributeAndChildLength(int availAttributes)
@@ -273,6 +275,8 @@ public class GeneralTree
     //--------------------------------------------------------------------
     public String toString()
     {
+        if (split == null) return data.classify().toString();
+
         StringBuilder b = new StringBuilder();
         appendTree(1, b);
         return b.toString();

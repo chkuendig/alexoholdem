@@ -1,6 +1,7 @@
 package ao.ai.opp_model.decision2.classification;
 
 import ao.ai.opp_model.decision2.data.Datum;
+import ao.ai.opp_model.decision2.data.State;
 import ao.util.stats.Info;
 
 import java.util.HashMap;
@@ -46,6 +47,18 @@ public class Histogram extends Classification
     {
         Integer count = hist.get(attribute);
         return (count == null) ? 0 : count;
+    }
+
+    public int countOfState(Object value)
+    {
+        for (Map.Entry<Datum, Integer> entry : hist.entrySet())
+        {
+            if (((State) entry.getKey()).state().equals( value ))
+            {
+                return entry.getValue();
+            }
+        }
+        return 0;
     }
 
 

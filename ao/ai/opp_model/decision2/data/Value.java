@@ -22,6 +22,15 @@ public class Value
 
 
     //--------------------------------------------------------------------
+    public Value corruptUpwards()
+    {
+//        VALUE += Double.MIN_VALUE;
+        return new Value(attribute(), VALUE + Double.MIN_VALUE);
+    }
+
+
+
+    //--------------------------------------------------------------------
     public boolean isBetween(Value lesser, Value greater)
     {
         return lesser.VALUE <= VALUE && VALUE <= greater.VALUE;
@@ -47,5 +56,18 @@ public class Value
     public String toString()
     {
         return String.valueOf( VALUE );
+    }
+
+    //--------------------------------------------------------------------
+    public boolean equals(Object o)
+    {
+        return !(o == null || getClass() != o.getClass()) &&
+                compareTo((Value) o) == 0;
+    }
+
+    public int hashCode()
+    {
+        long temp = VALUE != +0.0d ? Double.doubleToLongBits(VALUE) : 0L;
+        return (int) (temp ^ (temp >>> 32));
     }
 }
