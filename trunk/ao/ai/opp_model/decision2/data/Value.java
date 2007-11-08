@@ -53,6 +53,18 @@ public class Value
 
 
     //--------------------------------------------------------------------
+    public Value toLeast()
+    {
+        return new Value(attribute(), -1000000000000D);
+    }
+
+    public Value toMost()
+    {
+        return new Value(attribute(),  1000000000000D);
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return String.valueOf( VALUE );

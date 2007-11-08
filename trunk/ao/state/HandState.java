@@ -143,7 +143,7 @@ public class HandState
                              roundEnder ? null : startOfRound);
     }
 
-    public PlayerState[] nextPlayers(RealAction act)
+    private PlayerState[] nextPlayers(RealAction act)
     {
         PlayerState nextPlayers[] = players.clone();
         nextPlayers[nextToAct] = nextPlayers[nextToAct]
@@ -401,6 +401,20 @@ public class HandState
     public int betsToCall()
     {
         return toCall().bets( isSmallBet() );
+    }
+
+    public double nextToActPosition()
+    {
+        return (double) (nextToAct + 1) / players.length;
+    }
+    public double nextToActActivePosition()
+    {
+        int activePosition = 0;
+        for (int i = 0; i <= nextToAct; i++)
+        {
+            if (players[i].isActive()) activePosition++;
+        }
+        return (double) activePosition / numActivePlayers();
     }
 
 

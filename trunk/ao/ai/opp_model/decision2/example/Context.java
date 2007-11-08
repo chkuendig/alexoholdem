@@ -1,9 +1,10 @@
 package ao.ai.opp_model.decision2.example;
 
-import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.attribute.Attribute;
+import ao.ai.opp_model.decision2.data.Datum;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -12,9 +13,9 @@ public interface Context
 {
     public Example withTarget(Datum target);
 
-    public Collection<Attribute> attributes();
+    public List<Attribute> dataAttributes();
 
-    public Collection<Datum> attributeData();
+    public Collection<Datum> data();
 
     public void add(Datum datum);
 

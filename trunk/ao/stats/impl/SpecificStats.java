@@ -1,8 +1,8 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.decision.context.ContextDomain;
-import ao.ai.opp_model.decision.data.HoldemContext;
-import ao.ai.opp_model.decision.domain.BetsToCall;
+import ao.ai.opp_model.model.context.ContextDomain;
+import ao.ai.opp_model.model.data.HoldemContext;
+import ao.ai.opp_model.model.domain.BetsToCall;
 import ao.ai.opp_model.decision2.data.DataPool;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
@@ -32,6 +32,10 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
     private HandState    beforeNextAct;
     private Serializable subjectId;
     private boolean      isUnfolded;
+
+    private int checks;
+    private int calls;
+    private int raises;
 
 
     //--------------------------------------------------------------------
@@ -79,6 +83,10 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
             prevAct       = currAct;
             currAct       = act;
             beforeCurrAct = stateBeforeAct;
+
+                 if (act == RealAction.CHECK) checks++;
+            else if (act.isCheckCall())       calls++;
+            else if (act.isBetRaise())        raises++;
         }
 
 //        if (! stateAfterAct.atEndOfHand())
@@ -122,6 +130,24 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         ctx.add(pool.fromEnum(
                 BetsToCall.fromBets(beforeNextAct.betsToCall())));
+
+        // positional stats
+//        ctx.add(pool.newContinuous("Position",
+//                        beforeNextAct.nextToActPosition()));
+        ctx.add(pool.newContinuous("Active Position",
+                        beforeNextAct.nextToActActivePosition()));
+
+        // betting stats
+        int numActs = checks + calls + raises;
+        if (numActs != 0)
+        {
+            ctx.add(pool.newContinuous("Bet Ratio",
+                            (double) raises / numActs));
+            ctx.add(pool.newContinuous("Call Ratio",
+                            (double) calls / numActs));
+            ctx.add(pool.newContinuous("Check Ratio",
+                            (double) checks / numActs));
+        }
 
         if (beforeCurrAct != null && prevAct != null)
         {

@@ -1,12 +1,13 @@
 package ao.ai.opp_model;
 
-import ao.ai.opp_model.decision.context.PlayerExampleSet;
-import ao.ai.opp_model.decision.data.ActionExample;
+import ao.ai.opp_model.decision2.Classifier;
 import ao.ai.opp_model.decision2.classification.Histogram;
 import ao.ai.opp_model.decision2.data.State;
 import ao.ai.opp_model.decision2.example.Example;
-import ao.ai.opp_model.decision2.tree.GeneralTreeLearner;
+import ao.ai.opp_model.decision2.random.RandomLearner;
 import ao.ai.opp_model.mix.MixedAction;
+import ao.ai.opp_model.model.context.PlayerExampleSet;
+import ao.ai.opp_model.model.data.ActionExample;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
 import ao.persist.HandHistory;
@@ -35,7 +36,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-//        modelOpponet(playerAccess.find("irc", "fireman"));
+//        modelOpponet(playerAccess.find("irc", "perfecto3"));
         modelOpponet(playerAccess.find("irc", "perfecto"));
     }
 
@@ -56,8 +57,8 @@ public class OppModelTest
     }
     private void doDecisionModelOpponet(PlayerHandle p)
     {
-        GeneralTreeLearner learner =
-                new GeneralTreeLearner();
+        //Classifier learner = new GeneralTreeLearner();
+        Classifier learner = new RandomLearner();
 
         PlayerExampleSet trainingStats   = new PlayerExampleSet();
         PlayerExampleSet validationStats = new PlayerExampleSet();
@@ -72,6 +73,7 @@ public class OppModelTest
 //                    (i++ < 300) ? trainingStats
 //                                : validationStats;
             PlayerExampleSet examples = validationStats;
+//            PlayerExampleSet examples = trainingStats;
 
             List<PlayerHandle> playerHandles =
                     new ArrayList<PlayerHandle>();
@@ -96,6 +98,8 @@ public class OppModelTest
 
         System.out.println("building model");
         learner.train( trainingStats.postFlops() );
+        System.out.println(learner);
+//        ((RandomLearner) learner).printAsForest();
 
 //        double cost         = 0;
         int    exampleCount = 0;
@@ -113,7 +117,7 @@ public class OppModelTest
 //                     predictedAction.probabilityOf( (SimpleAction)
 //                             ((State) example.target()).state());
 //
-            boolean isCorrent   = example.target().equals(
+            boolean isCorrent = example.target().equals(
                                     prediction.mostProbable());
 //            cost -= Info.log2(Math.max(0.01, probability));
 //            System.out.println(

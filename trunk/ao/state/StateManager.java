@@ -161,12 +161,34 @@ public class StateManager
             HandHistory       hist,
             List<PlayerState> winners)
     {
+        PlayerHandle smallBlind, bigBlind;
+        if (events.get(0).getAction().isSmallBlind())
+        {
+            smallBlind = events.get(0).getPlayer();
+            bigBlind   = events.get(1).getPlayer();
+        }
+        else
+        {
+            smallBlind = null;
+            bigBlind   = events.get(0).getPlayer();
+        }
+
+
         Money totalLost = new Money();
         for (PlayerState player : head().players())
         {
             if (! winners.contains(player))
             {
                 Money commit = player.commitment();
+                if (player.handle().equals( smallBlind ))
+                {
+                    commit = commit.plus( Money.SMALL_BLIND );
+                }
+                else if(player.handle().equals( bigBlind ))
+                {
+                    commit = commit.plus( Money.BIG_BLIND );
+                }
+
                 hist.setDelta(player.handle(),
                               Money.ZERO.minus(commit));
                 totalLost = totalLost.plus(commit);

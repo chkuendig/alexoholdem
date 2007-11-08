@@ -4,8 +4,12 @@ import ao.ai.AbstractPlayer;
 import ao.state.HandState;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.act.EasyAction;
+import ao.holdem.model.Money;
 import ao.state.StateManager;
 import ao.strategy.Sklansky;
+import ao.persist.PlayerHandle;
+
+import java.util.Map;
 
 /**
  * Strategy from
@@ -13,6 +17,10 @@ import ao.strategy.Sklansky;
  */
 public class DuaneBot extends AbstractPlayer
 {
+    //--------------------------------------------------------------------
+    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+
+    
     //--------------------------------------------------------------------
     protected EasyAction act(StateManager env, HandState state, Hole hole)
     {

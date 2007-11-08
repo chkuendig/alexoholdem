@@ -23,5 +23,6 @@ public interface Attribute
     public Collection<? extends Datum> partition();
 
     public Collection<? extends Attribute> views();
+    public Attribute randomView();
     public double viewChoiceLength();
 }

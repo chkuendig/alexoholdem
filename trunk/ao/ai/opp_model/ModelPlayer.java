@@ -1,10 +1,11 @@
 package ao.ai.opp_model;
 
-import ao.ai.opp_model.decision.context.PlayerExampleSet;
-import ao.ai.opp_model.decision.data.ActionExample;
-import ao.ai.opp_model.decision.data.HoldemContext;
+import ao.ai.opp_model.model.context.PlayerExampleSet;
+import ao.ai.opp_model.model.data.ActionExample;
+import ao.ai.opp_model.model.data.HoldemContext;
 import ao.ai.opp_model.decision2.data.DataPool;
 import ao.holdem.model.Player;
+import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
@@ -13,6 +14,7 @@ import ao.state.StateManager;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * A player that extracts action examples from a HandHistory
@@ -47,6 +49,10 @@ public class ModelPlayer implements Player
     }
 
 
+    //--------------------------------------------------------------------
+    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+
+    
     //--------------------------------------------------------------------
     public RealAction act(StateManager env)
     {

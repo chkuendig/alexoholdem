@@ -1,4 +1,4 @@
-package ao.ai.opp_model.decision.domain;
+package ao.ai.opp_model.model.domain;
 
 /**
  *

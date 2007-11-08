@@ -4,20 +4,27 @@ import ao.ai.AbstractPlayer;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.act.EasyAction;
+import ao.holdem.model.Money;
 import ao.state.HandState;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
 import ao.state.StateManager;
+import ao.persist.PlayerHandle;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * Designed for heads up play.
  */
 public class MathBot extends AbstractPlayer
 {
+    //--------------------------------------------------------------------
+    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+
+    
     //--------------------------------------------------------------------
     protected EasyAction act(StateManager env, HandState state, Hole hole)
     {

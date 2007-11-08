@@ -1,6 +1,6 @@
-package ao.ai.opp_model.decision.data;
+package ao.ai.opp_model.model.data;
 
-import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.model.context.ContextDomain;
 import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.example.ContextImpl;
 
@@ -26,7 +26,7 @@ public class HoldemContext extends ContextImpl
     }
     public HoldemContext(HoldemContext context)
     {
-        super( context.attributeData() );
+        super( context.data() );
         for (ContextDomain domain : ContextDomain.values())
         {
             if (context.isApplicableTo( domain ))
@@ -60,8 +60,8 @@ public class HoldemContext extends ContextImpl
     public HoldemContext merge(HoldemContext with)
     {
         Collection<Datum> attributes = new ArrayList<Datum>();
-        attributes.addAll( attributeData() );
-        attributes.addAll( with.attributeData() );
+        attributes.addAll( data() );
+        attributes.addAll( with.data() );
 
         HoldemContext merged = new HoldemContext(attributes);
 

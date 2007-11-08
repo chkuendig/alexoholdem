@@ -61,6 +61,14 @@ public class Histogram extends Classification
         return 0;
     }
 
+    public void put(Datum datum, int value)
+    {
+        Integer oldVal = hist.put(datum, value);
+        if (oldVal == null) oldVal = 0;
+
+        total += value - oldVal;
+    }
+
 
     //--------------------------------------------------------------------
     public Datum mostProbable()

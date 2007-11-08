@@ -18,7 +18,7 @@ public class DeckCardSource implements CardSource
     //--------------------------------------------------------------------
     private final Deck                    cards;
     private final Map<Serializable, Hole> holes;
-    private       Community               community;
+    private       Community               community = new Community();
 
 
     //--------------------------------------------------------------------
@@ -59,7 +59,7 @@ public class DeckCardSource implements CardSource
 
     public void flop()
     {
-        if (community == null)
+        if (! community.hasFlop())
         {
             community = cards.nextFlop();
         }
