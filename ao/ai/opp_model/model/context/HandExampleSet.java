@@ -1,4 +1,4 @@
-package ao.ai.opp_model.decision.context;
+package ao.ai.opp_model.model.context;
 
 import ao.persist.PlayerHandle;
 

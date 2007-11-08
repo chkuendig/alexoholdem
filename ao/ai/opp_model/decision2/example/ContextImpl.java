@@ -3,10 +3,7 @@ package ao.ai.opp_model.decision2.example;
 import ao.ai.opp_model.decision2.attribute.Attribute;
 import ao.ai.opp_model.decision2.data.Datum;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  *
@@ -39,9 +36,9 @@ public class ContextImpl implements Context
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute> attributes()
+    public List<Attribute> dataAttributes()
     {
-        Collection<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = new ArrayList<Attribute>();
         for (Datum datum : byType.values())
         {
             attributes.add( datum.attribute() );
@@ -49,7 +46,7 @@ public class ContextImpl implements Context
         return attributes;
     }
 
-    public Collection<Datum> attributeData()
+    public Collection<Datum> data()
     {
         return byType.values();
     }

@@ -58,6 +58,11 @@ public class Multistate extends TypedAttribute
         return Collections.singleton(this);
     }
 
+    public Attribute randomView()
+    {
+        return this;
+    }
+
     public double viewChoiceLength()
     {
         return 0;

@@ -20,7 +20,7 @@ public class Dealer
 
     //--------------------------------------------------------------------
     public Dealer(StateManager startFrom,
-                      Map<PlayerHandle, ? extends Player> brains)
+                  Map<PlayerHandle, ? extends Player> brains)
     {
         start   = startFrom;
         players = brains;

@@ -1,4 +1,4 @@
-package ao.ai.opp_model.decision.graph;
+package ao.ai.opp_model.decision2.graph;
 
 /**
  * see Tan & Dowe (2003)

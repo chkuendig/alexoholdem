@@ -1,6 +1,6 @@
-package ao.ai.opp_model.decision.context;
+package ao.ai.opp_model.model.context;
 
-import ao.ai.opp_model.decision.data.ActionExample;
+import ao.ai.opp_model.model.data.ActionExample;
 import ao.ai.opp_model.decision2.example.LearningSet;
 
 /**

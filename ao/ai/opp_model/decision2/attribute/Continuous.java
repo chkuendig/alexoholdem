@@ -3,6 +3,7 @@ package ao.ai.opp_model.decision2.attribute;
 import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.data.Value;
 import ao.ai.opp_model.decision2.data.ValueRange;
+import ao.util.rand.Rand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +96,19 @@ public class Continuous extends TypedAttribute
     {
         return views(VIEW_FOLDS);
     }
+
+    public Attribute randomView()
+    {
+        sortAttributes();
+        double splitAt = Rand.nextDouble();
+        return new Continuous(type(), sorted,
+                              from,
+                              from + (int)(Math.ceil(
+                                            splitAt * (to - from - 1))),
+                              to,
+                              -1);
+    }
+
     public Collection<Continuous> views(int folds)
     {
         sortAttributes();
@@ -141,6 +155,10 @@ public class Continuous extends TypedAttribute
                 sorted[i + 1] = sorted[i].corruptUpwards();
             }
         }
+
+        // corrupt edges
+        sorted[0                ] = sorted[0                ].toLeast();
+        sorted[sorted.length - 1] = sorted[sorted.length - 1].toMost();
 
         from      = 0;
         to        = sorted.length;

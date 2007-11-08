@@ -1,9 +1,12 @@
-package ao.ai.opp_model.decision2.tree;
+package ao.ai.opp_model.decision2.random;
 
+import ao.ai.opp_model.decision2.Classifier;
 import ao.ai.opp_model.decision2.data.DataPool;
 import ao.ai.opp_model.decision2.data.Datum;
-import ao.ai.opp_model.decision2.example.*;
-import ao.util.rand.Rand;
+import ao.ai.opp_model.decision2.example.Context;
+import ao.ai.opp_model.decision2.example.ContextImpl;
+import ao.ai.opp_model.decision2.example.Example;
+import ao.ai.opp_model.decision2.example.LearningSet;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -11,71 +14,24 @@ import java.util.LinkedList;
 /**
  *
  */
-public class GeneralTreeTest
+public class RandomTreeTest
 {
     //---------------------------------------------------------------------
-    private GeneralTreeTest() {}
+    private RandomTreeTest() {}
 
 
     //---------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        new GeneralTreeTest().testMultivalue();
-        new GeneralTreeTest().testContinuous();
-    }
-
-
-    //---------------------------------------------------------------------
-    public void testContinuous()
-    {
-        LearningSet        examples = new LearningSet();
-        GeneralTreeLearner learner  = new GeneralTreeLearner();
-
-        for (int i = 0; i < 40; i++)
-        {
-            double temp = Rand.nextDouble();
-
-            TempClass clazz = TempClass.fromTemp(temp);
-            examples.add(
-                    new ExampleImpl(
-                            new ContextImpl(Arrays.asList(
-                                    learner.pool().newContinuous(
-                                        "temp", temp))),
-                            learner.pool().newMultistate("target", clazz)));
-        }
-        learner.train( examples );
-
-//        System.out.println(
-//                learner.classify(context(learner.pool(),
-//                                         true, false, true, true)));
-    }
-
-    private static enum TempClass
-    {
-        COLD(0.33), FRIDGIT(0.61), WARM(0.66), HOT(0.9), BOILING(1);
-
-        private final double  lessThan;
-        private TempClass(double lt) {lessThan = lt;}
-
-        public static TempClass fromTemp(double temp)
-        {
-            for (TempClass tempClass : values())
-            {
-                if (temp < tempClass.lessThan)
-                {
-                    return tempClass;
-                }
-            }
-            return null;
-        }
+        new RandomTreeTest().testMultivalue();
     }
 
 
     //---------------------------------------------------------------------
     public void testMultivalue()
     {
-        LearningSet        examples = new LearningSet();
-        GeneralTreeLearner learner  = new GeneralTreeLearner();
+        LearningSet examples = new LearningSet();
+        Classifier  learner  = new RandomLearner();
 
         // (a ^ b) v (c ^ d)
         for (int i = 0; i < 20; i++)
@@ -110,7 +66,7 @@ public class GeneralTreeTest
     }
 
     private Example function(
-            DataPool   attr,
+            DataPool attr,
             Boolean... vars)
     {
         return context(attr, Arrays.copyOf(vars, vars.length - 1)).

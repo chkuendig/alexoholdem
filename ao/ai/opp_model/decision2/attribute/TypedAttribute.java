@@ -12,6 +12,8 @@ public abstract class TypedAttribute implements Attribute
     //--------------------------------------------------------------------
     public TypedAttribute(String type)
     {
+        assert type != null;
+
         TYPE = type;
     }
 

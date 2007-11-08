@@ -1,6 +1,6 @@
-package ao.ai.opp_model.decision.data;
+package ao.ai.opp_model.model.data;
 
-import ao.ai.opp_model.decision.context.ContextDomain;
+import ao.ai.opp_model.model.context.ContextDomain;
 
 /**
  *

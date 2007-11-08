@@ -31,6 +31,11 @@ public class LearningSet implements Iterable<Example>
         data.add( datum );
     }
 
+    public int size()
+    {
+        return data.size();
+    }
+
     public boolean isEmpty()
     {
         return data.isEmpty();
@@ -94,11 +99,18 @@ public class LearningSet implements Iterable<Example>
 
 
     //--------------------------------------------------------------------
-    public Collection<Attribute> contextAttributes()
+    public List<Attribute> contextAttributes()
     {
         return isEmpty()
                ? null
-               : firstExample().attributes();
+               : firstExample().dataAttributes();
+    }
+
+    public Attribute targetAttribute()
+    {
+        return isEmpty()
+               ? null
+               : firstExample().targetAttribute();
     }
 
     private Example firstExample()
