@@ -20,8 +20,8 @@ public class GeneralTreeTest
     //---------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        new GeneralTreeTest().testMultivalue();
-        new GeneralTreeTest().testContinuous();
+        new GeneralTreeTest().testMultivalue();
+//        new GeneralTreeTest().testContinuous();
     }
 
 
@@ -90,10 +90,10 @@ public class GeneralTreeTest
                         for (boolean d : yesNo)
                         {
                             boolean func = (a && b) || (c && d);
-//                            if (Rand.nextDouble() < 0.1) // introduce noice
-//                            {
-//                                func = !func;
-//                            }
+                            if (Rand.nextDouble() < 0.5) // introduce noice
+                            {
+                                func = !func;
+                            }
 
                             examples.add( function(learner.pool(),
                                                    a, b, c, d, func) );

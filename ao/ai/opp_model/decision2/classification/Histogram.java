@@ -1,5 +1,7 @@
 package ao.ai.opp_model.decision2.classification;
 
+import ao.ai.opp_model.decision2.attribute.Attribute;
+import ao.ai.opp_model.decision2.attribute.Multistate;
 import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.data.State;
 import ao.util.stats.Info;
@@ -116,7 +118,22 @@ public class Histogram extends Classification
     @Override
     public String toString()
     {
-        return hist.toString() + "\t" +
-               Info.cost(probabilityOf(mostProbable()));
+        if (hist.isEmpty()) return "Empty";
+
+        State     aState = (State)hist.keySet().iterator().next();
+        Attribute attr   = aState.attribute();
+
+        StringBuilder b = new StringBuilder();
+        for (Datum datum : ((Multistate) attr).orderedPartition())
+        {
+            b//.append(datum)
+             //.append("\t")
+             .append( hist.get(datum) )
+             .append("\t");
+        }
+        return b.deleteCharAt( b.length()-1 ).toString();
+
+//        return hist.toString() + "\t" +
+//               Info.cost(probabilityOf(mostProbable()));
     }
 }

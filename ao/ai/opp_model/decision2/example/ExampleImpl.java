@@ -10,7 +10,7 @@ import java.util.List;
  *
  */
 public class ExampleImpl
-        implements Context, Example
+        implements Example
 {
     //--------------------------------------------------------------------
     private final Datum   TARGET;
