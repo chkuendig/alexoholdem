@@ -1,12 +1,13 @@
 package ao.ai.opp_model.decision2.random;
 
-import ao.ai.opp_model.decision2.Classifier;
+import ao.ai.opp_model.classifier.Classifier;
 import ao.ai.opp_model.decision2.data.DataPool;
 import ao.ai.opp_model.decision2.data.Datum;
 import ao.ai.opp_model.decision2.example.Context;
 import ao.ai.opp_model.decision2.example.ContextImpl;
 import ao.ai.opp_model.decision2.example.Example;
 import ao.ai.opp_model.decision2.example.LearningSet;
+import ao.util.rand.Rand;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -46,10 +47,10 @@ public class RandomTreeTest
                         for (boolean d : yesNo)
                         {
                             boolean func = (a && b) || (c && d);
-//                            if (Rand.nextDouble() < 0.1) // introduce noice
-//                            {
-//                                func = !func;
-//                            }
+                            if (Rand.nextDouble() < 0.5) // introduce noice
+                            {
+                                func = !func;
+                            }
 
                             examples.add( function(learner.pool(),
                                                    a, b, c, d, func) );

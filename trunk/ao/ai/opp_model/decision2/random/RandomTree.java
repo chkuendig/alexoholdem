@@ -27,8 +27,11 @@ public class RandomTree
                     attributeList.toArray(
                             new Attribute[ attributeList.size() ]);
 
+//        return new RandomTree(attributes,
+//                             (int)(attributes.length / 2 + 0.99));
+//        return new RandomTree(attributes, attributes.length);
         return new RandomTree(attributes,
-                             (int)(attributes.length / 2 + 0.99));
+                             (int)(attributes.length * 0.6 + 0.99));
     }
 
     

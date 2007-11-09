@@ -1,6 +1,6 @@
 package ao.ai.opp_model.decision2.tree;
 
-import ao.ai.opp_model.ClassifierImpl;
+import ao.ai.opp_model.classifier.ClassifierImpl;
 import ao.ai.opp_model.decision2.attribute.Attribute;
 import ao.ai.opp_model.decision2.classification.Classification;
 import ao.ai.opp_model.decision2.example.Context;

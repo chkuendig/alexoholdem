@@ -1,7 +1,7 @@
 package ao.ai.opp_model.model.context;
 
-import ao.ai.opp_model.model.data.ActionExample;
 import ao.ai.opp_model.decision2.example.LearningSet;
+import ao.ai.opp_model.model.data.DomainedExample;
 
 /**
  *
@@ -33,7 +33,7 @@ public class PlayerExampleSet
 
 
     //-------------------------------------------------------------------
-    public void add(ActionExample example)
+    public void add(DomainedExample example)
     {
         LearningSet addTo =
                 example.isApplicableTo( ContextDomain.POST_FLOP )

@@ -22,6 +22,10 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
     private HandState       forefront;
     private CommunitySource community;
 
+    private int checks;
+    private int calls;
+    private int raises;
+
 
     //--------------------------------------------------------------------
     public GenericStats(CommunitySource communitySource)
@@ -43,6 +47,13 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
                         RealAction   act,
                         HandState    stateAfterAct)
     {
+        if (! act.isBlind())
+        {
+                 if (act == RealAction.CHECK) checks++;
+            else if (act.isCheckCall())       calls++;
+            else if (act.isBetRaise())        raises++;
+        }
+
         forefront = stateAfterAct;
     }
 
@@ -59,6 +70,23 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
         ctx.add(pool.newContinuous("Community Heat",
                         CommunityMeasure.measure(
                                 community.community().asOf(round))));
+
+        // betting stats
+        int numActs = checks + calls + raises;
+        if (numActs != 0)
+        {
+            ctx.add(pool.newContinuous("Total Bet Ratio",
+                            (double) raises / numActs));
+            ctx.add(pool.newContinuous("Total Call Ratio",
+                            (double) calls / numActs));
+            ctx.add(pool.newContinuous("Total Check Ratio",
+                            (double) checks / numActs));
+        }
+
+        ctx.add(pool.newContinuous("Players",
+                        forefront.players().length));
+        ctx.add(pool.newContinuous("Active Players",
+                        forefront.numActivePlayers()));
 
         return ctx;
     }

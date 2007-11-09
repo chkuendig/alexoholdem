@@ -87,16 +87,6 @@ public class Continuous extends TypedAttribute
 
 
     //--------------------------------------------------------------------
-    // We assign a probability 1/2 (code length 1 bit) to the cut-point
-    //  being at the median observed value.  Either quartile costs 3 bits
-    //  (probability 1/8), octiles cost 5 bits (probability 1/32),
-    //  and so on.  This coding scheme uses the fact that
-    //      1/2 + 2/8 + 4/32 + ... = 1.
-    public Collection<? extends Attribute> views()
-    {
-        return views(VIEW_FOLDS);
-    }
-
     public Attribute randomView()
     {
         sortAttributes();
@@ -107,6 +97,17 @@ public class Continuous extends TypedAttribute
                                             splitAt * (to - from - 1))),
                               to,
                               -1);
+    }
+
+
+    // We assign a probability 1/2 (code length 1 bit) to the cut-point
+    //  being at the median observed value.  Either quartile costs 3 bits
+    //  (probability 1/8), octiles cost 5 bits (probability 1/32),
+    //  and so on.  This coding scheme uses the fact that
+    //      1/2 + 2/8 + 4/32 + ... = 1.
+    public Collection<? extends Attribute> views()
+    {
+        return views(VIEW_FOLDS);
     }
 
     public Collection<Continuous> views(int folds)

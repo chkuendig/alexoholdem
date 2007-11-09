@@ -1,11 +1,11 @@
-package ao.ai.opp_model;
+package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.model.context.PlayerExampleSet;
-import ao.ai.opp_model.model.data.ActionExample;
-import ao.ai.opp_model.model.data.HoldemContext;
 import ao.ai.opp_model.decision2.data.DataPool;
-import ao.holdem.model.Player;
+import ao.ai.opp_model.model.context.PlayerExampleSet;
+import ao.ai.opp_model.model.data.DomainedExample;
+import ao.ai.opp_model.model.data.HoldemContext;
 import ao.holdem.model.Money;
+import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
@@ -17,9 +17,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * A player that extracts action examples from a HandHistory
+ *
  */
-public class ModelPlayer implements Player
+public abstract class InputPlayer
+        implements Player
 {
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
@@ -30,7 +31,7 @@ public class ModelPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public ModelPlayer(HandHistory      history,
+    public InputPlayer(HandHistory      history,
                        PlayerExampleSet addTo,
                        PlayerHandle     player,
                        DataPool         attributePool,
@@ -52,24 +53,28 @@ public class ModelPlayer implements Player
     //--------------------------------------------------------------------
     public void handEnded(Map<PlayerHandle, Money> deltas) {}
 
-    
+
     //--------------------------------------------------------------------
     public RealAction act(StateManager env)
     {
         checkPlayer(env);
 
         RealAction act = shiftAction();
-        if (! act.isBlind() && publish)
+        if (publish && !act.isBlind())
         {
             HoldemContext ctx =
-                    env.stats().forPlayer(playerId).nextActContext(pool);
-//            System.out.println(ctx);
-            examples.add(new ActionExample(
-                            ctx,
-                            pool.fromEnum(act.toSimpleAction())));
+                env.stats().forPlayer(playerId)
+                        .nextActContext(pool);
+            examples.add(makeExampleOf(env, ctx, act, pool));
         }
         return act;
     }
+
+    protected abstract DomainedExample
+            makeExampleOf(StateManager  env,
+                          HoldemContext ctx,
+                          RealAction    act,
+                          DataPool      pool);
 
     public boolean shiftQuitAction()
     {

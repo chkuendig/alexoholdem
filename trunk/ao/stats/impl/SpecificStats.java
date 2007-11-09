@@ -132,8 +132,8 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
                 BetsToCall.fromBets(beforeNextAct.betsToCall())));
 
         // positional stats
-//        ctx.add(pool.newContinuous("Position",
-//                        beforeNextAct.nextToActPosition()));
+        ctx.add(pool.newContinuous("Position",
+                        beforeNextAct.nextToActPosition()));
         ctx.add(pool.newContinuous("Active Position",
                         beforeNextAct.nextToActActivePosition()));
 

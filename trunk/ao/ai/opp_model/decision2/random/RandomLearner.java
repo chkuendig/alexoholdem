@@ -1,6 +1,6 @@
 package ao.ai.opp_model.decision2.random;
 
-import ao.ai.opp_model.ClassifierImpl;
+import ao.ai.opp_model.classifier.ClassifierImpl;
 import ao.ai.opp_model.decision2.attribute.Multistate;
 import ao.ai.opp_model.decision2.classification.Classification;
 import ao.ai.opp_model.decision2.classification.Histogram;
@@ -15,7 +15,7 @@ import ao.ai.opp_model.decision2.example.LearningSet;
 public class RandomLearner extends ClassifierImpl
 {
     //--------------------------------------------------------------------
-    private static final int NUM_TREES = 128;
+    private static final int NUM_TREES = 64;
 
 
     //--------------------------------------------------------------------
