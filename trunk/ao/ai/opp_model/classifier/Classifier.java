@@ -1,9 +1,9 @@
 package ao.ai.opp_model.classifier;
 
-import ao.ai.opp_model.decision2.classification.Classification;
-import ao.ai.opp_model.decision2.example.Context;
-import ao.ai.opp_model.decision2.example.LearningSet;
-import ao.ai.opp_model.decision2.data.DataPool;
+import ao.ai.opp_model.decision.classification.Classification;
+import ao.ai.opp_model.decision.example.Context;
+import ao.ai.opp_model.decision.example.LearningSet;
+import ao.ai.opp_model.decision.data.DataPool;
 
 /**
  *

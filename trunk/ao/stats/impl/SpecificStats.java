@@ -3,7 +3,7 @@ package ao.stats.impl;
 import ao.ai.opp_model.model.context.ContextDomain;
 import ao.ai.opp_model.model.data.HoldemContext;
 import ao.ai.opp_model.model.domain.BetsToCall;
-import ao.ai.opp_model.decision2.data.DataPool;
+import ao.ai.opp_model.decision.data.DataPool;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;

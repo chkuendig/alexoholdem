@@ -1,10 +1,10 @@
 package ao.ai.opp_model;
 
 import ao.ai.opp_model.classifier.Classifier;
-import ao.ai.opp_model.decision2.classification.Histogram;
-import ao.ai.opp_model.decision2.data.State;
-import ao.ai.opp_model.decision2.example.Example;
-import ao.ai.opp_model.decision2.random.RandomLearner;
+import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.data.State;
+import ao.ai.opp_model.decision.example.Example;
+import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.input.InputPlayer;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.ai.opp_model.input.ModelHolePlayer;

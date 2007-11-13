@@ -1,8 +1,8 @@
 package ao.ai.opp_model.model.data;
 
 import ao.ai.opp_model.model.context.ContextDomain;
-import ao.ai.opp_model.decision2.data.Datum;
-import ao.ai.opp_model.decision2.example.ContextImpl;
+import ao.ai.opp_model.decision.data.Datum;
+import ao.ai.opp_model.decision.example.ContextImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
