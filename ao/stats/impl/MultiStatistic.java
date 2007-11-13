@@ -1,7 +1,7 @@
 package ao.stats.impl;
 
 import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.decision2.data.DataPool;
+import ao.ai.opp_model.decision.data.DataPool;
 import ao.stats.Statistic;
 
 /**

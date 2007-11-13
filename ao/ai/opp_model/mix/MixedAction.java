@@ -1,6 +1,6 @@
 package ao.ai.opp_model.mix;
 
-import ao.ai.opp_model.decision2.classification.Histogram;
+import ao.ai.opp_model.decision.classification.Histogram;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 

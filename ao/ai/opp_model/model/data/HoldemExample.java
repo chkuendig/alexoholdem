@@ -1,7 +1,7 @@
 package ao.ai.opp_model.model.data;
 
-import ao.ai.opp_model.decision2.data.Datum;
-import ao.ai.opp_model.decision2.example.ExampleImpl;
+import ao.ai.opp_model.decision.data.Datum;
+import ao.ai.opp_model.decision.example.ExampleImpl;
 import ao.ai.opp_model.model.context.ContextDomain;
 
 /**

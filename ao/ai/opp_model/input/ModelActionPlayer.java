@@ -1,6 +1,6 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.decision2.data.DataPool;
+import ao.ai.opp_model.decision.data.DataPool;
 import ao.ai.opp_model.model.context.PlayerExampleSet;
 import ao.ai.opp_model.model.data.HoldemExample;
 import ao.ai.opp_model.model.data.HoldemContext;
