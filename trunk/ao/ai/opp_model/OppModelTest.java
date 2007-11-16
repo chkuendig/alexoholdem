@@ -1,7 +1,9 @@
 package ao.ai.opp_model;
 
 import ao.ai.opp_model.classifier.Classifier;
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.ConfusionMatrix;
+import ao.ai.opp_model.decision.classification.Frequency;
+import ao.ai.opp_model.decision.data.Datum;
 import ao.ai.opp_model.decision.data.State;
 import ao.ai.opp_model.decision.example.Example;
 import ao.ai.opp_model.decision.random.RandomLearner;
@@ -104,31 +106,41 @@ public class OppModelTest
         }
 
         System.out.println("building model");
-        learner.train( trainingStats.postFlops() );
+        learner.set( trainingStats.postFlops() );
         System.out.println(learner);
 //        ((RandomLearner) learner).printAsForest();
+
+        ConfusionMatrix<Datum> confusion =
+                new ConfusionMatrix<Datum>();
 
         int    exampleCount = 0;
         for (Example example : validationStats.postFlops())
         {
-            Histogram prediction =
-                    (Histogram)learner.classify( example );
+            Frequency prediction =
+                    (Frequency)learner.classify( example );
             if (prediction == null)
-                prediction = new Histogram();
+                prediction = new Frequency();
 
             boolean isCorrent = example.target().equals(
                                     prediction.mostProbable());
             System.out.println(
                     ((State)example.target()).state() + "\t" +
-                    prediction  + "\t" +
-                    (isCorrent ? 1 : 0));
-
-            trainingStats.add( (HoldemExample) example );
-            if (exampleCount++ < 50 || (exampleCount % 50 == 0))
-            {
-                learner.train( trainingStats.postFlops() );
-            }
+                    prediction                        + "\t" +
+                    (isCorrent ? 1 : 0)               + "\t" +
+                    prediction.mostProbable(confusion));
+            
+            confusion.add(example.target(), prediction.mostProbable());
+//            confusion.add(((State)example.target()).state(),
+//                          ((State)prediction.mostProbable()).state());
+            learner.add( example );
+//            trainingStats.add( (HoldemExample) example );
+//            if (exampleCount++ < 50 || (exampleCount % 50 == 0))
+//            {
+//                learner.set( trainingStats.postFlops() );
+//            }
         }
+        System.out.println("Confusion Matrix (Pivot Format): ");
+        System.out.println(confusion);
     }
     private void doDecisionModelOpponet(PlayerHandle p)
     {
@@ -172,7 +184,7 @@ public class OppModelTest
         }
 
         System.out.println("building model");
-        learner.train( trainingStats.postFlops() );
+        learner.set( trainingStats.postFlops() );
         System.out.println(learner);
 //        ((RandomLearner) learner).printAsForest();
 
@@ -180,10 +192,10 @@ public class OppModelTest
         int    exampleCount = 0;
         for (Example example : validationStats.postFlops())
         {
-            Histogram prediction =
-                    (Histogram)learner.classify( example );
+            Frequency prediction =
+                    (Frequency)learner.classify( example );
             if (prediction == null)
-                prediction = new Histogram();
+                prediction = new Frequency();
 
             MixedAction predictedAction =
                     MixedAction.fromHistogram(prediction);
@@ -208,7 +220,7 @@ public class OppModelTest
             trainingStats.add( (HoldemExample) example );
             if (exampleCount++ < 50 || (exampleCount % 50 == 0))
             {
-                learner.train( trainingStats.postFlops() );
+                learner.set( trainingStats.postFlops() );
             }
         }
 //        System.out.println("cost = " + cost);

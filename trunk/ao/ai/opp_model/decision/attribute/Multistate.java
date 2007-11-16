@@ -50,8 +50,8 @@ public class Multistate extends TypedAttribute
 
     public Collection<? extends Datum> orderedPartition()
     {
-        if (! (byDatum.values().iterator().next().state()
-                    instanceof Comparable)) return partition();
+        Object aState = byDatum.values().iterator().next().state();
+        if (! (aState instanceof Comparable)) return partition();
 
         Collection<State> parts =
                 new TreeSet<State>(new Comparator<State>() {

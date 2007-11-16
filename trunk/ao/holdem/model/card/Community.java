@@ -1,7 +1,6 @@
 package ao.holdem.model.card;
 
 import ao.holdem.model.BettingRound;
-import ao.holdem.model.card.Card;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
@@ -189,8 +188,8 @@ public class Community
         return FLOP_A == card ||
                FLOP_B == card ||
                FLOP_C == card ||
-               TURN == card   ||
-               RIVER == card;
+               TURN   == card ||
+               RIVER  == card;
     }
 
     public boolean contains(Card.Rank rank)

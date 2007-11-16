@@ -1,6 +1,6 @@
 package ao.ai.opp_model.mix;
 
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.Frequency;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 
@@ -18,7 +18,7 @@ public class MixedAction
                                Rand.nextDouble());
     }
 
-    public static MixedAction fromHistogram(Histogram hist)
+    public static MixedAction fromHistogram(Frequency hist)
     {
         int fold  = hist.countOfState(SimpleAction.FOLD);
         int call  = hist.countOfState(SimpleAction.CALL);

@@ -13,7 +13,7 @@ public abstract class Classification
     {
         if (attribute.isSingleUse())
         {
-            return new Histogram();
+            return new Frequency();
         }
         else
         {

@@ -1,139 +1,121 @@
 package ao.ai.opp_model.decision.classification;
 
-import ao.ai.opp_model.decision.attribute.Attribute;
-import ao.ai.opp_model.decision.attribute.Multistate;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.data.State;
 import ao.util.stats.Info;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
  */
-public class Histogram extends Classification
+public class Histogram<T>
 {
     //--------------------------------------------------------------------
-    private Map<Datum, Integer> hist;
-    private int                 total = 0;
+    private Map<T, int[]> hist;
+    private int           total;
 
 
     //--------------------------------------------------------------------
     public Histogram()
     {
-        hist = new HashMap<Datum, Integer>();
+        hist = new HashMap<T, int[]>();
     }
 
 
     //--------------------------------------------------------------------
-    public void add(Datum datum)
+    public Collection<T> classes()
     {
-        Integer count = hist.get(datum);
-        hist.put(datum,
-                 (count == null ? 1 : ++count));
+        return hist.keySet();
+    }
+
+    public int classCount()
+    {
+        return hist.size();
+    }
+
+    public boolean isEmpty()
+    {
+        return total == 0;
+    }
+
+
+    //--------------------------------------------------------------------
+    public void put(T item, int count)
+    {
+        int oldVal[] = get( item );
+
+        total     += count - oldVal[0];
+        oldVal[0]  = count;
+    }
+
+
+    //--------------------------------------------------------------------
+    public void add(T item)
+    {
+        int count[] = get( item );
+
+        count[0]++;
         total++;
     }
 
-
-    //--------------------------------------------------------------------
-    public double probabilityOf(Datum datum)
+    private int[] get(T item)
     {
-        return (datum == null)
-                ? 0
-                : (double) countOf(datum)
-                            / total;
-    }
-
-    private int countOf(Datum attribute)
-    {
-        Integer count = hist.get(attribute);
-        return (count == null) ? 0 : count;
-    }
-
-    public int countOfState(Object value)
-    {
-        for (Map.Entry<Datum, Integer> entry : hist.entrySet())
+        int count[] = hist.get( item );
+        if (count == null)
         {
-            if (((State) entry.getKey()).state().equals( value ))
-            {
-                return entry.getValue();
-            }
+            count = new int[ 1 ];
+            hist.put(item, count);
         }
-        return 0;
-    }
-
-    public void put(Datum datum, int value)
-    {
-        Integer oldVal = hist.put(datum, value);
-        if (oldVal == null) oldVal = 0;
-
-        total += value - oldVal;
+        return count;
     }
 
 
     //--------------------------------------------------------------------
-    public Datum mostProbable()
+    public int countOf(T item)
     {
-        Datum mostFrequent = null;
-        int   count        = -1;
+        int count[] = hist.get( item );
+        return (count == null)
+                ? 0
+                : count[ 0 ];
+    }
 
-        for (Map.Entry<Datum, Integer> entry : hist.entrySet())
+
+    //--------------------------------------------------------------------
+    public double probabilityOf(T item)
+    {
+        return (double) countOf( item ) / total;
+    }
+
+    public T mostFrequent()
+    {
+        T   mostFrequent  = null;
+        int greatestCount = Integer.MIN_VALUE;
+        for (Map.Entry<T, int[]> entry : hist.entrySet())
         {
-            if (entry.getValue() > count)
+            if (entry.getValue()[0] > greatestCount)
             {
-                count        = entry.getValue();
-                mostFrequent = entry.getKey();
+                mostFrequent  = entry.getKey();
+                greatestCount = entry.getValue()[0];
             }
         }
         return mostFrequent;
     }
 
-
+    
     //--------------------------------------------------------------------
-    //If there are M classes,
-    //and in the first j things of a category, i[m] have had class m,
-    // the class of the (j + l)th thing is encoded assigning a probability
-    //  q[m] = (i[m] + alpha)/(j + M * alpha)
-    public double transmissionCost(double alpha)
+    public double distance(Histogram<T> histogram)
     {
-        int numClasses = hist.size();
+        Set<T> mutual = new HashSet<T>();
+        mutual.addAll(           hist.keySet() );
+        mutual.addAll( histogram.hist.keySet() );
 
-        int    j      = 0;
-        double length = 0;
-        for (Integer classCount : hist.values())
+        double distance = 0;
+        for (T item : mutual)
         {
-            for (int i = 0; i < classCount; i++)
-            {
-                double p = (i + alpha)/(j + numClasses*alpha);
-                length  -= Info.log2(p);
-                j++;
-            }
+            double deltaProb =
+                    probabilityOf( item ) -
+                    histogram.probabilityOf( item );
+            distance -= Info.log2(1.0 - Math.abs(deltaProb));
         }
-        return length;
-    }
-
-
-    //--------------------------------------------------------------------
-    @Override
-    public String toString()
-    {
-        if (hist.isEmpty()) return "Empty";
-
-        State     aState = (State)hist.keySet().iterator().next();
-        Attribute attr   = aState.attribute();
-
-        StringBuilder b = new StringBuilder();
-        for (Datum datum : ((Multistate) attr).orderedPartition())
-        {
-            b//.append(datum)
-             //.append("\t")
-             .append( hist.get(datum) )
-             .append("\t");
-        }
-        return b.deleteCharAt( b.length()-1 ).toString();
-
-//        return hist.toString() + "\t" +
-//               Info.cost(probabilityOf(mostProbable()));
+        return distance;
     }
 }

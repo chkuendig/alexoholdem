@@ -5,6 +5,7 @@ import ao.ai.opp_model.decision.attribute.Attribute;
 import ao.ai.opp_model.decision.classification.Classification;
 import ao.ai.opp_model.decision.example.Context;
 import ao.ai.opp_model.decision.example.LearningSet;
+import ao.ai.opp_model.decision.example.Example;
 
 /**
  *
@@ -13,11 +14,13 @@ public class GeneralTreeLearner extends ClassifierImpl
 {
     //--------------------------------------------------------------------
     private GeneralTree tree;
+    private LearningSet examples;
 
-    
+
     //--------------------------------------------------------------------
-    public synchronized void train(LearningSet ls)
+    public synchronized void set(LearningSet ls)
     {
+        examples = ls;
         if (ls.isEmpty()) return;
 
         tree = induce(ls);
@@ -27,6 +30,21 @@ public class GeneralTreeLearner extends ClassifierImpl
 //        System.out.println(tree + "" + tree.messageLength());
     }
 
+    public void add(LearningSet ls)
+    {
+        examples.addAll( ls );
+        set( examples );
+    }
+
+    public void add(Example example)
+    {
+        LearningSet s = new LearningSet();
+        s.add( example );
+        add( s );
+    }
+
+
+    //--------------------------------------------------------------------
     private GeneralTree induce(LearningSet ls)
     {
         GeneralTree root          = new GeneralTree(ls);
