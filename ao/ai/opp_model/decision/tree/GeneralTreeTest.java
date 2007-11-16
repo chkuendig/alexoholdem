@@ -43,7 +43,7 @@ public class GeneralTreeTest
                                         "temp", temp))),
                             learner.pool().newMultistate("target", clazz)));
         }
-        learner.train( examples );
+        learner.set( examples );
 
 //        System.out.println(
 //                learner.classify(context(learner.pool(),
@@ -102,7 +102,7 @@ public class GeneralTreeTest
                 }
             }
         }
-        learner.train( examples );
+        learner.set( examples );
 
         System.out.println(
                 learner.classify(context(learner.pool(),

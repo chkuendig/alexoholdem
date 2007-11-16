@@ -59,7 +59,7 @@ public class RandomTreeTest
                 }
             }
         }
-        learner.train( examples );
+        learner.set( examples );
 
         System.out.println(
                 learner.classify(context(learner.pool(),

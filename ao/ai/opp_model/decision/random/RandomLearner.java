@@ -3,7 +3,7 @@ package ao.ai.opp_model.decision.random;
 import ao.ai.opp_model.classifier.ClassifierImpl;
 import ao.ai.opp_model.decision.attribute.Multistate;
 import ao.ai.opp_model.decision.classification.Classification;
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.Frequency;
 import ao.ai.opp_model.decision.data.Datum;
 import ao.ai.opp_model.decision.example.Context;
 import ao.ai.opp_model.decision.example.Example;
@@ -15,7 +15,7 @@ import ao.ai.opp_model.decision.example.LearningSet;
 public class RandomLearner extends ClassifierImpl
 {
     //--------------------------------------------------------------------
-    private static final int NUM_TREES = 64;
+    private static final int NUM_TREES = 32;
 
 
     //--------------------------------------------------------------------
@@ -24,7 +24,7 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public synchronized void train(LearningSet ls)
+    public synchronized void set(LearningSet ls)
     {
         trees = new RandomTree[ NUM_TREES ];
         for (int i = 0; i < trees.length; i++)
@@ -43,12 +43,64 @@ public class RandomLearner extends ClassifierImpl
             targetAttribute = (Multistate) ls.targetAttribute();
         }
 
+        doAdd( ls );
+    }
+
+
+    //--------------------------------------------------------------------
+    public void add(LearningSet ls)
+    {
+        if (needsInitiation())
+        {
+            set( ls );
+        }
+        else if (! ls.isEmpty())
+        {
+            assert ls.targetAttribute().getClass() ==
+                        targetAttribute.getClass();
+            doAdd( ls );
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    public void add(Example example)
+    {
+        if (needsInitiation())
+        {
+            LearningSet s = new LearningSet();
+            s.add( example );
+            set( s );
+        }
+        else
+        {
+            assert example.targetAttribute().getClass() ==
+                    targetAttribute.getClass();
+            doAdd( example );
+        }
+    }
+
+    private boolean needsInitiation()
+    {
+         return trees           == null ||
+                targetAttribute == null;
+    }
+
+
+    //--------------------------------------------------------------------
+    private void doAdd(LearningSet ls)
+    {
         for (Example example : ls)
         {
-            for (RandomTree tree : trees)
-            {
-                tree.updateSatistic(example);
-            }
+            doAdd( example );
+        }
+    }
+
+    private void doAdd(Example example)
+    {
+        for (RandomTree tree : trees)
+        {
+            tree.updateSatistic(example);
         }
     }
 
@@ -56,7 +108,7 @@ public class RandomLearner extends ClassifierImpl
     //--------------------------------------------------------------------
     public Classification classify(Context context)
     {
-        Histogram classification = new Histogram();
+        Frequency classification = new Frequency();
         if (targetAttribute == null) return classification;
 
         for (Datum datum : targetAttribute.partition())

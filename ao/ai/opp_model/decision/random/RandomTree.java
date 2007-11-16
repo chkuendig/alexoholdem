@@ -1,7 +1,7 @@
 package ao.ai.opp_model.decision.random;
 
 import ao.ai.opp_model.decision.attribute.Attribute;
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.Frequency;
 import ao.ai.opp_model.decision.data.Datum;
 import ao.ai.opp_model.decision.example.Context;
 import ao.ai.opp_model.decision.example.LearningSet;
@@ -44,7 +44,7 @@ public class RandomTree
     private RandomTree sibling;
 
 //    private int dataLabeled;
-    private Histogram hist;
+    private Frequency hist;
 
 
     //--------------------------------------------------------------------
@@ -108,7 +108,7 @@ public class RandomTree
         {
             if (hist == null)
             {
-                hist = new Histogram();
+                hist = new Frequency();
             }
             hist.add( exampleContext.target() );
             return;
