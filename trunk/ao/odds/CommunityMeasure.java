@@ -34,7 +34,7 @@ public class CommunityMeasure
     public synchronized double heat(Community of)
     {
         if (of == null || !of.hasFlop()) return -1;
-        if (of.equals(prevCommunity)) return prevHeat;
+        if (of.equals(prevCommunity)) return prevHeat; // cache
 
         final Card cards[] = Card.values();
         moveKnownCommunitiesToEnd(cards, of);

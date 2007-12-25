@@ -1,6 +1,6 @@
 package ao.ai.opp_model.mix;
 
-import ao.ai.opp_model.decision.classification.Frequency;
+import ao.ai.opp_model.decision.classification.processed.Frequency;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 

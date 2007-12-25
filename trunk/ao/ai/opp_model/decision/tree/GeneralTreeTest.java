@@ -1,8 +1,8 @@
 package ao.ai.opp_model.decision.tree;
 
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.example.*;
+import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.classifier.raw.ClassifierImpl;
+import ao.ai.opp_model.decision.input.raw.example.*;
 import ao.util.rand.Rand;
 
 import java.util.Arrays;
@@ -20,16 +20,17 @@ public class GeneralTreeTest
     //---------------------------------------------------------------------
     public static void main(String[] args)
     {
-        new GeneralTreeTest().testMultivalue();
-//        new GeneralTreeTest().testContinuous();
+//        new GeneralTreeTest().testMultivalue();
+        new GeneralTreeTest().testContinuous();
     }
 
 
     //---------------------------------------------------------------------
     public void testContinuous()
     {
-        LearningSet        examples = new LearningSet();
-        GeneralTreeLearner learner  = new GeneralTreeLearner();
+        LearningSet examples = new LearningSet();
+        Classifier  learner  = new ClassifierImpl(
+                                        new GeneralTreeLearner());
 
         for (int i = 0; i < 40; i++)
         {
@@ -39,15 +40,13 @@ public class GeneralTreeTest
             examples.add(
                     new ExampleImpl(
                             new ContextImpl(Arrays.asList(
-                                    learner.pool().newContinuous(
-                                        "temp", temp))),
-                            learner.pool().newMultistate("target", clazz)));
+                                    new Datum("temp", temp))),
+                            new Datum("target", clazz)));
         }
         learner.set( examples );
 
-//        System.out.println(
-//                learner.classify(context(learner.pool(),
-//                                         true, false, true, true)));
+        System.out.println(
+                learner.classify(context(true, false, true, true)));
     }
 
     private static enum TempClass
@@ -74,8 +73,9 @@ public class GeneralTreeTest
     //---------------------------------------------------------------------
     public void testMultivalue()
     {
-        LearningSet        examples = new LearningSet();
-        GeneralTreeLearner learner  = new GeneralTreeLearner();
+        LearningSet examples = new LearningSet();
+        Classifier  learner  = new ClassifierImpl(
+                                        new GeneralTreeLearner() );
 
         // (a ^ b) v (c ^ d)
         for (int i = 0; i < 20; i++)
@@ -95,8 +95,7 @@ public class GeneralTreeTest
                                 func = !func;
                             }
 
-                            examples.add( function(learner.pool(),
-                                                   a, b, c, d, func) );
+                            examples.add( function(a, b, c, d, func) );
                         }
                     }
                 }
@@ -105,29 +104,23 @@ public class GeneralTreeTest
         learner.set( examples );
 
         System.out.println(
-                learner.classify(context(learner.pool(),
-                                         true, false, true, true)));
+                learner.classify(context(true, false, true, true)));
     }
 
-    private Example function(
-            DataPool   attr,
-            Boolean... vars)
+    private Example function(Boolean... vars)
     {
-        return context(attr, Arrays.copyOf(vars, vars.length - 1)).
-                withTarget(attr.fromTyped(vars[ vars.length - 1 ]));
+        return context(Arrays.copyOf(vars, vars.length - 1)).
+                withTarget(new Datum(vars[ vars.length - 1 ]));
     }
 
-    private Context context(
-            DataPool   attr,
-            Boolean... vars)
+    private Context context(Boolean... vars)
     {
-        LinkedList<Datum> varAttributes =
-                new LinkedList<Datum>();
+        LinkedList<Datum> varAttributes = new LinkedList<Datum>();
         Integer type = 0;
         for (Boolean var : vars)
         {
             varAttributes.add(
-                    attr.newMultistate(String.valueOf(type++), var) );
+                    new Datum(String.valueOf(type++), var) );
         }
         return new ContextImpl(varAttributes);
     }

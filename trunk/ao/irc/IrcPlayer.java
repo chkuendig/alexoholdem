@@ -1,16 +1,14 @@
 package ao.irc;
 
-import ao.holdem.model.act.RealAction;
-import ao.state.StateManager;
-import ao.holdem.model.Player;
-import ao.holdem.model.Money;
 import ao.holdem.engine.HoldemRuleBreach;
-import ao.persist.PlayerHandle;
+import ao.holdem.model.Player;
+import ao.holdem.model.act.RealAction;
+import ao.persist.HandHistory;
+import ao.state.StateManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -23,7 +21,7 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+    public void handEnded(HandHistory history) {}
 
     
     //--------------------------------------------------------------------

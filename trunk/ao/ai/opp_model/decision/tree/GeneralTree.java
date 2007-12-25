@@ -1,11 +1,11 @@
 package ao.ai.opp_model.decision.tree;
 
-import ao.ai.opp_model.decision.attribute.Attribute;
-import ao.ai.opp_model.decision.classification.Classification;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.data.ValueRange;
-import ao.ai.opp_model.decision.example.Context;
-import ao.ai.opp_model.decision.example.LearningSet;
+import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
+import ao.ai.opp_model.decision.classification.processed.Classification;
+import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
+import ao.ai.opp_model.decision.input.processed.data.ValueRange;
+import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
 import ao.util.stats.Info;
 import ao.util.text.Txt;
 
@@ -25,10 +25,10 @@ public class GeneralTree
 
 
     //--------------------------------------------------------------------
-    private LearningSet           data;
+    private LocalLearningSet data;
     private Collection<Attribute> availAttrs;
     private Attribute             split; // split on
-    private Datum                 check; // from parent's split
+    private LocalDatum check; // from parent's split
 
     private GeneralTree parent;
     private GeneralTree child;
@@ -36,13 +36,13 @@ public class GeneralTree
 
 
     //--------------------------------------------------------------------
-    public GeneralTree(LearningSet learningSet)
+    public GeneralTree(LocalLearningSet learningSet)
     {
         this(null, learningSet, learningSet.contextAttributes());
     }
 
-    private GeneralTree(Datum                 parentSplitVal,
-                        LearningSet           learningSet,
+    private GeneralTree(LocalDatum parentSplitVal,
+                        LocalLearningSet learningSet,
                         Collection<Attribute> availableAttributs)
     {
         check      = parentSplitVal;
@@ -102,7 +102,7 @@ public class GeneralTree
 
         split = on;
         GeneralTree prevChild = null;
-        for (Map.Entry<Datum, LearningSet> splinter :
+        for (Map.Entry<LocalDatum, LocalLearningSet> splinter :
                 data.split(on).entrySet())
         {
             Collection<Attribute> subAvailAttrs;
@@ -254,11 +254,11 @@ public class GeneralTree
 
 
     //--------------------------------------------------------------------
-    public Classification classify(Context exampleContext)
+    public Classification classify(LocalContext exampleContext)
     {
         if (split == null) return data.classify();
 
-        Datum splitVal = exampleContext.datumOfType( split );
+        LocalDatum splitVal = exampleContext.datumOfType( split );
         for (GeneralTree kid  = child;
                          kid != null;
                          kid  = kid.sibling)

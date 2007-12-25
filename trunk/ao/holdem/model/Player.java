@@ -1,10 +1,8 @@
 package ao.holdem.model;
 
 import ao.holdem.model.act.RealAction;
-import ao.persist.PlayerHandle;
+import ao.persist.HandHistory;
 import ao.state.StateManager;
-
-import java.util.Map;
 
 /**
  *
@@ -15,5 +13,5 @@ public interface Player
 
     public boolean shiftQuitAction();
 
-    public void handEnded(Map<PlayerHandle, Money> deltas);
+    public void handEnded(HandHistory history);
 }

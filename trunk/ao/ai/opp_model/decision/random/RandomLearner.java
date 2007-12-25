@@ -1,20 +1,29 @@
 package ao.ai.opp_model.decision.random;
 
-import ao.ai.opp_model.classifier.ClassifierImpl;
-import ao.ai.opp_model.decision.attribute.Multistate;
-import ao.ai.opp_model.decision.classification.Classification;
-import ao.ai.opp_model.decision.classification.Frequency;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.example.Context;
-import ao.ai.opp_model.decision.example.Example;
-import ao.ai.opp_model.decision.example.LearningSet;
+import ao.ai.opp_model.classifier.processed.LocalClassifier;
+import ao.ai.opp_model.classifier.processed.LocalClassifierFactory;
+import ao.ai.opp_model.decision.classification.processed.Classification;
+import ao.ai.opp_model.decision.classification.processed.Frequency;
+import ao.ai.opp_model.decision.input.processed.attribute.Multistate;
+import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
+import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.input.processed.example.LocalExample;
+import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 
  */
-public class RandomLearner extends ClassifierImpl
+public class RandomLearner implements LocalClassifier
 {
     //--------------------------------------------------------------------
+    public static LocalClassifierFactory FACTORY =
+            new LocalClassifierFactory() {
+                public LocalClassifier newInstance() {
+                    return new RandomLearner();
+                }
+            };
+
     private static final int NUM_TREES = 32;
 
 
@@ -24,7 +33,7 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public synchronized void set(LearningSet ls)
+    public synchronized void set(LocalLearningSet ls)
     {
         trees = new RandomTree[ NUM_TREES ];
         for (int i = 0; i < trees.length; i++)
@@ -48,7 +57,7 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public void add(LearningSet ls)
+    public void add(LocalLearningSet ls)
     {
         if (needsInitiation())
         {
@@ -64,11 +73,13 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public void add(Example example)
+    public void add(@NotNull LocalExample example)
     {
+//        if (example == null) return;
+
         if (needsInitiation())
         {
-            LearningSet s = new LearningSet();
+            LocalLearningSet s = new LocalLearningSet();
             s.add( example );
             set( s );
         }
@@ -88,15 +99,15 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    private void doAdd(LearningSet ls)
+    private void doAdd(LocalLearningSet ls)
     {
-        for (Example example : ls)
+        for (LocalExample example : ls)
         {
             doAdd( example );
         }
     }
 
-    private void doAdd(Example example)
+    private void doAdd(LocalExample example)
     {
         for (RandomTree tree : trees)
         {
@@ -106,12 +117,12 @@ public class RandomLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public Classification classify(Context context)
+    public Classification classify(LocalContext context)
     {
         Frequency classification = new Frequency();
         if (targetAttribute == null) return classification;
 
-        for (Datum datum : targetAttribute.partition())
+        for (LocalDatum datum : targetAttribute.partition())
         {
             double actSum = 0;
             for (RandomTree tree : trees)
@@ -119,7 +130,7 @@ public class RandomLearner extends ClassifierImpl
                 actSum += tree.proportionAtLeaf(context, datum);
             }
             classification.put(
-                    datum, (int)(1000 * (actSum / trees.length)));
+                    datum, (int)(100 * (actSum / trees.length)));
         }
         return classification;
     }

@@ -1,11 +1,11 @@
 package ao.ai.opp_model.decision.random;
 
-import ao.ai.opp_model.decision.attribute.Attribute;
-import ao.ai.opp_model.decision.classification.Frequency;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.example.Context;
-import ao.ai.opp_model.decision.example.LearningSet;
-import ao.ai.opp_model.decision.example.Example;
+import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
+import ao.ai.opp_model.decision.classification.processed.Frequency;
+import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
+import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
+import ao.ai.opp_model.decision.input.processed.example.LocalExample;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class RandomTree
 {
     //--------------------------------------------------------------------
-    public static RandomTree nextRandom(LearningSet ls)
+    public static RandomTree nextRandom(LocalLearningSet ls)
     {
         if (ls.isEmpty()) return new RandomTree();
 
@@ -37,7 +37,7 @@ public class RandomTree
     
     //--------------------------------------------------------------------
     private Attribute split; // split on
-    private Datum     check; // from parent's split
+    private LocalDatum check; // from parent's split
 
 //    private RandomTree parent;
     private RandomTree child;
@@ -78,7 +78,7 @@ public class RandomTree
         }
 
         RandomTree prevChild = null;
-        for (Datum datum : split.partition())
+        for (LocalDatum datum : split.partition())
         {
             RandomTree subTree =
                     new RandomTree(
@@ -102,7 +102,7 @@ public class RandomTree
 
 
     //--------------------------------------------------------------------
-    public void updateSatistic(Example exampleContext)
+    public void updateSatistic(LocalExample exampleContext)
     {
         if (split == null)
         {
@@ -114,7 +114,7 @@ public class RandomTree
             return;
         }
 
-        Datum splitVal = exampleContext.datumOfType( split );
+        LocalDatum splitVal = exampleContext.datumOfType( split );
         for (RandomTree kid  = child;
                         kid != null;
                         kid  = kid.sibling)
@@ -125,6 +125,7 @@ public class RandomTree
                 return;
             }
         }
+        // XXX TODO: add logic here to add unseen splitVal.
     }
 
 
@@ -147,8 +148,8 @@ public class RandomTree
 
     //--------------------------------------------------------------------
     public double proportionAtLeaf(
-            Context exampleContext,
-            Datum   ofTarget)
+            LocalContext exampleContext,
+            LocalDatum ofTarget)
     {
         if (split == null)
         {
@@ -157,7 +158,7 @@ public class RandomTree
                     : hist.probabilityOf( ofTarget );
         }
 
-        Datum splitVal = exampleContext.datumOfType( split );
+        LocalDatum splitVal = exampleContext.datumOfType( split );
         for (RandomTree kid  = child;
                         kid != null;
                         kid  = kid.sibling)

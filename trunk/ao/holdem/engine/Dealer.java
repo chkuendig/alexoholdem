@@ -2,6 +2,7 @@ package ao.holdem.engine;
 
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
+import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.PlayerState;
 import ao.state.StateManager;
@@ -30,7 +31,7 @@ public class Dealer
     //--------------------------------------------------------------------
     public StateManager playOutHand()
     {
-        StateManager state = start.continueFrom();
+        StateManager state = start.prototype();
         do
         {
             if (state.roundJustChanged())
@@ -53,6 +54,7 @@ public class Dealer
         
         if (state.winners().isEmpty())
             throw new HoldemRuleBreach("winnerless hand");
+
         return state;
     }
 
@@ -66,5 +68,22 @@ public class Dealer
             }
         }
     }
+
+
+    //--------------------------------------------------------------------
+    public void publishHistory(HandHistory history)
+    {
+        for (Player brain : players.values())
+        {
+            brain.handEnded( history );
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+//    public void advanceButton()
+//    {
+//
+//    }
 }
 

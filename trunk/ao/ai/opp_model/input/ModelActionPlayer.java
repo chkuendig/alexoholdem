@@ -1,10 +1,9 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.ai.opp_model.model.context.PlayerExampleSet;
-import ao.ai.opp_model.model.data.HoldemExample;
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.model.data.DomainedExample;
+import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.Datum;
+import ao.ai.opp_model.decision.input.raw.example.Example;
 import ao.holdem.model.act.RealAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -16,26 +15,39 @@ import ao.state.StateManager;
 public class ModelActionPlayer extends InputPlayer
 {
     //--------------------------------------------------------------------
-    public ModelActionPlayer(
-            HandHistory      history,
-            PlayerExampleSet addTo,
-            PlayerHandle     player,
-            DataPool         attributePool,
-            boolean          publishActions)
+    public static class Factory
+                            implements InputPlayerFactory
     {
-        super(history, addTo, player, attributePool, publishActions);
+        public InputPlayer newInstance(
+                HandHistory  history,
+                Classifier   addTo,
+                PlayerHandle player,
+                boolean      publishActions)
+        {
+            return new ModelActionPlayer(
+                            history, addTo, player, publishActions);
+        }
     }
 
 
     //--------------------------------------------------------------------
-    protected DomainedExample makeExampleOf(
-                                StateManager  env,
-                                HoldemContext ctx,
-                                RealAction    act,
-                                DataPool      pool)
+    public ModelActionPlayer(
+            HandHistory  history,
+            Classifier addTo,
+            PlayerHandle player,
+            boolean      publishActions)
     {
-        return new HoldemExample(
-                        ctx,
-                        pool.fromEnum(act.toSimpleAction()));
+        super(history, addTo, player, publishActions);
+    }
+
+
+    //--------------------------------------------------------------------
+    protected Example makeExampleOf(
+            StateManager env,
+            Context      ctx,
+            RealAction   act)
+    {
+        return ctx.withTarget(
+                new Datum(act.toSimpleAction()) );
     }
 }

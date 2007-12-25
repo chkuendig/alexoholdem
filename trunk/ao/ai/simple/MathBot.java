@@ -1,20 +1,18 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
+import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.Money;
-import ao.state.HandState;
 import ao.odds.ApproximateOddFinder;
 import ao.odds.OddFinder;
 import ao.odds.Odds;
+import ao.persist.HandHistory;
+import ao.state.HandState;
 import ao.state.StateManager;
-import ao.persist.PlayerHandle;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
 
 /**
  * Designed for heads up play.
@@ -22,7 +20,7 @@ import java.util.Map;
 public class MathBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+    public void handEnded(HandHistory history) {}
 
     
     //--------------------------------------------------------------------
