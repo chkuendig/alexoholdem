@@ -1,8 +1,8 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.model.context.ContextDomain;
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.decision.data.DataPool;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
+import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.card.CommunitySource;
@@ -59,15 +59,14 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(DataPool pool)
+    public Context nextActContext()
     {
-        HoldemContext ctx = new HoldemContext();
-        ctx.addDomains( ContextDomain.values() );
+        Context ctx = new ContextImpl();
 
         BettingRound round = forefront.round();
-        ctx.add(pool.fromEnum( round ));
+        ctx.add(new Datum( round ));
 
-        ctx.add(pool.newContinuous("Community Heat",
+        ctx.add(new Datum("Community Heat",
                         CommunityMeasure.measure(
                                 community.community().asOf(round))));
 
@@ -75,21 +74,26 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
         int numActs = checks + calls + raises;
         if (numActs != 0)
         {
-            ctx.add(pool.newContinuous("Total Bet Ratio",
+            ctx.add(new Datum("Total Bet Ratio",
                             (double) raises / numActs));
-            ctx.add(pool.newContinuous("Total Call Ratio",
+            ctx.add(new Datum("Total Call Ratio",
                             (double) calls / numActs));
-            ctx.add(pool.newContinuous("Total Check Ratio",
+            ctx.add(new Datum("Total Check Ratio",
                             (double) checks / numActs));
         }
 
-        ctx.add(pool.newContinuous("Players",
+        ctx.add(new Datum("Players",
                         forefront.players().length));
-        ctx.add(pool.newContinuous("Active Players",
+        ctx.add(new Datum("Active Players",
                         forefront.numActivePlayers()));
 
         return ctx;
     }
+
+//    public EnumSet<ContextDomain> nextActDomains()
+//    {
+//        return EnumSet.allOf( ContextDomain.class );
+//    }
 
 
     //--------------------------------------------------------------------

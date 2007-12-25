@@ -1,7 +1,7 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.decision.data.DataPool;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
 import ao.stats.Statistic;
 
 /**
@@ -21,18 +21,37 @@ public class MultiStatistic implements Statistic
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(DataPool pool)
+    public Context nextActContext()
     {
-        HoldemContext ctx = null;
+        Context ctx = null;
 
         for (Statistic stat : delegets)
         {
-            HoldemContext statCtx = stat.nextActContext(pool);
-            ctx = (ctx == null)
-                    ? new HoldemContext( statCtx )
-                    : ctx.merge(         statCtx );
+            Context statCtx = stat.nextActContext();
+
+            if (ctx == null)
+            {
+                ctx = new ContextImpl( statCtx );
+            }
+            else
+            {
+                ctx.addAll( statCtx );
+            }
         }
 
         return ctx;
     }
+
+//    public EnumSet<ContextDomain> nextActDomains()
+//    {
+//        EnumSet<ContextDomain> domains =
+//                EnumSet.allOf( ContextDomain.class );
+//
+//        for (Statistic stat : delegets)
+//        {
+//            domains.retainAll( stat.nextActDomains() );
+//        }
+//
+//        return domains;
+//    }
 }

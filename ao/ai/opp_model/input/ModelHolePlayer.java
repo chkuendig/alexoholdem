@@ -1,11 +1,10 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.ai.opp_model.model.context.PlayerExampleSet;
-import ao.ai.opp_model.model.data.DomainedExample;
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.model.data.HoldemExample;
-import ao.ai.opp_model.model.domain.HandStrengthDelta;
+import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.Datum;
+import ao.ai.opp_model.decision.input.raw.example.Example;
+import ao.ai.opp_model.model.domain.HandStrength;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -21,28 +20,43 @@ import ao.state.StateManager;
 public class ModelHolePlayer extends InputPlayer
 {
     //--------------------------------------------------------------------
-    public ModelHolePlayer(
-            HandHistory      history,
-            PlayerExampleSet addTo,
-            PlayerHandle     player,
-            DataPool         attributePool,
-            boolean          publishActions)
+    public static class Factory
+                            implements InputPlayerFactory
     {
-        super(history, addTo, player, attributePool, publishActions);
+        public InputPlayer newInstance(
+                HandHistory  history,
+                Classifier   addTo,
+                PlayerHandle player,
+                boolean      publishActions)
+        {
+            return new ModelHolePlayer(
+                            history, addTo, player, publishActions);
+        }
     }
 
 
     //--------------------------------------------------------------------
-    protected DomainedExample makeExampleOf(
-                                StateManager  env,
-                                HoldemContext ctx,
-                                RealAction    act,
-                                DataPool      pool)
+    public ModelHolePlayer(
+            HandHistory  history,
+            Classifier   addTo,
+            PlayerHandle player,
+            boolean      publishActions)
+    {
+        super(history, addTo, player, publishActions);
+    }
+
+
+    //--------------------------------------------------------------------
+    protected Example makeExampleOf(
+            StateManager env,
+            Context      ctx,
+            RealAction   act)
     {
         HandState state = env.head();
 
         Hole hole = env.cards().holeFor(
                         state.nextToAct().handle() );
+        if (hole == null || !hole.bothCardsVisible()) return null;
 
         Community community = env.cards().community();
 
@@ -56,10 +70,9 @@ public class ModelHolePlayer extends InputPlayer
                             expectationFinder.compute(
                                     community, state.numActivePlayers());
 
-        return new HoldemExample(
-                        ctx,
-                        pool.fromEnum(
-                                HandStrengthDelta.fromPercent(
+        return ctx.withTarget(
+                        new Datum(
+                                HandStrength.fromPercent(
                                     actual.strengthVsRandom() -
                                         expected.strengthVsRandom())));
     }

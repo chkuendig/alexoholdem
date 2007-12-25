@@ -1,12 +1,11 @@
 package ao.stats;
 
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.ai.opp_model.decision.data.DataPool;
+import ao.ai.opp_model.decision.input.raw.example.Context;
 
 /**
  *
  */
 public interface Statistic
 {
-    public HoldemContext nextActContext(DataPool pool);
+    public Context nextActContext();
 }

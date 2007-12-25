@@ -64,7 +64,6 @@ public class ConfusionMatrix<T>
     }
 
 
-
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     public String toString()

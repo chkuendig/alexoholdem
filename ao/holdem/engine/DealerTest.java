@@ -1,5 +1,6 @@
 package ao.holdem.engine;
 
+import ao.ai.monte_carlo.UctBot;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
 import ao.ai.simple.MathBot;
@@ -12,6 +13,7 @@ import ao.persist.dao.HandHistoryDao;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.state.StateManager;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +26,9 @@ import java.util.Map;
 public class DealerTest
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleLookup players;
-    @Inject HandHistoryDao     hands;
+    @Inject PlayerHandleLookup     players;
+    @Inject HandHistoryDao         hands;
+    @Inject Provider<UctBot> smarties;
 
 
     //--------------------------------------------------------------------
@@ -49,7 +52,7 @@ public class DealerTest
         brains.put(playerHandles.get(3), new MathBot());
         brains.put(playerHandles.get(4), new AlwaysRaiseBot());
         brains.put(playerHandles.get(5), new DuaneBot());
-        brains.put(playerHandles.get(6), new MathBot());
+        brains.put(playerHandles.get(6), smarties.get());
 
         Map<PlayerHandle, Money> cumDeltas =
                 new HashMap<PlayerHandle, Money>();
@@ -61,6 +64,7 @@ public class DealerTest
             //System.out.println(i);
             StateManager run  = dealer.playOutHand();
             HandHistory  hist = run.toHistory();
+            dealer.publishHistory( hist );
 //            hands.store(hist);
 
             Map<PlayerHandle, Money> deltas = hist.getDeltas();

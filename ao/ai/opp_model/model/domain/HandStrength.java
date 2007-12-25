@@ -1,44 +1,69 @@
 package ao.ai.opp_model.model.domain;
 
 /**
- * 
+ *
  */
 public enum HandStrength
 {
     //--------------------------------------------------------------------
-    PERCENTILE_10(0.1), PERCENTILE_15(0.15),
-    PERCENTILE_20(0.2), PERCENTILE_25(0.25),
-    PERCENTILE_30(0.3), PERCENTILE_35(0.35),
-    PERCENTILE_40(0.4), PERCENTILE_45(0.45),
-    PERCENTILE_50(0.5), PERCENTILE_55(0.55),
-    PERCENTILE_60(0.6), PERCENTILE_65(0.65),
-    PERCENTILE_70(0.7), PERCENTILE_75(0.75),
-    PERCENTILE_80(0.8), PERCENTILE_85(0.85),
-    PERCENTILE_90(0.9), PERCENTILE_95(0.95),
-    PERCENTILE_100(1.0);
+//    DELTA_m100(-1.00, -0.95),
+//    DELTA_m90 (-0.95, -0.85),
+//    DELTA_m80 (-0.85, -0.75),
+//    DELTA_m70 (-0.75, -0.65),
+//    DELTA_m60 (-0.65, -0.55),
+//    DELTA_m50 (-0.55, -0.45),
+//    DELTA_m40 (-0.45, -0.35),
+    DELTA_m40 (-1.00, -0.35),
+    DELTA_m30 (-0.35, -0.25),
+    DELTA_m20 (-0.25, -0.15),
+    DELTA_m10 (-0.15, -0.05),
+    DELTA_nil (-0.05,  0.05),
+    DELTA_p10 ( 0.05,  0.15),
+    DELTA_p20 ( 0.15,  0.25),
+    DELTA_p30 ( 0.25,  0.35),
+    DELTA_p40 ( 0.35,  0.45),
+    DELTA_p50 ( 0.45,  0.55),
+    DELTA_p60 ( 0.55,  0.65),
+    DELTA_p70 ( 0.65,  1.00);
+//    DELTA_p70 ( 0.65,  0.75),
+//    DELTA_p80 ( 0.75,  0.85),
+//    DELTA_p90 ( 0.85,  0.95),
+//    DELTA_p100( 0.95,  1.00);
 
 
     //--------------------------------------------------------------------
-    public static HandStrength fromPercent(double percent)
+    public static HandStrength fromPercent(double plusMinusOne)
     {
+        assert -1 <= plusMinusOne && plusMinusOne <= 1;
+
         for (HandStrength strength : values())
         {
-            if (percent <= strength.UP_TO_AND_INCLUDING)
+            if (strength.intersects( plusMinusOne ))
             {
                 return strength;
             }
         }
-        throw new Error("undefined percentage: " + percent);
+        throw new Error("not in [-1 .. 1]: " + plusMinusOne);
     }
 
 
     //--------------------------------------------------------------------
+    private final double FROM_AND_INCLUDING;
     private final double UP_TO_AND_INCLUDING;
 
 
     //--------------------------------------------------------------------
-    private HandStrength(double upToAndIncluding)
+    private HandStrength(
+            double fromAndIncluding,
+            double upToAndIncluding)
     {
+        FROM_AND_INCLUDING  = fromAndIncluding;
         UP_TO_AND_INCLUDING = upToAndIncluding;
+    }
+
+    private boolean intersects(double value)
+    {
+        return FROM_AND_INCLUDING <= value &&
+                                     value <= UP_TO_AND_INCLUDING;
     }
 }

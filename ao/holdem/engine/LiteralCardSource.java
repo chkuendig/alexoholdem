@@ -28,8 +28,8 @@ public class LiteralCardSource implements CardSource
     }
     public LiteralCardSource(Community literalCommunity)
     {
-        holes     = new HashMap<PlayerHandle, Hole>();
         setCommunity(literalCommunity);
+        holes = new HashMap<PlayerHandle, Hole>();
     }
 
 

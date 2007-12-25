@@ -1,24 +1,35 @@
 package ao.ai.opp_model.decision.tree;
 
-import ao.ai.opp_model.classifier.ClassifierImpl;
-import ao.ai.opp_model.decision.attribute.Attribute;
-import ao.ai.opp_model.decision.classification.Classification;
-import ao.ai.opp_model.decision.example.Context;
-import ao.ai.opp_model.decision.example.LearningSet;
-import ao.ai.opp_model.decision.example.Example;
+import ao.ai.opp_model.classifier.processed.LocalClassifier;
+import ao.ai.opp_model.classifier.processed.LocalClassifierFactory;
+import ao.ai.opp_model.decision.classification.processed.Classification;
+import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
+import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.input.processed.example.LocalExample;
+import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
  */
-public class GeneralTreeLearner extends ClassifierImpl
+public class GeneralTreeLearner implements LocalClassifier
 {
     //--------------------------------------------------------------------
-    private GeneralTree tree;
-    private LearningSet examples;
+    public static LocalClassifierFactory FACTORY =
+            new LocalClassifierFactory() {
+                public LocalClassifier newInstance() {
+                    return new GeneralTreeLearner();
+                }
+            };
 
 
     //--------------------------------------------------------------------
-    public synchronized void set(LearningSet ls)
+    private GeneralTree tree;
+    private LocalLearningSet examples;
+
+
+    //--------------------------------------------------------------------
+    public synchronized void set(LocalLearningSet ls)
     {
         examples = ls;
         if (ls.isEmpty()) return;
@@ -30,22 +41,22 @@ public class GeneralTreeLearner extends ClassifierImpl
 //        System.out.println(tree + "" + tree.messageLength());
     }
 
-    public void add(LearningSet ls)
+    public void add(LocalLearningSet ls)
     {
         examples.addAll( ls );
         set( examples );
     }
 
-    public void add(Example example)
+    public void add(@NotNull LocalExample example)
     {
-        LearningSet s = new LearningSet();
+        LocalLearningSet s = new LocalLearningSet();
         s.add( example );
         add( s );
     }
 
 
     //--------------------------------------------------------------------
-    private GeneralTree induce(LearningSet ls)
+    private GeneralTree induce(LocalLearningSet ls)
     {
         GeneralTree root          = new GeneralTree(ls);
         double      messageLength = root.messageLength();
@@ -96,7 +107,7 @@ public class GeneralTreeLearner extends ClassifierImpl
 
 
     //--------------------------------------------------------------------
-    public Classification classify(Context context)
+    public Classification classify(LocalContext context)
     {
         return (tree == null ?
                 null : tree.classify( context ));

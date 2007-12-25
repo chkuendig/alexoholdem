@@ -1,20 +1,18 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.ai.opp_model.model.context.PlayerExampleSet;
-import ao.ai.opp_model.model.data.DomainedExample;
-import ao.ai.opp_model.model.data.HoldemContext;
-import ao.holdem.model.Money;
+import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.Example;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.StateManager;
+import ao.stats.Statistic;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  *
@@ -24,23 +22,20 @@ public abstract class InputPlayer
 {
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
-    private PlayerExampleSet       examples;
+    private Classifier             examples;
     private Serializable           playerId;
-    private DataPool               pool;
     private boolean                publish;
 
 
     //--------------------------------------------------------------------
-    public InputPlayer(HandHistory      history,
-                       PlayerExampleSet addTo,
-                       PlayerHandle     player,
-                       DataPool         attributePool,
-                       boolean          publishActions)
+    public InputPlayer(HandHistory  history,
+                       Classifier   addTo,
+                       PlayerHandle player,
+                       boolean      publishActions)
     {
         acts     = new LinkedList<RealAction>();
         playerId = player.getId();
         examples = addTo;
-        pool     = attributePool;
         publish  = publishActions;
 
         for (Event event : history.getEvents( player ))
@@ -51,31 +46,37 @@ public abstract class InputPlayer
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<PlayerHandle, Money> deltas) {}
+    public void handEnded(HandHistory history) {}
 
 
     //--------------------------------------------------------------------
-    public RealAction act(StateManager env)
+    public RealAction act(final StateManager env)
     {
         checkPlayer(env);
 
-        RealAction act = shiftAction();
+        final RealAction act = shiftAction();
         if (publish && !act.isBlind())
         {
-            HoldemContext ctx =
-                env.stats().forPlayer(playerId)
-                        .nextActContext(pool);
-            examples.add(makeExampleOf(env, ctx, act, pool));
+            Statistic stat = env.stats().forPlayer(playerId);
+
+            Example addend =
+                    makeExampleOf(env,
+                                  stat.nextActContext(),
+                                  act);
+            //XXX: add checking here.
+            //examples.classify( addend );
+            examples.add( addend );
         }
         return act;
     }
 
-    protected abstract DomainedExample
-            makeExampleOf(StateManager  env,
-                          HoldemContext ctx,
-                          RealAction    act,
-                          DataPool      pool);
+    protected abstract Example
+            makeExampleOf(StateManager env,
+                          Context      ctx,
+                          RealAction   act);
 
+
+    //--------------------------------------------------------------------
     public boolean shiftQuitAction()
     {
         boolean isQuit = !acts.isEmpty() &&

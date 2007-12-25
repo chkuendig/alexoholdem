@@ -1,12 +1,8 @@
 package ao.ai.opp_model.decision.random;
 
-import ao.ai.opp_model.classifier.Classifier;
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.ai.opp_model.decision.data.Datum;
-import ao.ai.opp_model.decision.example.Context;
-import ao.ai.opp_model.decision.example.ContextImpl;
-import ao.ai.opp_model.decision.example.Example;
-import ao.ai.opp_model.decision.example.LearningSet;
+import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.classifier.raw.ClassifierImpl;
+import ao.ai.opp_model.decision.input.raw.example.*;
 import ao.util.rand.Rand;
 
 import java.util.Arrays;
@@ -32,7 +28,7 @@ public class RandomTreeTest
     public void testMultivalue()
     {
         LearningSet examples = new LearningSet();
-        Classifier  learner  = new RandomLearner();
+        Classifier  learner  = new ClassifierImpl( new RandomLearner() );
 
         // (a ^ b) v (c ^ d)
         for (int i = 0; i < 20; i++)
@@ -52,8 +48,7 @@ public class RandomTreeTest
                                 func = !func;
                             }
 
-                            examples.add( function(learner.pool(),
-                                                   a, b, c, d, func) );
+                            examples.add( function(a, b, c, d, func) );
                         }
                     }
                 }
@@ -62,29 +57,23 @@ public class RandomTreeTest
         learner.set( examples );
 
         System.out.println(
-                learner.classify(context(learner.pool(),
-                                         true, false, true, true)));
+                learner.classify(context(true, false, true, true)));
     }
 
-    private Example function(
-            DataPool attr,
-            Boolean... vars)
+    private Example function(Boolean... vars)
     {
-        return context(attr, Arrays.copyOf(vars, vars.length - 1)).
-                withTarget(attr.fromTyped(vars[ vars.length - 1 ]));
+        return context(Arrays.copyOf(vars, vars.length - 1)).
+                withTarget( new Datum(vars[ vars.length - 1 ]) );
     }
 
-    private Context context(
-            DataPool   attr,
-            Boolean... vars)
+    private Context context(Boolean... vars)
     {
-        LinkedList<Datum> varAttributes =
-                new LinkedList<Datum>();
+        LinkedList<Datum> varAttributes = new LinkedList<Datum>();
         Integer type = 0;
         for (Boolean var : vars)
         {
             varAttributes.add(
-                    attr.newMultistate(String.valueOf(type++), var) );
+                    new Datum(String.valueOf(type++), var));
         }
         return new ContextImpl(varAttributes);
     }

@@ -272,7 +272,7 @@ public class StateManager
 
 
     //--------------------------------------------------------------------
-    public StateManager continueFrom()
+    public StateManager prototype()
     {
         StateManager proto     = new StateManager();
         proto.head             = head;

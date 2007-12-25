@@ -1,10 +1,9 @@
 package ao.stats.impl;
 
-import ao.ai.opp_model.model.context.ContextDomain;
-import ao.ai.opp_model.model.data.HoldemContext;
+import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
+import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.model.domain.BetsToCall;
-import ao.ai.opp_model.decision.data.DataPool;
-import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
@@ -110,64 +109,76 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
 
     //--------------------------------------------------------------------
-    public HoldemContext nextActContext(DataPool pool)
+    public Context nextActContext()
     {
         assert isUnfolded;
 
-        HoldemContext ctx = new HoldemContext();
-        ctx.addDomain( ContextDomain.FIRST_ACT );
+        Context ctx = new ContextImpl();
 
-        ctx.add(pool.newContinuous("Pot Odds",
+        ctx.add(new Datum("Pot Odds",
                         ((double) beforeNextAct.toCall().smallBlinds()) /
                           (beforeNextAct.toCall().smallBlinds() +
                            beforeNextAct.pot().smallBlinds())));
 
         Money roundCommit = beforeNextAct.nextToAct().commitment().minus(
                                 startOfRoundForNextAct.stakes());
-        ctx.add(pool.newMultistate(
+        ctx.add(new Datum(
                 "Is Committed This Round",
                 roundCommit.compareTo( Money.ZERO ) > 0));
 
-        ctx.add(pool.fromEnum(
+        ctx.add(new Datum(
                 BetsToCall.fromBets(beforeNextAct.betsToCall())));
 
         // positional stats
-        ctx.add(pool.newContinuous("Position",
+        ctx.add(new Datum("Position",
                         beforeNextAct.nextToActPosition()));
-        ctx.add(pool.newContinuous("Active Position",
+        ctx.add(new Datum("Active Position",
                         beforeNextAct.nextToActActivePosition()));
 
         // betting stats
         int numActs = checks + calls + raises;
         if (numActs != 0)
         {
-            ctx.add(pool.newContinuous("Bet Ratio",
+            ctx.add(new Datum("Bet Ratio",
                             (double) raises / numActs));
-            ctx.add(pool.newContinuous("Call Ratio",
+            ctx.add(new Datum("Call Ratio",
                             (double) calls / numActs));
-            ctx.add(pool.newContinuous("Check Ratio",
+            ctx.add(new Datum("Check Ratio",
                             (double) checks / numActs));
         }
 
         if (beforeCurrAct != null && prevAct != null)
         {
-            ctx.add(pool.newMultistate(
+            ctx.add(new Datum(
                     "Last Act: Bet/Raise",
                     prevAct.toSimpleAction() == SimpleAction.RAISE));
 
-            ctx.add(pool.newMultistate(
+            ctx.add(new Datum(
                     "Last Bets Called > 0",
                     beforeCurrAct.toCall().compareTo(Money.ZERO) > 0));
-
-            ctx.addDomain((beforeNextAct.round() == BettingRound.PREFLOP)
-                           ? ContextDomain.PRE_FLOP
-                           : ContextDomain.POST_FLOP);
         }
 
         return ctx;
     }
 
-    
+//    public EnumSet<ContextDomain> nextActDomains()
+//    {
+//        EnumSet<ContextDomain> domains =
+//                EnumSet.noneOf( ContextDomain.class );
+//
+//        domains.add( ContextDomain.FIRST_ACT );
+//
+//        if (beforeCurrAct != null && prevAct != null)
+//        {
+//            domains.add((beforeNextAct.round() == BettingRound.PREFLOP)
+//                         ? ContextDomain.PRE_FLOP
+//                         : ContextDomain.POST_FLOP);
+//        }
+//
+//        return domains;
+//    }
+
+
     //--------------------------------------------------------------------
     public SpecificStats prototype()
     {
