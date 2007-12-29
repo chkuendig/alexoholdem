@@ -1,10 +1,12 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.classification.ConfusionMatrix;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.input.raw.example.Example;
 import ao.holdem.model.act.RealAction;
+import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.StateManager;
@@ -31,9 +33,14 @@ public class ModelActionPlayer extends InputPlayer
 
 
     //--------------------------------------------------------------------
+    private ConfusionMatrix<SimpleAction> confusion =
+            new ConfusionMatrix<SimpleAction>();
+
+
+    //--------------------------------------------------------------------
     public ModelActionPlayer(
             HandHistory  history,
-            Classifier addTo,
+            Classifier   addTo,
             PlayerHandle player,
             boolean      publishActions)
     {
@@ -47,7 +54,29 @@ public class ModelActionPlayer extends InputPlayer
             Context      ctx,
             RealAction   act)
     {
+        confusion.add(act.toSimpleAction(),
+                      (SimpleAction)
+                          predict(ctx).toHistogram().mostFrequent());
+
+        System.out.println(playerId()                + "\t" +
+                           ctx.bufferedData().size() + "\t" +
+                           predict(ctx)              + "\t" +
+                           act.toSimpleAction());
         return ctx.withTarget(
                 new Datum(act.toSimpleAction()) );
+    }
+
+
+    //--------------------------------------------------------------------
+    public void addTo(ConfusionMatrix<SimpleAction> confusionMatrix)
+    {
+        confusionMatrix.addAll( confusion );
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return confusion.toString();
     }
 }

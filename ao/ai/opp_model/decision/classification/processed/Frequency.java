@@ -93,6 +93,13 @@ public class Frequency extends Classification
 
 
     //--------------------------------------------------------------------
+    public Histogram<LocalDatum> asHistogram()
+    {
+        return hist;
+    }
+
+
+    //--------------------------------------------------------------------
     @Override
     public String toString()
     {

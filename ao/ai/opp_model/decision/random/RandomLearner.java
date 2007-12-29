@@ -28,8 +28,9 @@ public class RandomLearner implements LocalClassifier
 
 
     //--------------------------------------------------------------------
-    private RandomTree trees[];
-    private Multistate targetAttribute;
+    private RandomTree       trees[];
+    private Multistate       targetAttribute;
+    private LocalLearningSet totalSet;
 
 
     //--------------------------------------------------------------------
@@ -52,6 +53,7 @@ public class RandomLearner implements LocalClassifier
             targetAttribute = (Multistate) ls.targetAttribute();
         }
 
+        totalSet = new LocalLearningSet();
         doAdd( ls );
     }
 
@@ -109,9 +111,24 @@ public class RandomLearner implements LocalClassifier
 
     private void doAdd(LocalExample example)
     {
-        for (RandomTree tree : trees)
+        totalSet.add( example );
+        for (int i = 0; i < trees.length; i++)
         {
-            tree.updateSatistic(example);
+            if (! trees[i].updateSatistic(example))
+            {
+                //System.out.println("!!! REBUILDING RANDOM TREE");
+                trees[i] = RandomTree.nextRandom( totalSet );
+                for (LocalExample ex : totalSet)
+                {
+                    if (! trees[i].updateSatistic( ex ) &&
+                            totalSet.size() > 2)
+                    {
+//                        System.out.println("!!! ERROR REBUILDING TREE");
+                        throw new Error(
+                                "can't update existing example: " + ex);
+                    }
+                }
+            }
         }
     }
 
@@ -139,7 +156,9 @@ public class RandomLearner implements LocalClassifier
     //--------------------------------------------------------------------
     public String toString()
     {
-        return "RandomLearner with " + trees.length + " trees";
+        return "RandomLearner with " +
+                (trees == null ? "no" : trees.length) +
+               " trees";
     }
 
     public void printAsForest()

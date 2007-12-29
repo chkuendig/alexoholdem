@@ -47,4 +47,11 @@ public class ClassifierImpl implements Classifier
                     deleget.classify(context.toContext(pool)),
                     pool);
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return deleget.toString();
+    }
 }

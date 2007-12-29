@@ -3,7 +3,8 @@ package ao.ai.monte_carlo;
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
 import ao.ai.opp_model.decision.classification.Histogram;
-import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.classification.raw.Prediction;
+import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.input.InputPlayer;
 import ao.ai.opp_model.input.InputPlayerFactory;
@@ -85,8 +86,11 @@ public class HoldemPredictor
     //--------------------------------------------------------------------
     public Histogram
             predict(PlayerHandle forPlayer,
-                    LocalContext inContext)
+                    Context      inContext)
     {
-        return null;
+        Classifier learner =
+                    get(classifiers, forPlayer.getId());
+        Prediction p = learner.classify( inContext );
+        return p.toHistogram();
     }
 }

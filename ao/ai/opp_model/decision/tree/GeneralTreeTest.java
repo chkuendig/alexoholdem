@@ -44,9 +44,9 @@ public class GeneralTreeTest
                             new Datum("target", clazz)));
         }
         learner.set( examples );
-
-        System.out.println(
-                learner.classify(context(true, false, true, true)));
+        System.out.println(learner);
+//        System.out.println(
+//                learner.classify(context(true, false, true, true)));
     }
 
     private static enum TempClass

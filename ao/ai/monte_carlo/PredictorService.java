@@ -1,7 +1,7 @@
 package ao.ai.monte_carlo;
 
 import ao.ai.opp_model.decision.classification.Histogram;
-import ao.ai.opp_model.decision.input.processed.example.LocalContext;
+import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.ai.opp_model.input.ModelHolePlayer;
 import ao.ai.opp_model.model.domain.HandStrength;
@@ -63,7 +63,7 @@ public class PredictorService
     @SuppressWarnings("unchecked")
     public Histogram<SimpleAction>
             predictAction(PlayerHandle forPlayer,
-                          LocalContext inContext)
+                          Context      inContext)
     {
         return (Histogram<SimpleAction>)
                 actPredictor.predict(forPlayer, inContext);
@@ -72,7 +72,7 @@ public class PredictorService
     @SuppressWarnings("unchecked")
     public Histogram<HandStrength>
             predictHand(PlayerHandle forPlayer,
-                        LocalContext inContext)
+                        Context      inContext)
     {
         return (Histogram<HandStrength>)
                 holePredictor.predict(forPlayer, inContext);

@@ -2,30 +2,34 @@ package ao.ai.opp_model.decision.input.processed.data;
 
 import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
 import ao.ai.opp_model.decision.input.processed.attribute.Continuous;
+import ao.ai.opp_model.decision.input.processed.attribute.SortedList;
 
 /**
- *
+ * Note: perhaps this class should be internal to Continuous?
  */
 public class ValueRange extends LocalDatum
 {
     //--------------------------------------------------------------------
-    private Value[] inOrder;
-    private int     from;
-    private int     to;
+    private SortedList<Value> inOrder;
+    private double            from;
+    private double            to;
+    private boolean           roundToUp;
 
 
     //--------------------------------------------------------------------
     public ValueRange(
-            Continuous continuous,
-            Value[]    sorted,
-            int        fromIndex,
-            int        toIndex)
+            Continuous        continuous,
+            SortedList<Value> uniques,
+            double            fromPercentile,
+            double            toPercentile,
+            boolean           roundToUpOrDown)
     {
         super( continuous );
 
-        inOrder = sorted;
-        from    = fromIndex;
-        to      = toIndex;
+        inOrder   = uniques;
+        from      = fromPercentile;
+        to        = toPercentile;
+        roundToUp = roundToUpOrDown;
     }
 
 
@@ -41,14 +45,28 @@ public class ValueRange extends LocalDatum
     public boolean contains(LocalDatum datum)
     {
         return datum instanceof Value &&
-                ((Value) datum).isBetween(inOrder[from],
-                                          inOrder[to - 1]);
+                (roundToUp)
+                 ? ((Value) datum).isBetween(     from(), to() )
+                 : ((Value) datum).isBetweenOpen( from(), to() );
+    }
+
+    private Value from()
+    {
+        return inOrder.getPercentileDown(from);
+    }
+    private Value to()
+    {
+        return (roundToUp)
+                ? inOrder.getPercentileUp(to)
+                : inOrder.getPercentileDown(to);
     }
 
 
     //--------------------------------------------------------------------
     public String toString()
     {
-        return "[" + inOrder[from] + " .. " + inOrder[to - 1] + ")"; 
+        return "[" + from() +
+                     " .. " +
+                     to()   + (roundToUp ? "]" : ")");
     }
 }

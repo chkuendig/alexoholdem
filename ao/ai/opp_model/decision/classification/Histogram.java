@@ -20,6 +20,18 @@ public class Histogram<T>
         hist = new HashMap<T, int[]>();
     }
 
+    private Histogram(Map<T, int[]> copyHist,
+                      int           copyTotal)
+    {
+        total = copyTotal;
+        hist  = new HashMap<T,int[]>( copyHist );
+
+        for (T key : hist.keySet())
+        {
+            hist.put(key, hist.get(key).clone() );
+        }
+    }
+
 
     //--------------------------------------------------------------------
     public Collection<T> classes()
@@ -57,6 +69,24 @@ public class Histogram<T>
         total++;
     }
 
+    public void addAll(Histogram<T> addend)
+    {
+        for (Map.Entry<T, int[]> e : addend.hist.entrySet())
+        {
+            int[] curr = hist.get( e.getKey() );
+            if (curr == null)
+            {
+                hist.put( e.getKey(), e.getValue().clone() );
+            }
+            else
+            {
+                curr[0] += e.getValue()[0];
+            }
+        }
+    }
+
+    
+    //--------------------------------------------------------------------
     private int[] get(T item)
     {
         int count[] = hist.get( item );
@@ -117,5 +147,12 @@ public class Histogram<T>
             distance -= Info.log2(1.0 - Math.abs(deltaProb));
         }
         return distance;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Histogram<T> prototype()
+    {
+        return new Histogram<T>(hist, total);
     }
 }
