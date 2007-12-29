@@ -1,16 +1,15 @@
 package ao.ai.opp_model.decision.input.processed.attribute;
 
+import ao.ai.opp_model.decision.classification.processed.Classification;
+import ao.ai.opp_model.decision.classification.processed.Distribution;
 import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import ao.ai.opp_model.decision.input.processed.data.Value;
 import ao.ai.opp_model.decision.input.processed.data.ValueRange;
-import ao.ai.opp_model.decision.classification.processed.Classification;
-import ao.ai.opp_model.decision.classification.processed.Distribution;
 import ao.util.rand.Rand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -23,13 +22,11 @@ public class Continuous extends TypedAttribute
 
 
     //--------------------------------------------------------------------
-    private List<Value> values;
-
-    private Value sorted[];
-    private int   from; // including
-    private int   cut;  // up to but not including
-    private int   to;   // up to but not including
-    private int   percision;
+    private SortedList<Value> uniques;
+    private double            from; // including
+    private double            cut;  // up to but not including
+    private double            to;   // up to but not including
+    private int               percision;
 
 
     //--------------------------------------------------------------------
@@ -37,37 +34,36 @@ public class Continuous extends TypedAttribute
     {
         super(type);
 
-        values     = new ArrayList<Value>();
-        from       = -1;
+        uniques    = new SortedList<Value>();
+        from       =  0;
         cut        = -1;
-        to         = -1;
+        to         =  1;
         percision  = -1;
     }
 
     public Continuous(
-            String type,
-            Value  inOrder[],
-            int    fromIndex,
-            int    toIndex)
+            String            type,
+            SortedList<Value> uniqueVals,
+            double            fromPercentile,
+            double            toPercentile)
     {
-        this(type, inOrder, fromIndex, -1, toIndex, 0);
+        this(type, uniqueVals, fromPercentile, -1, toPercentile, 0);
     }
 
     private Continuous(
-            String type,
-            Value  inOrder[],
-            int    fromIndex,
-            int    cutIndex,
-            int    toIndex,
-            int    numberFolds)
+            String            type,
+            SortedList<Value> uniqueVals,
+            double            fromPercentile,
+            double            cutPercentile,
+            double            toPercentile,
+            int               numberFolds)
     {
         super(type);
 
-        values    = null;
-        sorted    = inOrder;
-        from      = fromIndex;
-        cut       = cutIndex;
-        to        = toIndex;
+        uniques   = uniqueVals;
+        from      = fromPercentile;
+        cut       = cutPercentile;
+        to        = toPercentile;
         percision = numberFolds;
     }
 
@@ -78,25 +74,28 @@ public class Continuous extends TypedAttribute
         return false;
     }
 
+    public boolean isWellInformed()
+    {
+        return (uniques.percentileUp(to) -
+                uniques.percentileDown(from)) > 1;
+    }
+
 
     //--------------------------------------------------------------------
     public Collection<? extends LocalDatum> partition()
     {
         return Arrays.asList(
-                new ValueRange(this, sorted, from, cut),
-                new ValueRange(this, sorted, cut,  to));
+                new ValueRange(this, uniques, from, cut, false),
+                new ValueRange(this, uniques, cut,  to,  true));
     }
 
 
     //--------------------------------------------------------------------
     public Attribute randomView()
     {
-        sortAttributes();
-        double splitAt = Rand.nextDouble();
-        return new Continuous(type(), sorted,
+        return new Continuous(type(), uniques,
                               from,
-                              from + (int)(Math.ceil(
-                                            splitAt * (to - from - 1))),
+                              Rand.nextDouble(from, to),
                               to,
                               -1);
     }
@@ -112,11 +111,9 @@ public class Continuous extends TypedAttribute
         return views(VIEW_FOLDS);
     }
 
-    public Collection<Continuous> views(int folds)
+    private Collection<Continuous> views(int folds)
     {
-        sortAttributes();
-
-        int size = valueCount();
+        //int size = uniques;
         Collection<Continuous> parts =
                 new ArrayList<Continuous>();
         for (int fold = 0; fold < folds; fold++)
@@ -126,46 +123,19 @@ public class Continuous extends TypedAttribute
             for (int split = 1; split < splits; split += 2)
             {
                 double percentile = ((double) split) / splits;
-                int    pivotDelta = (int)(size * percentile);
+                double cutPercent = from + (to - from) * percentile;
+                int    pivotDelta =
+                        uniques.percentileDown(cutPercent) -
+                        uniques.percentileDown(from);
                 if (pivotDelta < 3) break;
 
                 parts.add(new Continuous(
-                            type(), sorted,
-                            from, from + pivotDelta, to,
+                            type(), uniques,
+                            from, cutPercent, to,
                             cost));
             }
         }
         return parts;
-    }
-
-    private void sortAttributes()
-    {
-        if (sorted != null) return;
-
-        sorted = values.toArray( new Value[values.size()] );
-        Arrays.sort(sorted);
-        values = null;
-
-        // corrupt values for stable comparison
-        for (int i = 0; i < sorted.length - 1; i++)
-        {
-            if (sorted[i].equals( sorted[i + 1] ))
-            {
-                sorted[i + 1] = sorted[i + 1].corruptUpwards();
-            }
-            else if (sorted[i].compareTo( sorted[i + 1] ) > 0)
-            {
-                sorted[i + 1] = sorted[i].corruptUpwards();
-            }
-        }
-
-        // corrupt edges
-        sorted[0                ] = sorted[0                ].toLeast();
-        sorted[sorted.length - 1] = sorted[sorted.length - 1].toMost();
-
-        from      = 0;
-        to        = sorted.length;
-        percision = 0;
     }
 
 
@@ -175,21 +145,12 @@ public class Continuous extends TypedAttribute
         return percision * FOLD_LENGTH_WEIGHT;
     }
 
-    private int valueCount()
-    {
-        return (values != null)
-                ? values.size()
-                : to - from;
-    }
-
 
     //--------------------------------------------------------------------
     public Value add(double value)
     {
-        assert values != null : "views already derived";
-
         Value val = new Value(this, value);
-        values.add( val );
+        uniques.addIfAbsent( val );
         return val;
     }
 

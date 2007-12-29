@@ -65,7 +65,8 @@ public class LocalLearningSet implements Iterable<LocalExample>
     //--------------------------------------------------------------------
     public Map<LocalDatum, LocalLearningSet> split(Attribute on)
     {
-        Map<LocalDatum, LocalLearningSet> split = new HashMap<LocalDatum, LocalLearningSet>();
+        Map<LocalDatum, LocalLearningSet> split =
+                new HashMap<LocalDatum, LocalLearningSet>();
 
         Collection<? extends LocalDatum> parts = on.partition();
         for (LocalExample e : data)

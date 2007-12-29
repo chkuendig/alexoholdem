@@ -1,11 +1,12 @@
 package ao.ai.opp_model.decision.random;
 
-import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
 import ao.ai.opp_model.decision.classification.processed.Frequency;
+import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
+import ao.ai.opp_model.decision.input.processed.attribute.Continuous;
 import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import ao.ai.opp_model.decision.input.processed.example.LocalContext;
-import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
 import ao.ai.opp_model.decision.input.processed.example.LocalExample;
+import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
@@ -22,10 +23,15 @@ public class RandomTree
     {
         if (ls.isEmpty()) return new RandomTree();
 
-        List<Attribute> attributeList = ls.contextAttributes();
+        List<Attribute> attributeList =
+//                new ArrayList<Attribute>(
+                        ls.contextAttributes();//);
+        //Collections.shuffle( attributeList );
+
         Attribute attributes[] =
                     attributeList.toArray(
                             new Attribute[ attributeList.size() ]);
+
 
 //        return new RandomTree(attributes,
 //                             (int)(attributes.length / 2 + 0.99));
@@ -52,7 +58,11 @@ public class RandomTree
 
     private RandomTree(Attribute attributes[], int remainDepth)
     {
-        if (remainDepth < 0) return;
+        splitNext(attributes, remainDepth);
+    }
+    private void splitNext(Attribute attributes[], int remainDepth)
+    {
+        if (remainDepth < 0 || attributes.length == 0) return;
 
         int splitIndex = Rand.nextInt(attributes.length);
 
@@ -73,8 +83,25 @@ public class RandomTree
         }
         else
         {
-            childAttributes = attributes.clone();
-            childAttributes[splitIndex] = split;
+            if (((Continuous) split).isWellInformed())
+            {
+                childAttributes = attributes.clone();
+                childAttributes[splitIndex] = split;
+            }
+            else
+            {
+                // need to remove nasty duplication with above
+                childAttributes =
+                    Arrays.copyOf(attributes,
+                                  attributes.length - 1);
+
+                if (splitIndex != attributes.length - 1)
+                {
+                    childAttributes[splitIndex] =
+                            attributes[attributes.length - 1];
+                }
+                splitNext(childAttributes, remainDepth - 1);
+            }
         }
 
         RandomTree prevChild = null;
@@ -102,7 +129,7 @@ public class RandomTree
 
 
     //--------------------------------------------------------------------
-    public void updateSatistic(LocalExample exampleContext)
+    public boolean updateSatistic(LocalExample exampleContext)
     {
         if (split == null)
         {
@@ -111,7 +138,7 @@ public class RandomTree
                 hist = new Frequency();
             }
             hist.add( exampleContext.target() );
-            return;
+            return true;
         }
 
         LocalDatum splitVal = exampleContext.datumOfType( split );
@@ -122,28 +149,15 @@ public class RandomTree
             if (kid.check.contains( splitVal ))
             {
                 kid.updateSatistic(exampleContext);
-                return;
+                return true;
             }
         }
-        // XXX TODO: add logic here to add unseen splitVal.
+
+        // if we're here then the random tree must be rebuilt
+//        rebuildSubtree();
+//        updateSatistic(exampleContext);
+        return false;
     }
-
-
-    //--------------------------------------------------------------------
-//    public Classification classify(Context context)
-//    {
-//        Datum splitVal = context.datumOfType( split );
-//        for (RandomTree kid  = child;
-//                        kid != null;
-//                        kid  = kid.sibling)
-//        {
-//            if (kid.check.contains( splitVal ))
-//            {
-//                return kid.classify( context );
-//            }
-//        }
-//        return data.classify();
-//    }
 
 
     //--------------------------------------------------------------------

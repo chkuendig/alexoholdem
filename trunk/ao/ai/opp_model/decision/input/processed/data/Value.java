@@ -35,6 +35,10 @@ public class Value
     {
         return lesser.VALUE <= VALUE && VALUE <= greater.VALUE;
     }
+    public boolean isBetweenOpen(Value lesser, Value greaterNotIncluding)
+    {
+        return lesser.VALUE <= VALUE && VALUE < greaterNotIncluding.VALUE;
+    }
 
 
     //--------------------------------------------------------------------

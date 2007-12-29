@@ -70,11 +70,12 @@ public class ModelHolePlayer extends InputPlayer
                             expectationFinder.compute(
                                     community, state.numActivePlayers());
 
-        return ctx.withTarget(
-                        new Datum(
-                                HandStrength.fromPercent(
+        HandStrength actualDelta =
+                HandStrength.fromPercent(
                                     actual.strengthVsRandom() -
-                                        expected.strengthVsRandom())));
+                                        expected.strengthVsRandom());
+        System.out.println(predict(ctx) + "\t" + actualDelta);
+        return ctx.withTarget(new Datum( actualDelta ));
     }
 }
 

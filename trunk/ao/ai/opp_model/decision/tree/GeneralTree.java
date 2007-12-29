@@ -25,10 +25,10 @@ public class GeneralTree
 
 
     //--------------------------------------------------------------------
-    private LocalLearningSet data;
+    private LocalLearningSet      data;
     private Collection<Attribute> availAttrs;
     private Attribute             split; // split on
-    private LocalDatum check; // from parent's split
+    private LocalDatum            check; // from parent's split
 
     private GeneralTree parent;
     private GeneralTree child;

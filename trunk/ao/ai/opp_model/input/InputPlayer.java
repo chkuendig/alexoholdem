@@ -1,6 +1,7 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Example;
 import ao.holdem.model.Player;
@@ -44,6 +45,11 @@ public abstract class InputPlayer
         }
     }
 
+    protected Serializable playerId()
+    {
+        return playerId;
+    }
+
 
     //--------------------------------------------------------------------
     public void handEnded(HandHistory history) {}
@@ -74,6 +80,13 @@ public abstract class InputPlayer
             makeExampleOf(StateManager env,
                           Context      ctx,
                           RealAction   act);
+
+
+    //--------------------------------------------------------------------
+    protected Prediction predict(Context ctx)
+    {
+        return examples.classify(ctx);
+    }
 
 
     //--------------------------------------------------------------------

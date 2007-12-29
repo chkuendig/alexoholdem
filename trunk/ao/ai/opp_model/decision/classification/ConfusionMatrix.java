@@ -30,6 +30,23 @@ public class ConfusionMatrix<T>
         getPredicted(actual).add( predicted );
     }
 
+    public void addAll(ConfusionMatrix<T> addend)
+    {
+        all.addAll( addend.all );
+        for (Map.Entry<T, Histogram<T>> e : addend.matrix.entrySet())
+        {
+            Histogram<T> curr = matrix.get( e.getKey() );
+            if (curr == null)
+            {
+                matrix.put( e.getKey(), e.getValue().prototype() );
+            }
+            else
+            {
+                curr.addAll( e.getValue() );
+            }
+        }
+    }
+
 
     //--------------------------------------------------------------------
     private Histogram<T> getPredicted(T forActual)
@@ -84,7 +101,7 @@ public class ConfusionMatrix<T>
 
         StringBuilder str = new StringBuilder();
 
-        str.append("actual\tpredicted\n");
+        str.append("actual\tpredicted\tcount\n");
         for (T actualItem : allItems)
         {
             for (T predictedItem : allItems)

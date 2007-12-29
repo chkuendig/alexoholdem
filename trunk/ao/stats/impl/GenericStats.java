@@ -66,9 +66,12 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
         BettingRound round = forefront.round();
         ctx.add(new Datum( round ));
 
-        ctx.add(new Datum("Community Heat",
+        if (round != BettingRound.PREFLOP)
+        {
+            ctx.add(new Datum("Community Heat",
                         CommunityMeasure.measure(
                                 community.community().asOf(round))));
+        }
 
         // betting stats
         int numActs = checks + calls + raises;

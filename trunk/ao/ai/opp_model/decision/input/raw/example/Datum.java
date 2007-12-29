@@ -66,4 +66,39 @@ public class Datum
     {
         return (state != null);
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return type + " = " +
+               (isMultistate()
+                ? state
+                : value);
+    }
+
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Datum datum = (Datum) o;
+
+        return Double.compare(datum.value, value) == 0 &&
+                    !(state != null
+               ? !state.equals(datum.state)
+               : datum.state != null) &&
+                    type.equals(datum.type);
+    }
+
+    public int hashCode()
+    {
+        int result;
+        long temp;
+        result = type.hashCode();
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        temp = value != +0.0d ? Double.doubleToLongBits(value) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }
