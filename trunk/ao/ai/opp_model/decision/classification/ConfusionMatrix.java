@@ -23,7 +23,7 @@ public class ConfusionMatrix<T>
     //--------------------------------------------------------------------
     public void add(T actual, T predicted)
     {
-        if (actual == null || predicted == null) return;
+        if (actual == null /*|| predicted == null*/) return;
 
         all.add(actual);
         all.add(predicted);
@@ -82,17 +82,23 @@ public class ConfusionMatrix<T>
 
 
     //--------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     public String toString()
     {
         if (all.isEmpty()) return "[]";
 
         Collection<T> allItems;
 
-        T firstItem = all.iterator().next();
+        Iterator<T> tItr = all.iterator();
+        T firstItem = tItr.next();
+        if (firstItem == null) firstItem = tItr.next();
+
         if (firstItem instanceof Comparable)
         {
-            allItems = new TreeSet( all );
+            boolean containsNull = all.contains( null );
+            if (containsNull) all.remove( null );
+            allItems = new ArrayList<T>(new TreeSet<T>( all ));
+            if (containsNull) all.add( null );
+            if (containsNull) allItems.add( null );
         }
         else
         {
@@ -104,6 +110,8 @@ public class ConfusionMatrix<T>
         str.append("actual\tpredicted\tcount\n");
         for (T actualItem : allItems)
         {
+            if (actualItem == null) continue;
+            
             for (T predictedItem : allItems)
             {
                 int count = getPredicted(actualItem)

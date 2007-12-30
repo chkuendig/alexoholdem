@@ -73,4 +73,11 @@ public class LocalExampleImpl
     {
         return CONTEXT.datumOfType( attribute );
     }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return CONTEXT.toString() + "\t->\t" + TARGET.toString();
+    }
 }

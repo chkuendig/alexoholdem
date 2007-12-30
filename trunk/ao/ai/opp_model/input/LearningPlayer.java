@@ -1,6 +1,7 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.decision.classification.ConfusionMatrix;
 import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Example;
@@ -18,21 +19,34 @@ import java.util.LinkedList;
 /**
  *
  */
-public abstract class InputPlayer
+public abstract class LearningPlayer
         implements Player
 {
+    //--------------------------------------------------------------------
+    public static interface Factory
+    {
+        public LearningPlayer newInstance(
+                                HandHistory  history,
+                                Classifier   addTo,
+                                PlayerHandle player,
+                                boolean      publishActions);
+    }
+
+
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
     private Classifier             examples;
     private Serializable           playerId;
     private boolean                publish;
 
+    private ConfusionMatrix confusion = new ConfusionMatrix();
+
 
     //--------------------------------------------------------------------
-    public InputPlayer(HandHistory  history,
-                       Classifier   addTo,
-                       PlayerHandle player,
-                       boolean      publishActions)
+    public LearningPlayer(HandHistory  history,
+                          Classifier   addTo,
+                          PlayerHandle player,
+                          boolean      publishActions)
     {
         acts     = new LinkedList<RealAction>();
         playerId = player.getId();
@@ -56,6 +70,7 @@ public abstract class InputPlayer
 
 
     //--------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public RealAction act(final StateManager env)
     {
         checkPlayer(env);
@@ -65,13 +80,18 @@ public abstract class InputPlayer
         {
             Statistic stat = env.stats().forPlayer(playerId);
 
-            Example addend =
-                    makeExampleOf(env,
-                                  stat.nextActContext(),
-                                  act);
-            //XXX: add checking here.
-            //examples.classify( addend );
-            examples.add( addend );
+            Context ctx    = stat.nextActContext();
+            Example addend = makeExampleOf(env, ctx, act);
+
+            if (addend != null)
+            {
+                // record prediction accuracy
+                confusion.add(
+                        addend.target().state(),
+                        predict(ctx).toHistogram().mostFrequent());
+
+                examples.add( addend );
+            }
         }
         return act;
     }
@@ -107,5 +127,19 @@ public abstract class InputPlayer
     private RealAction shiftAction()
     {
         return acts.removeFirst();
+    }
+
+
+    //--------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
+    public void addTo(ConfusionMatrix confusionMatrix)
+    {
+        confusionMatrix.addAll( confusion );
+    }
+    
+    public String toString()
+    {
+        return "confusion for player: " + playerId + "\n" +
+                confusion.toString();
     }
 }

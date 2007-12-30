@@ -10,9 +10,17 @@ import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
  */
 public interface LocalClassifier
 {
+    //--------------------------------------------------------------------
     public void set(LocalLearningSet ls);
     public void add(LocalLearningSet ls);
     public void add(LocalExample example);
 
     public Classification classify(LocalContext context);
+
+
+    //--------------------------------------------------------------------
+    public static interface Factory
+    {
+        public LocalClassifier newInstance();
+    }
 }

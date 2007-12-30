@@ -5,7 +5,7 @@ import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
 import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.decision.classification.ConfusionMatrix;
-import ao.ai.opp_model.input.InputPlayer;
+import ao.ai.opp_model.input.LearningPlayer;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
@@ -36,8 +36,8 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "sagerbot"));
-//        modelOpponet(playerAccess.find("irc", "perfecto"));
+//        modelOpponet(playerAccess.find("irc", "sagerbot"));
+        modelOpponet(playerAccess.find("irc", "any2cnwin"));
     }
 
 
@@ -48,8 +48,8 @@ public class OppModelTest
 
         try
         {
-            //doDecisionModelOpponet( p );
-            doModelActions( p );
+            doModelAll( p );
+//            doModelActions( p );
         }
         catch (Exception e)
         {
@@ -59,7 +59,7 @@ public class OppModelTest
     private void doModelActions(PlayerHandle p)
     {
         Classifier learner =
-                new DomainedClassifier( RandomLearner.FACTORY );
+                new DomainedClassifier( new RandomLearner.Factory() );
 
         ConfusionMatrix<SimpleAction> total =
                 new ConfusionMatrix<SimpleAction>();
@@ -80,8 +80,8 @@ public class OppModelTest
                                      new LiteralCardSource(hand));
 
             ModelActionPlayer              target = null;
-            Map<PlayerHandle, InputPlayer> brains =
-                    new HashMap<PlayerHandle, InputPlayer>();
+            Map<PlayerHandle, LearningPlayer> brains =
+                    new HashMap<PlayerHandle, LearningPlayer>();
             for (PlayerHandle player : playerHandles)
             {
                 boolean isTarget = player.equals( p );
@@ -105,100 +105,22 @@ public class OppModelTest
         System.out.println(total);
     }
 
-    private void doModelHolesIntegrated(PlayerHandle p)
+    private void doModelAll(PlayerHandle p)
     {
         PredictorService predictor = new PredictorService();
 
+        //int i = 0;
         for (HandHistory hand : p.getHands())
         {
+            //System.out.print(".");
+            //if (++i % 20 == 0) System.out.println();
+
             predictor.add( hand );
         }
+
+        System.out.println( "\n\nERRORS:\n" );
+        System.out.println( predictor );
     }
-
-
-//    private void doDecisionModelOpponet(PlayerHandle p)
-//    {
-//        //Classifier learner = new GeneralTreeLearner();
-//        Classifier learner = new RandomLearner();
-//
-//        PlayerExampleSet trainingStats   = new PlayerExampleSet();
-//        PlayerExampleSet validationStats = new PlayerExampleSet();
-//
-//        int i = 0;
-//        for (HandHistory hand : p.getHands())
-//        {
-//            //System.out.println(i++);
-//            //System.out.println(hand.summary());
-//
-////            PlayerExampleSet examples =
-////                    (i++ < 300) ? trainingStats
-////                                : validationStats;
-//            PlayerExampleSet examples = validationStats;
-////            PlayerExampleSet examples = trainingStats;
-//
-//            List<PlayerHandle> playerHandles =
-//                    new ArrayList<PlayerHandle>();
-//            playerHandles.addAll( hand.getPlayers() );
-//
-//            StateManager start =
-//                    new StateManager(playerHandles,
-//                                     new LiteralCardSource(hand));
-//            Map<PlayerHandle, ModelActionPlayer> brains =
-//                    new HashMap<PlayerHandle, ModelActionPlayer>();
-//            for (PlayerHandle player : playerHandles)
-//            {
-//                brains.put(player,
-//                           new ModelActionPlayer(
-//                                   hand, examples, player,
-//                                   learner.pool(),
-//                                   player.equals( p )));
-//            }
-//
-//            new Dealer(start, brains).playOutHand();
-//        }
-//
-//        System.out.println("building model");
-//        learner.set( trainingStats.postFlops() );
-//        System.out.println(learner);
-////        ((RandomLearner) learner).printAsForest();
-//
-////        double cost         = 0;
-//        int    exampleCount = 0;
-//        for (Example example : validationStats.postFlops())
-//        {
-//            Frequency prediction =
-//                    (Frequency)learner.classify( example );
-//            if (prediction == null)
-//                prediction = new Frequency();
-//
-//            MixedAction predictedAction =
-//                    MixedAction.fromHistogram(prediction);
-//
-////            double  probability =
-////                     predictedAction.probabilityOf( (SimpleAction)
-////                             ((State) example.target()).state());
-////
-//            boolean isCorrent = example.target().equals(
-//                                    prediction.mostProbable());
-////            cost -= Info.log2(Math.max(0.01, probability));
-////            System.out.println(
-////                    ((State)example.target()).state() + "\t" +
-////                    prediction  + "\t" +
-////                    probability + "\t" +
-////                    (isCorrent ? 1 : 0));
-//            System.out.println(
-//                    ((State)example.target()).state() + "\t" +
-//                    predictedAction  + "\t" +
-//                    (isCorrent ? 1 : 0));
-//
-//            trainingStats.add( (HoldemExample) example );
-//            if (exampleCount++ < 50 || (exampleCount % 50 == 0))
-//            {
-//                learner.set( trainingStats.postFlops() );
-//            }
-//        }
-////        System.out.println("cost = " + cost);
-//    }
 
 
     //--------------------------------------------------------------------

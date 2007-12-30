@@ -17,13 +17,13 @@ import ao.state.StateManager;
 /**
  * 
  */
-public class ModelHolePlayer extends InputPlayer
+public class ModelHolePlayer extends LearningPlayer
 {
     //--------------------------------------------------------------------
     public static class Factory
-                            implements InputPlayerFactory
+                            implements LearningPlayer.Factory
     {
-        public InputPlayer newInstance(
+        public LearningPlayer newInstance(
                 HandHistory  history,
                 Classifier   addTo,
                 PlayerHandle player,
@@ -74,7 +74,11 @@ public class ModelHolePlayer extends InputPlayer
                 HandStrength.fromPercent(
                                     actual.strengthVsRandom() -
                                         expected.strengthVsRandom());
-        System.out.println(predict(ctx) + "\t" + actualDelta);
+
+        System.out.println(playerId()                + "\t" +
+                           ctx.bufferedData().size() + "\t" +
+                           predict(ctx)              + "\t" +
+                           actualDelta);
         return ctx.withTarget(new Datum( actualDelta ));
     }
 }

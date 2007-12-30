@@ -53,6 +53,20 @@ public class Datum
         return type;
     }
 
+    public Object state()
+    {
+        assert state != null
+                : "continuous data have 'value', not 'state'";
+        return state;
+    }
+
+    public double value()
+    {
+        assert state == null
+                : "multistate data have 'state', not 'value'";
+        return value;
+    }
+
 
     //--------------------------------------------------------------------
     public LocalDatum toDatum(DataPool inPool)
