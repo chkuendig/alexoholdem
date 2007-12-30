@@ -7,10 +7,10 @@ import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import ao.ai.opp_model.decision.input.processed.example.LocalContext;
 import ao.ai.opp_model.decision.input.processed.example.LocalExample;
 import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
-import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,25 +24,25 @@ public class RandomTree
         if (ls.isEmpty()) return new RandomTree();
 
         List<Attribute> attributeList =
-//                new ArrayList<Attribute>(
-                        ls.contextAttributes();//);
-        //Collections.shuffle( attributeList );
+                new ArrayList<Attribute>(
+                        ls.contextAttributes());
+        Collections.shuffle( attributeList );
 
-        Attribute attributes[] =
-                    attributeList.toArray(
-                            new Attribute[ attributeList.size() ]);
+        int length = (int)(attributeList.size() * 0.55 + 0.99);
+        assert length >= 1;
 
+        Attribute attributes[] = new Attribute[ length ];
+        for (int i = 0; i < length; i++)
+        {
+            attributes[ i ] = attributeList.get( i );
+        }
 
-//        return new RandomTree(attributes,
-//                             (int)(attributes.length / 2 + 0.99));
-//        return new RandomTree(attributes, attributes.length);
-        return new RandomTree(attributes,
-                             (int)(attributes.length * 0.6 + 0.99));
+        return new RandomTree(attributes, 0);
     }
 
     
     //--------------------------------------------------------------------
-    private Attribute split; // split on
+    private Attribute  split; // split on
     private LocalDatum check; // from parent's split
 
 //    private RandomTree parent;
@@ -56,51 +56,21 @@ public class RandomTree
     //--------------------------------------------------------------------
     public RandomTree() {}
 
-    private RandomTree(Attribute attributes[], int remainDepth)
+    private RandomTree(Attribute attributes[], int atIndex)
     {
-        splitNext(attributes, remainDepth);
+        splitNext(attributes, atIndex);
     }
-    private void splitNext(Attribute attributes[], int remainDepth)
+    private void splitNext(Attribute attributes[], int atIndex)
     {
-        if (remainDepth < 0 || attributes.length == 0) return;
+        if (atIndex >= attributes.length) return;
 
-        int splitIndex = Rand.nextInt(attributes.length);
-
-        split = attributes[splitIndex].randomView();
-
-        Attribute childAttributes[];
-        if (split.isSingleUse())
+        split = attributes[atIndex].randomView();
+        if (! split.isSingleUse())
         {
-            childAttributes =
-                Arrays.copyOf(attributes,
-                              attributes.length - 1);
-            
-            if (splitIndex != attributes.length - 1)
+            if (! ((Continuous) split).isWellInformed())
             {
-                childAttributes[splitIndex] =
-                        attributes[attributes.length - 1];
-            }
-        }
-        else
-        {
-            if (((Continuous) split).isWellInformed())
-            {
-                childAttributes = attributes.clone();
-                childAttributes[splitIndex] = split;
-            }
-            else
-            {
-                // need to remove nasty duplication with above
-                childAttributes =
-                    Arrays.copyOf(attributes,
-                                  attributes.length - 1);
-
-                if (splitIndex != attributes.length - 1)
-                {
-                    childAttributes[splitIndex] =
-                            attributes[attributes.length - 1];
-                }
-                splitNext(childAttributes, remainDepth - 1);
+                splitNext(attributes, atIndex + 1);
+                return;
             }
         }
 
@@ -108,11 +78,8 @@ public class RandomTree
         for (LocalDatum datum : split.partition())
         {
             RandomTree subTree =
-                    new RandomTree(
-                            childAttributes,
-                            remainDepth - 1);
-            subTree.check  = datum;
-//            subTree.parent = this;
+                    new RandomTree(attributes, atIndex + 1);
+            subTree.check      = datum;
 
             if (prevChild == null)
             {

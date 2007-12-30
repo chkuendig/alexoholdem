@@ -1,7 +1,6 @@
 package ao.ai.opp_model.decision.tree;
 
 import ao.ai.opp_model.classifier.processed.LocalClassifier;
-import ao.ai.opp_model.classifier.processed.LocalClassifierFactory;
 import ao.ai.opp_model.decision.classification.processed.Classification;
 import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
 import ao.ai.opp_model.decision.input.processed.example.LocalContext;
@@ -15,12 +14,13 @@ import org.jetbrains.annotations.NotNull;
 public class GeneralTreeLearner implements LocalClassifier
 {
     //--------------------------------------------------------------------
-    public static LocalClassifierFactory FACTORY =
-            new LocalClassifierFactory() {
-                public LocalClassifier newInstance() {
-                    return new GeneralTreeLearner();
-                }
-            };
+    public static class Factory implements LocalClassifier.Factory
+    {
+        public LocalClassifier newInstance()
+        {
+            return new GeneralTreeLearner();
+        }
+    }
 
 
     //--------------------------------------------------------------------

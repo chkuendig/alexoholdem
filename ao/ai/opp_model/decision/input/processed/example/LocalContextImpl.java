@@ -11,7 +11,8 @@ import java.util.*;
 public class LocalContextImpl implements LocalContext
 {
     //--------------------------------------------------------------------
-    private Map<String, LocalDatum> byType = new HashMap<String, LocalDatum>();
+    private Map<String, LocalDatum> byType =
+            new HashMap<String, LocalDatum>();
 
 
     //--------------------------------------------------------------------
@@ -76,5 +77,12 @@ public class LocalContextImpl implements LocalContext
     public LocalDatum datumOfType(Attribute attribute)
     {
         return byType.get( attribute.type() );
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return byType.toString();
     }
 }

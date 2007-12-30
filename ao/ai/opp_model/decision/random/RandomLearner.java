@@ -1,7 +1,6 @@
 package ao.ai.opp_model.decision.random;
 
 import ao.ai.opp_model.classifier.processed.LocalClassifier;
-import ao.ai.opp_model.classifier.processed.LocalClassifierFactory;
 import ao.ai.opp_model.decision.classification.processed.Classification;
 import ao.ai.opp_model.decision.classification.processed.Frequency;
 import ao.ai.opp_model.decision.input.processed.attribute.Multistate;
@@ -17,13 +16,16 @@ import org.jetbrains.annotations.NotNull;
 public class RandomLearner implements LocalClassifier
 {
     //--------------------------------------------------------------------
-    public static LocalClassifierFactory FACTORY =
-            new LocalClassifierFactory() {
-                public LocalClassifier newInstance() {
-                    return new RandomLearner();
-                }
-            };
+    public static class Factory implements LocalClassifier.Factory
+    {
+        public LocalClassifier newInstance()
+        {
+            return new RandomLearner();
+        }
+    }
 
+
+    //--------------------------------------------------------------------
     private static final int NUM_TREES = 32;
 
 
@@ -116,17 +118,16 @@ public class RandomLearner implements LocalClassifier
         {
             if (! trees[i].updateSatistic(example))
             {
-                //System.out.println("!!! REBUILDING RANDOM TREE");
                 trees[i] = RandomTree.nextRandom( totalSet );
                 for (LocalExample ex : totalSet)
                 {
-                    if (! trees[i].updateSatistic( ex ) &&
-                            totalSet.size() > 2)
-                    {
-//                        System.out.println("!!! ERROR REBUILDING TREE");
-                        throw new Error(
-                                "can't update existing example: " + ex);
-                    }
+                    trees[i].updateSatistic( ex );
+//                    if (! trees[i].updateSatistic( ex ) &&
+//                            totalSet.size() > 2)
+//                    {
+//                        throw new Error(
+//                                "can't update existing example: " + ex);
+//                    }
                 }
             }
         }

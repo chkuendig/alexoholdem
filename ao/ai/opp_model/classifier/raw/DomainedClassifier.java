@@ -1,6 +1,6 @@
 package ao.ai.opp_model.classifier.raw;
 
-import ao.ai.opp_model.classifier.processed.LocalClassifierFactory;
+import ao.ai.opp_model.classifier.processed.LocalClassifier;
 import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Example;
@@ -17,12 +17,12 @@ public class DomainedClassifier implements Classifier
 {
     //--------------------------------------------------------------------
     private final Map<Collection<String>, Classifier> pools;
-    private final LocalClassifierFactory              classifierFactory;
+    private final LocalClassifier.Factory classifierFactory;
 
 
     //--------------------------------------------------------------------
     public DomainedClassifier(
-            LocalClassifierFactory localClassifierFactory)
+            LocalClassifier.Factory localClassifierFactory)
     {
         pools             = new HashMap<Collection<String>, Classifier>();
         classifierFactory = localClassifierFactory;

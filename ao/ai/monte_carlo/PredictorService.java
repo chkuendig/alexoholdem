@@ -36,26 +36,6 @@ public class PredictorService
     {
         actPredictor.add(  history );
         holePredictor.add( history );
-
-//        StateManager start =
-//                new StateManager(history.getPlayers(),
-//                                 new LiteralCardSource(history));
-//        Map<PlayerHandle, ModelActionPlayer> brains =
-//                new HashMap<PlayerHandle, ModelActionPlayer>();
-//        for (PlayerHandle player : history.getPlayers())
-//        {
-//            Serializable id = player.getId();
-//            brains.put(player,
-//                       new ModelActionPlayer(
-//                               history,
-//                               new PlayerMultiSet(
-//                                       actPredictor.classifier(  id),
-//                                       holePredictor.classifier( id )),
-//                               player,
-//                               true));
-//        }
-//
-//        new Dealer(start, brains).playOutHand();
     }
 
 
@@ -76,5 +56,13 @@ public class PredictorService
     {
         return (Histogram<HandStrength>)
                 holePredictor.predict(forPlayer, inContext);
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return "ACTS:\n" + actPredictor.toString() + "\n\n" +
+               "HOLES:\n" + holePredictor.toString();
     }
 }
