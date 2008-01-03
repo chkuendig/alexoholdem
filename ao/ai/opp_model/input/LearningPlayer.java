@@ -1,6 +1,7 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.classifier.raw.Predictor;
 import ao.ai.opp_model.decision.classification.ConfusionMatrix;
 import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
@@ -26,16 +27,18 @@ public abstract class LearningPlayer
     public static interface Factory
     {
         public LearningPlayer newInstance(
-                                HandHistory  history,
-                                Classifier   addTo,
-                                PlayerHandle player,
-                                boolean      publishActions);
+                boolean      publishActions,
+                HandHistory  history,
+                PlayerHandle player,
+                Classifier   addTo,
+                Predictor    predictWith);
     }
 
 
     //--------------------------------------------------------------------
     private LinkedList<RealAction> acts;
     private Classifier             examples;
+    private Predictor              predictor;
     private Serializable           playerId;
     private boolean                publish;
 
@@ -43,15 +46,17 @@ public abstract class LearningPlayer
 
 
     //--------------------------------------------------------------------
-    public LearningPlayer(HandHistory  history,
-                          Classifier   addTo,
+    public LearningPlayer(boolean      publishActions,
+                          HandHistory  history,
                           PlayerHandle player,
-                          boolean      publishActions)
+                          Classifier   addTo,
+                          Predictor    predictWith)
     {
-        acts     = new LinkedList<RealAction>();
-        playerId = player.getId();
-        examples = addTo;
-        publish  = publishActions;
+        acts      = new LinkedList<RealAction>();
+        playerId  = player.getId();
+        examples  = addTo;
+        publish   = publishActions;
+        predictor = predictWith;
 
         for (Event event : history.getEvents( player ))
         {
@@ -86,9 +91,12 @@ public abstract class LearningPlayer
             if (addend != null)
             {
                 // record prediction accuracy
-                confusion.add(
+                if (predictor != null)
+                {
+                    confusion.add(
                         addend.target().state(),
                         predict(ctx).toHistogram().mostFrequent());
+                }
 
                 examples.add( addend );
             }
@@ -105,7 +113,15 @@ public abstract class LearningPlayer
     //--------------------------------------------------------------------
     protected Prediction predict(Context ctx)
     {
-        return examples.classify(ctx);
+        //return examples.classify(ctx);
+        return (predictor == null)
+                ? null
+                : predictor.classify( ctx );
+    }
+
+    protected int actsLeft()
+    {
+        return acts.size();
     }
 
 

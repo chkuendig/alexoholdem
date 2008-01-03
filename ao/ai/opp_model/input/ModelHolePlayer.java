@@ -1,6 +1,8 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.classifier.raw.Predictor;
+import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.input.raw.example.Example;
@@ -24,25 +26,27 @@ public class ModelHolePlayer extends LearningPlayer
                             implements LearningPlayer.Factory
     {
         public LearningPlayer newInstance(
+                boolean      publishActions,
                 HandHistory  history,
-                Classifier   addTo,
                 PlayerHandle player,
-                boolean      publishActions)
+                Classifier   addTo,
+                Predictor predictWith)
         {
             return new ModelHolePlayer(
-                            history, addTo, player, publishActions);
+                    publishActions, history, player, addTo, predictWith);
         }
     }
 
 
     //--------------------------------------------------------------------
     public ModelHolePlayer(
+            boolean      publishActions,
             HandHistory  history,
-            Classifier   addTo,
             PlayerHandle player,
-            boolean      publishActions)
+            Classifier   addTo,
+            Predictor    predictWith)
     {
-        super(history, addTo, player, publishActions);
+        super(publishActions, history, player, addTo, predictWith);
     }
 
 
@@ -57,6 +61,7 @@ public class ModelHolePlayer extends LearningPlayer
         Hole hole = env.cards().holeFor(
                         state.nextToAct().handle() );
         if (hole == null || !hole.bothCardsVisible()) return null;
+        //if (!(actsLeft() == 0 && !act.isFold())) return null;
 
         Community community = env.cards().community();
 
@@ -75,10 +80,14 @@ public class ModelHolePlayer extends LearningPlayer
                                     actual.strengthVsRandom() -
                                         expected.strengthVsRandom());
 
-        System.out.println(playerId()                + "\t" +
-                           ctx.bufferedData().size() + "\t" +
-                           predict(ctx)              + "\t" +
-                           actualDelta);
+        Prediction prediction = predict(ctx);
+        if (prediction != null)
+        {
+//            System.out.println(playerId()                + "\t" +
+//                               ctx.bufferedData().size() + "\t" +
+//                               prediction                + "\t" +
+//                               actualDelta);
+        }
         return ctx.withTarget(new Datum( actualDelta ));
     }
 }

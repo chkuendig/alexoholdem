@@ -51,6 +51,7 @@ public class RandomTree
 
 //    private int dataLabeled;
     private Frequency hist;
+    private int       sampleSize;
 
 
     //--------------------------------------------------------------------
@@ -100,11 +101,9 @@ public class RandomTree
     {
         if (split == null)
         {
-            if (hist == null)
-            {
-                hist = new Frequency();
-            }
-            hist.add( exampleContext.target() );
+            getHistogram().add( exampleContext.target() );
+
+            sampleSize++;
             return true;
         }
 
@@ -116,6 +115,8 @@ public class RandomTree
             if (kid.check.contains( splitVal ))
             {
                 kid.updateSatistic(exampleContext);
+
+                sampleSize++;
                 return true;
             }
         }
@@ -126,18 +127,21 @@ public class RandomTree
         return false;
     }
 
+    private Frequency getHistogram()
+    {
+        if (hist == null)
+        {
+            hist = new Frequency();
+        }
+        return hist;
+    }
+
 
     //--------------------------------------------------------------------
-    public double proportionAtLeaf(
-            LocalContext exampleContext,
-            LocalDatum ofTarget)
+    public Frequency frequencyAtLeaf(
+            LocalContext exampleContext)
     {
-        if (split == null)
-        {
-            return (hist == null)
-                    ? 0
-                    : hist.probabilityOf( ofTarget );
-        }
+        if (split == null) return getHistogram();
 
         LocalDatum splitVal = exampleContext.datumOfType( split );
         for (RandomTree kid  = child;
@@ -146,11 +150,10 @@ public class RandomTree
         {
             if (kid.check.contains( splitVal ))
             {
-                return kid.proportionAtLeaf(
-                                exampleContext, ofTarget);
+                return kid.frequencyAtLeaf(exampleContext);
             }
         }
-        return 0;
+        return new Frequency();
     }
 
 

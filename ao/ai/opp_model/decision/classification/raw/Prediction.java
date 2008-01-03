@@ -53,6 +53,11 @@ public class Prediction
         return rawHist;
     }
 
+    public int size()
+    {
+        return ((Frequency) DELEGET).asHistogram().size();
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()

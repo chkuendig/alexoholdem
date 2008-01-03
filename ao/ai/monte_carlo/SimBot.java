@@ -10,7 +10,7 @@ import ao.state.StateManager;
 /**
  *
  */
-public class UctBot extends AbstractPlayer
+public class SimBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
 //    @Inject HandApproximator handApprox;
@@ -21,7 +21,7 @@ public class UctBot extends AbstractPlayer
 
     
     //--------------------------------------------------------------------
-    public UctBot()
+    public SimBot()
     {
         predictor  = new PredictorService();
         handApprox = new HandApproximator( predictor );
@@ -34,7 +34,14 @@ public class UctBot extends AbstractPlayer
             HandState    state,
             Hole         hole)
     {
+        for (int i = 0; i < 256; i++)
+        {
+            Simulator sim = new Simulator();
 
+//            StateManager start =
+//                    new StateManager(playerHandles,
+//                                     new LiteralCardSource(hand));
+        }
 
 
         return null;
