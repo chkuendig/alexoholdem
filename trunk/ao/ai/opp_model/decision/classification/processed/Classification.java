@@ -5,12 +5,16 @@ import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 /**
  *
  */
-public abstract class Classification
-{
+public interface Classification
+{         
     //--------------------------------------------------------------------
-    public abstract void add(LocalDatum datum);
+    public void add(LocalDatum datum);
 
-    public abstract double transmissionCost(double alpha);
+    public double transmissionCost(double alpha);
 
-    public abstract double probabilityOf(LocalDatum datum);
+    public double probabilityOf(LocalDatum datum);
+
+
+    //--------------------------------------------------------------------
+    public int sampleSize();
 }

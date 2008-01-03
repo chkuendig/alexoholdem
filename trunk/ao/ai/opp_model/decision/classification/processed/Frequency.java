@@ -6,12 +6,13 @@ import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
 import ao.ai.opp_model.decision.input.processed.attribute.Multistate;
 import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import ao.ai.opp_model.decision.input.processed.data.State;
+import ao.ai.opp_model.decision.random.Selection;
 import ao.util.stats.Info;
 
 /**
  *
  */
-public class Frequency extends Classification
+public class Frequency implements Classification
 {
     //--------------------------------------------------------------------
     private Histogram<LocalDatum> hist;
@@ -37,6 +38,20 @@ public class Frequency extends Classification
         return hist.probabilityOf( datum );
     }
 
+    public Selection proportionOf(LocalDatum datum)
+    {
+        return new Selection(hist.countOf(datum), sampleSize());
+    }
+
+
+    //--------------------------------------------------------------------
+    public int sampleSize()
+    {
+        return hist.size();
+    }
+
+
+    //--------------------------------------------------------------------
     public int countOfState(Object value)
     {
         for (LocalDatum item : hist.classes())

@@ -1,6 +1,8 @@
 package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
+import ao.ai.opp_model.classifier.raw.Predictor;
+import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.input.raw.example.Example;
@@ -19,25 +21,27 @@ public class ModelActionPlayer extends LearningPlayer
                             implements LearningPlayer.Factory
     {
         public LearningPlayer newInstance(
+                boolean      publishActions,
                 HandHistory  history,
-                Classifier   addTo,
                 PlayerHandle player,
-                boolean      publishActions)
+                Classifier   addTo,
+                Predictor    predictWith)
         {
             return new ModelActionPlayer(
-                            history, addTo, player, publishActions);
+                    publishActions, history, player, addTo, predictWith);
         }
     }
 
 
     //--------------------------------------------------------------------
     public ModelActionPlayer(
+            boolean      publishActions,
             HandHistory  history,
-            Classifier   addTo,
             PlayerHandle player,
-            boolean      publishActions)
+            Classifier   addTo,
+            Predictor    predictWith)
     {
-        super(history, addTo, player, publishActions);
+        super(publishActions, history, player, addTo, predictWith);
     }
 
 
@@ -47,10 +51,15 @@ public class ModelActionPlayer extends LearningPlayer
             Context      ctx,
             RealAction   act)
     {
-        System.out.println(playerId()                + "\t" +
-                           ctx.bufferedData().size() + "\t" +
-                           predict(ctx)              + "\t" +
-                           act.toSimpleAction());
+        Prediction prediction = predict(ctx);
+        if (prediction != null)
+        {
+//            System.out.println(playerId()                + "\t" +
+//                               ctx.bufferedData().size() + "\t" +
+//                               prediction                + "\t" +
+//                               act.toSimpleAction());
+        }
+
         return ctx.withTarget(
                 new Datum(act.toSimpleAction()) );
     }

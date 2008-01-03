@@ -49,6 +49,11 @@ public class Histogram<T>
         return total == 0;
     }
 
+    public int size()
+    {
+        return total;
+    }
+
 
     //--------------------------------------------------------------------
     public void put(T item, int count)
@@ -112,7 +117,9 @@ public class Histogram<T>
     //--------------------------------------------------------------------
     public double probabilityOf(T item)
     {
-        return (double) countOf( item ) / total;
+        return isEmpty()
+                ? 0
+                : (double) countOf( item ) / total;
     }
 
     public T mostFrequent()

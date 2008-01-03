@@ -1,6 +1,6 @@
 package ao.holdem.engine;
 
-import ao.ai.monte_carlo.UctBot;
+import ao.ai.monte_carlo.SimBot;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
 import ao.ai.simple.MathBot;
@@ -28,7 +28,7 @@ public class DealerTest
     //--------------------------------------------------------------------
     @Inject PlayerHandleLookup     players;
     @Inject HandHistoryDao         hands;
-    @Inject Provider<UctBot> smarties;
+    @Inject Provider<SimBot> smarties;
 
 
     //--------------------------------------------------------------------

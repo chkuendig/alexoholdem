@@ -3,8 +3,8 @@ package ao.ai.opp_model;
 import ao.ai.monte_carlo.PredictorService;
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
-import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.decision.classification.ConfusionMatrix;
+import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.input.LearningPlayer;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.holdem.engine.Dealer;
@@ -36,8 +36,8 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-//        modelOpponet(playerAccess.find("irc", "sagerbot"));
-        modelOpponet(playerAccess.find("irc", "any2cnwin"));
+        modelOpponet(playerAccess.find("irc", "sagerbot"));
+//        modelOpponet(playerAccess.find("irc", "any2cnwin"));
     }
 
 
@@ -87,9 +87,10 @@ public class OppModelTest
                 boolean isTarget = player.equals( p );
                 ModelActionPlayer actionPlayer =
                     new ModelActionPlayer(
-                            hand, learner,
+                            isTarget,
+                            hand,
                             player,
-                            isTarget);
+                            learner, learner);
                 brains.put(player, actionPlayer);
 
                 if (isTarget)
@@ -108,10 +109,13 @@ public class OppModelTest
     private void doModelAll(PlayerHandle p)
     {
         PredictorService predictor = new PredictorService();
+        //HandApproximator approx    = new HandApproximator(predictor);
 
         //int i = 0;
         for (HandHistory hand : p.getHands())
         {
+
+
             //System.out.print(".");
             //if (++i % 20 == 0) System.out.println();
 

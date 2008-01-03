@@ -17,7 +17,7 @@ public class DomainedClassifier implements Classifier
 {
     //--------------------------------------------------------------------
     private final Map<Collection<String>, Classifier> pools;
-    private final LocalClassifier.Factory classifierFactory;
+    private final LocalClassifier.Factory             classifierFactory;
 
 
     //--------------------------------------------------------------------
@@ -57,10 +57,15 @@ public class DomainedClassifier implements Classifier
         Classifier classifier = pools.get( types );
         if (classifier == null)
         {
-            classifier = new ClassifierImpl(
-                    classifierFactory.newInstance());
+            classifier = newClassifier();
             pools.put(types, classifier);
         }
         return classifier;
+    }
+
+    private Classifier newClassifier()
+    {
+        return new ClassifierImpl(
+                    classifierFactory.newInstance());
     }
 }

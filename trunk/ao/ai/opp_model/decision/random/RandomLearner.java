@@ -10,6 +10,9 @@ import ao.ai.opp_model.decision.input.processed.example.LocalExample;
 import ao.ai.opp_model.decision.input.processed.example.LocalLearningSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * 
  */
@@ -140,15 +143,38 @@ public class RandomLearner implements LocalClassifier
         Frequency classification = new Frequency();
         if (targetAttribute == null) return classification;
 
-        for (LocalDatum datum : targetAttribute.partition())
+        Map<LocalDatum, double[]> rawClasses =
+                new HashMap<LocalDatum,double[]>();
+        int totalSampleSize = 0;
+
+        for (RandomTree tree : trees)
         {
-            double actSum = 0;
-            for (RandomTree tree : trees)
+            Frequency frequency = tree.frequencyAtLeaf( context );
+
+            for (LocalDatum datum : targetAttribute.partition())
             {
-                actSum += tree.proportionAtLeaf(context, datum);
+                double[] cumProbability = rawClasses.get( datum );
+                if (cumProbability == null)
+                {
+                    cumProbability = new double[1];
+                    rawClasses.put(datum, cumProbability);
+                }
+
+                cumProbability[0] += frequency.probabilityOf( datum );
             }
+            totalSampleSize += frequency.sampleSize();
+        }
+
+        int avgSampleSize = (int) Math.ceil((float)
+                                    totalSampleSize / trees.length);
+        for (Map.Entry<LocalDatum, double[]> rawClass :
+                rawClasses.entrySet())
+        {                         
             classification.put(
-                    datum, (int)(100 * (actSum / trees.length)));
+                    rawClass.getKey(),
+                    (int) Math.round(
+                            rawClass.getValue()[0] / trees.length
+                                * /*avgSampleSize*/ 1000));
         }
         return classification;
     }

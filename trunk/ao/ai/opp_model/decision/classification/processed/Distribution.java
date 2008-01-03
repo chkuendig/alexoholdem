@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  *
  */
-public class Distribution extends Classification
+public class Distribution implements Classification
 {
     //--------------------------------------------------------------------
     private Collection<LocalDatum> data;
@@ -35,5 +35,11 @@ public class Distribution extends Classification
     public double probabilityOf(LocalDatum datum)
     {
         return 0;
+    }
+
+    //--------------------------------------------------------------------
+    public int sampleSize()
+    {
+        return data.size();
     }
 }

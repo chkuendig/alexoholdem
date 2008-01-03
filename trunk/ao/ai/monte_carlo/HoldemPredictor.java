@@ -2,6 +2,7 @@ package ao.ai.monte_carlo;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
+import ao.ai.opp_model.classifier.raw.Predictor;
 import ao.ai.opp_model.decision.classification.ConfusionMatrix;
 import ao.ai.opp_model.decision.classification.Histogram;
 import ao.ai.opp_model.decision.classification.raw.Prediction;
@@ -13,6 +14,7 @@ import ao.holdem.engine.LiteralCardSource;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.StateManager;
+import ao.util.rand.Rand;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,10 +36,14 @@ public class HoldemPredictor
     private Map<Serializable, ConfusionMatrix>      errors;
     private ConfusionMatrix                         otherErrs;
 
+    private Classifier                              global;
+    private int                                     size;
+
 
     //--------------------------------------------------------------------
     public HoldemPredictor(LearningPlayer.Factory exampleProviders)
     {
+        global      = newClassifier();
         examplars   = exampleProviders;
         otherErrs   = new ConfusionMatrix();
         errors      = new HashMap<Serializable, ConfusionMatrix>();
@@ -47,14 +53,25 @@ public class HoldemPredictor
 
 
     //--------------------------------------------------------------------
-    public Classifier classifier(Serializable forPlayerId)
-    {
-        return get(classifiers, forPlayerId);
-    }
+//    public Classifier classifier(Serializable forPlayerId)
+//    {
+//        return get(classifiers, forPlayerId);
+//    }
 
 
     //--------------------------------------------------------------------
     public void add(HandHistory history)
+    {
+        add(history, false);
+
+        size++;
+        if (size < 1024 ||
+            Rand.nextBoolean(Math.sqrt(size) / size))
+        {
+            add(history, true);
+        }
+    }
+    public void add(HandHistory history, boolean toGlobal)
     {
         StateManager start =
                 new StateManager(history.getPlayers(),
@@ -65,17 +82,27 @@ public class HoldemPredictor
         for (PlayerHandle player : history.getPlayers())
         {
             Classifier learner =
-                    get(classifiers, player.getId());
+                    toGlobal
+                    ? global
+                    : get(classifiers, player.getId());
+            Predictor predictor =
+                    toGlobal
+                    ? null
+                    : new BoundPredictor(player);
+
             brains.put(player,
                        examplars.newInstance(
+                               true,
                                history,
-                               learner,
                                player,
-                               true));
+                               learner,
+                               predictor
+                       ));
         }
 
         new Dealer(start, brains).playOutHand();
 
+        if (toGlobal) return;
         for (Map.Entry<PlayerHandle, LearningPlayer> brain :
                 brains.entrySet())
         {
@@ -99,8 +126,7 @@ public class HoldemPredictor
         Classifier classifier = classifiers.get( key );
         if (classifier == null)
         {
-            classifier = new DomainedClassifier(
-                                new RandomLearner.Factory() );
+            classifier = newClassifier();
             classifiers.put( key, classifier );
 
             while (classifiers.size() > MEMORY)
@@ -114,16 +140,33 @@ public class HoldemPredictor
         return classifier;
     }
 
+    private Classifier newClassifier()
+    {
+        return new DomainedClassifier(
+                    new RandomLearner.Factory() );
+    }
+
 
     //--------------------------------------------------------------------
     public Histogram
             predict(PlayerHandle forPlayer,
                     Context      inContext)
     {
+        return predictInternal(forPlayer, inContext).toHistogram();
+    }
+    private Prediction
+            predictInternal(PlayerHandle forPlayer,
+                            Context      inContext)
+    {
         Classifier learner =
                     get(classifiers, forPlayer.getId());
         Prediction p = learner.classify( inContext );
-        return p.toHistogram();
+
+        if (p.size() < 6)
+        {
+            p = global.classify( inContext );
+        }
+        return p;
     }
 
 
@@ -140,8 +183,26 @@ public class HoldemPredictor
                .append(err.getValue().toString());
         }
 
-        str.append("Confusion for others\n")
+        str.append("\nConfusion for others\n")
                .append(otherErrs.toString());
         return str.toString();
+    }
+
+
+    //--------------------------------------------------------------------
+    private class BoundPredictor implements Predictor
+    {
+        private final PlayerHandle player;
+
+        public BoundPredictor(PlayerHandle player)
+        {
+            this.player = player;
+        }
+
+        public Prediction classify(Context context)
+        {
+            return HoldemPredictor.this.predictInternal(
+                        player, context);
+        }
     }
 }
