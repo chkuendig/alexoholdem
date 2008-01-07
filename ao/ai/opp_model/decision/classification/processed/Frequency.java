@@ -1,12 +1,10 @@
 package ao.ai.opp_model.decision.classification.processed;
 
-import ao.ai.opp_model.decision.classification.ConfusionMatrix;
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.processed.attribute.Attribute;
 import ao.ai.opp_model.decision.input.processed.attribute.Multistate;
 import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import ao.ai.opp_model.decision.input.processed.data.State;
-import ao.ai.opp_model.decision.random.Selection;
 import ao.util.stats.Info;
 
 /**
@@ -15,13 +13,19 @@ import ao.util.stats.Info;
 public class Frequency implements Classification
 {
     //--------------------------------------------------------------------
-    private Histogram<LocalDatum> hist;
+    private RealHistogram<LocalDatum> hist;
+    private int                       sampleSize;
 
 
     //--------------------------------------------------------------------
     public Frequency()
     {
-        hist = new Histogram<LocalDatum>();
+        this(0);
+    }
+    public Frequency(int totalSampleSize)
+    {
+        hist       = new RealHistogram<LocalDatum>();
+        sampleSize = totalSampleSize;
     }
 
 
@@ -29,6 +33,11 @@ public class Frequency implements Classification
     public void add(LocalDatum datum)
     {
         hist.add( datum );
+        sampleSize++;
+    }
+    public void addUnsampled(LocalDatum datum, double value)
+    {
+        hist.add( datum, value );
     }
 
 
@@ -38,47 +47,32 @@ public class Frequency implements Classification
         return hist.probabilityOf( datum );
     }
 
-    public Selection proportionOf(LocalDatum datum)
-    {
-        return new Selection(hist.countOf(datum), sampleSize());
-    }
-
 
     //--------------------------------------------------------------------
     public int sampleSize()
     {
-        return hist.size();
+        return sampleSize;
     }
 
 
     //--------------------------------------------------------------------
-    public int countOfState(Object value)
+    public double probabilityOfState(Object value)
     {
         for (LocalDatum item : hist.classes())
         {
             if (((State) item).state().equals( value ))
             {
-                return hist.countOf( item );
+                return hist.probabilityOf( item );
             }
         }
         return 0;
-    }
-
-    public void put(LocalDatum datum, int value)
-    {
-        hist.put(datum, value);
     }
 
 
     //--------------------------------------------------------------------
     public LocalDatum mostProbable()
     {
-        return hist.mostFrequent();
-    }
-
-    public LocalDatum mostProbable(ConfusionMatrix<LocalDatum> confusion)
-    {
-        return confusion.adjust( hist );
+        return hist.mostProbable();
     }
 
 
@@ -95,7 +89,7 @@ public class Frequency implements Classification
         double length = 0;
         for (LocalDatum clazz : hist.classes())
         {
-            int classCount = hist.countOf( clazz );
+            double classCount = hist.valueOf( clazz );
             for (int i = 0; i < classCount; i++)
             {
                 double p = (i + alpha)/(j + numClasses*alpha);
@@ -108,7 +102,7 @@ public class Frequency implements Classification
 
 
     //--------------------------------------------------------------------
-    public Histogram<LocalDatum> asHistogram()
+    public RealHistogram<LocalDatum> asRealHistogram()
     {
         return hist;
     }
@@ -128,7 +122,7 @@ public class Frequency implements Classification
         {
             b.append(datum)
              .append("\t")
-             .append( hist.countOf(datum) )
+             .append( hist.valueOf(datum) )
              .append("\t");
         }
         return b.deleteCharAt( b.length()-1 ).toString();

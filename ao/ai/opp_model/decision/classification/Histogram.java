@@ -87,6 +87,8 @@ public class Histogram<T>
             {
                 curr[0] += e.getValue()[0];
             }
+
+            total += e.getValue()[0];
         }
     }
 

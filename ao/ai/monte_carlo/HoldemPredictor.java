@@ -4,7 +4,7 @@ import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
 import ao.ai.opp_model.classifier.raw.Predictor;
 import ao.ai.opp_model.decision.classification.ConfusionMatrix;
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.random.RandomLearner;
@@ -148,11 +148,11 @@ public class HoldemPredictor
 
 
     //--------------------------------------------------------------------
-    public Histogram
+    public RealHistogram
             predict(PlayerHandle forPlayer,
                     Context      inContext)
     {
-        return predictInternal(forPlayer, inContext).toHistogram();
+        return predictInternal(forPlayer, inContext).toRealHistogram();
     }
     private Prediction
             predictInternal(PlayerHandle forPlayer,
@@ -162,9 +162,13 @@ public class HoldemPredictor
                     get(classifiers, forPlayer.getId());
         Prediction p = learner.classify( inContext );
 
-        if (p.size() < 6)
+        if (p.sampleSize() < 10)
         {
-            p = global.classify( inContext );
+            Prediction globalP = global.classify( inContext );
+            if (globalP.sampleSize() > p.sampleSize())
+            {
+                return globalP;
+            }
         }
         return p;
     }

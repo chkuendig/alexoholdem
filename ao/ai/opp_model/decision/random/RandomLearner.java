@@ -140,8 +140,7 @@ public class RandomLearner implements LocalClassifier
     //--------------------------------------------------------------------
     public Classification classify(LocalContext context)
     {
-        Frequency classification = new Frequency();
-        if (targetAttribute == null) return classification;
+        if (targetAttribute == null) return new Frequency();
 
         Map<LocalDatum, double[]> rawClasses =
                 new HashMap<LocalDatum,double[]>();
@@ -167,14 +166,13 @@ public class RandomLearner implements LocalClassifier
 
         int avgSampleSize = (int) Math.ceil((float)
                                     totalSampleSize / trees.length);
+        Frequency classification = new Frequency( avgSampleSize );
         for (Map.Entry<LocalDatum, double[]> rawClass :
                 rawClasses.entrySet())
         {                         
-            classification.put(
+            classification.addUnsampled(
                     rawClass.getKey(),
-                    (int) Math.round(
-                            rawClass.getValue()[0] / trees.length
-                                * /*avgSampleSize*/ 1000));
+                    rawClass.getValue()[0] / trees.length);
         }
         return classification;
     }
