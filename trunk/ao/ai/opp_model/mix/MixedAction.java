@@ -20,10 +20,10 @@ public class MixedAction
 
     public static MixedAction fromHistogram(Frequency hist)
     {
-        int fold  = hist.countOfState(SimpleAction.FOLD);
-        int call  = hist.countOfState(SimpleAction.CALL);
-        int raise = hist.countOfState(SimpleAction.RAISE);
-        int total = fold + call + raise;
+        double fold  = hist.probabilityOfState(SimpleAction.FOLD);
+        double call  = hist.probabilityOfState(SimpleAction.CALL);
+        double raise = hist.probabilityOfState(SimpleAction.RAISE);
+        double total = fold + call + raise;
         if (total == 0) return new MixedAction(1, 1, 1);
 
         double avg        = total / 3.0;

@@ -1,6 +1,6 @@
 package ao.ai.opp_model.decision.classification.raw;
 
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.classification.processed.Classification;
 import ao.ai.opp_model.decision.classification.processed.Distribution;
 import ao.ai.opp_model.decision.classification.processed.Frequency;
@@ -37,25 +37,25 @@ public class Prediction
 
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    public Histogram toHistogram()
+    public RealHistogram toRealHistogram()
     {
         if (DELEGET instanceof Distribution) return null;
 
-        Histogram<LocalDatum> localHist =
-                ((Frequency) DELEGET).asHistogram();
+        RealHistogram<LocalDatum> localHist =
+                ((Frequency) DELEGET).asRealHistogram();
 
-        Histogram rawHist = new Histogram();
+        RealHistogram rawHist = new RealHistogram();
         for (LocalDatum clazz : localHist.classes())
         {
-            rawHist.put(((State) clazz).state(),
-                        localHist.countOf(clazz));
+            rawHist.add(((State) clazz).state(),
+                        localHist.valueOf(clazz));
         }
         return rawHist;
     }
 
-    public int size()
+    public int sampleSize()
     {
-        return ((Frequency) DELEGET).asHistogram().size();
+        return DELEGET.sampleSize();
     }
 
 

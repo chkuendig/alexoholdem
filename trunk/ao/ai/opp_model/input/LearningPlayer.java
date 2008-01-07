@@ -95,7 +95,7 @@ public abstract class LearningPlayer
                 {
                     confusion.add(
                         addend.target().state(),
-                        predict(ctx).toHistogram().mostFrequent());
+                        predict(ctx).toRealHistogram().mostProbable());
                 }
 
                 examples.add( addend );

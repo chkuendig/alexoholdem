@@ -1,6 +1,6 @@
 package ao.ai.monte_carlo;
 
-import ao.ai.opp_model.decision.classification.Histogram;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.ai.opp_model.input.ModelHolePlayer;
@@ -41,20 +41,20 @@ public class PredictorService
 
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    public Histogram<SimpleAction>
+    public RealHistogram<SimpleAction>
             predictAction(PlayerHandle forPlayer,
                           Context      inContext)
     {
-        return (Histogram<SimpleAction>)
+        return (RealHistogram<SimpleAction>)
                 actPredictor.predict(forPlayer, inContext);
     }
 
     @SuppressWarnings("unchecked")
-    public Histogram<HandStrength>
+    public RealHistogram<HandStrength>
             predictHand(PlayerHandle forPlayer,
                         Context      inContext)
     {
-        return (Histogram<HandStrength>)
+        return (RealHistogram<HandStrength>)
                 holePredictor.predict(forPlayer, inContext);
     }
 
