@@ -5,7 +5,6 @@ import ao.persist.PlayerHandle;
 import ao.state.CumulativeState;
 import ao.state.HandState;
 import ao.state.PlayerState;
-import ao.state.StateManager;
 import ao.stats.impl.GenericStats;
 import ao.stats.impl.MultiStatistic;
 import ao.stats.impl.SpecificStats;
@@ -26,11 +25,16 @@ public class HandStats implements CumulativeState
 
 
     //--------------------------------------------------------------------
-    public HandStats(StateManager state)
+    /**
+     * @param playerStates players to track
+     */
+    //public HandStats(StateManager state)
+    public HandStats(PlayerState playerStates[])
     {
-        common = new GenericStats( state.cards() );
+        common = new GenericStats( /*state.cards()*/ );
 
-        for (PlayerState pState : state.head().players())
+        //for (PlayerState pState : state.head().players())
+        for (PlayerState pState : playerStates)
         {
             stats.put(pState.handle().getId(),
                       new SpecificStats( pState.handle() ));

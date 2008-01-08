@@ -1,5 +1,6 @@
 package ao.ai.opp_model;
 
+import ao.ai.monte_carlo.HandApproximator;
 import ao.ai.monte_carlo.PredictorService;
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
@@ -109,16 +110,11 @@ public class OppModelTest
     private void doModelAll(PlayerHandle p)
     {
         PredictorService predictor = new PredictorService();
-        //HandApproximator approx    = new HandApproximator(predictor);
+        HandApproximator approx    = new HandApproximator(predictor);
 
-        //int i = 0;
         for (HandHistory hand : p.getHands())
         {
-
-
-            //System.out.print(".");
-            //if (++i % 20 == 0) System.out.println();
-
+            approx.examine( hand );
             predictor.add( hand );
         }
 

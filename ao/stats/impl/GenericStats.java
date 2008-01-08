@@ -5,8 +5,6 @@ import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
-import ao.holdem.model.card.CommunitySource;
-import ao.odds.CommunityMeasure;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.stats.CumulativeStatistic;
@@ -20,7 +18,7 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
 {
     //--------------------------------------------------------------------
     private HandState       forefront;
-    private CommunitySource community;
+    //private CommunitySource community;
 
     private int checks;
     private int calls;
@@ -28,16 +26,16 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
 
 
     //--------------------------------------------------------------------
-    public GenericStats(CommunitySource communitySource)
+    public GenericStats(/*CommunitySource communitySource*/)
     {
-        community = communitySource;
+        //community = communitySource;
     }
 
-    private GenericStats(HandState       copyForefront,
-                         CommunitySource copyCommunity)
+    private GenericStats(HandState       copyForefront/*,
+                         CommunitySource copyCommunity*/)
     {
         forefront = copyForefront;
-        community = copyCommunity;
+        //community = copyCommunity;
     }
 
 
@@ -66,12 +64,12 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
         BettingRound round = forefront.round();
         ctx.add(new Datum( round ));
 
-        if (round != BettingRound.PREFLOP)
-        {
-            ctx.add(new Datum("Community Heat",
-                        CommunityMeasure.measure(
-                                community.community().asOf(round))));
-        }
+//        if (round != BettingRound.PREFLOP)
+//        {
+//            ctx.add(new Datum("Community Heat",
+//                        CommunityMeasure.measure(
+//                                community.community().asOf(round))));
+//        }
 
         // betting stats
         int numActs = checks + calls + raises;
@@ -102,6 +100,6 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
     //--------------------------------------------------------------------
     public GenericStats prototype()
     {
-        return new GenericStats(forefront, community);
+        return new GenericStats(forefront/*, community*/);
     }
 }

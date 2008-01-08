@@ -1,15 +1,11 @@
 package ao.odds;
 
+import ao.hand_eval.eval7.Eval7Faster;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.hand_eval.eval7.Eval7Faster;
 import ao.holdem.model.card.Hole;
 import ao.util.rand.MersenneTwisterFast;
-import ao.util.stats.Combo;
 import ao.util.stats.FastIntCombiner;
-import ao.odds.Odds;
-import ao.odds.OddFinder;
-import ao.odds.GeneralOddFinder;
 
 /**
  * Threadsafe!!
@@ -17,17 +13,11 @@ import ao.odds.GeneralOddFinder;
 public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int  DEFAULT_FLOP_ITR = 300;
-    private static final long DEFAULT_HOLE_ITR = 200;
+    private static final int  DEFAULT_FLOP_ITR = 2000; // 300
+    private static final long DEFAULT_HOLE_ITR = 1500; // 200
 
     private final int  FLOP_ITR;
     private final long HOLE_ITR;
-
-    private final double FLOP_FRACT;
-    private final double HOLE_FRACT;
-
-    private final boolean IS_FLOP_FRACT;
-    private final boolean IS_HOLE_FRACT;
 
 
     //--------------------------------------------------------------------
@@ -37,103 +27,22 @@ public class ApproximateOddFinder implements OddFinder
     }
 
     public ApproximateOddFinder(
-            double flops,
-            long   holes)
-    {
-        FLOP_FRACT = flops;
-        HOLE_ITR   = holes;
-
-        IS_FLOP_FRACT = true;
-        IS_HOLE_FRACT = true;
-
-        FLOP_ITR   = -1;
-        HOLE_FRACT = Double.NaN;
-    }
-
-    public ApproximateOddFinder(
-            int    flops,
-            double holes)
-    {
-        FLOP_ITR   = flops;
-        HOLE_FRACT = holes;
-
-        IS_FLOP_FRACT = true;
-        IS_HOLE_FRACT = true;
-
-        FLOP_FRACT = Double.NaN;
-        HOLE_ITR   = -1;
-    }
-
-    public ApproximateOddFinder(
-            double flops,
-            double holes)
-    {
-        FLOP_FRACT = flops;
-        HOLE_FRACT = holes;
-
-        IS_FLOP_FRACT = true;
-        IS_HOLE_FRACT = true;
-
-        FLOP_ITR = -1;
-        HOLE_ITR = -1;
-    }
-
-    public ApproximateOddFinder(
             int  flops,
             long holes)
     {
         FLOP_ITR = flops;
         HOLE_ITR = holes;
-
-        IS_FLOP_FRACT = false;
-        IS_HOLE_FRACT = false;
-
-        FLOP_FRACT = Double.NaN;
-        HOLE_FRACT = Double.NaN;
-    }
-
-
-    //--------------------------------------------------------------------
-    private int communityItr(Community community, double fraction)
-    {
-        // community
-        long communities =
-                Combo.choose(52 - 2 - community.knownCount(),
-                                community.unknownCount());
-        return (int)(communities * fraction);
-    }
-
-    private long holeItr(int activeOpponents, double fraction)
-    {
-        // opponent cards
-        long oppHoles =
-                Combo.choose(52 - 2 - 5,
-                                activeOpponents * 2);
-
-        // how many unique ways to group them by two
-        long holeGroups =
-                Combo.choose(activeOpponents * 2, 2);
-        // unique ways to assign two hole cards
-        long holeDistributions =
-                Combo.choose((int)holeGroups, activeOpponents);
-
-        long oppHoleChoices = oppHoles * holeDistributions;
-        return (long)(oppHoleChoices * fraction);
     }
 
 
     //--------------------------------------------------------------------
     public Odds compute(
-            Hole hole,
+            Hole      hole,
             Community community,
             int       activeOpponents)
     {
-        int  flops = (IS_FLOP_FRACT)
-                        ? communityItr(community, FLOP_FRACT)
-                        : FLOP_ITR;
-        long holes = (IS_HOLE_FRACT)
-                        ? holeItr(activeOpponents, HOLE_FRACT)
-                        : HOLE_ITR;
+        int  flops = FLOP_ITR;
+        long holes = HOLE_ITR;
 
         int  indexes[] = GeneralOddFinder.cardIndexes();
         Card cards[]   = Card.values();
