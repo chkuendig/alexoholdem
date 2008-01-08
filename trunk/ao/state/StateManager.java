@@ -64,7 +64,7 @@ public class StateManager
 
     private void init()
     {
-        stats = new HandStats(this);
+        stats = new HandStats( head.players() );
 //        nextActContext.advance(head);
     }
 

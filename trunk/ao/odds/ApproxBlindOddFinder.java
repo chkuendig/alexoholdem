@@ -4,6 +4,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.util.stats.FastCombiner;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -12,37 +13,65 @@ public class ApproxBlindOddFinder
         implements BlindOddFinder
 {
     //--------------------------------------------------------------------
-    public Odds compute(final Community community,
-                        final int       activePlayers)
+    private Community  prevCommunity;
+    private int        prevActivePlayers = -1;
+    private BlindOddsImpl prevOdds;
+
+
+    //--------------------------------------------------------------------
+    public synchronized BlindOddsImpl
+            compute(@NotNull Community community,
+                             int       activePlayers)
     {
-        HoleAveraginvVisitor average =
-                new HoleAveraginvVisitor(community, activePlayers);
+        if (activePlayers == prevActivePlayers &&
+                prevCommunity.equals( community ))
+        {
+            return prevOdds;
+        }
+
+        prevCommunity     = community;
+        prevActivePlayers = activePlayers;
+        prevOdds          = doCompute(community, activePlayers);
+
+        return prevOdds;
+    }
+
+    private BlindOddsImpl doCompute(Community community,
+                           int       activePlayers)
+    {
+        BlindOddsImpl blindOdds =
+                new BlindOddsImpl(community, activePlayers);
 
         FastCombiner<Card> c = new FastCombiner<Card>(Card.values());
-        c.combine(average);
-        return average.cumulative();
+        c.combine(blindOdds);
+        return blindOdds;
     }
 
 
 
     //--------------------------------------------------------------------
-    private static class HoleAveraginvVisitor
-            implements FastCombiner.CombinationVisitor2<Card>
+    private static class BlindOddsImpl
+            implements FastCombiner.CombinationVisitor2<Card>,
+                       BlindOddFinder.BlindOdds
     {
         //----------------------------------------------------------------
         private final Community community;
         private final int       activePlayers;
         private       Odds      cumulative;
+        private       Odds      max;
+        private       Odds      min;
 
 
         //----------------------------------------------------------------
-        public HoleAveraginvVisitor(
+        public BlindOddsImpl(
                 Community community,
                 int       activePlayers)
         {
             this.community     = community;
             this.activePlayers = activePlayers;
             this.cumulative    = new Odds();
+            this.max           = null;
+            this.min           = null;
         }
 
 
@@ -52,19 +81,43 @@ public class ApproxBlindOddFinder
             if (!( community.contains( holeA ) ||
                    community.contains( holeB ) ))
             {
-                ApproximateOddFinder f = new ApproximateOddFinder();
+                ApproximateOddFinder f =
+                        new ApproximateOddFinder(32, 1000);
 
-                Hole hole = new Hole(holeA, holeB);
-                Odds o = f.compute(hole, community, activePlayers - 1);
+                Hole hole  = new Hole(holeA, holeB);
+                Odds o     = f.compute(hole, community, activePlayers - 1);
                 cumulative = cumulative.plus( o );
+
+                if (max == null ||
+                    max.strengthVsRandom(activePlayers) <
+                            o.strengthVsRandom(activePlayers))
+                {
+                    max = o;
+                }
+                if (min == null ||
+                    min.strengthVsRandom(activePlayers) >
+                            o.strengthVsRandom(activePlayers))
+                {
+                    min = o;
+                }
             }
         }
 
 
         //----------------------------------------------------------------
-        public Odds cumulative()
+        public Odds sum()
         {
             return cumulative;
+        }
+
+        public Odds min()
+        {
+            return min;
+        }
+
+        public Odds max()
+        {
+            return max;
         }
     }
 }

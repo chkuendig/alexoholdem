@@ -24,7 +24,8 @@ public class Frequency implements Classification
     }
     public Frequency(int totalSampleSize)
     {
-        hist       = new RealHistogram<LocalDatum>();
+        hist       = new RealHistogram<LocalDatum>(
+                            totalSampleSize);
         sampleSize = totalSampleSize;
     }
 
@@ -33,6 +34,7 @@ public class Frequency implements Classification
     public void add(LocalDatum datum)
     {
         hist.add( datum );
+        hist.incrementSampleSize();
         sampleSize++;
     }
     public void addUnsampled(LocalDatum datum, double value)

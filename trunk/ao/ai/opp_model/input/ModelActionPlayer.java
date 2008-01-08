@@ -54,6 +54,14 @@ public class ModelActionPlayer extends LearningPlayer
         Prediction prediction = predict(ctx);
         if (prediction != null)
         {
+//            HandState state = env.head();
+//            Hole hole = env.cards().holeFor(
+//                        state.nextToAct().handle() );
+//            if (hole != null && hole.bothCardsVisible())
+//            {
+//
+//            }
+
 //            System.out.println(playerId()                + "\t" +
 //                               ctx.bufferedData().size() + "\t" +
 //                               prediction                + "\t" +

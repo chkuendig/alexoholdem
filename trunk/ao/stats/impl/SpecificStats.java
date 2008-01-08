@@ -6,7 +6,6 @@ import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.model.domain.BetsToCall;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
-import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.stats.CumulativeStatistic;
@@ -149,9 +148,10 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         if (beforeCurrAct != null && prevAct != null)
         {
-            ctx.add(new Datum(
-                    "Last Act: Bet/Raise",
-                    prevAct.toSimpleAction() == SimpleAction.RAISE));
+//            ctx.add(new Datum(
+//                    "Last Act: Bet/Raise",
+//                    prevAct.toSimpleAction() == SimpleAction.RAISE));
+            ctx.add(new Datum("Last Act", prevAct));
 
             ctx.add(new Datum(
                     "Last Bets Called > 0",

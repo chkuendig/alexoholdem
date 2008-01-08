@@ -1,6 +1,6 @@
 package ao.ai.opp_model.mix;
 
-import ao.ai.opp_model.decision.classification.processed.Frequency;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 
@@ -18,17 +18,19 @@ public class MixedAction
                                Rand.nextDouble());
     }
 
-    public static MixedAction fromHistogram(Frequency hist)
+    public static MixedAction fromHistogram(
+            RealHistogram<SimpleAction> hist)
     {
-        double fold  = hist.probabilityOfState(SimpleAction.FOLD);
-        double call  = hist.probabilityOfState(SimpleAction.CALL);
-        double raise = hist.probabilityOfState(SimpleAction.RAISE);
+        double fold  = hist.probabilityOf(SimpleAction.FOLD);
+        double call  = hist.probabilityOf(SimpleAction.CALL);
+        double raise = hist.probabilityOf(SimpleAction.RAISE);
         double total = fold + call + raise;
         if (total == 0) return new MixedAction(1, 1, 1);
 
+        int    sample     = hist.sampleSize();
         double avg        = total / 3.0;
-        double error      = Math.sqrt(total + 1) - 1;
-        double errPercent = error / total;
+        double error      = Math.sqrt(sample + 1) - 1;
+        double errPercent = error / sample;
 
         double adjustedFold  = (fold  - avg)*(1 - errPercent) + avg;
         double adjustedCall  = (call  - avg)*(1 - errPercent) + avg;
@@ -58,19 +60,15 @@ public class MixedAction
 
 
     //--------------------------------------------------------------------
-    public double foldProability()
+    public SimpleAction weightedRandom()
     {
-        return foldProb;
-    }
+        double rand = Rand.nextDouble();
 
-    public double callProbability()
-    {
-        return callProb;
-    }
-
-    public double raiseProbability()
-    {
-        return raiseProb;
+        return (rand <= foldProb)
+                ? SimpleAction.FOLD
+                : (rand <= (foldProb + callProb))
+                   ? SimpleAction.CALL
+                   : SimpleAction.RAISE;
     }
 
 

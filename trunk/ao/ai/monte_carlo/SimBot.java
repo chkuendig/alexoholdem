@@ -36,7 +36,7 @@ public class SimBot extends AbstractPlayer
     {
         for (int i = 0; i < 256; i++)
         {
-            Simulator sim = new Simulator();
+            //Simulator sim = new Simulator();
 
 //            StateManager start =
 //                    new StateManager(playerHandles,

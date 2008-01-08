@@ -2,7 +2,6 @@ package ao.ai.opp_model.input;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.Predictor;
-import ao.ai.opp_model.decision.classification.raw.Prediction;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.input.raw.example.Example;
@@ -39,6 +38,10 @@ public class ModelHolePlayer extends LearningPlayer
 
 
     //--------------------------------------------------------------------
+    private BlindOddFinder expectedOdds = new ApproxBlindOddFinder();
+
+
+    //--------------------------------------------------------------------
     public ModelHolePlayer(
             boolean      publishActions,
             HandHistory  history,
@@ -54,14 +57,16 @@ public class ModelHolePlayer extends LearningPlayer
     protected Example makeExampleOf(
             StateManager env,
             Context      ctx,
-            RealAction   act)
+            RealAction   action)
     {
         HandState state = env.head();
 
         Hole hole = env.cards().holeFor(
                         state.nextToAct().handle() );
         if (hole == null || !hole.bothCardsVisible()) return null;
-        //if (!(actsLeft() == 0 && !act.isFold())) return null;
+
+        // showdowns only
+        if (!(actsLeft() == 0 && !action.isFold())) return null;
 
         Community community = env.cards().community();
 
@@ -69,25 +74,37 @@ public class ModelHolePlayer extends LearningPlayer
         Odds      actual    =
                     oddFinder.compute(
                             hole, community, state.numActivePlayers()-1);
+        // actual hand strength
+        double act = actual.strengthVsRandom( state.numActivePlayers() );
 
-        BlindOddFinder expectationFinder = new ApproxBlindOddFinder();
-        Odds           expected          =
-                            expectationFinder.compute(
-                                    community, state.numActivePlayers());
+        BlindOddFinder.BlindOdds expected =
+                expectedOdds.compute(
+                        community, state.numActivePlayers());
 
+        // random expected average hand strength
+        double avg = expected.sum().strengthVsRandom(
+                                        state.numActivePlayers());
+
+        // by how much the actual hand is stronger than
+        //  an average random hand. -ve # means its
+        //  weaker than the average random hand.
+        double delta = act - avg;
+
+//        System.out.println(avg   + "\t" +
+//                           act   + "\t" +
+//                           delta);
+        
         HandStrength actualDelta =
-                HandStrength.fromPercent(
-                                    actual.strengthVsRandom() -
-                                        expected.strengthVsRandom());
+                HandStrength.fromPercent( delta );
 
-        Prediction prediction = predict(ctx);
-        if (prediction != null)
-        {
-//            System.out.println(playerId()                + "\t" +
-//                               ctx.bufferedData().size() + "\t" +
-//                               prediction                + "\t" +
-//                               actualDelta);
-        }
+//        Prediction prediction = predict(ctx);
+//        if (prediction != null)
+//        {
+////            System.out.println(playerId()                + "\t" +
+////                               ctx.bufferedData().size() + "\t" +
+////                               prediction                + "\t" +
+////                               actualDelta);
+//        }
         return ctx.withTarget(new Datum( actualDelta ));
     }
 }

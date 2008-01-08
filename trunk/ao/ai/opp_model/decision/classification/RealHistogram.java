@@ -13,12 +13,18 @@ public class RealHistogram<T>
     private Map<T, double[]> hist;
     private int              count;
     private double           total;
+    private int              sampleSize;
 
 
     //--------------------------------------------------------------------
     public RealHistogram()
     {
-        hist = new HashMap<T, double[]>();
+        this(0);
+    }
+    public RealHistogram(int givenSampleSize)
+    {
+        hist       = new HashMap<T, double[]>();
+        sampleSize = givenSampleSize;
     }
 
     private RealHistogram(Map<T, double[]> copyHist,
@@ -33,6 +39,21 @@ public class RealHistogram<T>
         {
             hist.put(key, hist.get(key).clone() );
         }
+    }
+
+
+    //--------------------------------------------------------------------
+    public void incrementSampleSize()
+    {
+        sampleSize++;
+    }
+    public void setSampleSize(int newSampleSize)
+    {
+        sampleSize = newSampleSize;
+    }
+    public int sampleSize()
+    {
+        return sampleSize;
     }
 
 
@@ -94,7 +115,7 @@ public class RealHistogram<T>
     //--------------------------------------------------------------------
     public double probabilityOf(T item)
     {
-        return isEmpty()
+        return isEmpty() || total == 0
                 ? 0
                 : valueOf( item ) / total;
     }
@@ -119,5 +140,23 @@ public class RealHistogram<T>
     public RealHistogram<T> prototype()
     {
         return new RealHistogram<T>(hist, count, total);
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder();
+
+        for (Map.Entry<T, double[]> e : hist.entrySet())
+        {
+            str.append(e.getKey())
+                    .append("\t")
+                    .append(e.getValue()[0])
+                    .append("\t");
+        }
+        str.deleteCharAt( str.length() - 1 );
+
+        return str.toString();
     }
 }

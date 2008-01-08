@@ -44,7 +44,7 @@ public class Prediction
         RealHistogram<LocalDatum> localHist =
                 ((Frequency) DELEGET).asRealHistogram();
 
-        RealHistogram rawHist = new RealHistogram();
+        RealHistogram rawHist = new RealHistogram(sampleSize());
         for (LocalDatum clazz : localHist.classes())
         {
             rawHist.add(((State) clazz).state(),
