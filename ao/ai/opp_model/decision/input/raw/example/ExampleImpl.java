@@ -72,8 +72,8 @@ public class ExampleImpl implements Example
         return DELEGET.types();
     }
 
-    public List<Datum> bufferedData()
+    public List<Datum> data()
     {
-        return DELEGET.bufferedData();
+        return DELEGET.data();
     }
 }

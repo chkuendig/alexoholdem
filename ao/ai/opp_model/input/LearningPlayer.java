@@ -80,12 +80,14 @@ public abstract class LearningPlayer
     {
         checkPlayer(env);
 
-        final RealAction act = shiftAction();
-        if (publish && !act.isBlind())
-        {
-            Statistic stat = env.stats().forPlayer(playerId);
+        RealAction act  = shiftAction();
+        if (act.isBlind()) return act;
 
-            Context ctx    = stat.nextActContext();
+        Statistic  stat = env.stats().forPlayer(playerId);
+        Context    ctx  = stat.nextActContext();
+
+        if (publish)
+        {
             Example addend = makeExampleOf(env, ctx, act);
 
             if (addend != null)

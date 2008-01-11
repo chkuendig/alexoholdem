@@ -55,8 +55,7 @@ public class ContextPlayer implements Player
         if (!act.isBlind())
         {
             Statistic stat = env.stats().forPlayer(playerId);
-
-            Context ctx = stat.nextActContext();
+            Context   ctx  = stat.nextActContext();
             contexts.add( ctx );
 
             if (acts.isEmpty() && !act.isFold())

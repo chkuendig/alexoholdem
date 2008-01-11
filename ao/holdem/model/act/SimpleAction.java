@@ -1,7 +1,6 @@
 package ao.holdem.model.act;
 
 import ao.holdem.model.Money;
-import ao.holdem.model.act.RealAction;
 
 /**
  *
@@ -35,5 +34,16 @@ public enum SimpleAction
                         : RealAction.BET;
         }
         throw new Error("should never be here");
+    }
+
+
+    //--------------------------------------------------------------------
+    public EasyAction toEasyAction()
+    {
+        return this == SimpleAction.FOLD
+                ? EasyAction.CHECK_OR_FOLD
+                : this == SimpleAction.CALL
+                  ? EasyAction.CHECK_OR_CALL
+                  : EasyAction.RAISE_OR_CALL;
     }
 }

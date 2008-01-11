@@ -6,11 +6,10 @@ import ao.holdem.model.Money;
 import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
-import ao.persist.PlayerHandle;
 import ao.persist.Event;
+import ao.persist.PlayerHandle;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -87,12 +86,12 @@ public class HandState
 
     // copy constructor
     private HandState(BettingRound copyRound,
-                        PlayerState  copyPlayers[],
-                        int          copyNextToAct,
-                        int          copyRemainingRoundBets,
-                        int          copyLatestRoundStaker,
-                        Money        copyStakes,
-                        HandState    copyStartOfRound)
+                      PlayerState  copyPlayers[],
+                      int          copyNextToAct,
+                      int          copyRemainingRoundBets,
+                      int          copyLatestRoundStaker,
+                      Money        copyStakes,
+                      HandState    copyStartOfRound)
     {
         round              = copyRound;
         players            = copyPlayers;
@@ -360,9 +359,9 @@ public class HandState
         return count;
     }
 
-    public Collection<PlayerState> unfolded()
+    public List<PlayerState> unfolded()
     {
-        Collection<PlayerState> condenters = new ArrayList<PlayerState>();
+        List<PlayerState> condenters = new ArrayList<PlayerState>();
 
         int firstUnfolded = nextUnfoldedAfter( nextToAct - 1 );
         int cursor        = firstUnfolded;
@@ -490,6 +489,11 @@ public class HandState
     public PlayerState nextToAct()
     {
         return players[ nextToAct ];
+    }
+
+    public int nextToActIndex()
+    {
+        return nextToAct;
     }
 
 

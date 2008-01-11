@@ -26,9 +26,9 @@ import java.util.Map;
 public class DealerTest
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleLookup     players;
-    @Inject HandHistoryDao         hands;
-    @Inject Provider<SimBot> smarties;
+    @Inject PlayerHandleLookup  players;
+    @Inject HandHistoryDao      hands;
+    @Inject Provider<SimBot>    smarties;
 
 
     //--------------------------------------------------------------------

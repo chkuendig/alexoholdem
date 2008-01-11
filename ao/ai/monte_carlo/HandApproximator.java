@@ -42,7 +42,7 @@ public class HandApproximator
         for (Map.Entry<PlayerHandle, Money> delta :
                 history.getDeltas().entrySet())
         {
-            if (delta.getValue().compareTo( win ) > 0)
+            if (delta.getValue().compareTo( win ) >= 0)
             {
                 winner = delta.getKey();
                 win    = delta.getValue();
@@ -91,7 +91,7 @@ public class HandApproximator
         return approximate(showdownContexts);
     }
 
-    private RealHistogram<PlayerHandle>
+    public RealHistogram<PlayerHandle>
             approximate(Map<PlayerHandle, Context> showdownContexts)
     {
         if (showdownContexts.size() < 2) return null;
