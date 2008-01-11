@@ -1,61 +1,83 @@
 package ao.ai.monte_carlo;
 
-import ao.ai.AbstractPlayer;
 import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.mix.MixedAction;
-import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.SimpleAction;
-import ao.holdem.model.card.Hole;
-import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
-import ao.state.HandState;
 import ao.state.StateManager;
 import ao.stats.Statistic;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * move in according to how we predict a player to move.
  */
-public class PredictorBot extends AbstractPlayer
+public class BotPredictor
 {
     //--------------------------------------------------------------------
     private PlayerHandle     handle;
     private PredictorService predictor;
-
+    private List<Context>    contexts;
+    private boolean          isUnfolded;
+    private boolean          hasActed;
 
 
     //--------------------------------------------------------------------
-    public void handEnded(HandHistory history) {}
-
-
-    //--------------------------------------------------------------------
-    public PredictorBot(PlayerHandle     playerHandle,
+    public BotPredictor(PlayerHandle     playerHandle,
                         PredictorService predictorService)
     {
         handle    = playerHandle;
         predictor = predictorService;
+
+        contexts   = new ArrayList<Context>();
+        isUnfolded = true;
+        hasActed   = false;
     }
 
 
     //--------------------------------------------------------------------
-    protected EasyAction act(
-            StateManager env,
-            HandState    state,
-            Hole         hole)
+    public MixedAction act(StateManager env)
     {
         Statistic stat = env.stats().forPlayer(handle.getId());
         Context   ctx  = stat.nextActContext();
+        contexts.add(ctx);
 
         RealHistogram<SimpleAction> hist =
                 predictor.predictAction(handle, ctx);
 
-        MixedAction  mixedAct = MixedAction.fromHistogram( hist );
-        SimpleAction randAct  = mixedAct.weightedRandom();
+        hasActed = true;
+        return MixedAction.fromHistogram( hist );
+    }
 
-        return randAct == SimpleAction.FOLD
-                ? EasyAction.CHECK_OR_FOLD
-                : randAct == SimpleAction.CALL
-                  ? EasyAction.CHECK_OR_CALL
-                  : EasyAction.RAISE_OR_CALL;
+    public void took(SimpleAction action)
+    {
+        if (action == SimpleAction.FOLD)
+        {
+            isUnfolded = false;
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    public boolean isUnfolded()
+    {
+        return isUnfolded;
+    }
+
+    public boolean hasActed()
+    {
+        return hasActed;
+    }
+
+    public List<Context> contexts()
+    {
+        return contexts;
+    }
+
+    public Context lastContext()
+    {
+        return contexts.get( contexts.size() - 1 );
     }
 }

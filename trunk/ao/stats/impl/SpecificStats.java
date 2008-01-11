@@ -31,6 +31,9 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
     private Serializable subjectId;
     private boolean      isUnfolded;
 
+    private int betsCalled[] = new int[4];
+    private int betsRaised[] = new int[4];
+
     private int checks;
     private int calls;
     private int raises;
@@ -82,6 +85,15 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
             currAct       = act;
             beforeCurrAct = stateBeforeAct;
 
+            if (act.isBetRaise())
+            {
+                betsRaised[ beforeCurrAct.round().ordinal() ]++;
+            }
+            else if (act.isCheckCall())
+            {
+                betsCalled[ beforeCurrAct.round().ordinal() ] +=
+                        beforeCurrAct.betsToCall();
+            }
                  if (act == RealAction.CHECK) checks++;
             else if (act.isCheckCall())       calls++;
             else if (act.isBetRaise())        raises++;
@@ -114,7 +126,7 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         Context ctx = new ContextImpl();
 
-        ctx.add(new Datum("Pot Odds",
+        ctx.add(new Datum("Immediate Pot Odds",
                         ((double) beforeNextAct.toCall().smallBlinds()) /
                           (beforeNextAct.toCall().smallBlinds() +
                            beforeNextAct.pot().smallBlinds())));
@@ -124,15 +136,23 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
         ctx.add(new Datum(
                 "Is Committed This Round",
                 roundCommit.compareTo( Money.ZERO ) > 0));
-
+                                             
         ctx.add(new Datum(
                 BetsToCall.fromBets(beforeNextAct.betsToCall())));
 
         // positional stats
-        ctx.add(new Datum("Position",
-                        beforeNextAct.nextToActPosition()));
+//        ctx.add(new Datum("Position",
+//                        beforeNextAct.nextToActPosition()));
         ctx.add(new Datum("Active Position",
                         beforeNextAct.nextToActActivePosition()));
+
+        for (int i = 0; i <= beforeNextAct.round().ordinal(); i++)
+        {
+            ctx.add(new Datum("round " + i + " raises",
+                                betsRaised[ i ]));
+//            ctx.add(new Datum("round " + i + " calls",
+//                                betsCalled[ i ]));
+        }
 
         // betting stats
         int numActs = checks + calls + raises;
@@ -140,10 +160,10 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
         {
             ctx.add(new Datum("Bet Ratio",
                             (double) raises / numActs));
-            ctx.add(new Datum("Call Ratio",
-                            (double) calls / numActs));
-            ctx.add(new Datum("Check Ratio",
-                            (double) checks / numActs));
+//            ctx.add(new Datum("Call Ratio",
+//                            (double) calls / numActs));
+//            ctx.add(new Datum("Check Ratio",
+//                            (double) checks / numActs));
         }
 
         if (beforeCurrAct != null && prevAct != null)
@@ -156,27 +176,13 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
             ctx.add(new Datum(
                     "Last Bets Called > 0",
                     beforeCurrAct.toCall().compareTo(Money.ZERO) > 0));
+//            ctx.add(new Datum(
+//                    "Last Bets Called",
+//                    beforeCurrAct.betsToCall()));
         }
 
         return ctx;
     }
-
-//    public EnumSet<ContextDomain> nextActDomains()
-//    {
-//        EnumSet<ContextDomain> domains =
-//                EnumSet.noneOf( ContextDomain.class );
-//
-//        domains.add( ContextDomain.FIRST_ACT );
-//
-//        if (beforeCurrAct != null && prevAct != null)
-//        {
-//            domains.add((beforeNextAct.round() == BettingRound.PREFLOP)
-//                         ? ContextDomain.PRE_FLOP
-//                         : ContextDomain.POST_FLOP);
-//        }
-//
-//        return domains;
-//    }
 
 
     //--------------------------------------------------------------------

@@ -17,7 +17,7 @@ public interface Context
     public void addAll(Context dataFrom);
 
     public Collection<String> types();
-    public List<Datum> bufferedData();
+    public List<Datum>        data();
 
     public LocalContext toContext(DataPool pool);
 }

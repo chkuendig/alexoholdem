@@ -61,9 +61,9 @@ public class ModelActionPlayer extends LearningPlayer
 //            {
 //
 //            }
-
+//
 //            System.out.println(playerId()                + "\t" +
-//                               ctx.bufferedData().size() + "\t" +
+//                               ctx.data().size() + "\t" +
 //                               prediction                + "\t" +
 //                               act.toSimpleAction());
         }

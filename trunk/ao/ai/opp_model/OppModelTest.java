@@ -114,8 +114,8 @@ public class OppModelTest
 
         for (HandHistory hand : p.getHands())
         {
-            approx.examine( hand );
-            predictor.add( hand );
+            //approx.examine( hand );
+            predictor.add(hand);
         }
 
         System.out.println( "\n\nERRORS:\n" );

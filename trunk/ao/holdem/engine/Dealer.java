@@ -50,7 +50,7 @@ public class Dealer
             state.advance(  act   );
             handleQuitters( state );
         }
-        while ( !state.winnersKnown() );
+        while ( !state.atEndOfHand() );
         
         if (state.winners().isEmpty())
             throw new HoldemRuleBreach("winnerless hand");

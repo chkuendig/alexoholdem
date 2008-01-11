@@ -93,7 +93,7 @@ public class ModelHolePlayer extends LearningPlayer
 //        System.out.println(avg   + "\t" +
 //                           act   + "\t" +
 //                           delta);
-        
+
         HandStrength actualDelta =
                 HandStrength.fromPercent( delta );
 
@@ -101,7 +101,7 @@ public class ModelHolePlayer extends LearningPlayer
 //        if (prediction != null)
 //        {
 ////            System.out.println(playerId()                + "\t" +
-////                               ctx.bufferedData().size() + "\t" +
+////                               ctx.data().size() + "\t" +
 ////                               prediction                + "\t" +
 ////                               actualDelta);
 //        }

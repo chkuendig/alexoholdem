@@ -1,19 +1,18 @@
 package ao.state;
 
+import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.holdem.engine.DeckCardSource;
+import ao.holdem.model.Money;
+import ao.holdem.model.act.RealAction;
 import ao.holdem.model.card.CardSource;
 import ao.holdem.model.card.Hand;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.Money;
-import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.stats.HandStats;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -27,6 +26,8 @@ public class StateManager
     private HandStats   stats;
     private boolean     roundJustChanged;
 
+    private Map<PlayerHandle, Context> allInContexts =
+                new HashMap<PlayerHandle, Context>();
 
 
     //--------------------------------------------------------------------
@@ -37,11 +38,15 @@ public class StateManager
             boolean            autoPostBlinds,
             CardSource         cardSource)
     {
-        head = autoPostBlinds
-               ? HandState.autoBlindInstance(clockwiseDealerLast)
-               : new HandState(clockwiseDealerLast);
+        head  = new HandState(clockwiseDealerLast);
         cards = cardSource;
-        init();
+        stats = new HandStats( head.players() );
+
+        if (autoPostBlinds)
+        {
+            advance(RealAction.SMALL_BLIND);
+            advance(RealAction.BIG_BLIND);
+        }
     }
 
     public StateManager(
@@ -50,22 +55,16 @@ public class StateManager
     {
         this(clockwiseDealerLast, false, cardSource);
     }
-    public StateManager(
-            List<PlayerHandle> clockwiseDealerLast)
-    {
-        this(clockwiseDealerLast, false, new DeckCardSource());
-    }
+//    public StateManager(
+//            List<PlayerHandle> clockwiseDealerLast)
+//    {
+//        this(clockwiseDealerLast, false, new DeckCardSource());
+//    }
     public StateManager(
             List<PlayerHandle> clockwiseDealerLast,
             boolean            autoPostBlinds)
     {
         this(clockwiseDealerLast, autoPostBlinds, new DeckCardSource());
-    }
-
-    private void init()
-    {
-        stats = new HandStats( head.players() );
-//        nextActContext.advance(head);
     }
 
 
@@ -77,16 +76,18 @@ public class StateManager
 
 
     //--------------------------------------------------------------------
-    public void advance(RealAction act)
+    public PlayerState advance(RealAction act)
     {
-        PlayerHandle actor = nextToAct();
-        Event        event = new Event(actor, head().round(), act);
-
+        int          nextActIndex = head.nextToActIndex();
+        PlayerHandle actor        = nextToAct();
+        Event        event        = new Event(actor, head().round(), act);
+        
         HandState nextState = head.advance(act);
         process(head, actor, act, nextState);
         head = nextState;
 
         events.add( event );
+        return head.players()[ nextActIndex ];
     }
     public void advanceQuitter(PlayerHandle quitter)
     {
@@ -118,6 +119,13 @@ public class StateManager
 
         if (! afterAct.atEndOfHand())
         {
+            if (act.isAllIn() && !act.isBlind())
+            {
+                allInContexts.put(
+                        actor,
+                        stats.forPlayer(actor.getId()).nextActContext());
+            }
+
             stats.advance(
                 beforeAct, actor, act, afterAct);
         }
@@ -173,7 +181,6 @@ public class StateManager
             bigBlind   = events.get(0).getPlayer();
         }
 
-
         Money totalLost = new Money();
         for (PlayerState player : head().players())
         {
@@ -219,12 +226,22 @@ public class StateManager
         return stats;
     }
 
+    public List<Event> events()
+    {
+        return events;
+    }
+
+    public Context allInContext(PlayerHandle forPlayer)
+    {
+        return allInContexts.get( forPlayer );
+    }
+
     public PlayerHandle nextToAct()
     {
         return head().nextToAct().handle();
     }
 
-    public boolean winnersKnown()
+    public boolean atEndOfHand()
     {
         return head().atEndOfHand();
     }
@@ -279,6 +296,10 @@ public class StateManager
         proto.cards            = cards.prototype();
         proto.stats            = stats.prototype();
         proto.roundJustChanged = roundJustChanged;
+        proto.events           = new ArrayList<Event>( events );
+        proto.allInContexts    =
+                new HashMap<PlayerHandle, Context>(
+                        allInContexts);
         return proto;
     }
 

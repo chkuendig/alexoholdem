@@ -29,7 +29,7 @@ public class ContextImpl implements Context
     }
     public ContextImpl(Context copyContext)
     {
-        this(copyContext.bufferedData());
+        this(copyContext.data());
     }
 
 
@@ -48,7 +48,7 @@ public class ContextImpl implements Context
 
     public void addAll(Context dataFrom)
     {
-        data.addAll( dataFrom.bufferedData() );
+        data.addAll( dataFrom.data() );
     }
 
 
@@ -65,7 +65,7 @@ public class ContextImpl implements Context
         return types;
     }
 
-    public List<Datum> bufferedData()
+    public List<Datum> data()
     {
         return data;
     }
