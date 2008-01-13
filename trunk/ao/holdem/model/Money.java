@@ -88,14 +88,6 @@ public class Money implements Comparable<Money>, Serializable
 
 
     //--------------------------------------------------------------------
-    @Override
-    public String toString()
-    {
-        return smallBlinds + " small blinds";
-    }
-
-
-    //--------------------------------------------------------------------
     public Money plus(Money addend)
     {
         return new Money(smallBlinds + addend.smallBlinds);
@@ -130,6 +122,12 @@ public class Money implements Comparable<Money>, Serializable
 
 
     //--------------------------------------------------------------------
+    @Override
+    public String toString()
+    {
+        return smallBlinds + " sb";
+    }
+    
     public boolean equals(Object o)
     {
         if (this == o) return true;

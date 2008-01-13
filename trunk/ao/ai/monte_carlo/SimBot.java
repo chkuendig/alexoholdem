@@ -22,7 +22,7 @@ import java.util.Map;
 public class SimBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private static final int SIM_COUNT = 256;
+    private static final int SIM_COUNT = 64;
 
 
     //--------------------------------------------------------------------
@@ -51,12 +51,12 @@ public class SimBot extends AbstractPlayer
 
         Map<SimpleAction, int[]> counts =
                 new EnumMap<SimpleAction, int[]>( SimpleAction.class );
-        Map<SimpleAction, int[]> expectation =
-                new EnumMap<SimpleAction, int[]>( SimpleAction.class );
+        Map<SimpleAction, double[]> expectation =
+                new EnumMap<SimpleAction, double[]>( SimpleAction.class );
         for (SimpleAction act : SimpleAction.values())
         {
             counts     .put(act, new int[1]);
-            expectation.put(act, new int[1]);
+            expectation.put(act, new double[1]);
         }
 
         for (int i = 0; i < SIM_COUNT; i++)
