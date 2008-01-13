@@ -15,10 +15,7 @@ import ao.state.StateManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -36,23 +33,23 @@ public class DealerTest
     {
         List<PlayerHandle> playerHandles =
                 new ArrayList<PlayerHandle>();
-        playerHandles.add( players.lookup("real.A") );
-        playerHandles.add( players.lookup("real.B") );
-        playerHandles.add( players.lookup("real.C") );
-        playerHandles.add( players.lookup("real.D") );
-        playerHandles.add( players.lookup("real.E") );
-        playerHandles.add( players.lookup("real.F") );
-        playerHandles.add( players.lookup("real.G") );
-
         Map<PlayerHandle, Player> brains =
                 new HashMap<PlayerHandle, Player>();
-        brains.put(playerHandles.get(0), new AlwaysRaiseBot());
-        brains.put(playerHandles.get(1), new DuaneBot());
-        brains.put(playerHandles.get(2), new RandomBot());
-        brains.put(playerHandles.get(3), new MathBot());
-        brains.put(playerHandles.get(4), new AlwaysRaiseBot());
-        brains.put(playerHandles.get(5), new DuaneBot());
-        brains.put(playerHandles.get(6), smarties.get());
+        for (Map.Entry<String, Player> e :
+                new LinkedHashMap<String, Player>(){{
+                    put("real.A", new AlwaysRaiseBot());
+                    put("real.B", new DuaneBot());
+                    put("real.C", new RandomBot());
+                    put("real.D", new MathBot());
+                    put("real.E", new AlwaysRaiseBot());
+                    put("real.F", new DuaneBot());
+                    put("real.G", smarties.get());
+                }}.entrySet())
+        {
+            PlayerHandle playerHandle = players.lookup(e.getKey());
+            playerHandles.add( playerHandle );
+            brains.put( playerHandle, new DuaneBot() );
+        }
 
         Map<PlayerHandle, Money> cumDeltas =
                 new HashMap<PlayerHandle, Money>();
@@ -82,7 +79,8 @@ public class DealerTest
                                           delta.getValue()));
                 }
             }
-            System.out.println(hist.getDeltas());
+            //System.out.println(hist.getDeltas());
+            System.out.println(cumDeltas);
 
             playerHandles.add( playerHandles.remove(0) );
         }
