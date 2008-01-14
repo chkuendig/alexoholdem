@@ -48,7 +48,7 @@ public class DealerTest
         {
             PlayerHandle playerHandle = players.lookup(e.getKey());
             playerHandles.add( playerHandle );
-            brains.put( playerHandle, new DuaneBot() );
+            brains.put( playerHandle, e.getValue() );
         }
 
         Map<PlayerHandle, Money> cumDeltas =
