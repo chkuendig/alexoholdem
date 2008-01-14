@@ -155,7 +155,14 @@ public class RealHistogram<T>
                     .append(e.getValue()[0])
                     .append("\t");
         }
-        str.deleteCharAt( str.length() - 1 );
+        if (str.length() > 0)
+        {
+            str.deleteCharAt( str.length() - 1 );
+        }
+        else
+        {
+            str.append("[empty]");
+        }
 
         return str.toString();
     }
