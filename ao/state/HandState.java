@@ -331,7 +331,7 @@ public class HandState
     {
         return stakes.equals( nextToAct().commitment() );
     }
-    private boolean nextToActCanRaise()
+    public boolean nextToActCanRaise()
     {
         return remainingRoundBets > 0;
     }

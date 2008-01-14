@@ -1,5 +1,10 @@
 package ao.ai.opp_model.model.domain;
 
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.odds.*;
+import ao.state.HandState;
+
 /**
  *
  */
@@ -46,33 +51,38 @@ public enum HandStrength
 //0.515314061
 //0.769022263
 //     */
-//    DELTA_00 (-1.0,  -0.14),
-//    DELTA_10 (-0.14,  0.02),
-//    DELTA_20 (-0.02,  0.11),
-//    DELTA_30 ( 0.11,  0.21),
-//    DELTA_40 ( 0.21,  0.27),
-//    DELTA_50 ( 0.27,  0.33),
-//    DELTA_60 ( 0.33,  0.37),
-//    DELTA_70 ( 0.37,  0.42),
-//    DELTA_80 ( 0.42,  0.46),
-//    DELTA_90 ( 0.46,  0.51),
-//    DELTA_100( 0.51,  1.00);
+    DELTA_00 (-0.51,  -0.14),
+    DELTA_10 (-0.14,  0.02),
+    DELTA_20 (-0.02,  0.11),
+    DELTA_30 ( 0.11,  0.21),
+    DELTA_40 ( 0.21,  0.27),
+    DELTA_50 ( 0.27,  0.33),
+    DELTA_60 ( 0.33,  0.37),
+    DELTA_70 ( 0.37,  0.42),
+    DELTA_80 ( 0.42,  0.46),
+    DELTA_90 ( 0.46,  0.51),
+    DELTA_100( 0.51,  0.77);
     
     //--------------------------------------------------------------------
-    /*
--0.51306198
-0.007092969
-0.237599137
-0.355728492
-0.459206907
-0.774503854
-     */
-    
-    DELTA_0(-0.513,  0.007),
-    DELTA_1( 0.007,  0.238),
-    DELTA_2( 0.238,  0.356),
-    DELTA_3( 0.356,  0.459),
-    DELTA_4( 0.459,  0.775);
+//    /*
+//-0.51306198
+//0.007092969
+//0.237599137
+//0.355728492
+//0.459206907
+//0.774503854
+//     */
+//
+//    DELTA_0(-0.513,  0.007),
+//    DELTA_1( 0.007,  0.238),
+//    DELTA_2( 0.238,  0.356),
+//    DELTA_3( 0.356,  0.459),
+//    DELTA_4( 0.459,  0.775);
+
+
+    //--------------------------------------------------------------------
+    private static BlindOddFinder expectedOdds =
+                        new ApproxBlindOddFinder();
 
 
     //--------------------------------------------------------------------
@@ -91,6 +101,41 @@ public enum HandStrength
                 ? values()[ values().length - 1 ]
                 : values()[ 0                   ];
     }
+
+    public static HandStrength fromState(
+            HandState showdown,
+            Community community,
+            Hole      hole)
+    {
+        OddFinder oddFinder = new ApproximateOddFinder();
+        Odds actual    =
+                    oddFinder.compute(
+                            hole, community,
+                            showdown.numActivePlayers()-1);
+        // actual hand strength
+        double act = actual.strengthVsRandom(
+                                showdown.numActivePlayers() );
+
+        BlindOddFinder.BlindOdds expected =
+                expectedOdds.compute(
+                        community, showdown.numActivePlayers());
+
+        // random expected average hand strength
+        double avg = expected.sum().strengthVsRandom(
+                        showdown.numActivePlayers());
+
+        // by how much the actual hand is stronger than
+        //  an average random hand. -ve # means its
+        //  weaker than the average random hand.
+        double delta = act - avg;
+
+//        System.out.println(avg   + "\t" +
+//                           act   + "\t" +
+//                           delta);
+
+        return HandStrength.fromPercent( delta );
+    }
+
 
 
     //--------------------------------------------------------------------

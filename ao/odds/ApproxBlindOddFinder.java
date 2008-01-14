@@ -13,8 +13,8 @@ public class ApproxBlindOddFinder
         implements BlindOddFinder
 {
     //--------------------------------------------------------------------
-    private Community  prevCommunity;
-    private int        prevActivePlayers = -1;
+    private Community     prevCommunity;
+    private int           prevActivePlayers = -1;
     private BlindOddsImpl prevOdds;
 
 

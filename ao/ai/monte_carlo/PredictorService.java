@@ -35,7 +35,7 @@ public class PredictorService
     public void add(HandHistory history)
     {
         actPredictor.add(  history );
-        holePredictor.add( history );
+        //holePredictor.add( history );
     }
 
 

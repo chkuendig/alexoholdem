@@ -74,6 +74,12 @@ public class StateManager
         return cards;
     }
 
+    public boolean holeVisible(PlayerHandle forPlayer)
+    {
+        Hole hole = cards.holeFor( forPlayer );
+        return (hole != null && hole.bothCardsVisible());
+    }
+
 
     //--------------------------------------------------------------------
     public PlayerState advance(RealAction act)
