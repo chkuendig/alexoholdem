@@ -38,7 +38,7 @@ public class OppModelTest
     {
 //        retrieveMostPrevalent();
         modelOpponet(playerAccess.find("irc", "sagerbot"));
-//        modelOpponet(playerAccess.find("irc", "any2cnwin"));
+//        modelOpponet(playerAccess.find("irc", "perfecto"));
     }
 
 
@@ -110,14 +110,13 @@ public class OppModelTest
     private void doModelAll(PlayerHandle p)
     {
         PredictorService predictor = new PredictorService();
-        //HandApproximator approx    = new HandApproximator(predictor);
-        DeltaApprox deltas = new DeltaApprox( predictor );
+        DeltaApprox      deltas    = new DeltaApprox( predictor );
 
         for (HandHistory hand : p.getHands())
         {
-            //approx.examine( hand );
+            deltas.examine( hand );
             predictor.add(hand);
-            deltas.learn(hand);
+            deltas.learn(hand, null);
         }
 
         System.out.println( "\n\nERRORS:\n" );

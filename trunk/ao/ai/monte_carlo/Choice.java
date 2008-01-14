@@ -1,44 +1,51 @@
 package ao.ai.monte_carlo;
 
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.mix.MixedAction;
-import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.BettingRound;
+import ao.holdem.model.act.SimpleAction;
+import ao.state.HandState;
 
 /**
  *
  */
-public class Surprise
+public class Choice
 {
     //----------------------------------------------------------------
     private final MixedAction  expected;
     private final SimpleAction actual;
     private final BettingRound round;
-    private final boolean      canRaise;
+    private final HandState    state;
 
 
     //----------------------------------------------------------------
-    public Surprise(MixedAction  expected,
-                    SimpleAction actual,
-                    BettingRound round,
-                    boolean      canRaise)
+    public Choice(RealHistogram<SimpleAction> expected,
+                  SimpleAction                actual,
+                  BettingRound                round,
+                  HandState                   state)
     {
-        this.expected = expected;
+        this.expected = MixedAction.fromHistogram( expected );
         this.actual   = actual;
         this.round    = round;
-        this.canRaise = canRaise;
+        this.state    = state;
     }
 
 
     //----------------------------------------------------------------
-    public MixedAction expected()
+    public HandState state()
     {
-        return expected;
+        return state;
     }
 
-    public SimpleAction actual()
-    {
-        return actual;
-    }
+//    public MixedAction expected()
+//    {
+//        return expected;
+//    }
+
+//    public SimpleAction actual()
+//    {
+//        return actual;
+//    }
 
     public double surprise()
     {
@@ -48,7 +55,7 @@ public class Surprise
                  : (actual == SimpleAction.CALL)
                     ? 0 : 1;
         double exp =
-                canRaise
+                state.nextToActCanRaise()
                 ? expected.probabilityOf(SimpleAction.RAISE) -
                   expected.probabilityOf(SimpleAction.FOLD)
                 : -(expected.probabilityOf(SimpleAction.FOLD) /
