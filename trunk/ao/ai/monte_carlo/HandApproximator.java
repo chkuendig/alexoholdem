@@ -80,7 +80,7 @@ public class HandApproximator
         for (Map.Entry<PlayerHandle, ContextPlayer> e :
                 brains.entrySet())
         {
-            if (e.getValue().reachedShowdown())
+            if (e.getValue().reachedEndOfHand())
             {
                 showdownContexts.put(
                         e.getKey(),
@@ -122,4 +122,8 @@ public class HandApproximator
                         showdownContexts.size() ));
         return approx;
     }
+
+
+    //--------------------------------------------------------------------
+    //public static class
 }

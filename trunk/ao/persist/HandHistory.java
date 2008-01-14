@@ -171,6 +171,12 @@ public class HandHistory extends Base
         getHoles().put(player, hole);
     }
 
+    public boolean holesVisible(PlayerHandle forPlayer)
+    {
+        Hole hole = getHoles().get( forPlayer );
+        return (hole != null && hole.bothCardsVisible());
+    }
+
 
     //--------------------------------------------------------------------
     private Community community = new Community();

@@ -59,43 +59,19 @@ public class ModelHolePlayer extends LearningPlayer
             Context      ctx,
             RealAction   action)
     {
-        HandState state = env.head();
+        if (! env.holeVisible( env.nextToAct() )) return null;
 
-        Hole hole = env.cards().holeFor(
-                        state.nextToAct().handle() );
-        if (hole == null || !hole.bothCardsVisible()) return null;
+        HandState state = env.head();
+        Hole      hole  = env.cards().holeFor(
+                                state.nextToAct().handle() );
 
         // showdowns only
         if (!(actsLeft() == 0 && !action.isFold())) return null;
 
         Community community = env.cards().community();
 
-        OddFinder oddFinder = new ApproximateOddFinder();
-        Odds      actual    =
-                    oddFinder.compute(
-                            hole, community, state.numActivePlayers()-1);
-        // actual hand strength
-        double act = actual.strengthVsRandom( state.numActivePlayers() );
-
-        BlindOddFinder.BlindOdds expected =
-                expectedOdds.compute(
-                        community, state.numActivePlayers());
-
-        // random expected average hand strength
-        double avg = expected.sum().strengthVsRandom(
-                                        state.numActivePlayers());
-
-        // by how much the actual hand is stronger than
-        //  an average random hand. -ve # means its
-        //  weaker than the average random hand.
-        double delta = act - avg;
-
-//        System.out.println(avg   + "\t" +
-//                           act   + "\t" +
-//                           delta);
-
         HandStrength actualDelta =
-                HandStrength.fromPercent( delta );
+                HandStrength.fromState(state, community, hole);
 
 //        Prediction prediction = predict(ctx);
 //        if (prediction != null)

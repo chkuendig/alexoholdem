@@ -6,13 +6,14 @@ import ao.holdem.model.act.RealAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
+import ao.state.HandState;
 import ao.state.StateManager;
 import ao.stats.Statistic;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  *
@@ -24,6 +25,7 @@ public class ContextPlayer implements Player
     private Serializable           playerId;
     private List<Context>          contexts;
     private boolean                reachedShowdown;
+    private List<HandState>        states;
 
 
     //--------------------------------------------------------------------
@@ -32,6 +34,7 @@ public class ContextPlayer implements Player
     {
         acts     = new LinkedList<RealAction>();
         contexts = new ArrayList<Context>();
+        states   = new ArrayList<HandState>();  
         playerId = player.getId();
 
         for (Event event : history.getEvents( player ))
@@ -57,6 +60,7 @@ public class ContextPlayer implements Player
             Statistic stat = env.stats().forPlayer(playerId);
             Context   ctx  = stat.nextActContext();
             contexts.add( ctx );
+            states.add( env.head() );
 
             if (acts.isEmpty() && !act.isFold())
             {
@@ -72,8 +76,13 @@ public class ContextPlayer implements Player
     {
         return contexts;
     }
-    
-    public boolean reachedShowdown()
+
+    public List<HandState> states()
+    {
+        return states;
+    }
+
+    public boolean reachedEndOfHand()
     {
         return reachedShowdown;
     }
