@@ -1,7 +1,6 @@
 package ao.holdem.engine;
 
 import ao.ai.monte_carlo.SimBot;
-import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
 import ao.holdem.model.Money;
 import ao.holdem.model.Player;
@@ -10,7 +9,6 @@ import ao.persist.PlayerHandle;
 import ao.persist.dao.HandHistoryDao;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.state.StateManager;
-import ao.util.rand.Rand;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -30,9 +28,9 @@ public class DealerTest
     //--------------------------------------------------------------------
     public void realDealerTest()
     {
-        Rand.nextBoolean();
-        Rand.nextDouble();
-        Rand.nextBoolean();
+//        Rand.nextBoolean();
+//        Rand.nextDouble();
+//        Rand.nextBoolean();
 
         List<PlayerHandle> playerHandles =
                 new ArrayList<PlayerHandle>();
@@ -40,12 +38,12 @@ public class DealerTest
                 new HashMap<PlayerHandle, Player>();
         for (Map.Entry<String, Player> e :
                 new LinkedHashMap<String, Player>(){{
-                    put("real.G", new DuaneBot());
-                    put("real.F", new DuaneBot());
-                    put("real.E", new DuaneBot());
-                    put("real.D", new AlwaysRaiseBot());
-                    put("real.C", new AlwaysRaiseBot());
-                    put("real.B", new AlwaysRaiseBot());
+//                    put("real.G", new DuaneBot());
+//                    put("real.F", new DuaneBot());
+//                    put("real.E", new DuaneBot());
+//                    put("real.D", new AlwaysRaiseBot());
+                    put("real.C", new DuaneBot());
+                    put("real.B", new DuaneBot());
                     put("real.A", smarties.get());
 //                    put("real.A", new AlwaysRaiseBot());
 //                    put("real.B", new DuaneBot());
@@ -63,7 +61,7 @@ public class DealerTest
 
         Map<PlayerHandle, Money> cumDeltas =
                 new HashMap<PlayerHandle, Money>();
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < 10000; i++)
         {
             StateManager start  = new StateManager(playerHandles, true);
             Dealer       dealer = new Dealer(start, brains);
