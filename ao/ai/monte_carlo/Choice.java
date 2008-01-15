@@ -14,19 +14,16 @@ public class Choice
     //----------------------------------------------------------------
     private final MixedAction  expected;
     private final SimpleAction actual;
-    private final BettingRound round;
     private final HandState    state;
 
 
     //----------------------------------------------------------------
     public Choice(RealHistogram<SimpleAction> expected,
                   SimpleAction                actual,
-                  BettingRound                round,
                   HandState                   state)
     {
         this.expected = MixedAction.fromHistogram( expected );
         this.actual   = actual;
-        this.round    = round;
         this.state    = state;
     }
 
@@ -65,6 +62,6 @@ public class Choice
 
     public BettingRound round()
     {
-        return round;
+        return state.round();
     }
 }

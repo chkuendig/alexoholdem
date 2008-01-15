@@ -3,8 +3,6 @@ package ao.holdem.engine;
 import ao.ai.monte_carlo.SimBot;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
-import ao.ai.simple.MathBot;
-import ao.ai.simple.RandomBot;
 import ao.holdem.model.Money;
 import ao.holdem.model.Player;
 import ao.persist.HandHistory;
@@ -39,8 +37,8 @@ public class DealerTest
                 new LinkedHashMap<String, Player>(){{
                     put("real.A", new AlwaysRaiseBot());
                     put("real.B", new DuaneBot());
-                    put("real.C", new RandomBot());
-                    put("real.D", new MathBot());
+                    put("real.C", new AlwaysRaiseBot());
+                    //put("real.D", new MathBot());
                     put("real.E", new AlwaysRaiseBot());
                     put("real.F", new DuaneBot());
                     put("real.G", smarties.get());
@@ -80,6 +78,7 @@ public class DealerTest
                 }
             }
             //System.out.println(hist.getDeltas());
+            //System.out.println(hist.summary());
             System.out.println(cumDeltas);
 
             playerHandles.add( playerHandles.remove(0) );

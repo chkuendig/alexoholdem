@@ -24,7 +24,7 @@ public class ContextPlayer implements Player
     private LinkedList<RealAction> acts;
     private Serializable           playerId;
     private List<Context>          contexts;
-    private boolean                reachedShowdown;
+    private boolean                finishedUnfolded;
     private List<HandState>        states;
 
 
@@ -54,7 +54,9 @@ public class ContextPlayer implements Player
     {
         checkPlayer(env);
 
-        final RealAction act = shiftAction();
+        RealAction act = shiftAction();
+        if (act == null) return null;
+        
         if (!act.isBlind())
         {
             Statistic stat = env.stats().forPlayer(playerId);
@@ -64,7 +66,7 @@ public class ContextPlayer implements Player
 
             if (acts.isEmpty() && !act.isFold())
             {
-                reachedShowdown = true;
+                finishedUnfolded = true;
             }
         }
         return act;
@@ -82,9 +84,9 @@ public class ContextPlayer implements Player
         return states;
     }
 
-    public boolean reachedEndOfHand()
+    public boolean finishedUnfolded()
     {
-        return reachedShowdown;
+        return finishedUnfolded;
     }
 
 
@@ -105,6 +107,6 @@ public class ContextPlayer implements Player
     }
     private RealAction shiftAction()
     {
-        return acts.removeFirst();
+        return (acts.isEmpty() ? null : acts.removeFirst());
     }
 }

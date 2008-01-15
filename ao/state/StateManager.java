@@ -1,8 +1,8 @@
 package ao.state;
 
-import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.holdem.engine.DeckCardSource;
 import ao.holdem.model.Money;
+import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.card.CardSource;
 import ao.holdem.model.card.Hand;
@@ -12,7 +12,10 @@ import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.stats.HandStats;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Collections;
 
 /**
  *
@@ -26,8 +29,8 @@ public class StateManager
     private HandStats   stats;
     private boolean     roundJustChanged;
 
-    private Map<PlayerHandle, Context> allInContexts =
-                new HashMap<PlayerHandle, Context>();
+//    private Map<PlayerHandle, Context> allInContexts =
+//                new HashMap<PlayerHandle, Context>();
 
 
     //--------------------------------------------------------------------
@@ -125,12 +128,12 @@ public class StateManager
 
         if (! afterAct.atEndOfHand())
         {
-            if (act.isAllIn() && !act.isBlind())
-            {
-                allInContexts.put(
-                        actor,
-                        stats.forPlayer(actor.getId()).nextActContext());
-            }
+//            if (act.isAllIn() && !act.isBlind())
+//            {
+//                allInContexts.put(
+//                        actor,
+//                        stats.forPlayer(actor.getId()).nextActContext());
+//            }
 
             stats.advance(
                 beforeAct, actor, act, afterAct);
@@ -175,6 +178,8 @@ public class StateManager
             HandHistory       hist,
             List<PlayerState> winners)
     {
+        if (winners.isEmpty()) return;
+
         PlayerHandle smallBlind, bigBlind;
         if (events.get(0).getAction().isSmallBlind())
         {
@@ -237,10 +242,10 @@ public class StateManager
         return events;
     }
 
-    public Context allInContext(PlayerHandle forPlayer)
-    {
-        return allInContexts.get( forPlayer );
-    }
+//    public Context allInContext(PlayerHandle forPlayer)
+//    {
+//        return allInContexts.get( forPlayer );
+//    }
 
     public PlayerHandle nextToAct()
     {
@@ -269,8 +274,10 @@ public class StateManager
         }
         else if (finalists.size() > 1)
         {
-            // for each commitment, from lowest to highest
-            //  this accoun
+            if (cards.community().round() != BettingRound.RIVER)
+            {
+                return Collections.emptyList();
+            }
 
             short topHandRank = -1;
             for (PlayerState player : finalists)
@@ -303,9 +310,9 @@ public class StateManager
         proto.stats            = stats.prototype();
         proto.roundJustChanged = roundJustChanged;
         proto.events           = new ArrayList<Event>( events );
-        proto.allInContexts    =
-                new HashMap<PlayerHandle, Context>(
-                        allInContexts);
+//        proto.allInContexts    =
+//                new HashMap<PlayerHandle, Context>(
+//                        allInContexts);
         return proto;
     }
 
