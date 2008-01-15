@@ -20,7 +20,7 @@ import java.util.*;
 public class SimBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private static final int SIM_COUNT = 64;
+    private static final int SIM_COUNT = 256;
 
 
     //--------------------------------------------------------------------
