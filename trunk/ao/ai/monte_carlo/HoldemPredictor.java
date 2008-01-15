@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * InputPlayer
  */
-public class HoldemPredictor
+public class HoldemPredictor<T>
 {
     //--------------------------------------------------------------------
     private static final int MEMORY = 32;
@@ -148,7 +148,8 @@ public class HoldemPredictor
 
 
     //--------------------------------------------------------------------
-    public RealHistogram
+    @SuppressWarnings("unchecked")
+    public RealHistogram<T>
             predict(PlayerHandle forPlayer,
                     Context      inContext)
     {

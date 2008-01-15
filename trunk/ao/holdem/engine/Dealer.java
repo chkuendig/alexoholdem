@@ -31,10 +31,14 @@ public class Dealer
     //--------------------------------------------------------------------
     public StateManager playOutHand()
     {
+        return playOutHand(true);
+    }
+    public StateManager playOutHand(boolean tilShowdown)
+    {
         StateManager state = start.prototype();
         do
         {
-            if (state.roundJustChanged())
+            if (state.roundJustChanged() && tilShowdown)
             {
                 switch (state.head().round())
                 {
@@ -46,14 +50,17 @@ public class Dealer
 
             PlayerHandle player = state.nextToAct();
             RealAction   act    = players.get( player ).act( state );
+            if (!tilShowdown && act == null) return state;
 
             state.advance(  act   );
             handleQuitters( state );
         }
         while ( !state.atEndOfHand() );
         
-        if (state.winners().isEmpty())
+        if (tilShowdown && state.winners().isEmpty())
+        {
             throw new HoldemRuleBreach("winnerless hand");
+        }
 
         return state;
     }

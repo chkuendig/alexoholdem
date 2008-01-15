@@ -3,11 +3,13 @@ package ao.ai.monte_carlo;
 import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
-import ao.ai.opp_model.input.ModelHolePlayer;
 import ao.ai.opp_model.model.domain.HandStrength;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,47 +17,68 @@ import ao.persist.PlayerHandle;
 public class PredictorService
 {
     //--------------------------------------------------------------------
-    private HoldemPredictor  actPredictor;
-    private HoldemPredictor holePredictor;
+    private HoldemPredictor<SimpleAction> actPredictor;
+    private DeltaApprox                   handPredictor;
 
 
     //--------------------------------------------------------------------
     public PredictorService()
     {
         actPredictor =
-                new HoldemPredictor(
+                new HoldemPredictor<SimpleAction>(
                         new ModelActionPlayer.Factory());
-        holePredictor =
-                new HoldemPredictor(
-                        new ModelHolePlayer.Factory());
+        handPredictor = new DeltaApprox( actPredictor );
     }
 
 
     //--------------------------------------------------------------------
     public void add(HandHistory history)
     {
-        actPredictor.add(  history );
+        actPredictor.add(    history );
+        handPredictor.learn( history );
         //holePredictor.add( history );
     }
 
 
     //--------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     public RealHistogram<SimpleAction>
             predictAction(PlayerHandle forPlayer,
                           Context      inContext)
     {
-        return (RealHistogram<SimpleAction>)
-                actPredictor.predict(forPlayer, inContext);
+        return actPredictor.predict(forPlayer, inContext);
     }
 
-    @SuppressWarnings("unchecked")
     public RealHistogram<HandStrength>
-            predictHand(PlayerHandle forPlayer,
-                        Context      inContext)
+            predictHand(List<Choice> fromChoices)
     {
-        return (RealHistogram<HandStrength>)
-                holePredictor.predict(forPlayer, inContext);
+        return handPredictor.approximate( fromChoices );
+    }
+    public RealHistogram<PlayerHandle> approximate(HandHistory history)
+    {
+        return handPredictor.approximate( history );
+    }
+    public RealHistogram<PlayerHandle>
+            approximate( Map<PlayerHandle, List<Choice>> choices )
+    {
+        return handPredictor.approximate( choices );
+    }
+
+
+    //--------------------------------------------------------------------
+    public void examine(HandHistory history)
+    {
+        handPredictor.examine( history );
+    }
+
+    public Map<PlayerHandle, List<Choice>>
+            extractChoices(HandHistory history)
+    {
+        return extractChoices(history, null);
+    }
+    public Map<PlayerHandle, List<Choice>>
+            extractChoices(HandHistory history, PlayerHandle onlyFor)
+    {
+        return handPredictor.extractChoices(history, onlyFor);
     }
 
 
@@ -63,6 +86,6 @@ public class PredictorService
     public String toString()
     {
         return "ACTS:\n" + actPredictor.toString() + "\n\n" +
-               "HOLES:\n" + holePredictor.toString();
+               "HOLES:\n" + handPredictor.toString();
     }
 }

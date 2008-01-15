@@ -1,6 +1,5 @@
 package ao.ai.opp_model;
 
-import ao.ai.monte_carlo.DeltaApprox;
 import ao.ai.monte_carlo.PredictorService;
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
@@ -38,7 +37,7 @@ public class OppModelTest
     {
 //        retrieveMostPrevalent();
 //        modelOpponet(playerAccess.find("irc", "sagerbot"));
-        modelOpponet(playerAccess.find("irc", "perfecto"));
+        modelOpponet(playerAccess.find("irc", "greg"));
     }
 
 
@@ -110,18 +109,15 @@ public class OppModelTest
     private void doModelAll(PlayerHandle p)
     {
         PredictorService predictor = new PredictorService();
-        DeltaApprox      deltas    = new DeltaApprox( predictor );
 
         for (HandHistory hand : p.getHands())
         {
-            deltas.examine( hand );
+            predictor.examine( hand );
             predictor.add(hand);
-            deltas.learn(hand, null);
         }
 
         System.out.println( "\n\nERRORS:\n" );
-        System.out.println( deltas );
-        //System.out.println( predictor );
+        System.out.println( predictor );
     }
 
 

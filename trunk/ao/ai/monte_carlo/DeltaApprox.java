@@ -15,6 +15,7 @@ import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
+import ao.holdem.model.act.SimpleAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -32,13 +33,13 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     private Classifier deltas =
                 new DomainedClassifier(new RandomLearner.Factory());
-    private PredictorService actPredictor;
+    private HoldemPredictor<SimpleAction> actPredictor;
     private ConfusionMatrix<HandStrength> confusion =
                 new ConfusionMatrix<HandStrength>();
 
 
     //--------------------------------------------------------------------
-    public DeltaApprox(PredictorService actPredictor)
+    public DeltaApprox(HoldemPredictor<SimpleAction> actPredictor)
     {
         this.actPredictor = actPredictor;
     }
@@ -82,7 +83,7 @@ public class DeltaApprox
     public RealHistogram<PlayerHandle>
             approximate( Map<PlayerHandle, List<Choice>> choices )
     {
-        if (choices.size() != 2) return null;
+        if (choices.size() < 2) return null;
 
         int sample = Integer.MAX_VALUE;
         Map<PlayerHandle, RealHistogram<HandStrength>> hands =
@@ -94,48 +95,87 @@ public class DeltaApprox
                     approximate(c.getValue());
             sample = Math.min(sample, handStrength.sampleSize());
             hands.put(c.getKey(), handStrength);
-
-//            double strength = 0;
-//            for (HandStrength estimate : HandStrength.values())
-//            {
-//                strength += handStrength.probabilityOf( estimate ) *
-//                            estimate.averageValue();
-//            }
-//            approx.add( c.getKey(), strength );
-
-
         }
 
+        RealHistogram<PlayerHandle> approx = doApproximate( hands );
+        approx.setSampleSize(sample);
+        return approx;
+    }
+
+    private RealHistogram<PlayerHandle> doApproximate(
+                Map<PlayerHandle, RealHistogram<HandStrength>> hands)
+    {
+        return (hands.size() == 2)
+                ? approxTwo(hands)
+                : approxN(hands);
+    }
+    private RealHistogram<PlayerHandle>
+            approxTwo(Map<PlayerHandle, RealHistogram<HandStrength>> hands)
+    {
         Iterator<PlayerHandle>      players = hands.keySet().iterator();
         PlayerHandle                playerA = players.next();
         RealHistogram<HandStrength> handA   = hands.get( playerA );
         PlayerHandle                playerB = players.next();
         RealHistogram<HandStrength> handB   = hands.get( playerB );
 
-        double tieProb   = 0;
-        double aWinsProb = 0;
+        double aNonLossProb = notLosingProbability(handA, handB);
+
+        RealHistogram<PlayerHandle> approx =
+                new RealHistogram<PlayerHandle>();
+        approx.add(playerA,       aNonLossProb);
+        approx.add(playerB, 1.0 - aNonLossProb);
+        return approx;
+    }
+    private RealHistogram<PlayerHandle>
+            approxN(Map<PlayerHandle, RealHistogram<HandStrength>> hands)
+    {
+        RealHistogram<PlayerHandle> approx  =
+                new RealHistogram<PlayerHandle>();
+        List<PlayerHandle>          inOrder =
+                new ArrayList<PlayerHandle>( hands.keySet() );
+        for (int i = 0; i < inOrder.size(); i++)
+        {
+            double                      nonLoss = 1.0;
+            PlayerHandle                playerA = inOrder.get(i);
+            RealHistogram<HandStrength> handA   = hands.get( playerA );
+            for (int j = 0; j < inOrder.size(); j++)
+            {
+                if (i == j) continue;
+
+                PlayerHandle playerB = inOrder.get( j );
+                nonLoss = Math.min(nonLoss,
+                                   notLosingProbability(
+                                           handA,
+                                           hands.get( playerB )));
+            }
+            approx.add(playerA, nonLoss);
+        }
+        return approx;
+    }
+
+    private double notLosingProbability(
+            RealHistogram<HandStrength> handA,
+            RealHistogram<HandStrength> vsHandB)
+    {
+        double tieProb = 0;
+        double winProb = 0;
         for (int i = HandStrength.values().length - 1; i >=0; i--)
         {
             HandStrength hs    = HandStrength.values()[ i ];
             double       probA = handA.probabilityOf(hs);
 
-            //tieProb += probA * handB.probabilityOf(hs);
+            tieProb += probA * vsHandB.probabilityOf(hs);
 
             double probLessThanA = 0;
             for (int j = 0; j < i; j++)
             {
                 probLessThanA +=
-                    handB.probabilityOf(HandStrength.values()[ j ]);
+                    vsHandB.probabilityOf(HandStrength.values()[ j ]);
             }
-            aWinsProb += (probA * probLessThanA);
+            winProb += (probA * probLessThanA);
         }
 
-        RealHistogram<PlayerHandle> approx =
-                new RealHistogram<PlayerHandle>();
-        approx.add(playerA, aWinsProb);
-        approx.add(playerB, 1.0 - aWinsProb - tieProb);
-        approx.setSampleSize(sample);
-        return approx;
+        return winProb + tieProb/2;
     }
 
 
@@ -147,7 +187,7 @@ public class DeltaApprox
     public void learn(HandHistory history, PlayerHandle onlyFor)
     {
         for (Map.Entry<PlayerHandle, List<Choice>> choice :
-                extractChoices(history, onlyFor).entrySet())
+                extractChoices(history, onlyFor, true).entrySet())
         {
             List<Choice> choiceList = choice.getValue();
             Choice       lastChoice =
@@ -178,8 +218,16 @@ public class DeltaApprox
         deltas.add( ctx.withTarget(new Datum(actual)) );
     }
 
-    private Map<PlayerHandle, List<Choice>>
+    //history.holesVisible( choice. )
+    public Map<PlayerHandle, List<Choice>>
             extractChoices(HandHistory history, PlayerHandle onlyFor)
+    {
+        return extractChoices(history, onlyFor, false);
+    }
+    public Map<PlayerHandle, List<Choice>>
+            extractChoices(HandHistory  history,
+                           PlayerHandle onlyFor,
+                           boolean      atShowdown)
     {
         StateManager start =
                 new StateManager(history.getPlayers(),
@@ -193,7 +241,7 @@ public class DeltaApprox
                        new ContextPlayer(history, player));
         }
 
-        new Dealer(start, brains).playOutHand();
+        new Dealer(start, brains).playOutHand( false );
 
         Map<PlayerHandle, List<Choice>> choices =
                 new HashMap<PlayerHandle, List<Choice>>();
@@ -202,9 +250,12 @@ public class DeltaApprox
         {
             PlayerHandle  player    = playerEntry.getKey();
             ContextPlayer ctxPlayer = playerEntry.getValue();
-            if (! ctxPlayer.reachedEndOfHand() ||
-                    ! history.holesVisible( player )) continue;
-            if (onlyFor != null && !player.equals( onlyFor )) continue;
+            if ( !ctxPlayer.finishedUnfolded()                  ||
+                 (atShowdown && !history.holesVisible( player ) ||
+                 (onlyFor != null && !player.equals( onlyFor ))))
+            {
+                continue;
+            }
 
             List<Choice>   s   = new ArrayList<Choice>();
             int            i   = 0;
@@ -214,10 +265,9 @@ public class DeltaApprox
                 if (e.getAction().isBlind()) continue;
 
                 s.add(new Choice(
-                            actPredictor.predictAction(
+                            actPredictor.predict(
                                         player, ctx.get(i)),
                             e.getAction().toSimpleAction(),
-                            e.getRound(),
                             ctxPlayer.states().get( i )));
                 i++;
             }
@@ -231,22 +281,22 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     public RealHistogram<HandStrength>
-            approximate( List<Choice> surprises )
+            approximate( List<Choice> choices )
     {
         return (RealHistogram<HandStrength>)
-                deltas.classify( contextFor(surprises) )
+                deltas.classify( contextFor(choices) )
                         .toRealHistogram();
     }
 
 
     //--------------------------------------------------------------------
-    private Context contextFor(List<Choice> surprises)
+    private Context contextFor(List<Choice> choices)
     {
         int          count     = 0;
         BettingRound prevRound = null;
 
         Context ctx = new ContextImpl();
-        for (Choice s : surprises)
+        for (Choice s : choices)
         {
             if (prevRound != s.round())
             {
