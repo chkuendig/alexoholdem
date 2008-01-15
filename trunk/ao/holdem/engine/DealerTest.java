@@ -10,6 +10,7 @@ import ao.persist.PlayerHandle;
 import ao.persist.dao.HandHistoryDao;
 import ao.persist.dao.PlayerHandleLookup;
 import ao.state.StateManager;
+import ao.util.rand.Rand;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -29,19 +30,30 @@ public class DealerTest
     //--------------------------------------------------------------------
     public void realDealerTest()
     {
+        Rand.nextBoolean();
+        Rand.nextDouble();
+        Rand.nextBoolean();
+
         List<PlayerHandle> playerHandles =
                 new ArrayList<PlayerHandle>();
         Map<PlayerHandle, Player> brains =
                 new HashMap<PlayerHandle, Player>();
         for (Map.Entry<String, Player> e :
                 new LinkedHashMap<String, Player>(){{
-                    put("real.A", new AlwaysRaiseBot());
-                    put("real.B", new DuaneBot());
-                    put("real.C", new AlwaysRaiseBot());
-                    //put("real.D", new MathBot());
-                    put("real.E", new AlwaysRaiseBot());
+                    put("real.G", new DuaneBot());
                     put("real.F", new DuaneBot());
-                    put("real.G", smarties.get());
+                    put("real.E", new DuaneBot());
+                    put("real.D", new AlwaysRaiseBot());
+                    put("real.C", new AlwaysRaiseBot());
+                    put("real.B", new AlwaysRaiseBot());
+                    put("real.A", smarties.get());
+//                    put("real.A", new AlwaysRaiseBot());
+//                    put("real.B", new DuaneBot());
+//                    put("real.C", new AlwaysRaiseBot());
+//                    put("real.D", new MathBot());
+//                    put("real.E", new AlwaysRaiseBot());
+//                    put("real.F", new DuaneBot());
+//                    put("real.G", smarties.get());
                 }}.entrySet())
         {
             PlayerHandle playerHandle = players.lookup(e.getKey());
@@ -51,7 +63,7 @@ public class DealerTest
 
         Map<PlayerHandle, Money> cumDeltas =
                 new HashMap<PlayerHandle, Money>();
-        for (int i = 0; i < 5000; i++)
+        for (int i = 0; i < 100000; i++)
         {
             StateManager start  = new StateManager(playerHandles, true);
             Dealer       dealer = new Dealer(start, brains);
