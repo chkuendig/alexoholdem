@@ -112,11 +112,14 @@ public class DeltaApprox
         PlayerHandle                playerB = players.next();
         RealHistogram<HandStrength> handB   = hands.get( playerB );
 
+        double tieProb   = 0;
         double aWinsProb = 0;
         for (int i = HandStrength.values().length - 1; i >=0; i--)
         {
             HandStrength hs    = HandStrength.values()[ i ];
             double       probA = handA.probabilityOf(hs);
+
+            //tieProb += probA * handB.probabilityOf(hs);
 
             double probLessThanA = 0;
             for (int j = 0; j < i; j++)
@@ -130,7 +133,7 @@ public class DeltaApprox
         RealHistogram<PlayerHandle> approx =
                 new RealHistogram<PlayerHandle>();
         approx.add(playerA, aWinsProb);
-        approx.add(playerB, 1.0 - aWinsProb);
+        approx.add(playerB, 1.0 - aWinsProb - tieProb);
         approx.setSampleSize(sample);
         return approx;
     }
