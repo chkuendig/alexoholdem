@@ -31,6 +31,22 @@ import java.util.*;
 public class DeltaApprox
 {
     //--------------------------------------------------------------------
+    private static final String[][] dataNameCache = new String[4][4];
+    static
+    {
+        for (BettingRound r : BettingRound.values())
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                dataNameCache[ r.ordinal() ][ i ] =
+                        r.toString() + " " + i;
+            }
+        }
+    }
+
+
+
+    //--------------------------------------------------------------------
     private Classifier deltas =
                 new DomainedClassifier(new RandomLearner.Factory());
     private HoldemPredictor<SimpleAction> actPredictor;
@@ -298,13 +314,14 @@ public class DeltaApprox
         Context ctx = new ContextImpl();
         for (Choice s : choices)
         {
-            if (prevRound != s.round())
+            BettingRound round = s.round();
+            if (prevRound != round)
             {
                 count = 0;
             }
 
-            ctx.add( new Datum(s.round().toString() + " " + count,
-                               s.surprise()) );
+            ctx.add(new Datum(dataNameCache[ round.ordinal() ][ count ],
+                              s.surprise()) );
 
             prevRound = s.round();
             count++;

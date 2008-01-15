@@ -5,6 +5,7 @@ import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
 import ao.state.HandState;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -60,8 +61,15 @@ public class Choice
         return value - exp;
     }
 
-    public BettingRound round()
+    public @NotNull BettingRound round()
     {
         return state.round();
+    }
+
+
+    //----------------------------------------------------------------
+    public String toString()
+    {
+        return actual.toString();
     }
 }

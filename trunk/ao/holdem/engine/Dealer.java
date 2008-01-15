@@ -35,7 +35,7 @@ public class Dealer
     }
     public StateManager playOutHand(boolean tilShowdown)
     {
-        StateManager state = start.prototype();
+        StateManager state = start.prototype( tilShowdown );
         do
         {
             if (state.roundJustChanged() && tilShowdown)

@@ -35,11 +35,12 @@ public class Simulator
     //--------------------------------------------------------------------
     public Outcome playOutHand()
     {
+        boolean      isFirstAct       = true;
         List<Event>  events           = new ArrayList<Event>();
         PlayerHandle firstToAct       = start.nextToAct();
         Money        firstToActStakes = Money.ZERO;
         double       probability      = 1;
-        StateManager state            = start.prototype();
+        StateManager state            = start.prototype( false );
         do
         {
             PlayerHandle player    = state.nextToAct();
@@ -50,7 +51,12 @@ public class Simulator
             RealAction realAct =
                     act.toEasyAction().toRealAction( state.head() );
             predictor.took( realAct.toSimpleAction() );
-            probability *= mixedAct.probabilityOf( act );
+
+            if (! isFirstAct)
+            {
+                probability *= mixedAct.probabilityOf( act );
+            }
+            isFirstAct = false;
 
             events.add(new Event(player, state.head().round(), realAct));
             PlayerState afterAction = state.advance( realAct );

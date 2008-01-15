@@ -302,17 +302,19 @@ public class StateManager
 
 
     //--------------------------------------------------------------------
-    public StateManager prototype()
+    public StateManager prototype(boolean faithful)
     {
         StateManager proto     = new StateManager();
         proto.head             = head;
-        proto.cards            = cards.prototype();
         proto.stats            = stats.prototype();
         proto.roundJustChanged = roundJustChanged;
-        proto.events           = new ArrayList<Event>( events );
-//        proto.allInContexts    =
-//                new HashMap<PlayerHandle, Context>(
-//                        allInContexts);
+
+        if (faithful)
+        {
+            proto.cards  = cards.prototype();
+            proto.events = new ArrayList<Event>( events );
+        }
+
         return proto;
     }
 
