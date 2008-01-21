@@ -1,13 +1,10 @@
 package ao.odds;
 
+import ao.hand_eval.eval7.Eval7Faster;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.hand_eval.eval7.Eval7Faster;
 import ao.util.stats.FastIntCombiner;
-import ao.odds.Odds;
-import ao.odds.OddFinder;
-import sun.plugin.dom.exception.InvalidStateException;
 
 /**
  * does NOT match numbers from:
@@ -212,7 +209,7 @@ public class GeneralOddFinder implements OddFinder
             case 2:
             case 3:
             default:
-                throw new InvalidStateException(
+                throw new IllegalArgumentException(
                         "intractable # of opponents: " + activeOpps);
         }
 

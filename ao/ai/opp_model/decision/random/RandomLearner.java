@@ -62,6 +62,12 @@ public class RandomLearner implements LocalClassifier
         doAdd( ls );
     }
 
+    public void limitPopulation(int toMostRecent)
+    {
+        totalSet.forget( toMostRecent );
+        set( totalSet );
+    }
+
 
     //--------------------------------------------------------------------
     public void add(LocalLearningSet ls)

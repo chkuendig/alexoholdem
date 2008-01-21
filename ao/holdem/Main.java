@@ -123,20 +123,18 @@ public class Main
     //----------------------------------------------------------
     public static void runPoker()
     {
-        doRun52c7();
+//        doRun52c7();
 //        doRunHandsOf5();
 //        doRunHandsOf6();
 //        doRunHandsOf7();
-//        doRunOdds();
+        doRunOdds();
     }
     public static void doRunOdds()
     {
         PrintStream output;
         try
         {
-            // before it was the 10th NOT the 9th
-            //  (contrary to what the filename stated).
-            File outFile = new File("8_player_pairs_approx.txt");
+            File outFile = new File("9_player_river_approx.txt");
             outFile.createNewFile();
             output = new PrintStream(
                         new BufferedOutputStream(
@@ -148,8 +146,8 @@ public class Main
             throw new Error( e );
         }
 
-        doRunOddsWith("default", new ApproximateOddFinder(), output);
-        for (int flops = 1; flops < 2118760; flops += 50)
+        doRunOddsWith("600\t500", new ApproximateOddFinder(), output);
+        for (int flops = 1; flops < 2; flops += 50)
         {
             for (long holes = 1; holes < 10000; holes += 50)
             {
@@ -160,7 +158,7 @@ public class Main
 
                 if (! doRunOddsWith(prefix, f, output)) break;
             }
-            System.out.println("");
+            System.out.println();
         }
 
 
@@ -229,28 +227,36 @@ public class Main
     }
     public static boolean doRunOddsWith(
             String      prefix,
-            OddFinder f,
+            OddFinder   f,
             PrintStream outputTo)
     {
-        Community c = new Community();
-        for (Card.Rank rank : Card.Rank.values())
-        {
-            Hole pocketPair =
-                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
-                             Card.valueOf(rank, Card.Suit.CLUBS));
+        Community c = new Community(Card.TWO_OF_CLUBS,
+                                    Card.SEVEN_OF_HEARTS,
+                                    Card.TWO_OF_HEARTS)
+                            .addTurn(Card.JACK_OF_HEARTS)
+                            .addRiver(Card.NINE_OF_SPADES);
+
+//        for (Card.Rank rank : Card.Rank.values())
+//        {
+//            Hole pocketPair =
+//                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
+//                             Card.valueOf(rank, Card.Suit.CLUBS));
+            Hole pocket = new Hole(Card.SIX_OF_SPADES,
+                                   Card.SEVEN_OF_DIAMONDS);
+
 
             long before = System.currentTimeMillis();
-            Odds odds   = f.compute(pocketPair, c, 7);
+            Odds odds   = f.compute(pocket, c, 8);
             long delta  = (System.currentTimeMillis() - before);
             
             outputTo.println(
-                    prefix     + "\t" +
-                    pocketPair + "\t" +
-                    odds       + "\t" +
+                    prefix + "\t" +
+                    pocket + "\t" +
+                    odds   + "\t" +
                     delta);
 
-            if (delta > 600) return false;
-        }
+            if (delta > 500) return false;
+//        }
         outputTo.flush();
         System.out.print(".");
         return true;

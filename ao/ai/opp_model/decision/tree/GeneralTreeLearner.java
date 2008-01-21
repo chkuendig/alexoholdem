@@ -24,7 +24,7 @@ public class GeneralTreeLearner implements LocalClassifier
 
 
     //--------------------------------------------------------------------
-    private GeneralTree tree;
+    private GeneralTree      tree;
     private LocalLearningSet examples;
 
 
@@ -113,7 +113,15 @@ public class GeneralTreeLearner implements LocalClassifier
                 null : tree.classify( context ));
     }
 
-    
+
+    //--------------------------------------------------------------------
+    public void limitPopulation(int toMostRecent)
+    {
+        examples.forget(toMostRecent);
+        set( examples );
+    }
+
+
     //--------------------------------------------------------------------
     public String toString()
     {

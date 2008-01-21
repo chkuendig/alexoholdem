@@ -50,6 +50,13 @@ public class ClassifierImpl implements Classifier
 
 
     //--------------------------------------------------------------------
+    public void limitPopulation(int toMostRecent)
+    {
+        deleget.limitPopulation( toMostRecent );
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return deleget.toString();

@@ -8,20 +8,18 @@ import ao.ai.opp_model.decision.input.processed.data.LocalDatum;
 import java.util.*;
 
 /**
- *
+ * NOT threadsafe.
  */
 public class LocalLearningSet implements Iterable<LocalExample>
 {
     //--------------------------------------------------------------------
     private List<LocalExample> data;
-//    private Map<String, Attribute> byType;
 
 
     //--------------------------------------------------------------------
     public LocalLearningSet()
     {
         data   = new ArrayList<LocalExample>();
-//        byType = new HashMap<String, Attribute>();
     }
 
 
@@ -95,6 +93,21 @@ public class LocalLearningSet implements Iterable<LocalExample>
     public void addAll(LocalLearningSet addend)
     {
         data.addAll( addend.data );
+    }
+
+    public void forget(int newSize)
+    {
+        if (data.size() <= newSize) return;
+
+        int overdraft = data.size() - newSize;
+        List<LocalExample> newData =
+                new ArrayList<LocalExample>(newSize);
+        for (int i = 0; i < newSize; i++)
+        {
+            newData.add( data.get(i + overdraft) );
+        }
+
+        data = newData;
     }
 
 
