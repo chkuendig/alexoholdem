@@ -52,6 +52,13 @@ public class DomainedClassifier implements Classifier
 
 
     //--------------------------------------------------------------------
+    public void limitPopulation(int toMostRecent)
+    {
+
+    }
+
+
+    //--------------------------------------------------------------------
     private Classifier getClassifier(Collection<String> types)
     {
         Classifier classifier = pools.get( types );

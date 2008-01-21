@@ -11,4 +11,6 @@ public interface Classifier extends Predictor
     public void set(LearningSet ls);
     public void add(LearningSet ls);
     public void add(Example example);
+
+    public void limitPopulation(int toMostRecent);
 }

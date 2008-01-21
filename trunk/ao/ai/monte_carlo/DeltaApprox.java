@@ -99,7 +99,7 @@ public class DeltaApprox
     public RealHistogram<PlayerHandle>
             approximate( Map<PlayerHandle, List<Choice>> choices )
     {
-        if (choices.size() < 2) return null;
+        if (choices.size() != 2) return null;
 
         int sample = Integer.MAX_VALUE;
         Map<PlayerHandle, RealHistogram<HandStrength>> hands =
@@ -223,12 +223,12 @@ public class DeltaApprox
         Prediction   p         = deltas.classify(ctx);
         HandStrength predicted =
                 (HandStrength) p.toRealHistogram().mostProbable();
-//        System.out.println((actual.equals(predicted) ? 1 : 0)
-//                                          + "\t" +
-//                           actual         + "\t" +
-//                           predicted      + "\t" +
-//                           p.sampleSize() + "\t" +
-//                           p);
+        System.out.println((actual.equals(predicted) ? 1 : 0)
+                                          + "\t" +
+                           actual         + "\t" +
+                           predicted      + "\t" +
+                           p.sampleSize() + "\t" +
+                           p);
         confusion.add(actual, predicted);
 
         deltas.add( ctx.withTarget(new Datum(actual)) );

@@ -140,11 +140,13 @@ public class Community
     //--------------------------------------------------------------------
     public Community addTurn(Card turn)
     {
+        assert TURN == null;
         return new Community(FLOP_A, FLOP_B, FLOP_C, turn);
     }
 
     public Community addRiver(Card river)
     {
+        assert RIVER == null;
         return new Community(FLOP_A, FLOP_B, FLOP_C, TURN, river);
     }
 

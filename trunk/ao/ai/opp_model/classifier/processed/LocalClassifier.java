@@ -17,6 +17,8 @@ public interface LocalClassifier
 
     public Classification classify(LocalContext context);
 
+    public void limitPopulation(int toMostRecent);
+
 
     //--------------------------------------------------------------------
     public static interface Factory

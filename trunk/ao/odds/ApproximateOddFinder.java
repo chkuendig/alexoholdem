@@ -13,8 +13,8 @@ import ao.util.stats.FastIntCombiner;
 public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    private static final int  DEFAULT_FLOP_ITR = 2000; // 300
-    private static final long DEFAULT_HOLE_ITR = 1500; // 200
+    private static final int  DEFAULT_FLOP_ITR = 1000; // 300
+    private static final long DEFAULT_HOLE_ITR =  600; // 200
 
     private final int  FLOP_ITR;
     private final long HOLE_ITR;
@@ -56,15 +56,23 @@ public class ApproximateOddFinder implements OddFinder
             case 0:
                 return computePreflop(
                         flops, holes, activeOpponents, indexes, cards, rand);
+//                return computePreflop(
+//                        1000, 1, activeOpponents, indexes, cards, rand);
             case 3:
                 return computeFlop(
                         flops, holes, activeOpponents, indexes, cards, rand);
+//                return computeFlop(
+//                        100, 50, activeOpponents, indexes, cards, rand);
             case 4:
                 return computeTurn(
                         holes, activeOpponents, indexes, cards, rand);
+//                return computeTurn(
+//                        100, activeOpponents, indexes, cards, rand);
             case 5:
                 return computeRiver(
                         holes, activeOpponents, indexes, cards, rand);
+//                return computeRiver(
+//                        600, activeOpponents, indexes, cards, rand);
         }
         return new Odds();
     }
@@ -303,7 +311,7 @@ public class ApproximateOddFinder implements OddFinder
             int  activeOpps,
             int  indexes[],
             Card cards[],
-            int communityShortcut,
+            int  communityShortcut,
             MersenneTwisterFast rand)
     {
         if (atOpp >= activeOpps)
