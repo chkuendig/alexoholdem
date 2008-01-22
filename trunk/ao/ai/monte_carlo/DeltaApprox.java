@@ -64,18 +64,25 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     public void examine(HandHistory history)
     {
-        RealHistogram<PlayerHandle> approx = approximate(history);
+        RealHistogram<PlayerHandle> approx = approximateShowdown(history);
         if (approx == null) return;
 
-        Money        win    = Money.ZERO;
+        Money win = Money.ZERO;
+        for (Map.Entry<PlayerHandle, Money> delta :
+                history.getDeltas().entrySet())
+        {
+            int cmp = delta.getValue().compareTo( win );
+            if (cmp > 0) win = delta.getValue();
+        }
         PlayerHandle winner = null;
         for (Map.Entry<PlayerHandle, Money> delta :
                 history.getDeltas().entrySet())
         {
-            if (delta.getValue().compareTo( win ) >= 0)
+            int cmp = delta.getValue().compareTo( win );
+            if (cmp == 0)
             {
+                if (winner != null) return;
                 winner = delta.getKey();
-                win    = delta.getValue();
             }
         }
         assert winner != null;
@@ -91,9 +98,10 @@ public class DeltaApprox
 
 
     //--------------------------------------------------------------------
-    public RealHistogram<PlayerHandle> approximate(HandHistory history)
+    public RealHistogram<PlayerHandle> approximateShowdown(
+            HandHistory history)
     {
-        return approximate(extractChoices(history, null));
+        return approximate(extractShowdownChoices(history, null));
     }
 
     public RealHistogram<PlayerHandle>
@@ -109,8 +117,13 @@ public class DeltaApprox
         {
             RealHistogram<HandStrength> handStrength =
                     approximate(c.getValue());
-            sample = Math.min(sample, handStrength.sampleSize());
+//            if (handStrength == null   ||
+//                handStrength.isEmpty() ||
+//                handStrength.total() == 0) return null;
+            
             hands.put(c.getKey(), handStrength);
+
+            sample = Math.min(sample, handStrength.sampleSize());
         }
 
         RealHistogram<PlayerHandle> approx = doApproximate( hands );
@@ -134,12 +147,12 @@ public class DeltaApprox
         PlayerHandle                playerB = players.next();
         RealHistogram<HandStrength> handB   = hands.get( playerB );
 
-        double aNonLossProb = notLosingProbability(handA, handB);
-
+        double aWin = winProbability(handA, handB);
+        
         RealHistogram<PlayerHandle> approx =
                 new RealHistogram<PlayerHandle>();
-        approx.add(playerA,       aNonLossProb);
-        approx.add(playerB, 1.0 - aNonLossProb);
+        approx.add(playerA, aWin);
+        approx.add(playerB, 1.0 - aWin);
         return approx;
     }
     private RealHistogram<PlayerHandle>
@@ -151,28 +164,36 @@ public class DeltaApprox
                 new ArrayList<PlayerHandle>( hands.keySet() );
         for (int i = 0; i < inOrder.size(); i++)
         {
-            double                      nonLoss = 1.0;
+            double                      win     = 1.0;
             PlayerHandle                playerA = inOrder.get(i);
             RealHistogram<HandStrength> handA   = hands.get( playerA );
+
             for (int j = 0; j < inOrder.size(); j++)
             {
                 if (i == j) continue;
 
                 PlayerHandle playerB = inOrder.get( j );
-                nonLoss = Math.min(nonLoss,
-                                   notLosingProbability(
-                                           handA,
-                                           hands.get( playerB )));
+                win = Math.min(win,
+                               winProbability(
+                                       handA, hands.get( playerB )));
             }
-            approx.add(playerA, nonLoss);
+            approx.add(playerA, win);
         }
         return approx;
     }
 
-    private double notLosingProbability(
+    private double winProbability(
             RealHistogram<HandStrength> handA,
             RealHistogram<HandStrength> vsHandB)
     {
+//        boolean aPriori = handA.isEmpty();
+//        if (vsHandB.isEmpty())
+//        {
+//            return aPriori
+//                   ? 0.5
+//                   : (1.0 - notLosingProbability(vsHandB, handA));
+//        }
+
         double tieProb = 0;
         double winProb = 0;
         for (int i = HandStrength.values().length - 1; i >=0; i--)
@@ -182,13 +203,13 @@ public class DeltaApprox
 
             tieProb += probA * vsHandB.probabilityOf(hs);
 
-            double probLessThanA = 0;
+            double probBltA = 0; // P(B lessThan A)
             for (int j = 0; j < i; j++)
             {
-                probLessThanA +=
+                probBltA +=
                     vsHandB.probabilityOf(HandStrength.values()[ j ]);
             }
-            winProb += (probA * probLessThanA);
+            winProb += (probA * probBltA);
         }
 
         return winProb + tieProb/2;
@@ -236,9 +257,10 @@ public class DeltaApprox
 
     //history.holesVisible( choice. )
     public Map<PlayerHandle, List<Choice>>
-            extractChoices(HandHistory history, PlayerHandle onlyFor)
+            extractShowdownChoices(
+                HandHistory history, PlayerHandle onlyFor)
     {
-        return extractChoices(history, onlyFor, false);
+        return extractChoices(history, onlyFor, true);
     }
     public Map<PlayerHandle, List<Choice>>
             extractChoices(HandHistory  history,

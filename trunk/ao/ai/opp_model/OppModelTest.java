@@ -47,7 +47,7 @@ public class OppModelTest
         for (HandHistory hand : p.getHands())
         {
             predictor.examine( hand );
-            predictor.add(hand);
+            predictor.add( hand );
         }
 
         System.out.println( "\n\nERRORS:\n" );
