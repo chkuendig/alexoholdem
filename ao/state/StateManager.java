@@ -157,9 +157,10 @@ public class StateManager
             PlayerHandle handle = player.handle();
             hist.addPlayer( handle );
 
-            if (winners.contains( player ))
+            Hole hole = cards.holeFor( handle );
+            if (hole != null)
             {
-                hist.addHole( handle, cards.holeFor(handle) );
+                hist.addHole( handle, hole );
             }
         }
 
