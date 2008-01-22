@@ -75,7 +75,6 @@ public class Odds
     {
         return (WIN + (double)SPLIT/numberOfPlayers)
                / (WIN + LOSE + SPLIT);
-
     }
 
 

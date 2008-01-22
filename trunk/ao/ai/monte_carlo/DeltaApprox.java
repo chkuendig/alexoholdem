@@ -223,12 +223,12 @@ public class DeltaApprox
         Prediction   p         = deltas.classify(ctx);
         HandStrength predicted =
                 (HandStrength) p.toRealHistogram().mostProbable();
-        System.out.println((actual.equals(predicted) ? 1 : 0)
-                                          + "\t" +
-                           actual         + "\t" +
-                           predicted      + "\t" +
-                           p.sampleSize() + "\t" +
-                           p);
+//        System.out.println((actual.equals(predicted) ? 1 : 0)
+//                                          + "\t" +
+//                           actual         + "\t" +
+//                           predicted      + "\t" +
+//                           p.sampleSize() + "\t" +
+//                           p);
         confusion.add(actual, predicted);
 
         deltas.add( ctx.withTarget(new Datum(actual)) );

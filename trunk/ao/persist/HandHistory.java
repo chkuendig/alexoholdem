@@ -267,7 +267,7 @@ public class HandHistory extends Base
                     str.append("\t");
                     round = e.getRound();
                 }
-                str.append( e.getAction().toString().charAt(0) );
+                str.append( e.getAction().toString().substring(0, 2) );
             }
         }
         return str.toString();

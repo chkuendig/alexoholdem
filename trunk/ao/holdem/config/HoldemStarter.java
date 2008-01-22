@@ -2,6 +2,7 @@ package ao.holdem.config;
 
 import ao.ai.opp_model.OppModelTest;
 import ao.persist.dao.PlayerHandleAccess;
+import ao.util.rand.Rand;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.wideplay.warp.persist.PersistenceService;
@@ -17,6 +18,8 @@ public class HoldemStarter
 {
     public static void main(String args[]) throws Exception
     {
+        Rand.nextBoolean();
+
         // configure log4j logging
         BasicConfigurator.configure();
         Logger.getLogger("org.hibernate").setLevel(Level.ERROR);
@@ -37,7 +40,7 @@ public class HoldemStarter
 //                PredictPersistTest.class).testPredictionPersistqqance();
         injector.getInstance(OppModelTest.class).testOpponentModeling();
 //        injector.getInstance(IrcRunner.class).run(
-//                "C:\\alex\\data\\limit_holdem\\holdem\\199504");
+//                "C:\\alex\\data\\limit_holdem\\holdem\\199505");
 //                "C:\\alex\\data\\irc_poker\\holdem\\200104");
 //        injector.getInstance(IrcRunner.class).runOnSubdirs(
 //                "C:\\alex\\data\\limit_holdem\\holdem");
