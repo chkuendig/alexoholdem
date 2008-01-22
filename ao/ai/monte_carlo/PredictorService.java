@@ -55,7 +55,7 @@ public class PredictorService
     }
     public RealHistogram<PlayerHandle> approximate(HandHistory history)
     {
-        return handPredictor.approximate( history );
+        return handPredictor.approximateShowdown( history );
     }
     public RealHistogram<PlayerHandle>
             approximate( Map<PlayerHandle, List<Choice>> choices )
@@ -78,7 +78,7 @@ public class PredictorService
     public Map<PlayerHandle, List<Choice>>
             extractChoices(HandHistory history, PlayerHandle onlyFor)
     {
-        return handPredictor.extractChoices(history, onlyFor);
+        return handPredictor.extractChoices(history, onlyFor, false);
     }
 
 

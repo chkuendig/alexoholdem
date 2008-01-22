@@ -56,6 +56,11 @@ public class RealHistogram<T>
         return sampleSize;
     }
 
+    public double total()
+    {
+        return total;
+    }
+
 
     //--------------------------------------------------------------------
     public Collection<T> classes()

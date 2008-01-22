@@ -47,18 +47,34 @@ public class Choice
 
     public double surprise()
     {
-        double value =
-                (actual == SimpleAction.FOLD)
-                 ? -1
-                 : (actual == SimpleAction.CALL)
-                    ? 0 : 1;
-        double exp =
-                state.nextToActCanRaise()
-                ? expected.probabilityOf(SimpleAction.RAISE) -
-                  expected.probabilityOf(SimpleAction.FOLD)
-                : -(expected.probabilityOf(SimpleAction.FOLD) /
-                    (1.0 - expected.probabilityOf(SimpleAction.RAISE)));
-        return value - exp;
+        assert actual != SimpleAction.FOLD;
+
+        double callProb =
+                expected.probabilityOf(SimpleAction.CALL);
+        double raiseProb =
+                expected.probabilityOf(SimpleAction.RAISE);
+//        double raiseProb =
+//                state.nextToActCanRaise()
+//                ? expected.probabilityOf(SimpleAction.RAISE) : 0;
+
+        double toCall = callProb / (callProb + raiseProb);
+
+        return (actual == SimpleAction.CALL)
+                ? toCall - 1
+                : toCall;
+        
+//        double value =
+//                (actual == SimpleAction.FOLD)
+//                 ? -1
+//                 : (actual == SimpleAction.CALL)
+//                    ? 0 : 1;
+//        double exp =
+//                state.nextToActCanRaise()
+//                ? expected.probabilityOf(SimpleAction.RAISE) -
+//                  expected.probabilityOf(SimpleAction.FOLD)
+//                : -(expected.probabilityOf(SimpleAction.FOLD) /
+//                    (1.0 - expected.probabilityOf(SimpleAction.RAISE)));
+//        return value - exp;
     }
 
     public @NotNull BettingRound round()
