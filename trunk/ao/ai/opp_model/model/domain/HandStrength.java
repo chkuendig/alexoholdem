@@ -55,18 +55,27 @@ public enum HandStrength
 //0.515314061
 //0.769022263
 //     */
-    DELTA_00 (-0.493,  -0.244),
-    DELTA_10 (-0.244,  -0.140),
-    DELTA_20 (-0.140,  -0.031),
+    DELTA_00 (-0.493, -0.244),
+    DELTA_10 (-0.244, -0.140),
+    DELTA_20 (-0.140, -0.031),
     DELTA_30 (-0.031,  0.078),
     DELTA_40 ( 0.078,  0.167),
     DELTA_50 ( 0.167,  0.252),
     DELTA_60 ( 0.252,  0.325),
     DELTA_70 ( 0.325,  0.390),
     DELTA_80 ( 0.390,  0.465),
-    DELTA_90 ( 0.465,  0.728),
-    DELTA_100( 0.728,  0.744);
-    
+    DELTA_90 ( 0.465,  0.744);
+//    DELTA_00 (-0.731, -0.430),
+//    DELTA_10 (-0.430, -0.161),
+//    DELTA_20 (-0.161,  0.068),
+//    DELTA_30 ( 0.068,  0.253),
+//    DELTA_40 ( 0.253,  0.414),
+//    DELTA_50 ( 0.414,  0.555),
+//    DELTA_60 ( 0.555,  0.677),
+//    DELTA_70 ( 0.677,  0.787),
+//    DELTA_80 ( 0.787,  0.916),
+//    DELTA_90 ( 0.916,  1.000);
+
     //--------------------------------------------------------------------
 //    /*
 //-0.51306198
@@ -129,17 +138,35 @@ public enum HandStrength
         // random expected average hand strength
         double avg = expected.sum().strengthVsRandom(
                         showdown.numActivePlayers());
+//        double min = Math.min(act,
+//                              expected.min().strengthVsRandom(
+//                                      showdown.numActivePlayers()));
+//        double max = Math.max(act,
+//                              expected.max().strengthVsRandom(
+//                                      showdown.numActivePlayers()));
 
         // by how much the actual hand is stronger than
         //  an average random hand. -ve # means its
         //  weaker than the average random hand.
         double delta = act - avg;
 
+//        double deltaPercent =
+//                (delta < 0)
+//                 ? delta / (avg - min)
+//                 : delta / (max - avg);
+//        if (Double.isNaN(deltaPercent))
+//        {
+//            deltaPercent = 0;
+//        }
 //        System.out.println(avg   + "\t" +
 //                           act   + "\t" +
-//                           delta);
+//                           delta + "\t" +
+//                           min   + "\t" +
+//                           max   + "\t" +
+//                           deltaPercent);
 
         return HandStrength.fromPercent( delta );
+//        return HandStrength.fromPercent( deltaPercent );
     }
 
 

@@ -53,8 +53,8 @@ public class OppModelTest
             predictor.add( hand );
         }
 
-        System.out.println( "\n\nERRORS:\n" );
-        System.out.println( predictor );
+        //System.out.println( "\n\nERRORS:\n" );
+        //System.out.println( predictor );
     }
 
 
