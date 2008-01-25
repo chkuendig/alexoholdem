@@ -1,4 +1,4 @@
-package ao.strategy;
+package ao.ai.simple;
 
 import static ao.holdem.model.card.Card.Rank.*;
 import ao.holdem.model.card.Hole;

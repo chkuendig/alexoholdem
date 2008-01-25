@@ -20,7 +20,7 @@ import java.util.*;
 public class SimBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private static final int SIM_COUNT = 256;
+    private static final int SIM_COUNT = 256 + 1;
 
 
     //--------------------------------------------------------------------
@@ -50,26 +50,45 @@ public class SimBot extends AbstractPlayer
         for (int i = 0; i < SIM_COUNT; i++)
         {
             runSimulation(env, state, counts, expectation, baseChoices);
+
+//            if ((i+1) % 64 == 0)
+//            {
+//                System.out.println(expectations(counts, expectation));
+//            }
         }
 
         SimpleAction bestAct    = SimpleAction.FOLD;
         double       mostExpect = Long.MIN_VALUE;
+        for (Map.Entry<SimpleAction, Double> exp :
+                expectations(counts, expectation).entrySet())
+        {
+            if (exp.getValue() > mostExpect)
+            {
+                bestAct    = exp.getKey();
+                mostExpect = exp.getValue();
+            }
+        }
+
+        return bestAct.toEasyAction();
+    }
+
+    private Map<SimpleAction, Double> expectations(
+            Map<SimpleAction, int[]>    counts,
+            Map<SimpleAction, double[]> expectation)
+    {
+        Map<SimpleAction, Double> exp =
+                new EnumMap<SimpleAction, Double>( SimpleAction.class );
+
         for (SimpleAction act : SimpleAction.values())
         {
             if (counts.get(act)[0] == 0) continue;
 
             double expect = expectation.get( act )[0] /
                                 counts.get( act )[0];
-            //System.out.println(act + "\t" + expect);
-
-            if (expect > mostExpect)
-            {
-                mostExpect = expect;
-                bestAct    = act;
-            }
+            exp.put(act, expect);
         }
 
-        return bestAct.toEasyAction();
+        return exp;
     }
 
 
@@ -88,27 +107,29 @@ public class SimBot extends AbstractPlayer
 
         List<PlayerHandle> atShowdown = initBrains(state, brains);
 
-        Simulator         sim = new Simulator(env, brains);
+        PlayerHandle      me  = env.nextToAct();
+        Simulator         sim = new Simulator(env, brains, me);
         Simulator.Outcome out = sim.playOutHand();
-
-        extractSimulatedChoices(brains, choices, atShowdown);
-
-        PlayerHandle me      = env.nextToAct();
-        double       winProb = winProbability(me, choices);
-
-        int ifLoss =
-                choices.containsKey( me )
-                ? -out.showdownStakes().smallBlinds()
-                : -brains.get( me ).lastChoice().state()
-                        .stakes().smallBlinds();
-        int ifWin  = out.totalCommit().smallBlinds()
-                      -out.showdownStakes().smallBlinds();
 
         SimpleAction act =
                 out.events().get(0).getAction().toSimpleAction();
-        expectation.get(act)[0] +=
-                (winProb * ifWin + (1.0 - winProb) * ifLoss)
+        int stakes = out.lastActStakes().smallBlinds();
+
+        if (out.mainReachedShowdown())
+        {
+            extractSimulatedChoices(brains, choices, atShowdown);
+            double winProb = winProbability(me, choices);
+
+            int ifWin = out.totalCommit().smallBlinds() - stakes;
+
+            expectation.get(act)[0] +=
+                (winProb * ifWin - (1.0 - winProb) * stakes)
                   * out.probability();
+        }
+        else
+        {
+            expectation.get(act)[0] -= stakes * out.probability();
+        }
         counts.get(act)[0]++;
     }
 
@@ -144,7 +165,9 @@ public class SimBot extends AbstractPlayer
         {
             RealHistogram<PlayerHandle> results =
                     predictor.approximate( choices );
-            return results.probabilityOf( me );
+            return results == null
+                    ? 1.0 / choices.size()
+                    : results.probabilityOf( me );
         }
     }
 

@@ -1,15 +1,15 @@
 package ao.holdem;
 
 
-import ao.odds.ApproximateOddFinder;
-import ao.odds.OddFinder;
-import ao.odds.Odds;
+import ao.odds.agglom.impl.ApproximateOddFinder;
+import ao.odds.agglom.OddFinder;
+import ao.odds.agglom.Odds;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hand;
-import ao.hand_eval.eval7.Eval7FastLookup;
-import ao.hand_eval.eval7.Eval7Faster;
-import ao.hand_eval.eval_567.EvalSlow;
+import ao.odds.eval.eval7.Eval7FastLookup;
+import ao.odds.eval.eval7.Eval7Faster;
+import ao.odds.eval.eval_567.EvalSlow;
 import ao.holdem.model.card.Hole;
 import ao.holdem.net.OverTheWireState;
 import ao.util.rand.Rand;

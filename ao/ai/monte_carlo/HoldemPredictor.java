@@ -71,7 +71,7 @@ public class HoldemPredictor<T>
             add(history, true);
         }
     }
-    public void add(HandHistory history, boolean toGlobal)
+    private void add(HandHistory history, boolean toGlobal)
     {
         StateManager start =
                 new StateManager(history.getPlayers(),
@@ -163,7 +163,7 @@ public class HoldemPredictor<T>
                     get(classifiers, forPlayer.getId());
         Prediction p = learner.classify( inContext );
 
-        if (p.sampleSize() < 10)
+        if (p.sampleSize() < 6)
         {
             Prediction globalP = global.classify( inContext );
             if (globalP.sampleSize() > p.sampleSize())

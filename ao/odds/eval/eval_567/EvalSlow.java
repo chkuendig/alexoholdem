@@ -1,7 +1,7 @@
-package ao.hand_eval.eval_567;
+package ao.odds.eval.eval_567;
 
 import ao.holdem.model.card.Card;
-import ao.hand_eval.eval5.Eval5;
+import ao.odds.eval.eval5.Eval5;
 
 /**
  * All card values are returned in the range of...

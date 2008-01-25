@@ -21,7 +21,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "sagerbot"));
+        modelOpponet(playerAccess.find("irc", "alx"));
 //        modelOpponet(playerAccess.find("irc", "greg"));
     }
 
@@ -46,6 +46,9 @@ public class OppModelTest
 
         for (HandHistory hand : p.getHands())
         {
+            //System.out.println(hand.summary());
+//            System.out.println(".");
+
             predictor.examine( hand );
             predictor.add( hand );
         }

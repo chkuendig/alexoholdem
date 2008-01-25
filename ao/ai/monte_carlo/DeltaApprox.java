@@ -20,8 +20,10 @@ import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.StateManager;
+import ao.util.rand.Rand;
 
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * Approximates the difference between the average
@@ -44,14 +46,22 @@ public class DeltaApprox
         }
     }
 
+    private static final int MEMORY = 32;
 
 
     //--------------------------------------------------------------------
-    private Classifier deltas =
-                new DomainedClassifier(new RandomLearner.Factory());
+    private Classifier global = newClassifier();
+    private LinkedHashMap<Serializable, Classifier> individual =
+            new LinkedHashMap<Serializable, Classifier>(
+                    MEMORY, 0.75f, true);
+
     private HoldemPredictor<SimpleAction> actPredictor;
-    private ConfusionMatrix<HandStrength> confusion =
-                new ConfusionMatrix<HandStrength>();
+    private ConfusionMatrix<HandStrength> othersErrors =
+            new ConfusionMatrix<HandStrength>();
+    private Map<Serializable, ConfusionMatrix<HandStrength>> errors =
+            new HashMap<Serializable, ConfusionMatrix<HandStrength>>();
+
+    private int size;
 
 
     //--------------------------------------------------------------------
@@ -107,7 +117,7 @@ public class DeltaApprox
     public RealHistogram<PlayerHandle>
             approximate( Map<PlayerHandle, List<Choice>> choices )
     {
-        if (choices.size() != 2) return null;
+        if (choices.size() < 2) return null;
 
         int sample = Integer.MAX_VALUE;
         Map<PlayerHandle, RealHistogram<HandStrength>> hands =
@@ -116,7 +126,7 @@ public class DeltaApprox
                 choices.entrySet())
         {
             RealHistogram<HandStrength> handStrength =
-                    approximate(c.getValue());
+                    approximate(c.getKey(), c.getValue());
 //            if (handStrength == null   ||
 //                handStrength.isEmpty() ||
 //                handStrength.total() == 0) return null;
@@ -138,8 +148,8 @@ public class DeltaApprox
                 ? approxTwo(hands)
                 : approxN(hands);
     }
-    private RealHistogram<PlayerHandle>
-            approxTwo(Map<PlayerHandle, RealHistogram<HandStrength>> hands)
+    private RealHistogram<PlayerHandle> approxTwo(
+                Map<PlayerHandle, RealHistogram<HandStrength>> hands)
     {
         Iterator<PlayerHandle>      players = hands.keySet().iterator();
         PlayerHandle                playerA = players.next();
@@ -155,8 +165,8 @@ public class DeltaApprox
         approx.add(playerB, 1.0 - aWin);
         return approx;
     }
-    private RealHistogram<PlayerHandle>
-            approxN(Map<PlayerHandle, RealHistogram<HandStrength>> hands)
+    private RealHistogram<PlayerHandle> approxN(
+                Map<PlayerHandle, RealHistogram<HandStrength>> hands)
     {
         RealHistogram<PlayerHandle> approx  =
                 new RealHistogram<PlayerHandle>();
@@ -234,14 +244,35 @@ public class DeltaApprox
                     lastChoice.state(),
                     history.getCommunity(),
                     history.getHoles().get( choice.getKey() ));
-            learn( choiceList, strength );
+            learn( choice.getKey(), choiceList, strength );
         }
     }
 
-    private void learn(List<Choice> surprises, HandStrength actual)
+    private void learn(
+            PlayerHandle player,
+            List<Choice> surprises,
+            HandStrength actual)
     {
+        doLearn(getClassifier(player),
+                getConfusion(player),
+                surprises, actual);
+
+        size++;
+        if (size < 1024 ||
+            Rand.nextBoolean(Math.sqrt(size) / size))
+        {
+            doLearn(global, othersErrors, surprises, actual);
+        }
+    }
+    private void doLearn(
+            Classifier                    classifier,
+            ConfusionMatrix<HandStrength> confusion,
+            List<Choice>                  surprises,
+            HandStrength                  actual)
+    {
+        //individual
         Context      ctx       = contextFor(surprises);
-        Prediction   p         = deltas.classify(ctx);
+        Prediction   p         = classifier.classify(ctx);
         HandStrength predicted =
                 (HandStrength) p.toRealHistogram().mostProbable();
 //        System.out.println((actual.equals(predicted) ? 1 : 0)
@@ -252,7 +283,7 @@ public class DeltaApprox
 //                           p);
         confusion.add(actual, predicted);
 
-        deltas.add( ctx.withTarget(new Datum(actual)) );
+        classifier.add( ctx.withTarget(new Datum(actual)) );
     }
 
     //history.holesVisible( choice. )
@@ -319,19 +350,34 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     public RealHistogram<HandStrength>
-            approximate( List<Choice> choices )
+            approximate(PlayerHandle player,
+                        List<Choice> choices)
     {
+        Context    ctx      = contextFor(choices);
+        Classifier personal = getClassifier(player);
+        Prediction p        = personal.classify( ctx );
+
+        Prediction mostConfident = p;
+        if (p.sampleSize() < 5)
+        {
+            Prediction globalP = global.classify( ctx );
+            if (globalP.sampleSize() > p.sampleSize())
+            {
+                mostConfident = globalP;
+            }
+        }
         return (RealHistogram<HandStrength>)
-                deltas.classify( contextFor(choices) )
-                        .toRealHistogram();
+                mostConfident.toRealHistogram();
     }
 
 
     //--------------------------------------------------------------------
     private Context contextFor(List<Choice> choices)
     {
-        int          count     = 0;
-        BettingRound prevRound = null;
+        double       maxRoundSurprise = Long.MIN_VALUE;
+        BettingRound prevRound        = null;
+
+        double roundMaxes[] = new double[ 4 ];
 
         Context ctx = new ContextImpl();
         for (Choice s : choices)
@@ -339,24 +385,96 @@ public class DeltaApprox
             BettingRound round = s.round();
             if (prevRound != round)
             {
-                count = 0;
+                maxRoundSurprise = Long.MIN_VALUE;
             }
 
-            ctx.add(new Datum(dataNameCache[ round.ordinal() ][ count ],
-                              s.surprise()) );
-
+            double surprise = s.surprise();
+            if (surprise > maxRoundSurprise)
+            {
+                maxRoundSurprise              = surprise;
+                roundMaxes[ round.ordinal() ] = surprise;
+            }
             prevRound = s.round();
-            count++;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            ctx.add(new Datum(BettingRound.values()[ i ].toString(),
+                              roundMaxes[ i ]) );
         }
 
+//        for (Choice s : choices)
+//        {
+//            BettingRound round = s.round();
+//            if (prevRound != round)
+//            {
+//                count = 0;
+//            }
+//
+//            ctx.add(new Datum(dataNameCache[ round.ordinal() ][ count ],
+//                              s.surprise()) );
+//
+//            prevRound = s.round();
+//            count++;
+//        }
         return ctx;
     }
 
-    
+
+    //--------------------------------------------------------------------
+    private ConfusionMatrix<HandStrength>
+                getConfusion(PlayerHandle player)
+    {
+        ConfusionMatrix<HandStrength> confusion =
+                errors.get( player.getId() );
+        if (confusion == null)
+        {
+            confusion = new ConfusionMatrix<HandStrength>();
+            errors.put( player.getId(), confusion );
+        }
+        return confusion;
+    }
+
+    private Classifier getClassifier(PlayerHandle player)
+    {
+        Classifier personal = individual.get( player.getId() );
+        if (personal == null)
+        {
+            personal = newClassifier();
+            individual.put( player.getId(), personal );
+
+            while (individual.size() > MEMORY)
+            {
+                Serializable forgottenId =
+                        individual.keySet().iterator().next();
+                individual.remove( forgottenId );
+                othersErrors.addAll( errors.remove(forgottenId) );
+            }
+        }
+        return personal;
+    }
+
+    private Classifier newClassifier()
+    {
+        return new DomainedClassifier(new RandomLearner.Factory());
+    }
+
+
     //--------------------------------------------------------------------
     public String toString()
     {
-        return confusion.toString();
+        StringBuilder str = new StringBuilder();
+        for (Map.Entry<Serializable, ConfusionMatrix<HandStrength>> err :
+                errors.entrySet())
+        {
+            str.append("\nConfusion for ")
+               .append(err.getKey())
+               .append("\n")
+               .append(err.getValue().toString());
+        }
+
+        str.append("\nConfusion for others\n")
+               .append(othersErrors.toString());
+        return str.toString();
     }
 }
 

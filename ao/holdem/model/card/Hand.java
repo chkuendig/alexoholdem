@@ -1,6 +1,6 @@
 package ao.holdem.model.card;
 
-import ao.hand_eval.eval_567.EvalSlow;
+import ao.odds.eval.eval_567.EvalSlow;
 import ao.util.stats.Combiner;
 
 /**

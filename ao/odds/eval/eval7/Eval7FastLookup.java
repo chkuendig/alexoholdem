@@ -1,4 +1,4 @@
-package ao.hand_eval.eval7;
+package ao.odds.eval.eval7;
 
 import ao.util.persist.PersistentShorts;
 
