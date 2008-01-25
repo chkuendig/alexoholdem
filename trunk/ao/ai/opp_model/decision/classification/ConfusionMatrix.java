@@ -32,6 +32,8 @@ public class ConfusionMatrix<T>
 
     public void addAll(ConfusionMatrix<T> addend)
     {
+        if (addend == null) return;
+
         all.addAll( addend.all );
         for (Map.Entry<T, Histogram<T>> e : addend.matrix.entrySet())
         {

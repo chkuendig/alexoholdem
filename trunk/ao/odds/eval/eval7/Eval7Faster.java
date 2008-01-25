@@ -1,7 +1,7 @@
-package ao.hand_eval.eval7;
+package ao.odds.eval.eval7;
 
-import ao.hand_eval.eval5.Eval5;
-import ao.hand_eval.eval_567.EvalSlow;
+import ao.odds.eval.eval5.Eval5;
+import ao.odds.eval.eval_567.EvalSlow;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hand;
 import ao.util.persist.PersistentInts;

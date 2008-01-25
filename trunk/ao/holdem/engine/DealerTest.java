@@ -1,6 +1,7 @@
 package ao.holdem.engine;
 
 import ao.ai.monte_carlo.SimBot;
+import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
 import ao.holdem.model.Money;
 import ao.holdem.model.Player;
@@ -41,8 +42,8 @@ public class DealerTest
 //                    put("real.G", new DuaneBot());
 //                    put("real.F", new DuaneBot());
 //                    put("real.E", new DuaneBot());
-//                    put("real.D", new AlwaysRaiseBot());
-                    put("real.C", new DuaneBot());
+//                    put("real.D", new MathBot());
+                    put("real.C", new AlwaysRaiseBot());
                     put("real.B", new DuaneBot());
                     put("real.A", smarties.get());
 //                    put("real.A", new AlwaysRaiseBot());

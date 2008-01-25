@@ -21,14 +21,17 @@ public class Simulator
     //--------------------------------------------------------------------
     private final StateManager                    start;
     private final Map<PlayerHandle, BotPredictor> players;
+    private final PlayerHandle                    main;
 
 
     //--------------------------------------------------------------------
     public Simulator(StateManager                    startFrom,
-                     Map<PlayerHandle, BotPredictor> brains)
+                     Map<PlayerHandle, BotPredictor> brains,
+                     PlayerHandle                    mainPlayer)
     {
         start   = startFrom;
         players = brains;
+        main    = mainPlayer;
     }
 
 
@@ -63,6 +66,15 @@ public class Simulator
             if (firstToAct.equals( player ))
             {
                 firstToActStakes = afterAction.commitment();
+
+                if (realAct.isFold())
+                {
+                    return new Outcome(events,
+                                       firstToActStakes,
+                                       state.head().pot(),
+                                       probability,
+                                       false);
+                }
             }
         }
         while ( !state.atEndOfHand() );
@@ -70,7 +82,8 @@ public class Simulator
         return new Outcome(events,
                            firstToActStakes,
                            state.head().pot(),
-                           probability);
+                           probability,
+                           true);
     }
 
 
@@ -78,22 +91,25 @@ public class Simulator
     public static class Outcome
     {
         //----------------------------------------------------------------
-        private List<Event> events;
-        private Money       showdownStakes;
-        private Money totalCommit;
-        private double      probability;
+        private final List<Event> events;
+        private final Money       lastActStakes;
+        private final Money       totalCommit;
+        private final double      probability;
+        private final boolean     mainReachedShowdown;
 
 
         //----------------------------------------------------------------
         public Outcome(List<Event> events,
-                       Money       showdownStakes,
+                       Money       lastActStakes,
                        Money       totalCommit,
-                       double      probability)
+                       double      probability,
+                       boolean     mainReachedShowdown)
         {
-            this.events         = events;
-            this.showdownStakes = showdownStakes;
-            this.totalCommit    = totalCommit;
-            this.probability    = probability;
+            this.events              = events;
+            this.lastActStakes       = lastActStakes;
+            this.totalCommit         = totalCommit;
+            this.probability         = probability;
+            this.mainReachedShowdown = mainReachedShowdown;
         }
 
 
@@ -103,9 +119,9 @@ public class Simulator
             return events;
         }
 
-        public Money showdownStakes()
+        public Money lastActStakes()
         {
-            return showdownStakes;
+            return lastActStakes;
         }
 
         public Money totalCommit()
@@ -116,6 +132,11 @@ public class Simulator
         public double probability()
         {
             return probability;
+        }
+
+        public boolean mainReachedShowdown()
+        {
+            return mainReachedShowdown;
         }
     }
 }

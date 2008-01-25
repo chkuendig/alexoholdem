@@ -1,8 +1,10 @@
-package ao.odds;
+package ao.odds.agglom.impl;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.BlindOddFinder;
+import ao.odds.agglom.Odds;
 import ao.util.stats.FastCombiner;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +61,7 @@ public class ApproxBlindOddFinder
         private final int       activePlayers;
         private       Odds      cumulative;
         private       Odds      max;
-        private       Odds      min;
+        private Odds min;
 
 
         //----------------------------------------------------------------

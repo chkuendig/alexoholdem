@@ -1,4 +1,4 @@
-package ao.odds;
+package ao.odds.agglom;
 
 /**
  * odds from the point of view of one player.

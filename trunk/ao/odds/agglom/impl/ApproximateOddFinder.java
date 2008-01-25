@@ -1,9 +1,11 @@
-package ao.odds;
+package ao.odds.agglom.impl;
 
-import ao.hand_eval.eval7.Eval7Faster;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.OddFinder;
+import ao.odds.agglom.Odds;
+import ao.odds.eval.eval7.Eval7Faster;
 import ao.util.rand.MersenneTwisterFast;
 import ao.util.stats.FastIntCombiner;
 
@@ -24,6 +26,7 @@ public class ApproximateOddFinder implements OddFinder
     public ApproximateOddFinder()
     {
         this(DEFAULT_FLOP_ITR, DEFAULT_HOLE_ITR);
+//        this(-1, -1);
     }
 
     public ApproximateOddFinder(
@@ -69,10 +72,10 @@ public class ApproximateOddFinder implements OddFinder
 //                return computeTurn(
 //                        100, activeOpponents, indexes, cards, rand);
             case 5:
-                return computeRiver(
-                        holes, activeOpponents, indexes, cards, rand);
 //                return computeRiver(
-//                        600, activeOpponents, indexes, cards, rand);
+//                        holes, activeOpponents, indexes, cards, rand);
+                return computeRiver(
+                        2000, activeOpponents, indexes, cards, rand);
         }
         return new Odds();
     }

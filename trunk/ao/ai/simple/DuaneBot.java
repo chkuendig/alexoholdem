@@ -6,7 +6,7 @@ import ao.holdem.model.card.Hole;
 import ao.persist.HandHistory;
 import ao.state.HandState;
 import ao.state.StateManager;
-import ao.strategy.Sklansky;
+import ao.ai.simple.Sklansky;
 
 /**
  * Strategy from

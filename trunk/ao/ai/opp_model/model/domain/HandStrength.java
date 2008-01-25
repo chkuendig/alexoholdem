@@ -2,7 +2,11 @@ package ao.ai.opp_model.model.domain;
 
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.odds.*;
+import ao.odds.agglom.Odds;
+import ao.odds.agglom.OddFinder;
+import ao.odds.agglom.BlindOddFinder;
+import ao.odds.agglom.impl.ApproxBlindOddFinder;
+import ao.odds.agglom.impl.ApproximateOddFinder;
 import ao.state.HandState;
 
 /**
@@ -51,17 +55,17 @@ public enum HandStrength
 //0.515314061
 //0.769022263
 //     */
-//    DELTA_00 (-0.493,  -0.244),
-//    DELTA_10 (-0.244,  -0.140),
-//    DELTA_20 (-0.140,  -0.031),
-//    DELTA_30 (-0.031,  0.078),
-//    DELTA_40 ( 0.078,  0.167),
-//    DELTA_50 ( 0.167,  0.252),
-//    DELTA_60 ( 0.252,  0.325),
-//    DELTA_70 ( 0.325,  0.390),
-//    DELTA_80 ( 0.390,  0.465),
-//    DELTA_90 ( 0.465,  0.728),
-//    DELTA_100( 0.728,  0.744);
+    DELTA_00 (-0.493,  -0.244),
+    DELTA_10 (-0.244,  -0.140),
+    DELTA_20 (-0.140,  -0.031),
+    DELTA_30 (-0.031,  0.078),
+    DELTA_40 ( 0.078,  0.167),
+    DELTA_50 ( 0.167,  0.252),
+    DELTA_60 ( 0.252,  0.325),
+    DELTA_70 ( 0.325,  0.390),
+    DELTA_80 ( 0.390,  0.465),
+    DELTA_90 ( 0.465,  0.728),
+    DELTA_100( 0.728,  0.744);
     
     //--------------------------------------------------------------------
 //    /*
@@ -72,12 +76,14 @@ public enum HandStrength
 //0.459206907
 //0.774503854
 //     */
-    DELTA_0(-0.493, -0.219),
-    DELTA_1(-0.044,  0.051),
-    DELTA_2( 0.104,  0.269),
-    DELTA_3( 0.229,  0.446),
-    DELTA_4( 0.337,  0.744);
+//    DELTA_0(-0.493, -0.219),
+//    DELTA_1(-0.044,  0.051),
+//    DELTA_2( 0.104,  0.269),
+//    DELTA_3( 0.229,  0.446),
+//    DELTA_4( 0.337,  0.744);
 
+//    DELTA_0(-0.493, 0.167),
+//    DELTA_1( 0.167, 0.744);
 
     //--------------------------------------------------------------------
     private static BlindOddFinder expectedOdds =

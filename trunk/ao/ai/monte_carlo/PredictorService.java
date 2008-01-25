@@ -3,7 +3,6 @@ package ao.ai.monte_carlo;
 import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
-import ao.ai.opp_model.model.domain.HandStrength;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -48,15 +47,16 @@ public class PredictorService
         return actPredictor.predict(forPlayer, inContext);
     }
 
-    public RealHistogram<HandStrength>
-            predictHand(List<Choice> fromChoices)
-    {
-        return handPredictor.approximate( fromChoices );
-    }
-    public RealHistogram<PlayerHandle> approximate(HandHistory history)
-    {
-        return handPredictor.approximateShowdown( history );
-    }
+//    public RealHistogram<HandStrength>
+//            predictHand(PlayerHandle forPlayer,
+//                        List<Choice> fromChoices)
+//    {
+//        return handPredictor.approximate( forPlayer, fromChoices );
+//    }
+//    public RealHistogram<PlayerHandle> approximate(HandHistory history)
+//    {
+//        return handPredictor.approximateShowdown( history );
+//    }
     public RealHistogram<PlayerHandle>
             approximate( Map<PlayerHandle, List<Choice>> choices )
     {
