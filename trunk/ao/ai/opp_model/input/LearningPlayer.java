@@ -12,7 +12,7 @@ import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.state.StateManager;
-import ao.stats.Statistic;
+import ao.ai.opp_model.predict.act.Statistic;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -83,7 +83,7 @@ public abstract class LearningPlayer
         RealAction act  = shiftAction();
         if (act.isBlind()) return act;
 
-        Statistic  stat = env.stats().forPlayer(playerId);
+        Statistic stat = env.stats().forPlayer(playerId);
         Context    ctx  = stat.nextActContext();
 
         if (publish)

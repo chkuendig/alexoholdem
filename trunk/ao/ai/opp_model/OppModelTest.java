@@ -1,6 +1,6 @@
 package ao.ai.opp_model;
 
-import ao.ai.monte_carlo.PredictorService;
+import ao.ai.opp_model.predict.PredictorService;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
 import ao.persist.dao.PlayerHandleAccess;
@@ -21,7 +21,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "alx"));
+        modelOpponet(playerAccess.find("irc", "King_Fish"));
 //        modelOpponet(playerAccess.find("irc", "greg"));
     }
 
@@ -53,8 +53,8 @@ public class OppModelTest
             predictor.add( hand );
         }
 
-        //System.out.println( "\n\nERRORS:\n" );
-        //System.out.println( predictor );
+        System.out.println( "\n\nERRORS:\n" );
+        System.out.println( predictor );
     }
 
 

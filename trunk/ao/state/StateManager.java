@@ -10,7 +10,7 @@ import ao.holdem.model.card.Hole;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
-import ao.stats.HandStats;
+import ao.ai.opp_model.predict.act.HandStats;
 
 import java.util.ArrayList;
 import java.util.Collection;

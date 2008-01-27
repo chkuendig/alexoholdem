@@ -1,8 +1,9 @@
-package ao.ai.monte_carlo;
+package ao.ai.opp_model.predict;
 
 import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
+import ao.ai.opp_model.predict.hole.DeltaApprox;
 import ao.holdem.model.act.SimpleAction;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
@@ -17,7 +18,7 @@ public class PredictorService
 {
     //--------------------------------------------------------------------
     private HoldemPredictor<SimpleAction> actPredictor;
-    private DeltaApprox                   handPredictor;
+    private DeltaApprox handPredictor;
 
 
     //--------------------------------------------------------------------
