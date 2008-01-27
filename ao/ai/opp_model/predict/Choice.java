@@ -1,4 +1,4 @@
-package ao.ai.monte_carlo;
+package ao.ai.opp_model.predict;
 
 import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.mix.MixedAction;
@@ -40,10 +40,10 @@ public class Choice
 //        return expected;
 //    }
 
-//    public SimpleAction actual()
-//    {
-//        return actual;
-//    }
+    public SimpleAction actual()
+    {
+        return actual;
+    }
 
     public double surprise()
     {

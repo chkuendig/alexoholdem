@@ -7,7 +7,9 @@ import ao.holdem.model.act.SimpleAction;
 import ao.persist.PlayerHandle;
 import ao.state.HandState;
 import ao.state.StateManager;
-import ao.stats.Statistic;
+import ao.ai.opp_model.predict.act.Statistic;
+import ao.ai.opp_model.predict.PredictorService;
+import ao.ai.opp_model.predict.Choice;
 
 import java.util.ArrayList;
 import java.util.List;

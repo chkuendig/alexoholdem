@@ -1,4 +1,4 @@
-package ao.ai.monte_carlo;
+package ao.ai.opp_model.predict.hole;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;
@@ -11,6 +11,8 @@ import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.input.ContextPlayer;
 import ao.ai.opp_model.model.domain.HandStrength;
+import ao.ai.opp_model.predict.Choice;
+import ao.ai.opp_model.predict.HoldemPredictor;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
 import ao.holdem.model.BettingRound;
@@ -19,11 +21,12 @@ import ao.holdem.model.act.SimpleAction;
 import ao.persist.Event;
 import ao.persist.HandHistory;
 import ao.persist.PlayerHandle;
+import ao.state.HandState;
 import ao.state.StateManager;
 import ao.util.rand.Rand;
 
-import java.util.*;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * Approximates the difference between the average
@@ -271,7 +274,7 @@ public class DeltaApprox
             HandStrength                  actual)
     {
         //individual
-        Context      ctx       = contextFor(surprises);
+        Context      ctx       = denseContextFor(surprises);
         Prediction   p         = classifier.classify(ctx);
         HandStrength predicted =
                 (HandStrength) p.toRealHistogram().mostProbable();
@@ -353,7 +356,7 @@ public class DeltaApprox
             approximate(PlayerHandle player,
                         List<Choice> choices)
     {
-        Context    ctx      = contextFor(choices);
+        Context    ctx      = denseContextFor(choices);
         Classifier personal = getClassifier(player);
         Prediction p        = personal.classify( ctx );
 
@@ -372,36 +375,69 @@ public class DeltaApprox
 
 
     //--------------------------------------------------------------------
-    private Context contextFor(List<Choice> choices)
+    private Context denseContextFor(List<Choice> choices)
     {
-        double       maxRoundSurprise = Long.MIN_VALUE;
-        BettingRound prevRound        = null;
+        int    checkCount  = 0;
+        int    raiseCount  = 0;
+        int    betsMatched = 0;
+        double totalPosition = 0;
 
         double roundMaxes[] = new double[ 4 ];
+        for (Map.Entry<BettingRound, List<Choice>> r :
+                byRound(choices).entrySet())
+        {
+            double maxRoundSurprise = Long.MIN_VALUE;
+
+            for (Choice c : r.getValue())
+            {
+                double surprise = c.surprise();
+
+                if (surprise > maxRoundSurprise)
+                {
+                    maxRoundSurprise                   = surprise;
+                    roundMaxes[ r.getKey().ordinal() ] = surprise;
+                }
+
+                totalPosition += c.state().nextToActActivePosition();
+                betsMatched   += c.state().betsToCall();
+                if (c.actual() == SimpleAction.RAISE)
+                {
+                    raiseCount++;
+                }
+                else if (c.actual() == SimpleAction.CALL &&
+                         c.state().betsToCall() == 0)
+                {
+                    checkCount++;
+                }
+            }
+        }
 
         Context ctx = new ContextImpl();
-        for (Choice s : choices)
-        {
-            BettingRound round = s.round();
-            if (prevRound != round)
-            {
-                maxRoundSurprise = Long.MIN_VALUE;
-            }
-
-            double surprise = s.surprise();
-            if (surprise > maxRoundSurprise)
-            {
-                maxRoundSurprise              = surprise;
-                roundMaxes[ round.ordinal() ] = surprise;
-            }
-            prevRound = s.round();
-        }
         for (int i = 0; i < 4; i++)
         {
             ctx.add(new Datum(BettingRound.values()[ i ].toString(),
                               roundMaxes[ i ]) );
         }
 
+        HandState last = choices.get( choices.size() - 1 ).state();
+
+        ctx.add(new Datum("Total Choices", choices.size()));
+        ctx.add(new Datum("Total Bets Matched", betsMatched));
+        ctx.add(new Datum("Average Position",
+                          totalPosition / choices.size()));
+        ctx.add(new Datum("Bet Ratio",
+                          (double) raiseCount /
+                                  (choices.size() - checkCount)));
+        ctx.add(new Datum("Pot Ratio",
+                            (double) last.stakes().smallBlinds() /
+                                     last.pot().smallBlinds()));
+        
+        return ctx;
+    }
+
+//    private Context contextFor(List<Choice> choices)
+//    {
+//        Context ctx = new ContextImpl();
 //        for (Choice s : choices)
 //        {
 //            BettingRound round = s.round();
@@ -416,7 +452,31 @@ public class DeltaApprox
 //            prevRound = s.round();
 //            count++;
 //        }
-        return ctx;
+//        return ctx;
+//    }
+
+    private Map<BettingRound, List<Choice>> byRound(List<Choice> flat)
+    {
+        Map<BettingRound, List<Choice>> byRound =
+                new EnumMap<BettingRound, List<Choice>>(
+                        BettingRound.class);
+
+        List<Choice> currRound = null;
+        BettingRound prevRound = null;
+        for (Choice choice : flat)
+        {
+            BettingRound round = choice.round();
+            if (prevRound != round)
+            {
+                currRound = new ArrayList<Choice>();
+                byRound.put(round, currRound);
+                prevRound = round;
+            }
+
+            currRound.add( choice );
+        }
+
+        return byRound;
     }
 
 

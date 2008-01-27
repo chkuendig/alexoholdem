@@ -1,4 +1,4 @@
-package ao.ai.monte_carlo;
+package ao.ai.opp_model.predict;
 
 import ao.ai.opp_model.classifier.raw.Classifier;
 import ao.ai.opp_model.classifier.raw.DomainedClassifier;

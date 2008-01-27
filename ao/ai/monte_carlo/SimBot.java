@@ -2,6 +2,8 @@ package ao.ai.monte_carlo;
 
 import ao.ai.AbstractPlayer;
 import ao.ai.opp_model.decision.classification.RealHistogram;
+import ao.ai.opp_model.predict.PredictorService;
+import ao.ai.opp_model.predict.Choice;
 import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.card.Hole;
@@ -24,7 +26,8 @@ public class SimBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    @Inject PredictorService predictor;
+    @Inject
+    PredictorService predictor;
 //    private PredictorService predictor;
 
     
