@@ -1,8 +1,8 @@
 package ao.holdem.model;
 
 import ao.holdem.model.act.RealAction;
-import ao.persist.HandHistory;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.state.StateManager;
 
 /**
  *

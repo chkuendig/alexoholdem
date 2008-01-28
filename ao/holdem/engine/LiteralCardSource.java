@@ -4,8 +4,8 @@ import ao.holdem.model.BettingRound;
 import ao.holdem.model.card.CardSource;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
 
 import java.util.HashMap;
 import java.util.Map;

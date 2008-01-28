@@ -7,9 +7,9 @@ import ao.holdem.model.card.Hole;
 import ao.odds.agglom.impl.ApproximateOddFinder;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
-import ao.persist.HandHistory;
-import ao.state.HandState;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.StateManager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

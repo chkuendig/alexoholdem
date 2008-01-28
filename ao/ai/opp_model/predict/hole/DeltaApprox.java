@@ -18,11 +18,11 @@ import ao.holdem.engine.LiteralCardSource;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.SimpleAction;
-import ao.persist.Event;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.state.HandState;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.Event;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.StateManager;
 import ao.util.rand.Rand;
 
 import java.io.Serializable;
@@ -377,8 +377,9 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     private Context denseContextFor(List<Choice> choices)
     {
-        int raiseCount  = 0;
-        int betsMatched = 0;
+        int raiseCount       = 0;
+        int betsCalled       = 0;
+        int betsRaiseMatched = 0;
 
         double roundMaxes[] = new double[ 4 ];
         for (Map.Entry<BettingRound, List<Choice>> r :
@@ -396,16 +397,16 @@ public class DeltaApprox
                     roundMaxes[ r.getKey().ordinal() ] = surprise;
                 }
 
-                betsMatched   += c.state().betsToCall();
+                int toCall = c.state().betsToCall();
                 if (c.actual() == SimpleAction.RAISE)
                 {
                     raiseCount++;
+                    betsRaiseMatched += toCall;
                 }
-//                else if (c.actual() == SimpleAction.CALL &&
-//                         c.state().betsToCall() == 0)
-//                {
-//                    checkCount++;
-//                }
+                else if (c.actual() == SimpleAction.CALL && toCall > 0)
+                {
+                    betsCalled += toCall;
+                }
             }
         }
 
@@ -419,7 +420,7 @@ public class DeltaApprox
         HandState last = choices.get( choices.size() - 1 ).state();
 
         ctx.add(new Datum("Total Choices", choices.size()));
-        ctx.add(new Datum("Total Bets Matched", betsMatched));
+        ctx.add(new Datum("Total Bets Matched", betsCalled + betsRaiseMatched));
         ctx.add(new Datum("Position", last.position()));
         ctx.add(new Datum("Bet Ratio",
                           (double) raiseCount / choices.size()));

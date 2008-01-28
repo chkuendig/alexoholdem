@@ -1,10 +1,10 @@
-package ao.persist;
+package ao.holdem.engine.persist;
 
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
-import ao.persist.Base;
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.Base;
+import ao.holdem.engine.persist.PlayerHandle;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;

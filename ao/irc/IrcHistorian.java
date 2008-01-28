@@ -1,7 +1,7 @@
 package ao.irc;
 
-import ao.persist.HandHistory;
-import ao.persist.dao.PlayerHandleLookup;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.dao.PlayerHandleLookup;
 import com.google.inject.Inject;
 
 import java.io.File;

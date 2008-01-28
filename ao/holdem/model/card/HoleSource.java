@@ -1,6 +1,6 @@
 package ao.holdem.model.card;
 
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.PlayerHandle;
 
 /**
  *

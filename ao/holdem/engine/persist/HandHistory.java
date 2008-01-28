@@ -1,4 +1,4 @@
-package ao.persist;
+package ao.holdem.engine.persist;
 
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.card.Card;

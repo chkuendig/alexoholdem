@@ -1,10 +1,10 @@
 package ao.ai.opp_model.predict.act;
 
 import ao.holdem.model.act.RealAction;
-import ao.persist.PlayerHandle;
-import ao.state.CumulativeState;
-import ao.state.HandState;
-import ao.state.PlayerState;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.CumulativeState;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.PlayerState;
 import ao.ai.opp_model.predict.act.impl.GenericStats;
 import ao.ai.opp_model.predict.act.impl.MultiStatistic;
 import ao.ai.opp_model.predict.act.impl.SpecificStats;

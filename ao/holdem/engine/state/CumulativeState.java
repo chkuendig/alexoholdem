@@ -1,7 +1,7 @@
-package ao.state;
+package ao.holdem.engine.state;
 
 import ao.holdem.model.act.RealAction;
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.PlayerHandle;
 
 /**
  * 

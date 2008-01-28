@@ -1,7 +1,7 @@
 package ao.ai;
 
-import ao.state.HandState;
-import ao.state.StateManager;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.StateManager;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.EasyAction;

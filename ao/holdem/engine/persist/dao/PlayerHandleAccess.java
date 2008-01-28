@@ -1,6 +1,6 @@
-package ao.persist.dao;
+package ao.holdem.engine.persist.dao;
 
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.PlayerHandle;
 import com.google.inject.name.Named;
 import com.wideplay.warp.persist.dao.Finder;
 import com.wideplay.warp.persist.dao.MaxResults;
