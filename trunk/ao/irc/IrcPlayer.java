@@ -3,8 +3,8 @@ package ao.irc;
 import ao.holdem.engine.HoldemRuleBreach;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
-import ao.persist.HandHistory;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.state.StateManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -4,7 +4,7 @@ import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
-import ao.state.HandState;
+import ao.holdem.engine.state.HandState;
 import org.jetbrains.annotations.NotNull;
 
 /**

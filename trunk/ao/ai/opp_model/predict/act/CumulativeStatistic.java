@@ -1,6 +1,6 @@
 package ao.ai.opp_model.predict.act;
 
-import ao.state.CumulativeState;
+import ao.holdem.engine.state.CumulativeState;
 
 /**
  *

@@ -7,9 +7,9 @@ import ao.ai.opp_model.decision.input.raw.example.Context;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.decision.input.raw.example.Example;
 import ao.holdem.model.act.RealAction;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.StateManager;
 
 /**
  * A player that extracts action examples from a HandHistory

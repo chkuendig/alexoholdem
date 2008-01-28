@@ -1,8 +1,7 @@
 package ao.holdem.config;
 
 import ao.ai.opp_model.OppModelTest;
-import ao.persist.dao.PlayerHandleAccess;
-import ao.util.rand.Rand;
+import ao.holdem.engine.persist.dao.PlayerHandleAccess;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.wideplay.warp.persist.PersistenceService;
@@ -18,8 +17,6 @@ public class HoldemStarter
 {
     public static void main(String args[]) throws Exception
     {
-        Rand.nextBoolean();
-
         // configure log4j logging
         BasicConfigurator.configure();
         Logger.getLogger("org.hibernate").setLevel(Level.ERROR);

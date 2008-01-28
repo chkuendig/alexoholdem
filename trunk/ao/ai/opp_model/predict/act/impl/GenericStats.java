@@ -5,8 +5,8 @@ import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
 import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
-import ao.persist.PlayerHandle;
-import ao.state.HandState;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
 import ao.ai.opp_model.predict.act.CumulativeStatistic;
 
 /**
@@ -77,16 +77,17 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
         {
             ctx.add(new Datum("Total Bet Ratio",
                             (double) raises / numActs));
-            ctx.add(new Datum("Total Call Ratio",
-                            (double) calls / numActs));
+//            ctx.add(new Datum("Total Call Ratio",
+//                            (double) calls / numActs));
 //            ctx.add(new Datum("Total Check Ratio",
 //                            (double) checks / numActs));
         }
 
-//        ctx.add(new Datum("Players",
-//                        forefront.players().length));
+        ctx.add(new Datum("Players",
+                        forefront.players().length));
         ctx.add(new Datum("Active Players",
-                        forefront.numActivePlayers()));
+                        (double) forefront.numActivePlayers()
+                                 / forefront.players().length));
 
         return ctx;
     }

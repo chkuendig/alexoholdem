@@ -1,8 +1,8 @@
-package ao.persist.dao;
+package ao.holdem.engine.persist.dao;
 
-import ao.persist.Event;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.Event;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.wideplay.warp.persist.Transactional;

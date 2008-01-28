@@ -6,8 +6,8 @@ import ao.ai.opp_model.decision.input.raw.example.Datum;
 import ao.ai.opp_model.model.domain.BetsToCall;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
-import ao.persist.PlayerHandle;
-import ao.state.HandState;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
 import ao.ai.opp_model.predict.act.CumulativeStatistic;
 
 import java.io.Serializable;
@@ -31,8 +31,11 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
     private Serializable subjectId;
     private boolean      isUnfolded;
 
-    private int betsCalled[] = new int[4];
-    private int betsRaised[] = new int[4];
+    private int timesCalled[]      = new int[4];
+    private int timesRaised[]      = new int[4];
+    private int timesChecked[]     = new int[4];
+    private int betsCalled[]       = new int[4];
+    private int betsRaiseMatched[] = new int[4];
 
     private int checks;
     private int calls;
@@ -85,14 +88,24 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
             currAct       = act;
             beforeCurrAct = stateBeforeAct;
 
+            int round  = beforeCurrAct.round().ordinal();
+            int toCall = beforeCurrAct.betsToCall();
             if (act.isBetRaise())
             {
-                betsRaised[ beforeCurrAct.round().ordinal() ]++;
+                timesRaised     [ round ]++;
+                betsRaiseMatched[ round ] += toCall;
             }
             else if (act.isCheckCall())
             {
-                betsCalled[ beforeCurrAct.round().ordinal() ] +=
-                        beforeCurrAct.betsToCall();
+                if (toCall == 0)
+                {
+                    timesChecked[ round ]++;
+                }
+                else
+                {
+                    timesCalled[ round ]++;
+                    betsCalled [ round ] += toCall;
+                }
             }
                  if (act == RealAction.CHECK) checks++;
             else if (act.isCheckCall())       calls++;
@@ -148,17 +161,28 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         for (int i = 0; i <= beforeNextAct.round().ordinal(); i++)
         {
-            ctx.add(new Datum("round " + i + " raises",
-                                betsRaised[ i ]));
+            int numActs = //timesChecked[ i ] +
+                          timesCalled [ i ] +
+                          timesRaised [ i ];
+            if (numActs != 0)
+            {
+                ctx.add(new Datum("Round " + i + " Bet Ratio",
+                                (double) timesRaised[ i ] / numActs));
+                ctx.add(new Datum("Round " + i + " Total Bets Matched",
+                                (double)(betsCalled[ i ] +
+                                         betsRaiseMatched[ i ])
+                                    / numActs));
+            }
+
 //            ctx.add(new Datum("round " + i + " calls",
 //                                betsCalled[ i ]));
         }
 
         // betting stats
-        int numActs = checks + calls + raises;
+        int numActs = /*checks +*/ calls + raises;
         if (numActs != 0)
         {
-            ctx.add(new Datum("Bet Ratio",
+            ctx.add(new Datum("Hand Bet Ratio",
                             (double) raises / numActs));
 //            ctx.add(new Datum("Call Ratio",
 //                            (double) calls / numActs));

@@ -1,4 +1,4 @@
-package ao.persist;
+package ao.holdem.engine.persist;
 
 import ao.util.serial.Stringer;
 

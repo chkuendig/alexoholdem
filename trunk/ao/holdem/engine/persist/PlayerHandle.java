@@ -1,4 +1,4 @@
-package ao.persist;
+package ao.holdem.engine.persist;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;

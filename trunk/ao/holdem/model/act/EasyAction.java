@@ -1,6 +1,6 @@
 package ao.holdem.model.act;
 
-import ao.state.HandState;
+import ao.holdem.engine.state.HandState;
 
 /**
  * In Holdem, there are four possible actions:

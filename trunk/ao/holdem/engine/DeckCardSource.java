@@ -4,7 +4,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Deck;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.CardSource;
-import ao.persist.PlayerHandle;
+import ao.holdem.engine.persist.PlayerHandle;
 
 import java.io.Serializable;
 import java.util.HashMap;

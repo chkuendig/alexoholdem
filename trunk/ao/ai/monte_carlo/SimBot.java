@@ -7,11 +7,11 @@ import ao.ai.opp_model.predict.Choice;
 import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.card.Hole;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.state.HandState;
-import ao.state.PlayerState;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.PlayerState;
+import ao.holdem.engine.state.StateManager;
 import com.google.inject.Inject;
 
 import java.util.*;

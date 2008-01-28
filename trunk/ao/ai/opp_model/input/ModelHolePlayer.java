@@ -11,10 +11,10 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.BlindOddFinder;
 import ao.odds.agglom.impl.ApproxBlindOddFinder;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.state.HandState;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.StateManager;
 
 /**
  * 

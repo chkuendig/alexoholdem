@@ -7,7 +7,7 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.BlindOddFinder;
 import ao.odds.agglom.impl.ApproxBlindOddFinder;
 import ao.odds.agglom.impl.ApproximateOddFinder;
-import ao.state.HandState;
+import ao.holdem.engine.state.HandState;
 
 /**
  *

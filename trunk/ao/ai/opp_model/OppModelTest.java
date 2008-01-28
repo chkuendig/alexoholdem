@@ -1,9 +1,9 @@
 package ao.ai.opp_model;
 
 import ao.ai.opp_model.predict.PredictorService;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.persist.dao.PlayerHandleAccess;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.persist.dao.PlayerHandleAccess;
 import com.google.inject.Inject;
 import com.wideplay.warp.persist.Transactional;
 
@@ -21,7 +21,7 @@ public class OppModelTest
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
-        modelOpponet(playerAccess.find("irc", "King_Fish"));
+        modelOpponet(playerAccess.find("irc", "pokibot"));
 //        modelOpponet(playerAccess.find("irc", "greg"));
     }
 

@@ -11,9 +11,9 @@ import ao.ai.opp_model.decision.random.RandomLearner;
 import ao.ai.opp_model.input.LearningPlayer;
 import ao.holdem.engine.Dealer;
 import ao.holdem.engine.LiteralCardSource;
-import ao.persist.HandHistory;
-import ao.persist.PlayerHandle;
-import ao.state.StateManager;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.StateManager;
 import ao.util.rand.Rand;
 
 import java.io.Serializable;
