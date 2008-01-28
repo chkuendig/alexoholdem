@@ -377,10 +377,8 @@ public class DeltaApprox
     //--------------------------------------------------------------------
     private Context denseContextFor(List<Choice> choices)
     {
-        int    checkCount  = 0;
-        int    raiseCount  = 0;
-        int    betsMatched = 0;
-        double totalPosition = 0;
+        int raiseCount  = 0;
+        int betsMatched = 0;
 
         double roundMaxes[] = new double[ 4 ];
         for (Map.Entry<BettingRound, List<Choice>> r :
@@ -398,17 +396,16 @@ public class DeltaApprox
                     roundMaxes[ r.getKey().ordinal() ] = surprise;
                 }
 
-                totalPosition += c.state().nextToActActivePosition();
                 betsMatched   += c.state().betsToCall();
                 if (c.actual() == SimpleAction.RAISE)
                 {
                     raiseCount++;
                 }
-                else if (c.actual() == SimpleAction.CALL &&
-                         c.state().betsToCall() == 0)
-                {
-                    checkCount++;
-                }
+//                else if (c.actual() == SimpleAction.CALL &&
+//                         c.state().betsToCall() == 0)
+//                {
+//                    checkCount++;
+//                }
             }
         }
 
@@ -423,11 +420,9 @@ public class DeltaApprox
 
         ctx.add(new Datum("Total Choices", choices.size()));
         ctx.add(new Datum("Total Bets Matched", betsMatched));
-        ctx.add(new Datum("Average Position",
-                          totalPosition / choices.size()));
+        ctx.add(new Datum("Position", last.position()));
         ctx.add(new Datum("Bet Ratio",
-                          (double) raiseCount /
-                                  (choices.size() - checkCount)));
+                          (double) raiseCount / choices.size()));
         ctx.add(new Datum("Pot Ratio",
                             (double) last.stakes().smallBlinds() /
                                      last.pot().smallBlinds()));
