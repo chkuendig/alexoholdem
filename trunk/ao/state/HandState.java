@@ -402,11 +402,11 @@ public class HandState
         return toCall().bets( isSmallBet() );
     }
 
-    public double nextToActPosition()
+    public double position()
     {
         return (double) (nextToAct + 1) / players.length;
     }
-    public double nextToActActivePosition()
+    public double activePosition()
     {
         int activePosition = 0;
         for (int i = 0; i <= nextToAct; i++)

@@ -142,9 +142,9 @@ public class SpecificStats implements CumulativeStatistic<SpecificStats>
 
         // positional stats
 //        ctx.add(new Datum("Position",
-//                        beforeNextAct.nextToActPosition()));
+//                        beforeNextAct.position()));
         ctx.add(new Datum("Active Position",
-                        beforeNextAct.nextToActActivePosition()));
+                        beforeNextAct.activePosition()));
 
         for (int i = 0; i <= beforeNextAct.round().ordinal(); i++)
         {
