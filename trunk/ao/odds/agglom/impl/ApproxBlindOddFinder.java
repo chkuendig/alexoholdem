@@ -91,14 +91,12 @@ public class ApproxBlindOddFinder
                 cumulative = cumulative.plus( o );
 
                 if (max == null ||
-                    max.strengthVsRandom(activePlayers) <
-                            o.strengthVsRandom(activePlayers))
+                    max.strengthVsRandom() < o.strengthVsRandom())
                 {
                     max = o;
                 }
                 if (min == null ||
-                    min.strengthVsRandom(activePlayers) >
-                            o.strengthVsRandom(activePlayers))
+                    min.strengthVsRandom() > o.strengthVsRandom())
                 {
                     min = o;
                 }

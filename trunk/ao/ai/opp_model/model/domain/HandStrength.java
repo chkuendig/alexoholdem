@@ -128,16 +128,14 @@ public enum HandStrength
                             hole, community,
                             showdown.numActivePlayers()-1);
         // actual hand strength
-        double act = actual.strengthVsRandom(
-                                showdown.numActivePlayers() );
+        double act = actual.strengthVsRandom();
 
         BlindOddFinder.BlindOdds expected =
                 expectedOdds.compute(
                         community, showdown.numActivePlayers());
 
         // random expected average hand strength
-        double avg = expected.sum().strengthVsRandom(
-                        showdown.numActivePlayers());
+        double avg = expected.sum().strengthVsRandom();
 //        double min = Math.min(act,
 //                              expected.min().strengthVsRandom(
 //                                      showdown.numActivePlayers()));

@@ -1,17 +1,20 @@
 package ao.ai.monte_carlo;
 
-import ao.ai.opp_model.mix.MixedAction;
-import ao.holdem.model.Money;
-import ao.holdem.model.act.RealAction;
-import ao.holdem.model.act.SimpleAction;
-import ao.holdem.engine.persist.Event;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.engine.state.PlayerState;
 import ao.holdem.engine.state.StateManager;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.PlayerState;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.model.act.SimpleAction;
+import ao.ai.opp_model.predict.Choice;
+import ao.ai.opp_model.predict.PredictorService;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
+
+import com.google.inject.Inject;
 
 /**
  *
@@ -19,124 +22,138 @@ import java.util.ArrayList;
 public class Simulator
 {
     //--------------------------------------------------------------------
-    private final StateManager                    start;
-    private final Map<PlayerHandle, BotPredictor> players;
-    private final PlayerHandle                    main;
+    private final PredictorService                predictor;
+    private final Map<PlayerHandle, List<Choice>> baseChoices;
+    private final HandState                       state;
+    private final StateManager                    env;
 
 
     //--------------------------------------------------------------------
-    public Simulator(StateManager                    startFrom,
-                     Map<PlayerHandle, BotPredictor> brains,
-                     PlayerHandle                    mainPlayer)
+    public Simulator(PredictorService predictorService,
+                     StateManager     startFrom)
     {
-        start   = startFrom;
-        players = brains;
-        main    = mainPlayer;
+        env         = startFrom;
+        state       = startFrom.head();
+        predictor   = predictorService;
+        baseChoices = predictor.extractChoices( startFrom.toHistory() );
     }
 
 
     //--------------------------------------------------------------------
-    public Outcome playOutHand()
+    public ProbableRollout rollout()
     {
-        boolean      isFirstAct       = true;
-        List<Event>  events           = new ArrayList<Event>();
-        PlayerHandle firstToAct       = start.nextToAct();
-        Money        firstToActStakes = Money.ZERO;
-        double       probability      = 1;
-        StateManager state            = start.prototype( false );
-        do
+        Map<PlayerHandle, List<Choice>> choices =
+                cloneBaseChoices(baseChoices);
+        Map<PlayerHandle, BotPredictor> brains  =
+                new HashMap<PlayerHandle, BotPredictor>();
+        List<PlayerHandle> atShowdown = initBrains(state, brains);
+
+        PlayerHandle me  = env.nextToAct();
+        Simulation   sim = new Simulation(env, brains, me);
+        Rollout      out = sim.playOutHand();
+
+        int stakes = out.mainStakes().smallBlinds();
+
+        if (out.mainReachedShowdown())
         {
-            PlayerHandle player    = state.nextToAct();
-            BotPredictor predictor = players.get( player );
-            MixedAction  mixedAct  = predictor.act( state );
-            SimpleAction act       = mixedAct.weightedRandom();
+            extractSimulatedChoices(brains, choices, atShowdown);
+            double winProb = winProbability(me, choices);
 
-            RealAction realAct =
-                    act.toEasyAction().toRealAction( state.head() );
-            predictor.took( realAct.toSimpleAction() );
+            int ifWin = out.potSize().smallBlinds() - stakes;
+            return out.with((         winProb  * ifWin
+                             - (1.0 - winProb) * stakes));
+        }
+        else
+        {
+            return out.with( -stakes );
+        }
+    }
 
-            if (! isFirstAct)
+
+    //--------------------------------------------------------------------
+    private double winProbability(
+            PlayerHandle                    me,
+            Map<PlayerHandle, List<Choice>> choices)
+    {
+        if (choices.isEmpty())
+        {
+            // everybody (including me) folded, leaving some player
+            //  the winner without acting
+            return 0;
+        }
+        else if (choices.size() == 1)
+        {
+            return choices.containsKey( me ) ? 1.0 : 0.0;
+        }
+        else
+        {
+            RealHistogram<PlayerHandle> results =
+                    predictor.approximate( choices );
+            return results == null
+                    ? 1.0 / choices.size()
+                    : results.probabilityOf( me );
+        }
+    }
+
+    private void extractSimulatedChoices(
+            Map<PlayerHandle, BotPredictor> brains,
+            Map<PlayerHandle, List<Choice>> choices,
+            List<PlayerHandle>              atShowdown)
+    {
+        for (Map.Entry<PlayerHandle, BotPredictor> p :
+                brains.entrySet())
+        {
+            BotPredictor predictor = p.getValue();
+            if (predictor.isUnfolded() && predictor.hasActed())
             {
-                probability *= mixedAct.probabilityOf( act );
-            }
-            isFirstAct = false;
-
-            events.add(new Event(player, state.head().round(), realAct));
-            PlayerState afterAction = state.advance( realAct );
-            if (firstToAct.equals( player ))
-            {
-                firstToActStakes = afterAction.commitment();
-
-                if (realAct.isFold())
+                List<Choice> base = choices.get( p.getKey() );
+                if (base == null)
                 {
-                    return new Outcome(events,
-                                       firstToActStakes,
-                                       state.head().pot(),
-                                       probability,
-                                       false);
+                    base = new ArrayList<Choice>();
+                    choices.put(p.getKey(), base);
                 }
+                base.addAll( p.getValue().choices() );
+                atShowdown.add( p.getKey() );
             }
         }
-        while ( !state.atEndOfHand() );
-
-        return new Outcome(events,
-                           firstToActStakes,
-                           state.head().pot(),
-                           probability,
-                           true);
+        choices.keySet().retainAll( atShowdown );
     }
 
 
     //--------------------------------------------------------------------
-    public static class Outcome
+    private Map<PlayerHandle, List<Choice>> cloneBaseChoices(
+                Map<PlayerHandle, List<Choice>> baseChoices)
     {
-        //----------------------------------------------------------------
-        private final List<Event> events;
-        private final Money       lastActStakes;
-        private final Money       totalCommit;
-        private final double      probability;
-        private final boolean     mainReachedShowdown;
-
-
-        //----------------------------------------------------------------
-        public Outcome(List<Event> events,
-                       Money       lastActStakes,
-                       Money       totalCommit,
-                       double      probability,
-                       boolean     mainReachedShowdown)
+        Map<PlayerHandle, List<Choice>> clone =
+                new HashMap<PlayerHandle, List<Choice>>();
+        for (Map.Entry<PlayerHandle, List<Choice>> choice :
+                baseChoices.entrySet())
         {
-            this.events              = events;
-            this.lastActStakes       = lastActStakes;
-            this.totalCommit         = totalCommit;
-            this.probability         = probability;
-            this.mainReachedShowdown = mainReachedShowdown;
+            clone.put(choice.getKey(),
+                      new ArrayList<Choice>( choice.getValue() ));
         }
-
-
-        //----------------------------------------------------------------
-        public List<Event> events()
-        {
-            return events;
-        }
-
-        public Money lastActStakes()
-        {
-            return lastActStakes;
-        }
-
-        public Money totalCommit()
-        {
-            return totalCommit;
-        }
-
-        public double probability()
-        {
-            return probability;
-        }
-
-        public boolean mainReachedShowdown()
-        {
-            return mainReachedShowdown;
-        }
+        return clone;
     }
+
+    private List<PlayerHandle> initBrains(
+            HandState                       state,
+            Map<PlayerHandle, BotPredictor> brains)
+    {
+        List<PlayerHandle> atShowdown = new ArrayList<PlayerHandle>();
+        for (PlayerState pState : state.unfolded())
+        {
+            if (! pState.isAllIn())
+            {
+                brains.put(pState.handle(),
+                           new BotPredictor(pState.handle(),
+                                            predictor));
+            }
+            else
+            {
+                atShowdown.add( pState.handle() );
+            }
+        }
+        return atShowdown;
+    }
+
 }
