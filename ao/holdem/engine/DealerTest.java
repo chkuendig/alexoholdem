@@ -2,14 +2,13 @@ package ao.holdem.engine;
 
 import ao.ai.monte_carlo.SimBot;
 import ao.ai.simple.AlwaysRaiseBot;
-import ao.ai.simple.DuaneBot;
-import ao.holdem.model.Money;
-import ao.holdem.model.Player;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;
 import ao.holdem.engine.persist.dao.HandHistoryDao;
 import ao.holdem.engine.persist.dao.PlayerHandleLookup;
 import ao.holdem.engine.state.StateManager;
+import ao.holdem.model.Money;
+import ao.holdem.model.Player;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -43,9 +42,9 @@ public class DealerTest
 //                    put("real.F", new DuaneBot());
 //                    put("real.E", new DuaneBot());
 //                    put("real.D", new MathBot());
-                    put("real.C", new AlwaysRaiseBot());
-                    put("real.B", new DuaneBot());
-                    put("real.A", smarties.get());
+                    put("raise", new AlwaysRaiseBot());
+//                    put("duane", new DuaneBot());
+                    put("sim", smarties.get());
 //                    put("real.A", new AlwaysRaiseBot());
 //                    put("real.B", new DuaneBot());
 //                    put("real.C", new AlwaysRaiseBot());
@@ -90,7 +89,8 @@ public class DealerTest
             }
             //System.out.println(hist.getDeltas());
             //System.out.println(hist.summary());
-            System.out.println(cumDeltas);
+            System.out.println(
+                    formatCumulativeDeltas(i, cumDeltas));
 
             playerHandles.add( playerHandles.remove(0) );
         }
@@ -104,4 +104,26 @@ public class DealerTest
                                delta.getValue());
         }
     }
+
+    private String formatCumulativeDeltas(
+            int                      dataIndex,
+            Map<PlayerHandle, Money> cumDeltas)
+    {
+        StringBuilder str = new StringBuilder();
+
+        for (Map.Entry<PlayerHandle, Money> delta :
+                cumDeltas.entrySet())
+        {
+            str.append(dataIndex)
+               .append("\t")
+               .append(delta.getKey().getName())
+               .append("\t")
+               .append(delta.getValue().smallBlinds())
+               .append("\n");
+        }
+
+        str.deleteCharAt( str.length() - 1 );
+        return str.toString();
+    }
+
 }

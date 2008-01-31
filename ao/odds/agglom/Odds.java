@@ -71,7 +71,12 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    public double strengthVsRandom(int numberOfPlayers)
+    public double strengthVsRandom()
+    {
+        // it is extremely rare that more than 2 ppl split.
+        return strengthVsRandom(2);
+    }
+    private double strengthVsRandom(int numberOfPlayers)
     {
         return (WIN + (double)SPLIT/numberOfPlayers)
                / (WIN + LOSE + SPLIT);
