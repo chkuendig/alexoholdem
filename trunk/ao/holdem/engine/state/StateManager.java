@@ -4,6 +4,7 @@ import ao.holdem.engine.DeckCardSource;
 import ao.holdem.model.Money;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
+import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.card.CardSource;
 import ao.holdem.model.card.Hand;
 import ao.holdem.model.card.Hole;
@@ -11,6 +12,7 @@ import ao.holdem.engine.persist.Event;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;
 import ao.ai.opp_model.predict.act.HandStats;
+import ao.ai.monte_carlo.uct.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -324,5 +326,38 @@ public class StateManager
     public String toString()
     {
         return head().toString();
+    }
+
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StateManager that = (StateManager) o;
+        return head.equals(that.head);
+    }
+
+    public int hashCode()
+    {
+        return head.hashCode();
+    }
+
+    public List<Node> generateActionNodes(Node current)
+    {
+        List<Node> actionNodes = new ArrayList<Node>( 3 );
+        if (atEndOfHand()) return actionNodes; 
+
+        actionNodes.add(
+                current.advance(this, SimpleAction.FOLD));
+        actionNodes.add(
+                current.advance(this, SimpleAction.CALL));
+
+        if (head().canRaise())
+        {
+            actionNodes.add(
+                current.advance(this, SimpleAction.RAISE));
+        }
+
+        return actionNodes;
     }
 }

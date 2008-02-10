@@ -11,6 +11,7 @@ import ao.holdem.engine.persist.PlayerHandle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * To handle the corner case:
@@ -168,7 +169,7 @@ public class HandState
     private BettingRound nextBettingRound(RealAction act)
     {
         return nextActionCritical()
-                ? nextToActCanRaise()
+                ? canRaise()
                     ? (act.toSimpleAction() == SimpleAction.RAISE)
                         ? round
                         : round.next()
@@ -300,7 +301,7 @@ public class HandState
     {
         return atShowdown()    ||
                nextToAct == -1 ||
-               nextToActIsLastActivePlayer() && nextToActCanCheck() ||
+               nextToActIsLastActivePlayer() && canCheck() ||
                nextToAct == nextUnfoldedAfter(nextToAct);
     }
     private boolean nextToActIsLastActivePlayer()
@@ -324,14 +325,14 @@ public class HandState
 
     public RealAction toRealAction(EasyAction easyAction)
     {
-        return easyAction.toRealAction(nextToActCanCheck(),
-                                       nextToActCanRaise());
+        return easyAction.toRealAction(canCheck(),
+                                       canRaise());
     }
-    private boolean nextToActCanCheck()
+    private boolean canCheck()
     {
         return stakes.equals( nextToAct().commitment() );
     }
-    public boolean nextToActCanRaise()
+    public boolean canRaise()
     {
         return remainingRoundBets > 0;
     }
@@ -502,7 +503,8 @@ public class HandState
             PlayerHandle player, RealAction act)
     {
         if (atEndOfHand())
-            throw new HoldemRuleBreach("the hand is already done");
+            throw new HoldemRuleBreach(
+                        "the hand is already done: " + this);
 
         if (! nextToAct().handle().equals( player ))
             throw new HoldemRuleBreach(
@@ -521,7 +523,35 @@ public class HandState
         return nextToAct() + ", " + round;
     }
 
-//    public boolean handsEqual(HandState with)
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HandState handState = (HandState) o;
+
+        return latestRoundStaker  == handState.latestRoundStaker  &&
+               nextToAct          == handState.nextToAct          &&
+               remainingRoundBets == handState.remainingRoundBets &&
+               Arrays.equals(players, handState.players)          &&
+               round              ==              handState.round &&
+               stakes.equals(handState.stakes);
+
+    }
+
+    public int hashCode()
+    {
+        int result;
+        result = round.hashCode();
+        result = 31 * result + Arrays.hashCode(players);
+        result = 31 * result + nextToAct;
+        result = 31 * result + remainingRoundBets;
+        result = 31 * result + latestRoundStaker;
+        result = 31 * result + stakes.hashCode();
+        return result;
+    }
+
+    //    public boolean handsEqual(HandState with)
 //    {
 //        return with != null &&
 //               handId == with.handId;

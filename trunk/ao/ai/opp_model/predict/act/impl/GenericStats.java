@@ -79,8 +79,6 @@ public class GenericStats implements CumulativeStatistic<GenericStats>
                             (double) raises / numActs));
 //            ctx.add(new Datum("Total Call Ratio",
 //                            (double) calls / numActs));
-//            ctx.add(new Datum("Total Check Ratio",
-//                            (double) checks / numActs));
         }
 
         ctx.add(new Datum("Players",

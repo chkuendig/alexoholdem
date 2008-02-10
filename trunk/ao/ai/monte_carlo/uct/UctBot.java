@@ -1,11 +1,13 @@
-package ao.ai.monte_carlo.utc;
+package ao.ai.monte_carlo.uct;
 
 import ao.ai.AbstractPlayer;
+import ao.ai.opp_model.predict.PredictorService;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.state.HandState;
 import ao.holdem.engine.state.StateManager;
 import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.card.Hole;
+import com.google.inject.Inject;
 
 /**
  *
@@ -13,7 +15,12 @@ import ao.holdem.model.card.Hole;
 public class UctBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    @Inject PredictorService predictor;
+
+
+    //--------------------------------------------------------------------
     private int numRuns;
+
 
     //--------------------------------------------------------------------
     public UctBot(int iterations)
@@ -22,7 +29,7 @@ public class UctBot extends AbstractPlayer
     }
     public UctBot()
     {
-        this(64);
+        this(256);
     }
 
 
@@ -36,17 +43,13 @@ public class UctBot extends AbstractPlayer
                              HandState    state,
                              Hole         hole)
     {
-//        Node root =
-//                new Node(
-//                        new BiState(board, you, opp, optimize),
-//                        optimize);
-//        for (int run = 0; run < numRuns; run++)
-//        {
-//            root.playSimulation();
-//        }
+        Node root = new Node(env);
+        for (int run = 0; run < numRuns; run++)
+        {
+            root.playSimulation(predictor);
+        }
 ////        System.out.println(root);
-//        return root.optimize();
-        return null;
+        return root.optimize().toEasyAction();
     }
 
 

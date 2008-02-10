@@ -1,20 +1,17 @@
 package ao.ai.monte_carlo;
 
-import ao.holdem.engine.state.StateManager;
-import ao.holdem.engine.state.HandState;
-import ao.holdem.engine.state.PlayerState;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.model.act.SimpleAction;
+import ao.ai.opp_model.decision.classification.RealHistogram;
 import ao.ai.opp_model.predict.Choice;
 import ao.ai.opp_model.predict.PredictorService;
-import ao.ai.opp_model.decision.classification.RealHistogram;
+import ao.holdem.engine.persist.PlayerHandle;
+import ao.holdem.engine.state.HandState;
+import ao.holdem.engine.state.PlayerState;
+import ao.holdem.engine.state.StateManager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-
-import com.google.inject.Inject;
 
 /**
  *
