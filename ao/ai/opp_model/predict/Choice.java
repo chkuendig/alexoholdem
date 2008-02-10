@@ -54,7 +54,7 @@ public class Choice
         double raiseProb =
                 expected.probabilityOf(SimpleAction.RAISE);
 //        double raiseProb =
-//                state.nextToActCanRaise()
+//                state.canRaise()
 //                ? expected.probabilityOf(SimpleAction.RAISE) : 0;
 
         double toCall = callProb / (callProb + raiseProb);
@@ -69,7 +69,7 @@ public class Choice
 //                 : (actual == SimpleAction.CALL)
 //                    ? 0 : 1;
 //        double exp =
-//                state.nextToActCanRaise()
+//                state.canRaise()
 //                ? expected.probabilityOf(SimpleAction.RAISE) -
 //                  expected.probabilityOf(SimpleAction.FOLD)
 //                : -(expected.probabilityOf(SimpleAction.FOLD) /

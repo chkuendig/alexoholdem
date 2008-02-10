@@ -1,5 +1,6 @@
 package ao.holdem.model.act;
 
+import ao.holdem.engine.state.HandState;
 import ao.holdem.model.Money;
 
 /**
@@ -14,6 +15,11 @@ public enum SimpleAction
 
 
     //--------------------------------------------------------------------
+    public RealAction toRealAction(HandState state)
+    {
+        return toRealAction(state.toCall(),
+                            state.remainingBetsInRound() < 4);
+    }
     public RealAction toRealAction(
             Money   toCall,
             boolean betMadeThisRound)

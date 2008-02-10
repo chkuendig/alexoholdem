@@ -1,4 +1,4 @@
-package ao.ai.monte_carlo.utc;
+package ao.ai.monte_carlo.uct;
 
 /**
  *
@@ -18,11 +18,7 @@ public class Reward
     {
         this(0);
     }
-//    public Reward(double expectedReward, int activeOpponents)
-//    {
-//
-//    }
-    private Reward(double value)
+    public Reward(double value)
     {
         val = value;
     }

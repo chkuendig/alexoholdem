@@ -25,9 +25,9 @@ public class Simulation
 
 
     //--------------------------------------------------------------------
-    public Simulation(StateManager                    startFrom,
-                     Map<PlayerHandle, BotPredictor> brains,
-                     PlayerHandle                    mainPlayer)
+    public Simulation(StateManager                   startFrom,
+                      Map<PlayerHandle, BotPredictor> brains,
+                      PlayerHandle                    mainPlayer)
     {
         start   = startFrom;
         players = brains;
@@ -54,7 +54,7 @@ public class Simulation
 
             events.add(new Event(player, state.head().round(), realAct));
             PlayerState afterAction = state.advance( realAct );
-            if (/*firstToAct*/ main.equals( player ))
+            if (main.equals( player ))
             {
                 mainStakes = afterAction.commitment();
 

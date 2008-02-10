@@ -1,10 +1,14 @@
-package ao.ai.monte_carlo.utc;
+package ao.ai.monte_carlo.uct;
 
+import ao.ai.monte_carlo.ProbableRollout;
+import ao.ai.monte_carlo.Simulator;
+import ao.ai.opp_model.predict.PredictorService;
 import ao.holdem.engine.state.StateManager;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -12,31 +16,40 @@ import java.util.LinkedList;
 public class Node
 {
     //--------------------------------------------------------------------
-    private int    visits;
-    private Reward rewardSum;
-    private Reward rewardSquareSum;
+    private RewardSet rewardSum;
+    private int       visits;
 
-    private SimpleAction act;
-    private StateManager state;
+    private SimpleAction     act;
+    private StateManager     state;
+    private RewardNormalizer normaliezr;
 
     private Node child;
     private Node sibling;
 
 
     //--------------------------------------------------------------------
-    public Node(SimpleAction act,
-                StateManager state)
+    public Node(SimpleAction     act,
+                StateManager     stateAfterAct,
+                RewardNormalizer normaliezr)
     {
-        this.act   = act;
-        this.state = state;
+        this.act        = act;
+        this.state      = stateAfterAct;
+        this.normaliezr = normaliezr;
 
-        visits          = 0;
-        rewardSum       = new Reward();
-        rewardSquareSum = new Reward();
+        rewardSum       = new RewardSet();
     }
     public Node(StateManager state)
     {
-        this(null, state);
+        this(null, state, new RewardNormalizer());
+    }
+
+    public Node advance(StateManager beforeAct,
+                        SimpleAction act)
+    {
+        StateManager afterAct = beforeAct.prototype( true );
+        afterAct.advance( act.toRealAction(beforeAct.head()) );
+
+        return new Node(act, afterAct, normaliezr);
     }
 
 
@@ -68,11 +81,6 @@ public class Node
         return act;
     }
 
-    public int visits()
-    {
-        return visits;
-    }
-
 
     //--------------------------------------------------------------------
     public SimpleAction optimize()
@@ -80,7 +88,7 @@ public class Node
         Node best = optimizeInternal();
         return best.act;
     }
-    public Node optimizeInternal()
+    private Node optimizeInternal()
     {
         Node   optimal       = null;
         double optimalReward = Long.MIN_VALUE;
@@ -88,7 +96,7 @@ public class Node
                   nextChild != null;
                   nextChild  = nextChild.sibling)
         {
-            double reward = nextChild.averageReward();
+            double reward = nextChild.aggregateReward();
 
             if (reward > optimalReward)
             {
@@ -99,74 +107,88 @@ public class Node
         return (optimal == null) ? this : optimal;
     }
 
-    private double averageReward()
+    private double aggregateReward()
     {
-        return rewardSum.averagedOver( visits + 1 );
+        return rewardSum.aggregateFor( state.nextToAct() );
     }
 
 
     //--------------------------------------------------------------------
-    public void playSimulation()
+    public void playSimulation(PredictorService predictor)
     {
-//        LinkedList<Node> path = new LinkedList<Node>();
-//        path.add(this);
-//
-//        while (! path.getLast().unvisited())
-//        {
-//            Node selectedChild =
-//                    path.getLast().descendByUCB1();
-//            if (selectedChild == null) break;
-//
-//            path.add( selectedChild );
-//        }
-//        propagateValue(path, path.getLast().monteCarloValue());
+        LinkedList<Node> path = new LinkedList<Node>();
+        path.add(this);
+
+        while (! path.getLast().unvisited())
+        {
+            Node selectedChild =
+                    path.getLast().descendByUCB1();
+            if (selectedChild == null) break;
+
+            path.add( selectedChild );
+        }
+        propagateValue(
+                path,
+                path.getLast()
+                        .monteCarloValue( predictor ));
     }
 
-    private void propagateValue(LinkedList<Node> path, Reward reward)
+    private void propagateValue(
+            LinkedList<Node> path, RewardSet reward)
     {
-//        Reward maxiMax = reward.compliment();
-//        for (int i = path.size() - 1; i >= 0; i--)
-//        {
-//            Node step = path.get(i);
-//
-//            step.rewardSum = step.rewardSum.plus(maxiMax);
-//            step.rewardSquareSum =
-//                    step.rewardSquareSum.plus(
-//                            maxiMax.square());
-//            step.visits++;
-//
-//            maxiMax = maxiMax.compliment();
-//        }
+        for (Node n : path)
+        {
+            n.cumulate( reward );
+        }
+    }
+    private void cumulate(RewardSet reward)
+    {
+        rewardSum.add( reward );
+        visits++;
     }
 
-//    private Reward monteCarloValue()
-//    {
-//        Rollout r = state.rollout();
-//
-//        if (child == null)
-//        {
-//            List<Node> children = state.generateNodes();
-//
-//            if (! children.isEmpty())
-//            {
-//                child = children.get(0);
-//                for (int i = 0; i < children.size() - 1; i++)
-//                {
-//                    Node childSib = children.get(i);
-//                    childSib.sibling = children.get(i + 1);
-//                }
-//            }
-//        }
-//
-//        double isWin = r.winProbability();
-//
-//
-//
-//
-//        return ( r.isTie()             ? new Reward(0.5) :
-//                 r.nextToActIsWinner() ? new Reward(1.0) :
-//                                         new Reward(0.0) );
-//    }
+
+    private RewardSet monteCarloValue(
+            PredictorService predictor)
+    {
+        if (state.atEndOfHand())
+        {
+            RewardSet reward = new RewardSet();
+            reward.add(state.nextToAct(),
+                    new Reward( -state.head().stakes().smallBets() ));
+            return reward;
+        }
+        initChildren();
+
+        RewardSet rewardSet = new RewardSet();
+        Simulator       sim = new Simulator(predictor, state);
+        for (int i = 0; i < 1; i++)
+        {
+            ProbableRollout r      = sim.rollout();
+            double          reward = r.expectedReward();
+            rewardSet.add(state.nextToAct(),
+                          new Reward(reward));
+        }
+        return rewardSet;
+    }
+
+    private void initChildren()
+    {
+        if (child != null) return;
+
+        List<Node> children = state.generateActionNodes(this);
+
+        if (! children.isEmpty())
+        {
+            child = children.get(0);
+            for (int i = 0; i < children.size() - 1; i++)
+            {
+                Node childSib = children.get(i);
+                childSib.sibling = children.get(i + 1);
+            }
+        }
+    }
+
 
 
     //--------------------------------------------------------------------
@@ -192,7 +214,7 @@ public class Node
             else
             {
                 utcValue =
-                        nextChild.averageReward() +
+                        nextChild.aggregateReward() +
                         Math.sqrt(Math.log(visits) /
                                     (5 * nextChild.visits));
             }
@@ -233,7 +255,7 @@ public class Node
            .append( "  "            )
            .append( rewardSum       )
            .append( "  "            )
-           .append( averageReward() )
+           .append( aggregateReward() )
            .append( "  "            )
            .append( act             );
 
