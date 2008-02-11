@@ -1,7 +1,7 @@
 package ao.holdem.engine;
 
 import ao.ai.monte_carlo.uct.UctBot;
-import ao.ai.simple.AlwaysRaiseBot;
+import ao.ai.simple.DuaneBot;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;
 import ao.holdem.engine.persist.dao.HandHistoryDao;
@@ -42,8 +42,8 @@ public class DealerTest
 //                    put("real.F", new DuaneBot());
 //                    put("real.E", new DuaneBot());
 //                    put("real.D", new MathBot());
-                    put("raise", new AlwaysRaiseBot());
-//                    put("duane", new DuaneBot());
+//                    put("raise", new AlwaysRaiseBot());
+                    put("duane", new DuaneBot());
                     put("uct", smarties.get());
 //                    put("real.A", new AlwaysRaiseBot());
 //                    put("real.B", new DuaneBot());

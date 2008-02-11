@@ -1,14 +1,14 @@
 package ao.ai.opp_model.predict.hole;
 
-import ao.ai.opp_model.classifier.raw.Classifier;
-import ao.ai.opp_model.classifier.raw.DomainedClassifier;
-import ao.ai.opp_model.decision.classification.ConfusionMatrix;
-import ao.ai.opp_model.decision.classification.RealHistogram;
-import ao.ai.opp_model.decision.classification.raw.Prediction;
-import ao.ai.opp_model.decision.input.raw.example.Context;
-import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
-import ao.ai.opp_model.decision.input.raw.example.Datum;
-import ao.ai.opp_model.decision.random.RandomLearner;
+import ao.ai.supervised.classifier.raw.Classifier;
+import ao.ai.supervised.classifier.raw.DomainedClassifier;
+import ao.ai.supervised.decision.classification.ConfusionMatrix;
+import ao.ai.supervised.decision.classification.RealHistogram;
+import ao.ai.supervised.decision.classification.raw.Prediction;
+import ao.ai.supervised.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.input.raw.example.ContextImpl;
+import ao.ai.supervised.decision.input.raw.example.Datum;
+import ao.ai.supervised.decision.random.RandomLearner;
 import ao.ai.opp_model.input.ContextPlayer;
 import ao.ai.opp_model.model.domain.HandStrength;
 import ao.ai.opp_model.predict.Choice;

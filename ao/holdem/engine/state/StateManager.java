@@ -345,12 +345,13 @@ public class StateManager
     public List<Node> generateActionNodes(Node current)
     {
         List<Node> actionNodes = new ArrayList<Node>( 3 );
-        if (atEndOfHand()) return actionNodes; 
+        if (atEndOfHand()) return actionNodes;
 
-        actionNodes.add(
-                current.advance(this, SimpleAction.FOLD));
-        actionNodes.add(
-                current.advance(this, SimpleAction.CALL));
+        Node afterFold = current.advance(this, SimpleAction.FOLD);
+        actionNodes.add(afterFold);
+        
+        Node afterCall = current.advance(this, SimpleAction.CALL);
+        actionNodes.add(afterCall);
 
         if (head().canRaise())
         {

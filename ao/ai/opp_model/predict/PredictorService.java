@@ -1,7 +1,7 @@
 package ao.ai.opp_model.predict;
 
-import ao.ai.opp_model.decision.classification.RealHistogram;
-import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.classification.RealHistogram;
+import ao.ai.supervised.decision.input.raw.example.Context;
 import ao.ai.opp_model.input.ModelActionPlayer;
 import ao.ai.opp_model.predict.hole.DeltaApprox;
 import ao.holdem.model.act.SimpleAction;

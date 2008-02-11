@@ -193,62 +193,6 @@ public class HandHistory extends Base
                 : community;
     }
 
-    public void dealFlop(Community flop)
-    {
-        setCommunity(flop);
-    }
-    public void dealTurn(Card turn)
-    {
-        setCommunity(getCommunity().addTurn(turn));
-    }
-    public void dealRiver(Card river)
-    {
-        setCommunity(getCommunity().addRiver(river));
-    }
-
-
-    //--------------------------------------------------------------------
-//    public Snapshot snapshot()
-//    {
-//        return snapshot(null);
-//    }
-//    public Snapshot nextToActSnapshot()
-//    {
-//        return snapshot( getEvents().get(getEvents().size() - 1) );
-//    }
-//    public Snapshot snapshot(Event asOf)
-//    {
-//        List<Event> toCapture = new ArrayList<Event>();
-//
-//        if (asOf != null)
-//        {
-//            for (Event event : getEvents())
-//            {
-//                toCapture.add( event );
-//                if (event.equals(asOf))
-//                {
-//                    break;
-//                }
-//            }
-//        }
-//
-//        Snapshot s = new Snapshot(getPlayers());
-//        return s.populate( toCapture )
-//                ? s : null;
-//    }
-
-
-    //--------------------------------------------------------------------
-//    public HoldemRetroSet casesFor(PlayerHandle p)
-//    {
-//        return new HandParser().casesFor(this, p);
-//    }
-//    public PredictionContext nextToActContext()
-//    {
-//        return new HandParser().nextToActContext(
-//                this, nextToActSnapshot().nextToAct());
-//    }
-
 
     //--------------------------------------------------------------------
     public String summary()

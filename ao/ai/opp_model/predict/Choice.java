@@ -1,6 +1,6 @@
 package ao.ai.opp_model.predict;
 
-import ao.ai.opp_model.decision.classification.RealHistogram;
+import ao.ai.supervised.decision.classification.RealHistogram;
 import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;

@@ -1,6 +1,7 @@
 package ao.ai.monte_carlo;
 
-import ao.ai.opp_model.decision.classification.RealHistogram;
+import ao.ai.monte_carlo.uct.Reward;
+import ao.ai.supervised.decision.classification.RealHistogram;
 import ao.ai.opp_model.predict.Choice;
 import ao.ai.opp_model.predict.PredictorService;
 import ao.holdem.engine.persist.PlayerHandle;
@@ -64,6 +65,19 @@ public class Simulator
         {
             return out.with( -stakes );
         }
+    }
+
+    public Reward expectedAtShowdown(PlayerHandle forPlayer)
+    {
+        assert env.atEndOfHand();
+
+        double winProb =
+                winProbability(forPlayer, baseChoices);
+
+        int stakes = env.head().stakes().smallBlinds();
+        int ifWin  = env.head().pot().smallBlinds() - stakes;
+        return new Reward(        winProb  * ifWin
+                          -(1.0 - winProb) * stakes);
     }
 
 

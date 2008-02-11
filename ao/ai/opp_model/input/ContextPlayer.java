@@ -1,6 +1,6 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.input.raw.example.Context;
 import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.engine.persist.Event;

@@ -1,7 +1,7 @@
 package ao.ai.monte_carlo;
 
-import ao.ai.opp_model.decision.classification.RealHistogram;
-import ao.ai.opp_model.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.classification.RealHistogram;
+import ao.ai.supervised.decision.input.raw.example.Context;
 import ao.ai.opp_model.mix.MixedAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.engine.persist.PlayerHandle;

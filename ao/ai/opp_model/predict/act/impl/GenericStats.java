@@ -1,8 +1,8 @@
 package ao.ai.opp_model.predict.act.impl;
 
-import ao.ai.opp_model.decision.input.raw.example.Context;
-import ao.ai.opp_model.decision.input.raw.example.ContextImpl;
-import ao.ai.opp_model.decision.input.raw.example.Datum;
+import ao.ai.supervised.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.input.raw.example.ContextImpl;
+import ao.ai.supervised.decision.input.raw.example.Datum;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.engine.persist.PlayerHandle;
