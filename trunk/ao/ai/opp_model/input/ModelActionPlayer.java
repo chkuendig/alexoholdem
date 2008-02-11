@@ -1,11 +1,11 @@
 package ao.ai.opp_model.input;
 
-import ao.ai.opp_model.classifier.raw.Classifier;
-import ao.ai.opp_model.classifier.raw.Predictor;
-import ao.ai.opp_model.decision.classification.raw.Prediction;
-import ao.ai.opp_model.decision.input.raw.example.Context;
-import ao.ai.opp_model.decision.input.raw.example.Datum;
-import ao.ai.opp_model.decision.input.raw.example.Example;
+import ao.ai.supervised.classifier.raw.Classifier;
+import ao.ai.supervised.classifier.raw.Predictor;
+import ao.ai.supervised.decision.classification.raw.Prediction;
+import ao.ai.supervised.decision.input.raw.example.Context;
+import ao.ai.supervised.decision.input.raw.example.Datum;
+import ao.ai.supervised.decision.input.raw.example.Example;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;

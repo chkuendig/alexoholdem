@@ -29,7 +29,7 @@ public class UctBot extends AbstractPlayer
     }
     public UctBot()
     {
-        this(256);
+        this(64);
     }
 
 
@@ -56,7 +56,7 @@ public class UctBot extends AbstractPlayer
     //--------------------------------------------------------------------
     public void handEnded(HandHistory history)
     {
-
+        toString();
     }
 
 

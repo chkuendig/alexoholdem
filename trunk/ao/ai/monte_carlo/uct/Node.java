@@ -3,6 +3,7 @@ package ao.ai.monte_carlo.uct;
 import ao.ai.monte_carlo.ProbableRollout;
 import ao.ai.monte_carlo.Simulator;
 import ao.ai.opp_model.predict.PredictorService;
+import ao.holdem.engine.persist.PlayerHandle;
 import ao.holdem.engine.state.StateManager;
 import ao.holdem.model.act.SimpleAction;
 import ao.util.rand.Rand;
@@ -19,8 +20,11 @@ public class Node
     private RewardSet rewardSum;
     private int       visits;
 
+    private PlayerHandle     mainActor;
     private SimpleAction     act;
-    private StateManager     state;
+    private PlayerHandle     actor;
+    private double           actProb;
+    private StateManager     afterAct;
     private RewardNormalizer normaliezr;
 
     private Node child;
@@ -28,19 +32,27 @@ public class Node
 
 
     //--------------------------------------------------------------------
-    public Node(SimpleAction     act,
-                StateManager     stateAfterAct,
-                RewardNormalizer normaliezr)
+    private Node(PlayerHandle     mainActor,
+                 PlayerHandle     actor,
+                 SimpleAction     act,
+                 double           actProb,
+                 StateManager     stateAfterAct,
+                 RewardNormalizer normaliezr)
     {
+        this.mainActor  = mainActor;
         this.act        = act;
-        this.state      = stateAfterAct;
+        this.actProb    = actProb;
+        this.actor      = actor;
+        this.afterAct   = stateAfterAct;
         this.normaliezr = normaliezr;
 
         rewardSum       = new RewardSet();
     }
     public Node(StateManager state)
     {
-        this(null, state, new RewardNormalizer());
+        this(afterAct.head().nextToAct().handle(),
+             null, null, Double.NaN,
+             state, new RewardNormalizer());
     }
 
     public Node advance(StateManager beforeAct,
@@ -49,7 +61,10 @@ public class Node
         StateManager afterAct = beforeAct.prototype( true );
         afterAct.advance( act.toRealAction(beforeAct.head()) );
 
-        return new Node(act, afterAct, normaliezr);
+        return new Node(
+                    mainActor,
+                    beforeAct.head().nextToAct().handle(),
+                    act, afterAct, normaliezr);
     }
 
 
@@ -60,8 +75,8 @@ public class Node
                   nextChild != null;
                   nextChild  = nextChild.sibling)
         {
-//            System.out.println("child.state\n" + nextChild.state);
-            if (nextChild.state.equals( state ))
+//            System.out.println("child.afterAct\n" + nextChild.afterAct);
+            if (nextChild.afterAct.equals( state ))
             {
 //                System.out.println("equality!!");
                 return nextChild;
@@ -71,7 +86,7 @@ public class Node
     }
     public StateManager state()
     {
-        return state;
+        return afterAct;
     }
 
 
@@ -109,7 +124,7 @@ public class Node
 
     private double aggregateReward()
     {
-        return rewardSum.aggregateFor( state.nextToAct() );
+        return rewardSum.aggregateFor( actor );
     }
 
 
@@ -117,7 +132,7 @@ public class Node
     public void playSimulation(PredictorService predictor)
     {
         LinkedList<Node> path = new LinkedList<Node>();
-        path.add(this);
+        path.add( this );
 
         while (! path.getLast().unvisited())
         {
@@ -151,32 +166,39 @@ public class Node
     private RewardSet monteCarloValue(
             PredictorService predictor)
     {
-        if (state.atEndOfHand())
-        {
-            RewardSet reward = new RewardSet();
-            reward.add(state.nextToAct(),
-                    new Reward( -state.head().stakes().smallBets() ));
-            return reward;
-        }
-        initChildren();
+        initChildren(predictor);
 
         RewardSet rewardSet = new RewardSet();
-        Simulator       sim = new Simulator(predictor, state);
-        for (int i = 0; i < 1; i++)
+        if (act == SimpleAction.FOLD)
         {
-            ProbableRollout r      = sim.rollout();
-            double          reward = r.expectedReward();
-            rewardSet.add(state.nextToAct(),
-                          new Reward(reward));
+            rewardSet.add(actor,
+                    new Reward( -afterAct.head().stakes().smallBets() ));
+        }
+        else
+        {
+            Simulator sim = new Simulator(predictor, afterAct);
+
+            if (afterAct.atEndOfHand())
+            {
+                rewardSet.add(actor, sim.expectedAtShowdown(actor));
+            }
+            else
+            {
+                ProbableRollout r      = sim.rollout();
+                double          reward = r.expectedReward();
+                rewardSet.add(actor, new Reward(reward));
+            }
         }
         return rewardSet;
     }
 
-    private void initChildren()
+    private void initChildren(PredictorService predictor)
     {
         if (child != null) return;
 
-        List<Node> children = state.generateActionNodes(this);
+        //predictor.predictAction(actor, afterAct.head().);
+
+        List<Node> children = afterAct.generateActionNodes(this);
 
         if (! children.isEmpty())
         {
@@ -214,7 +236,8 @@ public class Node
             else
             {
                 utcValue =
-                        nextChild.aggregateReward() +
+                        normaliezr.normalize(
+                                nextChild.aggregateReward()) +
                         Math.sqrt(Math.log(visits) /
                                     (5 * nextChild.visits));
             }

@@ -133,8 +133,6 @@ public enum Card
         Qc = 11    Qd = 24    Qh = 37    Qs = 50
         Kc = 12    Kd = 25    Kh = 38    Ks = 51
         Ac = 13    Ad = 26    Ah = 39    As = 52
-
-        Card.index()
 	*/
     public int index()
     {
