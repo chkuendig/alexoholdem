@@ -1,8 +1,6 @@
 package ao.irc;
 
 import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.persist.dao.PlayerHandleLookup;
-import com.google.inject.Inject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.Map;
 public class IrcHistorian
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleLookup playerLookup;
+//    @Inject PlayerHandleLookup playerLookup;
 
 
     //--------------------------------------------------------------------
@@ -27,7 +25,7 @@ public class IrcHistorian
         Map<String, List<IrcAction>> players = groupPlayers(r);
         Map<Long, IrcRoster>         rosters = indexRosters(r);
 
-        return new HandItr(players, rosters, r.hands(), playerLookup);
+        return new HandItr(players, rosters, r.hands());
     }
 
 

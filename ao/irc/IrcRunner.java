@@ -1,7 +1,6 @@
 package ao.irc;
 
 import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.persist.dao.HandHistoryDao;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -13,7 +12,7 @@ public class IrcRunner
 {
     //--------------------------------------------------------------------
     @Inject IrcHistorian   historian;
-    @Inject HandHistoryDao hands;
+//    @Inject HandHistoryDao hands;
 
 
     //--------------------------------------------------------------------
@@ -24,7 +23,7 @@ public class IrcRunner
         for (HandHistory hist :
                 historian.fromSnapshot(ircDir))
         {
-            hands.store( hist );
+//            hands.store( hist );
 //            System.out.println("hist = " + hist);
         }
     }

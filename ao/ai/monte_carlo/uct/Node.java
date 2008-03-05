@@ -50,7 +50,7 @@ public class Node
     }
     public Node(StateManager state)
     {
-        this(afterAct.head().nextToAct().handle(),
+        this(state.head().nextToAct().handle(),
              null, null, Double.NaN,
              state, new RewardNormalizer());
     }
@@ -61,10 +61,11 @@ public class Node
         StateManager afterAct = beforeAct.prototype( true );
         afterAct.advance( act.toRealAction(beforeAct.head()) );
 
+        // xxx todo: -1 is a filler
         return new Node(
                     mainActor,
                     beforeAct.head().nextToAct().handle(),
-                    act, afterAct, normaliezr);
+                    act, -1, afterAct, normaliezr);
     }
 
 

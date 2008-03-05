@@ -1,25 +1,17 @@
 package ao.holdem.engine.persist;
 
 import ao.holdem.model.BettingRound;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.MapKeyManyToMany;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import java.util.*;
 
 /**
  *
  */
-@Entity
+//@Entity
 public class HandHistory extends Base
 {
     //--------------------------------------------------------------------
@@ -42,11 +34,11 @@ public class HandHistory extends Base
     private List<PlayerHandle> players =
             new ArrayList<PlayerHandle>();
 
-    @ManyToMany(
-        cascade={CascadeType.PERSIST, CascadeType.MERGE},
-//        mappedBy="hands",
-        targetEntity = PlayerHandle.class)
-    @IndexColumn(name = "position", base = 0)
+//    @ManyToMany(
+//        cascade={CascadeType.PERSIST, CascadeType.MERGE},
+////        mappedBy="hands",
+//        targetEntity = PlayerHandle.class)
+//    @IndexColumn(name = "position", base = 0)
     public List<PlayerHandle> getPlayers()
     {
         return (tempPlayers.isEmpty())
@@ -85,9 +77,9 @@ public class HandHistory extends Base
     private Map<PlayerHandle, Money> deltas =
             new HashMap<PlayerHandle, Money>();
 
-    @SuppressWarnings({"JpaModelErrorInspection"})
-    @CollectionOfElements(targetElement = Money.class)
-    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
+//    @SuppressWarnings({"JpaModelErrorInspection"})
+//    @CollectionOfElements(targetElement = Money.class)
+//    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Money> getDeltas()
     {
         return deltas;
@@ -107,11 +99,11 @@ public class HandHistory extends Base
     //--------------------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(
-//            fetch = FetchType.EAGER,
-            cascade={CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinColumn(name="HAND_ID")
-    @IndexColumn(name="EVENT_INDEX")
+//    @OneToMany(
+////            fetch = FetchType.EAGER,
+//            cascade={CascadeType.PERSIST, CascadeType.MERGE})
+////    @JoinColumn(name="HAND_ID")
+//    @IndexColumn(name="EVENT_INDEX")
     public List<Event> getEvents()
     {
         return events;
@@ -152,9 +144,9 @@ public class HandHistory extends Base
     private Map<PlayerHandle, Hole> holes =
             new HashMap<PlayerHandle, Hole>();
 
-    @SuppressWarnings({"JpaModelErrorInspection"})
-    @CollectionOfElements(targetElement = Hole.class)
-    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
+//    @SuppressWarnings({"JpaModelErrorInspection"})
+//    @CollectionOfElements(targetElement = Hole.class)
+//    @MapKeyManyToMany(targetEntity = PlayerHandle.class)
     public Map<PlayerHandle, Hole> getHoles()
     {
         return holes;

@@ -2,7 +2,6 @@ package ao.ai.supervised.decision.input.raw.example;
 
 import ao.ai.supervised.decision.input.processed.data.DataPool;
 import ao.ai.supervised.decision.input.processed.data.LocalDatum;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * External Datum
@@ -16,25 +15,25 @@ public class Datum
 
 
     //--------------------------------------------------------------------
-    public <T extends Enum<T>> Datum(@NotNull T enumValue)
+    public <T extends Enum<T>> Datum(T enumValue)
     {
         this(enumValue.getDeclaringClass().getSimpleName(),
              enumValue);
     }
 
-    public Datum(@NotNull Object state)
+    public Datum(Object state)
     {
         this(state.getClass().getSimpleName(), state, 0);
     }
 
-    public Datum(@NotNull String type,
-                 @NotNull Object state)
+    public Datum(String type,
+                 Object state)
     {
         this(type, state, 0);
     }
 
-    public Datum(@NotNull String type,
-                          double value)
+    public Datum(String type,
+                 double value)
     {
         this(type, null, value);
     }

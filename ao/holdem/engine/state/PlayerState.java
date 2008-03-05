@@ -1,10 +1,10 @@
 package ao.holdem.engine.state;
 
+import ao.holdem.engine.persist.PlayerHandle;
 import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
-import ao.holdem.engine.persist.PlayerHandle;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -24,8 +24,8 @@ public class PlayerState
                      boolean      allIn,
                      boolean      folded,
 //                     boolean      unacted,
-            @NotNull Money        totalCommitment,
-            @NotNull PlayerHandle playerHandle)
+                     Money        totalCommitment,
+                     PlayerHandle playerHandle)
     {
         isAllIn    = allIn;
         isFolded   = folded;
@@ -37,9 +37,9 @@ public class PlayerState
 
     //--------------------------------------------------------------------
     public PlayerState advance(
-            @NotNull RealAction action,
-            @NotNull Money      stakes,
-            @NotNull Money      betSize)
+            RealAction action,
+            Money      stakes,
+            Money      betSize)
     {
         SimpleAction takenAction = action.toSimpleAction();
         if (takenAction == SimpleAction.FOLD) return fold();

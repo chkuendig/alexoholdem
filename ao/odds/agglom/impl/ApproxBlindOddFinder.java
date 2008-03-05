@@ -6,7 +6,7 @@ import ao.holdem.model.card.Hole;
 import ao.odds.agglom.BlindOddFinder;
 import ao.odds.agglom.Odds;
 import ao.util.stats.FastCombiner;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -22,8 +22,8 @@ public class ApproxBlindOddFinder
 
     //--------------------------------------------------------------------
     public synchronized BlindOddsImpl
-            compute(@NotNull Community community,
-                             int       activePlayers)
+            compute(Community community,
+                    int       activePlayers)
     {
         if (activePlayers == prevActivePlayers &&
                 prevCommunity.equals( community ))

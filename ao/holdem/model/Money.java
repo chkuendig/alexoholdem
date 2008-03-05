@@ -1,12 +1,12 @@
 package ao.holdem.model;
 
-import javax.persistence.Embeddable;
+//import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
  *
  */
-@Embeddable
+//@Embeddable
 public class Money implements Comparable<Money>, Serializable
 {
     //--------------------------------------------------------------------

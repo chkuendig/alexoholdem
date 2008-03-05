@@ -7,7 +7,6 @@ import ao.holdem.model.Player;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.engine.persist.dao.PlayerHandleLookup;
 import ao.holdem.engine.state.StateManager;
 
 import java.util.*;
@@ -25,17 +24,17 @@ public class HandItr implements Iterable<HandHistory>
     private HandHistory nextHistory;
     private int         nextHandIndex;
 
-    private PlayerHandleLookup playerLookup;
+//    private PlayerHandleLookup playerLookup;
 
 
 
     //--------------------------------------------------------------------
     public HandItr(Map<String, List<IrcAction>> players,
                    Map<Long, IrcRoster>         rosters,
-                   List<IrcHand>                hands,
-                   PlayerHandleLookup           playerLookup)
+                   List<IrcHand>                hands/*,
+                   PlayerHandleLookup           playerLookup*/)
     {
-        this.playerLookup = playerLookup;
+        //this.playerLookup = playerLookup;
         init(players, rosters, hands);
     }
 
@@ -258,6 +257,7 @@ public class HandItr implements Iterable<HandHistory>
     //--------------------------------------------------------------------
     private PlayerHandle ircPlayer(String name)
     {
-        return playerLookup.lookup("irc", name);
+        //return playerLookup.lookup("irc", name);
+        return null;
     }
 }
