@@ -3,18 +3,16 @@ package ao.holdem.engine.persist;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
-import ao.holdem.engine.persist.Base;
-import ao.holdem.engine.persist.PlayerHandle;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+//import javax.persistence.Entity;
+//import javax.persistence.Enumerated;
+//import javax.persistence.FetchType;
+//import javax.persistence.ManyToOne;
 
 /**
  *
  */
-@Entity
+//@Entity
 public class Event extends Base
 {
     //--------------------------------------------------------------------
@@ -33,8 +31,8 @@ public class Event extends Base
     //--------------------------------------------------------------------
     private PlayerHandle player;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="player_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+////    @JoinColumn(name="player_id")
     public PlayerHandle getPlayer()
     {
         return player;
@@ -62,7 +60,7 @@ public class Event extends Base
     //--------------------------------------------------------------------
     private RealAction action;
 
-    @Enumerated
+//    @Enumerated
     public RealAction getAction()
     {
         return action;
@@ -81,7 +79,7 @@ public class Event extends Base
     //--------------------------------------------------------------------
     private BettingRound round;
 
-    @Enumerated
+//    @Enumerated
     public BettingRound getRound()
     {
         return round;

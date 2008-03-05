@@ -2,14 +2,14 @@ package ao.holdem.model.card;
 
 import ao.holdem.model.BettingRound;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Enumerated;
+//import javax.persistence.Embeddable;
+//import javax.persistence.Enumerated;
 import java.util.Arrays;
 
 /**
  * Immutable.
  */
-@Embeddable
+//@Embeddable
 public class Community
 {
     //--------------------------------------------------------------------
@@ -52,7 +52,7 @@ public class Community
 
     //--------------------------------------------------------------------
     // used for persistance purposes.
-    @Enumerated
+//    @Enumerated
     public Card getFlopA()
     {
         return FLOP_A;
@@ -62,7 +62,7 @@ public class Community
         FLOP_A = flopA;
     }
 
-    @Enumerated
+//    @Enumerated
     public Card getFlopB()
     {
         return FLOP_B;
@@ -72,7 +72,7 @@ public class Community
         FLOP_B = flopB;
     }
 
-    @Enumerated
+//    @Enumerated
     public Card getFlopC()
     {
         return FLOP_C;
@@ -82,7 +82,7 @@ public class Community
         FLOP_C = flopC;
     }
 
-    @Enumerated
+//    @Enumerated
     public Card getTurn()
     {
         return TURN;
@@ -92,7 +92,7 @@ public class Community
         TURN = turn;
     }
     
-    @Enumerated
+//    @Enumerated
     public Card getRiver()
     {
         return RIVER;

@@ -1,16 +1,12 @@
 package ao.holdem.model.card;
 
-import ao.holdem.model.card.Card;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Enumerated;
 import java.io.Serializable;
 
 
 /**
  *
  */
-@Embeddable
+//@Embeddable
 public class Hole implements Serializable
 {
     //--------------------------------------------------------------------
@@ -32,7 +28,7 @@ public class Hole implements Serializable
         this(null, null);
     }
 
-    @Enumerated
+//    @Enumerated
     public Card getFirstCard()
     {
         return FIRST;
@@ -42,7 +38,7 @@ public class Hole implements Serializable
         FIRST = first;
     }
 
-    @Enumerated
+//    @Enumerated
     public Card getSecondCard()
     {
         return SECOND;

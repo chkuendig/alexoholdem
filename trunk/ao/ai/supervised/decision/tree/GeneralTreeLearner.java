@@ -6,7 +6,7 @@ import ao.ai.supervised.decision.input.processed.attribute.Attribute;
 import ao.ai.supervised.decision.input.processed.example.LocalContext;
 import ao.ai.supervised.decision.input.processed.example.LocalExample;
 import ao.ai.supervised.decision.input.processed.example.LocalLearningSet;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -47,7 +47,7 @@ public class GeneralTreeLearner implements LocalClassifier
         set( examples );
     }
 
-    public void add(@NotNull LocalExample example)
+    public void add(LocalExample example)
     {
         LocalLearningSet s = new LocalLearningSet();
         s.add( example );

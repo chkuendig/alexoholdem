@@ -1,11 +1,11 @@
 package ao.ai.opp_model.predict;
 
-import ao.ai.supervised.decision.classification.RealHistogram;
 import ao.ai.opp_model.mix.MixedAction;
+import ao.ai.supervised.decision.classification.RealHistogram;
+import ao.holdem.engine.state.HandState;
 import ao.holdem.model.BettingRound;
 import ao.holdem.model.act.SimpleAction;
-import ao.holdem.engine.state.HandState;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -77,7 +77,7 @@ public class Choice
 //        return value - exp;
     }
 
-    public @NotNull BettingRound round()
+    public BettingRound round()
     {
         return state.round();
     }

@@ -2,9 +2,8 @@ package ao.holdem.engine.persist.dao;
 
 import ao.holdem.engine.persist.PlayerHandle;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.wideplay.warp.persist.Transactional;
-import org.hibernate.Session;
+//import com.wideplay.warp.persist.Transactional;
+//import org.hibernate.Session;
 
 /**
  *
@@ -13,21 +12,22 @@ public class PlayerHandleLookup
 {
     //--------------------------------------------------------------------
     @Inject PlayerHandleAccess playerAccess;
-    @Inject Provider<Session>  session;
+//    @Inject Provider<Session>  session;
 
 
     //--------------------------------------------------------------------
-    @Transactional
+//    @Transactional
     public PlayerHandle lookup(
             String domain, String name)
     {
-        PlayerHandle player = playerAccess.find(domain, name);
-        if (player == null)
-        {
-            player = new PlayerHandle(domain, name);
-            session.get().saveOrUpdate( player );
-        }
-        return player;
+//        PlayerHandle player = playerAccess.find(domain, name);
+//        if (player == null)
+//        {
+//            player = new PlayerHandle(domain, name);
+//            session.get().saveOrUpdate( player );
+//        }
+//        return player;
+        return null;
     }
 
     public PlayerHandle lookup(String name)

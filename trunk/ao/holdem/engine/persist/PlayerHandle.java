@@ -1,13 +1,14 @@
 package ao.holdem.engine.persist;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+//import org.hibernate.annotations.Cache;
+//import org.hibernate.annotations.CacheConcurrencyStrategy;
+//import org.hibernate.annotations.Index;
+//
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.ManyToMany;
+//import javax.persistence.OneToMany;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,8 @@ import java.util.List;
 /**
  *
  */
-@Entity
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+//@Entity
+//@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PlayerHandle extends Base
 {
     //--------------------------------------------------------------------
@@ -31,7 +32,7 @@ public class PlayerHandle extends Base
     //--------------------------------------------------------------------
     private String name;
 
-    @Index(name="name_index")
+//    @Index(name="name_index")
     public String getName()            { return name;      }
     public void   setName(String name) { this.name = name; }
 
@@ -39,7 +40,7 @@ public class PlayerHandle extends Base
     //--------------------------------------------------------------------
     private String domain;
 
-    @Index(name="domain_index")
+//    @Index(name="domain_index")
     public String getDomain()              { return domain;        }
     public void   setDomain(String domain) { this.domain = domain; }
 
@@ -47,8 +48,8 @@ public class PlayerHandle extends Base
     //--------------------------------------------------------------------
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany(mappedBy = "player",
-               fetch    = FetchType.LAZY)
+//    @OneToMany(mappedBy = "player",
+//               fetch    = FetchType.LAZY)
     public List<Event> getEvents()
     {
         return events;
@@ -68,10 +69,10 @@ public class PlayerHandle extends Base
     private List<HandHistory> hands =
             new ArrayList<HandHistory>();
 
-    @ManyToMany(
-        targetEntity=HandHistory.class,
-        mappedBy = "players",
-        fetch    = FetchType.LAZY)
+//    @ManyToMany(
+//        targetEntity=HandHistory.class,
+//        mappedBy = "players",
+//        fetch    = FetchType.LAZY)
     public List<HandHistory> getHands()
     {
         return hands;

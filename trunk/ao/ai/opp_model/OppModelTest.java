@@ -3,9 +3,7 @@ package ao.ai.opp_model;
 import ao.ai.opp_model.predict.PredictorService;
 import ao.holdem.engine.persist.HandHistory;
 import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.engine.persist.dao.PlayerHandleAccess;
-import com.google.inject.Inject;
-import com.wideplay.warp.persist.Transactional;
+//import com.wideplay.warp.persist.Transactional;
 
 /**
  *
@@ -13,16 +11,16 @@ import com.wideplay.warp.persist.Transactional;
 public class OppModelTest
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleAccess playerAccess;
+//    @Inject PlayerHandleAccess playerAccess;
 
 
     //--------------------------------------------------------------------
-    @Transactional
+//    @Transactional
     public void testOpponentModeling()
     {
 //        retrieveMostPrevalent();
 //        modelOpponet(playerAccess.find("irc", "pokibot"));
-        modelOpponet(playerAccess.find("local", "real.A"));
+//        modelOpponet(playerAccess.find("local", "real.A"));
     }
 
 
@@ -71,10 +69,10 @@ public class OppModelTest
         any2cnwin :: 2192 */
     private void retrieveMostPrevalent()
     {
-        for (PlayerHandle p : playerAccess.byPrevalence(200))
-        {
-            System.out.println(
-                    p.getName() + " :: " + p.getHands().size());
-        }
+//        for (PlayerHandle p : playerAccess.byPrevalence(200))
+//        {
+//            System.out.println(
+//                    p.getName() + " :: " + p.getHands().size());
+//        }
     }
 }

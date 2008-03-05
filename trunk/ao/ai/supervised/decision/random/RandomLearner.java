@@ -8,7 +8,7 @@ import ao.ai.supervised.decision.input.processed.data.LocalDatum;
 import ao.ai.supervised.decision.input.processed.example.LocalContext;
 import ao.ai.supervised.decision.input.processed.example.LocalExample;
 import ao.ai.supervised.decision.input.processed.example.LocalLearningSet;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -86,7 +86,7 @@ public class RandomLearner implements LocalClassifier
 
 
     //--------------------------------------------------------------------
-    public void add(@NotNull LocalExample example)
+    public void add(LocalExample example)
     {
 //        if (example == null) return;
 
