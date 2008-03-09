@@ -129,12 +129,12 @@ public class IrcHand
                 return new Community(cards[0], cards[1], cards[2]);
 
             case 4:
-                return new Community(cards[0], cards[1],
-                                     cards[2], cards[3]);
+                return new Community(cards[0], cards[1], cards[2],
+                                     cards[3]);
 
             case 5:
-                return new Community(cards[0], cards[1],
-                                     cards[2], cards[3], cards[4]);
+                return new Community(cards[0], cards[1], cards[2],
+                                     cards[3], cards[4]);
         }
         throw new Error("weird community cards: " + comm +
                         " as " + Arrays.toString(cards));

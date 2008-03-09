@@ -18,14 +18,18 @@ public class EnumBinding<E extends Enum<E>>
     public EnumBinding(Class<E> enumType)
     {
         VALUES = enumType.getEnumConstants();
+
+        assert VALUES.length < Byte.MAX_VALUE;
     }
 
 
     //--------------------------------------------------------------------
     public E entryToObject(TupleInput input)
     {
-        short index = input.readShort();
-        return VALUES[ index ];
+        byte index = input.readByte();
+        return index == Byte.MAX_VALUE
+               ? null
+               : VALUES[ index ];
     }
 
 
@@ -34,6 +38,13 @@ public class EnumBinding<E extends Enum<E>>
     public void objectToEntry(Object object, TupleOutput output)
     {
         E action = (E) object;
-        output.writeShort( action.ordinal() );
+        if (action == null)
+        {
+            output.writeByte( Byte.MAX_VALUE );
+        }
+        else
+        {
+            output.writeByte( (byte) action.ordinal() );
+        }
     }
 }

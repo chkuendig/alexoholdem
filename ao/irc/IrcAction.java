@@ -302,7 +302,7 @@ public class IrcAction
     {
         return potWon;
     }
-    public Hole holes()
+    public Hole hole()
     {
         return revealedHole;
     }
