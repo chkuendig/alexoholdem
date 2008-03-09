@@ -36,17 +36,13 @@ public class Community
     }
 
     public Community(
-            Card flopA,
-            Card flopB,
-            Card flopC,
-            Card turn,
-            Card river)
+            Card flopA, Card flopB, Card flopC, Card turn, Card river)
     {
         FLOP_A = flopA;
         FLOP_B = flopB;
         FLOP_C = flopC;
-        TURN = turn;
-        RIVER = river;
+        TURN   = turn;
+        RIVER  = river;
     }
 
 
@@ -178,10 +174,10 @@ public class Community
                       ? 3 : 0;
     }
 
-    public int unknownCount()
-    {
-        return 5 - knownCount();
-    }
+//    public int unknownCount()
+//    {
+//        return 5 - knownCount();
+//    }
 
 
     //--------------------------------------------------------------------
@@ -194,13 +190,13 @@ public class Community
                RIVER  == card;
     }
 
-    public boolean contains(Card.Rank rank)
-    {
-        return contains(Card.valueOf(rank, Card.Suit.CLUBS)) ||
-               contains(Card.valueOf(rank, Card.Suit.DIAMONDS)) ||
-               contains(Card.valueOf(rank, Card.Suit.HEARTS)) ||
-               contains(Card.valueOf(rank, Card.Suit.SPADES));
-    }
+//    public boolean contains(Card.Rank rank)
+//    {
+//        return contains(Card.valueOf(rank, Card.Suit.CLUBS)) ||
+//               contains(Card.valueOf(rank, Card.Suit.DIAMONDS)) ||
+//               contains(Card.valueOf(rank, Card.Suit.HEARTS)) ||
+//               contains(Card.valueOf(rank, Card.Suit.SPADES));
+//    }
 
     public boolean flushPossible()
     {

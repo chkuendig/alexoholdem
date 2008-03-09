@@ -45,6 +45,7 @@ public class HoldemDb
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setTransactional(true);
         envConfig.setAllowCreate(true);
+        envConfig.setCacheSize(1024 * 1024 * 20);
 
         env = new Environment(new File(homeDirectory), envConfig);
 
@@ -58,13 +59,17 @@ public class HoldemDb
         avatarDb = env.openDatabase(null, AVATAR_STORE,
                                     dbConfig(true));
 
-        txn      = new TransactionRunner(env);
+        TransactionConfig txnConf = new TransactionConfig();
+        txnConf.setNoSync(true);
+        //txnConf.setReadUncommitted(true);
+        txn = new TransactionRunner(env, 32, txnConf);
     }
 
     private DatabaseConfig dbConfig(boolean allowDuplicates)
     {
         DatabaseConfig dbConfig = new DatabaseConfig();
 
+        //dbConfig.setDeferredWrite(true);
         dbConfig.setTransactional(true);
         dbConfig.setAllowCreate(true);
         dbConfig.setSortedDuplicates(allowDuplicates);
@@ -107,6 +112,20 @@ public class HoldemDb
         return avatarDb;
     }
 
+    public Cursor openAvatarCursor()
+    {
+//        CursorConfig config = new CursorConfig();
+//        config.setReadUncommitted( true );
+        try
+        {
+            return avatarDb.openCursor(null, null);
+        }
+        catch (DatabaseException e)
+        {
+            throw new Error( e );
+        }
+    }
+
     
     //--------------------------------------------------------------------
     public void close()
@@ -120,7 +139,7 @@ public class HoldemDb
             throw new Error( e );
         }
     }
-    public void doClose()
+    private void doClose()
             throws DatabaseException
     {
         avatarDb.close();

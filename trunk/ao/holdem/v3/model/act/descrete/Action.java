@@ -26,6 +26,8 @@ public enum Action
     BIG_BLIND(          false, true, null),
     BIG_BLIND_ALL_IN(   true,  true, null);
 
+    public static final Action[] VALUES = values();
+
 
     //--------------------------------------------------------------------
     private final boolean        IS_ALL_IN;

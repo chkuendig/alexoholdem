@@ -96,10 +96,10 @@ public class HandItr implements Iterable<HandHistory>
             playerHandles.add(handle);
             brains.put(handle, new IrcPlayer(acts));
 
-            ao.holdem.model.card.Hole hole = acts.holes();
+            ao.holdem.model.card.Hole hole = acts.hole();
             if (hole != null)
             {
-                cards.putHole(handle, acts.holes());
+                cards.putHole(handle, acts.hole());
             }
         }
 

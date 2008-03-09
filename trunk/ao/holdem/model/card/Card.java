@@ -63,18 +63,22 @@ public enum Card
     KING_OF_SPADES (Rank.KING,  Suit.SPADES),
     ACE_OF_SPADES  (Rank.ACE,   Suit.SPADES);
 
+    public static final Card[] VALUES = Card.values();
+
 
     //--------------------------------------------------------------------
     public static Card valueOf(Rank rank, Suit suit)
     {                       
-        return values()[ rank.ordinal() +
-                         suit.ordinal() * Rank.values().length ];
+        return VALUES[ rank.ordinal() +
+                       suit.ordinal() * Rank.values().length ];
     }
-    public static Card valueOf(int index)
-    {
-        return values()[ index - 1 ];
-    }
+//    public static Card valueOf(int index)
+//    {
+//        return values()[ index - 1 ];
+//    }
 
+
+    //--------------------------------------------------------------------
     // 5h Qd 6c Ac 6s
     public static Card valueOfCard(String name)
     {

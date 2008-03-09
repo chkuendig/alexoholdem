@@ -10,10 +10,10 @@ public enum BettingRound
     TURN,
     RIVER;
 
-    public BettingRound previous()
-    {
-        return values()[ ordinal() - 1 ];
-    }
+//    public BettingRound previous()
+//    {
+//        return values()[ ordinal() - 1 ];
+//    }
 
     public BettingRound next()
     {
