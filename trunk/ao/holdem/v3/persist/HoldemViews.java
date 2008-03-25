@@ -1,8 +1,8 @@
 package ao.holdem.v3.persist;
 
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.hand.Hand;
 import ao.holdem.v3.model.hand.HandId;
+import ao.holdem.v3.model.hand.Replay;
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.collections.StoredEntrySet;
@@ -22,7 +22,7 @@ public class HoldemViews
     public HoldemViews(HoldemDb db)
     {
         EntryBinding  handKeyBinding   = HandId.BINDING;
-        EntityBinding handValueBinding = Hand.BINDING;
+        EntityBinding handValueBinding = Replay.BINDING;
 
         EntryBinding avatarKeyBinding   = Avatar.BINDING;
         EntryBinding avatarValueBinding = HandId.BINDING;

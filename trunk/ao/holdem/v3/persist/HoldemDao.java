@@ -1,7 +1,7 @@
 package ao.holdem.v3.persist;
 
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.hand.Hand;
+import ao.holdem.v3.model.hand.Replay;
 import ao.util.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.collections.StoredMap;
@@ -31,7 +31,7 @@ public class HoldemDao
 
 
     //--------------------------------------------------------------------
-    public void presist(final Hand hand)
+    public void presist(final Replay hand)
     {
         db.atomic(new TransactionWorker() {
             public void doWork() throws Exception {
@@ -47,16 +47,16 @@ public class HoldemDao
 
 
     //--------------------------------------------------------------------
-    public List<Hand> retrieve(Avatar withPlayer)
+    public List<Replay> retrieve(Avatar withPlayer)
     {
         return retrieve(withPlayer, Integer.MAX_VALUE);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Hand> retrieve(
+    public List<Replay> retrieve(
             Avatar withPlayer, int numLatest)
     {
-        List<Hand> playerHands = new ArrayList<Hand>();
+        List<Replay> playerHands = new ArrayList<Replay>();
 
         int count = 0;
         for (Object handId : avatars.duplicates(withPlayer))
@@ -64,7 +64,7 @@ public class HoldemDao
             if (count++ >= numLatest) break;
 
             playerHands.add(
-                    (Hand) hands.get( handId ));
+                    (Replay) hands.get( handId ));
         }
 
         return playerHands;

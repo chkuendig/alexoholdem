@@ -81,12 +81,6 @@ public class Money implements Comparable<Money>, Serializable
     }
 
 
-    public int chips(int smallBlind)
-    {
-        return smallBlinds() * smallBlind;
-    }
-
-
     //--------------------------------------------------------------------
     public Money plus(Money addend)
     {
