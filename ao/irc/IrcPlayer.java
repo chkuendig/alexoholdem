@@ -1,14 +1,19 @@
 package ao.irc;
 
-import ao.holdem.engine.HoldemRuleBreach;
-import ao.holdem.model.Player;
-import ao.holdem.model.act.RealAction;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.state.StateManager;
+import ao.holdem.v3.engine.Player;
+import ao.holdem.v3.engine.RuleBreach;
+import ao.holdem.v3.engine.analysis.Analysis;
+import ao.holdem.v3.engine.state.State;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -16,18 +21,18 @@ import java.util.List;
 public class IrcPlayer implements Player
 {
     //--------------------------------------------------------------------
-    private List<RealAction> acts;
-    private int              nextAction;
+    private List<Action> acts;
+    private int          nextAction;
 
 
     //--------------------------------------------------------------------
-    public void handEnded(HandHistory history) {}
+    public void handEnded(Map<Avatar, Chips> deltas) {}
 
     
     //--------------------------------------------------------------------
     public IrcPlayer(IrcAction action)
     {
-        acts       = new ArrayList<RealAction>();
+        acts       = new ArrayList<Action>();
         nextAction = 0;
 
         acts.addAll(Arrays.asList( action.preFlop() ));
@@ -38,20 +43,23 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public RealAction act(StateManager env)
+    public Action act(State     state,
+                      Hole      hole,
+                      Community community,
+                      Analysis  analysis)
     {
         if (! nextActionInBounds())
         {
-            throw new HoldemRuleBreach("unspecified move: " + env);
+            throw new RuleBreach("unspecified move: " + state);
         }
 
         return acts.get( nextAction++ );
     }
 
-    public boolean shiftQuitAction()
+    public boolean hasQuit()
     {
         boolean isQuit = nextActionInBounds() &&
-                         acts.get(nextAction).equals( RealAction.QUIT );
+                         acts.get(nextAction).equals( Action.QUIT );
         if (isQuit) nextAction++;
         return isQuit;
     }

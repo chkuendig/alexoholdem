@@ -1,10 +1,10 @@
 package ao.holdem;
 
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 import ao.holdem.net.OverTheWireState;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.ApproximateOddFinder;
@@ -241,8 +241,9 @@ public class Main
 //            Hole pocketPair =
 //                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
 //                             Card.valueOf(rank, Card.Suit.CLUBS));
-            Hole pocket = new Hole(Card.SIX_OF_SPADES,
-                                   Card.SEVEN_OF_DIAMONDS);
+            Hole pocket = Hole.newInstance(
+                                Card.SIX_OF_SPADES,
+                                Card.SEVEN_OF_DIAMONDS);
 
 
             long before = System.currentTimeMillis();

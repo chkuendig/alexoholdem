@@ -1,12 +1,17 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
-import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.card.Hole;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.state.HandState;
-import ao.holdem.engine.state.StateManager;
+import ao.holdem.v3.engine.analysis.Analysis;
+import ao.holdem.v3.engine.state.State;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.act.FallbackAction;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.util.rand.Rand;
+
+import java.util.Map;
 
 
 /**
@@ -15,12 +20,16 @@ import ao.util.rand.Rand;
 public class RandomBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public void handEnded(HandHistory history) {}
+    public void handEnded(Map<Avatar, Chips> deltas) {}
 
 
     //--------------------------------------------------------------------
-    protected EasyAction act(StateManager env, HandState state, Hole hole)
+    public Action act(State     state,
+                      Hole      hole,
+                      Community community,
+                      Analysis  analysis)
     {
-        return Rand.fromArray( EasyAction.values() );
+        return state.reify(
+                Rand.fromArray( FallbackAction.VALUES ));
     }
 }

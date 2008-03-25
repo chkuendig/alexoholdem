@@ -1,7 +1,7 @@
 package ao.holdem.v3.persist;
 
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.hand.Replay;
+import ao.holdem.v3.model.replay.Replay;
 import ao.util.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.collections.StoredMap;

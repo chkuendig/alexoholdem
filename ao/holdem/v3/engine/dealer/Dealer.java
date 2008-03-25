@@ -1,12 +1,13 @@
-package ao.holdem.v3.engine;
+package ao.holdem.v3.engine.dealer;
 
+import ao.holdem.v3.engine.Player;
 import ao.holdem.v3.engine.state.Seat;
 import ao.holdem.v3.engine.state.StateFlow;
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Stack;
+import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.chance.ChanceCards;
-import ao.holdem.v3.model.hand.Replay;
+import ao.holdem.v3.model.replay.StackedReplay;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,9 @@ public class Dealer
 
 
     //--------------------------------------------------------------------
-    public Replay play(List<Avatar> clockwiseDealerLast,
-                     ChanceCards  cards)
+    public StackedReplay play(
+            List<Avatar> clockwiseDealerLast,
+            ChanceCards  cards)
     {
         StateFlow stateFlow = new StateFlow(clockwiseDealerLast,
                                             autoBlinds);
@@ -52,8 +54,11 @@ public class Dealer
         }
         while (! stateFlow.head().atEndOfHand());
 
-        publishOutcome( null );
-        return stateFlow.asHand( cards );
+        Map<Avatar, Chips> deltas = stateFlow.deltas(cards);
+        publishOutcome( deltas );
+        return new StackedReplay(
+                    stateFlow.asHand( cards ),
+                    deltas);
     }
 
     private void handleQuitters(StateFlow stateFlow)
@@ -68,7 +73,7 @@ public class Dealer
         }
     }
 
-    private void publishOutcome(Map<Avatar, Stack> deltas)
+    private void publishOutcome(Map<Avatar, Chips> deltas)
     {
         for (Avatar avatar : deltas.keySet())
         {

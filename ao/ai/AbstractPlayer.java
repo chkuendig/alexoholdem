@@ -1,11 +1,6 @@
 package ao.ai;
 
-import ao.holdem.engine.state.HandState;
-import ao.holdem.engine.state.StateManager;
-import ao.holdem.model.card.Hole;
-import ao.holdem.model.Player;
-import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.act.RealAction;
+import ao.holdem.v3.engine.Player;
 
 /**
  *
@@ -13,22 +8,7 @@ import ao.holdem.model.act.RealAction;
 public abstract class AbstractPlayer implements Player
 {
     //--------------------------------------------------------------------
-    public RealAction act(StateManager env)
-    {
-        HandState state = env.head();
-        return act(env,
-                   state,
-                   env.cards().holeFor(
-                           state.nextToAct().handle() ))
-                .toRealAction( env.head() );
-    }
-
-    protected abstract EasyAction act(
-            StateManager env, HandState state, Hole hole);
-
-
-    //--------------------------------------------------------------------
-    public boolean shiftQuitAction()
+    public boolean hasQuit()
     {
         return false;
     }

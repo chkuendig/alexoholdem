@@ -7,35 +7,35 @@ import com.sleepycat.bind.tuple.TupleOutput;
 /**
  * One or more chips.
  */
-public class Stack implements Comparable<Stack>
+public class Chips implements Comparable<Chips>
 {
     //--------------------------------------------------------------------
-    private static final Stack CACHE_NEGATIVE[] = new Stack[ 64  ];
-    private static final Stack CACHE_POSITIVE[] = new Stack[ 256 ];
+    private static final Chips CACHE_NEGATIVE[] = new Chips[ 64  ];
+    private static final Chips CACHE_POSITIVE[] = new Chips[ 256 ];
     static
     {
         for (int i = 0; i < CACHE_NEGATIVE.length; i++)
-            CACHE_NEGATIVE[ i ] = new Stack(-i);
+            CACHE_NEGATIVE[ i ] = new Chips(-i);
 
         for (int i = 0; i < CACHE_POSITIVE.length; i++)
-            CACHE_POSITIVE[ i ] = new Stack(i);
+            CACHE_POSITIVE[ i ] = new Chips(i);
     }
 
 
     //--------------------------------------------------------------------
-    public static final Stack ZERO        = newInstance(0);
-    public static final Stack SMALL_BLIND = newInstance(1);
-    public static final Stack BIG_BLIND   = newInstance(2);
-    public static final Stack SMALL_BET   = BIG_BLIND;
-    public static final Stack BIG_BET     = newInstance(4);
-    public static final Stack MAX_VALUE   = newInstance(Short.MAX_VALUE);
+    public static final Chips ZERO        = newInstance(0);
+    public static final Chips SMALL_BLIND = newInstance(1);
+    public static final Chips BIG_BLIND   = newInstance(2);
+    public static final Chips SMALL_BET   = BIG_BLIND;
+    public static final Chips BIG_BET     = newInstance(4);
+    public static final Chips MAX_VALUE   = newInstance(Short.MAX_VALUE);
 
-    public static Stack blind(boolean isSmall)
+    public static Chips blind(boolean isSmall)
     {
         return isSmall ? SMALL_BLIND : BIG_BLIND;
     }
 
-    public static Stack newInstance(int smallBlinds)
+    public static Chips newInstance(int smallBlinds)
     {
         return (0 <= smallBlinds &&
                      smallBlinds < CACHE_POSITIVE.length)
@@ -43,14 +43,14 @@ public class Stack implements Comparable<Stack>
                 : (0 > smallBlinds &&
                        smallBlinds >= -(CACHE_NEGATIVE.length + 1))
                    ? CACHE_NEGATIVE[-(smallBlinds + 1)]
-                   : new Stack( smallBlinds );
+                   : new Chips( smallBlinds );
     }
 
 
     //--------------------------------------------------------------------
     private final int smallBlinds;
 
-    private Stack(int smallBlinds)
+    private Chips(int smallBlinds)
     {
         this.smallBlinds = smallBlinds;
     }
@@ -86,42 +86,42 @@ public class Stack implements Comparable<Stack>
 
 
     //--------------------------------------------------------------------
-    public Stack plus(Stack addend)
+    public Chips plus(Chips addend)
     {
-        return Stack.newInstance(
+        return Chips.newInstance(
                 smallBlinds + addend.smallBlinds);
     }
 
-    public Stack minus(Stack subtractor)
+    public Chips minus(Chips subtractor)
     {
-        return Stack.newInstance(
+        return Chips.newInstance(
                 smallBlinds - subtractor.smallBlinds);
     }
 
-    public Stack negate()
+    public Chips negate()
     {
-        return Stack.newInstance(-smallBlinds);
+        return Chips.newInstance(-smallBlinds);
     }
 
-    public Stack split(int into)
+    public Chips split(int into)
     {
-        return Stack.newInstance(
+        return Chips.newInstance(
                 smallBlinds / into);
     }
-    public Stack remainder(int afterSplittingInto)
+    public Chips remainder(int afterSplittingInto)
     {
         return minus( split(afterSplittingInto)
                         .times(afterSplittingInto) );
     }
-    private Stack times(int factor)
+    private Chips times(int factor)
     {
-        return Stack.newInstance(
+        return Chips.newInstance(
                 smallBlinds * factor);
     }
 
 
     //--------------------------------------------------------------------
-    public int compareTo(Stack o)
+    public int compareTo(Chips o)
     {
         return (smallBlinds < o.smallBlinds) ? -1 :
                (smallBlinds > o.smallBlinds) ?  1 : 0;
@@ -141,7 +141,7 @@ public class Stack implements Comparable<Stack>
         if (o == null ||
             getClass() != o.getClass()) return false;
 
-        Stack money = (Stack) o;
+        Chips money = (Chips) o;
         return smallBlinds == money.smallBlinds;
     }
 
@@ -155,17 +155,17 @@ public class Stack implements Comparable<Stack>
     public static final Binding BINDING = new Binding();
     public static class Binding extends TupleBinding
     {
-        public Stack entryToObject(TupleInput input)
+        public Chips entryToObject(TupleInput input)
         {
             short smallBlinds = input.readShort();
-            return Stack.newInstance( smallBlinds );
+            return Chips.newInstance( smallBlinds );
         }
 
         public void objectToEntry(Object      object,
                                   TupleOutput output)
         {
-            Stack stack = (Stack) object;
-            output.writeShort((short) stack.smallBlinds);
+            Chips chips = (Chips) object;
+            output.writeShort((short) chips.smallBlinds);
         }
     }
 }

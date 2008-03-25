@@ -1,8 +1,8 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;

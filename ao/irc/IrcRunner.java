@@ -1,6 +1,6 @@
 package ao.irc;
 
-import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.v3.model.replay.Replay;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class IrcRunner
     {
         System.out.println("ircDir: " + ircDir);
 
-        for (HandHistory hist :
+        for (Replay hist :
                 historian.fromSnapshot(ircDir))
         {
 //            hands.store( hist );

@@ -1,18 +1,21 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
-import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
-import ao.odds.agglom.impl.ApproximateOddFinder;
+import ao.holdem.v3.engine.analysis.Analysis;
+import ao.holdem.v3.engine.state.State;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.act.FallbackAction;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.state.HandState;
-import ao.holdem.engine.state.StateManager;
+import ao.odds.agglom.impl.ApproximateOddFinder;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * Designed for heads up play.
@@ -20,14 +23,15 @@ import java.io.InputStreamReader;
 public class MathBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public void handEnded(HandHistory history) {}
+    public void handEnded(Map<Avatar, Chips> deltas) {}
 
     
     //--------------------------------------------------------------------
-    protected EasyAction act(StateManager env, HandState state, Hole hole)
+    public Action act(State     state,
+                      Hole      hole,
+                      Community community,
+                      Analysis  analysis)
     {
-        Community community = env.cards().community();
-
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
                         hole, community, state.numActivePlayers()-1);
@@ -46,9 +50,10 @@ public class MathBot extends AbstractPlayer
 //                " vs [" + Math.round(potOdds * 100) + "]");
 //        }
 
-        return (odds.winPercent() > potOdds)
-                ? EasyAction.RAISE_OR_CALL
-                : EasyAction.CHECK_OR_CALL;
+        return state.reify(
+                (odds.winPercent() > potOdds)
+                ? FallbackAction.RAISE_OR_CALL
+                : FallbackAction.CHECK_OR_CALL);
     }
 
 

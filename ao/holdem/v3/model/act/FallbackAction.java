@@ -1,6 +1,5 @@
 package ao.holdem.v3.model.act;
 
-import ao.holdem.model.act.RealAction;
 
 /**
  * In limit Holdem, there are four possible actions:
@@ -34,37 +33,39 @@ public enum FallbackAction
 {
     //--------------------------------------------------------------------
     CHECK_OR_FOLD {
-        public RealAction toRealAction(
+        public Action fallback(
                 boolean canCheck, boolean canRaise) {
             return canCheck
-                   ? RealAction.CHECK
-                   : RealAction.FOLD;
+                   ? Action.CHECK
+                   : Action.FOLD;
         }},
 
     CHECK_OR_CALL {
-        public RealAction toRealAction(
+        public Action fallback(
                 boolean canCheck, boolean canRaise) {
             return canCheck
-                   ? RealAction.CHECK
-                   : RealAction.CALL;
+                   ? Action.CHECK
+                   : Action.CALL;
         }},
 
     RAISE_OR_CALL {
-        public RealAction toRealAction(
+        public Action fallback(
                 boolean canCheck, boolean canRaise) {
             return canRaise
-                   ? RealAction.RAISE
-                   : RealAction.CALL;
+                   ? Action.RAISE
+                   : Action.CALL;
         }};
+
+    public static final FallbackAction VALUES[] = values();
 
 
     //--------------------------------------------------------------------
-//    public RealAction toRealAction(HandState state)
+//    public RealAction fallback(HandState state)
 //    {
-//        return state.toRealAction(this);
+//        return state.fallback(this);
 //    }
 
-    public abstract RealAction toRealAction(
+    public abstract Action fallback(
             boolean canCheck,
             boolean canRaise);
 //    {

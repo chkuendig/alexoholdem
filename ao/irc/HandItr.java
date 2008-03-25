@@ -1,40 +1,36 @@
 package ao.irc;
 
-import ao.holdem.engine.Dealer;
-import ao.holdem.engine.HoldemRuleBreach;
-import ao.holdem.engine.LiteralCardSource;
-import ao.holdem.model.Player;
-import ao.holdem.model.act.RealAction;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.engine.state.StateManager;
+import ao.holdem.v3.engine.Player;
+import ao.holdem.v3.engine.RuleBreach;
+import ao.holdem.v3.engine.dealer.Dealer;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.card.Hole;
+import ao.holdem.v3.model.card.chance.LiteralCards;
+import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.v3.model.replay.StackedReplay;
 
 import java.util.*;
 
 /**
  * Hand History Iterator
  */
-public class HandItr implements Iterable<HandHistory>
+public class HandItr implements Iterable<Replay>
 {
     //--------------------------------------------------------------------
     private Map<String, List<IrcAction>> players;
     private Map<Long, IrcRoster>         rosters;
     private List<IrcHand>                hands;
 
-    private HandHistory nextHistory;
-    private int         nextHandIndex;
-
-//    private PlayerHandleLookup playerLookup;
-
+    private Replay nextHistory;
+    private int    nextHandIndex;
 
 
     //--------------------------------------------------------------------
     public HandItr(Map<String, List<IrcAction>> players,
                    Map<Long, IrcRoster>         rosters,
-                   List<IrcHand>                hands/*,
-                   PlayerHandleLookup           playerLookup*/)
+                   List<IrcHand>                hands)
     {
-        //this.playerLookup = playerLookup;
         init(players, rosters, hands);
     }
 
@@ -65,7 +61,7 @@ public class HandItr implements Iterable<HandHistory>
         }
     }
 
-    private HandHistory computeHistory(IrcHand hand)
+    private Replay computeHistory(IrcHand hand)
     {
         IrcRoster roster = rosters.get( hand.timestamp() );
         if (roster == null) return null;
@@ -81,38 +77,38 @@ public class HandItr implements Iterable<HandHistory>
 //        System.out.println("nextHandIndex " + (nextHandIndex-1));
 //        displayHand(hand, action);
 
-        LiteralCardSource cards =
-                new LiteralCardSource( hand.community() );
 
-        List<PlayerHandle> playerHandles = new ArrayList<PlayerHandle>();
-        Map<PlayerHandle, Player> brains =
-                new HashMap<PlayerHandle, Player>();
+        Map<Avatar, Hole>   holes         = new HashMap<Avatar, Hole>();
+        List<Avatar>        playerHandles = new ArrayList<Avatar>();
+        Map<Avatar, Player> brains        = new HashMap<Avatar, Player>();
         for (int i = 0; i < names.size(); i++)
         {
-            String       name   = names.get(i);
-            PlayerHandle handle = ircPlayer(name);
-            IrcAction    acts   = action.get(i);
+            String    name   = names.get(i);
+            Avatar    handle = ircPlayer(name);
+            IrcAction acts   = action.get(i);
 
             playerHandles.add(handle);
             brains.put(handle, new IrcPlayer(acts));
 
-            ao.holdem.model.card.Hole hole = acts.hole();
+            Hole hole = acts.hole();
             if (hole != null)
             {
-                cards.putHole(handle, acts.hole());
+                holes.put(handle, acts.hole());
             }
         }
 
-        StateManager start  = new StateManager(playerHandles, cards);
-        Dealer dealer = new Dealer(start, brains);
+        Dealer dealer = new Dealer(false, brains);
         try
         {
-            StateManager out    = dealer.playOutHand();
+            StackedReplay out =
+                    dealer.play(playerHandles,
+                                new LiteralCards(
+                                        hand.community(), holes));
 //            System.out.println("winners: " +
 //                           Arrays.deepToString(out.winners().toArray()));
-            return out.toHistory();
+            return out.replay();
         }
-        catch (HoldemRuleBreach e)
+        catch (RuleBreach e)
         {
             if (! e.getMessage().contains("round betting cap exceeded"))
             {
@@ -140,7 +136,7 @@ public class HandItr implements Iterable<HandHistory>
         for (IrcAction acts : actions)
         {
             int quitIndex = Arrays.asList( acts.preFlop() )
-                                .indexOf( RealAction.QUIT );
+                                .indexOf( Action.QUIT );
             if (quitIndex != -1) return true;
         }
         return false;
@@ -234,15 +230,15 @@ public class HandItr implements Iterable<HandHistory>
 
 
     //--------------------------------------------------------------------
-    public Iterator<HandHistory> iterator()
+    public Iterator<Replay> iterator()
     {
-        return new Iterator<HandHistory>() {
+        return new Iterator<Replay>() {
             public boolean hasNext() {
                 return (nextHistory != null);
             }
 
-            public HandHistory next() {
-                HandHistory next = nextHistory;
+            public Replay next() {
+                Replay next = nextHistory;
                 computeNextHistory();
                 return next;
             }
@@ -255,9 +251,8 @@ public class HandItr implements Iterable<HandHistory>
 
 
     //--------------------------------------------------------------------
-    private PlayerHandle ircPlayer(String name)
+    private Avatar ircPlayer(String name)
     {
-        //return playerLookup.lookup("irc", name);
-        return null;
+        return new Avatar("irc", name);
     }
 }

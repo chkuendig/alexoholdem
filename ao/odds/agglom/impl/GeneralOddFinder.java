@@ -1,11 +1,11 @@
 package ao.odds.agglom.impl;
 
-import ao.odds.eval.eval7.Eval7Faster;
-import ao.odds.agglom.Odds;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.OddFinder;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.odds.agglom.Odds;
+import ao.odds.eval.eval7.Eval7Faster;
 import ao.util.stats.FastIntCombiner;
 
 /**
@@ -278,8 +278,8 @@ public class GeneralOddFinder implements OddFinder
     public static void moveKnownCardsToEnd(
             int cards[], Hole hole, Community community)
     {
-        swap(cards, hole.first().ordinal(),  HOLE_A);
-        swap(cards, hole.second().ordinal(), HOLE_B);
+        swap(cards, hole.a().ordinal(), HOLE_A);
+        swap(cards, hole.b().ordinal(), HOLE_B);
 
         switch (community.knownCount())
         {

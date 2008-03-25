@@ -1,7 +1,7 @@
 package ao.ai.opp_model.mix;
 
 import ao.ai.supervised.decision.classification.RealHistogram;
-import ao.holdem.model.act.SimpleAction;
+import ao.holdem.v3.model.act.AbstractAction;
 import ao.util.rand.Rand;
 
 /**
@@ -19,11 +19,11 @@ public class MixedAction
     }
 
     public static MixedAction fromHistogram(
-            RealHistogram<SimpleAction> hist)
+            RealHistogram<AbstractAction> hist)
     {
-        double fold  = hist.probabilityOf(SimpleAction.FOLD);
-        double call  = hist.probabilityOf(SimpleAction.CALL);
-        double raise = hist.probabilityOf(SimpleAction.RAISE);
+        double fold  = hist.probabilityOf(AbstractAction.QUIT_FOLD);
+        double call  = hist.probabilityOf(AbstractAction.CHECK_CALL);
+        double raise = hist.probabilityOf(AbstractAction.BET_RAISE);
         double total = fold + call + raise;
         if (total == 0) return new MixedAction(1, 1, 1);
 
@@ -60,26 +60,26 @@ public class MixedAction
 
 
     //--------------------------------------------------------------------
-    public SimpleAction weightedRandom()
+    public AbstractAction weightedRandom()
     {
         double rand = Rand.nextDouble();
 
         return (rand <= foldProb)
-                ? SimpleAction.FOLD
+                ? AbstractAction.QUIT_FOLD
                 : (rand <= (foldProb + callProb))
-                   ? SimpleAction.CALL
-                   : SimpleAction.RAISE;
+                   ? AbstractAction.CHECK_CALL
+                   : AbstractAction.BET_RAISE;
     }
 
 
     //--------------------------------------------------------------------
-    public double probabilityOf(SimpleAction action)
+    public double probabilityOf(AbstractAction action)
     {
-        return action == SimpleAction.FOLD
+        return action == AbstractAction.QUIT_FOLD
                ? foldProb
-               : action == SimpleAction.CALL
+               : action == AbstractAction.CHECK_CALL
                  ? callProb
-                 : action == SimpleAction.RAISE
+                 : action == AbstractAction.BET_RAISE
                    ? raiseProb : 0;
     }
 

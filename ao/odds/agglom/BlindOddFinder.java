@@ -1,7 +1,6 @@
 package ao.odds.agglom;
 
-import ao.holdem.model.card.Community;
-import ao.odds.agglom.Odds;
+import ao.holdem.v3.model.card.Community;
 
 /**
  *

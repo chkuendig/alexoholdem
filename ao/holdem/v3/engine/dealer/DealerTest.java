@@ -1,16 +1,12 @@
-package ao.holdem.engine;
+package ao.holdem.v3.engine.dealer;
 
-import ao.ai.monte_carlo.uct.UctBot;
+import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.engine.persist.dao.HandHistoryDao;
-import ao.holdem.engine.persist.dao.PlayerHandleLookup;
-import ao.holdem.engine.state.StateManager;
-import ao.holdem.model.Money;
-import ao.holdem.model.Player;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import ao.holdem.v3.engine.Player;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
+import ao.holdem.v3.model.card.chance.DeckCards;
+import ao.holdem.v3.model.replay.StackedReplay;
 
 import java.util.*;
 
@@ -20,9 +16,7 @@ import java.util.*;
 public class DealerTest
 {
     //--------------------------------------------------------------------
-    @Inject PlayerHandleLookup  players;
-    @Inject HandHistoryDao      hands;
-    @Inject Provider<UctBot>    smarties;
+//    @Inject Provider<UctBot>    smarties;
 
 
     //--------------------------------------------------------------------
@@ -32,10 +26,10 @@ public class DealerTest
 //        Rand.nextDouble();
 //        Rand.nextBoolean();
 
-        List<PlayerHandle> playerHandles =
-                new ArrayList<PlayerHandle>();
-        Map<PlayerHandle, Player> brains =
-                new HashMap<PlayerHandle, Player>();
+        List<Avatar> players =
+                new ArrayList<Avatar>();
+        Map<Avatar, Player> brains =
+                new HashMap<Avatar, Player>();
         for (Map.Entry<String, Player> e :
                 new LinkedHashMap<String, Player>(){{
 //                    put("real.G", new DuaneBot());
@@ -44,8 +38,8 @@ public class DealerTest
 //                    put("real.D", new MathBot());
 //                    put("raise", new AlwaysRaiseBot());
                     put("duane", new DuaneBot());
-                    put("uct", smarties.get());
-//                    put("real.A", new AlwaysRaiseBot());
+//                    put("uct", smarties.get());
+                    put("real.A", new AlwaysRaiseBot());
 //                    put("real.B", new DuaneBot());
 //                    put("real.C", new AlwaysRaiseBot());
 //                    put("real.D", new MathBot());
@@ -54,32 +48,32 @@ public class DealerTest
 //                    put("real.G", smarties.get());
                 }}.entrySet())
         {
-            PlayerHandle playerHandle = players.lookup(e.getKey());
-            playerHandles.add( playerHandle );
+            Avatar playerHandle = Avatar.local(e.getKey());
+            players.add( playerHandle );
             brains.put( playerHandle, e.getValue() );
         }
 
-        Map<PlayerHandle, Money> cumDeltas =
-                new HashMap<PlayerHandle, Money>();
+        Map<Avatar, Chips> cumDeltas =
+                new HashMap<Avatar, Chips>();
+
+        Dealer dealer = new Dealer(true, brains);
+
         for (int i = 0; i < 10000; i++)
         {
-            StateManager start  = new StateManager(playerHandles, true);
-            Dealer       dealer = new Dealer(start, brains);
-
             //System.out.println(i);
-            StateManager run  = dealer.playOutHand();
-            HandHistory  hist = run.toHistory();
-            dealer.publishHistory( hist );
+            StackedReplay replay =
+                    dealer.play(players, new DeckCards());
 //            hands.store(hist);
 
-            Map<PlayerHandle, Money> deltas = hist.getDeltas();
+            Map<Avatar, Chips>
+                    deltas = replay.deltas();
             if (cumDeltas.isEmpty())
             {
                 cumDeltas.putAll( deltas );
             }
             else
             {
-                for (Map.Entry<PlayerHandle, Money> delta
+                for (Map.Entry<Avatar, Chips> delta
                         : deltas.entrySet())
                 {
                     cumDeltas.put(delta.getKey(),
@@ -92,11 +86,11 @@ public class DealerTest
             System.out.println(
                     formatCumulativeDeltas(i, cumDeltas));
 
-            playerHandles.add( playerHandles.remove(0) );
+            players.add( players.remove(0) );
         }
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        for (Map.Entry<PlayerHandle, Money> delta
+        for (Map.Entry<Avatar, Chips> delta
                 : cumDeltas.entrySet())
         {
             System.out.println(delta.getKey() + "\t" +
@@ -106,19 +100,19 @@ public class DealerTest
     }
 
     private String formatCumulativeDeltas(
-            int                      dataIndex,
-            Map<PlayerHandle, Money> cumDeltas)
+            int                dataIndex,
+            Map<Avatar, Chips> cumDeltas)
     {
         StringBuilder str = new StringBuilder();
 
-        for (Map.Entry<PlayerHandle, Money> delta :
+        for (Map.Entry<Avatar, Chips> delta :
                 cumDeltas.entrySet())
         {
             str.append(dataIndex)
                .append("\t")
-               .append(delta.getKey().getName())
+               .append(delta.getKey().name())
                .append("\t")
-               .append(delta.getValue().smallBlinds())
+               .append(delta.getValue())
                .append("\n");
         }
 

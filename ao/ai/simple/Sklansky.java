@@ -1,7 +1,8 @@
 package ao.ai.simple;
 
-import static ao.holdem.model.card.Card.Rank.*;
-import ao.holdem.model.card.Hole;
+import static ao.holdem.v3.model.card.Card.Rank.*;
+import ao.holdem.v3.model.card.Hole;
+
 
 /**
  *
@@ -22,11 +23,11 @@ public class Sklansky
     public static int groupOf(Hole hole)
     {
         // 1  	AA, KK, QQ, JJ, AKs
-        if (    hole.ranks(ACE, ACE) ||
-                hole.ranks(KING, KING) ||
+        if (    hole.ranks(ACE,   ACE)   ||
+                hole.ranks(KING,  KING)  ||
                 hole.ranks(QUEEN, QUEEN) ||
-                hole.ranks(JACK, JACK) ||
-                hole.ranks(ACE, KING) && hole.suited())
+                hole.ranks(JACK,  JACK)  ||
+                hole.ranks(ACE,   KING)  && hole.suited())
         {
             return 1;
         }
