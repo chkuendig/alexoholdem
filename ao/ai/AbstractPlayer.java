@@ -1,6 +1,6 @@
 package ao.ai;
 
-import ao.holdem.v3.engine.Player;
+import ao.holdem.engine.Player;
 
 /**
  *

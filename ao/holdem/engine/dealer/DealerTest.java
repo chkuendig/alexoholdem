@@ -1,8 +1,8 @@
-package ao.holdem.v3.engine.dealer;
+package ao.holdem.engine.dealer;
 
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
-import ao.holdem.v3.engine.Player;
+import ao.holdem.engine.Player;
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.card.chance.DeckCards;

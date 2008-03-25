@@ -1,6 +1,6 @@
-package ao.holdem.v3.engine.state;
+package ao.holdem.engine.state;
 
-import ao.holdem.v3.engine.RuleBreach;
+import ao.holdem.engine.RuleBreach;
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.Round;

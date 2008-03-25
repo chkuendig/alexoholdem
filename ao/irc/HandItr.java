@@ -1,8 +1,8 @@
 package ao.irc;
 
-import ao.holdem.v3.engine.Player;
-import ao.holdem.v3.engine.RuleBreach;
-import ao.holdem.v3.engine.dealer.Dealer;
+import ao.holdem.engine.Player;
+import ao.holdem.engine.RuleBreach;
+import ao.holdem.engine.dealer.Dealer;
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.Hole;
