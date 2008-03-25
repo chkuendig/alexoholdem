@@ -1,13 +1,12 @@
 package ao.holdem.v3.engine.state;
 
-import ao.holdem.engine.HoldemRuleBreach;
-import ao.holdem.model.act.EasyAction;
-import ao.holdem.model.act.RealAction;
+import ao.holdem.v3.engine.RuleBreach;
 import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.Stack;
 import ao.holdem.v3.model.act.AbstractAction;
 import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.act.FallbackAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,7 @@ public class State
     private final int   nextToAct;
     private final int   remainingRoundBets;
     private final int   latestRoundStaker;
-    private final Stack stakes;
+    private final Chips stakes;
     private final State startOfRound;
 
 
@@ -46,7 +45,7 @@ public class State
         nextToAct          = 0;
         remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker  = -1;
-        stakes             = Stack.ZERO;
+        stakes             = Chips.ZERO;
         startOfRound       = this;
     }
     private Seat initPlayerState(
@@ -55,7 +54,7 @@ public class State
     {
         Avatar player = clockwiseDealerLast.get( playerIndex );
         return new Seat(
-                    player, Stack.ZERO, false, false);
+                    player, Chips.ZERO, false, false);
     }
 
     // automatically posts blinds
@@ -73,7 +72,7 @@ public class State
                   int   copyNextToAct,
                   int   copyRemainingRoundBets,
                   int   copyLatestRoundStaker,
-                  Stack copyStakes,
+                  Chips copyStakes,
                   State copyStartOfRound)
     {
         round              = copyRound;
@@ -112,7 +111,7 @@ public class State
         Seat  nextPlayers[]     = nextPlayers(act);
         int   nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
         int   nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
-        Stack nextStakes        = nextStakes(nextPlayers, betRaise);
+        Chips nextStakes        = nextStakes(nextPlayers, betRaise);
         int   nextRoundStaker   =
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
@@ -134,7 +133,7 @@ public class State
         return nextPlayers;
     }
 
-    private Stack nextStakes(Seat[] nextPlayers, boolean betRaise)
+    private Chips nextStakes(Seat[] nextPlayers, boolean betRaise)
     {
         return (betRaise)
                ? nextPlayers[nextToAct].commitment()
@@ -194,12 +193,12 @@ public class State
     {
         boolean isSmall = act.isSmallBlind();
 
-        if ( isSmall && !stakes.equals( Stack.ZERO ))
-            throw new HoldemRuleBreach("Small Blind already in.");
-        if (!isSmall && stakes.compareTo( Stack.BIG_BLIND ) >= 0)
-            throw new HoldemRuleBreach("Big Blind already in.");
+        if ( isSmall && !stakes.equals( Chips.ZERO ))
+            throw new RuleBreach("Small Blind already in.");
+        if (!isSmall && stakes.compareTo( Chips.BIG_BLIND ) >= 0)
+            throw new RuleBreach("Big Blind already in.");
 
-        Stack betSize       = Stack.blind(isSmall);
+        Chips betSize       = Chips.blind(isSmall);
         Seat  nextPlayers[] = seats.clone();
         nextPlayers[nextToAct] =
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
@@ -292,9 +291,9 @@ public class State
         return round == null;
     }
 
-    public Stack betSize()
+    public Chips betSize()
     {
-        return isSmallBet() ? Stack.SMALL_BET : Stack.BIG_BET;
+        return isSmallBet() ? Chips.SMALL_BET : Chips.BIG_BET;
     }
     private boolean isSmallBet()
     {
@@ -302,10 +301,9 @@ public class State
                round == Round.FLOP;
     }
 
-    public RealAction toRealAction(EasyAction easyAction)
+    public Action reify(FallbackAction easyAction)
     {
-        return easyAction.toRealAction(canCheck(),
-                                       canRaise());
+        return easyAction.fallback(canCheck(), canRaise());
     }
     private boolean canCheck()
     {
@@ -361,15 +359,15 @@ public class State
         return condenters;
     }
 
-    public Stack pot()
+    public Chips pot()
     {
-        Stack pot = Stack.ZERO;
+        Chips pot = Chips.ZERO;
         for (Seat player : seats)
             pot = pot.plus( player.commitment() );
         return pot;
     }
 
-    public Stack stakes()
+    public Chips stakes()
     {
         return stakes;
     }
@@ -379,7 +377,7 @@ public class State
         return remainingRoundBets;
     }
 
-    public Stack toCall()
+    public Chips toCall()
     {
         return stakes.minus( nextToAct().commitment() );
     }
@@ -488,17 +486,17 @@ public class State
             Avatar player, Action act)
     {
         if (atEndOfHand())
-            throw new HoldemRuleBreach(
+            throw new RuleBreach(
                         "the hand is already done: " + this);
 
         if (! nextToAct().player().equals( player ))
-            throw new HoldemRuleBreach(
+            throw new RuleBreach(
                         "expected " + nextToAct().player() + " not " +
                                       player);
 
         if (remainingRoundBets == 0 &&
                 act.abstraction() == AbstractAction.BET_RAISE)
-            throw new HoldemRuleBreach("round betting cap exceeded");
+            throw new RuleBreach("round betting cap exceeded");
     }
 
 

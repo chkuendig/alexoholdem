@@ -1,6 +1,6 @@
 package ao.irc;
 
-import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.v3.model.replay.Replay;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class IrcHistorian
 
 
     //--------------------------------------------------------------------
-    public Iterable<HandHistory> fromSnapshot(String dirName)
+    public Iterable<Replay> fromSnapshot(String dirName)
     {
         IrcReader r = new IrcReader(new File(dirName));
 

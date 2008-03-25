@@ -1,6 +1,7 @@
 package ao.holdem.v3.model.act;
 
-import ao.holdem.model.Money;
+import ao.holdem.v3.model.Chips;
+
 
 /**
  * 
@@ -10,19 +11,19 @@ public enum AbstractAction
     //--------------------------------------------------------------------
     QUIT_FOLD(FallbackAction.CHECK_OR_FOLD){
         public Action toAction(
-                Money toCall, boolean betMadeThisRound) {
+                Chips toCall, boolean betMadeThisRound) {
             return Action.FOLD;
         }},
     CHECK_CALL(FallbackAction.CHECK_OR_CALL){
         public Action toAction(
-                Money toCall, boolean betMadeThisRound) {
-            return toCall.equals( Money.ZERO )
+                Chips toCall, boolean betMadeThisRound) {
+            return toCall.equals( Chips.ZERO )
                    ? Action.CHECK
                    : Action.CALL;
         }},
     BET_RAISE(FallbackAction.RAISE_OR_CALL){
         public Action toAction(
-                Money toCall, boolean betMadeThisRound) {
+                Chips toCall, boolean betMadeThisRound) {
             return betMadeThisRound
                    ? Action.RAISE
                    : Action.BET;
@@ -41,14 +42,14 @@ public enum AbstractAction
 
 
     //--------------------------------------------------------------------
-//    public Action toRealAction(HandState state)
+//    public Action fallback(HandState state)
 //    {
-//        return toRealAction(state.toCall(),
+//        return fallback(state.toCall(),
 //                            state.remainingBetsInRound() < 4);
 //    }
 
     public abstract Action toAction(
-            Money toCall,
+            Chips toCall,
             boolean betMadeThisRound);
 //    {
 //        switch (this)

@@ -1,7 +1,7 @@
 package ao.holdem.v3.engine.state;
 
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Stack;
+import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.act.AbstractAction;
 import ao.holdem.v3.model.act.Action;
 
@@ -12,7 +12,7 @@ public class Seat
 {
     //--------------------------------------------------------------------
     private final Avatar  player;
-    private final Stack   commitment;
+    private final Chips commitment;
     private final boolean isAllIn;
     private final boolean isFolded;
 
@@ -20,7 +20,7 @@ public class Seat
     //--------------------------------------------------------------------
     public Seat(
             Avatar  playerHandle,
-            Stack   totalCommitment,
+            Chips totalCommitment,
             boolean allIn,
             boolean folded)
     {
@@ -34,8 +34,8 @@ public class Seat
     //--------------------------------------------------------------------
     public Seat advance(
             Action action,
-            Stack  stakes,
-            Stack  betSize)
+            Chips stakes,
+            Chips betSize)
     {
         AbstractAction abstraction = action.abstraction();
         if (abstraction == AbstractAction.QUIT_FOLD) return fold();
@@ -46,7 +46,7 @@ public class Seat
                 : raise( nextIsAllIn, stakes, betSize );
     }
 
-    public Seat advanceBlind(Action act, Stack betSize)
+    public Seat advanceBlind(Action act, Chips betSize)
     {
         return new Seat(
                     player, betSize, act.isAllIn(), false);
@@ -60,14 +60,14 @@ public class Seat
                 player, commitment, isAllIn, true);
     }
 
-    private Seat call(boolean nextIsAllIn, Stack stakes)
+    private Seat call(boolean nextIsAllIn, Chips stakes)
     {
         return new Seat(
                     player, stakes, nextIsAllIn, false);
     }
 
     private Seat raise(
-            boolean nextIsAllIn, Stack stakes, Stack money)
+            boolean nextIsAllIn, Chips stakes, Chips money)
     {
         return new Seat(player, stakes.plus(money),
                         nextIsAllIn, false);
@@ -90,7 +90,7 @@ public class Seat
         return isFolded;
     }
 
-    public Stack commitment()
+    public Chips commitment()
     {
         return commitment;
     }

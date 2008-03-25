@@ -1,6 +1,6 @@
 package ao.holdem.config;
 
-import ao.holdem.engine.DealerTest;
+import ao.holdem.v3.engine.dealer.DealerTest;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.BasicConfigurator;

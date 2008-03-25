@@ -1,8 +1,9 @@
 package ao.holdem.v3.engine;
 
+import ao.holdem.v3.engine.analysis.Analysis;
 import ao.holdem.v3.engine.state.State;
 import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Stack;
+import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.Community;
 import ao.holdem.v3.model.card.Hole;
@@ -34,7 +35,7 @@ public interface Player
      *          a valid action, then it will be processed though
      *          FallbackAction.
      */
-    public Action act(State state,
+    public Action act(State     state,
                       Hole      hole,
                       Community community,
                       Analysis analysis);
@@ -55,5 +56,5 @@ public interface Player
      * @param deltas
      *          the change in stack size for each player.
      */
-    public void handEnded(Map<Avatar, Stack> deltas);
+    public void handEnded(Map<Avatar, Chips> deltas);
 }

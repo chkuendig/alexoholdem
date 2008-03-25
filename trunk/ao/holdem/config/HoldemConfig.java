@@ -1,7 +1,6 @@
 package ao.holdem.config;
 
 import ao.ai.opp_model.OppModelTest;
-import ao.holdem.engine.persist.dao.PlayerHandleLookup;
 import ao.irc.IrcRunner;
 import com.google.inject.AbstractModule;
 //import org.hibernate.cfg.AnnotationConfiguration;
@@ -17,7 +16,6 @@ public class HoldemConfig extends AbstractModule
 //        bind(Configuration.class)
 //                .toInstance(new AnnotationConfiguration().configure());
 
-        bind(PlayerHandleLookup.class);
         bind(IrcRunner.class);
         bind(OppModelTest.class);
     }

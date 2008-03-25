@@ -1,8 +1,8 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.BlindOddFinder;
 import ao.odds.agglom.Odds;
 import ao.util.stats.FastCombiner;
@@ -86,7 +86,7 @@ public class ApproxBlindOddFinder
                 ApproximateOddFinder f =
                         new ApproximateOddFinder(32, 1000);
 
-                Hole hole  = new Hole(holeA, holeB);
+                Hole hole  = Hole.newInstance(holeA, holeB);
                 Odds o     = f.compute(hole, community, activePlayers - 1);
                 cumulative = cumulative.plus( o );
 

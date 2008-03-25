@@ -1,10 +1,10 @@
 package ao.irc;
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
-import ao.holdem.model.BettingRound;
-import ao.holdem.model.act.SimpleAction;
-import ao.holdem.model.act.RealAction;
+import ao.holdem.v3.model.Round;
+import ao.holdem.v3.model.act.AbstractAction;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Hole;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -72,10 +72,10 @@ public class IrcAction
     private final int    numPlayers;
     private final int    position;
 
-    private       RealAction[] preflop;
-    private final RealAction[] onFlop;
-    private final RealAction[] onTurn;
-    private final RealAction[] onRiver;
+    private       Action[] preflop;
+    private final Action[] onFlop;
+    private final Action[] onTurn;
+    private final Action[] onRiver;
 
     private final int  startingBankroll;
     private final int  totalAction;
@@ -120,11 +120,11 @@ public class IrcAction
     private Hole parseHole(String holeString)
     {
         if (holeString == null ||
-                holeString.length() == 0) return new Hole();
+                holeString.length() == 0) return null;
 
         String holes[] = holeString.split("\\s+");
-        return new Hole(Card.valueOfCard(holes[0]),
-                        Card.valueOfCard(holes[1]));
+        return Hole.newInstance(Card.valueOfCard(holes[0]),
+                                Card.valueOfCard(holes[1]));
     }
 
 
@@ -141,13 +141,13 @@ public class IrcAction
          Q       quits game
          K       kicked from game
      */
-    private RealAction[] parseActions(
+    private Action[] parseActions(
             String actionString, boolean hasFolded)
     {
-        if (hasFolded) return new RealAction[0];
+        if (hasFolded) return new Action[0];
 
-        RealAction[] actions =
-                new RealAction[ actionString.length() ];
+        Action[] actions =
+                new Action[ actionString.length() ];
 
 
         int nextIndex = 0;
@@ -160,7 +160,7 @@ public class IrcAction
                     break;
 
                 case 'B':
-                    actions[ nextIndex++ ] = RealAction.BIG_BLIND;
+                    actions[ nextIndex++ ] = Action.BIG_BLIND;
                     break;
 
                 case 'A': // indicates all-in, comes up
@@ -170,28 +170,28 @@ public class IrcAction
                     break;
 
                 case 'f':
-                    actions[ nextIndex++ ] = RealAction.FOLD;
+                    actions[ nextIndex++ ] = Action.FOLD;
                     break char_loop;
 
                 case 'Q':
                 case 'K':
-                    actions[ nextIndex++ ] = RealAction.QUIT;
+                    actions[ nextIndex++ ] = Action.QUIT;
                     break char_loop;
 
                 case 'k':
-                    actions[ nextIndex++ ] = RealAction.CHECK;
+                    actions[ nextIndex++ ] = Action.CHECK;
                     break;
 
                 case 'c':
-                    actions[ nextIndex++ ] = RealAction.CALL;
+                    actions[ nextIndex++ ] = Action.CALL;
                     break;
 
                 case 'b':
-                    actions[ nextIndex++ ] = RealAction.BET;
+                    actions[ nextIndex++ ] = Action.BET;
                     break;
 
                 case 'r':
-                    actions[ nextIndex++ ] = RealAction.RAISE;
+                    actions[ nextIndex++ ] = Action.RAISE;
                     break;
 
                 default:
@@ -203,13 +203,13 @@ public class IrcAction
         return Arrays.copyOf(actions, nextIndex);
     }
 
-    private boolean hasFolded(RealAction[] ... actions)
+    private boolean hasFolded(Action[] ... actions)
     {
-        for (RealAction[] actionSet : actions)
+        for (Action[] actionSet : actions)
         {
-            for (RealAction act : actionSet)
+            for (Action act : actionSet)
             {
-                if (act.toSimpleAction() == SimpleAction.FOLD)
+                if (act.abstraction() == AbstractAction.QUIT_FOLD)
                 {
                     return true;
                 }
@@ -238,24 +238,24 @@ public class IrcAction
     }
 
     //--------------------------------------------------------------------
-    public RealAction[] preFlop()
+    public Action[] preFlop()
     {
         return preflop;
     }
-    public RealAction[] onFlop()
+    public Action[] onFlop()
     {
         return onFlop;
     }
-    public RealAction[] onTurn()
+    public Action[] onTurn()
     {
         return onTurn;
     }
-    public RealAction[] onRiver()
+    public Action[] onRiver()
     {
         return onRiver;
     }
 
-    public RealAction[] action(BettingRound during)
+    public Action[] action(Round during)
     {
         switch (during)
         {

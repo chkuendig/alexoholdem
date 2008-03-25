@@ -1,11 +1,11 @@
 package ao.irc;
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Arrays;
 
 /**
  * timestamp      hand #     #players/starting potsize

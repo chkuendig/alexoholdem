@@ -1,4 +1,4 @@
-package ao.holdem.v3.model.hand;
+package ao.holdem.v3.model.replay;
 
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Round;
@@ -7,6 +7,7 @@ import ao.holdem.v3.model.card.Community;
 import ao.holdem.v3.model.card.Hole;
 import ao.holdem.v3.model.card.chance.ChanceCards;
 import ao.holdem.v3.model.card.chance.LiteralCards;
+import ao.holdem.v3.persist.UniqueId;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.bind.tuple.TupleTupleBinding;
@@ -19,7 +20,7 @@ import java.util.*;
 public class Replay
 {
     //--------------------------------------------------------------------
-    private final HandId                    id;
+    private final UniqueId id;
     private final List<Avatar>              players;
     private final Map<Avatar, List<Action>> action;
     private final Community                 community;
@@ -28,11 +29,11 @@ public class Replay
 
     //--------------------------------------------------------------------
     public Replay(List<Avatar>              clockwiseDealerLast,
-                ChanceCards               cards,
-                Round                     asOf,
-                Map<Avatar, List<Action>> playerAction)
+                  ChanceCards               cards,
+                  Round                     asOf,
+                  Map<Avatar, List<Action>> playerAction)
     {
-        this(HandId.nextInstance(),
+        this(UniqueId.nextInstance(),
              clockwiseDealerLast,
              playerAction,
              cards.community(asOf),
@@ -52,7 +53,7 @@ public class Replay
              asOf,
              initPlayerAction(clockwiseDealerLast));
     }
-    private Replay(HandId                    handId,
+    private Replay(UniqueId handId,
                  List<Avatar>              clockwiseDealerLast,
                  Map<Avatar, List<Action>> playerAction,
                  Community                 communityCards,
@@ -96,7 +97,7 @@ public class Replay
 
 
     //--------------------------------------------------------------------
-    public HandId id()
+    public UniqueId id()
     {
         return id;
     }
@@ -145,7 +146,7 @@ public class Replay
 
 
     //--------------------------------------------------------------------
-    // key: HandId
+    // key: UniqueId
     //
     // data:
     // (community)
@@ -161,7 +162,7 @@ public class Replay
         public void objectToKey(Object object, TupleOutput output)
         {
             Replay hand = (Replay) object;
-            HandId.BINDING.objectToEntry(
+            UniqueId.BINDING.objectToEntry(
                     hand.id, output);
         }
 
@@ -191,7 +192,7 @@ public class Replay
         public Replay entryToObject(TupleInput keyInput,
                                   TupleInput dataInput)
         {
-            HandId id = HandId.BINDING.entryToObject(keyInput);
+            UniqueId id = UniqueId.BINDING.entryToObject(keyInput);
 
             Community community =
                     Community.BINDING.entryToObject(dataInput);

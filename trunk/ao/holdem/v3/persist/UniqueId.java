@@ -1,4 +1,4 @@
-package ao.holdem.v3.model.hand;
+package ao.holdem.v3.persist;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -9,8 +9,8 @@ import java.io.Serializable;
 /**
  *
  */
-public class HandId
-        implements Comparable<HandId>,
+public class UniqueId
+        implements Comparable<UniqueId>,
                    Serializable
 {
     //--------------------------------------------------------------------
@@ -18,9 +18,9 @@ public class HandId
 
 
     //--------------------------------------------------------------------
-    public static HandId nextInstance()
+    public static UniqueId nextInstance()
     {
-        return new HandId(
+        return new UniqueId(
                     System.currentTimeMillis() * OFFSET +
                     (int) (Math.random() * OFFSET));
     }
@@ -31,14 +31,14 @@ public class HandId
 
 
     //--------------------------------------------------------------------
-    private HandId(long id)
+    private UniqueId(long id)
     {
         ID = id;
     }
 
 
     //--------------------------------------------------------------------
-    public int compareTo(HandId o)
+    public int compareTo(UniqueId o)
     {
         return ID < o.ID
                ? -1
@@ -59,7 +59,7 @@ public class HandId
         if (o == null ||
             getClass() != o.getClass()) return false;
 
-        HandId handId = (HandId) o;
+        UniqueId handId = (UniqueId) o;
         return ID == handId.ID;
     }
 
@@ -73,17 +73,17 @@ public class HandId
     public static final Binding BINDING = new Binding();
     public static class Binding extends TupleBinding
     {
-        public HandId entryToObject(TupleInput input)
+        public UniqueId entryToObject(TupleInput input)
         {
             // negated for newest-to-last sort order
             long id = -input.readLong();
-            return new HandId( id );
+            return new UniqueId( id );
         }
 
         public void objectToEntry(Object object, TupleOutput output)
         {
             // negated for newest-to-last sort order
-            HandId handId = (HandId) object;
+            UniqueId handId = (UniqueId) object;
             output.writeLong( -handId.ID );
         }
     }

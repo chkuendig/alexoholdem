@@ -1,15 +1,15 @@
 package ao.holdem.v3.engine.state;
 
-import ao.holdem.v3.engine.Analysis;
+import ao.holdem.v3.engine.analysis.Analysis;
 import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.Stack;
 import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.Card;
 import ao.holdem.v3.model.card.Community;
 import ao.holdem.v3.model.card.Hole;
 import ao.holdem.v3.model.card.chance.ChanceCards;
-import ao.holdem.v3.model.hand.Replay;
+import ao.holdem.v3.model.replay.Replay;
 import ao.odds.eval.eval_567.EvalSlow;
 
 import java.util.ArrayList;
@@ -109,11 +109,11 @@ public class StateFlow
         return new Replay(players, cards, head.round(), actions);
     }
 
-    public Map<Avatar, Stack> deltas(ChanceCards cards)
+    public Map<Avatar, Chips> deltas(ChanceCards cards)
     {
         List<Avatar> winners = winners(cards);
 
-        Map<Avatar, Stack> deltas = new HashMap<Avatar, Stack>();
+        Map<Avatar, Chips> deltas = new HashMap<Avatar, Chips>();
 
 //        Avatar smallBlind, bigBlind;
 //        Avatar leftOfDealer = head.seats( -1 ).player();
@@ -128,19 +128,19 @@ public class StateFlow
 //            bigBlind   = leftOfDealer;
 //        }
 
-        Stack totalLost = Stack.ZERO;
+        Chips totalLost = Chips.ZERO;
         for (Seat seat : head().seats())
         {
             if (! winners.contains(seat.player()))
             {
-                Stack commit = seat.commitment();
+                Chips commit = seat.commitment();
 //                if (seat.player().equals( smallBlind ))
 //                {
-//                    commit = commit.plus( Stack.SMALL_BLIND );
+//                    commit = commit.plus( Chips.SMALL_BLIND );
 //                }
 //                else if(seat.player().equals( bigBlind ))
 //                {
-//                    commit = commit.plus( Stack.BIG_BLIND );
+//                    commit = commit.plus( Chips.BIG_BLIND );
 //                }
 
                 deltas.put(seat.player(), commit.negate());
@@ -148,12 +148,12 @@ public class StateFlow
             }
         }
 
-        Stack winnings  = totalLost.split(     winners.size() );
-        Stack remainder = totalLost.remainder( winners.size() );
+        Chips winnings  = totalLost.split(     winners.size() );
+        Chips remainder = totalLost.remainder( winners.size() );
         for (int i = 0; i < winners.size(); i++)
         {
             Avatar winner = winners.get(i);
-            Stack  total  = (i == 0)
+            Chips total  = (i == 0)
                              ? winnings.plus( remainder )
                              : winnings;
             deltas.put(winner, total);
@@ -205,26 +205,26 @@ public class StateFlow
     }
 
 
-//    private Map<Avatar, Stack> deltas(ChanceCards cards)
+//    private Map<Avatar, Chips> deltas(ChanceCards cards)
 //    {
 //        assert head.atEndOfHand();
 //
-//        Map<Avatar, Stack> commits = new HashMap<Avatar, Stack>();
+//        Map<Avatar, Chips> commits = new HashMap<Avatar, Chips>();
 //        for (Seat seat : head.seats())
 //        {
 //            commits.put(seat.player(), seat.commitment());
 //        }
 //
-//        Map<Avatar, Stack> deltas = new HashMap<Avatar, Stack>();
+//        Map<Avatar, Chips> deltas = new HashMap<Avatar, Chips>();
 //        for (List<Avatar> pot : pots())
 //        {
 //            short        greatestHandRank    = -1;
 //            List<Avatar> greatestHandHolders = new ArrayList<Avatar>();
-//            Stack        lowest              = Stack.MAX_VALUE;
+//            Chips        lowest              = Chips.MAX_VALUE;
 //
 //            for (Avatar staker : pot)
 //            {
-//                Stack remainingCommitment = commits.get(staker);
+//                Chips remainingCommitment = commits.get(staker);
 //                if (remainingCommitment.compareTo(lowest) < 0)
 //                {
 //                    lowest = remainingCommitment;
