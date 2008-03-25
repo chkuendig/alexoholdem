@@ -1,9 +1,9 @@
 package ao.irc;
 
-import ao.holdem.v3.engine.Player;
-import ao.holdem.v3.engine.RuleBreach;
-import ao.holdem.v3.engine.analysis.Analysis;
-import ao.holdem.v3.engine.state.State;
+import ao.holdem.engine.Player;
+import ao.holdem.engine.RuleBreach;
+import ao.holdem.engine.analysis.Analysis;
+import ao.holdem.engine.state.State;
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.act.Action;

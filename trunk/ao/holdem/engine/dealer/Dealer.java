@@ -1,8 +1,8 @@
-package ao.holdem.v3.engine.dealer;
+package ao.holdem.engine.dealer;
 
-import ao.holdem.v3.engine.Player;
-import ao.holdem.v3.engine.state.Seat;
-import ao.holdem.v3.engine.state.StateFlow;
+import ao.holdem.engine.Player;
+import ao.holdem.engine.state.Seat;
+import ao.holdem.engine.state.StateFlow;
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Chips;
 import ao.holdem.v3.model.act.Action;
