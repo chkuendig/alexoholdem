@@ -1,7 +1,7 @@
 package ao.odds.eval.eval7;
 
 
-import ao.holdem.v3.model.card.Card;
+import ao.holdem.model.card.Card;
 import ao.odds.eval.eval_567.EvalSlow;
 import ao.util.stats.Combiner;
 import ao.util.stats.Combo;

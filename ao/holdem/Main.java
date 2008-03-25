@@ -1,10 +1,10 @@
 package ao.holdem;
 
 
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 import ao.holdem.net.OverTheWireState;
-import ao.holdem.v3.model.card.Card;
-import ao.holdem.v3.model.card.Community;
-import ao.holdem.v3.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.ApproximateOddFinder;

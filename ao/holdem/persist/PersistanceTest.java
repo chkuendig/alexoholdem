@@ -1,10 +1,10 @@
-package ao.holdem.v3.persist;
+package ao.holdem.persist;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.chance.DeckCards;
-import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Round;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.chance.DeckCards;
+import ao.holdem.model.replay.Replay;
 import ao.util.rand.Rand;
 
 import java.util.ArrayList;
@@ -20,16 +20,16 @@ public class PersistanceTest
     public static void main(String[] args)
     {
         Rand.nextBoolean();
-        HoldemDb    db    = new HoldemDb("hand_db");
+        HoldemDb    db    = new HoldemDb("replay_db");
         HoldemViews views = new HoldemViews(db);
         HoldemDao   dao   = new HoldemDao(db, views);
 
         System.out.println("presisting random hands");
-//        dao.presist( randomHand() );
+//        dao.persist( randomHand() );
         for (int i = 0; i < 10000; i++)
         {
             System.out.print(".");
-            dao.presist( randomHand() );
+            dao.persist( randomHand() );
 
             if ((i + 1) % 100 == 0) System.out.println();
         }

@@ -1,6 +1,6 @@
-package ao.holdem.v3.model.card;
+package ao.holdem.model.card;
 
-import ao.holdem.v3.persist.EnumBinding;
+import ao.holdem.persist.EnumBinding;
 
 /**
  * Note that this given order of cards

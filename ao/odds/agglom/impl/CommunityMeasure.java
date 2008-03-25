@@ -1,7 +1,7 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.v3.model.card.Card;
-import ao.holdem.v3.model.card.Community;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval_567.EvalSlow;
 import ao.util.stats.FastCombiner;

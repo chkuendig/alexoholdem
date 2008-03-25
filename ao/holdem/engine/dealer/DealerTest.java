@@ -2,11 +2,12 @@ package ao.holdem.engine.dealer;
 
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
+import ao.ai.simple.MathBot;
 import ao.holdem.engine.Player;
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
-import ao.holdem.v3.model.card.chance.DeckCards;
-import ao.holdem.v3.model.replay.StackedReplay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
+import ao.holdem.model.card.chance.DeckCards;
+import ao.holdem.model.replay.StackedReplay;
 
 import java.util.*;
 
@@ -35,11 +36,11 @@ public class DealerTest
 //                    put("real.G", new DuaneBot());
 //                    put("real.F", new DuaneBot());
 //                    put("real.E", new DuaneBot());
-//                    put("real.D", new MathBot());
+                    put("math", new MathBot());
 //                    put("raise", new AlwaysRaiseBot());
                     put("duane", new DuaneBot());
 //                    put("uct", smarties.get());
-                    put("real.A", new AlwaysRaiseBot());
+                    put("raise", new AlwaysRaiseBot());
 //                    put("real.B", new DuaneBot());
 //                    put("real.C", new AlwaysRaiseBot());
 //                    put("real.D", new MathBot());
@@ -58,15 +59,14 @@ public class DealerTest
 
         Dealer dealer = new Dealer(true, brains);
 
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < 1000; i++)
         {
-            //System.out.println(i);
+//            System.out.println(i);
             StackedReplay replay =
                     dealer.play(players, new DeckCards());
 //            hands.store(hist);
 
-            Map<Avatar, Chips>
-                    deltas = replay.deltas();
+            Map<Avatar, Chips> deltas = replay.deltas();
             if (cumDeltas.isEmpty())
             {
                 cumDeltas.putAll( deltas );
@@ -81,10 +81,10 @@ public class DealerTest
                                           delta.getValue()));
                 }
             }
-            //System.out.println(hist.getDeltas());
+            System.out.println(replay.deltas());
             //System.out.println(hist.summary());
-            System.out.println(
-                    formatCumulativeDeltas(i, cumDeltas));
+//            System.out.println(
+//                    formatCumulativeDeltas(i, cumDeltas));
 
             players.add( players.remove(0) );
         }

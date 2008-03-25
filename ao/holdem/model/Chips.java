@@ -1,4 +1,4 @@
-package ao.holdem.v3.model;
+package ao.holdem.model;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -15,7 +15,7 @@ public class Chips implements Comparable<Chips>
     static
     {
         for (int i = 0; i < CACHE_NEGATIVE.length; i++)
-            CACHE_NEGATIVE[ i ] = new Chips(-i);
+            CACHE_NEGATIVE[ i ] = new Chips(-(i + 1));
 
         for (int i = 0; i < CACHE_POSITIVE.length; i++)
             CACHE_POSITIVE[ i ] = new Chips(i);
@@ -41,7 +41,7 @@ public class Chips implements Comparable<Chips>
                      smallBlinds < CACHE_POSITIVE.length)
                 ? CACHE_POSITIVE[ smallBlinds ]
                 : (0 > smallBlinds &&
-                       smallBlinds >= -(CACHE_NEGATIVE.length + 1))
+                       smallBlinds > -(CACHE_NEGATIVE.length + 1))
                    ? CACHE_NEGATIVE[-(smallBlinds + 1)]
                    : new Chips( smallBlinds );
     }

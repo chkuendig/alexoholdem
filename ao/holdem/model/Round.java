@@ -1,6 +1,6 @@
-package ao.holdem.v3.model;
+package ao.holdem.model;
 
-import ao.holdem.v3.model.card.Community;
+import ao.holdem.model.card.Community;
 
 /**
  * 

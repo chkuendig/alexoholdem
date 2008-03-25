@@ -1,6 +1,6 @@
 package ao.odds.eval.eval5;
 
-import ao.holdem.v3.model.card.Card;
+import ao.holdem.model.card.Card;
 
 /**
  * see

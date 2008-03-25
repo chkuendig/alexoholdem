@@ -1,9 +1,9 @@
-package ao.holdem.v3.model.card.chance;
+package ao.holdem.model.card.chance;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.card.Community;
-import ao.holdem.v3.model.card.Hole;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Round;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +52,10 @@ public class DeckCards implements ChanceCards
     //--------------------------------------------------------------------
     public Community community(Round asOf)
     {
-        switch (asOf)
+        Round safeRound =
+                (asOf == null)
+                 ? Round.RIVER : asOf;
+        switch (safeRound)
         {
             case RIVER:
                 flop();
@@ -70,7 +73,7 @@ public class DeckCards implements ChanceCards
                 break;
         }
 
-        return community.asOf( asOf );
+        return community.asOf( safeRound );
     }
 
     private void flop()

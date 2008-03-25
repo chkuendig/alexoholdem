@@ -1,13 +1,13 @@
-package ao.holdem.v3.model.replay;
+package ao.holdem.model.replay;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.Community;
-import ao.holdem.v3.model.card.Hole;
-import ao.holdem.v3.model.card.chance.ChanceCards;
-import ao.holdem.v3.model.card.chance.LiteralCards;
-import ao.holdem.v3.persist.UniqueId;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Round;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.card.chance.LiteralCards;
+import ao.holdem.persist.UniqueId;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.bind.tuple.TupleTupleBinding;

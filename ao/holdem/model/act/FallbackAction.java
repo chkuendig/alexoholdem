@@ -1,4 +1,4 @@
-package ao.holdem.v3.model.act;
+package ao.holdem.model.act;
 
 
 /**
