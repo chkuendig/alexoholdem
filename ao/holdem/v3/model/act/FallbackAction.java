@@ -1,4 +1,4 @@
-package ao.holdem.v3.model.act.descrete;
+package ao.holdem.v3.model.act;
 
 import ao.holdem.model.act.RealAction;
 

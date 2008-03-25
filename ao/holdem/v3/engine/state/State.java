@@ -1,101 +1,83 @@
-package ao.holdem.engine.state;
+package ao.holdem.v3.engine.state;
 
 import ao.holdem.engine.HoldemRuleBreach;
-import ao.holdem.engine.persist.Event;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.holdem.model.BettingRound;
-import ao.holdem.model.Money;
 import ao.holdem.model.act.EasyAction;
 import ao.holdem.model.act.RealAction;
-import ao.holdem.model.act.SimpleAction;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Round;
+import ao.holdem.v3.model.Stack;
+import ao.holdem.v3.model.act.AbstractAction;
+import ao.holdem.v3.model.act.Action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * To handle the corner case:
- *  unexpected move on burney, PREFLOP
- *   2	0	0	2	2	[7d, 8c, 9d, Jd, 4d]
- *   burney    812871541  2  1 B   -     -     -   1000    5    4 Js 4s
- *   THyde     812871541  2  2 BA  -     -     -      1    1    2 5c 3d
- * Awareness of bet quantities is needed, fortunetally
- *  this corner case is irrelavent because no action is necessary.
- *
- * Also, cases such as:
- *   the hand is already done
- *   2	0	0	0	0	[]
- *   geg       797477841  2  1 BQ  -     -     -         2648   10   10
- *   Liver     797477841  2  2 Q   -     -     -         2470    0    0
- * Are not gonna get accepted from IRC because really they are
- *  being interpreted correctly.  This error comes up because the Quits
- *  are asynchronouse and IRC doesn't contain timing information.
- *
- *
- * Note, obects of this class are immutable.
+ * Holdem hand state.
  */
-public class HandState
+public class State
 {
     //--------------------------------------------------------------------
     private static final int BETS_PER_ROUND = 4;
 
 
     //--------------------------------------------------------------------
-    private final BettingRound round;
-    private final PlayerState  players[];
-    private final int          nextToAct;
-    private final int          remainingRoundBets;
-    private final int          latestRoundStaker;
-    private final Money        stakes;
-    private final HandState    startOfRound;
+    private final Round round;
+    private final Seat  seats[];
+    private final int   nextToAct;
+    private final int   remainingRoundBets;
+    private final int   latestRoundStaker;
+    private final Stack stakes;
+    private final State startOfRound;
 
 
     //--------------------------------------------------------------------
     // expects blind actions
-    public HandState(List<PlayerHandle> clockwiseDealerLast)
+    public State(List<Avatar> clockwiseDealerLast)
     {
-        players = new PlayerState[ clockwiseDealerLast.size() ];
-        for (int i = 0; i < players.length; i++)
+        seats = new Seat[ clockwiseDealerLast.size() ];
+        for (int i = 0; i < seats.length; i++)
         {
-            players[i] = addInitPlayerState(clockwiseDealerLast, i);
+            seats[i] = initPlayerState(clockwiseDealerLast, i);
         }
 
-        round              = BettingRound.PREFLOP;
+        round              = Round.PREFLOP;
         nextToAct          = 0;
         remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker  = -1;
-        stakes             = Money.ZERO;
+        stakes             = Stack.ZERO;
         startOfRound       = this;
     }
-    private PlayerState addInitPlayerState(
-            List<PlayerHandle> clockwiseDealerLast,
-            int                playerIndex)
+    private Seat initPlayerState(
+            List<Avatar> clockwiseDealerLast,
+            int          playerIndex)
     {
-        PlayerHandle player = clockwiseDealerLast.get( playerIndex );
-        return new PlayerState(
-                    false, false, /*true,*/ Money.ZERO, player);
+        Avatar player = clockwiseDealerLast.get( playerIndex );
+        return new Seat(
+                    player, Stack.ZERO, false, false);
     }
 
     // automatically posts blinds
-    public static HandState autoBlindInstance(
-            List<PlayerHandle> clockwiseDealerLast)
+    public static State autoBlindInstance(
+            List<Avatar> clockwiseDealerLast)
     {
-        return new HandState(clockwiseDealerLast)
-                    .advanceBlind( RealAction.SMALL_BLIND )
-                    .advanceBlind( RealAction.BIG_BLIND );
+        return new State(clockwiseDealerLast)
+                    .advanceBlind( Action.SMALL_BLIND )
+                    .advanceBlind( Action.BIG_BLIND   );
     }
 
     // copy constructor
-    private HandState(BettingRound copyRound,
-                      PlayerState  copyPlayers[],
-                      int          copyNextToAct,
-                      int          copyRemainingRoundBets,
-                      int          copyLatestRoundStaker,
-                      Money        copyStakes,
-                      HandState    copyStartOfRound)
+    private State(Round copyRound,
+                  Seat  copySeats[],
+                  int   copyNextToAct,
+                  int   copyRemainingRoundBets,
+                  int   copyLatestRoundStaker,
+                  Stack copyStakes,
+                  State copyStartOfRound)
     {
         round              = copyRound;
-        players            = copyPlayers;
+        seats              = copySeats;
         nextToAct          = copyNextToAct;
         remainingRoundBets = copyRemainingRoundBets;
         latestRoundStaker  = copyLatestRoundStaker;
@@ -106,52 +88,53 @@ public class HandState
 
 
     //--------------------------------------------------------------------
-    public HandState advance(PlayerHandle player, RealAction act)
+    public State advance(Avatar player, Action act)
     {
         validateNextAction(player, act);
         return act.isBlind()
                 ? advanceBlind(act)
                 : advanceVoluntary(act);
     }
-    public HandState advance(RealAction act)
+    public State advance(Action act)
     {
-        return advance(nextToAct().handle(), act);
+        return advance(nextToAct().player(), act);
     }
 
 
     //--------------------------------------------------------------------
-    private HandState advanceVoluntary(RealAction act)
+    private State advanceVoluntary(Action act)
     {
-        BettingRound nextRound  = nextBettingRound(act);
-        boolean      roundEnder = (round != nextRound);
-        boolean      betRaise   = act.isBetRaise();
+        Round   nextRound  = nextBettingRound(act);
+        boolean roundEnder = (round != nextRound);
+        boolean betRaise   =
+                    act.abstraction() == AbstractAction.BET_RAISE;
 
-        PlayerState
-              nextPlayers[]     = nextPlayers(act);
+        Seat  nextPlayers[]     = nextPlayers(act);
         int   nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
         int   nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
-        Money nextStakes        = nextStakes(nextPlayers, betRaise);
+        Stack nextStakes        = nextStakes(nextPlayers, betRaise);
         int   nextRoundStaker   =
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
-        return new HandState(nextRound,
-                             nextPlayers,
-                             nextNextToAct,
-                             nextRemainingBets,
-                             nextRoundStaker,
-                             nextStakes,
-                             roundEnder ? null : startOfRound);
+        return new State(nextRound,
+                         nextPlayers,
+                         nextNextToAct,
+                         nextRemainingBets,
+                         nextRoundStaker,
+                         nextStakes,
+                         roundEnder ? null : startOfRound);
     }
 
-    private PlayerState[] nextPlayers(RealAction act)
+    private Seat[] nextPlayers(Action act)
     {
-        PlayerState nextPlayers[] = players.clone();
-        nextPlayers[nextToAct] = nextPlayers[nextToAct]
-                                    .advance(act, stakes, betSize());
+        Seat nextPlayers[] = seats.clone();
+        nextPlayers[nextToAct] =
+                nextPlayers[nextToAct]
+                        .advance(act, stakes, betSize());
         return nextPlayers;
     }
 
-    private Money nextStakes(PlayerState[] nextPlayers, boolean betRaise)
+    private Stack nextStakes(Seat[] nextPlayers, boolean betRaise)
     {
         return (betRaise)
                ? nextPlayers[nextToAct].commitment()
@@ -159,18 +142,18 @@ public class HandState
     }
 
     private int nextNextToAct(
-            PlayerState[] nextPlayers, boolean roundEnder)
+            Seat[] nextPlayers, boolean roundEnder)
     {
         return roundEnder
-                ? nextActiveAfter(nextPlayers, players.length - 1)
+                ? nextActiveAfter(nextPlayers, seats.length - 1)
                 : nextActiveAfter(nextPlayers, nextToAct);
     }
 
-    private BettingRound nextBettingRound(RealAction act)
+    private Round nextBettingRound(Action act)
     {
         return nextActionCritical()
                 ? canRaise()
-                    ? (act.toSimpleAction() == SimpleAction.RAISE)
+                    ? (act.abstraction() == AbstractAction.BET_RAISE)
                         ? round
                         : round.next()
                     : round.next()
@@ -184,14 +167,14 @@ public class HandState
     }
 
     private int nextLatestRoundStaker(
-            RealAction act, boolean roundEnder, boolean betRaise)
+            Action act, boolean roundEnder, boolean betRaise)
     {
         return roundEnder
                 ? -1
                 : (betRaise
                    ? nextToAct
                    : (latestRoundStaker == -1 && // when all players check
-                        !act.isFold())
+                        act.abstraction() != AbstractAction.QUIT_FOLD)
                       ? nextToAct
                       : latestRoundStaker);
     }
@@ -207,49 +190,47 @@ public class HandState
 
 
     //--------------------------------------------------------------------
-    private HandState advanceBlind(RealAction act)
+    private State advanceBlind(Action act)
     {
         boolean isSmall = act.isSmallBlind();
 
-        if ( isSmall && !stakes.equals( Money.ZERO ))
+        if ( isSmall && !stakes.equals( Stack.ZERO ))
             throw new HoldemRuleBreach("Small Blind already in.");
-        if (!isSmall && stakes.compareTo( Money.BIG_BLIND ) >= 0)
+        if (!isSmall && stakes.compareTo( Stack.BIG_BLIND ) >= 0)
             throw new HoldemRuleBreach("Big Blind already in.");
 
-        Money       betSize       = Money.blind(isSmall);
-        PlayerState nextPlayers[] = players.clone();
-        nextPlayers[nextToAct]    =
+        Stack betSize       = Stack.blind(isSmall);
+        Seat  nextPlayers[] = seats.clone();
+        nextPlayers[nextToAct] =
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
 
         int nextNextToAct   = nextActiveAfter(nextPlayers, nextToAct);
         int nextRoundStaker =
-                act == RealAction.BIG_BLIND_ALL_IN
+                act == Action.BIG_BLIND_ALL_IN
                 ? nextToAct : latestRoundStaker;
-        
-        return new HandState(round,
-                             nextPlayers,
-                             nextNextToAct,
-                             remainingRoundBets,
-                             nextRoundStaker,
-                             betSize,
-//                             nextHandId,
-                             startOfRound);
+
+        return new State(round,
+                         nextPlayers,
+                         nextNextToAct,
+                         remainingRoundBets,
+                         nextRoundStaker,
+                         betSize,
+                         startOfRound);
     }
 
 
     //--------------------------------------------------------------------
     // assert ! quitter.equals( nextToAct().handle() )
-    public HandState advanceQuitter(
-            PlayerHandle quitter, List<Event> events)
+    public State advanceQuitter(Avatar quitter)
     {
         int index = indexOf(quitter);
-        if (players[ index ].isFolded()) return this;
+        if (seats[ index ].isFolded()) return this;
 
-        PlayerState nextPlayers[] = players.clone();
+        Seat nextPlayers[] = seats.clone();
         nextPlayers[ index ] = nextPlayers[ index ].fold();
 
         int perlimStaker   =
-                roundStakerAfterQuit(nextPlayers, index, events);
+                roundStakerAfterQuit(nextPlayers, index);
         boolean roundEnder =
                 perlimStaker == nextStakingUnfoldedAfter(
                                     nextPlayers, index(nextToAct - 1));
@@ -258,40 +239,38 @@ public class HandState
                 roundEnder
                 ? -1 : perlimStaker;
 
-        BettingRound nextRound = roundEnder ? round.next() : round;
+        Round nextRound = roundEnder ? round.next() : round;
         int nextNextToAct =
                 roundEnder
-                ? nextActiveAfter(nextPlayers, players.length - 1)
+                ? nextActiveAfter(nextPlayers, seats.length - 1)
                 : nextActiveAfter(nextPlayers, index(nextToAct - 1));
-        
-        return new HandState(nextRound,
-                             nextPlayers,
-                             nextNextToAct,
-                             nextRemainingBets(roundEnder, false),
-                             nextRoundStaker,
-                             stakes,
-                             roundEnder ? null : startOfRound);
+
+        return new State(nextRound,
+                         nextPlayers,
+                         nextNextToAct,
+                         nextRemainingBets(roundEnder, false),
+                         nextRoundStaker,
+                         stakes,
+                         roundEnder ? null : startOfRound);
     }
 
     private int roundStakerAfterQuit(
-            PlayerState pStates[],
-            int         index,
-            List<Event> events)
+            Seat        pStates[],
+            int         index)
     {
         if (latestRoundStaker != index) return latestRoundStaker;
 
-        PlayerHandle stakerHandle = pStates[index].handle();
-        for (int i = events.size() - 1; i < events.size(); i++)
+        for (int i = 1; i <= index; i++)
         {
-            Event e = events.get(i);
-            if (e.getPlayer().equals( stakerHandle )) break;
+            int  prevActorIndex = index(index - i);
+            Seat prevActorSeat  = pStates[ prevActorIndex ];
 
-            RealAction act = e.getAction();
-            if (act.isCheckCall() || act.isBetRaise())
+            if (! prevActorSeat.isFolded())
             {
-                return indexOf( e.getPlayer() );
+                return prevActorIndex;
             }
         }
+
         return -1;
     }
 
@@ -313,14 +292,14 @@ public class HandState
         return round == null;
     }
 
-    public Money betSize()
+    public Stack betSize()
     {
-        return isSmallBet() ? Money.SMALL_BET : Money.BIG_BET;
+        return isSmallBet() ? Stack.SMALL_BET : Stack.BIG_BET;
     }
     private boolean isSmallBet()
     {
-        return round == BettingRound.PREFLOP ||
-               round == BettingRound.FLOP;
+        return round == Round.PREFLOP ||
+               round == Round.FLOP;
     }
 
     public RealAction toRealAction(EasyAction easyAction)
@@ -340,35 +319,41 @@ public class HandState
 
     //--------------------------------------------------------------------
     // these functions are provided as convenience,
-    //  they are not actually used by state tracking.
+    //  they are not actually used by track the state.
 
-    public BettingRound round()
+    public Round round()
     {
         return round;
     }
 
-    public PlayerState[] players()
+    public Seat[] seats()
     {
-        return players;
+        return seats;
+    }
+    public Seat seats(int indexDealerLast)
+    {
+        return seats[   indexDealerLast < 0
+                      ? indexDealerLast + seats.length
+                      : indexDealerLast];
     }
 
     public int numActivePlayers()
     {
         int count = 0;
-        for (PlayerState state : players)
+        for (Seat state : seats)
             if (state.isActive()) count++;
         return count;
     }
 
-    public List<PlayerState> unfolded()
+    public List<Seat> unfolded()
     {
-        List<PlayerState> condenters = new ArrayList<PlayerState>();
+        List<Seat> condenters = new ArrayList<Seat>();
 
         int firstUnfolded = nextUnfoldedAfter( nextToAct - 1 );
         int cursor        = firstUnfolded;
         do
         {
-            condenters.add( players[cursor] );
+            condenters.add( seats[cursor] );
             cursor = nextUnfoldedAfter(cursor);
         }
         while (cursor != firstUnfolded);
@@ -376,15 +361,15 @@ public class HandState
         return condenters;
     }
 
-    public Money pot()
+    public Stack pot()
     {
-        Money pot = Money.ZERO;
-        for (PlayerState player : players)
+        Stack pot = Stack.ZERO;
+        for (Seat player : seats)
             pot = pot.plus( player.commitment() );
         return pot;
     }
 
-    public Money stakes()
+    public Stack stakes()
     {
         return stakes;
     }
@@ -394,7 +379,7 @@ public class HandState
         return remainingRoundBets;
     }
 
-    public Money toCall()
+    public Stack toCall()
     {
         return stakes.minus( nextToAct().commitment() );
     }
@@ -405,14 +390,14 @@ public class HandState
 
     public double position()
     {
-        return (double) (nextToAct + 1) / players.length;
+        return (double) (nextToAct + 1) / seats.length;
     }
     public double activePosition()
     {
         int activePosition = 0;
         for (int i = 0; i <= nextToAct; i++)
         {
-            if (players[i].isActive()) activePosition++;
+            if (seats[i].isActive()) activePosition++;
         }
         return (double) activePosition / numActivePlayers();
     }
@@ -422,23 +407,23 @@ public class HandState
     private int index(int fromIndex)
     {
         return fromIndex < 0
-                ? fromIndex + players.length
-                : fromIndex % players.length;
+                ? fromIndex + seats.length
+                : fromIndex % seats.length;
     }
-    private int indexOf(PlayerHandle player)
+    private int indexOf(Avatar player)
     {
-        for (int i = 0; i < players.length; i++)
+        for (int i = 0; i < seats.length; i++)
         {
-            if (players[ i ].handle().equals( player )) return i;
+            if (seats[ i ].player().equals( player )) return i;
         }
         return -1;
     }
 
     private int nextActiveAfter(int playerIndex)
     {
-        return nextActiveAfter( players, playerIndex );
+        return nextActiveAfter(seats, playerIndex );
     }
-    private int nextActiveAfter(PlayerState[] states, int playerIndex)
+    private int nextActiveAfter(Seat[] states, int playerIndex)
     {
         for (int i = 1; i <= states.length; i++)
         {
@@ -453,15 +438,15 @@ public class HandState
 
     private int nextStakingUnfoldedAfter(int playerIndex)
     {
-        return nextStakingUnfoldedAfter(players, playerIndex);
+        return nextStakingUnfoldedAfter(seats, playerIndex);
     }
     private int nextStakingUnfoldedAfter(
-            PlayerState[] pStates, int playerIndex)
+            Seat[] pStates, int playerIndex)
     {
         int index = nextUnfoldedAfter(pStates, playerIndex);
-        while (startOfRound.players[ index ].isAllIn() ||
-                players[ index ].isAllIn() &&
-               !players[ index ].commitment().equals( stakes ))
+        while (startOfRound.seats[ index ].isAllIn() ||
+                seats[ index ].isAllIn() &&
+               !seats[ index ].commitment().equals( stakes ))
         {
             index = nextUnfoldedAfter(index);
         }
@@ -470,11 +455,11 @@ public class HandState
 
     private int nextUnfoldedAfter(int playerIndex)
     {
-        return nextUnfoldedAfter(players, playerIndex);
+        return nextUnfoldedAfter(seats, playerIndex);
     }
     private int nextUnfoldedAfter(
-            PlayerState pStates[],
-            int         playerIndex)
+            Seat pStates[],
+            int  playerIndex)
     {
         for (int i = 1; i <= pStates.length; i++)
         {
@@ -487,9 +472,9 @@ public class HandState
         return -1;
     }
 
-    public PlayerState nextToAct()
+    public Seat nextToAct()
     {
-        return players[ nextToAct ];
+        return seats[ nextToAct ];
     }
 
     public int nextToActIndex()
@@ -500,19 +485,19 @@ public class HandState
 
     //--------------------------------------------------------------------
     private void validateNextAction(
-            PlayerHandle player, RealAction act)
+            Avatar player, Action act)
     {
         if (atEndOfHand())
             throw new HoldemRuleBreach(
                         "the hand is already done: " + this);
 
-        if (! nextToAct().handle().equals( player ))
+        if (! nextToAct().player().equals( player ))
             throw new HoldemRuleBreach(
-                        "expected " + nextToAct().handle() + " not " +
+                        "expected " + nextToAct().player() + " not " +
                                       player);
 
         if (remainingRoundBets == 0 &&
-                act.toSimpleAction() == SimpleAction.RAISE)
+                act.abstraction() == AbstractAction.BET_RAISE)
             throw new HoldemRuleBreach("round betting cap exceeded");
     }
 
@@ -525,17 +510,18 @@ public class HandState
 
     public boolean equals(Object o)
     {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        //if (this == o) return true;
+        if (o == null ||
+            getClass() != o.getClass()) return false;
 
-        HandState handState = (HandState) o;
+        State state = (State) o;
 
-        return latestRoundStaker  == handState.latestRoundStaker  &&
-               nextToAct          == handState.nextToAct          &&
-               remainingRoundBets == handState.remainingRoundBets &&
-               Arrays.equals(players, handState.players)          &&
-               round              ==              handState.round &&
-               stakes.equals(handState.stakes);
+        return latestRoundStaker  == state.latestRoundStaker  &&
+               nextToAct          == state.nextToAct          &&
+               remainingRoundBets == state.remainingRoundBets &&
+               round              == state.round              &&
+               Arrays.equals(seats, state.seats)              &&
+               stakes.equals(state.stakes);
 
     }
 
@@ -543,17 +529,11 @@ public class HandState
     {
         int result;
         result = round.hashCode();
-        result = 31 * result + Arrays.hashCode(players);
+        result = 31 * result + Arrays.hashCode(seats);
         result = 31 * result + nextToAct;
         result = 31 * result + remainingRoundBets;
         result = 31 * result + latestRoundStaker;
         result = 31 * result + stakes.hashCode();
         return result;
     }
-
-    //    public boolean handsEqual(HandState with)
-//    {
-//        return with != null &&
-//               handId == with.handId;
-//    }
 }

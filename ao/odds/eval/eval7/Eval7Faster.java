@@ -1,9 +1,9 @@
 package ao.odds.eval.eval7;
 
+import ao.holdem.v3.model.card.Card;
+import ao.odds.eval.HandRank;
 import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hand;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
 
@@ -531,7 +531,7 @@ public class Eval7Faster
         	System.out.print("Enumerating hand frequencies and equivalency classes...");
         	startTimer = System.currentTimeMillis();
         }
-        int frequency[] = new int[ Hand.HandRank.values().length ];
+        int frequency[] = new int[ HandRank.values().length ];
 
         for (c0 = 1; c0 < 53; c0++) {
             u0 = handRanks[53 + c0];
@@ -567,7 +567,7 @@ public class Eval7Faster
 //                                            53 + c0] + c1] + c2] + c3] + c4] + c5] + c6];
 
 //                                    int value = valueOf(c0, c1, c2, c3, c4, c5, c6);
-                                    frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+                                    frequency[ HandRank.fromValue(value).ordinal() ]++;
 
 //                                    handEnumerations[handRank >>> 12]++;
 //                                	equivalencyEnumerations[handRank >>> 12][handRank & 0xFFF]++;

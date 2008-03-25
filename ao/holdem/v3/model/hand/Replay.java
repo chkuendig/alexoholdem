@@ -2,7 +2,7 @@ package ao.holdem.v3.model.hand;
 
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.descrete.Action;
+import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.Community;
 import ao.holdem.v3.model.card.Hole;
 import ao.holdem.v3.model.card.chance.ChanceCards;
@@ -11,13 +11,12 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.bind.tuple.TupleTupleBinding;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  */
-public class Hand implements Serializable
+public class Replay
 {
     //--------------------------------------------------------------------
     private final HandId                    id;
@@ -28,39 +27,32 @@ public class Hand implements Serializable
 
 
     //--------------------------------------------------------------------
-    public Hand(List<Avatar> clockwiseDealerLast)
+    public Replay(List<Avatar>              clockwiseDealerLast,
+                ChanceCards               cards,
+                Round                     asOf,
+                Map<Avatar, List<Action>> playerAction)
     {
-        this(clockwiseDealerLast, Community.PREFLOP);
-    }
-    public Hand(List<Avatar> clockwiseDealerLast,
-                ChanceCards  cards,
-                Round        asOf)
-    {
-        this(clockwiseDealerLast, cards.community(asOf));
+        this(HandId.nextInstance(),
+             clockwiseDealerLast,
+             playerAction,
+             cards.community(asOf),
+             initHoles());
 
         for (Avatar avatar : clockwiseDealerLast)
         {
             addHole(avatar, cards.hole(avatar));
         }
     }
-    public Hand(List<Avatar> clockwiseDealerLast,
-                Community    community)
+    public Replay(List<Avatar> clockwiseDealerLast,
+                ChanceCards  cards,
+                Round        asOf)
     {
         this(clockwiseDealerLast,
-             community,
-             new HashMap<Avatar, Hole>());
+             cards,
+             asOf,
+             initPlayerAction(clockwiseDealerLast));
     }
-    public Hand(List<Avatar>      clockwiseDealerLast,
-                Community         community,
-                Map<Avatar, Hole> holes)
-    {
-        this(HandId.nextInstance(),
-             clockwiseDealerLast,
-             initPlayerAction( clockwiseDealerLast ),
-             community,
-             holes);
-    }
-    private Hand(HandId                    handId,
+    private Replay(HandId                    handId,
                  List<Avatar>              clockwiseDealerLast,
                  Map<Avatar, List<Action>> playerAction,
                  Community                 communityCards,
@@ -71,6 +63,11 @@ public class Hand implements Serializable
         action    = playerAction;
         community = communityCards;
         holes     = holeCards;
+    }
+
+    private static Map<Avatar, Hole> initHoles()
+    {
+        return new HashMap<Avatar, Hole>();
     }
     private static Map<Avatar, List<Action>>
             initPlayerAction(List<Avatar> players)
@@ -91,7 +88,7 @@ public class Hand implements Serializable
         action.get( player ).add( act );
     }
 
-    public void addHole(Avatar player, Hole hole)
+    private void addHole(Avatar player, Hole hole)
     {
         Hole previous = holes.put(player, hole);
         assert previous == null || previous.equals( hole );
@@ -125,10 +122,10 @@ public class Hand implements Serializable
     //--------------------------------------------------------------------
     public String toString()
     {
-        return id.toString() + ":\n" +
-               community.toString() + "\n" +
-               holes.toString() + "\n" +
-               action.toString();
+        return id        .toString() + ":\n" +
+               community .toString() +  "\n" +
+               holes     .toString() +  "\n" +
+               action    .toString();
     }
 
     public boolean equals(Object o)
@@ -137,7 +134,7 @@ public class Hand implements Serializable
         if (o == null ||
             getClass() != o.getClass()) return false;
 
-        Hand hand = (Hand) o;
+        Replay hand = (Replay) o;
         return id.equals(hand.id);
     }
 
@@ -163,14 +160,14 @@ public class Hand implements Serializable
     {
         public void objectToKey(Object object, TupleOutput output)
         {
-            Hand hand = (Hand) object;
+            Replay hand = (Replay) object;
             HandId.BINDING.objectToEntry(
-                    hand.id(), output);
+                    hand.id, output);
         }
 
         public void objectToData(Object object, TupleOutput output)
         {
-            Hand hand = (Hand) object;
+            Replay hand = (Replay) object;
 
             Community.BINDING.objectToEntry(hand.community, output);
             output.writeShort( hand.players().size() );
@@ -191,7 +188,7 @@ public class Hand implements Serializable
             }
         }
 
-        public Hand entryToObject(TupleInput keyInput,
+        public Replay entryToObject(TupleInput keyInput,
                                   TupleInput dataInput)
         {
             HandId id = HandId.BINDING.entryToObject(keyInput);
@@ -229,7 +226,7 @@ public class Hand implements Serializable
                 }
             }
 
-            return new Hand(id,
+            return new Replay(id,
                             clockwiseDealerLast,
                             playerAction,
                             community,

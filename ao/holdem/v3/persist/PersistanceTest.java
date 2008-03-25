@@ -2,9 +2,9 @@ package ao.holdem.v3.persist;
 
 import ao.holdem.v3.model.Avatar;
 import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.descrete.Action;
+import ao.holdem.v3.model.act.Action;
 import ao.holdem.v3.model.card.chance.DeckCards;
-import ao.holdem.v3.model.hand.Hand;
+import ao.holdem.v3.model.hand.Replay;
 import ao.util.rand.Rand;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class PersistanceTest
                 dao.mostPrevalent(1)
                         .keySet().iterator().next();
         long start = System.currentTimeMillis();
-        for (Hand h : dao.retrieve(prevalent, 5))
+        for (Replay h : dao.retrieve(prevalent, 5))
         {
 //            System.out.println(h);
         }
@@ -58,7 +58,7 @@ public class PersistanceTest
         System.out.println("took: " + delta);
     }
 
-    private static Hand randomHand()
+    private static Replay randomHand()
     {
         List<String> names = new ArrayList<String>(Arrays.asList(
                 "a", "b", "c", "d", "e", "f", "g",
@@ -69,7 +69,7 @@ public class PersistanceTest
         names.remove(name);
         Avatar opponent = Avatar.local(Rand.fromList(names));
 
-        Hand hand = new Hand(Arrays.asList(opponent, dealer),
+        Replay hand = new Replay(Arrays.asList(opponent, dealer),
                              new DeckCards(),
                              Rand.fromArray(Round.VALUES));
 

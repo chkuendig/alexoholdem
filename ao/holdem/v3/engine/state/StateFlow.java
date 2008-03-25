@@ -1,0 +1,296 @@
+package ao.holdem.v3.engine.state;
+
+import ao.holdem.v3.engine.Analysis;
+import ao.holdem.v3.model.Avatar;
+import ao.holdem.v3.model.Round;
+import ao.holdem.v3.model.Stack;
+import ao.holdem.v3.model.act.Action;
+import ao.holdem.v3.model.card.Card;
+import ao.holdem.v3.model.card.Community;
+import ao.holdem.v3.model.card.Hole;
+import ao.holdem.v3.model.card.chance.ChanceCards;
+import ao.holdem.v3.model.hand.Replay;
+import ao.odds.eval.eval_567.EvalSlow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ */
+public class StateFlow
+{
+    //--------------------------------------------------------------------
+    private State                     head;
+    private List<Avatar>              players;
+    private Map<Avatar, List<Action>> actions;
+    private Analysis                  analysis;
+//    private List<Avatar>              allIns;
+
+
+    //--------------------------------------------------------------------
+    public StateFlow(
+            List<Avatar> clockwiseDealerLast,
+            boolean      autoPostBlinds)
+    {
+        players  = clockwiseDealerLast;
+        head     = new State( players );
+
+        analysis = new Analysis();
+        analysis.analyze( head );
+
+        if (autoPostBlinds)
+        {
+            advance(Action.SMALL_BLIND);
+            advance(Action.BIG_BLIND);
+        }
+
+        actions = new HashMap<Avatar, List<Action>>();
+        for (Avatar avatar : clockwiseDealerLast)
+        {
+            actions.put(avatar, new ArrayList<Action>());
+        }
+
+//        allIns = new ArrayList<Avatar>();
+    }
+
+
+    //--------------------------------------------------------------------
+    public State head()
+    {
+        return head;
+    }
+
+
+    //--------------------------------------------------------------------
+    /**
+     * Advanced the hand to the next state.
+     *
+     * @param act action taken by nextToAct
+     * @return seat state after this action is taken
+     */
+    public Seat advance(Action act)
+    {
+        int    nextToActIndex = head.nextToActIndex();
+        Avatar nextToAct      = head.nextToAct().player();
+
+        head = head.advance(act);
+        analysis.analyze( head );
+
+        actions.get(nextToAct).add( act );
+
+//        if (act.isAllIn())
+//        {
+//            allIns.add( nextToAct );
+//        }
+
+        return head.seats()[ nextToActIndex ];
+    }
+
+    public void advanceQuitter(Avatar quitter)
+    {
+        head = head.advanceQuitter( quitter );
+        analysis.analyze( head );
+    }
+
+
+    //--------------------------------------------------------------------
+    public Analysis analysis()
+    {
+        return analysis;
+    }
+
+
+    //--------------------------------------------------------------------
+    public Replay asHand(ChanceCards cards)
+    {
+        return new Replay(players, cards, head.round(), actions);
+    }
+
+    public Map<Avatar, Stack> deltas(ChanceCards cards)
+    {
+        List<Avatar> winners = winners(cards);
+
+        Map<Avatar, Stack> deltas = new HashMap<Avatar, Stack>();
+
+//        Avatar smallBlind, bigBlind;
+//        Avatar leftOfDealer = head.seats( -1 ).player();
+//        if (actions.get( leftOfDealer ).get(0).isSmallBlind())
+//        {
+//            smallBlind = leftOfDealer;
+//            bigBlind   = head.seats(-2).player();
+//        }
+//        else
+//        {
+//            smallBlind = null;
+//            bigBlind   = leftOfDealer;
+//        }
+
+        Stack totalLost = Stack.ZERO;
+        for (Seat seat : head().seats())
+        {
+            if (! winners.contains(seat.player()))
+            {
+                Stack commit = seat.commitment();
+//                if (seat.player().equals( smallBlind ))
+//                {
+//                    commit = commit.plus( Stack.SMALL_BLIND );
+//                }
+//                else if(seat.player().equals( bigBlind ))
+//                {
+//                    commit = commit.plus( Stack.BIG_BLIND );
+//                }
+
+                deltas.put(seat.player(), commit.negate());
+                totalLost = totalLost.plus(commit);
+            }
+        }
+
+        Stack winnings  = totalLost.split(     winners.size() );
+        Stack remainder = totalLost.remainder( winners.size() );
+        for (int i = 0; i < winners.size(); i++)
+        {
+            Avatar winner = winners.get(i);
+            Stack  total  = (i == 0)
+                             ? winnings.plus( remainder )
+                             : winnings;
+            deltas.put(winner, total);
+        }
+
+        return deltas;
+    }
+
+    private List<Avatar> winners(ChanceCards cards)
+    {
+        assert head.atEndOfHand();
+
+        List<Avatar> winners   = new ArrayList<Avatar>();
+        List<Seat>   finalists = head().unfolded();
+
+        if (finalists.size() == 1)
+        {
+            winners.add( finalists.get(0).player() );
+        }
+        else if (finalists.size() > 1)
+        {
+            Community community = cards.community( Round.RIVER );
+            Card      eval[]    =
+                    {community.flopA(), community.flopB(),
+                     community.flopC(), community.turn(),
+                     community.river(), null, null};
+
+            short     topHandRank = -1;
+            for (Seat seat : finalists)
+            {
+                Hole hole = cards.hole(seat.player());
+
+                eval[5] = hole.a();
+                eval[6] = hole.b();
+                short handRank = EvalSlow.valueOf(eval);
+
+                if (handRank > topHandRank)
+                {
+                    winners.clear();
+                    topHandRank = handRank;
+                }
+                if (handRank == topHandRank)
+                {
+                    winners.add( seat.player() );
+                }
+            }
+        }
+        return winners;
+    }
+
+
+//    private Map<Avatar, Stack> deltas(ChanceCards cards)
+//    {
+//        assert head.atEndOfHand();
+//
+//        Map<Avatar, Stack> commits = new HashMap<Avatar, Stack>();
+//        for (Seat seat : head.seats())
+//        {
+//            commits.put(seat.player(), seat.commitment());
+//        }
+//
+//        Map<Avatar, Stack> deltas = new HashMap<Avatar, Stack>();
+//        for (List<Avatar> pot : pots())
+//        {
+//            short        greatestHandRank    = -1;
+//            List<Avatar> greatestHandHolders = new ArrayList<Avatar>();
+//            Stack        lowest              = Stack.MAX_VALUE;
+//
+//            for (Avatar staker : pot)
+//            {
+//                Stack remainingCommitment = commits.get(staker);
+//                if (remainingCommitment.compareTo(lowest) < 0)
+//                {
+//                    lowest = remainingCommitment;
+//                }
+//
+//                short handRank = EvalSlow.valueOf(/* xxxx */);
+//                if (handRank > greatestHandRank)
+//                {
+//                    greatestHandRank = handRank;
+//
+//                    greatestHandHolders.clear();
+//                    greatestHandHolders.add(staker);
+//                }
+//                else if (handRank == greatestHandRank)
+//                {
+//                    greatestHandHolders.add(staker);
+//                }
+//            }
+//
+//            for (Avatar staker : pot)
+//            {
+//                if (greatestHandHolders.contains(staker))
+//                {
+//
+//                }
+//            }
+//        }
+//
+//        return deltas;
+//    }
+
+    /**
+     * In Holdem, when a player goes all in, he cannot win
+     *  more than his stake in the pot.
+     * So for example, if there are 4 players (A, B, C, D):
+     *  A bets all-in.
+     *  B re-raises all-in.
+     *  C re-raises all-in.
+     *  D calls.
+     * In this situation,
+     *  if A has the best cards, he will his share of the pot,
+     *      then the rest will be up for grabs as if  he
+     *      never existed.
+     * The general rule is, the person with the best hand wins
+     *  the pot elligible to him. Then, all players in smaller
+     *  or equal pots are forgotten, and the process is repeated.
+     */
+//    private List<List<Avatar>> pots()
+//    {
+//        List<List<Avatar>> pots = new ArrayList<List<Avatar>>();
+//        List<Avatar>       all  = new ArrayList<Avatar>(players);
+//
+//        pots.add( all );
+//        for (Avatar allIn : allIns)
+//        {
+//            List<Avatar> sidepot = new ArrayList<Avatar>();
+//            for (Avatar avatar : pots.get(pots.size() - 1))
+//            {
+//                if (! avatar.equals(allIn))
+//                {
+//                    sidepot.add( avatar );
+//                }
+//            }
+//            pots.add( sidepot );
+//        }
+//
+//        return pots;
+//    }
+}

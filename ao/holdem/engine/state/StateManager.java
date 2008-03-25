@@ -1,23 +1,23 @@
 package ao.holdem.engine.state;
 
+import ao.ai.monte_carlo.uct.Node;
+import ao.ai.opp_model.predict.act.HandStats;
 import ao.holdem.engine.DeckCardSource;
-import ao.holdem.model.Money;
+import ao.holdem.engine.persist.Event;
+import ao.holdem.engine.persist.HandHistory;
+import ao.holdem.engine.persist.PlayerHandle;
 import ao.holdem.model.BettingRound;
+import ao.holdem.model.Money;
 import ao.holdem.model.act.RealAction;
 import ao.holdem.model.act.SimpleAction;
 import ao.holdem.model.card.CardSource;
 import ao.holdem.model.card.Hand;
 import ao.holdem.model.card.Hole;
-import ao.holdem.engine.persist.Event;
-import ao.holdem.engine.persist.HandHistory;
-import ao.holdem.engine.persist.PlayerHandle;
-import ao.ai.opp_model.predict.act.HandStats;
-import ao.ai.monte_carlo.uct.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -240,10 +240,10 @@ public class StateManager
         return stats;
     }
 
-    public List<Event> events()
-    {
-        return events;
-    }
+//    public List<Event> events()
+//    {
+//        return events;
+//    }
 
 //    public Context allInContext(PlayerHandle forPlayer)
 //    {

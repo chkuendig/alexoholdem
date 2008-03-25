@@ -1,17 +1,17 @@
 package ao.holdem;
 
 
-import ao.odds.agglom.impl.ApproximateOddFinder;
-import ao.odds.agglom.OddFinder;
-import ao.odds.agglom.Odds;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hand;
+import ao.holdem.model.card.Hole;
+import ao.holdem.net.OverTheWireState;
+import ao.odds.agglom.OddFinder;
+import ao.odds.agglom.Odds;
+import ao.odds.agglom.impl.ApproximateOddFinder;
+import ao.odds.eval.HandRank;
 import ao.odds.eval.eval7.Eval7FastLookup;
 import ao.odds.eval.eval7.Eval7Faster;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.holdem.model.card.Hole;
-import ao.holdem.net.OverTheWireState;
 import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
 import ao.util.text.Arr;
@@ -301,7 +301,7 @@ public class Main
 
         Card cards[] = Card.values();
         int exactFrequency[] = new int[ 7462 ];
-        int frequency[] = new int[ Hand.HandRank.values().length ];
+        int frequency[] = new int[ HandRank.values().length ];
         for (int c0 = 1; c0 < 53; c0++) {
             Card card0 = cards[ c0 - 1 ];
             for (int c1 = c0 + 1; c1 < 53; c1++) {
@@ -377,7 +377,7 @@ public class Main
                 System.out.println("WTF!!!!!\t" + value + "\t" +
                                    EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
             }
-            frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+            frequency[ HandRank.fromValue(value).ordinal() ]++;
             exactFrequency[ value ]++;
         }
         }}}}}}}
@@ -397,7 +397,7 @@ public class Main
         long start = System.currentTimeMillis();
 
         int count       = 0;
-        int frequency[] = new int[ Hand.HandRank.values().length ];
+        int frequency[] = new int[ HandRank.values().length ];
         while (permuter.hasMoreElements())
         {
 //            if (count   % 10000000 == 0) System.out.println();
@@ -416,7 +416,7 @@ public class Main
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
             }
 
-            frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+            frequency[ HandRank.fromValue(value).ordinal() ]++;
         }
 
         System.out.println(Arrays.toString(frequency));
@@ -430,7 +430,7 @@ public class Main
         long start = System.currentTimeMillis();
 
         int count       = 0;
-        int frequency[] = new int[ Hand.HandRank.values().length ];
+        int frequency[] = new int[ HandRank.values().length ];
         while (permuter.hasMoreElements())
         {
             if (count   % 10000000 == 0) System.out.println();
@@ -441,7 +441,7 @@ public class Main
             int value = EvalSlow.valueOf(hand);
 //            int value = Eval7Faster.valueOf(
 //                            hand[0], hand[1], hand[2], hand[3], hand[4]);
-            frequency[ Hand.HandRank.fromValue(value).ordinal() ]++;
+            frequency[ HandRank.fromValue(value).ordinal() ]++;
         }
 
         System.out.println(Arrays.toString(frequency));
