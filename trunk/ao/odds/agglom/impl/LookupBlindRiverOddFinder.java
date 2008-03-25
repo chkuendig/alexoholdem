@@ -1,7 +1,7 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.card.Community;
+import ao.holdem.model.Round;
+import ao.holdem.model.card.Community;
 import ao.odds.agglom.BlindOddFinder;
 
 /**

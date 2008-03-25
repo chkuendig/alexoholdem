@@ -1,4 +1,4 @@
-package ao.holdem.v3.persist;
+package ao.holdem.persist;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -14,7 +14,7 @@ public class UniqueId
                    Serializable
 {
     //--------------------------------------------------------------------
-    private static final int OFFSET = 1 << 8;
+    private static final int OFFSET = 1 << 10;
 
 
     //--------------------------------------------------------------------

@@ -1,7 +1,7 @@
 package ao.ai.simple;
 
-import static ao.holdem.v3.model.card.Card.Rank.*;
-import ao.holdem.v3.model.card.Hole;
+import static ao.holdem.model.card.Card.Rank.*;
+import ao.holdem.model.card.Hole;
 
 
 /**

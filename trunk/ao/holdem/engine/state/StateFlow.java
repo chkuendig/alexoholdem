@@ -1,15 +1,15 @@
 package ao.holdem.engine.state;
 
 import ao.holdem.engine.analysis.Analysis;
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.Card;
-import ao.holdem.v3.model.card.Community;
-import ao.holdem.v3.model.card.Hole;
-import ao.holdem.v3.model.card.chance.ChanceCards;
-import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
+import ao.holdem.model.Round;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.replay.Replay;
 import ao.odds.eval.eval_567.EvalSlow;
 
 import java.util.ArrayList;
@@ -41,16 +41,16 @@ public class StateFlow
         analysis = new Analysis();
         analysis.analyze( head );
 
-        if (autoPostBlinds)
-        {
-            advance(Action.SMALL_BLIND);
-            advance(Action.BIG_BLIND);
-        }
-
         actions = new HashMap<Avatar, List<Action>>();
         for (Avatar avatar : clockwiseDealerLast)
         {
             actions.put(avatar, new ArrayList<Action>());
+        }
+
+        if (autoPostBlinds)
+        {
+            advance(Action.SMALL_BLIND);
+            advance(Action.BIG_BLIND);
         }
 
 //        allIns = new ArrayList<Avatar>();
@@ -128,12 +128,11 @@ public class StateFlow
 //            bigBlind   = leftOfDealer;
 //        }
 
-        Chips totalLost = Chips.ZERO;
+        Chips totalCommit = Chips.ZERO;
         for (Seat seat : head().seats())
         {
-            if (! winners.contains(seat.player()))
-            {
-                Chips commit = seat.commitment();
+//            if (! winners.contains(seat.player()))
+//            {
 //                if (seat.player().equals( smallBlind ))
 //                {
 //                    commit = commit.plus( Chips.SMALL_BLIND );
@@ -142,21 +141,21 @@ public class StateFlow
 //                {
 //                    commit = commit.plus( Chips.BIG_BLIND );
 //                }
-
-                deltas.put(seat.player(), commit.negate());
-                totalLost = totalLost.plus(commit);
-            }
+//            }
+            Chips commit = seat.commitment();
+            totalCommit = totalCommit.plus(commit);
+            deltas.put(seat.player(), commit.negate());
         }
 
-        Chips winnings  = totalLost.split(     winners.size() );
-        Chips remainder = totalLost.remainder( winners.size() );
+        Chips winnings  = totalCommit.split(     winners.size() );
+        Chips remainder = totalCommit.remainder( winners.size() );
         for (int i = 0; i < winners.size(); i++)
         {
             Avatar winner = winners.get(i);
             Chips total  = (i == 0)
                              ? winnings.plus( remainder )
                              : winnings;
-            deltas.put(winner, total);
+            deltas.put(winner, deltas.get(winner).plus(total));
         }
 
         return deltas;

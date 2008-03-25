@@ -1,8 +1,8 @@
-package ao.holdem.v3.model.card.chance;
+package ao.holdem.model.card.chance;
 
-import ao.holdem.v3.model.card.Card;
-import ao.holdem.v3.model.card.Community;
-import ao.holdem.v3.model.card.Hole;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 import ao.util.rand.Rand;
 
 /**

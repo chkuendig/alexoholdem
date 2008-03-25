@@ -1,7 +1,7 @@
-package ao.holdem.v3.persist;
+package ao.holdem.persist;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.replay.Replay;
 import ao.util.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.collections.StoredMap;
@@ -16,9 +16,9 @@ import java.util.*;
 public class HoldemDao
 {
     //--------------------------------------------------------------------
-    private HoldemDb       db;
-    private StoredMap      hands;
-    private StoredMap      avatars;
+    private HoldemDb                              db;
+    private StoredMap/*<UniqueId, Hand>*/         hands;
+    private StoredMap/*<Avatar, List<UniqueId>>*/ avatars;
 
 
     //--------------------------------------------------------------------
@@ -31,7 +31,7 @@ public class HoldemDao
 
 
     //--------------------------------------------------------------------
-    public void presist(final Replay hand)
+    public void persist(final Replay hand)
     {
         db.atomic(new TransactionWorker() {
             public void doWork() throws Exception {

@@ -3,11 +3,11 @@ package ao.holdem.engine.dealer;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.Seat;
 import ao.holdem.engine.state.StateFlow;
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.chance.ChanceCards;
-import ao.holdem.v3.model.replay.StackedReplay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.replay.StackedReplay;
 
 import java.util.List;
 import java.util.Map;

@@ -1,9 +1,9 @@
 package ao.holdem.engine.state;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
-import ao.holdem.v3.model.act.AbstractAction;
-import ao.holdem.v3.model.act.Action;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
+import ao.holdem.model.act.AbstractAction;
+import ao.holdem.model.act.Action;
 
 /**
  *

@@ -1,7 +1,7 @@
-package ao.holdem.v3.model.card;
+package ao.holdem.model.card;
 
 
-import ao.holdem.v3.model.Round;
+import ao.holdem.model.Round;
 import ao.util.serial.Prototype;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;

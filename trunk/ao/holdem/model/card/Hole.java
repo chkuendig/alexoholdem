@@ -1,4 +1,4 @@
-package ao.holdem.v3.model.card;
+package ao.holdem.model.card;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;

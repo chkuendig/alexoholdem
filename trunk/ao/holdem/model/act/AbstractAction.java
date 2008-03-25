@@ -1,6 +1,6 @@
-package ao.holdem.v3.model.act;
+package ao.holdem.model.act;
 
-import ao.holdem.v3.model.Chips;
+import ao.holdem.model.Chips;
 
 
 /**

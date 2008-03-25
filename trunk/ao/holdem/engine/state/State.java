@@ -1,12 +1,12 @@
 package ao.holdem.engine.state;
 
 import ao.holdem.engine.RuleBreach;
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.AbstractAction;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.act.FallbackAction;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
+import ao.holdem.model.Round;
+import ao.holdem.model.act.AbstractAction;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.act.FallbackAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;

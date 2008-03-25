@@ -3,12 +3,12 @@ package ao.irc;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.RuleBreach;
 import ao.holdem.engine.dealer.Dealer;
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.Hole;
-import ao.holdem.v3.model.card.chance.LiteralCards;
-import ao.holdem.v3.model.replay.Replay;
-import ao.holdem.v3.model.replay.StackedReplay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.chance.LiteralCards;
+import ao.holdem.model.replay.Replay;
+import ao.holdem.model.replay.StackedReplay;
 
 import java.util.*;
 

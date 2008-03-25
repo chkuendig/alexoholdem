@@ -1,10 +1,10 @@
 package ao.irc;
 
-import ao.holdem.v3.model.Round;
-import ao.holdem.v3.model.act.AbstractAction;
-import ao.holdem.v3.model.act.Action;
-import ao.holdem.v3.model.card.Card;
-import ao.holdem.v3.model.card.Hole;
+import ao.holdem.model.Round;
+import ao.holdem.model.act.AbstractAction;
+import ao.holdem.model.act.Action;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Hole;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

@@ -1,7 +1,7 @@
-package ao.holdem.v3.model.replay;
+package ao.holdem.model.replay;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.Chips;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
 
 import java.util.Map;
 

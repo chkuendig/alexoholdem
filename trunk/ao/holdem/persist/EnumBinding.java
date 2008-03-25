@@ -1,4 +1,4 @@
-package ao.holdem.v3.persist;
+package ao.holdem.persist;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;

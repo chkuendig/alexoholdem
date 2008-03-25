@@ -1,6 +1,6 @@
 package ao.irc;
 
-import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.model.replay.Replay;
 import com.google.inject.Inject;
 
 import java.io.File;

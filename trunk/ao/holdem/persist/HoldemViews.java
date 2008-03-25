@@ -1,7 +1,7 @@
-package ao.holdem.v3.persist;
+package ao.holdem.persist;
 
-import ao.holdem.v3.model.Avatar;
-import ao.holdem.v3.model.replay.Replay;
+import ao.holdem.model.Avatar;
+import ao.holdem.model.replay.Replay;
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.collections.StoredEntrySet;

@@ -1,6 +1,6 @@
-package ao.holdem.v3.model.act;
+package ao.holdem.model.act;
 
-import ao.holdem.v3.persist.EnumBinding;
+import ao.holdem.persist.EnumBinding;
 
 
 /**
