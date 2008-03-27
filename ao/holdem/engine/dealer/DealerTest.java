@@ -2,14 +2,18 @@ package ao.holdem.engine.dealer;
 
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
-import ao.ai.simple.MathBot;
 import ao.holdem.engine.Player;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.replay.StackedReplay;
+import ao.util.stats.Combo;
+import ao.util.stats.Permuter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,76 +21,41 @@ import java.util.*;
 public class DealerTest
 {
     //--------------------------------------------------------------------
+    private static final long TARGET_ROUNDS = 10000;
+
+
+    //--------------------------------------------------------------------
 //    @Inject Provider<UctBot>    smarties;
 
 
     //--------------------------------------------------------------------
     public void realDealerTest()
     {
-//        Rand.nextBoolean();
-//        Rand.nextDouble();
-//        Rand.nextBoolean();
-
-        List<Avatar> players =
-                new ArrayList<Avatar>();
         Map<Avatar, Player> brains =
-                new HashMap<Avatar, Player>();
-        for (Map.Entry<String, Player> e :
-                new LinkedHashMap<String, Player>(){{
-//                    put("real.G", new DuaneBot());
-//                    put("real.F", new DuaneBot());
-//                    put("real.E", new DuaneBot());
-                    put("math", new MathBot());
-//                    put("raise", new AlwaysRaiseBot());
-                    put("duane", new DuaneBot());
-//                    put("uct", smarties.get());
-                    put("raise", new AlwaysRaiseBot());
-//                    put("real.B", new DuaneBot());
-//                    put("real.C", new AlwaysRaiseBot());
-//                    put("real.D", new MathBot());
-//                    put("real.E", new AlwaysRaiseBot());
-//                    put("real.F", new DuaneBot());
-//                    put("real.G", smarties.get());
-                }}.entrySet())
+                new HashMap<Avatar, Player>() {{
+                    put(Avatar.local("duane0"), new DuaneBot());
+                    put(Avatar.local("duane1"), new DuaneBot());
+                    put(Avatar.local("raise0"), new AlwaysRaiseBot());
+                    put(Avatar.local("raise1"), new AlwaysRaiseBot());
+                    put(Avatar.local("raise2"), new AlwaysRaiseBot());
+//                    put(Avatar.local("math0"),  new MathBot());
+                }};
+        long roundRobins = Combo.smallFactorial( brains.size() );
+        int  decksTrials = (int) Math.ceil(Math.sqrt(
+                            (double) TARGET_ROUNDS / roundRobins));
+
+        DeckCards decks[] = new DeckCards[decksTrials];
+        for (int deck = 0; deck < decks.length; deck++)
         {
-            Avatar playerHandle = Avatar.local(e.getKey());
-            players.add( playerHandle );
-            brains.put( playerHandle, e.getValue() );
+            decks[deck] = new DeckCards();
         }
 
-        Map<Avatar, Chips> cumDeltas =
-                new HashMap<Avatar, Chips>();
-
-        Dealer dealer = new Dealer(true, brains);
-
-        for (int i = 0; i < 1000; i++)
+        Dealer             dealer    = new Dealer(true, brains);
+        Map<Avatar, Chips> cumDeltas = new HashMap<Avatar, Chips>();
+        for (int trialSet = 0; trialSet < decksTrials; trialSet++)
         {
-//            System.out.println(i);
-            StackedReplay replay =
-                    dealer.play(players, new DeckCards());
-//            hands.store(hist);
-
-            Map<Avatar, Chips> deltas = replay.deltas();
-            if (cumDeltas.isEmpty())
-            {
-                cumDeltas.putAll( deltas );
-            }
-            else
-            {
-                for (Map.Entry<Avatar, Chips> delta
-                        : deltas.entrySet())
-                {
-                    cumDeltas.put(delta.getKey(),
-                                  cumDeltas.get(delta.getKey()).plus(
-                                          delta.getValue()));
-                }
-            }
-            System.out.println(replay.deltas());
-            //System.out.println(hist.summary());
-//            System.out.println(
-//                    formatCumulativeDeltas(i, cumDeltas));
-
-            players.add( players.remove(0) );
+            roundrobinTournament(
+                    dealer, brains.keySet(), decks, cumDeltas);
         }
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -99,25 +68,63 @@ public class DealerTest
         }
     }
 
-    private String formatCumulativeDeltas(
-            int                dataIndex,
+    private void roundrobinTournament(
+            Dealer             dealer,
+            Collection<Avatar> players,
+            DeckCards          decks[],
             Map<Avatar, Chips> cumDeltas)
     {
-        StringBuilder str = new StringBuilder();
-
-        for (Map.Entry<Avatar, Chips> delta :
-                cumDeltas.entrySet())
+        for (Avatar permutation[] :
+                new Permuter<Avatar>(
+                        players.toArray(new Avatar[players.size()])))
         {
-            str.append(dataIndex)
-               .append("\t")
-               .append(delta.getKey().name())
-               .append("\t")
-               .append(delta.getValue())
-               .append("\n");
-        }
+            for (DeckCards deck : decks)
+            {
+                StackedReplay replay =
+                        dealer.play(Arrays.asList(permutation),
+                                    deck);
 
-        str.deleteCharAt( str.length() - 1 );
-        return str.toString();
+                Map<Avatar, Chips> deltas = replay.deltas();
+                if (cumDeltas.isEmpty())
+                {
+                    cumDeltas.putAll(deltas);
+                }
+                else
+                {
+                    for (Map.Entry<Avatar, Chips> delta :
+                            deltas.entrySet())
+                    {
+                        cumDeltas.put(
+                                delta.getKey(),
+                                cumDeltas.get(delta.getKey())
+                                        .plus(delta.getValue()));
+                    }
+                }
+                System.out.println(replay.deltas());
+
+                deck.reset();
+            }
+        }
     }
 
+//    private String formatCumulativeDeltas(
+//            int                dataIndex,
+//            Map<Avatar, Chips> cumDeltas)
+//    {
+//        StringBuilder str = new StringBuilder();
+//
+//        for (Map.Entry<Avatar, Chips> delta :
+//                cumDeltas.entrySet())
+//        {
+//            str.append(dataIndex)
+//               .append("\t")
+//               .append(delta.getKey().name())
+//               .append("\t")
+//               .append(delta.getValue())
+//               .append("\n");
+//        }
+//
+//        str.deleteCharAt( str.length() - 1 );
+//        return str.toString();
+//    }
 }

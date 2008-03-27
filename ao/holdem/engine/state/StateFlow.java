@@ -24,6 +24,7 @@ public class StateFlow
 {
     //--------------------------------------------------------------------
     private State                     head;
+    private Round                     lastActRound;
     private List<Avatar>              players;
     private Map<Avatar, List<Action>> actions;
     private Analysis                  analysis;
@@ -76,7 +77,8 @@ public class StateFlow
         int    nextToActIndex = head.nextToActIndex();
         Avatar nextToAct      = head.nextToAct().player();
 
-        head = head.advance(act);
+        lastActRound = head.round();
+        head         = head.advance(act);
         analysis.analyze( head );
 
         actions.get(nextToAct).add( act );
@@ -91,7 +93,17 @@ public class StateFlow
 
     public void advanceQuitter(Avatar quitter)
     {
-        head = head.advanceQuitter( quitter );
+        assert !head.atEndOfHand() : "can't quit after hand is over.";
+
+        // this condition is needed for when
+        //   a person quits *after* the hand is over.
+//        lastActRound =
+//                (head.round() == null)
+//                 ? lastActRound
+//                 : head.round();
+
+        lastActRound = head.round();
+        head         = head.advanceQuitter( quitter );
         analysis.analyze( head );
     }
 
@@ -106,42 +118,17 @@ public class StateFlow
     //--------------------------------------------------------------------
     public Replay asHand(ChanceCards cards)
     {
-        return new Replay(players, cards, head.round(), actions);
+        return new Replay(players, cards, lastActRound, actions);
     }
 
     public Map<Avatar, Chips> deltas(ChanceCards cards)
     {
-        List<Avatar> winners = winners(cards);
-
-        Map<Avatar, Chips> deltas = new HashMap<Avatar, Chips>();
-
-//        Avatar smallBlind, bigBlind;
-//        Avatar leftOfDealer = head.seats( -1 ).player();
-//        if (actions.get( leftOfDealer ).get(0).isSmallBlind())
-//        {
-//            smallBlind = leftOfDealer;
-//            bigBlind   = head.seats(-2).player();
-//        }
-//        else
-//        {
-//            smallBlind = null;
-//            bigBlind   = leftOfDealer;
-//        }
+        List<Avatar>       winners = winners(cards);
+        Map<Avatar, Chips> deltas  = new HashMap<Avatar, Chips>();
 
         Chips totalCommit = Chips.ZERO;
         for (Seat seat : head().seats())
         {
-//            if (! winners.contains(seat.player()))
-//            {
-//                if (seat.player().equals( smallBlind ))
-//                {
-//                    commit = commit.plus( Chips.SMALL_BLIND );
-//                }
-//                else if(seat.player().equals( bigBlind ))
-//                {
-//                    commit = commit.plus( Chips.BIG_BLIND );
-//                }
-//            }
             Chips commit = seat.commitment();
             totalCommit = totalCommit.plus(commit);
             deltas.put(seat.player(), commit.negate());
@@ -184,6 +171,7 @@ public class StateFlow
             for (Seat seat : finalists)
             {
                 Hole hole = cards.hole(seat.player());
+                assert hole != null : "hole must be visible at showdown";
 
                 eval[5] = hole.a();
                 eval[6] = hole.b();

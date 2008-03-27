@@ -1,7 +1,6 @@
 package ao.irc;
 
 import ao.holdem.engine.Player;
-import ao.holdem.engine.RuleBreach;
 import ao.holdem.engine.dealer.Dealer;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.act.Action;
@@ -108,9 +107,16 @@ public class HandItr implements Iterable<Replay>
 //                           Arrays.deepToString(out.winners().toArray()));
             return out.replay();
         }
-        catch (RuleBreach e)
+        catch (Throwable e)
         {
-            if (! e.getMessage().contains("round betting cap exceeded"))
+            if (e.getMessage() == null)
+            {
+                System.out.println("nextHandIndex " + (nextHandIndex-1));
+                e.printStackTrace();
+                displayHand(hand, action);
+            }
+            else if (! e.getMessage()
+                        .contains("round betting cap exceeded"))
             {
                 System.out.println("nextHandIndex " + (nextHandIndex-1));
                 System.out.println(e.getMessage());

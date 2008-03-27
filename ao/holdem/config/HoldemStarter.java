@@ -1,6 +1,6 @@
 package ao.holdem.config;
 
-import ao.holdem.engine.dealer.DealerTest;
+import ao.irc.IrcRunner;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.BasicConfigurator;
@@ -19,11 +19,11 @@ public class HoldemStarter
                 Guice.createInjector(
                         new HoldemConfig());
 
-        injector.getInstance(DealerTest.class).realDealerTest();
+//        injector.getInstance(DealerTest.class).realDealerTest();
 //        injector.getInstance(DecisionTest.class).testDecisionTree();
 //        injector.getInstance(OppModelTest.class).testOpponentModeling();
-//        injector.getInstance(IrcRunner.class).run(
-//                "C:\\alex\\data\\limit_holdem\\holdem\\199505");
+        injector.getInstance(IrcRunner.class).run(
+                "irc/holdem/199802");
 //                "C:\\alex\\data\\irc_poker\\holdem\\200104");
 //        injector.getInstance(IrcRunner.class).runOnSubdirs(
 //                "C:\\alex\\data\\limit_holdem\\holdem");

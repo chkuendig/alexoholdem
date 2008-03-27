@@ -64,6 +64,13 @@ public class Deck
 
 
     //--------------------------------------------------------------------
+    public void reset()
+    {
+        nextIndex = 0;
+    }
+
+
+    //--------------------------------------------------------------------
     public Deck prototype()
     {
         return new Deck(cards, nextIndex);

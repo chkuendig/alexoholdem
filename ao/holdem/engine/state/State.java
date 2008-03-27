@@ -53,8 +53,7 @@ public class State
             int          playerIndex)
     {
         Avatar player = clockwiseDealerLast.get( playerIndex );
-        return new Seat(
-                    player, Chips.ZERO, false, false);
+        return new Seat(player);
     }
 
     // automatically posts blinds
@@ -99,7 +98,7 @@ public class State
         return advance(nextToAct().player(), act);
     }
 
-
+                       
     //--------------------------------------------------------------------
     private State advanceVoluntary(Action act)
     {
@@ -129,7 +128,7 @@ public class State
         Seat nextPlayers[] = seats.clone();
         nextPlayers[nextToAct] =
                 nextPlayers[nextToAct]
-                        .advance(act, stakes, betSize());
+                        .advance(act, stakes, betSize(), round);
         return nextPlayers;
     }
 
@@ -161,8 +160,8 @@ public class State
     // it determines weather or not the next action can end the round.
     private boolean nextActionCritical()
     {
-        return latestRoundStaker == nextStakingUnfoldedAfter( nextToAct );// ||
-                //nextToAct == nextActiveAfter( nextToAct );
+        return latestRoundStaker ==
+               nextStakingUnfoldedAfter( nextToAct );
     }
 
     private int nextLatestRoundStaker(
@@ -223,26 +222,28 @@ public class State
     public State advanceQuitter(Avatar quitter)
     {
         int index = indexOf(quitter);
-        if (seats[ index ].isFolded()) return this;
+        if (seats[ index ].isFolded() /*||
+            atEndOfHand()*/) return this;
 
         Seat nextPlayers[] = seats.clone();
-        nextPlayers[ index ] = nextPlayers[ index ].fold();
-
+        nextPlayers[ index ] = nextPlayers[ index ].fold(round);
+        
         int perlimStaker   =
                 roundStakerAfterQuit(nextPlayers, index);
-        boolean roundEnder =
-                perlimStaker == nextStakingUnfoldedAfter(
-                                    nextPlayers, index(nextToAct - 1));
+        int nextActive =
+                nextActiveAfter(nextPlayers, index(nextToAct - 1));
+        boolean roundEnder = (perlimStaker == nextActive);
 
         int nextRoundStaker =
                 roundEnder
                 ? -1 : perlimStaker;
+//        int nextRoundStaker = -1;
 
         Round nextRound = roundEnder ? round.next() : round;
         int nextNextToAct =
                 roundEnder
                 ? nextActiveAfter(nextPlayers, seats.length - 1)
-                : nextActiveAfter(nextPlayers, index(nextToAct - 1));
+                : nextActive;
 
         return new State(nextRound,
                          nextPlayers,
@@ -253,24 +254,41 @@ public class State
                          roundEnder ? null : startOfRound);
     }
 
+    /**
+     * the next round staker after quitting,
+     * is first in the chain of players that played before me,
+     *  and that have commitment equal stakes.
+     * or -1 if nobody played before me this round,
+     *  or if nobody has commitment equal stakes.
+     *
+     * @param pStates with quitter being folded
+     * @param index seat #
+     * @return seat # of the new round staker
+     * */
     private int roundStakerAfterQuit(
-            Seat        pStates[],
-            int         index)
+            Seat pStates[], int index)
     {
         if (latestRoundStaker != index) return latestRoundStaker;
 
+        int earliestInChain = -1;
         for (int i = 1; i <= index; i++)
         {
             int  prevActorIndex = index(index - i);
             Seat prevActorSeat  = pStates[ prevActorIndex ];
 
-            if (! prevActorSeat.isFolded())
+            if (! prevActorSeat.isFolded() &&
+                  prevActorSeat.voluntarilyActedDuring( round ) &&
+                  prevActorSeat.commitment().equals( stakes ))
             {
-                return prevActorIndex;
+                earliestInChain = prevActorIndex;
+            }
+            else if (earliestInChain != -1)
+            {
+                return earliestInChain;
             }
         }
 
-        return -1;
+        return earliestInChain;
     }
 
 
@@ -436,17 +454,14 @@ public class State
 
     private int nextStakingUnfoldedAfter(int playerIndex)
     {
-        return nextStakingUnfoldedAfter(seats, playerIndex);
-    }
-    private int nextStakingUnfoldedAfter(
-            Seat[] pStates, int playerIndex)
-    {
-        int index = nextUnfoldedAfter(pStates, playerIndex);
+        int index = nextUnfoldedAfter(seats, playerIndex);
         while (startOfRound.seats[ index ].isAllIn() ||
                 seats[ index ].isAllIn() &&
                !seats[ index ].commitment().equals( stakes ))
         {
             index = nextUnfoldedAfter(index);
+
+//            if (playerIndex == index) return index;
         }
         return index;
     }
