@@ -38,7 +38,7 @@ public class Dealer
     {
         StateFlow stateFlow = new StateFlow(clockwiseDealerLast,
                                             autoBlinds);
-        do
+        while (true)
         {
             Avatar player = stateFlow.head().nextToAct().player();
             Action act    =
@@ -50,9 +50,12 @@ public class Dealer
                             stateFlow.analysis());
 
             stateFlow.advance(act);
-            handleQuitters( stateFlow );
+            if (! stateFlow.head().atEndOfHand())
+            {
+                handleQuitters( stateFlow );
+            }
+            else break;
         }
-        while (! stateFlow.head().atEndOfHand());
 
         Map<Avatar, Chips> deltas = stateFlow.deltas(cards);
         publishOutcome( deltas );

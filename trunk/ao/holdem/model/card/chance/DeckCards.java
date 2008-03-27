@@ -52,10 +52,10 @@ public class DeckCards implements ChanceCards
     //--------------------------------------------------------------------
     public Community community(Round asOf)
     {
-        Round safeRound =
-                (asOf == null)
-                 ? Round.RIVER : asOf;
-        switch (safeRound)
+//        Round safeRound =
+//                (asOf == null)
+//                 ? Round.RIVER : asOf;
+        switch (asOf)
         {
             case RIVER:
                 flop();
@@ -73,7 +73,8 @@ public class DeckCards implements ChanceCards
                 break;
         }
 
-        return community.asOf( safeRound );
+//        return community.asOf( safeRound );
+        return community.asOf( asOf );
     }
 
     private void flop()
@@ -96,6 +97,15 @@ public class DeckCards implements ChanceCards
         {
             community = community.addRiver( cards.nextCard() );
         }
+    }
+
+
+    //--------------------------------------------------------------------
+    public void reset()
+    {
+        cards.reset();
+        holes.clear();
+        community = Community.PREFLOP;
     }
 
 

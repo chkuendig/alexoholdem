@@ -173,6 +173,9 @@ public class Community implements Prototype<Community>
     //--------------------------------------------------------------------
     public Community asOf(Round round)
     {
+//        return (round == null)
+//                ? Round.RIVER.ofCommunity( this )
+//                : round.ofCommunity( this );
         return round.ofCommunity( this );
     }
 
@@ -182,21 +185,21 @@ public class Community implements Prototype<Community>
     }
     public Community asFlop()
     {
-        assert hasFlop();
+        assert hasFlop() : "no flop cards available";
         return hasTurn()
                 ? new Community(FLOP_A, FLOP_B, FLOP_C)
                 : this;
     }
     public Community asTurn()
     {
-        assert hasTurn();
+        assert hasTurn() : "no turn cards available";
         return hasRiver()
                ? new Community(FLOP_A, FLOP_B, FLOP_C, TURN)
                : this;
     }
     public Community asRiver()
     {
-        assert hasRiver();
+        assert hasRiver() : "no river cards available";
         return this;
     }
 
