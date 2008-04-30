@@ -7,8 +7,7 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.ApproximateOddFinder;
@@ -27,14 +26,15 @@ public class MathBot extends AbstractPlayer
 
     
     //--------------------------------------------------------------------
-    public Action act(State     state,
-                      Hole      hole,
-                      Community community,
-                      Analysis  analysis)
+    public Action act(State        state,
+                      CardSequence cards,
+                      Analysis     analysis)
     {
         OddFinder oddFinder = new ApproximateOddFinder();
         Odds odds = oddFinder.compute(
-                        hole, community, state.numActivePlayers()-1);
+                        cards.hole(),
+                        cards.community(),
+                        state.numActivePlayers()-1);
 
         double toCall = state.remainingBetsInRound() * state.betsToCall();
         double potOdds =

@@ -2,6 +2,8 @@ package ao.holdem.model.card;
 
 import ao.holdem.persist.EnumBinding;
 
+import java.util.Comparator;
+
 /**
  * Note that this given order of cards
  *  is standard and will not be changed.
@@ -173,47 +175,28 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-    public enum Rank
-    {
-        TWO("2"), THREE("3"), FOUR("4"),  FIVE("5"),
-        SIX("6"), SEVEN("7"), EIGHT("8"), NINE("9"),
-        TEN("T"), JACK("J"),  QUEEN("Q"), KING("K"),
-        ACE("A");
-
-        private final String NAME;
-
-        private Rank(String name)
-        {
-            NAME  = name;
-        }
-
-        public String toString()
-        {
-            return NAME;
-        }
-    }
-
-
-    //--------------------------------------------------------------------
-    public enum Suit
-    {
-        CLUBS("c"), DIAMONDS("d"), HEARTS("h"), SPADES("s");
-
-        private final String NAME;
-
-        private Suit(String name)
-        {
-            NAME = name;
-        }
-
-        public String toString()
-        {
-            return NAME;
-        }
-    }
-
-
-    //--------------------------------------------------------------------
     public static final EnumBinding<Card> BINDING =
                                 new EnumBinding<Card>(Card.class);
+
+
+    //--------------------------------------------------------------------
+    public static final ByRank BY_RANK = new ByRank();
+    public static class ByRank implements Comparator<Card>
+    {
+        public int compare(Card a, Card b)
+        {
+            int cmp = a.rank().compareTo( b.rank() );
+            return cmp == 0
+                    ? a.suit().compareTo( b.suit() )
+                    : cmp;
+        }
+        public Card min(Card a, Card b)
+        {
+            return compare(a, b) < 0 ? a : b;
+        }
+        public Card max(Card a, Card b)
+        {
+            return compare(a, b) > 0 ? a : b;
+        }
+    }
 }

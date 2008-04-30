@@ -7,6 +7,7 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.holdem.model.replay.StackedReplay;
 
 import java.util.List;
@@ -44,9 +45,11 @@ public class Dealer
             Action act    =
                     brains.get( player ).act(
                             stateFlow.head(),
-                            cards.hole( player ),
-                            cards.community(
-                                    stateFlow.head().round() ),
+                            new LiteralCardSequence(
+                                    cards.hole( player ),
+                                    cards.community(
+                                            stateFlow.head().round() )
+                            ),
                             stateFlow.analysis());
 
             stateFlow.advance(act);

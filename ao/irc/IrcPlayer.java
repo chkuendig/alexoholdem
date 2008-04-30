@@ -7,8 +7,7 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +42,9 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public Action act(State     state,
-                      Hole      hole,
-                      Community community,
-                      Analysis  analysis)
+    public Action act(State        state,
+                      CardSequence cards,
+                      Analysis     analysis)
     {
         if (! nextActionInBounds())
         {

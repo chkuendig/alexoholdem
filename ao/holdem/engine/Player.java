@@ -5,8 +5,7 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
 
 import java.util.Map;
 
@@ -23,10 +22,8 @@ public interface Player
      *
      * @param state
      *          hand state from POV of this player.
-     * @param hole
-     *          hole cards corresponding to this player.
-     * @param community
-     *          shared community cards for this stage of the hand.
+     * @param cards
+     *          private hole cards, and public community cards.
      * @param analysis
      *          shared analysis of the players in this hand.
      *          can be used to predict players' actions.
@@ -35,10 +32,9 @@ public interface Player
      *          a valid action, then it will be processed though
      *          FallbackAction.
      */
-    public Action act(State     state,
-                      Hole      hole,
-                      Community community,
-                      Analysis analysis);
+    public Action act(State        state,
+                      CardSequence cards,
+                      Analysis     analysis);
 
     /**
      * There has to be a special case for QUIT actions because

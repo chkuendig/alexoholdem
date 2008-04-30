@@ -52,13 +52,13 @@ public class Hole
 
     
     //--------------------------------------------------------------------
-    public boolean ranks(Card.Rank rankA, Card.Rank rankB)
+    public boolean ranks(Rank rankA, Rank rankB)
     {
         return A.rank() == rankA && B.rank() == rankB ||
                A.rank() == rankB && B.rank() == rankA;
     }
 
-    public boolean ranks(Card.Rank rank)
+    public boolean ranks(Rank rank)
     {
         return A.rank() == rank || B.rank() == rank;
     }
@@ -68,10 +68,15 @@ public class Hole
         return A.suit() == B.suit();
     }
 
+    public boolean paired()
+    {
+        return A.rank() == B.rank();
+    }
+
     public boolean hasXcard()
     {
-        return A.rank().ordinal() < Card.Rank.JACK.ordinal() ||
-                B.rank().ordinal() < Card.Rank.JACK.ordinal();
+        return A.rank().ordinal() < Rank.JACK.ordinal() ||
+                B.rank().ordinal() < Rank.JACK.ordinal();
     }
 
     public boolean contains(Card card)
