@@ -40,7 +40,7 @@ public class DealerTest
                     put(Avatar.local("raise2"), new AlwaysRaiseBot());
 //                    put(Avatar.local("math0"),  new MathBot());
                 }};
-        long roundRobins = Combo.smallFactorial( brains.size() );
+        long roundRobins = Combo.factorial( brains.size() );
         int  decksTrials = (int) Math.ceil(Math.sqrt(
                             (double) TARGET_ROUNDS / roundRobins));
 
