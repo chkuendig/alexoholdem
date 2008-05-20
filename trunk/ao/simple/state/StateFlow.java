@@ -19,7 +19,7 @@ public class StateFlow
 
     //--------------------------------------------------------------------
     public StateFlow(KuhnState   state,
-                        KuhnOutcome outcome)
+                     KuhnOutcome outcome)
     {
         STATE   = state;
         OUTCOME = outcome;

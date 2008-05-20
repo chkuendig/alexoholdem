@@ -1,13 +1,69 @@
 package ao.regret.node;
 
-import ao.holdem.model.act.AbstractAction;
+import ao.bucket.Bucket;
+import ao.simple.KuhnAction;
+import ao.simple.rules.KuhnRules;
+import ao.simple.state.StateFlow;
+import ao.util.text.Txt;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * 
  */
-public class OpponentNode extends PlayerNode
+public class OpponentNode implements PlayerNode
 {
-    private Map<AbstractAction, InfoNode> kids;
+    //--------------------------------------------------------------------
+    private Map<KuhnAction, InfoNode> kids;
+
+
+    //--------------------------------------------------------------------
+    public OpponentNode(KuhnRules rules,
+                        Bucket    bucket)
+    {
+        kids = new EnumMap<KuhnAction, InfoNode>(KuhnAction.class);
+
+        for (Map.Entry<KuhnAction, KuhnRules> transition :
+                rules.transitions().entrySet())
+        {
+            KuhnRules nextRules = transition.getValue();
+            StateFlow nextState = nextRules.state();
+
+            if (nextState.endOfHand())
+            {
+                kids.put(transition.getKey(),
+                         new TerminalNode(
+                                 bucket,
+                                 nextState.outcome()));
+            }
+            else
+            {
+                kids.put(transition.getKey(),
+                         new ProponentNode(
+                                 nextRules, bucket));
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return toString(0);
+    }
+
+    public String toString(int depth)
+    {
+        StringBuilder str = new StringBuilder();
+        for (Map.Entry<KuhnAction, InfoNode> kid : kids.entrySet())
+        {
+            str.append( Txt.nTimes("\t", depth) )
+               .append( kid.getKey() )
+               .append( "\n" )
+               .append( kid.getValue().toString(depth + 1) )
+               .append( "\n" );
+        }
+        return str.toString();
+    }
 }

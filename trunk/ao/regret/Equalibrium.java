@@ -1,6 +1,6 @@
 package ao.regret;
 
-import ao.holdem.model.act.AbstractAction;
+import ao.regret.node.*;
 
 /**
  *
@@ -20,20 +20,47 @@ public class Equalibrium
                             double              pA,
                             double              pB)
     {
-        InfoSet infoA = rA.info();
+        //InfoSet infoA = rA.info();
 
-        if (rA.isPlayerNode())
+        if (rA instanceof ProponentNode)
         {
             // computer positive counterfactual regret
             //  for each available action at I(rA)
 
             //Regret
-            for (AbstractAction act : infoA.acts())
-            {
-                InfoNode childA = rA.child(act);
-                InfoNode childB = rB.child(act);
+//            for (AbstractAction act : infoA.acts())
+//            {
+//                InfoNode childA = rA.child(act);
+//                InfoNode childB = rB.child(act);
+//
+//            }
+        }
+        else if (rB instanceof ProponentNode)
+        {
+            // rA is an apponent node
+            // do opposite of above
+        }
+        else if (rA instanceof BucketNode)
+        {
+            BucketNode bucketA = (BucketNode) rA;
+            BucketNode bucketB = (BucketNode) rB;
 
-            }
+            PlayerNode nextA = bucketA.accordingTo(b);
+            PlayerNode nextB = bucketB.accordingTo(b);
+
+            
+        }
+        else if (rA instanceof TerminalNode)
+        {
+            TerminalNode terminalA = (TerminalNode) rA;
+            TerminalNode terminalB = (TerminalNode) rB;
+
+            double expectedValue =
+                    terminalA.expectedValue( terminalB );
+        }
+        else
+        {
+            System.out.println("WTF?!!");
         }
     }
 

@@ -66,11 +66,9 @@ public class KuhnDealer
         StateFlow flow = StateFlow.FIRST_ACTION;
         do
         {
-            KuhnSeat seat = flow.firstIsNextToAct() ? a : b;
-
-            KuhnAction action =
-                    seat.player().act(
-                            seat.hole(), flow.state());
+            KuhnSeat   seat   = flow.firstIsNextToAct()
+                                 ? a : b;
+            KuhnAction action = seat.act(flow.state());
             flow = flow.advance( action );
         }
         while (! flow.endOfHand());
