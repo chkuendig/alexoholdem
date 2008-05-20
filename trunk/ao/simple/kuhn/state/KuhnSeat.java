@@ -1,8 +1,8 @@
-package ao.simple.state;
+package ao.simple.kuhn.state;
 
-import ao.simple.KuhnAction;
-import ao.simple.KuhnCard;
-import ao.simple.KuhnPlayer;
+import ao.simple.kuhn.KuhnAction;
+import ao.simple.kuhn.KuhnCard;
+import ao.simple.kuhn.KuhnPlayer;
 
 /**
  *

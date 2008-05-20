@@ -1,9 +1,9 @@
-package ao.simple;
+package ao.simple.kuhn;
 
-import ao.simple.player.CrmBot;
-import ao.simple.player.RandomKuhnPlayer;
-import ao.simple.state.KuhnSeat;
-import ao.simple.state.StateFlow;
+import ao.simple.kuhn.player.CrmBot;
+import ao.simple.kuhn.player.RandomKuhnPlayer;
+import ao.simple.kuhn.state.KuhnSeat;
+import ao.simple.kuhn.state.StateFlow;
 
 import java.util.Arrays;
 import java.util.Collections;

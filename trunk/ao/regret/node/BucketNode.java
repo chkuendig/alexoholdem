@@ -1,8 +1,8 @@
 package ao.regret.node;
 
 import ao.regret.JointBucketSequence;
-import ao.simple.rules.KuhnBucket;
-import ao.simple.rules.KuhnRules;
+import ao.simple.kuhn.rules.KuhnBucket;
+import ao.simple.kuhn.rules.KuhnRules;
 import ao.util.text.Txt;
 
 import java.util.Collection;

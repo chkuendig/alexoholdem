@@ -1,6 +1,6 @@
-package ao.simple.rules;
+package ao.simple.kuhn.rules;
 
-import ao.simple.KuhnCard;
+import ao.simple.kuhn.KuhnCard;
 
 import java.util.ArrayList;
 import java.util.Collection;

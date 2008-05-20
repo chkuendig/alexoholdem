@@ -1,7 +1,7 @@
 package ao.regret;
 
-import ao.simple.KuhnCard;
-import ao.simple.rules.KuhnBucket;
+import ao.simple.kuhn.KuhnCard;
+import ao.simple.kuhn.rules.KuhnBucket;
 
 import java.util.ArrayList;
 import java.util.Arrays;

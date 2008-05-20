@@ -1,4 +1,4 @@
-package ao.simple;
+package ao.simple.kuhn;
 
 /**
  * 

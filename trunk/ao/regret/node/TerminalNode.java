@@ -1,7 +1,7 @@
 package ao.regret.node;
 
-import ao.simple.rules.KuhnBucket;
-import ao.simple.state.KuhnOutcome;
+import ao.simple.kuhn.rules.KuhnBucket;
+import ao.simple.kuhn.state.KuhnOutcome;
 import ao.util.text.Txt;
 
 /**

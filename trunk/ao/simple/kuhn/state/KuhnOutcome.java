@@ -1,4 +1,4 @@
-package ao.simple.state;
+package ao.simple.kuhn.state;
 
 /**
  * 
