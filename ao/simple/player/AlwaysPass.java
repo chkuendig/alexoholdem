@@ -14,4 +14,6 @@ public class AlwaysPass implements KuhnPlayer
     {
         return KuhnAction.PASS;
     }
+
+    public void handEnded() {}
 }

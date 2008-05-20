@@ -19,4 +19,6 @@ public class RandomKuhnPlayer implements KuhnPlayer
                 ? KuhnAction.PASS
                 : KuhnAction.BET;
     }
+
+    public void handEnded() {}
 }

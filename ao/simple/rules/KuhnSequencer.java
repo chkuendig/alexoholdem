@@ -1,6 +1,5 @@
 package ao.simple.rules;
 
-import ao.bucket.Bucket;
 import ao.simple.KuhnCard;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.Collection;
  */
 public class KuhnSequencer
 {
-    private final Bucket ROOT;
+    private final KuhnBucket ROOT;
 
     public KuhnSequencer()
     {
@@ -43,7 +42,7 @@ public class KuhnSequencer
 //        }
 //        ROOT = new KuhnJbs(null, rootKids);
 
-        Collection<Bucket> kids = new ArrayList<Bucket>();
+        Collection<KuhnBucket> kids = new ArrayList<KuhnBucket>();
         for (KuhnCard c : KuhnCard.values())
         {
             kids.add( new KuhnBucket(c) );
@@ -51,7 +50,7 @@ public class KuhnSequencer
         ROOT = new KuhnBucket(null, kids);
     }
 
-    public Bucket root()
+    public KuhnBucket root()
     {
         return ROOT;
     }

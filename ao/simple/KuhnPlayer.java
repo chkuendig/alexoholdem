@@ -10,4 +10,6 @@ public interface KuhnPlayer
     public KuhnAction
             act(KuhnCard  hole,
                 KuhnState state);
+
+//    public void handEnded();
 }

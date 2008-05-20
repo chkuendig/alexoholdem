@@ -13,7 +13,7 @@ import ao.simple.rules.KuhnSequencer;
 public class KuhnInfoTree
 {
     //--------------------------------------------------------------------
-    public InfoNode initialize(
+    public BucketNode initialize(
             Bucket<KuhnBucket> rootSequences,
             boolean            isDealer)
     {
@@ -35,13 +35,15 @@ public class KuhnInfoTree
         InfoNode firstRoot = tree.initialize(sequencer.root(), false);
         InfoNode lastRoot  = tree.initialize(sequencer.root(), true);
 
-        JointBucketSequence jbs = new JointBucketSequence();
-        equalibrium.approximate(
-                firstRoot, lastRoot,
-                jbs,
-                1.0, 1.0);
+        for (int i = 0; i < 1000000; i++)
+        {
+            equalibrium.approximate(
+                    firstRoot, lastRoot,
+                    new JointBucketSequence(),
+                    1.0, 1.0);
+        }
 
-        System.out.println("first: " + firstRoot);
-        System.out.println("last: "  + lastRoot);
+        System.out.println("first:\n" + firstRoot);
+        System.out.println("last:\n"  + lastRoot);
     }
 }

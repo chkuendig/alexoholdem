@@ -35,7 +35,7 @@ public enum KuhnState
     //--------------------------------------------------------------------
     private final StateFlow ON_PASS;
     private final StateFlow ON_BET_RAISE;
-    private final boolean      FIRST_TO_ACT;
+    private final boolean   FIRST_TO_ACT;
 
 
     //--------------------------------------------------------------------
@@ -60,6 +60,7 @@ public enum KuhnState
 
 
     //--------------------------------------------------------------------
+    // true if the next player to act is the first to act
     public boolean firstToAct()
     {
         return FIRST_TO_ACT;

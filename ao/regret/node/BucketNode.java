@@ -16,7 +16,7 @@ public class BucketNode implements InfoNode
 {
     //--------------------------------------------------------------------
     private Map<KuhnBucket, PlayerNode> kids;
-    private boolean                    firstToAct;
+    private boolean                     firstToAct;
 
 
     //--------------------------------------------------------------------
@@ -42,10 +42,14 @@ public class BucketNode implements InfoNode
 
 
     //--------------------------------------------------------------------
-    public PlayerNode accordingTo(JointBucketSequence<KuhnBucket> jbs)
+    public PlayerNode accordingTo(JointBucketSequence jbs)
     {
         KuhnBucket b = jbs.forPlayer(firstToAct);
         return kids.get( b );
+    }
+    public PlayerNode accordingTo(KuhnBucket bucket)
+    {
+        return kids.get( bucket );
     }
 
 

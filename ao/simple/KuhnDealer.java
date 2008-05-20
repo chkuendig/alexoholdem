@@ -1,6 +1,6 @@
 package ao.simple;
 
-import ao.simple.player.AlwaysBet;
+import ao.simple.player.CrmBot;
 import ao.simple.player.RandomKuhnPlayer;
 import ao.simple.state.KuhnSeat;
 import ao.simple.state.StateFlow;
@@ -18,10 +18,15 @@ public class KuhnDealer
     public static void main(String args[])
     {
         KuhnDealer dealer =
-                new KuhnDealer(new AlwaysBet(),
-                               new RandomKuhnPlayer());
+                new KuhnDealer(
+                        new CrmBot(1000)
+//                    ,   new CrmBot(10000)
+//                    ,   new AlwaysBet()
+//                    ,   new AlwaysPass()
+                    ,   new RandomKuhnPlayer()
+        );
 
-        int numHands = 1000000;
+        int numHands = 10000000;
         int cumDelta = 0;
         for (int i = 0; i < numHands; i++)
         {
