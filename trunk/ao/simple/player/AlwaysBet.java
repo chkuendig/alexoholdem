@@ -14,4 +14,6 @@ public class AlwaysBet implements KuhnPlayer
     {
         return KuhnAction.BET;
     }
+
+    public void handEnded() {}
 }

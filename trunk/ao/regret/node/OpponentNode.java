@@ -1,7 +1,7 @@
 package ao.regret.node;
 
-import ao.bucket.Bucket;
 import ao.simple.KuhnAction;
+import ao.simple.rules.KuhnBucket;
 import ao.simple.rules.KuhnRules;
 import ao.simple.state.StateFlow;
 import ao.util.text.Txt;
@@ -19,8 +19,8 @@ public class OpponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-    public OpponentNode(KuhnRules rules,
-                        Bucket    bucket)
+    public OpponentNode(KuhnRules  rules,
+                        KuhnBucket bucket)
     {
         kids = new EnumMap<KuhnAction, InfoNode>(KuhnAction.class);
 
@@ -48,6 +48,13 @@ public class OpponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
+    public InfoNode child(KuhnAction forAction)
+    {
+        return kids.get( forAction );
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return toString(0);
@@ -64,6 +71,6 @@ public class OpponentNode implements PlayerNode
                .append( kid.getValue().toString(depth + 1) )
                .append( "\n" );
         }
-        return str.toString();
+        return str.substring(0, str.length()-1);
     }
 }

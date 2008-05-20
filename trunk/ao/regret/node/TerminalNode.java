@@ -52,6 +52,8 @@ public class TerminalNode implements InfoNode
     public String toString(int depth)
     {
         return Txt.nTimes("\t", depth) +
-                BUCKET + ", " + OUTCOME;
+               OUTCOME;
+//        return Txt.nTimes("\t", depth) +
+//                BUCKET + ", " + OUTCOME;
     }
 }
