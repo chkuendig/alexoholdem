@@ -3,6 +3,6 @@ package ao.regret.node;
 /**
  * 
  */
-public class PlayerNode implements InfoNode
+public interface PlayerNode extends InfoNode
 {
 }

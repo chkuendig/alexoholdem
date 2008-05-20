@@ -1,5 +1,6 @@
 package ao.simple.state;
 
+import ao.simple.KuhnAction;
 import ao.simple.KuhnCard;
 import ao.simple.KuhnPlayer;
 
@@ -19,6 +20,13 @@ public class KuhnSeat
     {
         PLAYER = player;
         HOLE   = hole;
+    }
+
+
+    //--------------------------------------------------------------------
+    public KuhnAction act(KuhnState state)
+    {
+        return PLAYER.act(HOLE, state);
     }
 
 
