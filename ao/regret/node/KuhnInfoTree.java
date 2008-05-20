@@ -3,9 +3,9 @@ package ao.regret.node;
 import ao.bucket.Bucket;
 import ao.regret.Equalibrium;
 import ao.regret.JointBucketSequence;
-import ao.simple.rules.KuhnBucket;
-import ao.simple.rules.KuhnRules;
-import ao.simple.rules.KuhnSequencer;
+import ao.simple.kuhn.rules.KuhnBucket;
+import ao.simple.kuhn.rules.KuhnRules;
+import ao.simple.kuhn.rules.KuhnSequencer;
 
 /**
  *

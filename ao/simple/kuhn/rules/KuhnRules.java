@@ -1,7 +1,7 @@
-package ao.simple.rules;
+package ao.simple.kuhn.rules;
 
-import ao.simple.KuhnAction;
-import ao.simple.state.StateFlow;
+import ao.simple.kuhn.KuhnAction;
+import ao.simple.kuhn.state.StateFlow;
 
 import java.util.EnumMap;
 import java.util.Map;

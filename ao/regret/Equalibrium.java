@@ -1,7 +1,7 @@
 package ao.regret;
 
 import ao.regret.node.*;
-import ao.simple.KuhnAction;
+import ao.simple.kuhn.KuhnAction;
 
 import java.util.EnumMap;
 import java.util.Map;

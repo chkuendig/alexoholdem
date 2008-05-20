@@ -1,9 +1,9 @@
 package ao.regret.node;
 
-import ao.simple.KuhnAction;
-import ao.simple.rules.KuhnBucket;
-import ao.simple.rules.KuhnRules;
-import ao.simple.state.StateFlow;
+import ao.simple.kuhn.KuhnAction;
+import ao.simple.kuhn.rules.KuhnBucket;
+import ao.simple.kuhn.rules.KuhnRules;
+import ao.simple.kuhn.state.StateFlow;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 

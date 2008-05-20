@@ -1,6 +1,6 @@
-package ao.simple;
+package ao.simple.kuhn;
 
-import ao.simple.state.KuhnState;
+import ao.simple.kuhn.state.KuhnState;
 
 /**
  *

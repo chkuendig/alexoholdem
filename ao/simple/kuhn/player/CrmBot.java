@@ -1,14 +1,14 @@
-package ao.simple.player;
+package ao.simple.kuhn.player;
 
 import ao.regret.Equalibrium;
 import ao.regret.JointBucketSequence;
 import ao.regret.node.*;
-import ao.simple.KuhnAction;
-import ao.simple.KuhnCard;
-import ao.simple.KuhnPlayer;
-import ao.simple.rules.KuhnBucket;
-import ao.simple.rules.KuhnSequencer;
-import ao.simple.state.KuhnState;
+import ao.simple.kuhn.KuhnAction;
+import ao.simple.kuhn.KuhnCard;
+import ao.simple.kuhn.KuhnPlayer;
+import ao.simple.kuhn.rules.KuhnBucket;
+import ao.simple.kuhn.rules.KuhnSequencer;
+import ao.simple.kuhn.state.KuhnState;
 
 /**
  * Counterfactual Regret Minimizing player

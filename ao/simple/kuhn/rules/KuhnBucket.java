@@ -1,8 +1,8 @@
-package ao.simple.rules;
+package ao.simple.kuhn.rules;
 
 import ao.bucket.Bucket;
 import ao.odds.agglom.Odds;
-import ao.simple.KuhnCard;
+import ao.simple.kuhn.KuhnCard;
 
 import java.util.Collection;
 
@@ -22,7 +22,7 @@ public class KuhnBucket implements Bucket<KuhnBucket>
     {
         this(card, null);
     }
-    public KuhnBucket(KuhnCard               card,
+    public KuhnBucket(KuhnCard card,
                       Collection<KuhnBucket> kids)
     {
         CARD = card;
