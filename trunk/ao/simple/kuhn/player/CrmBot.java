@@ -1,8 +1,8 @@
 package ao.simple.kuhn.player;
 
-import ao.regret.Equalibrium;
-import ao.regret.JointBucketSequence;
-import ao.regret.node.*;
+import ao.regret.khun.Equalibrium;
+import ao.regret.khun.JointBucketSequence;
+import ao.regret.khun.node.*;
 import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.KuhnCard;
 import ao.simple.kuhn.KuhnPlayer;
@@ -38,6 +38,8 @@ public class CrmBot implements KuhnPlayer
                     new JointBucketSequence(),
                     1.0, 1.0);
         }
+        System.out.println("first:\n" + firstRoot);
+        System.out.println("last:\n"  + lastRoot);
     }
 
 

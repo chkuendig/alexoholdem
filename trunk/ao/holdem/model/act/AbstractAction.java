@@ -57,14 +57,14 @@ public enum AbstractAction
 //            case FOLD:
 //                return RealAction.FOLD;
 //
-//            case CALL:
+//            case CHECK_CALL:
 //                return toCall.equals( Money.ZERO )
 //                        ? RealAction.CHECK
-//                        : RealAction.CALL;
+//                        : RealAction.CHECK_CALL;
 //
-//            case RAISE:
+//            case BET_RAISE:
 //                return betMadeThisRound
-//                        ? RealAction.RAISE
+//                        ? RealAction.BET_RAISE
 //                        : RealAction.BET;
 //        }
 //        throw new Error("should never be here");

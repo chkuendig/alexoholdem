@@ -74,7 +74,7 @@ public enum FallbackAction
 //            case CHECK_OR_CALL:
 //                return canCheck
 //                        ? RealAction.CHECK
-//                        : RealAction.CALL;
+//                        : RealAction.CHECK_CALL;
 //
 //            case CHECK_OR_FOLD:
 //                return canCheck
@@ -83,8 +83,8 @@ public enum FallbackAction
 //
 //            case RAISE_OR_CALL:
 //                return canRaise
-//                        ? RealAction.RAISE
-//                        : RealAction.CALL;
+//                        ? RealAction.BET_RAISE
+//                        : RealAction.CHECK_CALL;
 //        }
 //        throw new Error("can't be here");
 //    }
