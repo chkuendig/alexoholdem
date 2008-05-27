@@ -182,7 +182,7 @@ public class SpecificStats //implements CumulativeStatistic<SpecificStats>
 //        {
 ////            ctx.add(new Datum(
 ////                    "Last Act: Bet/Raise",
-////                    prevAct.toSimpleAction() == SimpleAction.RAISE));
+////                    prevAct.toSimpleAction() == SimpleAction.BET_RAISE));
 //            ctx.add(new Datum("Last Act", prevAct));
 //
 //            ctx.add(new Datum(

@@ -45,30 +45,30 @@ public class Choice
 //        assert actual != SimpleAction.FOLD;
 //
 //        double callProb =
-//                expected.probabilityOf(SimpleAction.CALL);
+//                expected.probabilityOf(SimpleAction.CHECK_CALL);
 //        double raiseProb =
-//                expected.probabilityOf(SimpleAction.RAISE);
+//                expected.probabilityOf(SimpleAction.BET_RAISE);
 ////        double raiseProb =
 ////                state.canRaise()
-////                ? expected.probabilityOf(SimpleAction.RAISE) : 0;
+////                ? expected.probabilityOf(SimpleAction.BET_RAISE) : 0;
 //
 //        double toCall = callProb / (callProb + raiseProb);
 //
-//        return (actual == SimpleAction.CALL)
+//        return (actual == SimpleAction.CHECK_CALL)
 //                ? toCall - 1
 //                : toCall;
 //
 ////        double value =
 ////                (actual == SimpleAction.FOLD)
 ////                 ? -1
-////                 : (actual == SimpleAction.CALL)
+////                 : (actual == SimpleAction.CHECK_CALL)
 ////                    ? 0 : 1;
 ////        double exp =
 ////                state.canRaise()
-////                ? expected.probabilityOf(SimpleAction.RAISE) -
+////                ? expected.probabilityOf(SimpleAction.BET_RAISE) -
 ////                  expected.probabilityOf(SimpleAction.FOLD)
 ////                : -(expected.probabilityOf(SimpleAction.FOLD) /
-////                    (1.0 - expected.probabilityOf(SimpleAction.RAISE)));
+////                    (1.0 - expected.probabilityOf(SimpleAction.BET_RAISE)));
 ////        return value - exp;
 //    }
 //

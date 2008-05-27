@@ -36,6 +36,7 @@ public interface Player
                       CardSequence cards,
                       Analysis     analysis);
 
+
     /**
      * There has to be a special case for QUIT actions because
      *  they are the only ones that can happen out-of-turn.
@@ -43,6 +44,7 @@ public interface Player
      * @return weather or not the given player has quit.
      */
     public boolean hasQuit();
+
 
     /**
      * Signals that the hand is over.

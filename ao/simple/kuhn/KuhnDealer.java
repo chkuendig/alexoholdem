@@ -1,7 +1,7 @@
 package ao.simple.kuhn;
 
+import ao.simple.kuhn.player.AlwaysBet;
 import ao.simple.kuhn.player.CrmBot;
-import ao.simple.kuhn.player.RandomKuhnPlayer;
 import ao.simple.kuhn.state.KuhnSeat;
 import ao.simple.kuhn.state.StateFlow;
 
@@ -20,26 +20,48 @@ public class KuhnDealer
         KuhnDealer dealer =
                 new KuhnDealer(
                         new CrmBot(1000)
-//                    ,   new CrmBot(10000)
-//                    ,   new AlwaysBet()
+//                    ,   new CrmBot(100)
+                    ,   new AlwaysBet()
 //                    ,   new AlwaysPass()
-                    ,   new RandomKuhnPlayer()
+//                    ,   new RandomKuhnPlayer()
         );
 
-        int numHands = 10000000;
-        int cumDelta = 0;
-        for (int i = 0; i < numHands; i++)
+        boolean  inOrder   = true;
+        int      numHands  = 0;
+        int      cumDelta  = 0;
+        KuhnCard hands[][] = generateHands(1000000);
+        for (int round = 0; round < 2*5; round++)
         {
-            cumDelta +=
-                    (i % 2 == 0 ? 1 : -1) *
-                        dealer.playHand();
-
+            for (KuhnCard[] hand : hands)
+            {
+                cumDelta += (inOrder ? 1 : -1) *
+                                dealer.playHand(
+                                        hand[0], hand[1]);
+                numHands++;
+            }
             dealer.swapPlayers();
+            inOrder = !inOrder;
         }
 
         System.out.println(
                 (double) cumDelta / numHands);
     }
+
+    private static KuhnCard[][] generateHands(int howMany)
+    {
+        KuhnCard hands[][] = new KuhnCard[ howMany ][2];
+        for (KuhnCard hand[] : hands)
+        {
+            List<KuhnCard> deck =
+                    Arrays.asList( KuhnCard.values() );
+            Collections.shuffle(deck);
+
+            hand[0] = deck.get( 0 );
+            hand[1] = deck.get( 1 );
+        }
+        return hands;
+    }
+
 
 
     //--------------------------------------------------------------------
@@ -65,8 +87,12 @@ public class KuhnDealer
         List<KuhnCard> deck = Arrays.asList( KuhnCard.values() );
         Collections.shuffle(deck);
 
-        KuhnSeat a = new KuhnSeat(first, deck.get(0));
-        KuhnSeat b = new KuhnSeat(last,  deck.get(1));
+        return playHand(deck.get(0), deck.get(1));
+    }
+    public int playHand(KuhnCard firstCard, KuhnCard lastCard)
+    {
+        KuhnSeat a = new KuhnSeat(first, firstCard);
+        KuhnSeat b = new KuhnSeat(last,  lastCard);
 
         StateFlow flow = StateFlow.FIRST_ACTION;
         do

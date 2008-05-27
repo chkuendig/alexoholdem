@@ -1,4 +1,4 @@
-package ao.regret.node;
+package ao.regret.khun.node;
 
 import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.rules.KuhnBucket;
@@ -16,9 +16,15 @@ import java.util.Map;
 public class ProponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
+    private static final int SPARSE_LIMIT = 5;
+
+
+    //--------------------------------------------------------------------
     private Map<KuhnAction, double[]> regret;
     private Map<KuhnAction, InfoNode> actions;
     private Map<KuhnAction, double[]> prob;
+
+    private int visits = 0;
 
 
     //--------------------------------------------------------------------
@@ -91,6 +97,8 @@ public class ProponentNode implements PlayerNode
         {
             regret.get( r.getKey() )[0] += r.getValue();
         }
+
+        visits++;
     }
 
 
@@ -150,6 +158,11 @@ public class ProponentNode implements PlayerNode
 //        return 0;
 //    }
 
+    public boolean isSparse()
+    {
+        return visits < SPARSE_LIMIT;
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()
@@ -167,7 +180,9 @@ public class ProponentNode implements PlayerNode
                .append( " :: " )
                .append( prob.get(action.getKey())[0] )
                .append( " :: " )
-               .append( regret.get(action.getKey())[0] )
+               .append( regret.get(action.getKey())[0] / visits )
+               .append( " :: " )
+               .append( visits )
                .append( "\n" )
                .append( action.getValue().toString(depth + 1) )
                .append( "\n" );

@@ -1,4 +1,4 @@
-package ao.regret.node;
+package ao.regret.khun.node;
 
 import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.rules.KuhnBucket;

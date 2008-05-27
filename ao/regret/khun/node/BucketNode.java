@@ -1,12 +1,12 @@
-package ao.regret.node;
+package ao.regret.khun.node;
 
-import ao.regret.JointBucketSequence;
+import ao.regret.khun.JointBucketSequence;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnRules;
 import ao.util.text.Txt;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +25,7 @@ public class BucketNode implements InfoNode
             KuhnRules              rules,
             boolean                isDealer)
     {
-        kids = new HashMap<KuhnBucket, PlayerNode>();
+        kids = new LinkedHashMap<KuhnBucket, PlayerNode>();
 
         for (KuhnBucket bucket : buckets)
         {

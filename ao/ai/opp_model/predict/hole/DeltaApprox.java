@@ -370,12 +370,12 @@ public class DeltaApprox
 //                }
 //
 //                int toCall = c.state().betsToCall();
-//                if (c.actual() == SimpleAction.RAISE)
+//                if (c.actual() == SimpleAction.BET_RAISE)
 //                {
 //                    raiseCount++;
 //                    betsRaiseMatched += toCall;
 //                }
-//                else if (c.actual() == SimpleAction.CALL && toCall > 0)
+//                else if (c.actual() == SimpleAction.CHECK_CALL && toCall > 0)
 //                {
 //                    betsCalled += toCall;
 //                }
