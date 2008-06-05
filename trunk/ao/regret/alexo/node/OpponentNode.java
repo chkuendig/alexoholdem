@@ -6,7 +6,6 @@ import ao.simple.alexo.AlexoAction;
 import ao.simple.alexo.state.AlexoState;
 import ao.util.text.Txt;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Map;
 public class OpponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
-    private Map<AlexoAction, InfoNode> kids;
+    private PlayerKids kids;
 
 
     //--------------------------------------------------------------------
@@ -23,39 +22,14 @@ public class OpponentNode implements PlayerNode
                         AlexoBucket bucket,
                         boolean     forFirstToAct)
     {
-        kids = new EnumMap<AlexoAction, InfoNode>(AlexoAction.class);
-
-        for (AlexoAction action : state.validActions())
-        {
-            AlexoState nextState = state.advance( action );
-
-            if (nextState.endOfHand())
-            {
-                kids.put(action,
-                         new TerminalNode(
-                                 bucket, nextState));
-            }
-            else if (nextState.atStartOfRound())
-            {
-                kids.put(action,
-                         new BucketNode(bucket.nextBuckets(),
-                                        nextState,
-                                        forFirstToAct));
-            }
-            else
-            {
-                kids.put(action,
-                         new ProponentNode(
-                                 nextState, bucket, forFirstToAct));
-            }
-        }
+        kids = new PlayerKids(state, bucket, forFirstToAct, false);
     }
 
 
     //--------------------------------------------------------------------
     public InfoNode child(AlexoAction forAction)
     {
-        return kids.get( forAction );
+        return kids.child( forAction );
     }
 
 

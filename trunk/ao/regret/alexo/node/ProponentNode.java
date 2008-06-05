@@ -22,8 +22,8 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
+    private PlayerKids                 kids;
     private Map<AlexoAction, double[]> regret;
-    private Map<AlexoAction, InfoNode> kids;
     private Map<AlexoAction, double[]> prob;
     private int                        visits = 0;
 
@@ -36,33 +36,11 @@ public class ProponentNode implements PlayerNode
     {
         prob   = new EnumMap<AlexoAction, double[]>(AlexoAction.class);
         regret = new EnumMap<AlexoAction, double[]>(AlexoAction.class);
-        kids   = new EnumMap<AlexoAction, InfoNode>(AlexoAction.class);
+        kids   = new PlayerKids(state, bucket, forFirstToAct, true);
 
         List<AlexoAction> actions = state.validActions();
         for (AlexoAction action : actions)
         {
-            AlexoState nextState = state.advance( action );
-
-            if (nextState.endOfHand())
-            {
-                kids.put(action,
-                         new TerminalNode(
-                                 bucket, nextState));
-            }
-            else if (nextState.atStartOfRound())
-            {
-                kids.put(action,
-                         new BucketNode(bucket.nextBuckets(),
-                                        nextState,
-                                        forFirstToAct));
-            }
-            else
-            {
-                kids.put(action,
-                         new OpponentNode(
-                                 nextState, bucket, forFirstToAct));
-            }
-            
             prob.put(action, new double[]{
                                 1.0 / actions.size()});
             regret.put(action, new double[]{0});
@@ -91,14 +69,14 @@ public class ProponentNode implements PlayerNode
 
     public boolean actionAvalable(AlexoAction act)
     {
-        return kids.containsKey( act );
+        return kids.actionAvalable( act );
     }
 
 
     //--------------------------------------------------------------------
     public InfoNode child(AlexoAction forAction)
     {
-        return kids.get( forAction );
+        return kids.child( forAction );
     }
 
     public double probabilityOf(AlexoAction action)

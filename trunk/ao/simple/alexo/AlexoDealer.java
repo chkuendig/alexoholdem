@@ -48,8 +48,8 @@ public class AlexoDealer
     public static void main(String[] args)
     {
         AlexoDealer dealer = new AlexoDealer(
-                                    new CrmBot(1000),
-                                    new CrmBot(100000));
+                                    new CrmBot(10000),
+                                    new CrmBot(1000000));
 
         boolean           inOrder  = true;
         int               numHands = 0;
