@@ -1,18 +1,19 @@
-package ao.regret.khun.node;
+package ao.regret.alexo.node;
 
 import ao.regret.InfoNode;
+import ao.regret.alexo.AlexoBucket;
+import ao.simple.alexo.AlexoAction;
+import ao.simple.alexo.state.AlexoState;
 import ao.simple.kuhn.KuhnAction;
-import ao.simple.kuhn.rules.KuhnBucket;
-import ao.simple.kuhn.rules.KuhnRules;
-import ao.simple.kuhn.state.StateFlow;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * 
  */
 public class ProponentNode implements PlayerNode
 {
@@ -21,54 +22,61 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-    private Map<KuhnAction, double[]> regret;
-    private Map<KuhnAction, InfoNode> actions;
-    private Map<KuhnAction, double[]> prob;
-    private int                       visits = 0;
+    private Map<AlexoAction, double[]> regret;
+    private Map<AlexoAction, InfoNode> kids;
+    private Map<AlexoAction, double[]> prob;
+    private int                        visits = 0;
 
 
     //--------------------------------------------------------------------
-    public ProponentNode(KuhnRules rules, KuhnBucket bucket)
+    public ProponentNode(
+            AlexoState  state,
+            AlexoBucket bucket,
+            boolean     forFirstToAct)
     {
-        prob    = new EnumMap<KuhnAction, double[]>(KuhnAction.class);
-        regret  = new EnumMap<KuhnAction, double[]>(KuhnAction.class);
-        actions = new EnumMap<KuhnAction, InfoNode>(KuhnAction.class);
+        prob   = new EnumMap<AlexoAction, double[]>(AlexoAction.class);
+        regret = new EnumMap<AlexoAction, double[]>(AlexoAction.class);
+        kids   = new EnumMap<AlexoAction, InfoNode>(AlexoAction.class);
 
-        for (Map.Entry<KuhnAction, KuhnRules> transition :
-                rules.transitions().entrySet())
+        List<AlexoAction> actions = state.validActions();
+        for (AlexoAction action : actions)
         {
-            KuhnRules nextRules = transition.getValue();
-            StateFlow nextState = nextRules.state();
+            AlexoState nextState = state.advance( action );
 
             if (nextState.endOfHand())
             {
-                actions.put(transition.getKey(),
-                            new TerminalNode(
-                                    bucket, nextState.outcome()));
+                kids.put(action,
+                         new TerminalNode(
+                                 bucket, nextState));
+            }
+            else if (nextState.atStartOfRound())
+            {
+                kids.put(action,
+                         new BucketNode(bucket.nextBuckets(),
+                                        nextState,
+                                        forFirstToAct));
             }
             else
             {
-                actions.put(transition.getKey(),
-                            new OpponentNode(nextRules, bucket));
+                kids.put(action,
+                         new OpponentNode(
+                                 nextState, bucket, forFirstToAct));
             }
-        }
-
-        for (KuhnAction act : KuhnAction.VALUES)
-        {
-            prob.put(act, new double[]{
-                             1.0 / KuhnAction.VALUES.length});
-            regret.put(act, new double[]{0});
+            
+            prob.put(action, new double[]{
+                                1.0 / actions.size()});
+            regret.put(action, new double[]{0});
         }
     }
 
 
     //--------------------------------------------------------------------
-    public KuhnAction nextAction()
+    public AlexoAction nextAction()
     {
-        KuhnAction bestAction       = null;
-        double     bestActionWeight = Long.MIN_VALUE;
+        AlexoAction bestAction       = null;
+        double      bestActionWeight = Long.MIN_VALUE;
 
-        for (Map.Entry<KuhnAction, double[]> p : prob.entrySet())
+        for (Map.Entry<AlexoAction, double[]> p : prob.entrySet())
         {
             double weight = Rand.nextDouble(p.getValue()[0]);
             if (bestActionWeight < weight)
@@ -81,39 +89,45 @@ public class ProponentNode implements PlayerNode
         return bestAction;
     }
 
+    public boolean actionAvalable(AlexoAction act)
+    {
+        return kids.containsKey( act );
+    }
+
 
     //--------------------------------------------------------------------
-    public double probabilityOf(KuhnAction action)
+    public InfoNode child(AlexoAction forAction)
+    {
+        return kids.get( forAction );
+    }
+
+    public double probabilityOf(AlexoAction action)
     {
         return prob.get( action )[ 0 ];
     }
 
-    public InfoNode child(KuhnAction forAction)
+    public boolean isInformed()
     {
-        return actions.get( forAction );
-    }
-
-    public boolean isSparse()
-    {
-        return visits < SPARSE_LIMIT;
+        return visits >= SPARSE_LIMIT;
     }
 
 
     //--------------------------------------------------------------------
-    public void add(Map<KuhnAction, Double> counterfactualRegret)
+    public void add(Map<AlexoAction, Double> counterfactualRegret)
     {
-        for (Map.Entry<KuhnAction, Double> r :
+        for (Map.Entry<AlexoAction, Double> r :
                 counterfactualRegret.entrySet())
         {
             regret.get( r.getKey() )[0] += r.getValue();
         }
 
         visits++;
+        updateActionPabilities();
     }
 
 
     //--------------------------------------------------------------------
-    public void updateActionPabilities()
+    private void updateActionPabilities()
     {
         double cumRegret = positiveCumulativeCounterfactualRegret();
 
@@ -126,7 +140,7 @@ public class ProponentNode implements PlayerNode
         }
         else
         {
-            for (Map.Entry<KuhnAction, double[]> p : prob.entrySet())
+            for (Map.Entry<AlexoAction, double[]> p : prob.entrySet())
             {
                 double cRegret = regret.get( p.getKey() )[0];
 
@@ -161,7 +175,7 @@ public class ProponentNode implements PlayerNode
     public String toString(int depth)
     {
         StringBuilder str = new StringBuilder();
-        for (Map.Entry<KuhnAction, InfoNode> action : actions.entrySet())
+        for (Map.Entry<AlexoAction, InfoNode> action : kids.entrySet())
         {
             str.append( Txt.nTimes("\t", depth) )
                .append( action.getKey() )

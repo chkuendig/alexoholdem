@@ -1,4 +1,4 @@
-package ao.regret.khun.node;
+package ao.regret;
 
 /**
  * 

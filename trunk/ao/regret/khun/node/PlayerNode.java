@@ -1,5 +1,6 @@
 package ao.regret.khun.node;
 
+import ao.regret.InfoNode;
 import ao.simple.kuhn.KuhnAction;
 
 /**
