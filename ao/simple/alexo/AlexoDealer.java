@@ -1,8 +1,8 @@
 package ao.simple.alexo;
 
 import ao.simple.alexo.card.AlexoCardSequence;
-import ao.simple.alexo.player.AlexoRandom;
-import ao.simple.alexo.player.AlwaysRaise;
+import ao.simple.alexo.player.CrmBot;
+import ao.simple.alexo.state.AlexoRound;
 import ao.simple.alexo.state.AlexoState;
 
 /**
@@ -48,14 +48,14 @@ public class AlexoDealer
     public static void main(String[] args)
     {
         AlexoDealer dealer = new AlexoDealer(
-                                    new AlwaysRaise(),
-                                    new AlexoRandom());
+                                    new CrmBot(1000),
+                                    new CrmBot(100000));
 
         boolean           inOrder  = true;
         int               numHands = 0;
         int               cumDelta = 0;
-        AlexoCardSequence hands[]  = generate(1000000);
-        for (int round = 0; round < 2; round++)
+        AlexoCardSequence hands[]  = generate(200000);
+        for (int round = 0; round < 2*2; round++)
         {
             for (AlexoCardSequence hand : hands)
             {
@@ -103,18 +103,39 @@ public class AlexoDealer
     {
         AlexoState state = new AlexoState();
 
+        AlexoCardSequence currentCards =
+                cards.truncate(AlexoRound.PREFLOP);
+        first.handStarted(currentCards, true );
+        last .handStarted(currentCards, false);
+
         do
         {
+            if (state.atStartOfRound())
+            {
+                AlexoRound round = state.round();
+                currentCards = cards.truncate(round);
+
+                first.roundAdvanced(round, currentCards);
+                last .roundAdvanced(round, currentCards);
+            }
+
             AlexoPlayer nextToAct =
                     state.firstToActIsNext()
                     ? first : last;
 
-            AlexoAction act = nextToAct.act(state, cards);
+            AlexoAction act = nextToAct.act(state, currentCards);
+
+            (nextToAct == first ? last : first)
+                    .opponentActed(state, act);
+
             state = state.advance( act );
         }
         while (! state.endOfHand());
-        
-        return state.deltas( cards );
+
+        int delta = state.deltas( currentCards );
+        first.handEnded( delta );
+        last .handEnded( delta );
+        return delta;
     }
 
 

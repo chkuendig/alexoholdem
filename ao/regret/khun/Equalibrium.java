@@ -1,5 +1,6 @@
 package ao.regret.khun;
 
+import ao.regret.InfoNode;
 import ao.regret.khun.node.*;
 import ao.simple.kuhn.KuhnAction;
 
@@ -28,13 +29,11 @@ public class Equalibrium
     {
         if (rA instanceof ProponentNode)
         {
-            return handleProponent(rA, rB, b, pA, pB, true);
-//            return handleFirstProponent(rA, rB, b, pA, pB);
+            return handlePlayer(rA, rB, b, pA, pB, true);
         }
         else if (rB instanceof ProponentNode)
         {
-            return handleProponent(rA, rB, b, pA, pB, false);
-//            return handleLastProponent(rA, rB, b, pA, pB);
+            return handlePlayer(rA, rB, b, pA, pB, false);
         }
         else if (rA instanceof BucketNode)
         {
@@ -62,7 +61,7 @@ public class Equalibrium
 
 
     //--------------------------------------------------------------------
-    private double[] handleProponent(
+    private double[] handlePlayer(
             InfoNode            rA,
             InfoNode            rB,
             JointBucketSequence b,

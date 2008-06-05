@@ -1,0 +1,38 @@
+package ao.regret.alexo.pair;
+
+import ao.regret.alexo.JointBucketSequence;
+import ao.regret.alexo.node.TerminalNode;
+
+/**
+ * 
+ */
+public class TerminalPair implements InfoPair
+{
+    //--------------------------------------------------------------------
+    private final TerminalNode FIRST;
+    private final TerminalNode LAST;
+
+
+    //--------------------------------------------------------------------
+    public TerminalPair(TerminalNode first,
+                        TerminalNode last)
+    {
+        FIRST = first;
+        LAST  = last;
+    }
+
+
+    //--------------------------------------------------------------------
+    public double approximate(
+            JointBucketSequence b, double pA, double pB)
+    {
+        return firstToActExpectation();
+    }
+
+
+    //--------------------------------------------------------------------
+    public double firstToActExpectation()
+    {
+        return FIRST.expectedValue(LAST);
+    }
+}

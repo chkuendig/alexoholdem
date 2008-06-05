@@ -1,10 +1,9 @@
-package ao.regret.khun.node;
+package ao.regret.alexo.node;
 
 import ao.regret.InfoNode;
-import ao.simple.kuhn.KuhnAction;
-import ao.simple.kuhn.rules.KuhnBucket;
-import ao.simple.kuhn.rules.KuhnRules;
-import ao.simple.kuhn.state.StateFlow;
+import ao.regret.alexo.AlexoBucket;
+import ao.simple.alexo.AlexoAction;
+import ao.simple.alexo.state.AlexoState;
 import ao.util.text.Txt;
 
 import java.util.EnumMap;
@@ -16,40 +15,45 @@ import java.util.Map;
 public class OpponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
-    private Map<KuhnAction, InfoNode> kids;
+    private Map<AlexoAction, InfoNode> kids;
 
 
     //--------------------------------------------------------------------
-    public OpponentNode(KuhnRules  rules,
-                        KuhnBucket bucket)
+    public OpponentNode(AlexoState  state,
+                        AlexoBucket bucket,
+                        boolean     forFirstToAct)
     {
-        kids = new EnumMap<KuhnAction, InfoNode>(KuhnAction.class);
+        kids = new EnumMap<AlexoAction, InfoNode>(AlexoAction.class);
 
-        for (Map.Entry<KuhnAction, KuhnRules> transition :
-                rules.transitions().entrySet())
+        for (AlexoAction action : state.validActions())
         {
-            KuhnRules nextRules = transition.getValue();
-            StateFlow nextState = nextRules.state();
+            AlexoState nextState = state.advance( action );
 
             if (nextState.endOfHand())
             {
-                kids.put(transition.getKey(),
+                kids.put(action,
                          new TerminalNode(
-                                 bucket,
-                                 nextState.outcome()));
+                                 bucket, nextState));
+            }
+            else if (nextState.atStartOfRound())
+            {
+                kids.put(action,
+                         new BucketNode(bucket.nextBuckets(),
+                                        nextState,
+                                        forFirstToAct));
             }
             else
             {
-                kids.put(transition.getKey(),
+                kids.put(action,
                          new ProponentNode(
-                                 nextRules, bucket));
+                                 nextState, bucket, forFirstToAct));
             }
         }
     }
 
 
     //--------------------------------------------------------------------
-    public InfoNode child(KuhnAction forAction)
+    public InfoNode child(AlexoAction forAction)
     {
         return kids.get( forAction );
     }
@@ -64,7 +68,7 @@ public class OpponentNode implements PlayerNode
     public String toString(int depth)
     {
         StringBuilder str = new StringBuilder();
-        for (Map.Entry<KuhnAction, InfoNode> kid : kids.entrySet())
+        for (Map.Entry<AlexoAction, InfoNode> kid : kids.entrySet())
         {
             str.append( Txt.nTimes("\t", depth) )
                .append( kid.getKey() )

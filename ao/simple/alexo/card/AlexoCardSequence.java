@@ -1,5 +1,7 @@
 package ao.simple.alexo.card;
 
+import ao.simple.alexo.state.AlexoRound;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +27,32 @@ public class AlexoCardSequence
         HOLE_B = deck.get(1);
         COMMUNITY = new AlexoCommunity(
                 deck.get(2), deck.get(3));
+    }
+
+    public AlexoCardSequence(
+            AlexoCard holeA,      AlexoCard holeB,
+            AlexoCard communityA, AlexoCard communityB)
+    {
+        this(holeA, holeB,
+             new AlexoCommunity(
+                            communityA, communityB));
+    }
+
+    public AlexoCardSequence(
+            AlexoCard      holeA,
+            AlexoCard      holeB,
+            AlexoCommunity community)
+    {
+        HOLE_A    = holeA;
+        HOLE_B    = holeB;
+        COMMUNITY = community;
+    }
+
+    //--------------------------------------------------------------------
+    public AlexoCardSequence truncate(AlexoRound toRound)
+    {
+        return new AlexoCardSequence(HOLE_A, HOLE_B,
+                                     COMMUNITY.truncate( toRound ));
     }
 
 

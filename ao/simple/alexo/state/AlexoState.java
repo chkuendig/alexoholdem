@@ -36,7 +36,7 @@ public class AlexoState
         firstCommit        = ANTE;
         lastCommit         = ANTE;
         remainingRoundBets = 2;
-        firstToActNext = true;
+        firstToActNext     = true;
         endOfHand          = false;
         prevActInRound     = null;
     }
@@ -161,6 +161,12 @@ public class AlexoState
             int lastVal = AlexoHand.valueOf(
                     cards.lastHole(), cards.community());
 
+            assert firstVal != lastVal;
+//            if (firstVal == lastVal)
+//            {
+//                return 0;
+//            }
+
             firstToActWins = (firstVal > lastVal);
         }
         
@@ -169,6 +175,17 @@ public class AlexoState
 //                : new int[]{-firstCommit, firstCommit};
         return firstToActWins
                 ? lastCommit : -firstCommit;
+    }
+
+    public AlexoOutcome outcome()
+    {
+        assert endOfHand;
+
+        return (prevActInRound == AlexoAction.FOLD)
+                ? firstToActNext
+                  ? AlexoOutcome.FIRST_TO_ACT_WINS
+                  : AlexoOutcome.LAST_TO_ACT_WINS
+                : AlexoOutcome.SHOWDOWN;
     }
 
 
@@ -181,6 +198,25 @@ public class AlexoState
     public boolean firstToActIsNext()
     {
         return firstToActNext;
+    }
+
+    public int firstCommit()
+    {
+        return firstCommit;
+    }
+    public int lastCommit()
+    {
+        return lastCommit;
+    }
+
+    public boolean atStartOfRound()
+    {
+        return prevActInRound == null;
+    }
+
+    public AlexoRound round()
+    {
+        return round;
     }
 }
 

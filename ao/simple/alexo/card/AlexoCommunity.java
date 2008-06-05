@@ -1,5 +1,7 @@
 package ao.simple.alexo.card;
 
+import ao.simple.alexo.state.AlexoRound;
+
 /**
  *
  */
@@ -16,6 +18,17 @@ public class AlexoCommunity
     {
         FLOP = flop;
         TURN = turn;
+    }
+
+
+    //--------------------------------------------------------------------
+    public AlexoCommunity truncate(AlexoRound asOf)
+    {
+        return new AlexoCommunity(
+                (asOf == AlexoRound.PREFLOP
+                 ? null : FLOP),
+                (asOf == AlexoRound.TURN
+                 ? TURN : null));
     }
 
 

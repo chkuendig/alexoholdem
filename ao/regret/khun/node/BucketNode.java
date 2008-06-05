@@ -1,5 +1,6 @@
 package ao.regret.khun.node;
 
+import ao.regret.InfoNode;
 import ao.regret.khun.JointBucketSequence;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnRules;
