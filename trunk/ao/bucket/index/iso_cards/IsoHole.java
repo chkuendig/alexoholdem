@@ -1,5 +1,6 @@
-package ao.bucket.index;
+package ao.bucket.index.iso_cards;
 
+import ao.bucket.index.iso_case.HoleCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 
@@ -9,7 +10,8 @@ import ao.holdem.model.card.Hole;
 public class IsoHole
 {
     //--------------------------------------------------------------------
-    private final Hole     HOLE;
+    //private final Hole     HOLE;
+    private final HoleCase CASE;
     private final Ordering ORDER;
 
     private final WildCard A, B;
@@ -18,10 +20,20 @@ public class IsoHole
     //--------------------------------------------------------------------
     public IsoHole(Hole hole)
     {
-        Card a = Card.BY_RANK.max(hole.a(), hole.b());
-        Card b = Card.BY_RANK.min(hole.a(), hole.b());
+        Card a, b;
+        if (hole.a().rank() == hole.b().rank())
+        {
+            a = hole.a();
+            b = hole.b();
+        }
+        else
+        {
+            a = Card.BY_RANK.max(hole.a(), hole.b());
+            b = Card.BY_RANK.min(hole.a(), hole.b());
+        }
 
-        HOLE  = Hole.newInstance(a, b);
+        //HOLE  = Hole.newInstance(a, b);
+        CASE  = HoleCase.newInstance(hole);
         ORDER = hole.paired()
                 ? Ordering.pair(a.suit(), b.suit())
                 : hole.suited()
@@ -34,9 +46,18 @@ public class IsoHole
 
 
     //--------------------------------------------------------------------
+    public HoleCase holeCase()
+    {
+        return CASE;
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
-        return HOLE + " | " + ORDER;
+        //return HOLE + " | " + ORDER;
+        //return "[" + A + ", " + B + "] | " + ORDER;
+        return CASE + " [" + A + ", " + B + "]";
     }
 
 

@@ -1,4 +1,4 @@
-package ao.bucket.index;
+package ao.bucket.index.iso_cards;
 
 import ao.holdem.model.card.Rank;
 

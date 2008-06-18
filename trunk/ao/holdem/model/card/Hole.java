@@ -97,6 +97,21 @@ public class Hole
 
 
     //--------------------------------------------------------------------
+    public Card hi()
+    {
+        assert !paired();
+        return (A.rank().compareTo( B.rank() ) > 0
+                ? A : B);
+    }
+    public Card lo()
+    {
+        assert !paired();
+        return (A.rank().compareTo( B.rank() ) < 0
+                ? A : B);
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return "[" + A + ", " + B + "]";

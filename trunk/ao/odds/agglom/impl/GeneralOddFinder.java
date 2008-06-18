@@ -1,8 +1,6 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.*;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
@@ -313,5 +311,35 @@ public class GeneralOddFinder implements OddFinder
         int temp = cards[i];
         cards[i] = cards[j];
         cards[j] = temp;
+    }
+
+    
+    //--------------------------------------------------------------------
+    public static void main(String args[])
+    {
+        OddFinder oddFinder = new GeneralOddFinder();
+
+        Suit a = Suit.HEARTS;
+        Suit b = Suit.SPADES;
+        Suit c = Suit.DIAMONDS;
+        Suit d = Suit.CLUBS;
+
+        Odds odds = oddFinder.compute(
+//                Hole.newInstance(Card.TWO_OF_HEARTS,
+//                                 Card.TWO_OF_SPADES),
+//                new Community(Card.TEN_OF_DIAMONDS,
+//                              Card.TEN_OF_CLUBS,
+//                              Card.JACK_OF_HEARTS,
+//                              Card.JACK_OF_SPADES,
+//                              Card.FIVE_OF_DIAMONDS),
+                Hole.newInstance(Card.valueOf(Rank.TWO, a),
+                                 Card.valueOf(Rank.TWO, b)),
+                new Community(Card.valueOf(Rank.TEN, c),
+                              Card.valueOf(Rank.TEN, d),
+                              Card.valueOf(Rank.JACK, a),
+                              Card.valueOf(Rank.JACK, b),
+                              Card.valueOf(Rank.FIVE, c)),
+                1);
+        System.out.println( odds );
     }
 }

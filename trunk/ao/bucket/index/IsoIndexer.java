@@ -1,10 +1,11 @@
 package ao.bucket.index;
 
+import ao.bucket.index.iso_cards.IsoHole;
+import ao.bucket.index.iso_case.CommunityCase;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.util.stats.Combiner;
 import ao.util.stats.Combo;
 
 /**
@@ -38,19 +39,54 @@ public class IsoIndexer implements Indexer
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        Indexer indexer = new IsoIndexer();
+        Card cards[] = Card.values();
 
-        for (Card a : Card.VALUES)
+        for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
         {
-            for (Card b : Card.VALUES)
-            {
-                if (a.compareTo(b) >= 0) continue;
-                Hole hole = Hole.newInstance(a, b);
+            swap(cards, holeCards[1].ordinal(), 51  );
+            swap(cards, holeCards[0].ordinal(), 51-1);
 
-                indexer.indexOf(
-                        new LiteralCardSequence(
-                                hole, Community.PREFLOP));
-            }
+            Hole    hole    = Hole.newInstance(
+                                    holeCards[0], holeCards[1]);
+            IsoHole isoHole = new IsoHole( hole );
+            handleFlop(cards, holeCards, hole, isoHole);
+
+            swap(cards, holeCards[0].ordinal(), 50);
+            swap(cards, holeCards[1].ordinal(), 51);
         }
+    }
+
+    private static void handleFlop(
+            Card    cards[],
+            Card    holeCards[],
+            Hole    hole,
+            IsoHole isoHole)
+    {
+        if (isoHole.holeCase().index() != 0) return;
+
+//        Map<IsoHole, int[]> abs =
+//                        new LinkedHashMap<IsoHole, int[]>();
+
+        for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
+        {
+            swap(cards, flopCards[2].ordinal(), 51-2);
+            swap(cards, flopCards[1].ordinal(), 51-3);
+            swap(cards, flopCards[0].ordinal(), 51-4);
+
+            CommunityCase flopCase =
+                    new CommunityCase(flopCards, holeCards);
+
+            swap(cards, flopCards[0].ordinal(), 51-4);
+            swap(cards, flopCards[1].ordinal(), 51-3);
+            swap(cards, flopCards[2].ordinal(), 51-2);
+        }
+    }
+
+
+    private static void swap(Card cards[], int i, int j)
+    {
+        Card tmp = cards[i];
+        cards[i] = cards[j];
+        cards[j] = tmp;
     }
 }

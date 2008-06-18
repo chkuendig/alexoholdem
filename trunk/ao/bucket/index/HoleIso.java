@@ -21,33 +21,34 @@ public class HoleIso
                 new HashMap<CommunityCase, int[]>();
         for (Card hole[] : new Combiner<Card>(Card.VALUES, 2))
         {
-            swap(cards, hole[0].ordinal(), 51);
-            swap(cards, hole[1].ordinal(), 50);
+            swap(cards, hole[1].ordinal(), 51  );
+            swap(cards, hole[0].ordinal(), 51-1);
 
 //            HoleCase holeCase =
 //                    HoleCase.newInstance(
 //                            Hole.newInstance(hole[0], hole[1]));
             for (Card flop[] : new Combiner<Card>(cards, 50, 3))
             {
-                if (contains(flop, hole))
-                {
-                    System.out.println("wtf!!?!");
-                }
+                swap(cards, flop[2].ordinal(), 51-2);
+                swap(cards, flop[1].ordinal(), 51-3);
+                swap(cards, flop[0].ordinal(), 51-4);
 
                 CommunityCase flopCase =
                         new CommunityCase(flop, hole);
 
-//                for (Card turn: Card.VALUES)
+//                for (int turnIndex = 0; turnIndex <= 51-5; turnIndex++)
 //                {
-//                    if (contains(hole, turn) ||
-//                        contains(flop, turn)) continue;
+//                    Card turn = cards[ turnIndex ];
 //
-//                    for (Card river : Card.VALUES)
+//                    for (int riverIndex  = 0;
+//                             riverIndex <= 51-6;
+//                             riverIndex++)
 //                    {
+//                        Card river = cards[ riverIndex ];
+//
 //
 //                    }
 //                }
-
 
                 int[] count = flopCases.get( flopCase );
                 if (count == null)
@@ -56,7 +57,14 @@ public class HoleIso
                     flopCases.put(flopCase, count);
                 }
                 count[0]++;
+
+                swap(cards, flop[0].ordinal(), 51-4);
+                swap(cards, flop[1].ordinal(), 51-3);
+                swap(cards, flop[2].ordinal(), 51-2);
             }
+
+            swap(cards, hole[0].ordinal(), 50);
+            swap(cards, hole[1].ordinal(), 51);
         }
 
         for (Map.Entry<CommunityCase, int[]> e : flopCases.entrySet())
