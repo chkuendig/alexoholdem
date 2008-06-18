@@ -1,4 +1,4 @@
-package ao.bucket.index;
+package ao.bucket.index.iso_cards;
 
 import ao.holdem.model.card.Suit;
 
@@ -68,7 +68,12 @@ public class Ordering
         {
             for (Suit s : ORDER[ i ])
             {
-                if (suit == s) return WildSuit.VALUES[ i ];
+                if (suit == s)
+                {
+                    return ORDER[ i ].length == 1
+                           ? WildSuit.VALUES[ i ]
+                           : WildSuit.WILD;
+                }
             }
         }
         return null;
