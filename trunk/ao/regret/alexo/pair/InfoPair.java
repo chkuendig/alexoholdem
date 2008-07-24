@@ -7,7 +7,9 @@ import ao.regret.alexo.JointBucketSequence;
  */
 public interface InfoPair
 {
-    public double approximate(JointBucketSequence b,
-                              double              pA,
-                              double              pB);
+    public double approximate(
+            JointBucketSequence b,
+            double              pA,
+            double              pB,
+            double              aggression);
 }

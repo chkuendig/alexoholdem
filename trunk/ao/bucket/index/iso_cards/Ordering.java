@@ -1,8 +1,12 @@
 package ao.bucket.index.iso_cards;
 
 import ao.holdem.model.card.Suit;
+import ao.util.data.Arr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  *
@@ -35,6 +39,37 @@ public class Ordering
 
 
     //--------------------------------------------------------------------
+    public static Ordering triplet(
+            Suit aheadA, Suit aheadB, Suit aheadC)
+    {
+        return new Ordering(
+                new Suit[][]{{aheadA, aheadB, aheadC},
+                             complement(aheadA, aheadB, aheadC)});
+    }
+    public static Ordering partSuited(
+            Suit aheadA, Suit aheadB, Suit mid)
+    {
+        return new Ordering(
+                new Suit[][]{{aheadA, aheadB}, {mid},
+                             complement(aheadA, aheadB, mid)});
+    }
+    public static Ordering partSuited(
+            Suit aheadA, Suit mid)
+    {
+        return new Ordering(
+                new Suit[][]{{aheadA}, {mid},
+                             complement(aheadA, mid)});
+    }
+    public static Ordering ordered(
+            Suit ahead, Suit mid, Suit behind)
+    {
+        return new Ordering(
+                new Suit[][]{{ahead}, {mid}, {behind},
+                             complement(ahead, mid, behind)});
+    }
+
+
+    //--------------------------------------------------------------------
     private Ordering(Suit order[][])
     {
         ORDER = order;
@@ -57,7 +92,43 @@ public class Ordering
     //--------------------------------------------------------------------
     public Ordering refine(Ordering with)
     {
-        return null;
+        Suit[][] refined = new Suit[4][];
+
+        int index = 0;
+        for (Suit group[] : ORDER)
+        {
+            for (Suit subGroup[] : with.refine(group))
+            {
+                refined[ index++ ] = subGroup;
+            }
+        }
+
+        return new Ordering(Arrays.copyOf(refined, index));
+    }
+
+    public Suit[][] refine(Suit group[])
+    {
+        List<Suit[]> subGroups = new ArrayList<Suit[]>();
+
+        for (Suit[] myGroup : ORDER)
+        {
+            int  index      = 0;
+            Suit subGroup[] = new Suit[ group.length ];
+            for(Suit suit : group)
+            {
+                if ( Arr.indexOf(myGroup, suit) != -1 )
+                {
+                    subGroup[ index++ ] = suit;
+                }
+            }
+
+            if (index > 0)
+            {
+                subGroups.add( Arrays.copyOf(subGroup, index) );
+            }
+        }
+
+        return subGroups.toArray(new Suit[subGroups.size()][]);
     }
 
 
@@ -88,30 +159,47 @@ public class Ordering
 
 
     //--------------------------------------------------------------------
-    private static Suit[] complement(Suit of)
+    public boolean equals(Object o)
     {
-        int  index        = 0;
-        Suit compliment[] = new Suit[3];
-        for (Suit s : Suit.VALUES)
-        {
-            if (s != of)
-            {
-                compliment[ index++ ] = s;
-            }
-        }
-        return compliment;
+        return !(o == null || getClass() != o.getClass()) &&
+               Arrays.deepEquals(ORDER, ((Ordering) o).ORDER);
     }
-    private static Suit[] complement(Suit a, Suit b)
+
+    public int hashCode()
     {
-        int  index        = 0;
-        Suit compliment[] = new Suit[2];
-        for (Suit s : Suit.VALUES)
-        {
-            if (s != a && s != b)
-            {
-                compliment[ index++ ] = s;
-            }
-        }
-        return compliment;
+        return Arrays.deepHashCode(ORDER);
     }
+
+    
+    //--------------------------------------------------------------------
+    private static Suit[] complement(Suit head, Suit... tail)
+    {
+        EnumSet<Suit> s = EnumSet.complementOf(EnumSet.of(head, tail));
+        return s.toArray(new Suit[s.size()]);
+    }
+
+//    private static Suit[] complement(Suit a, Suit b)
+//    {
+//        int  index        = 0;
+//        Suit compliment[] = new Suit[2];
+//        for (Suit s : Suit.VALUES)
+//        {
+//            if (s != a && s != b)
+//            {
+//                compliment[ index++ ] = s;
+//            }
+//        }
+//        return compliment;
+//    }
+//    private static Suit[] complement(Suit a, Suit b, Suit c)
+//    {
+//        for (Suit s : Suit.VALUES)
+//        {
+//            if (s != a && s != b && s != c)
+//            {
+//                return new Suit[]{ s };
+//            }
+//        }
+//        throw new Error("all suits exhausted");
+//    }
 }

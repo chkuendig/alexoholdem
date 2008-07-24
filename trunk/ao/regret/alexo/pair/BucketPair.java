@@ -68,14 +68,26 @@ public class BucketPair implements InfoPair
 
 
     //--------------------------------------------------------------------
-    public double approximate()
+//    public double approximate()
+//    {
+//        return approximate(new JointBucketSequence(), 1.0, 1.0);
+//    }
+    public double approximate(double aggression)
     {
-        return approximate(new JointBucketSequence(), 1.0, 1.0);
+        return approximate(new JointBucketSequence(),
+                           1.0, 1.0, aggression);
     }
+
+//    public double approximate(
+//            JointBucketSequence b, double pA, double pB)
+//    {
+//        return accordingTo( b ).approximate(b, pA, pB);
+//    }
     public double approximate(
-            JointBucketSequence b, double pA, double pB)
+            JointBucketSequence b,
+            double pA, double pB, double aggression)
     {
-        return accordingTo( b ).approximate(b, pA, pB);
+        return accordingTo( b ).approximate(b, pA, pB, aggression);
     }
 
 

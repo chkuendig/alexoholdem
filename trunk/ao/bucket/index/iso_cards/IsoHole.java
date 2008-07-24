@@ -12,36 +12,27 @@ public class IsoHole
     //--------------------------------------------------------------------
     //private final Hole     HOLE;
     private final HoleCase CASE;
-    private final Ordering ORDER;
+    //private final Ordering ORDER;
 
     private final WildCard A, B;
 
 
     //--------------------------------------------------------------------
-    public IsoHole(Hole hole)
+    public IsoHole(HoleCase holeCase,
+                   WildCard a,
+                   WildCard b)
     {
-        Card a, b;
-        if (hole.a().rank() == hole.b().rank())
-        {
-            a = hole.a();
-            b = hole.b();
-        }
-        else
-        {
-            a = Card.BY_RANK.max(hole.a(), hole.b());
-            b = Card.BY_RANK.min(hole.a(), hole.b());
-        }
+        CASE = holeCase;
+        A    = a;
+        B    = b;
+    }
 
-        //HOLE  = Hole.newInstance(a, b);
-        CASE  = HoleCase.newInstance(hole);
-        ORDER = hole.paired()
-                ? Ordering.pair(a.suit(), b.suit())
-                : hole.suited()
-                  ? Ordering.suited  (a.suit())
-                  : Ordering.unsuited(a.suit(), b.suit());
 
-        A = new WildCard(a.rank(), ORDER.asWild(a.suit()));
-        B = new WildCard(b.rank(), ORDER.asWild(b.suit()));
+    //--------------------------------------------------------------------
+    public IsoFlop flop(Hole hole, Card... flop)
+    {
+        //return new IsoFlop(ORDER, HOLE.asArray(), flop);
+        return new IsoFlop(hole.ordering(), hole.asArray(), flop);
     }
 
 

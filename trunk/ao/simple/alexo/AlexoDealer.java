@@ -1,6 +1,7 @@
 package ao.simple.alexo;
 
 import ao.simple.alexo.card.AlexoCardSequence;
+import ao.simple.alexo.player.AlwaysRaise;
 import ao.simple.alexo.player.CrmBot;
 import ao.simple.alexo.state.AlexoRound;
 import ao.simple.alexo.state.AlexoState;
@@ -47,16 +48,34 @@ public class AlexoDealer
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        AlexoDealer dealer = new AlexoDealer(
-                                    new CrmBot(100000),
-                                    new CrmBot(10000000));
+//        int max = 1000;
+//        AlexoPlayer maxPlayer = new CrmBot(max);
+//        for (int i = 0; i < max; i += max/100)
+//        {
+//            touney(new CrmBot(i), maxPlayer);
+//        }
+
+        for (double aggression = 0; aggression < 1.0; aggression += 0.01)
+        {
+            System.out.println(
+                    "aggression: " +
+                    (double) Math.round(aggression * 1000) / 1000);
+            touney(new CrmBot(100000, aggression), new AlwaysRaise());
+        }
+    }
+
+    public static void touney(AlexoPlayer playerA,
+                              AlexoPlayer playerB)
+    {
+        AlexoDealer dealer =
+                new AlexoDealer(playerA, playerB);
 
         boolean           inOrder  = true;
         int               numHands = 0;
         int               cumDelta = 0;
-        AlexoCardSequence hands[]  = generate(200000);
-        for (int round = 0; round < 2*2; round++)
-        {
+        AlexoCardSequence hands[]  = generate(500000);
+//        for (int round = 0; round < 2*2; round++)
+//        {
             for (AlexoCardSequence hand : hands)
             {
                 cumDelta += (inOrder ? 1 : -1) *
@@ -64,12 +83,13 @@ public class AlexoDealer
                 numHands++;
             }
 
-            dealer.swapPlayers();
-            inOrder = !inOrder;
-        }
+//            dealer.swapPlayers();
+//            inOrder = !inOrder;
+//        }
 
         System.out.println(
-                (double) cumDelta / numHands);
+                (double) cumDelta / numHands +
+                " for " + playerA + " vs " + playerB);
     }
 
     private static AlexoCardSequence[] generate(int n)

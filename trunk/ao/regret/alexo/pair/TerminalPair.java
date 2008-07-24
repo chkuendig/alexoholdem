@@ -24,9 +24,10 @@ public class TerminalPair implements InfoPair
 
     //--------------------------------------------------------------------
     public double approximate(
-            JointBucketSequence b, double pA, double pB)
+            JointBucketSequence b,
+            double pA, double pB, double aggression)
     {
-        return firstToActExpectation();
+        return firstToActExpectation() * (1.0 + aggression);
     }
 
 
