@@ -1,12 +1,14 @@
 package ao.bucket.index;
 
+import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.IsoHole;
-import ao.bucket.index.iso_case.CommunityCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.util.stats.Combiner;
 import ao.util.stats.Combo;
+
+import java.util.*;
 
 /**
  *
@@ -16,9 +18,9 @@ public class IsoIndexer implements Indexer
     //--------------------------------------------------------------------
     public int indexOf(CardSequence cards)
     {
-        IsoHole hole = new IsoHole( cards.hole() );
+        //IsoHole hole = new IsoHole( cards.hole() );
 
-        System.out.println(hole);
+        //System.out.println(hole);
 
         return 0;
     }
@@ -41,40 +43,80 @@ public class IsoIndexer implements Indexer
     {
         Card cards[] = Card.values();
 
+        Map<IsoHole, List< Card[] >> isoHoles =
+                new LinkedHashMap<IsoHole, List<Card[]>>();
         for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
         {
-            swap(cards, holeCards[1].ordinal(), 51  );
-            swap(cards, holeCards[0].ordinal(), 51-1);
-
             Hole    hole    = Hole.newInstance(
                                     holeCards[0], holeCards[1]);
-            IsoHole isoHole = new IsoHole( hole );
-            handleFlop(cards, holeCards, hole, isoHole);
+//            if (! hole.paired()) continue;
 
-            swap(cards, holeCards[0].ordinal(), 50);
-            swap(cards, holeCards[1].ordinal(), 51);
+            retrieveOrCreate( isoHoles, hole.isomorphism() )
+                    .add( holeCards );
+        }
+
+        for (Map.Entry<IsoHole, List< Card[] >> holeEntry
+                : isoHoles.entrySet())
+        {
+            IsoHole isoHole = holeEntry.getKey();
+            System.out.println(isoHole);
+
+            Map<IsoFlop, List< Card[] >> isoFlops =
+                    new LinkedHashMap<IsoFlop, List<Card[]>>();
+            for (Card holeCards[] : holeEntry.getValue())
+            {
+                System.out.println(Arrays.toString( holeCards ));
+
+                swap(cards, holeCards[1].ordinal(), 51  );
+                swap(cards, holeCards[0].ordinal(), 51-1);
+
+                Hole hole = Hole.newInstance(holeCards[0], holeCards[1]);
+                handleFlop(hole, isoFlops, cards);
+
+                swap(cards, holeCards[0].ordinal(), 51-1);
+                swap(cards, holeCards[1].ordinal(), 51  );
+            }
+
+            displayIsoFlops(isoFlops);
         }
     }
 
-    private static void handleFlop(
-            Card    cards[],
-            Card    holeCards[],
-            Hole    hole,
-            IsoHole isoHole)
+
+    //--------------------------------------------------------------------
+    private static void displayIsoFlops(
+            Map<IsoFlop, List<Card[]>> isoFlops)
     {
-        if (isoHole.holeCase().index() != 0) return;
+        for (Map.Entry<IsoFlop, List< Card[] >> flopEntry
+                : isoFlops.entrySet())
+        {
+            IsoFlop isoFlop = flopEntry.getKey();
+            System.out.println("\t" + isoFlop);
+            for (Card[] flopCards : flopEntry.getValue())
+            {
+                System.out.println("\t\t" + Arrays.toString(flopCards));
+            }
+        }
+    }
 
-//        Map<IsoHole, int[]> abs =
-//                        new LinkedHashMap<IsoHole, int[]>();
 
+    //--------------------------------------------------------------------
+    private static void handleFlop(
+            Hole                         hole,
+            Map<IsoFlop, List< Card[] >> isoFlops,
+            Card                         cards[])
+    {
         for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
         {
+            Arrays.sort(flopCards, Card.BY_RANK_DSC);
+
             swap(cards, flopCards[2].ordinal(), 51-2);
             swap(cards, flopCards[1].ordinal(), 51-3);
             swap(cards, flopCards[0].ordinal(), 51-4);
 
-            CommunityCase flopCase =
-                    new CommunityCase(flopCards, holeCards);
+            IsoFlop isoFlop = hole.isomorphism()
+                                  .flop( hole, flopCards );
+            retrieveOrCreate(isoFlops, isoFlop)
+                    .add( flopCards );
 
             swap(cards, flopCards[0].ordinal(), 51-4);
             swap(cards, flopCards[1].ordinal(), 51-3);
@@ -82,6 +124,20 @@ public class IsoIndexer implements Indexer
         }
     }
 
+
+    //--------------------------------------------------------------------
+    private static <K, V> List< V[] > retrieveOrCreate(
+            Map<K, List< V[] >> map,
+            K                   key)
+    {
+        List< V[] > val = map.get( key );
+        if (val == null)
+        {
+            val = new ArrayList<V[]>();
+            map.put( key, val );
+        }
+        return val;
+    }
 
     private static void swap(Card cards[], int i, int j)
     {

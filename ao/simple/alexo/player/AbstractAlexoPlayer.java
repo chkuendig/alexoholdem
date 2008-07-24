@@ -23,4 +23,10 @@ public abstract class AbstractAlexoPlayer
     public void roundAdvanced(
             AlexoRound currentRound,
             AlexoCardSequence cards) {}
+
+    
+    public String toString()
+    {
+        return getClass().toString();
+    }
 }

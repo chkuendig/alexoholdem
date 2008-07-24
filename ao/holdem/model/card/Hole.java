@@ -1,5 +1,9 @@
 package ao.holdem.model.card;
 
+import ao.bucket.index.iso_cards.IsoHole;
+import ao.bucket.index.iso_cards.Ordering;
+import ao.bucket.index.iso_cards.WildCard;
+import ao.bucket.index.iso_case.HoleCase;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -108,6 +112,33 @@ public class Hole
         assert !paired();
         return (A.rank().compareTo( B.rank() ) < 0
                 ? A : B);
+    }
+
+    public Card[] asArray()
+    {
+        return new Card[]{A, B};
+    }
+
+
+    //--------------------------------------------------------------------
+    public IsoHole isomorphism()
+    {
+        Card     a     = paired() ? A : hi();
+        Card     b     = paired() ? B : lo();
+        Ordering order = ordering();
+
+        return new IsoHole(HoleCase.newInstance(this),
+                           new WildCard(a.rank(), order.asWild(a.suit())),
+                           new WildCard(b.rank(), order.asWild(b.suit())));
+    }
+
+    public Ordering ordering()
+    {
+        return paired()
+                ? Ordering.pair(A.suit(), B.suit())
+                : suited()
+                  ? Ordering.suited  (A.suit())
+                  : Ordering.unsuited(hi().suit(), lo().suit());
     }
 
 

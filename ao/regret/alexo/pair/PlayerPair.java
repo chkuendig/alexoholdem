@@ -79,10 +79,18 @@ public class PlayerPair implements InfoPair
 
 
     //--------------------------------------------------------------------
+//    public double approximate(
+//            JointBucketSequence b,
+//            double              pA,
+//            double              pB)
+//    {
+//        return approximate(b, pA, pB, 0);
+//    }
     public double approximate(
             JointBucketSequence b,
             double              pA,
-            double              pB)
+            double              pB,
+            double              aggression)
     {
         boolean       pFirst    = proponentIsFirst();
         ProponentNode proponent = (ProponentNode)
@@ -102,10 +110,18 @@ public class PlayerPair implements InfoPair
                 continue;
             }
 
+//            double val =
+//                    (child(act).approximate(b,
+//                        pA * (pFirst ? actProb : 1.0),
+//                        pB * (pFirst ? 1.0 : actProb),
+//                        aggression)
+//                     * (1.0 + aggression))
+//                    * (pFirst ? 1 : -1);
             double val =
                     child(act).approximate(b,
                         pA * (pFirst ? actProb : 1.0),
-                        pB * (pFirst ? 1.0 : actProb))
+                        pB * (pFirst ? 1.0 : actProb),
+                        aggression)
                     * (pFirst ? 1 : -1);
 
             expectation.put(act, val);

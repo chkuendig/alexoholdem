@@ -180,15 +180,24 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-    public static final ByRank BY_RANK = new ByRank();
+    public static final ByRank BY_RANK_DSC = new ByRank(false);
+    public static final ByRank BY_RANK_ASC = new ByRank(true);
     public static class ByRank implements Comparator<Card>
     {
+        private final boolean ascending;
+        private ByRank(boolean asc)
+        {
+            ascending = asc;
+        }
+
         public int compare(Card a, Card b)
         {
             int cmp = a.rank().compareTo( b.rank() );
-            return cmp == 0
+            int cmpB =
+                    cmp == 0
                     ? a.suit().compareTo( b.suit() )
                     : cmp;
+            return ascending ? cmpB : -cmpB;
         }
         public Card min(Card a, Card b)
         {

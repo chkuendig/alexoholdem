@@ -29,7 +29,7 @@ public class AlexoInfoTree
         {
             root.approximate(
                     new JointBucketSequence(),
-                    1.0, 1.0);
+                    1.0, 1.0, 0);
         }
 //        System.out.println( root );
     }

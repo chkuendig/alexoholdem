@@ -19,6 +19,7 @@ import ao.simple.alexo.state.AlexoState;
 public class CrmBot implements AlexoPlayer
 {
     //--------------------------------------------------------------------
+    private final int        itr;
     private final BucketPair root;
     private       InfoNode   node = null;
 
@@ -26,11 +27,16 @@ public class CrmBot implements AlexoPlayer
     //--------------------------------------------------------------------
     public CrmBot(int iterations)
     {
+        this(iterations, 0);
+    }
+    public CrmBot(int iterations, double aggression)
+    {
+        itr  = iterations;
         root = new AlexoInfoTree().root();
 
-        for (int i = 0; i < iterations; i++)
+        for (int i = 0; i < itr; i++)
         {
-            root.approximate();
+            root.approximate(aggression);
         }
     }
 
@@ -71,5 +77,12 @@ public class CrmBot implements AlexoPlayer
         AlexoAction act = myNode.nextAction();
         node = myNode.child( act );
         return act;
+    }
+
+    
+    //--------------------------------------------------------------------
+    public String toString()
+    {
+        return "CRM @ " + itr;
     }
 }
