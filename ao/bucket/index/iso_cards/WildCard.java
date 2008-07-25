@@ -21,6 +21,18 @@ public class WildCard
 
 
     //--------------------------------------------------------------------
+    public Rank rank()
+    {
+        return RANK;
+    }
+
+    public WildSuit suit()
+    {
+        return SUIT;
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return RANK + " of " + SUIT;
