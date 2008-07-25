@@ -5,6 +5,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Date: Jun 18, 2008
@@ -35,16 +36,44 @@ public class IsoFlop
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
 
-        Card holeInOrder[] = hole.clone();
-        Arrays.sort(holeInOrder, Card.BY_RANK_DSC);
-        HOLE_A = asWild(refined, holeInOrder[0]);
-        HOLE_B = asWild(refined, holeInOrder[1]);
+        WildCard wildHole[] = new WildCard[]{
+                asWild(refined, hole[ 0 ]),
+                asWild(refined, hole[ 1 ])};
+        sort(wildHole);
+        HOLE_A = wildHole[ 0 ];
+        HOLE_B = wildHole[ 1 ];
 
-        Card flopInOrder[] = flop.clone();
-        Arrays.sort(flopInOrder, Card.BY_RANK_DSC);
-        FLOP_A = asWild(refined, flopInOrder[0]);
-        FLOP_B = asWild(refined, flopInOrder[1]);
-        FLOP_C = asWild(refined, flopInOrder[2]);
+        WildCard wildFlop[] = new WildCard[]{
+                asWild(refined, flop[ 0 ]),
+                asWild(refined, flop[ 1 ]),
+                asWild(refined, flop[ 2 ])};
+        sort(wildFlop);
+        FLOP_A = wildFlop[ 0 ];
+        FLOP_B = wildFlop[ 1 ];
+        FLOP_C = wildFlop[ 2 ];
+
+//        Card holeInOrder[] = hole.clone();
+//        Arrays.sort(holeInOrder, Card.BY_RANK_DSC);
+//        HOLE_A = asWild(refined, holeInOrder[0]);
+//        HOLE_B = asWild(refined, holeInOrder[1]);
+//
+//        Card flopInOrder[] = flop.clone();
+//        Arrays.sort(flopInOrder, Card.BY_RANK_DSC);
+//        FLOP_A = asWild(refined, flopInOrder[0]);
+//        FLOP_B = asWild(refined, flopInOrder[1]);
+//        FLOP_C = asWild(refined, flopInOrder[2]);
+    }
+
+    private void sort(WildCard wildCards[])
+    {
+        Arrays.sort(wildCards, new Comparator<WildCard>()  {
+            public int compare(WildCard a, WildCard b) {
+                int suitCmp = a.suit().compareTo( b.suit() );
+                return (suitCmp == 0
+                           ? a.rank().compareTo( b.rank() )
+                           : suitCmp);
+            }
+        });
     }
 
     private WildCard asWild(Ordering order, Card card)
@@ -161,6 +190,69 @@ public class IsoFlop
 
         return result;
     }
+
+    public FlopCase flopCase()
+    {
+        return new FlopCase(CASE,
+                            HOLE_A.suit(), HOLE_B.suit(),
+                            FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
+    }
+
+
+    //--------------------------------------------------------------------
+    public static class FlopCase
+    {
+        private final CommunityCase CASE;
+        private final WildSuit      HOLE_A, HOLE_B,
+                                    FLOP_A, FLOP_B, FLOP_C;
+
+        public FlopCase(CommunityCase comCase,
+                         WildSuit holeA, WildSuit holeB,
+                         WildSuit flopA, WildSuit flopB, WildSuit flopC)
+        {
+            CASE = comCase;
+            HOLE_A = holeA;
+            HOLE_B = holeB;
+            FLOP_A = flopA;
+            FLOP_B = flopB;
+            FLOP_C = flopC;
+        }
+
+        public String toString()
+        {
+            return CASE + " -> " +
+                   "[" + HOLE_A + ", " + HOLE_B + "]" +
+                   "[" + FLOP_A + ", " + FLOP_B + ", " + FLOP_C +"]";
+//            return CASE.toString();
+        }
+
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            FlopCase flopCase = (FlopCase) o;
+            return CASE.equals(flopCase.CASE) &&
+                   HOLE_A == flopCase.HOLE_A &&
+                   HOLE_B == flopCase.HOLE_B &&
+                   FLOP_A == flopCase.FLOP_A &&
+                   FLOP_B == flopCase.FLOP_B &&
+                   FLOP_C == flopCase.FLOP_C;
+        }
+
+        public int hashCode()
+        {
+            int result;
+            result = CASE.hashCode();
+            result = 31 * result + HOLE_A.hashCode();
+            result = 31 * result + HOLE_B.hashCode();
+            result = 31 * result + FLOP_A.hashCode();
+            result = 31 * result + FLOP_B.hashCode();
+            result = 31 * result + FLOP_C.hashCode();
+            return result;
+        }
+    }
+
 
 
     //--------------------------------------------------------------------

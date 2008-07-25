@@ -1,6 +1,7 @@
 package ao.bucket.index;
 
 import ao.bucket.index.iso_cards.IsoFlop;
+import ao.bucket.index.iso_cards.IsoFlop.FlopCase;
 import ao.bucket.index.iso_cards.IsoHole;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
@@ -55,6 +56,8 @@ public class IsoIndexer implements Indexer
                     .add( holeCards );
         }
 
+        Map<FlopCase, List<IsoFlop>> flopCases =
+                new LinkedHashMap<FlopCase, List<IsoFlop>>();
         for (Map.Entry<IsoHole, List< Card[] >> holeEntry
                 : isoHoles.entrySet())
         {
@@ -77,8 +80,47 @@ public class IsoIndexer implements Indexer
                 swap(cards, holeCards[1].ordinal(), 51  );
             }
 
-            displayIsoFlops(isoFlops);
+            for (IsoFlop isoFlop : isoFlops.keySet())
+            {
+                List<IsoFlop> exiting =
+                        flopCases.get( isoFlop.flopCase() );
+                if (exiting == null)
+                {
+                    exiting = new ArrayList<IsoFlop>();
+                    flopCases.put(isoFlop.flopCase(), exiting);
+                }
+                exiting.add( isoFlop );
+            }
+
+            System.out.println(flopCases.size());
+
+            //displayIsoFlops(isoFlops);
         }
+
+        System.out.println("------------------------------");
+//        FlopCase fc = new FlopCase(new CommunityCase(
+//                new Card[]{
+//                        Card.THREE_OF_DIAMONDS,
+//                        Card.JACK_OF_DIAMONDS,
+//                        Card.ACE_OF_HEARTS
+//                },
+//                Card.SEVEN_OF_SPADES,
+//                Card.SEVEN_OF_HEARTS
+//        ));
+
+        for (Map.Entry<FlopCase, List<IsoFlop>> e :
+                flopCases.entrySet())
+        {
+            System.out.println(e.getKey() + " :: " + e.getValue().size());
+//            System.out.println(fc);
+//            for (IsoFlop isoFlop : e.getValue())
+////            for (IsoFlop isoFlop : flopCases.get( fc ))
+//            {
+//                System.out.println( isoFlop );
+//            }
+//            break;
+        }
+
     }
 
 
