@@ -84,15 +84,14 @@ public class IsoIndexer implements Indexer
 
             System.out.println(flopCases.size());
 //            break;
-
-            //displayIsoFlops(isoFlops);
         }
 
+        BitSet indexes = new BitSet();
         System.out.println("------------------------------");
         for (Map.Entry<FlopCase, List<IsoFlop>> e :
                 flopCases.entrySet())
         {
-            if (! e.getKey().equals(FlopCase.CASE_12_123)) continue;
+            //if (! e.getKey().equals(FlopCase.CASE_12_112)) continue;
 
             System.out.println(e.getKey() + " :: " + e.getValue().size());
 
@@ -100,19 +99,16 @@ public class IsoIndexer implements Indexer
             {
                 int index =
                         new PostPairIndexer().indexOf(e.getKey(), flop);
-                System.out.println(index);
+                if (indexes.get(index))
+                {
+                    System.out.println("WTF!?!?: " + flop);
+                }
+                indexes.set( index );
+//                System.out.println(index);
             }
-            break;
-
-//            System.out.println(fc);
-//            for (IsoFlop isoFlop : e.getValue())
-////            for (IsoFlop isoFlop : flopCases.get( fc ))
-//            {
-//                System.out.println( isoFlop );
-//            }
 //            break;
         }
-
+        System.out.println(indexes.nextClearBit(0));
     }
 
 
