@@ -2,8 +2,8 @@ package ao.bucket.index;
 
 import ao.bucket.index.flop.PostPairIndexer;
 import ao.bucket.index.iso_cards.IsoFlop;
-import ao.bucket.index.iso_cards.IsoFlop.FlopCase;
 import ao.bucket.index.iso_cards.IsoHole;
+import ao.bucket.index.iso_case.FlopCase;
 import ao.bucket.index.iso_case.HoleCase;
 import ao.bucket.index.iso_case.HoleCase.Type;
 import ao.holdem.model.card.Card;
@@ -83,26 +83,16 @@ public class IsoIndexer implements Indexer
             }
 
             System.out.println(flopCases.size());
-            //break;
+//            break;
 
             //displayIsoFlops(isoFlops);
         }
 
         System.out.println("------------------------------");
-//        FlopCase fc = new FlopCase(new CommunityCase(
-//                new Card[]{
-//                        Card.THREE_OF_DIAMONDS,
-//                        Card.JACK_OF_DIAMONDS,
-//                        Card.ACE_OF_HEARTS
-//                },
-//                Card.SEVEN_OF_SPADES,
-//                Card.SEVEN_OF_HEARTS
-//        ));
-
         for (Map.Entry<FlopCase, List<IsoFlop>> e :
                 flopCases.entrySet())
         {
-            if (! e.getKey().equals(FlopCase.CASE_12_133)) continue;
+            if (! e.getKey().equals(FlopCase.CASE_12_123)) continue;
 
             System.out.println(e.getKey() + " :: " + e.getValue().size());
 
