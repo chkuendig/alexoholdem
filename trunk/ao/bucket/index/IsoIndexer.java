@@ -1,13 +1,15 @@
 package ao.bucket.index;
 
+import ao.bucket.index.flop.PostPairIndexer;
 import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.IsoFlop.FlopCase;
 import ao.bucket.index.iso_cards.IsoHole;
+import ao.bucket.index.iso_case.HoleCase;
+import ao.bucket.index.iso_case.HoleCase.Type;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.util.stats.Combiner;
-import ao.util.stats.Combo;
 
 import java.util.*;
 
@@ -28,18 +30,6 @@ public class IsoIndexer implements Indexer
 
 
     //--------------------------------------------------------------------
-    private static int colex(int... set)
-    {
-        int colex = 0;
-        for (int i = 0; i < set.length; i++)
-        {
-            colex += Combo.choose(set[i], i + 1);
-        }
-        return colex;
-    }
-
-
-    //--------------------------------------------------------------------
     public static void main(String[] args)
     {
         Card cards[] = Card.values();
@@ -50,7 +40,7 @@ public class IsoIndexer implements Indexer
         {
             Hole    hole    = Hole.newInstance(
                                     holeCards[0], holeCards[1]);
-//            if (! hole.paired()) continue;
+            if (HoleCase.newInstance(hole).type() != Type.PAIR) continue;
 
             retrieveOrCreate( isoHoles, hole.isomorphism() )
                     .add( holeCards );
@@ -93,6 +83,7 @@ public class IsoIndexer implements Indexer
             }
 
             System.out.println(flopCases.size());
+            //break;
 
             //displayIsoFlops(isoFlops);
         }
@@ -111,7 +102,18 @@ public class IsoIndexer implements Indexer
         for (Map.Entry<FlopCase, List<IsoFlop>> e :
                 flopCases.entrySet())
         {
+            if (! e.getKey().equals(FlopCase.CASE_12_133)) continue;
+
             System.out.println(e.getKey() + " :: " + e.getValue().size());
+
+            for (IsoFlop flop : e.getValue())
+            {
+                int index =
+                        new PostPairIndexer().indexOf(e.getKey(), flop);
+                System.out.println(index);
+            }
+            break;
+
 //            System.out.println(fc);
 //            for (IsoFlop isoFlop : e.getValue())
 ////            for (IsoFlop isoFlop : flopCases.get( fc ))

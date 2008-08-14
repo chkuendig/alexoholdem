@@ -2,6 +2,7 @@ package ao.bucket.index.iso_cards;
 
 import ao.bucket.index.iso_case.CommunityCase;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class IsoFlop
     //--------------------------------------------------------------------
     //private final Card          CARDS[];
 //    private final Ordering      HOLE_ORDER;
+    private final Ordering      ORDER;
     private final CommunityCase CASE;
     private final WildCard      HOLE_A, HOLE_B,
                                 FLOP_A, FLOP_B, FLOP_C;
@@ -35,6 +37,7 @@ public class IsoFlop
 
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
+        ORDER            = refined;
 
         WildCard wildHole[] = new WildCard[]{
                 asWild(refined, hole[ 0 ]),
@@ -51,17 +54,6 @@ public class IsoFlop
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
-
-//        Card holeInOrder[] = hole.clone();
-//        Arrays.sort(holeInOrder, Card.BY_RANK_DSC);
-//        HOLE_A = asWild(refined, holeInOrder[0]);
-//        HOLE_B = asWild(refined, holeInOrder[1]);
-//
-//        Card flopInOrder[] = flop.clone();
-//        Arrays.sort(flopInOrder, Card.BY_RANK_DSC);
-//        FLOP_A = asWild(refined, flopInOrder[0]);
-//        FLOP_B = asWild(refined, flopInOrder[1]);
-//        FLOP_C = asWild(refined, flopInOrder[2]);
     }
 
     private void sort(WildCard wildCards[])
@@ -80,6 +72,30 @@ public class IsoFlop
     {
         return new WildCard(card.rank(),
                             order.asWild(card.suit()));
+    }
+
+
+    //--------------------------------------------------------------------
+    public Rank holeA()
+    {
+        return HOLE_A.rank();
+    }
+    public Rank holeB()
+    {
+        return HOLE_B.rank();
+    }
+
+    public Rank flopA()
+    {
+        return FLOP_A.rank();
+    }
+    public Rank flopB()
+    {
+        return FLOP_B.rank();
+    }
+    public Rank flopC()
+    {
+        return FLOP_C.rank();
     }
 
 
@@ -193,7 +209,8 @@ public class IsoFlop
 
     public FlopCase flopCase()
     {
-        return new FlopCase(CASE,
+        return new FlopCase(//ORDER,
+                            //CASE,
                             HOLE_A.suit(), HOLE_B.suit(),
                             FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
     }
@@ -202,15 +219,26 @@ public class IsoFlop
     //--------------------------------------------------------------------
     public static class FlopCase
     {
-        private final CommunityCase CASE;
+        public static FlopCase CASE_12_113 =
+                new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                             WildSuit.ONE, WildSuit.ONE, WildSuit.THREE);
+        public static FlopCase CASE_12_133 =
+                new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                             WildSuit.ONE, WildSuit.THREE, WildSuit.THREE);
+
+
+//        private final Ordering      ORDER;
+//        private final CommunityCase CASE;
         private final WildSuit      HOLE_A, HOLE_B,
                                     FLOP_A, FLOP_B, FLOP_C;
 
-        public FlopCase(CommunityCase comCase,
-                         WildSuit holeA, WildSuit holeB,
-                         WildSuit flopA, WildSuit flopB, WildSuit flopC)
+        public FlopCase(//Ordering order,
+                        //CommunityCase comCase,
+                        WildSuit holeA, WildSuit holeB,
+                        WildSuit flopA, WildSuit flopB, WildSuit flopC)
         {
-            CASE = comCase;
+//            ORDER = order;
+//            CASE  = comCase;
             HOLE_A = holeA;
             HOLE_B = holeB;
             FLOP_A = flopA;
@@ -220,7 +248,7 @@ public class IsoFlop
 
         public String toString()
         {
-            return CASE + " -> " +
+            return //CASE + /*" :: " + ORDER +*/ " -> " +
                    "[" + HOLE_A + ", " + HOLE_B + "]" +
                    "[" + FLOP_A + ", " + FLOP_B + ", " + FLOP_C +"]";
 //            return CASE.toString();
@@ -232,7 +260,8 @@ public class IsoFlop
             if (o == null || getClass() != o.getClass()) return false;
 
             FlopCase flopCase = (FlopCase) o;
-            return CASE.equals(flopCase.CASE) &&
+            return //ORDER.equals(flopCase.ORDER) &&
+                   //CASE.equals(flopCase.CASE)   &&
                    HOLE_A == flopCase.HOLE_A &&
                    HOLE_B == flopCase.HOLE_B &&
                    FLOP_A == flopCase.FLOP_A &&
@@ -242,8 +271,9 @@ public class IsoFlop
 
         public int hashCode()
         {
-            int result;
-            result = CASE.hashCode();
+            int result = 0;
+            //result = 31 * result + ORDER.hashCode();
+            //result = 31 * result + CASE.hashCode();
             result = 31 * result + HOLE_A.hashCode();
             result = 31 * result + HOLE_B.hashCode();
             result = 31 * result + FLOP_A.hashCode();
