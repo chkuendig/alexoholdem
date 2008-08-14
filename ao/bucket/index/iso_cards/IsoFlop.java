@@ -1,6 +1,7 @@
 package ao.bucket.index.iso_cards;
 
 import ao.bucket.index.iso_case.CommunityCase;
+import ao.bucket.index.iso_case.FlopCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
@@ -209,80 +210,9 @@ public class IsoFlop
 
     public FlopCase flopCase()
     {
-        return new FlopCase(//ORDER,
-                            //CASE,
-                            HOLE_A.suit(), HOLE_B.suit(),
+        return new FlopCase(HOLE_A.suit(), HOLE_B.suit(),
                             FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
     }
-
-
-    //--------------------------------------------------------------------
-    public static class FlopCase
-    {
-        public static FlopCase CASE_12_113 =
-                new FlopCase(WildSuit.ONE, WildSuit.TWO,
-                             WildSuit.ONE, WildSuit.ONE, WildSuit.THREE);
-        public static FlopCase CASE_12_133 =
-                new FlopCase(WildSuit.ONE, WildSuit.TWO,
-                             WildSuit.ONE, WildSuit.THREE, WildSuit.THREE);
-
-
-//        private final Ordering      ORDER;
-//        private final CommunityCase CASE;
-        private final WildSuit      HOLE_A, HOLE_B,
-                                    FLOP_A, FLOP_B, FLOP_C;
-
-        public FlopCase(//Ordering order,
-                        //CommunityCase comCase,
-                        WildSuit holeA, WildSuit holeB,
-                        WildSuit flopA, WildSuit flopB, WildSuit flopC)
-        {
-//            ORDER = order;
-//            CASE  = comCase;
-            HOLE_A = holeA;
-            HOLE_B = holeB;
-            FLOP_A = flopA;
-            FLOP_B = flopB;
-            FLOP_C = flopC;
-        }
-
-        public String toString()
-        {
-            return //CASE + /*" :: " + ORDER +*/ " -> " +
-                   "[" + HOLE_A + ", " + HOLE_B + "]" +
-                   "[" + FLOP_A + ", " + FLOP_B + ", " + FLOP_C +"]";
-//            return CASE.toString();
-        }
-
-        public boolean equals(Object o)
-        {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            FlopCase flopCase = (FlopCase) o;
-            return //ORDER.equals(flopCase.ORDER) &&
-                   //CASE.equals(flopCase.CASE)   &&
-                   HOLE_A == flopCase.HOLE_A &&
-                   HOLE_B == flopCase.HOLE_B &&
-                   FLOP_A == flopCase.FLOP_A &&
-                   FLOP_B == flopCase.FLOP_B &&
-                   FLOP_C == flopCase.FLOP_C;
-        }
-
-        public int hashCode()
-        {
-            int result = 0;
-            //result = 31 * result + ORDER.hashCode();
-            //result = 31 * result + CASE.hashCode();
-            result = 31 * result + HOLE_A.hashCode();
-            result = 31 * result + HOLE_B.hashCode();
-            result = 31 * result + FLOP_A.hashCode();
-            result = 31 * result + FLOP_B.hashCode();
-            result = 31 * result + FLOP_C.hashCode();
-            return result;
-        }
-    }
-
 
 
     //--------------------------------------------------------------------
