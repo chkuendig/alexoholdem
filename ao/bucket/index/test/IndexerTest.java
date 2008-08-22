@@ -1,6 +1,6 @@
-package ao.bucket.index;
+package ao.bucket.index.test;
 
-import ao.bucket.index.flop.PostPairIndexer;
+import ao.bucket.index.flop.PostSuitedIndexer;
 import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.IsoHole;
 import ao.bucket.index.iso_case.FlopCase;
@@ -8,7 +8,6 @@ import ao.bucket.index.iso_case.HoleCase;
 import ao.bucket.index.iso_case.HoleCase.Type;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.CardSequence;
 import ao.util.stats.Combiner;
 
 import java.util.*;
@@ -16,19 +15,8 @@ import java.util.*;
 /**
  *
  */
-public class IsoIndexer implements Indexer
+public class IndexerTest
 {
-    //--------------------------------------------------------------------
-    public int indexOf(CardSequence cards)
-    {
-        //IsoHole hole = new IsoHole( cards.hole() );
-
-        //System.out.println(hole);
-
-        return 0;
-    }
-
-
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
@@ -40,7 +28,7 @@ public class IsoIndexer implements Indexer
         {
             Hole    hole    = Hole.newInstance(
                                     holeCards[0], holeCards[1]);
-            if (HoleCase.newInstance(hole).type() != Type.PAIR) continue;
+            if (HoleCase.newInstance(hole).type() != Type.SUITED) continue;
 
             retrieveOrCreate( isoHoles, hole.isomorphism() )
                     .add( holeCards );
@@ -83,32 +71,33 @@ public class IsoIndexer implements Indexer
             }
 
             System.out.println(flopCases.size());
-//            break;
+            break;
         }
 
-        BitSet indexes = new BitSet();
+//        BitSet indexes = new BitSet();
         System.out.println("------------------------------");
         for (Map.Entry<FlopCase, List<IsoFlop>> e :
                 flopCases.entrySet())
         {
-            //if (! e.getKey().equals(FlopCase.CASE_12_112)) continue;
+            if (! e.getKey().equals(FlopCase.CASE_11_122)) continue;
 
             System.out.println(e.getKey() + " :: " + e.getValue().size());
 
             for (IsoFlop flop : e.getValue())
             {
                 int index =
-                        new PostPairIndexer().indexOf(e.getKey(), flop);
-                if (indexes.get(index))
-                {
-                    System.out.println("WTF!?!?: " + flop);
-                }
-                indexes.set( index );
-//                System.out.println(index);
+                        new PostSuitedIndexer().indexOf(
+                                null, e.getKey(), flop);
+//                if (indexes.get(index))
+//                {
+//                    System.out.println("WTF!?!?: " + flop);
+//                }
+//                indexes.set( index );
+                System.out.println(index);
             }
-//            break;
+            break;
         }
-        System.out.println(indexes.nextClearBit(0));
+//        System.out.println("free index: " + indexes.nextClearBit(0));
     }
 
 

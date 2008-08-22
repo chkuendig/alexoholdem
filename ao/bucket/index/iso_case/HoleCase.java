@@ -48,11 +48,7 @@ public class HoleCase
 
 
     //--------------------------------------------------------------------
-//    public int members()
-//    {
-//        return type.members();
-//    }
-    public int index()
+    public int subIndex()
     {
         return index;
     }
@@ -88,13 +84,14 @@ public class HoleCase
         return result;
     }
 
-    
+
     //--------------------------------------------------------------------
     public static enum Type
     {
         PAIR(13), SUITED(78), UNSUITED(78);
 
         private final int MEMBERS;
+
         private Type(int members)
         {
             MEMBERS = members;
