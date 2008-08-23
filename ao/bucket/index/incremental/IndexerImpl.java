@@ -4,6 +4,7 @@ import ao.bucket.index.Indexer;
 import ao.bucket.index.flop.FlopSubIndexer;
 import ao.bucket.index.flop.PostPairFlop;
 import ao.bucket.index.flop.PostSuitedFlop;
+import ao.bucket.index.flop.PostUnsuitedFlop;
 import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.IsoHole;
 import ao.bucket.index.iso_case.HoleCase.Type;
@@ -40,7 +41,7 @@ public class IndexerImpl implements Indexer
                  ? PostPairFlop.values()
                  : isoHole.holeCase().type() == Type.SUITED
                    ? PostSuitedFlop.values()
-                   : null);
+                   : PostUnsuitedFlop.values());
 
         for (FlopSubIndexer subIndexer : subIndexers)
         {
@@ -57,7 +58,8 @@ public class IndexerImpl implements Indexer
 
 //                return subIndexer.subIndex( flop );
             }
-            offset += subIndexer.size();
+            offset += subIndexer.size() *
+                        isoHole.holeCase().type().members();
         }
 
         return -1;

@@ -8,6 +8,7 @@ import ao.bucket.index.iso_case.HoleCase.Type;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.util.stats.Combiner;
 
@@ -42,7 +43,7 @@ public class GenericIndexerTest
             Hole hole = Hole.newInstance(
                             holeCards[0], holeCards[1]);
             if (HoleCase.newInstance(hole).type() !=
-                    Type.SUITED) continue;
+                    Type.UNSUITED) continue;
 
             swap(cards, holeCards[1].ordinal(), 51  );
             swap(cards, holeCards[0].ordinal(), 51-1);
@@ -75,7 +76,7 @@ public class GenericIndexerTest
                     hole.isomorphism()
                         .flop( hole, flopCards );
 //            if (! isoFlop.flopCase().equals(
-//                    FlopCase.CASE_11_3WW)) continue;
+//                    FlopCase.CASE_12_113)) continue;
 
             Arrays.sort(flopCards, Card.BY_RANK_DSC);
 
@@ -83,10 +84,14 @@ public class GenericIndexerTest
             swap(cards, flopCards[1].ordinal(), 51-3);
             swap(cards, flopCards[0].ordinal(), 51-4);
 
-            int index = indexer.indexOf(new LiteralCardSequence(
-                    hole, new Community(
-                            flopCards[0], flopCards[1], flopCards[2])));
+            CardSequence cardSeq =
+                    new LiteralCardSequence(
+                            hole, new Community(
+                            flopCards[0], flopCards[1], flopCards[2]));
+            int index = indexer.indexOf(cardSeq);
             flopGapper.set(index);
+
+//            if (index == 0) System.out.println(cardSeq);
 
             swap(cards, flopCards[0].ordinal(), 51-4);
             swap(cards, flopCards[1].ordinal(), 51-3);

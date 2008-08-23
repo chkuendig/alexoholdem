@@ -24,42 +24,59 @@ public class FlopIsoUtils
 
 
     //--------------------------------------------------------------------
-    public static int fullOffsetA(IsoFlop isoFlop)
+    public static int abOffsetA(IsoFlop isoFlop)
     {
-        return offsetA(isoFlop) +
-                ((isoFlop.holeB().ordinal() <
-                  isoFlop.flopA().ordinal()) ? -1 : 0);
+        return aOffsetA(isoFlop) +
+               bOffsetA(isoFlop);
     }
 
-    public static int fullOffsetB(IsoFlop isoFlop)
+    public static int abOffsetB(IsoFlop isoFlop)
     {
-        return offsetB(isoFlop) +
-                ((isoFlop.holeB().ordinal() <
-                  isoFlop.flopB().ordinal()) ? -1 : 0);
+        return aOffsetB(isoFlop) +
+               bOffsetB(isoFlop);
     }
 
-    public static int fullOffsetC(IsoFlop isoFlop)
+    public static int abOffsetC(IsoFlop isoFlop)
     {
-        return offsetC(isoFlop) +
-                ((isoFlop.holeB().ordinal() <
-                  isoFlop.flopC().ordinal()) ? -1 : 0);
+        return aOffsetC(isoFlop) +
+               bOffsetC(isoFlop);
     }
 
 
     //--------------------------------------------------------------------
-    public static int offsetA(IsoFlop isoFlop)
+    public static int bOffsetA(IsoFlop isoFlop)
+    {
+        return (isoFlop.holeB().ordinal() <
+                isoFlop.flopA().ordinal()) ? -1 : 0;
+    }
+
+    public static int bOffsetB(IsoFlop isoFlop)
+    {
+        return (isoFlop.holeB().ordinal() <
+                isoFlop.flopB().ordinal()) ? -1 : 0;
+    }
+
+    public static int bOffsetC(IsoFlop isoFlop)
+    {
+        return (isoFlop.holeB().ordinal() <
+                isoFlop.flopC().ordinal()) ? -1 : 0;
+    }
+
+
+    //--------------------------------------------------------------------
+    public static int aOffsetA(IsoFlop isoFlop)
     {
         return (isoFlop.holeA().ordinal() <
                 isoFlop.flopA().ordinal()) ? -1 : 0;
     }
 
-    public static int offsetB(IsoFlop isoFlop)
+    public static int aOffsetB(IsoFlop isoFlop)
     {
         return (isoFlop.holeA().ordinal() <
                 isoFlop.flopB().ordinal()) ? -1 : 0;
     }
 
-    public static int offsetC(IsoFlop isoFlop)
+    public static int aOffsetC(IsoFlop isoFlop)
     {
         return (isoFlop.holeA().ordinal() <
                 isoFlop.flopC().ordinal()) ? -1 : 0;

@@ -12,21 +12,21 @@ import static ao.util.stats.Combo.colex;
 public enum PostPairFlop implements FlopSubIndexer
 {
     //--------------------------------------------------------------------
-    // [ONE, TWO][ONE, ONE, TWO] :: 0 .. 791
+    // [ONE, TWO][ONE, ONE, TWO] :: 792 x 13 = 10296
     OT_OOT(792, FlopCase.CASE_12_112){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(a + offsetA(flop),
-                         b + offsetB(flop)) * 12 +
-                   (c + offsetC(flop));
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 12 +
+                   (c + bOffsetC(flop));
         }
     },
 
     // [ONE, TWO][ONE, ONE, ONE] :: 0 .. 219
     OT_OOO(220, FlopCase.CASE_12_111){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(a + offsetA(flop),
-                         b + offsetB(flop),
-                         c + offsetC(flop));
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop),
+                         c + aOffsetC(flop));
         }
     },
 
@@ -47,7 +47,7 @@ public enum PostPairFlop implements FlopSubIndexer
     // [ONE, TWO][ONE, WILD, WILD] :: 0 .. 155
     OT_OWW(156, FlopCase.CASE_12_1WW){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return (a + offsetA(flop)) * 13 + b;
+            return (a + aOffsetA(flop)) * 13 + b;
         }
     },
 
@@ -55,37 +55,37 @@ public enum PostPairFlop implements FlopSubIndexer
     OT_ORF(936, FlopCase.CASE_12_134){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
             return sortColex(b, c) * 12 +
-                   (a + offsetA(flop));
+                   (a + aOffsetA(flop));
         }
     },
 
     // [ONE, TWO][ONE, TWO, THREE] :: 0 .. 857
     OT_OTR(858, FlopCase.CASE_12_123){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return sortColex(a + offsetA(flop),
-                             b + offsetB(flop)) * 13 + c;
+            return sortColex(a + aOffsetA(flop),
+                             b + aOffsetB(flop)) * 13 + c;
         }
     },
 
     // [WILD, WILD][TWO, WILD, WILD] :: 0 .. 155
     WW_TWW(156, FlopCase.CASE_WW_2WW){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return (b + offsetA(flop)) * 13 + a;
+            return (b + aOffsetB(flop)) * 13 + a;
         }
     },
 
     // [ONE, TWO][ONE, THREE, THREE] :: 0 .. 935
     OT_ORR(936, FlopCase.CASE_12_133){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(b, c) * 12 + (a + offsetA(flop));
+            return colex(b, c) * 12 + (a + aOffsetA(flop));
         }
     },
 
     // [ONE, TWO][ONE, ONE, THREE] :: 0 .. 857
     OT_OOR(858, FlopCase.CASE_12_113){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(a + offsetA(flop),
-                         b + offsetB(flop)) * 13 + c;
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 13 + c;
         }
     };
 

@@ -17,7 +17,7 @@ public enum PostSuitedFlop implements FlopSubIndexer
     OO_OTT(858, FlopCase.CASE_11_122){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
             return sortColex(b, c) * 11 +
-                   (fullOffsetA(flop) + a);
+                   (abOffsetA(flop) + a);
         }
     },
 
@@ -40,8 +40,8 @@ public enum PostSuitedFlop implements FlopSubIndexer
     //[ONE, ONE][ONE, ONE, TWO]	:: 715 x 78 = 55770
     OO_OOT(715, FlopCase.CASE_11_112){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(a + fullOffsetA(flop),
-                         b + fullOffsetB(flop)) * 13 + c;
+            return colex(a + abOffsetA(flop),
+                         b + abOffsetB(flop)) * 13 + c;
         }
     },
 
@@ -49,7 +49,7 @@ public enum PostSuitedFlop implements FlopSubIndexer
     OO_OTR(858, FlopCase.CASE_11_123){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
             return sortColex(b, c) * 11 +
-                   (a + fullOffsetA(flop));
+                   (a + abOffsetA(flop));
         }
     },
 
@@ -57,7 +57,7 @@ public enum PostSuitedFlop implements FlopSubIndexer
     //[ONE, ONE][ONE, WILD, WILD] :: 143 x 78 = 11154
     OO_OWW(143, FlopCase.CASE_11_1WW){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return (a + fullOffsetA(flop)) * 13 + b;
+            return (a + abOffsetA(flop)) * 13 + b;
         }
     },
     
@@ -89,9 +89,9 @@ public enum PostSuitedFlop implements FlopSubIndexer
     //[ONE, ONE][ONE, ONE, ONE] :: 165 x 78 = 12870
     OO_OOO(165, FlopCase.CASE_11_111){
         public int subIndex(IsoFlop flop, int a, int b, int c) {
-            return colex(a + fullOffsetA(flop),
-                         b + fullOffsetB(flop),
-                         c + fullOffsetC(flop));
+            return colex(a + abOffsetA(flop),
+                         b + abOffsetB(flop),
+                         c + abOffsetC(flop));
         }
     },;
 
