@@ -3,20 +3,41 @@ package ao.bucket.index.iso_cards;
 import ao.holdem.model.card.Rank;
 
 /**
- *
+ * Date: Aug 23, 2008
+ * Time: 2:55:42 PM
  */
-public class WildCard
+public class WildCard implements RankedSuited<Rank, WildSuit>
 {
+    //--------------------------------------------------------------------
+    public static WildCard newInstance(
+            Rank     rank,
+            WildSuit suit)
+    {
+        return new WildCard(rank, suit);
+    }
+
+
     //--------------------------------------------------------------------
     private final Rank     RANK;
     private final WildSuit SUIT;
 
 
     //--------------------------------------------------------------------
-    public WildCard(Rank rank, WildSuit suit)
+    private WildCard(Rank     rank,
+                     WildSuit suit)
     {
         RANK = rank;
         SUIT = suit;
+    }
+
+
+    //--------------------------------------------------------------------
+    public WildMarkedCard mark(int leftRankMatches)
+    {
+        return WildMarkedCard.newInstance(
+                RANK,
+                WildMarkedSuit.newInstance(
+                        SUIT, leftRankMatches));
     }
 
 
@@ -36,26 +57,5 @@ public class WildCard
     public String toString()
     {
         return RANK + " of " + SUIT;
-    }
-
-
-    //--------------------------------------------------------------------
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WildCard wildCard = (WildCard) o;
-
-        return RANK == wildCard.RANK &&
-               SUIT == wildCard.SUIT;
-    }
-
-    public int hashCode()
-    {
-        int result;
-        result = RANK.hashCode();
-        result = 31 * result + SUIT.hashCode();
-        return result;
     }
 }
