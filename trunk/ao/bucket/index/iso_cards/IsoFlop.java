@@ -1,6 +1,5 @@
 package ao.bucket.index.iso_cards;
 
-import ao.bucket.index.iso_case.CommunityCase;
 import ao.bucket.index.iso_case.FlopCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
@@ -16,12 +15,8 @@ import java.util.Comparator;
 public class IsoFlop
 {
     //--------------------------------------------------------------------
-    //private final Card          CARDS[];
-//    private final Ordering      HOLE_ORDER;
-    private final Ordering      ORDER;
-    private final CommunityCase CASE;
-    private final WildCard      HOLE_A, HOLE_B,
-                                FLOP_A, FLOP_B, FLOP_C;
+    private final WildMarkedCard HOLE_A, HOLE_B;
+    private final WildCard       FLOP_A, FLOP_B, FLOP_C;
 
 
     //--------------------------------------------------------------------
@@ -29,23 +24,16 @@ public class IsoFlop
                    Card     hole[],
                    Card...  flop)
     {
-        //CARDS = Arrays.copyOf(hole, hole.length + flop.length);
-        //System.arraycopy(flop, 0, CARDS, hole.length, flop.length);
-
-//        HOLE_ORDER = holeOrder;
-
-        CASE  = new CommunityCase(flop, hole);
-
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
-        ORDER            = refined;
 
         WildCard wildHole[] = new WildCard[]{
-                asWild(refined, hole[ 0 ]),
-                asWild(refined, hole[ 1 ])};
+                asWild(refined, hole[0]),
+                asWild(refined, hole[1])};
         sort(wildHole);
-        HOLE_A = wildHole[ 0 ];
-        HOLE_B = wildHole[ 1 ];
+        HOLE_A = wildHole[ 0 ].mark(0);
+        HOLE_B = wildHole[ 1 ].mark(
+                    countLeftRankMatches(hole, hole[1], 1));
 
         WildCard wildFlop[] = new WildCard[]{
                 asWild(refined, flop[ 0 ]),
@@ -57,10 +45,13 @@ public class IsoFlop
         FLOP_C = wildFlop[ 2 ];
     }
 
-    private void sort(WildCard wildCards[])
+    private <S extends Comparable<S>,
+             T extends Comparable<T>>
+            void sort(RankedSuited<S, T> wildCards[])
     {
-        Arrays.sort(wildCards, new Comparator<WildCard>()  {
-            public int compare(WildCard a, WildCard b) {
+        Arrays.sort(wildCards, new Comparator<RankedSuited<S, T>>()  {
+            public int compare(RankedSuited<S, T> a,
+                               RankedSuited<S, T> b) {
                 int suitCmp = a.suit().compareTo( b.suit() );
                 return (suitCmp == 0
                            ? a.rank().compareTo( b.rank() )
@@ -69,10 +60,28 @@ public class IsoFlop
         });
     }
 
-    private WildCard asWild(Ordering order, Card card)
+
+    //--------------------------------------------------------------------
+    private WildCard asWild(
+            Ordering order, Card card)
     {
-        return new WildCard(card.rank(),
-                            order.asWild(card.suit()));
+        return WildCard.newInstance(
+                card.rank(),
+                order.asWild( card.suit() ));
+    }
+
+    private int countLeftRankMatches(
+            Card in[], Card of, int upTo)
+    {
+        int count = 0;
+        for (int i = 0; i < upTo; i++)
+        {
+            if (in[i].rank() == of.rank())
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
 
@@ -165,8 +174,8 @@ public class IsoFlop
 //                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
 //        return CASE +  " -> " +
 //                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
-        return CASE +  " -> " +
-                Arrays.toString(new WildCard[]{HOLE_A, HOLE_B}) +
+        return //CASE +  " -> " +
+                Arrays.toString(new WildMarkedCard[]{HOLE_A, HOLE_B}) +
                 Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
     }
 
@@ -210,19 +219,15 @@ public class IsoFlop
 
     public FlopCase flopCase()
     {
-        return new FlopCase(HOLE_A.suit(), HOLE_B.suit(),
-                            FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
+        return FlopCase.newInstance(
+                HOLE_A.suit(), HOLE_B.suit(),
+                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
     }
 
 
     //--------------------------------------------------------------------
     private static Ordering suitedPlus(Suit a, Suit b, Suit c)
     {
-//        return a == b
-//               ? Ordering.partSuited(a, b, c)
-//               : a == c
-//                 ? Ordering.partSuited(a, c, b)
-//                 : Ordering.partSuited(b, c, a);
         return a == b
                ? Ordering.partSuited(a, c)
                : a == c

@@ -1,9 +1,7 @@
 package ao.holdem.model.card;
 
-import ao.bucket.index.iso_cards.IsoHole;
+import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.Ordering;
-import ao.bucket.index.iso_cards.WildCard;
-import ao.bucket.index.iso_case.HoleCase;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -31,6 +29,10 @@ public class Hole
         }
     }
 
+    private static final int PAIR_COUNT             = 13;
+    private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
+    public  static final int SUIT_ISOMORPHIC_COUNT  = 169;
+
 
     //--------------------------------------------------------------------
     public static Hole newInstance(Card a, Card b)
@@ -40,8 +42,10 @@ public class Hole
 
 
     //--------------------------------------------------------------------
-    private Card A;
-    private Card B;
+    private final Card     A;
+    private final Card     B;
+    private final int      ISO_INDEX;
+    private final Ordering ORDERING;
 
 
     //--------------------------------------------------------------------
@@ -50,11 +54,61 @@ public class Hole
         assert a != null && b != null;
         assert a != b;
 
-        A = a;
-        B = b;
+        A         = a;
+        B         = b;
+        ISO_INDEX = computeSuitIsomorphicIndex();
+        ORDERING  = computeOrdering();
     }
 
-    
+
+    //--------------------------------------------------------------------
+    private int computeSuitIsomorphicIndex()
+    {
+        if (paired())
+        {
+            return A.rank().ordinal();
+        }
+        else
+        {
+            int hi  = hi().rank().ordinal();
+            int lo  = lo().rank().ordinal();
+
+            int subIndex = hi * (hi - 1) / 2 + lo;
+
+            return (suited()
+                    ? PAIR_COUNT
+                    : PAIR_PLUS_SUITED_COUNT) +
+                   subIndex;
+        }
+    }
+
+    private Ordering computeOrdering()
+    {
+        return paired()
+                ? Ordering.pair(A.suit(), B.suit())
+                : suited()
+                  ? Ordering.suited  (A.suit())
+                  : Ordering.unsuited(hi().suit(), lo().suit());
+    }
+
+
+    //--------------------------------------------------------------------
+    public Card a()
+    {
+        return A;
+    }
+
+    public Card b()
+    {
+        return B;
+    }
+
+    public int suitIsomorphicIndex()
+    {
+        return ISO_INDEX;
+    }
+
+
     //--------------------------------------------------------------------
     public boolean ranks(Rank rankA, Rank rankB)
     {
@@ -90,17 +144,6 @@ public class Hole
 
 
     //--------------------------------------------------------------------
-    public Card a()
-    {
-        return A;
-    }
-    public Card b()
-    {
-        return B;
-    }
-
-
-    //--------------------------------------------------------------------
     public Card hi()
     {
         assert !paired();
@@ -118,27 +161,12 @@ public class Hole
     {
         return new Card[]{A, B};
     }
-
+    
 
     //--------------------------------------------------------------------
-    public IsoHole isomorphism()
+    public IsoFlop isoFlop(Card flop[])
     {
-        Card     a     = paired() ? A : hi();
-        Card     b     = paired() ? B : lo();
-        Ordering order = ordering();
-
-        return new IsoHole(HoleCase.newInstance(this),
-                           new WildCard(a.rank(), order.asWild(a.suit())),
-                           new WildCard(b.rank(), order.asWild(b.suit())));
-    }
-
-    public Ordering ordering()
-    {
-        return paired()
-                ? Ordering.pair(A.suit(), B.suit())
-                : suited()
-                  ? Ordering.suited  (A.suit())
-                  : Ordering.unsuited(hi().suit(), lo().suit());
+        return new IsoFlop(ORDERING, asArray(), flop);
     }
 
 
@@ -148,28 +176,21 @@ public class Hole
         return "[" + A + ", " + B + "]";
     }
 
-    public boolean equals(Object o)
+    @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass"})
+    public boolean equals(Object obj)
     {
-        //if (this == o) return true;
-        if (o == null ||
-            getClass() != o.getClass()) return false;
-
-        Hole hole = (Hole) o;
-        return A == hole.A && B == hole.B ||
-               A == hole.B && B == hole.A;
+        return this == obj;
     }
 
     public int hashCode()
     {
-        int result;
-        result  = 31 * A.hashCode();
-        result += 31 * B.hashCode();
-        return result;
+        return A.ordinal() * 52 + B.ordinal();
     }
 
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
+
     public static class Binding extends TupleBinding
     {
         public Hole entryToObject(TupleInput input)
