@@ -88,7 +88,39 @@ public class FlopCase
     public static FlopCase CASE_11_111 =
             new FlopCase(WildSuit.ONE, WildSuit.ONE,
                          WildSuit.ONE, WildSuit.ONE, WildSuit.ONE);
-    
+
+    public static FlopCase CASE_12_223 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.TWO, WildSuit.TWO, WildSuit.THREE);
+
+    public static FlopCase CASE_12_233 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.TWO, WildSuit.THREE, WildSuit.THREE);
+
+    public static FlopCase CASE_12_234 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.TWO, WildSuit.THREE, WildSuit.FOUR);
+
+    public static FlopCase CASE_12_2WW =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.TWO, WildSuit.WILD, WildSuit.WILD);
+
+    public static FlopCase CASE_12_334 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.THREE, WildSuit.THREE, WildSuit.FOUR);
+
+    public static FlopCase CASE_12_333 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.THREE, WildSuit.THREE, WildSuit.THREE);
+
+    public static FlopCase CASE_12_222 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.TWO, WildSuit.TWO, WildSuit.TWO);
+
+    public static FlopCase CASE_12_122 =
+            new FlopCase(WildSuit.ONE, WildSuit.TWO,
+                         WildSuit.ONE, WildSuit.TWO, WildSuit.TWO);
+
 
     //--------------------------------------------------------------------
     private final WildSuit HOLE_A, HOLE_B,
