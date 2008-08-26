@@ -1,11 +1,12 @@
 package ao.bucket.index.test;
 
 import ao.bucket.index.Indexer;
-import ao.bucket.index.incremental.IndexerImpl;
+import ao.bucket.index.incremental.FlopIndexerImpl;
 import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_case.FlopCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import static ao.util.data.Arr.swap;
 import ao.util.stats.Combiner;
 
 import java.util.LinkedHashSet;
@@ -22,7 +23,7 @@ public class GenericIndexerTest
     {
         GenericIndexerTest indexerTest = new GenericIndexerTest();
 
-        indexerTest.test( new IndexerImpl() );
+        indexerTest.test( new FlopIndexerImpl() );
     }
 
 
@@ -106,14 +107,5 @@ public class GenericIndexerTest
         }
 
         System.out.println(hole);
-    }
-
-
-    //--------------------------------------------------------------------
-    private static void swap(Card cards[], int i, int j)
-    {
-        Card tmp = cards[i];
-        cards[i] = cards[j];
-        cards[j] = tmp;
     }
 }

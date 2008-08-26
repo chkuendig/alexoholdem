@@ -10,7 +10,7 @@ public enum PostUnsuitedFlop //implements FlopSubIndexer
 {
     //--------------------------------------------------------------------
 //    // [ONE, TWO][TWO, TWO, THREE] :: 858 x 78 = 66924
-//    OO_OTT(858, FlopCase.CASE_12_223) {
+//    OT_TTR(858, FlopCase.CASE_12_223) {
 //        public int subIndex(IsoFlop flop, int a, int b, int c) {
 //            return sortColex(a + bOffsetA(flop),
 //                             b + bOffsetB(flop)) * 13 + c;
@@ -138,19 +138,6 @@ public enum PostUnsuitedFlop //implements FlopSubIndexer
 //        }
 //    },
      ;
-
-
-    //--------------------------------------------------------------------
-//    public static final Map<FlopCase, PostSuitedFlop> INDEX =
-//            new LinkedHashMap<FlopCase, PostSuitedFlop>(){{
-//                //for (PostPairFlop ppf : values())
-//                for (PostSuitedFlop ppf : Arrays.asList(
-//                        OO_OTT, OO_TTR, OO_TTT, OO_OOT, OO_OTR,
-//                        OO_OWW, OO_RWW, OO_TRF, OO_WWW, OO_OOO))
-//                {
-//                    put(ppf.CASE, ppf);
-//                }
-//            }};
 
 
     //--------------------------------------------------------------------

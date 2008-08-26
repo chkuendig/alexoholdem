@@ -1,191 +1,295 @@
 package ao.bucket.index.iso_case;
 
+import static ao.bucket.index.flop.FlopIsoUtils.*;
+import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.WildMarkedSuit;
 import ao.bucket.index.iso_cards.WildSuit;
+import static ao.util.stats.Combo.colex;
 
 /**
  * Date: Aug 14, 2008
  * Time: 3:41:50 AM
  */
-public class FlopCase
+public enum FlopCase
 {
     //--------------------------------------------------------------------
     //[ONE_0, ONE_0][ONE, TWO, TWO]
-    public static FlopCase OO_OTT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.ONE, WildSuit.TWO, WildSuit.TWO);
+    OO_OTT(858) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(b, c) * 11 +
+                   (abOffsetA(flop) + a);
+        }
+    },
 
     //[ONE_0, ONE_0][TWO, TWO, THREE]
-    public static FlopCase OO_TTR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.THREE);
+    OO_TTR(1014) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(a, b) * 13 + c;
+        }
+    },
+
 
     //[ONE_0, ONE_0][TWO, TWO, TWO]
-    public static FlopCase OO_TTT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.TWO);
+    OO_TTT(286) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a, b, c);
+        }
+    },
 
     //[ONE_0, ONE_0][ONE, ONE, TWO]
-    public static FlopCase OO_OOT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.TWO);
+    OO_OOT(715){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + abOffsetA(flop),
+                         b + abOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, ONE_0][ONE, TWO, THREE]
-    public static FlopCase OO_OTR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.ONE, WildSuit.TWO, WildSuit.THREE);
+    OO_OTR(858){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(b, c) * 11 +
+                   (a + abOffsetA(flop));
+        }
+    },
 
     //[ONE_0, ONE_0][ONE, WILD, WILD]
-    public static FlopCase OO_OWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.ONE, WildSuit.WILD, WildSuit.WILD);
+    OO_OWW(143){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return (a + abOffsetA(flop)) * 13 + b;
+        }
+    },
 
     //[ONE_0, ONE_0][THREE, WILD, WILD]
-    public static FlopCase OO_RWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.THREE, WildSuit.WILD, WildSuit.WILD);
+    OO_RWW(156){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return (b + (a < b ? -1 : 0)) * 13 +
+                    a;
+        }
+    },
 
     //[ONE_0, ONE_0][TWO, THREE, FOUR]
-    public static FlopCase OO_TRF =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.TWO, WildSuit.THREE, WildSuit.FOUR);
+    OO_TRF(286){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(c, b, a);
+        }
+    },
 
     //[ONE_0, ONE_0][WILD, WILD, WILD]
-    public static FlopCase OO_WWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.WILD, WildSuit.WILD, WildSuit.WILD);
+    OO_WWW(13){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return a;
+        }
+    },
 
     //[ONE_0, ONE_0][ONE, ONE, ONE]
-    public static FlopCase OO_OOO =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.ONE_0,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.ONE);
+    OO_OOO(165){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + abOffsetA(flop),
+                         b + abOffsetB(flop),
+                         c + abOffsetC(flop));
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, ONE, THREE]
-    public static FlopCase P_OT_OOR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.THREE);
+    P_OT_OOR(858){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, THREE, THREE]
-    public static FlopCase P_OT_ORR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.THREE, WildSuit.THREE);
+    P_OT_ORR(936){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(b, c) * 12 + (a + aOffsetA(flop));
+        }
+    },
 
     //[WILD_0, WILD_1][TWO, WILD, WILD]
-    public static FlopCase P_WW_TWW =
-            new FlopCase(WildMarkedSuit.WILD_0, WildMarkedSuit.WILD_1,
-                         WildSuit.TWO, WildSuit.WILD, WildSuit.WILD);
+    P_WW_TWW(156){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return (b + aOffsetB(flop)) * 13 + a;
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, TWO, THREE]
-    public static FlopCase P_OT_OTR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.TWO, WildSuit.THREE);
+    P_OT_OTR(858){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(a + aOffsetA(flop),
+                             b + aOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, THREE, FOUR]
-    public static FlopCase P_OT_ORF =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.THREE, WildSuit.FOUR);
+    P_OT_ORF(936){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(b, c) * 12 +
+                   (a + aOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, WILD, WILD]
-    public static FlopCase P_OT_OWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.WILD, WildSuit.WILD);
+    P_OT_OWW(156){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return (a + aOffsetA(flop)) * 13 + b;
+        }
+    },
 
     //[WILD_0, WILD_1][TWO, TWO, THREE]
-    public static FlopCase P_WW_TTR =
-            new FlopCase(WildMarkedSuit.WILD_0, WildMarkedSuit.WILD_1,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.THREE);
+    P_WW_TTR(1014) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(a, b) * 13 + c;
+        }
+    },
 
     //[WILD_0, WILD_1][TWO, TWO, TWO]
-    public static FlopCase P_WW_TTT =
-            new FlopCase(WildMarkedSuit.WILD_0, WildMarkedSuit.WILD_1,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.TWO);
+    P_WW_TTT(286){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a, b, c);
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, ONE, ONE]
-    public static FlopCase P_OT_OOO =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.ONE);
+    P_OT_OOO(220){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop),
+                         c + aOffsetC(flop));
+        }
+    },
 
     //[ONE_0, TWO_1][ONE, ONE, TWO]
-    public static FlopCase P_OT_OOT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_1,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.TWO);
+    P_OT_OOT(792){
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 12 +
+                   (c + bOffsetC(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][TWO, TWO, THREE]
-    public static FlopCase OT_TTR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.THREE);
+    OT_TTR(858) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(a + bOffsetA(flop),
+                             b + bOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, TWO, THREE]
-    public static FlopCase OT_OTR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.TWO, WildSuit.THREE);
+    OT_OTR(871) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(a + aOffsetA(flop),
+                             b + bOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_0][TWO, THREE, THREE]
-    public static FlopCase OT_TRR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.THREE, WildSuit.THREE);
+    OT_TRR(936) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(b, c) * 12 +
+                   (a + bOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][TWO, THREE, FOUR]
-    public static FlopCase OT_TRF =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.TWO, WildSuit.THREE, WildSuit.FOUR);
+    OT_TRF(936) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(b, c) * 12 +
+                   (a + bOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][TWO, WILD, WILD]
-    public static FlopCase OT_TWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.TWO, WildSuit.WILD, WildSuit.WILD);
+    OT_TWW(156) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return b * 12 +
+                   (a + bOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, THREE, THREE]
-    public static FlopCase OT_ORR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.THREE, WildSuit.THREE);
+    OT_ORR(936) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(b, c) * 12 + (a + aOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, ONE, THREE]
-    public static FlopCase OT_OOR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.THREE);
+    OT_OOR(858) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, THREE, FOUR]
-    public static FlopCase OT_ORF =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.THREE, WildSuit.FOUR);
+    OT_ORF(936) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return sortColex(b, c) * 12 +
+                   (a + aOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, WILD, WILD]
-    public static FlopCase OT_OWW =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.WILD, WildSuit.WILD);
+    OT_OWW(156) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return (a + aOffsetA(flop)) * 13 + b;
+        }
+    },
 
     //[ONE_0, TWO_0][THREE, THREE, FOUR]
-    public static FlopCase OT_RRF =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.THREE, WildSuit.THREE, WildSuit.FOUR);
+    OT_RRF(1014) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a, b) * 13 + c;
+        }
+    },
 
     //[ONE_0, TWO_0][THREE, THREE, THREE]
-    public static FlopCase OT_RRR =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.THREE, WildSuit.THREE, WildSuit.THREE);
+    OT_RRR(286) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a, b, c);
+        }
+    },
 
     //[ONE_0, TWO_0][TWO, TWO, TWO]
-    public static FlopCase OT_TTT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.TWO, WildSuit.TWO, WildSuit.TWO);
+    OT_TTT(220) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + bOffsetA(flop),
+                         b + bOffsetB(flop),
+                         c + bOffsetC(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, TWO, TWO]
-    public static FlopCase OT_OTT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.TWO, WildSuit.TWO);
+    OT_OTT(792) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(b + bOffsetB(flop),
+                         c + bOffsetC(flop)) * 12 +
+                    (a + aOffsetA(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, ONE, TWO]
-    public static FlopCase OT_OOT =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.TWO);
+    OT_OOT(792) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop)) * 12 +
+                    (c + bOffsetC(flop));
+        }
+    },
 
     //[ONE_0, TWO_0][ONE, ONE, ONE]
-    public static FlopCase OT_OOO =
-            new FlopCase(WildMarkedSuit.ONE_0, WildMarkedSuit.TWO_0,
-                         WildSuit.ONE, WildSuit.ONE, WildSuit.ONE);
+    OT_OOO(220) {
+        public int subIndex(IsoFlop flop, int a, int b, int c) {
+            return colex(a + aOffsetA(flop),
+                         b + aOffsetB(flop),
+                         c + aOffsetC(flop));
+        }
+    };
 
-    
+    public static final FlopCase VALUES[] = values();
+
+
     //--------------------------------------------------------------------
     public static FlopCase newInstance(
             WildMarkedSuit holeA, WildMarkedSuit holeB,
@@ -299,52 +403,28 @@ public class FlopCase
 
 
     //--------------------------------------------------------------------
-    private final WildMarkedSuit HOLE_A, HOLE_B;
-    private final WildSuit       FLOP_A, FLOP_B, FLOP_C;
+    private final int SIZE;
 
-
-    //--------------------------------------------------------------------
-    private FlopCase(WildMarkedSuit holeA, WildMarkedSuit holeB,
-                     WildSuit flopA, WildSuit flopB, WildSuit flopC)
+    private FlopCase(int size)
     {
-        HOLE_A = holeA;
-        HOLE_B = holeB;
-        FLOP_A = flopA;
-        FLOP_B = flopB;
-        FLOP_C = flopC;
+        SIZE = size;
     }
 
 
     //--------------------------------------------------------------------
-    public String toString()
+    public int size()
     {
-        return "[" + HOLE_A + ", " + HOLE_B + "]" +
-               "[" + FLOP_A + ", " + FLOP_B + ", " + FLOP_C +"]";
+        return SIZE;
     }
 
 
     //--------------------------------------------------------------------
-    public boolean equals(Object o)
+    public int subIndex(IsoFlop flop)
     {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FlopCase flopCase = (FlopCase) o;
-        return HOLE_A == flopCase.HOLE_A &&
-               HOLE_B == flopCase.HOLE_B &&
-               FLOP_A == flopCase.FLOP_A &&
-               FLOP_B == flopCase.FLOP_B &&
-               FLOP_C == flopCase.FLOP_C;
+        return subIndex(flop,
+                        flop.flopA().ordinal(),
+                        flop.flopB().ordinal(),
+                        flop.flopC().ordinal());
     }
-
-    public int hashCode()
-    {
-        int result = 0;
-        result = 31 * result + HOLE_A.hashCode();
-        result = 31 * result + HOLE_B.hashCode();
-        result = 31 * result + FLOP_A.hashCode();
-        result = 31 * result + FLOP_B.hashCode();
-        result = 31 * result + FLOP_C.hashCode();
-        return result;
-    }
+    protected abstract int subIndex(IsoFlop flop, int a, int b, int c);
 }

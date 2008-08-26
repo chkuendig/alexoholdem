@@ -14,6 +14,7 @@ import java.util.Arrays;
  */
 public class Eval7Faster
 {
+    //--------------------------------------------------------------------
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
