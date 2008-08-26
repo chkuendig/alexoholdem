@@ -164,7 +164,7 @@ public class Hole
     
 
     //--------------------------------------------------------------------
-    public IsoFlop isoFlop(Card flop[])
+    public IsoFlop isoFlop(Card... flop)
     {
         return new IsoFlop(ORDERING, asArray(), flop);
     }
