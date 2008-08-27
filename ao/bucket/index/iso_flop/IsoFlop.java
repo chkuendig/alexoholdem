@@ -1,6 +1,10 @@
-package ao.bucket.index.iso_cards;
+package ao.bucket.index.iso_flop;
 
-import ao.bucket.index.iso_case.FlopCase;
+import ao.bucket.index.iso_cards.Ordering;
+import ao.bucket.index.iso_cards.wild.card.RankedSuited;
+import ao.bucket.index.iso_cards.wild.card.WildCard;
+import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
+import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
@@ -15,8 +19,11 @@ import java.util.Comparator;
 public class IsoFlop
 {
     //--------------------------------------------------------------------
-    private final WildMarkedCard HOLE_A, HOLE_B;
-    private final WildCard       FLOP_A, FLOP_B, FLOP_C;
+    private final RankedSuited<Rank, WildMarkedSuit>
+                           HOLE_A, HOLE_B;
+    private final WildCard FLOP_A, FLOP_B, FLOP_C;
+
+    private final FlopCase FLOP_CASE;
 
 
     //--------------------------------------------------------------------
@@ -43,15 +50,16 @@ public class IsoFlop
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
+
+        FLOP_CASE = computeFlopCase();
     }
 
-    private <S extends Comparable<S>,
-             T extends Comparable<T>>
-            void sort(RankedSuited<S, T> wildCards[])
+    private <S extends WildSuitMarker<S>>
+            void sort(RankedSuited<Rank, S> wildCards[])
     {
-        Arrays.sort(wildCards, new Comparator<RankedSuited<S, T>>()  {
-            public int compare(RankedSuited<S, T> a,
-                               RankedSuited<S, T> b) {
+        Arrays.sort(wildCards, new Comparator<RankedSuited<Rank, S>>()  {
+            public int compare(RankedSuited<Rank, S> a,
+                               RankedSuited<Rank, S> b) {
                 int suitCmp = a.suit().compareTo( b.suit() );
                 return (suitCmp == 0
                            ? a.rank().compareTo( b.rank() )
@@ -106,6 +114,27 @@ public class IsoFlop
     public Rank flopC()
     {
         return FLOP_C.rank();
+    }
+
+
+    //--------------------------------------------------------------------
+    public FlopCase flopCase()
+    {
+        return FLOP_CASE;
+    }
+
+    private FlopCase computeFlopCase()
+    {
+        return FlopCase.newInstance(
+                HOLE_A.suit(), HOLE_B.suit(),
+                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
+    }
+
+    public int subIndex()
+    {
+        return FLOP_CASE.subIndex(
+                holeA().ordinal(), holeB().ordinal(),
+                flopA().ordinal(), flopB().ordinal(), flopC().ordinal());
     }
 
 
@@ -175,7 +204,7 @@ public class IsoFlop
 //        return CASE +  " -> " +
 //                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
         return //CASE +  " -> " +
-                Arrays.toString(new WildMarkedCard[]{HOLE_A, HOLE_B}) +
+                Arrays.toString(new RankedSuited[]{HOLE_A, HOLE_B}) +
                 Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
     }
 
@@ -215,13 +244,6 @@ public class IsoFlop
         result = 31 * result + FLOP_C.hashCode();
 
         return result;
-    }
-
-    public FlopCase flopCase()
-    {
-        return FlopCase.newInstance(
-                HOLE_A.suit(), HOLE_B.suit(),
-                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
     }
 
 

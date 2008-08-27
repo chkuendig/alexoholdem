@@ -1,11 +1,9 @@
 package ao.bucket.index.incremental;
 
-import ao.bucket.index.Indexer;
-import ao.bucket.index.iso_cards.IsoFlop;
-import ao.bucket.index.iso_case.FlopCase;
+import ao.bucket.index.iso_flop.FlopCase;
+import ao.bucket.index.iso_flop.IsoFlop;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.CardSequence;
 import static ao.util.data.Arr.swap;
 import ao.util.persist.PersistentInts;
 import ao.util.stats.Combiner;
@@ -16,7 +14,7 @@ import java.util.Arrays;
  * Date: Aug 16, 2008
  * Time: 2:48:07 PM
  */
-public class FlopIndexerImpl implements Indexer
+public class FlopIndexerImpl
 {
     //--------------------------------------------------------------------
     private static final String OFFSET_FILE = "lookup/flop_offsets.cache";
@@ -120,54 +118,14 @@ public class FlopIndexerImpl implements Indexer
 
 
     //--------------------------------------------------------------------
-    public int indexOf(CardSequence cards)
+    public int indexOf(Hole hole,
+                       Card flopA, Card flopB, Card flopC)
     {
-        if (cards.community().isPreflop())
-        {
-            return cards.hole().suitIsomorphicIndex();
-        }
+        IsoFlop flop = hole.isoFlop(flopA, flopB, flopC);
 
-        Hole    hole = cards.hole();
-        IsoFlop flop = hole.isoFlop(cards.community().flopA(),
-                                    cards.community().flopB(),
-                                    cards.community().flopC());
-
-        flop
-
-
-//        int offset    = 0;
-//        int holeIndex = isoHole.holeCase().subIndex();
-//
-//        FlopSubIndexer subIndexers[] =
-//                (isoHole.holeCase().type() == Type.PAIR
-//                 ? PostPairFlop.values()
-//                 : isoHole.holeCase().type() == Type.SUITED
-//                   ? PostSuitedFlop.values()
-//                   : PostUnsuitedFlop.values());
-//
-//        for (FlopSubIndexer subIndexer : subIndexers)
-//        {
-//            if (subIndexer.caseEquals(flop.flopCase()))
-//            {
-//                return offset +
-//                       subIndexer.subIndex( flop ) *
-//                            isoHole.holeCase().type().members() +
-//                       holeIndex;
-//
-////                return subIndexer.subIndex( flop ) *
-////                            isoHole.holeCase().type().members() +
-////                       holeIndex;
-//
-////                return subIndexer.subIndex( flop );
-//            }
-//            offset += subIndexer.size() *
-//                        isoHole.holeCase().type().members();
-//        }
-
-        return -1;
+        return OFFSETS[ hole.suitIsomorphicIndex() ]
+                      [ flop.flopCase().ordinal()  ] +
+                flop.subIndex();
+//        return flop.subIndex();
     }
-
-
-
-
 }

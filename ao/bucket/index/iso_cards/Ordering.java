@@ -1,5 +1,6 @@
 package ao.bucket.index.iso_cards;
 
+import ao.bucket.index.iso_cards.wild.suit.WildSuit;
 import ao.holdem.model.card.Suit;
 import ao.util.data.Arr;
 
