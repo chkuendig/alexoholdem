@@ -1,30 +1,23 @@
-package ao.bucket.index.iso_cards;
+package ao.bucket.index.iso_cards.wild.card;
 
+import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
 import ao.holdem.model.card.Rank;
 
 /**
- *
+ * Date: Aug 27, 2008
+ * Time: 3:29:37 AM
  */
-public class WildMarkedCard
-        implements RankedSuited<Rank, WildMarkedSuit>
+public class RankedSuitedImpl<S extends WildSuitMarker<S>>
+        implements RankedSuited<Rank, S>
 {
     //--------------------------------------------------------------------
-    public static WildMarkedCard newInstance(
-            Rank           rank,
-            WildMarkedSuit suit)
-    {
-        return new WildMarkedCard(rank, suit);
-    }
+    private final Rank RANK;
+    private final S    SUIT;
 
 
     //--------------------------------------------------------------------
-    private final Rank           RANK;
-    private final WildMarkedSuit SUIT;
-
-
-    //--------------------------------------------------------------------
-    private WildMarkedCard(Rank           rank,
-                           WildMarkedSuit suit)
+    protected RankedSuitedImpl(Rank rank,
+                               S    suit)
     {
         RANK = rank;
         SUIT = suit;
@@ -37,7 +30,7 @@ public class WildMarkedCard
         return RANK;
     }
 
-    public WildMarkedSuit suit()
+    public S suit()
     {
         return SUIT;
     }
@@ -54,12 +47,12 @@ public class WildMarkedCard
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof RankedSuitedImpl)) return false;
 
-        WildMarkedCard wildCard = (WildMarkedCard) o;
+        RankedSuitedImpl that = (RankedSuitedImpl) o;
 
-        return RANK == wildCard.RANK &&
-               SUIT == wildCard.SUIT;
+        return RANK == that.RANK &&
+               SUIT == that.SUIT;
     }
 
     public int hashCode()

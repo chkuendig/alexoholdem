@@ -1,16 +1,14 @@
 package ao.bucket.index.test;
 
 import ao.bucket.index.Indexer;
-import ao.bucket.index.incremental.FlopIndexerImpl;
-import ao.bucket.index.iso_cards.IsoFlop;
-import ao.bucket.index.iso_case.FlopCase;
+import ao.bucket.index.incremental.IndexerImpl;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
+import ao.holdem.model.card.sequence.LiteralCardSequence;
 import static ao.util.data.Arr.swap;
 import ao.util.stats.Combiner;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Date: Aug 21, 2008
@@ -23,7 +21,7 @@ public class GenericIndexerTest
     {
         GenericIndexerTest indexerTest = new GenericIndexerTest();
 
-        indexerTest.test( new FlopIndexerImpl() );
+        indexerTest.test( new IndexerImpl() );
     }
 
 
@@ -36,20 +34,27 @@ public class GenericIndexerTest
     {
         Gapper flopGapper = new Gapper();
 
-        Set<FlopCase> flopCases = new LinkedHashSet<FlopCase>();
+//        Set<FlopCase> flopCases = new LinkedHashSet<FlopCase>();
         for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
         {
             Hole hole = Hole.newInstance(
                             holeCards[0], holeCards[1]);
 //            if (! hole.paired()) continue;
 //            if (! hole.suited()) continue;
-//            if (hole.suited() || hole.paired()) continue;
+//            if (hole.suited() || hole.paired()) continue; // unsuited
 
             swap(cards, holeCards[1].ordinal(), 51  );
             swap(cards, holeCards[0].ordinal(), 51-1);
 
-            iterateFlops(hole, indexer, flopGapper,
-                         flopCases);
+//            for (FlopCase fc : FlopCase.VALUES)
+//            {
+//                System.out.println(fc);
+//                Gapper flopGapper = new Gapper();
+//                iterateFlops(hole, indexer, flopGapper, fc);
+            iterateFlops(hole, indexer, flopGapper);
+//                flopGapper.displayStatus();
+//            }
+
 //            int holeIndex =
 //                    indexer.indexOf(
 //                            new LiteralCardSequence(
@@ -63,11 +68,11 @@ public class GenericIndexerTest
         System.out.println("Flop gapper status:");
         flopGapper.displayStatus();
 
-        System.out.println("Flop Cases:");
-        for (FlopCase flopCase : flopCases)
-        {
-            System.out.println(flopCase);
-        }
+//        System.out.println("Flop Cases:");
+//        for (FlopCase flopCase : flopCases)
+//        {
+//            System.out.println(flopCase);
+//        }
     }
 
 
@@ -75,16 +80,19 @@ public class GenericIndexerTest
     public void iterateFlops(
             Hole    hole,
             Indexer indexer,
-            Gapper  flopGapper,
-            Set<FlopCase> flopCases)
+            Gapper  flopGapper
+            //,FlopCase filter
+            )
     {
         for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
         {
-            IsoFlop isoFlop = hole.isoFlop( flopCards );
+//            IsoFlop isoFlop = hole.isoFlop( flopCards );
 //            if (! isoFlop.flopCase().equals(
-//                    FlopCase.CASE_12_113)) continue;
+//                    FlopCase.OT_TTR)) continue;
+//            if (! isoFlop.flopCase().equals( filter )) continue;
 
-            flopCases.add( isoFlop.flopCase() );
+
+//            flopCases.add( isoFlop.flopCase() );
 
 //            Arrays.sort(flopCards, Card.BY_RANK_DSC);
 //
@@ -92,12 +100,12 @@ public class GenericIndexerTest
 //            swap(cards, flopCards[1].ordinal(), 51-3);
 //            swap(cards, flopCards[0].ordinal(), 51-4);
 //
-//            CardSequence cardSeq =
-//                    new LiteralCardSequence(
-//                            hole, new Community(
-//                            flopCards[0], flopCards[1], flopCards[2]));
-//            int index = indexer.indexOf(cardSeq);
-//            flopGapper.set(index);
+            CardSequence cardSeq =
+                    new LiteralCardSequence(
+                            hole, new Community(
+                            flopCards[0], flopCards[1], flopCards[2]));
+            int index = indexer.indexOf(cardSeq);
+            flopGapper.set(index);
 //
 ////            if (index == 0) System.out.println(cardSeq);
 //

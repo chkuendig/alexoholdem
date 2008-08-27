@@ -1,7 +1,7 @@
 package ao.holdem.model.card;
 
-import ao.bucket.index.iso_cards.IsoFlop;
 import ao.bucket.index.iso_cards.Ordering;
+import ao.bucket.index.iso_flop.IsoFlop;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
