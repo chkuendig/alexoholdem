@@ -4,6 +4,8 @@ import ao.holdem.model.card.*;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
+import static ao.util.data.Arr.sequence;
+import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 
 /**
@@ -30,9 +32,15 @@ public class GeneralOddFinder implements OddFinder
                         int       activeOpponents)
     {
         Card cards[]   = Card.values();
-        int  indexes[] = cardIndexes();
 
-        moveKnownCardsToEnd(indexes, hole, community);
+        // selected from right [51] to left [0]
+        //  meaning rightmost elements of indexes[] are
+        //  personal hole cards, and common community cards,
+        //  and to the left of those (0..44, ie. < 52 - 2 - 5)
+        //  are opponents' simulated cards.
+        int  indexes[] = sequence( cards.length );
+
+        initKnownCardsToEnd(cards, hole, community);
 
         int unknownCount = 52 - 2 - community.knownCount();
         FastIntCombiner fc =
@@ -89,20 +97,20 @@ public class GeneralOddFinder implements OddFinder
 
         public void visit(int a, int b, int c, int d, int e)
         {
-            swap(indexes, a, COM_A);
-            swap(indexes, b, COM_B);
-            swap(indexes, c, COM_C);
-            swap(indexes, d, COM_D);
-            swap(indexes, e, COM_E);
+            swap(cards, a, COM_A);
+            swap(cards, b, COM_B);
+            swap(cards, c, COM_C);
+            swap(cards, d, COM_D);
+            swap(cards, e, COM_E);
 
             odds = odds.plus(
                     computeOppCards(activeOpponents, indexes, cards));
 
-            swap(indexes, e, COM_E);
-            swap(indexes, d, COM_D);
-            swap(indexes, c, COM_C);
-            swap(indexes, b, COM_B);
-            swap(indexes, a, COM_A);
+            swap(cards, e, COM_E);
+            swap(cards, d, COM_D);
+            swap(cards, c, COM_C);
+            swap(cards, b, COM_B);
+            swap(cards, a, COM_A);
         }
 
         public Odds odds()
@@ -130,14 +138,14 @@ public class GeneralOddFinder implements OddFinder
 
         public void visit(int d, int e)
         {
-            swap(indexes, d, COM_D);
-            swap(indexes, e, COM_E);
+            swap(cards, d, COM_D);
+            swap(cards, e, COM_E);
 
             odds = odds.plus(
                     computeOppCards(activeOpponents, indexes, cards));
 
-            swap(indexes, e, COM_E);
-            swap(indexes, d, COM_D);
+            swap(cards, e, COM_E);
+            swap(cards, d, COM_D);
         }
 
         public Odds odds() {  return odds;  }
@@ -162,10 +170,10 @@ public class GeneralOddFinder implements OddFinder
 
         public void visit(int e)
         {
-            swap(indexes, e, COM_E);
+            swap(cards, e, COM_E);
             odds = odds.plus(
                     computeOppCards(activeOpponents, indexes, cards));
-            swap(indexes, e, COM_E);
+            swap(cards, e, COM_E);
         }
 
         public Odds odds() {  return odds;  }
@@ -178,11 +186,11 @@ public class GeneralOddFinder implements OddFinder
             int  indexes[],
             Card cards[])
     {
-        Card comA = cards[ indexes[COM_A] ],
-             comB = cards[ indexes[COM_B] ],
-             comC = cards[ indexes[COM_C] ],
-             comD = cards[ indexes[COM_D] ],
-             comE = cards[ indexes[COM_E] ];
+        Card comA = cards[ COM_A ],
+             comB = cards[ COM_B ],
+             comC = cards[ COM_C ],
+             comD = cards[ COM_D ],
+             comE = cards[ COM_E ];
 
         int shortcut =
                 Eval7Faster.shortcutFor(comA, comB, comC, comD, comE);
@@ -191,8 +199,8 @@ public class GeneralOddFinder implements OddFinder
 //                               cards[ indexes[HOLE_A] ],
 //                               cards[ indexes[HOLE_B] ]);
         short myVal = Eval7Faster.fastValueOf(shortcut,
-                                          cards[ indexes[HOLE_A] ],
-                                          cards[ indexes[HOLE_B] ]);
+                                          cards[ HOLE_A ],
+                                          cards[ HOLE_B ]);
 
         FastIntCombiner fc = new FastIntCombiner(indexes, 52 - 2 - 5);
         switch (activeOpps)
@@ -273,8 +281,8 @@ public class GeneralOddFinder implements OddFinder
 
 
     //--------------------------------------------------------------------
-    public static void moveKnownCardsToEnd(
-            int cards[], Hole hole, Community community)
+    public static void initKnownCardsToEnd(
+            Card cards[], Hole hole, Community community)
     {
         swap(cards, hole.a().ordinal(), HOLE_A);
         swap(cards, hole.b().ordinal(), HOLE_B);
@@ -294,33 +302,14 @@ public class GeneralOddFinder implements OddFinder
         }
     }
 
-    // selected from right [51] to left [0]
-    //  meaning rightmost elements of indexes[] are
-    //  personal hole cards, and common community cards,
-    //  and to the left of those (0..44, ie. < 52 - 2 - 5)
-    //  are opponents' simulated cards.
-    public static int[] cardIndexes()
-    {
-        int  indexes[] = new int[52];
-        for (int i = 0; i < 52; i++) {  indexes[i] = i;  }
-        return indexes;
-    }
-
-    public static void swap(int cards[], int i, int j)
-    {
-        int temp = cards[i];
-        cards[i] = cards[j];
-        cards[j] = temp;
-    }
-
     
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
         OddFinder oddFinder = new GeneralOddFinder();
 
-        Suit a = Suit.HEARTS;
-        Suit b = Suit.SPADES;
+        Suit a = Suit.SPADES;
+        Suit b = Suit.HEARTS;
         Suit c = Suit.DIAMONDS;
         Suit d = Suit.CLUBS;
 
@@ -332,7 +321,7 @@ public class GeneralOddFinder implements OddFinder
 //                              Card.JACK_OF_HEARTS,
 //                              Card.JACK_OF_SPADES,
 //                              Card.FIVE_OF_DIAMONDS),
-                Hole.newInstance(Card.valueOf(Rank.TWO, a),
+                Hole.valueOf(Card.valueOf(Rank.TWO, a),
                                  Card.valueOf(Rank.TWO, b)),
                 new Community(Card.valueOf(Rank.TEN, c),
                               Card.valueOf(Rank.TEN, d),

@@ -34,13 +34,15 @@ public class Gapper
 
 
     //--------------------------------------------------------------------
-    public void displayStatus()
+    public boolean displayStatus()
     {
-        if (continuous())
+        boolean isContinuous = continuous();
+        if (isContinuous)
         {
             System.out.println(
                 "Compressed " + count + " into " +
                     indexes.length() + " isomorphisms.");
+
         }
         else
         {
@@ -48,5 +50,6 @@ public class Gapper
                     "ERROR: gap at " + indexes.nextClearBit(0) +
                         " of " + indexes.length() + " indexes.");
         }
+        return isContinuous;
     }
 }

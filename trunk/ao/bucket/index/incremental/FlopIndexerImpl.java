@@ -75,7 +75,7 @@ public class FlopIndexerImpl
         Card cards[] = Card.values();
         for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
         {
-            Hole hole = Hole.newInstance(
+            Hole hole = Hole.valueOf(
                             holeCards[0], holeCards[1]);
 
             int subOffsets[] = offsets[ hole.suitIsomorphicIndex() ];

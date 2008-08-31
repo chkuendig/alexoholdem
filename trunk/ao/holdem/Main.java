@@ -16,7 +16,8 @@ import ao.util.rand.Rand;
 import ao.util.stats.Combiner;
 import ao.util.text.Arr;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -131,57 +132,63 @@ public class Main
     }
     public static void doRunOdds()
     {
-        PrintStream output;
-        try
-        {
-            File outFile = new File("9_player_river_approx.txt");
-            outFile.createNewFile();
-            output = new PrintStream(
-                        new BufferedOutputStream(
-                            new FileOutputStream(outFile)),
-                        false);
-        }
-        catch (IOException e)
-        {
-            throw new Error( e );
-        }
-
-        doRunOddsWith("600\t500", new ApproximateOddFinder(), output);
-        for (int flops = 1; flops < 2; flops += 50)
-        {
-            for (long holes = 1; holes < 10000; holes += 50)
-            {
-                String prefix = flops + "\t" + holes;
-                OddFinder f =
-                        new ApproximateOddFinder(
-                                flops, holes);
-
-                if (! doRunOddsWith(prefix, f, output)) break;
-            }
-            System.out.println();
-        }
-
-
-//        Community c = new Community();
-//        OddFinder f = new ApproximateOddFinder();
-//        OddFinder f = new GeneralOddFinder();
-//        for (int opps = 10; opps <= 10; opps++)
+//        PrintStream output;
+//        try
 //        {
-//            for (Card holes[] : new Combiner<Card>(Card.values(), 2))
-//            {
-//                Odds odds =
-//                        f.compute(new Hole(holes[0], holes[1]), c, opps);
+//            File outFile = new File("9_player_river_approx.txt");
+//            outFile.createNewFile();
+//            output = new PrintStream(
+//                        new BufferedOutputStream(
+//                            new FileOutputStream(outFile)),
+//                        false);
+//        }
+//        catch (IOException e)
+//        {
+//            throw new Error( e );
+//        }
 //
+//        doRunOddsWith("600\t500", new ApproximateOddFinder(), output);
+//        for (int flops = 1; flops < 2; flops += 50)
+//        {
+//            for (long holes = 1; holes < 10000; holes += 50)
+//            {
+//                String prefix = flops + "\t" + holes;
+//                OddFinder f =
+//                        new ApproximateOddFinder(
+//                                flops, holes);
+//
+//                if (! doRunOddsWith(prefix, f, output)) break;
+//            }
+//            System.out.println();
+//        }
+
+
+        Community c  = new Community();
+        OddFinder fa = new ApproximateOddFinder();
+//        OddFinder fg = new GeneralOddFinder();
+        for (int opps = 1; opps <= 1; opps++)
+        {
+            for (Card holes[] : new Combiner<Card>(Card.values(), 2))
+            {
+                Odds approxOdds =
+                        fa.compute(Hole.valueOf(holes[0], holes[1]), c, opps);
+//                Odds exactOdds =
+//                        fg.compute(Hole.valueOf(holes[0], holes[1]), c, opps);
+
+                System.out.println(
+                        "approxLookup[" + opps + "]" +
+                              "[" + holes[0].ordinal() + "]" +
+                              "[" + holes[1].ordinal() + "]\t" + approxOdds);
 //                System.out.println(
-//                        "lookup[" + opps + "]" +
+//                        "exactLookup[" + opps + "]" +
 //                              "[" + holes[0].ordinal() + "]" +
-//                              "[" + holes[1].ordinal() + "] = " + odds + ";");
+//                              "[" + holes[1].ordinal() + "]\t" + exactOdds);
 //                System.out.println(
 //                        "lookup[" + opps + "]" +
 //                              "[" + holes[1].ordinal() + "]" +
 //                              "[" + holes[0].ordinal() + "] = " + odds + ";");
-//            }
-//        }
+            }
+        }
 
 //        for (Card.Suit suitA : Card.Suit.values())
 //        {
@@ -241,7 +248,7 @@ public class Main
 //            Hole pocketPair =
 //                    new Hole(Card.valueOf(rank, Card.Suit.DIAMONDS),
 //                             Card.valueOf(rank, Card.Suit.CLUBS));
-            Hole pocket = Hole.newInstance(
+            Hole pocket = Hole.valueOf(
                                 Card.SIX_OF_SPADES,
                                 Card.SEVEN_OF_DIAMONDS);
 

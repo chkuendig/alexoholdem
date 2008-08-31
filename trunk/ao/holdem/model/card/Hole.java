@@ -35,7 +35,7 @@ public class Hole
 
 
     //--------------------------------------------------------------------
-    public static Hole newInstance(Card a, Card b)
+    public static Hole valueOf(Card a, Card b)
     {
         return VALUES[ a.ordinal() ][ b.ordinal() ];
     }

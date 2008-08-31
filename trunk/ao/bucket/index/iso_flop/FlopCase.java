@@ -2,8 +2,8 @@ package ao.bucket.index.iso_flop;
 
 import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
 import ao.bucket.index.iso_cards.wild.suit.WildSuit;
-import static ao.bucket.index.iso_case.IsoCaseUtils.offset;
-import static ao.bucket.index.iso_case.IsoCaseUtils.sortColex;
+import static ao.bucket.index.iso_util.IsoCaseUtils.offset;
+import static ao.bucket.index.iso_util.IsoCaseUtils.sortColex;
 import static ao.util.stats.Combo.colex;
 
 /**

@@ -1,4 +1,4 @@
-package ao.bucket.index.iso_case;
+package ao.bucket.index.iso_util;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;
