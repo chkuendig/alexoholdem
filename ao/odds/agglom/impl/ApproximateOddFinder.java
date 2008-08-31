@@ -5,7 +5,10 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
+import static ao.odds.agglom.impl.GeneralOddFinder.*;
 import ao.odds.eval.eval7.Eval7Faster;
+import static ao.util.data.Arr.sequence;
+import static ao.util.data.Arr.swap;
 import ao.util.rand.MersenneTwisterFast;
 import ao.util.stats.FastIntCombiner;
 
@@ -47,18 +50,18 @@ public class ApproximateOddFinder implements OddFinder
         int  flops = FLOP_ITR;
         long holes = HOLE_ITR;
 
-        int  indexes[] = GeneralOddFinder.cardIndexes();
         Card cards[]   = Card.values();
+        int  indexes[] = sequence( cards.length );
 
-        GeneralOddFinder.moveKnownCardsToEnd(
-                indexes, hole, community);
+        initKnownCardsToEnd(
+                cards, hole, community);
 
         MersenneTwisterFast rand = new MersenneTwisterFast();
         switch (community.knownCount())
         {
             case 0:
                 return computePreflop(
-                        flops, holes, activeOpponents, indexes, cards, rand);
+                        flops, holes, activeOpponents, cards, rand);
 //                return computePreflop(
 //                        1000, 1, activeOpponents, indexes, cards, rand);
             case 3:
@@ -75,14 +78,14 @@ public class ApproximateOddFinder implements OddFinder
 //                return computeRiver(
 //                        holes, activeOpponents, indexes, cards, rand);
                 return computeRiver(
-                        2000, activeOpponents, indexes, cards, rand);
+                        2000, activeOpponents, cards, rand);
         }
         return new Odds();
     }
 
     private Odds computePreflop(
             int flops, long holes, int activeOpponents,
-            int indexes[], Card cards[], MersenneTwisterFast rand)
+            Card cards[], MersenneTwisterFast rand)
     {
 //                int unknownCount = 52 - 2;
 //                FastIntCombiner fc =
@@ -97,25 +100,25 @@ public class ApproximateOddFinder implements OddFinder
         Odds odds = new Odds();
         for (int i = 0; i < flops; i++)
         {
-            int xComA = rand.nextInt( GeneralOddFinder.COM_A + 1 );
-            GeneralOddFinder.swap(indexes, xComA, GeneralOddFinder.COM_A);
-            int xComB = rand.nextInt( GeneralOddFinder.COM_B + 1 );
-            GeneralOddFinder.swap(indexes, xComB, GeneralOddFinder.COM_B);
-            int xComC = rand.nextInt( GeneralOddFinder.COM_C + 1 );
-            GeneralOddFinder.swap(indexes, xComC, GeneralOddFinder.COM_C);
-            int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
-            GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
-            int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-            GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+            int xComA = rand.nextInt( COM_A + 1 );
+            swap(cards, xComA, COM_A);
+            int xComB = rand.nextInt( COM_B + 1 );
+            swap(cards, xComB, COM_B);
+            int xComC = rand.nextInt( COM_C + 1 );
+            swap(cards, xComC, COM_C);
+            int xComD = rand.nextInt( COM_D + 1 );
+            swap(cards, xComD, COM_D);
+            int xComE = rand.nextInt( COM_E + 1 );
+            swap(cards, xComE, COM_E);
 
             odds = odds.plus(computeOppOdds(
-                        activeOpponents, indexes, cards, holes, rand));
+                        activeOpponents, cards, holes, rand));
 
-            GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
-            GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
-            GeneralOddFinder.swap(indexes, xComC, GeneralOddFinder.COM_C);
-            GeneralOddFinder.swap(indexes, xComB, GeneralOddFinder.COM_B);
-            GeneralOddFinder.swap(indexes, xComA, GeneralOddFinder.COM_A);
+            swap(cards, xComE, COM_E);
+            swap(cards, xComD, COM_D);
+            swap(cards, xComC, COM_C);
+            swap(cards, xComB, COM_B);
+            swap(cards, xComA, COM_A);
         }
         return odds;
     }
@@ -133,7 +136,7 @@ public class ApproximateOddFinder implements OddFinder
 
             TurnCommunityVisitor turn =
                     new TurnCommunityVisitor(
-                            activeOpponents, indexes, cards, holes, rand);
+                            activeOpponents, cards, holes, rand);
             fc.combine(turn);
             odds = turn.odds();
         }
@@ -141,16 +144,16 @@ public class ApproximateOddFinder implements OddFinder
         {
             for (int i = 0; i < flops; i++)
             {
-                int xComD = rand.nextInt( GeneralOddFinder.COM_D + 1 );
-                GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
-                int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-                GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+                int xComD = rand.nextInt( COM_D + 1 );
+                swap(cards, xComD, COM_D);
+                int xComE = rand.nextInt( COM_E + 1 );
+                swap(cards, xComE, COM_E);
 
                 odds = odds.plus(computeOppOdds(
-                            activeOpponents, indexes, cards, holes, rand));
+                            activeOpponents, cards, holes, rand));
 
-                GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
-                GeneralOddFinder.swap(indexes, xComD, GeneralOddFinder.COM_D);
+                swap(cards, xComE, COM_E);
+                swap(cards, xComD, COM_D);
             }
         }
         return odds;
@@ -177,17 +180,17 @@ public class ApproximateOddFinder implements OddFinder
 
         RiverCommunityVisitor river =
                 new RiverCommunityVisitor(
-                        activeOpponents, indexes, cards, holes, rand);
+                        activeOpponents, cards, holes, rand);
         fc.combine(river);
         return river.odds();
     }
 
     private Odds computeRiver(
             long holes, int activeOpponents,
-            int indexes[], Card cards[], MersenneTwisterFast rand)
+            Card cards[], MersenneTwisterFast rand)
     {
         return computeOppOdds(
-                    activeOpponents, indexes, cards, holes, rand);
+                    activeOpponents, cards, holes, rand);
     }
 
 
@@ -196,7 +199,6 @@ public class ApproximateOddFinder implements OddFinder
             implements FastIntCombiner.CombinationVisitor2
     {
         private Card cards[];
-        private int  indexes[];
         private int  activeOpponents;
         private Odds odds = new Odds();
         private long holes;
@@ -204,28 +206,26 @@ public class ApproximateOddFinder implements OddFinder
 
         public TurnCommunityVisitor(
                 int  activeOpps,
-                int  indexes[],
                 Card cards[],
                 long holes,
                 MersenneTwisterFast rand)
         {
             activeOpponents = activeOpps;
-            this.indexes    = indexes;
             this.cards      = cards;
             this.rand       = rand;
             this.holes      = holes;
         }
         public void visit(int d, int e)
         {
-            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+            swap(cards, d, COM_D);
+            swap(cards, e, COM_E);
 
             odds = odds.plus(
                     computeOppOdds(
-                                activeOpponents, indexes, cards, holes, rand));
+                                activeOpponents, cards, holes, rand));
 
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
-            GeneralOddFinder.swap(indexes, d, GeneralOddFinder.COM_D);
+            swap(cards, e, COM_E);
+            swap(cards, d, COM_D);
         }
         public Odds odds() {  return odds;  }
     }
@@ -234,7 +234,6 @@ public class ApproximateOddFinder implements OddFinder
             implements FastIntCombiner.CombinationVisitor1
     {
         private Card cards[];
-        private int  indexes[];
         private int  activeOpponents;
         private Odds odds = new Odds();
         private long holes;
@@ -242,26 +241,24 @@ public class ApproximateOddFinder implements OddFinder
 
         public RiverCommunityVisitor(
                 int  activeOpps,
-                int  indexes[],
                 Card cards[],
                 long holes,
                 MersenneTwisterFast rand)
         {
             activeOpponents = activeOpps;
-            this.indexes    = indexes;
             this.cards      = cards;
             this.rand       = rand;
             this.holes      = holes;
         }
         public void visit(int e)
         {
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+            swap(cards, e, COM_E);
 
             odds = odds.plus(
                     computeOppOdds(
-                                activeOpponents, indexes, cards, holes, rand));
+                                activeOpponents, cards, holes, rand));
 
-            GeneralOddFinder.swap(indexes, e, GeneralOddFinder.COM_E);
+            swap(cards, e, COM_E);
         }
         public Odds odds() {  return odds;  }
     }
@@ -271,16 +268,15 @@ public class ApproximateOddFinder implements OddFinder
     //--------------------------------------------------------------------
     private static Odds computeOppOdds(
             int  activeOpps,
-            int  indexes[],
             Card cards[],
             long holes,
             MersenneTwisterFast rand)
     {
-        Card comA = cards[ indexes[GeneralOddFinder.COM_A] ];
-        Card comB = cards[ indexes[GeneralOddFinder.COM_B] ];
-        Card comC = cards[ indexes[GeneralOddFinder.COM_C] ];
-        Card comD = cards[ indexes[GeneralOddFinder.COM_D] ];
-        Card comE = cards[ indexes[GeneralOddFinder.COM_E] ];
+        Card comA = cards[ COM_A ];
+        Card comB = cards[ COM_B ];
+        Card comC = cards[ COM_C ];
+        Card comD = cards[ COM_D ];
+        Card comE = cards[ COM_E ];
 
         int wins   = 0;
         int losses = 0;
@@ -292,13 +288,13 @@ public class ApproximateOddFinder implements OddFinder
 
         short myVal =
                 Eval7Faster.fastValueOf(shortcut,
-                        cards[ indexes[GeneralOddFinder.HOLE_A] ],
-                        cards[ indexes[GeneralOddFinder.HOLE_B] ]);
+                        cards[ HOLE_A ],
+                        cards[ HOLE_B ]);
 
         for (int i = 0; i < holes; i++)
         {
             short oppVal =
-                    approxMaxOppVal(0, activeOpps, indexes, cards,
+                    approxMaxOppVal(0, activeOpps, cards,
                                     shortcut, rand);
 
             if      (myVal > oppVal) {  wins++;    }
@@ -312,7 +308,6 @@ public class ApproximateOddFinder implements OddFinder
     private static short approxMaxOppVal(
             int  atOpp,
             int  activeOpps,
-            int  indexes[],
             Card cards[],
             int  communityShortcut,
             MersenneTwisterFast rand)
@@ -322,27 +317,27 @@ public class ApproximateOddFinder implements OddFinder
             return Short.MIN_VALUE;
         }
 
-        int holeDestA = GeneralOddFinder.OPPS - atOpp*2;
+        int holeDestA = OPPS - atOpp*2;
         int holeDestB = holeDestA - 1;
 
         int xOppA = rand.nextInt( holeDestA + 1 );
         int xOppB = rand.nextInt( holeDestB + 1 );
 
-        GeneralOddFinder.swap(indexes, xOppA, holeDestA);
-        GeneralOddFinder.swap(indexes, xOppB, holeDestB);
+        swap(cards, xOppA, holeDestA);
+        swap(cards, xOppB, holeDestB);
 
-        Card oppA = cards[ indexes[holeDestA] ];
-        Card oppB = cards[ indexes[holeDestB] ];
+        Card oppA = cards[ holeDestA ];
+        Card oppB = cards[ holeDestB ];
 
         short oppVal = Eval7Faster.fastValueOf(
                 communityShortcut, oppA, oppB);
 
         short maxOtherOppVal =
-                approxMaxOppVal(atOpp + 1, activeOpps, indexes, cards,
+                approxMaxOppVal(atOpp + 1, activeOpps, cards,
                                 communityShortcut, rand);
 
-        GeneralOddFinder.swap(indexes, xOppB, holeDestB);
-        GeneralOddFinder.swap(indexes, xOppA, holeDestA);
+        swap(cards, xOppB, holeDestB);
+        swap(cards, xOppA, holeDestA);
 
         return (short) Math.max(oppVal, maxOtherOppVal);
     }

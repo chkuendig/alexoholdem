@@ -5,6 +5,9 @@ import ao.bucket.index.iso_cards.wild.card.RankedSuited;
 import ao.bucket.index.iso_cards.wild.card.WildCard;
 import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
 import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
+import ao.bucket.index.iso_turn.IsoTurn;
+import static ao.bucket.index.iso_util.IsoCaseUtils.distinct;
+import static ao.bucket.index.iso_util.IsoCaseUtils.sortByRank;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
@@ -23,6 +26,7 @@ public class IsoFlop
                            HOLE_A, HOLE_B;
     private final WildCard FLOP_A, FLOP_B, FLOP_C;
 
+    private final Ordering ORDER;
     private final FlopCase FLOP_CASE;
 
 
@@ -33,6 +37,7 @@ public class IsoFlop
     {
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
+        ORDER = refined;
 
         WildCard wildHole[] = new WildCard[]{
                 asWild(refined, hole[0]),
@@ -135,6 +140,15 @@ public class IsoFlop
         return FLOP_CASE.subIndex(
                 holeA().ordinal(), holeB().ordinal(),
                 flopA().ordinal(), flopB().ordinal(), flopC().ordinal());
+    }
+
+
+    //--------------------------------------------------------------------
+    public IsoTurn isoTurn(Card hole[],
+                           Card flop[],
+                           Card turnCard)
+    {
+        return new IsoTurn(ORDER, hole, flop, turnCard);
     }
 
 
@@ -255,20 +269,5 @@ public class IsoFlop
                : a == c
                  ? Ordering.partSuited(a, b)
                  : Ordering.partSuited(b, a);
-    }
-
-    private static Card[] sortByRank(Card... cards)
-    {
-        Card copy[] = cards.clone();
-        Arrays.sort(copy, Card.BY_RANK_DSC);
-        return copy;
-    }
-
-    private static <T> int distinct(T a, T b, T c)
-    {
-        return a == b && b == c
-               ? 1
-               : a != b && a != c && b != c
-                 ? 3 : 2;
     }
 }

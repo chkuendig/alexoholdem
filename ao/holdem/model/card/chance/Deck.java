@@ -37,7 +37,7 @@ public class Deck
     //--------------------------------------------------------------------
     public Hole nextHole()
     {
-        return Hole.newInstance(nextCard(), nextCard());
+        return Hole.valueOf(nextCard(), nextCard());
     }
 
 

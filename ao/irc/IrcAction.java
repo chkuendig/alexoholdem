@@ -123,7 +123,7 @@ public class IrcAction
                 holeString.length() == 0) return null;
 
         String holes[] = holeString.split("\\s+");
-        return Hole.newInstance(Card.valueOfCard(holes[0]),
+        return Hole.valueOf(Card.valueOfCard(holes[0]),
                                 Card.valueOfCard(holes[1]));
     }
 

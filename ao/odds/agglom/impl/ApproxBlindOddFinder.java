@@ -86,7 +86,7 @@ public class ApproxBlindOddFinder
                 ApproximateOddFinder f =
                         new ApproximateOddFinder(32, 1000);
 
-                Hole hole  = Hole.newInstance(holeA, holeB);
+                Hole hole  = Hole.valueOf(holeA, holeB);
                 Odds o     = f.compute(hole, community, activePlayers - 1);
                 cumulative = cumulative.plus( o );
 

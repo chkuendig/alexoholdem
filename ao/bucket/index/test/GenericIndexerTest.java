@@ -2,13 +2,23 @@ package ao.bucket.index.test;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
+import ao.bucket.index.iso_flop.IsoFlop;
+import ao.bucket.index.iso_turn.IsoTurn;
+import ao.bucket.index.iso_turn.TurnCase;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.util.data.Arr;
 import static ao.util.data.Arr.swap;
-import ao.util.stats.Combiner;
+import ao.util.stats.FastIntCombiner;
+import ao.util.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.stats.FastIntCombiner.CombinationVisitor3;
+
+import java.util.BitSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Date: Aug 21, 2008
@@ -26,94 +36,136 @@ public class GenericIndexerTest
 
 
     //--------------------------------------------------------------------
-    private Card cards[] = Card.values();
+    private Card cards[]   = Card.values();
+    private int  indexes[] = Arr.sequence( Card.VALUES.length );
 
 
     //--------------------------------------------------------------------
-    public void test(Indexer indexer)
+    public void test(final Indexer indexer)
     {
-        Gapper flopGapper = new Gapper();
+        final Gapper flopGapper = new Gapper();
+        final BitSet seenHoles  = new BitSet();
 
-//        Set<FlopCase> flopCases = new LinkedHashSet<FlopCase>();
-        for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
-        {
-            Hole hole = Hole.newInstance(
-                            holeCards[0], holeCards[1]);
+        final Set<TurnCase> turnCases = new LinkedHashSet<TurnCase>();
+        new FastIntCombiner(indexes, indexes.length).combine(
+                new CombinationVisitor2() {
+            public void visit(int holeA, int holeB)
+            {
+                Hole hole = Hole.valueOf(
+                        cards[holeA], cards[holeB]);
+
 //            if (! hole.paired()) continue;
 //            if (! hole.suited()) continue;
 //            if (hole.suited() || hole.paired()) continue; // unsuited
+                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
+                seenHoles.set( hole.suitIsomorphicIndex() );
 
-            swap(cards, holeCards[1].ordinal(), 51  );
-            swap(cards, holeCards[0].ordinal(), 51-1);
+                swap(cards, holeB, 51  );
+                swap(cards, holeA, 51-1);
 
-//            for (FlopCase fc : FlopCase.VALUES)
-//            {
-//                System.out.println(fc);
-//                Gapper flopGapper = new Gapper();
-//                iterateFlops(hole, indexer, flopGapper, fc);
-            iterateFlops(hole, indexer, flopGapper);
-//                flopGapper.displayStatus();
-//            }
+                iterateFlops(hole, indexer, flopGapper, turnCases);
 
-//            int holeIndex =
-//                    indexer.indexOf(
-//                            new LiteralCardSequence(
-//                                    hole, new Community()));
+                swap(cards, holeA, 51-1);
+                swap(cards, holeB, 51  );
+            }
+        });
 
-            swap(cards, holeCards[0].ordinal(), 51-1);
-            swap(cards, holeCards[1].ordinal(), 51  );
-
-//            break;
-        }
         System.out.println("Flop gapper status:");
         flopGapper.displayStatus();
 
-//        System.out.println("Flop Cases:");
-//        for (FlopCase flopCase : flopCases)
-//        {
-//            System.out.println(flopCase);
-//        }
+        System.out.println("Turn Cases:");
+        for (TurnCase turnCase : turnCases)
+        {
+            System.out.println(turnCase);
+        }
     }
 
 
     //--------------------------------------------------------------------
     public void iterateFlops(
-            Hole    hole,
-            Indexer indexer,
-            Gapper  flopGapper
+            final Hole    hole,
+            final Indexer indexer,
+            final Gapper  flopGapper,
+            final Set<TurnCase> turnCases
             //,FlopCase filter
             )
     {
-        for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
-        {
-//            IsoFlop isoFlop = hole.isoFlop( flopCards );
-//            if (! isoFlop.flopCase().equals(
-//                    FlopCase.OT_TTR)) continue;
-//            if (! isoFlop.flopCase().equals( filter )) continue;
+        final BitSet seenFlops = new BitSet();
 
+        new FastIntCombiner(indexes, indexes.length - 2).combine(
+                new CombinationVisitor3() {
+            public void visit(int flopA, int flopB, int flopC)
+            {
+                Card flopCards[] =
+                        {cards[flopA], cards[flopB], cards[flopC]};
 
-//            flopCases.add( isoFlop.flopCase() );
+                swap(cards, flopC, 51-2);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopA, 51-4);
 
-//            Arrays.sort(flopCards, Card.BY_RANK_DSC);
-//
-//            swap(cards, flopCards[2].ordinal(), 51-2);
-//            swap(cards, flopCards[1].ordinal(), 51-3);
-//            swap(cards, flopCards[0].ordinal(), 51-4);
-//
-            CardSequence cardSeq =
+                CardSequence cardSeq =
                     new LiteralCardSequence(
                             hole, new Community(
                             flopCards[0], flopCards[1], flopCards[2]));
-            int index = indexer.indexOf(cardSeq);
-            flopGapper.set(index);
-//
-////            if (index == 0) System.out.println(cardSeq);
-//
-//            swap(cards, flopCards[0].ordinal(), 51-4);
-//            swap(cards, flopCards[1].ordinal(), 51-3);
-//            swap(cards, flopCards[2].ordinal(), 51-2);
-        }
+                int index = indexer.indexOf(cardSeq);
+//                flopGapper.set(index);
+//                if (index == 0) System.out.println(cardSeq);
+
+                if (! seenFlops.get( index )) {
+                    seenFlops.set( index );
+                    iterateTurns(hole, flopCards, turnCases);
+                }
+
+                swap(cards, flopA, 51-4);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopC, 51-2);
+            }});
 
         System.out.println(hole);
+    }
+
+    public void iterateTurns(
+            Hole    hole,
+            Card    flop[],
+            Set<TurnCase> turnCases)
+    {
+        IsoFlop isoFlop = hole.isoFlop( flop );
+//        System.out.println(isoFlop.flopCase());
+
+        Gapper turnGappers[] = new Gapper[4];
+        //for (Card turnCard[] : new Combiner<Card>(cards, 47, 1))
+        for (int turnCardIndex = 0;
+                 turnCardIndex < 52 - 2 - 3;
+                 turnCardIndex++)
+        {
+            Card turnCard = cards[ turnCardIndex ];
+            IsoTurn isoTurn =
+                    isoFlop.isoTurn(
+                            hole.asArray(), flop, turnCard);
+
+            Gapper turnGapper = turnGappers[ isoTurn.caseIndex() ];
+            if (turnGapper == null)
+            {
+                turnGapper = new Gapper();
+                turnGappers[ isoTurn.caseIndex() ] = turnGapper;
+            }
+            turnGapper.set( isoTurn.subIndex() );
+
+//            TurnCase turnCase = isoTurn.turnCase();
+//            if (turnCases.add( turnCase ))
+//            {
+//                System.out.println(turnCase);
+//            }
+        }
+
+        for (Gapper turnGapper : turnGappers)
+        {
+            if (turnGapper == null) break;
+            if (! turnGapper.continuous())
+            {
+                System.out.println("Turns after " + isoFlop);
+                turnGapper.displayStatus();
+            }
+        }
     }
 }
