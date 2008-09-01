@@ -14,8 +14,12 @@ import java.util.Arrays;
  * Date: Aug 16, 2008
  * Time: 2:48:07 PM
  */
-public class FlopIndexerImpl
+public class FlopIndexer
 {
+    //--------------------------------------------------------------------
+    public static final int ISO_FLOP_COUNT = 1208714;
+
+
     //--------------------------------------------------------------------
     private static final String OFFSET_FILE = "lookup/flop_offsets.cache";
     private static final int OFFSETS[][] = retrieveOrCalculateOffsets();
@@ -122,7 +126,11 @@ public class FlopIndexerImpl
                        Card flopA, Card flopB, Card flopC)
     {
         IsoFlop flop = hole.isoFlop(flopA, flopB, flopC);
+        return indexOf(hole, flop);
+    }
 
+    public int indexOf(Hole hole, IsoFlop flop)
+    {
         return OFFSETS[ hole.suitIsomorphicIndex() ]
                       [ flop.flopCase().ordinal()  ] +
                 flop.subIndex();

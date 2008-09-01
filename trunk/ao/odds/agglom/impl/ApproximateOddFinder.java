@@ -7,7 +7,6 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import static ao.odds.agglom.impl.GeneralOddFinder.*;
 import ao.odds.eval.eval7.Eval7Faster;
-import static ao.util.data.Arr.sequence;
 import static ao.util.data.Arr.swap;
 import ao.util.rand.MersenneTwisterFast;
 import ao.util.stats.FastIntCombiner;
@@ -51,7 +50,6 @@ public class ApproximateOddFinder implements OddFinder
         long holes = HOLE_ITR;
 
         Card cards[]   = Card.values();
-        int  indexes[] = sequence( cards.length );
 
         initKnownCardsToEnd(
                 cards, hole, community);
@@ -63,20 +61,20 @@ public class ApproximateOddFinder implements OddFinder
                 return computePreflop(
                         flops, holes, activeOpponents, cards, rand);
 //                return computePreflop(
-//                        1000, 1, activeOpponents, indexes, cards, rand);
+//                        1000, 1, activeOpponents, cards, rand);
             case 3:
                 return computeFlop(
-                        flops, holes, activeOpponents, indexes, cards, rand);
+                        flops, holes, activeOpponents, cards, rand);
 //                return computeFlop(
-//                        100, 50, activeOpponents, indexes, cards, rand);
+//                        100, 50, activeOpponents, cards, rand);
             case 4:
                 return computeTurn(
-                        holes, activeOpponents, indexes, cards, rand);
+                        holes, activeOpponents, cards, rand);
 //                return computeTurn(
-//                        100, activeOpponents, indexes, cards, rand);
+//                        100, activeOpponents, cards, rand);
             case 5:
 //                return computeRiver(
-//                        holes, activeOpponents, indexes, cards, rand);
+//                        holes, activeOpponents, cards, rand);
                 return computeRiver(
                         2000, activeOpponents, cards, rand);
         }
@@ -89,11 +87,11 @@ public class ApproximateOddFinder implements OddFinder
     {
 //                int unknownCount = 52 - 2;
 //                FastIntCombiner fc =
-//                    new FastIntCombiner(indexes, unknownCount);
+//                    new FastIntCombiner(INDEXES, unknownCount);
 //
 //                CommunityVisitor5 c5 =
 //                        new CommunityVisitor5(
-//                                activeOpponents, indexes, cards, rand);
+//                                activeOpponents, cards, rand);
 //                fc.combine(c5);
 //                return c5.odds();
 
@@ -125,14 +123,14 @@ public class ApproximateOddFinder implements OddFinder
 
     private Odds computeFlop(
             int flops, long holes, int activeOpponents,
-            int indexes[], Card cards[], MersenneTwisterFast rand)
+            Card cards[], MersenneTwisterFast rand)
     {
         Odds odds = new Odds();
         if (flops >= 1081)
         {
             int unknownCount = 52 - 2 - 3;
             FastIntCombiner fc =
-                new FastIntCombiner(indexes, unknownCount);
+                new FastIntCombiner(INDEXES, unknownCount);
 
             TurnCommunityVisitor turn =
                     new TurnCommunityVisitor(
@@ -161,22 +159,22 @@ public class ApproximateOddFinder implements OddFinder
 
     private Odds computeTurn(
             long holes, int activeOpponents,
-            int indexes[], Card cards[], MersenneTwisterFast rand)
+            Card cards[], MersenneTwisterFast rand)
     {
 //        for (int i = 0; i < flops; i++)
 //        {
 //            int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-//            GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//            swap(cards, xComE, GeneralOddFinder.COM_E);
 //
 //            odds = odds.plus(computeOppOdds(
-//                        activeOpponents, indexes, cards, rand));
+//                        activeOpponents, cards, rand));
 //
-//            GeneralOddFinder.swap(indexes, xComE, GeneralOddFinder.COM_E);
+//            swap(cards, xComE, GeneralOddFinder.COM_E);
 //        }
 
         int unknownCount = 52 - 2 - 4;
         FastIntCombiner fc =
-            new FastIntCombiner(indexes, unknownCount);
+            new FastIntCombiner(INDEXES, unknownCount);
 
         RiverCommunityVisitor river =
                 new RiverCommunityVisitor(

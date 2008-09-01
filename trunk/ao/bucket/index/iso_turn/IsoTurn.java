@@ -19,14 +19,10 @@ import java.util.Comparator;
 public class IsoTurn
 {
     //--------------------------------------------------------------------
-    //private final RankedSuited<Rank, WildMarkedSuit>
-    private final WildCard
-                           HOLE_A, HOLE_B;
+    private final WildCard HOLE_A, HOLE_B;
     private final WildCard FLOP_A, FLOP_B, FLOP_C,
                            TURN;
-
-    private final WildCard PREV_CARDS[];
-
+    private final TurnCase CASE;
 
 
     //--------------------------------------------------------------------
@@ -44,9 +40,6 @@ public class IsoTurn
         sort(wildHole);
         HOLE_A = wildHole[ 0 ];
         HOLE_B = wildHole[ 1 ];
-//        HOLE_A = wildHole[ 0 ].mark(0);
-//        HOLE_B = wildHole[ 1 ].mark(
-//                    countLeftRankMatches(hole, hole[1], 1));
 
         WildCard wildFlop[] = new WildCard[]{
                 asWild(refined, flop[ 0 ]),
@@ -58,8 +51,10 @@ public class IsoTurn
         FLOP_C = wildFlop[ 2 ];
 
         TURN = asWild(refined, turn);
-        PREV_CARDS = new WildCard[]{HOLE_A, HOLE_B,
-                                    FLOP_A, FLOP_B, FLOP_C};
+        CASE = TurnCase.valueOf(
+                HOLE_A, HOLE_B,
+                FLOP_A, FLOP_B, FLOP_C,
+                TURN);
     }
 
     private <S extends WildSuitMarker<S>>
@@ -84,20 +79,6 @@ public class IsoTurn
         return WildCard.newInstance(
                 card.rank(),
                 order.asWild( card.suit() ));
-    }
-
-    private int countLeftRankMatches(
-            Card in[], Card of, int upTo)
-    {
-        int count = 0;
-        for (int i = 0; i < upTo; i++)
-        {
-            if (in[i].rank() == of.rank())
-            {
-                count++;
-            }
-        }
-        return count;
     }
 
 
@@ -131,30 +112,28 @@ public class IsoTurn
 
 
     //--------------------------------------------------------------------
-    public TurnCase turnCase()
-    {
-        return new TurnCase(
-                HOLE_A.suit(), HOLE_B.suit(),
-                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit(),
-                TURN.suit());
-    }
-
-
-    //--------------------------------------------------------------------
     public int caseIndex()
     {
         return subCase().indexOf( TURN.suit() );
     }
 
-    public TurnSubCase subCase()
+    public TurnCase subCase()
     {
-        return TurnSubCase.valueOf(
-                HOLE_A.suit(), HOLE_B.suit(),
-                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
+        return CASE;
     }
 
 
     //--------------------------------------------------------------------
+    public int casedSubIndex(TurnCaseSet caseSet)
+    {
+        TurnCase subCase =
+                caseSet.isFalsed()
+                ? caseSet.trueCase()
+                : subCase();
+
+        int localOffset = subCase.localOffset( TURN.suit() );
+        return subIndex() + localOffset;
+    }
     public int subIndex()
     {
         int index         = 0;
