@@ -25,52 +25,52 @@ public class GeneralOddFinder implements OddFinder
                             COM_E  = 52 - (2 + 5),
                             OPPS   = 52 - (2 + 5 + 1);
 
+    public static final int INDEXES[] = sequence( Card.VALUES.length );
+
 
     //--------------------------------------------------------------------
     public Odds compute(Hole      hole,
                         Community community,
                         int       activeOpponents)
     {
-        Card cards[]   = Card.values();
-
         // selected from right [51] to left [0]
         //  meaning rightmost elements of indexes[] are
         //  personal hole cards, and common community cards,
         //  and to the left of those (0..44, ie. < 52 - 2 - 5)
         //  are opponents' simulated cards.
-        int  indexes[] = sequence( cards.length );
+        Card cards[]   = Card.values();
 
         initKnownCardsToEnd(cards, hole, community);
 
         int unknownCount = 52 - 2 - community.knownCount();
         FastIntCombiner fc =
-                    new FastIntCombiner(indexes, unknownCount);
+                    new FastIntCombiner(INDEXES, unknownCount);
 
         switch (community.knownCount())
         {
             case 0:
                 CommunityVisitor5 c5 =
                         new CommunityVisitor5(
-                                activeOpponents, indexes, cards);
+                                activeOpponents, cards);
                 fc.combine(c5);
                 return c5.odds();
 
             case 3:
                 CommunityVisitor2 c2 =
                         new CommunityVisitor2(
-                                activeOpponents, indexes, cards);
+                                activeOpponents, cards);
                 fc.combine(c2);
                 return c2.odds();
 
             case 4:
                 CommunityVisitor1 c1 =
                         new CommunityVisitor1(
-                                activeOpponents, indexes, cards);
+                                activeOpponents, cards);
                 fc.combine(c1);
                 return c1.odds();
 
             case 5:
-                return computeOppCards(activeOpponents, indexes, cards);
+                return computeOppCards(activeOpponents, cards);
         }
         return null;
     }
@@ -81,17 +81,14 @@ public class GeneralOddFinder implements OddFinder
             implements FastIntCombiner.CombinationVisitor5
     {
         private Card cards[];
-        private int  indexes[];
         private int  activeOpponents;
         private Odds odds = new Odds();
 
         public CommunityVisitor5(
                 int  activeOpps,
-                int  indexes[],
                 Card cards[])
         {
             activeOpponents = activeOpps;
-            this.indexes    = indexes;
             this.cards      = cards;
         }
 
@@ -104,7 +101,7 @@ public class GeneralOddFinder implements OddFinder
             swap(cards, e, COM_E);
 
             odds = odds.plus(
-                    computeOppCards(activeOpponents, indexes, cards));
+                    computeOppCards(activeOpponents, cards));
 
             swap(cards, e, COM_E);
             swap(cards, d, COM_D);
@@ -122,17 +119,14 @@ public class GeneralOddFinder implements OddFinder
             implements FastIntCombiner.CombinationVisitor2
     {
         private Card cards[];
-        private int  indexes[];
         private int  activeOpponents;
         private Odds odds = new Odds();
 
         public CommunityVisitor2(
                 int  activeOpps,
-                int  indexes[],
                 Card cards[])
         {
             activeOpponents = activeOpps;
-            this.indexes    = indexes;
             this.cards      = cards;
         }
 
@@ -142,7 +136,7 @@ public class GeneralOddFinder implements OddFinder
             swap(cards, e, COM_E);
 
             odds = odds.plus(
-                    computeOppCards(activeOpponents, indexes, cards));
+                    computeOppCards(activeOpponents, cards));
 
             swap(cards, e, COM_E);
             swap(cards, d, COM_D);
@@ -154,17 +148,14 @@ public class GeneralOddFinder implements OddFinder
             implements FastIntCombiner.CombinationVisitor1
     {
         private Card cards[];
-        private int  indexes[];
         private int  activeOpponents;
         private Odds odds = new Odds();
 
         public CommunityVisitor1(
                 int  activeOpps,
-                int  indexes[],
                 Card cards[])
         {
             activeOpponents = activeOpps;
-            this.indexes    = indexes;
             this.cards      = cards;
         }
 
@@ -172,7 +163,7 @@ public class GeneralOddFinder implements OddFinder
         {
             swap(cards, e, COM_E);
             odds = odds.plus(
-                    computeOppCards(activeOpponents, indexes, cards));
+                    computeOppCards(activeOpponents, cards));
             swap(cards, e, COM_E);
         }
 
@@ -183,7 +174,6 @@ public class GeneralOddFinder implements OddFinder
     //--------------------------------------------------------------------
     private static Odds computeOppCards(
             int  activeOpps,
-            int  indexes[],
             Card cards[])
     {
         Card comA = cards[ COM_A ],
@@ -202,7 +192,7 @@ public class GeneralOddFinder implements OddFinder
                                           cards[ HOLE_A ],
                                           cards[ HOLE_B ]);
 
-        FastIntCombiner fc = new FastIntCombiner(indexes, 52 - 2 - 5);
+        FastIntCombiner fc = new FastIntCombiner(INDEXES, 52 - 2 - 5);
         switch (activeOpps)
         {
             case 1:

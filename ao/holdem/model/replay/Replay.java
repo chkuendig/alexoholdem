@@ -20,7 +20,7 @@ import java.util.*;
 public class Replay
 {
     //--------------------------------------------------------------------
-    private final UniqueId id;
+    private final UniqueId                  id;
     private final List<Avatar>              players;
     private final Map<Avatar, List<Action>> action;
     private final Community                 community;

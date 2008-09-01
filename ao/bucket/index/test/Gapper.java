@@ -32,6 +32,11 @@ public class Gapper
         return indexes.nextClearBit(0) == indexes.length();
     }
 
+    public int length()
+    {
+        return indexes.length();
+    }
+
 
     //--------------------------------------------------------------------
     public boolean displayStatus()
