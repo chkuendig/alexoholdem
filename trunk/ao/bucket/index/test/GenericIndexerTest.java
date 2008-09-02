@@ -2,8 +2,6 @@ package ao.bucket.index.test;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
-import ao.bucket.index.incremental.TurnIndexer;
-import ao.bucket.index.iso_turn.TurnCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -15,7 +13,6 @@ import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
@@ -50,7 +47,7 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
+//                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
                 seenHoles.set( hole.suitIsomorphicIndex() );
 
                 swap(cards, holeB, 51  );
@@ -92,13 +89,13 @@ public class GenericIndexerTest
                             flopCards[0], flopCards[1], flopCards[2]));
                 int index = indexer.indexOf(cardSeq);
 //                flopGapper.set(index);
-//                if (index == 0) System.out.println(cardSeq);
 
-                if (! seenFlops.get( index )) {
+//                if (! seenFlops.get( index ))
+//                {
                     seenFlops.set( index );
                     iterateTurns(
-                            hole, flopCards, index, indexer, turnGaps);
-                }
+                            hole, flopCards, indexer, turnGaps);
+//                }
 
                 swap(cards, flopA, 51-4);
                 swap(cards, flopB, 51-3);
@@ -111,14 +108,14 @@ public class GenericIndexerTest
     public void iterateTurns(
             Hole    hole,
             Card    flop[],
-            int     flopIndex,
+//            int     flopIndex,
             Indexer indexer,
             Gapper  turnGaps)
     {
-        if (TurnIndexer.CASE_SETS[flopIndex] !=
-            TurnCaseSet.OTOTR_P) return;
+//        if (TurnIndexer.CASE_SETS[flopIndex] !=
+//            TurnCaseSet.OTOTR_P) return;
 
-        Gapper localGapper = new Gapper();
+//        Gapper localGapper = new Gapper();
         for (int turnCardIndex = 0;
                  turnCardIndex < 52 - 2 - 3;
                  turnCardIndex++)
@@ -128,30 +125,26 @@ public class GenericIndexerTest
             CardSequence seq = new LiteralCardSequence(hole,
                    new Community(flop[0], flop[1], flop[2], turnCard));
             int turnIndex = indexer.indexOf(seq);
-            if (turnIndex == 11 || turnIndex == 21 || turnIndex == 23)
-            {
-                indexer.indexOf(seq);
-            }
+            turnGaps.set( turnIndex );
+            
+//            localGapper.set( turnIndex );
 
-//            turnGaps.set( turnIndex );
-            localGapper.set( turnIndex );
-
-            System.out.println( hole.isoFlop(flop).isoTurn(
-                    hole.asArray(), flop, turnCard) + "\t" + turnIndex);
+//            System.out.println( hole.isoFlop(flop).isoTurn(
+//                    hole.asArray(), flop, turnCard) + "\t" + turnIndex);
         }
 
-        if (! localGapper.continuous())
-        {
-            System.out.println(hole + "\t" + Arrays.toString(flop));
-            localGapper.displayStatus();
-        }
-        else if (TurnIndexer.CASE_SETS[flopIndex].size() !=
-                    localGapper.length())
-        {
-            System.out.println(hole + "\t" + Arrays.toString(flop));
-            System.out.println(
-                    TurnIndexer.CASE_SETS[flopIndex].size() + "\t" +
-                    localGapper.length());
-        }
+//        if (! localGapper.continuous())
+//        {
+//            System.out.println(hole + "\t" + Arrays.toString(flop));
+//            localGapper.displayStatus();
+//        }
+//        else if (TurnIndexer.CASE_SETS[flopIndex].size() !=
+//                    localGapper.length())
+//        {
+//            System.out.println(hole + "\t" + Arrays.toString(flop));
+//            System.out.println(
+//                    TurnIndexer.CASE_SETS[flopIndex].size() + "\t" +
+//                    localGapper.length());
+//        }
     }
 }
