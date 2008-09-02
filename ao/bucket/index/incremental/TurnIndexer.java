@@ -166,6 +166,7 @@ public class TurnIndexer
         TurnCaseSet caseSet = TurnCaseSet.valueOf(turnCaseBuffer);
         if (caseSet == null)
         {
+//            TurnCaseSet.valueOf(turnCaseBuffer);
             System.out.println(
                     "missing TurnCaseSet\t" + turnCaseBuffer);
         }
@@ -203,7 +204,7 @@ public class TurnIndexer
         int casedSubIndex  = isoTurn.casedSubIndex(caseSet);
         int localIndex     = turnCaseOffset + casedSubIndex;
 
-        //return localIndex + GLOBAL_OFFSET[ flopIsoIndex ];
-        return localIndex;
+        return localIndex + GLOBAL_OFFSET[ flopIsoIndex ];
+//        return localIndex;
     }
 }

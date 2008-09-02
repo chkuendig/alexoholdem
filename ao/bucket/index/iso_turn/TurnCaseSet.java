@@ -52,7 +52,7 @@ public enum TurnCaseSet
 //[OT_OTR, WW_TWW]
     OTOTR_WWTWW(OT_OTR_P, WW_TWW),
 
-    OTOTR_P(true, OT_OTR_P, OT_ORR),
+    OTOTR_P(true, OT_OTR_P, OT_OTR),
 
 //[OT_OTR]
     OTOTR(OT_OTR),
@@ -117,7 +117,7 @@ public enum TurnCaseSet
         {
             if (turnCaseSet.TURN_CASES.length == 1 &&
                 ( turnCaseSet.FALSE_MATCH == turnCaseA ||
-                  turnCaseSet.FALSE_MATCH != null &&
+                  turnCaseSet.FALSE_MATCH == null &&
                    turnCaseSet.TURN_CASES[0] == turnCaseA))
             {
                 return turnCaseSet;
