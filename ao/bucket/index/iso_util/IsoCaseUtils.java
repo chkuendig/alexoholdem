@@ -25,6 +25,17 @@ public class IsoCaseUtils
 
     //--------------------------------------------------------------------
     public static int offset(
+            int    of,
+            int... precededBy)
+    {
+        int offset = 0;
+        for (int precedent : precededBy)
+        {
+            offset += offset(precedent, of);
+        }
+        return offset;
+    }
+    public static int offset(
             int precededByA,
             int precededByB,
             int of)
