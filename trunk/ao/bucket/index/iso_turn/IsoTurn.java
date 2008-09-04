@@ -4,6 +4,7 @@ import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_cards.wild.card.RankedSuited;
 import ao.bucket.index.iso_cards.wild.card.WildCard;
 import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
+import ao.bucket.index.iso_river.IsoRiver;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 
@@ -23,34 +24,36 @@ public class IsoTurn
     private final WildCard FLOP_A, FLOP_B, FLOP_C,
                            TURN;
     private final TurnCase CASE;
+    private final Ordering ORDER;
 
 
     //--------------------------------------------------------------------
     public IsoTurn(Ordering flopOrder,
-                   Card     hole[],
+                   Card hole[],
                    Card     flop[],
                    Card     turn)
     {
         Ordering byTurn  = Ordering.suited(turn.suit());
         Ordering refined = flopOrder.refine( byTurn );
+        ORDER            = refined;
 
         WildCard wildHole[] = new WildCard[]{
-                asWild(refined, hole[0]),
-                asWild(refined, hole[1])};
+                WildCard.newInstance(refined, hole[0]),
+                WildCard.newInstance(refined, hole[1])};
         sort(wildHole);
         HOLE_A = wildHole[ 0 ];
         HOLE_B = wildHole[ 1 ];
 
         WildCard wildFlop[] = new WildCard[]{
-                asWild(refined, flop[ 0 ]),
-                asWild(refined, flop[ 1 ]),
-                asWild(refined, flop[ 2 ])};
+                WildCard.newInstance(refined, flop[ 0 ]),
+                WildCard.newInstance(refined, flop[ 1 ]),
+                WildCard.newInstance(refined, flop[ 2 ])};
         sort(wildFlop);
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
 
-        TURN = asWild(refined, turn);
+        TURN = WildCard.newInstance(refined, turn);
         CASE = TurnCase.valueOf(
                 HOLE_A, HOLE_B,
                 FLOP_A, FLOP_B, FLOP_C,
@@ -70,17 +73,6 @@ public class IsoTurn
             }
         });
     }
-
-
-    //--------------------------------------------------------------------
-    private WildCard asWild(
-            Ordering order, Card card)
-    {
-        return WildCard.newInstance(
-                card.rank(),
-                order.asWild( card.suit() ));
-    }
-
 
     //--------------------------------------------------------------------
     public Rank holeA()
@@ -108,6 +100,17 @@ public class IsoTurn
     public Rank turn()
     {
         return TURN.rank();
+    }
+
+
+    //--------------------------------------------------------------------
+    public IsoRiver isoRiver(Card hole[],
+                             Card flop[],
+                             Card turn,
+                             Card river)
+    {
+        return new IsoRiver(ORDER,
+                            hole, flop, turn, river);
     }
 
 

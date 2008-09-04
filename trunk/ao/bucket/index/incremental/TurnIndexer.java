@@ -24,13 +24,13 @@ import java.util.Set;
 public class TurnIndexer
 {
     //--------------------------------------------------------------------
-    private static final String CASE_FILE = "lookup/turn_cases.cache";
+    private static final String      CASE_FILE =
+                                        "lookup/turn_cases.cache";
     
     private static final FlopIndexer FLOPS     = new FlopIndexer();
     private static final int         INDEXES[];
-
-    public static final TurnCaseSet CASE_SETS[];
-    private static final int GLOBAL_OFFSET[];
+    private static final TurnCaseSet CASE_SETS[];
+    private static final int         GLOBAL_OFFSET[];
 
     static
     {

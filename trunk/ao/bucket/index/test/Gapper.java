@@ -26,6 +26,20 @@ public class Gapper
     }
 
 
+    public boolean get(int index)
+    {
+        return indexes.get( index );
+    }
+
+
+    //--------------------------------------------------------------------
+    public void clear()
+    {
+        count = 0;
+        indexes.clear();
+    }
+
+
     //--------------------------------------------------------------------
     public boolean continuous()
     {

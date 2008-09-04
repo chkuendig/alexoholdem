@@ -40,17 +40,17 @@ public class IsoFlop
         ORDER = refined;
 
         WildCard wildHole[] = new WildCard[]{
-                asWild(refined, hole[0]),
-                asWild(refined, hole[1])};
+                WildCard.newInstance(refined, hole[0]),
+                WildCard.newInstance(refined, hole[1])};
         sort(wildHole);
         HOLE_A = wildHole[ 0 ].mark(0);
         HOLE_B = wildHole[ 1 ].mark(
                     countLeftRankMatches(hole, hole[1], 1));
 
         WildCard wildFlop[] = new WildCard[]{
-                asWild(refined, flop[ 0 ]),
-                asWild(refined, flop[ 1 ]),
-                asWild(refined, flop[ 2 ])};
+                WildCard.newInstance(refined, flop[ 0 ]),
+                WildCard.newInstance(refined, flop[ 1 ]),
+                WildCard.newInstance(refined, flop[ 2 ])};
         sort(wildFlop);
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
@@ -75,14 +75,6 @@ public class IsoFlop
 
 
     //--------------------------------------------------------------------
-    private WildCard asWild(
-            Ordering order, Card card)
-    {
-        return WildCard.newInstance(
-                card.rank(),
-                order.asWild( card.suit() ));
-    }
-
     private int countLeftRankMatches(
             Card in[], Card of, int upTo)
     {

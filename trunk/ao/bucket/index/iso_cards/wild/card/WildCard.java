@@ -1,7 +1,9 @@
 package ao.bucket.index.iso_cards.wild.card;
 
+import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
 import ao.bucket.index.iso_cards.wild.suit.WildSuit;
+import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 
 /**
@@ -11,6 +13,14 @@ import ao.holdem.model.card.Rank;
 public class WildCard extends RankedSuitedImpl<WildSuit>
 {
     //--------------------------------------------------------------------
+    public static WildCard newInstance(
+            Ordering order, Card card)
+    {
+        return WildCard.newInstance(
+                card.rank(),
+                order.asWild( card.suit() ));
+    }
+
     public static WildCard newInstance(
             Rank     rank,
             WildSuit suit)
