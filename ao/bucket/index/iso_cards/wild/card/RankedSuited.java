@@ -8,6 +8,7 @@ import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
  */
 public interface RankedSuited<R extends Comparable<R>,
                               S extends WildSuitMarker<S>>
+        extends Comparable<RankedSuited<R, S>>
 {
     public R rank();
 

@@ -4,7 +4,6 @@ import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_cards.wild.card.RankedSuited;
 import ao.bucket.index.iso_cards.wild.card.WildCard;
 import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
-import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
 import ao.bucket.index.iso_turn.IsoTurn;
 import static ao.bucket.index.iso_util.IsoCaseUtils.distinct;
 import static ao.bucket.index.iso_util.IsoCaseUtils.sortByRank;
@@ -13,7 +12,6 @@ import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Date: Jun 18, 2008
@@ -42,7 +40,7 @@ public class IsoFlop
         WildCard wildHole[] = new WildCard[]{
                 WildCard.newInstance(refined, hole[0]),
                 WildCard.newInstance(refined, hole[1])};
-        sort(wildHole);
+        Arrays.sort(wildHole);
         HOLE_A = wildHole[ 0 ].mark(0);
         HOLE_B = wildHole[ 1 ].mark(
                     countLeftRankMatches(hole, hole[1], 1));
@@ -51,26 +49,12 @@ public class IsoFlop
                 WildCard.newInstance(refined, flop[ 0 ]),
                 WildCard.newInstance(refined, flop[ 1 ]),
                 WildCard.newInstance(refined, flop[ 2 ])};
-        sort(wildFlop);
+        Arrays.sort(wildFlop);
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
 
         FLOP_CASE = computeFlopCase();
-    }
-
-    private <S extends WildSuitMarker<S>>
-            void sort(RankedSuited<Rank, S> wildCards[])
-    {
-        Arrays.sort(wildCards, new Comparator<RankedSuited<Rank, S>>()  {
-            public int compare(RankedSuited<Rank, S> a,
-                               RankedSuited<Rank, S> b) {
-                int suitCmp = a.suit().compareTo( b.suit() );
-                return (suitCmp == 0
-                           ? a.rank().compareTo( b.rank() )
-                           : suitCmp);
-            }
-        });
     }
 
 

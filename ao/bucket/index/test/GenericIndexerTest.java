@@ -5,6 +5,7 @@ import ao.bucket.index.incremental.IndexerImpl;
 import ao.bucket.index.iso_flop.IsoFlop;
 import ao.bucket.index.iso_river.IsoRiver;
 import ao.bucket.index.iso_river.RiverCase;
+import ao.bucket.index.iso_river.RiverCaseSet;
 import ao.bucket.index.iso_turn.IsoTurn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -13,13 +14,14 @@ import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.util.data.Arr;
 import static ao.util.data.Arr.swap;
+import ao.util.persist.PersistentBytes;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
 import java.util.BitSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Date: Aug 21, 2008
@@ -35,13 +37,17 @@ public class GenericIndexerTest
         indexerTest.test( new IndexerImpl() );
     }
 
+    //--------------------------------------------------------------------
+    private static final String RAW_RIVER_CASES =
+                                    "lookup/raw_river_cases.cache";
+
 
     //--------------------------------------------------------------------
     private Card   cards[]   = Card.values();
     private int    indexes[] = Arr.sequence( Card.VALUES.length );
     private Gapper seenTurns = new Gapper();
     private Gapper riverGaps = new Gapper();
-    private Set<RiverCase> riverCases = new LinkedHashSet<RiverCase>();
+    private byte   RIVER_CASES[] = new byte[51520872];
 
 
     //--------------------------------------------------------------------
@@ -49,11 +55,10 @@ public class GenericIndexerTest
     {
         seenTurns.clear();
         riverGaps.clear();
-        riverCases.clear();
-
         final BitSet seenHoles  = new BitSet();
         new FastIntCombiner(indexes, indexes.length).combine(
                 new CombinationVisitor2() {
+            private long prevTime = System.currentTimeMillis();
             public void visit(int holeA, int holeB)
             {
                 Hole hole = Hole.valueOf(
@@ -66,13 +71,15 @@ public class GenericIndexerTest
                 swap(cards, holeA, 51-1);
 
                 iterateFlops(hole, indexer);
+                System.out.println(System.currentTimeMillis() - prevTime);
+                prevTime = System.currentTimeMillis();
 
                 swap(cards, holeA, 51-1);
                 swap(cards, holeB, 51  );
             }
         });
 
-        riverGaps.displayStatus();
+        PersistentBytes.persist(RIVER_CASES, RAW_RIVER_CASES);
     }
 
 
@@ -134,7 +141,7 @@ public class GenericIndexerTest
                 seenTurns.set( turnIndex );
 
             swap(cards, turnCardIndex, 51-5);
-            iterateRivers(hole, flop, turnCard, indexer);
+            iterateRivers(hole, flop, turnCard, turnIndex, indexer);
             swap(cards, turnCardIndex, 51-5);
         }
     }
@@ -143,36 +150,71 @@ public class GenericIndexerTest
             Hole    hole,
             Card    flop[],
             Card    turn,
+            int     turnIndex,
             Indexer indexer)
     {
-//        Gapper localRiver = new Gapper();
-        for (int turnCardIndex = 0;
-                 turnCardIndex < 52 - 2 - 3;
-                 turnCardIndex++)
+        int            size       = 0;
+        Set<RiverCase> caseBuffer = new TreeSet<RiverCase>();
+        for (int riverCardIndex = 0;
+                 riverCardIndex < 52 - 2 - 3 - 1;
+                 riverCardIndex++)
         {
-            Card riverCard = cards[ turnCardIndex ];
+            Card riverCard = cards[ riverCardIndex ];
 
             IsoFlop  isoFlop  = hole.isoFlop(flop);
             IsoTurn  isoTurn  = isoFlop.isoTurn(
                     hole.asArray(), flop, turn);
             IsoRiver isoRiver = isoTurn.isoRiver(
                     hole.asArray(), flop, turn, riverCard);
-
-
-            if (riverCases.add( isoRiver.riverCase() ))
+            if (caseBuffer.add( isoRiver.riverCase() ))
             {
-                System.out.println(isoRiver.riverCase());
+                size += isoRiver.riverCase().size();
             }
-
-
-//            CardSequence seq = new LiteralCardSequence(hole,
-//                   new Community(flop[0], flop[1], flop[2],
-//                                 turn, riverCard));
-//            int riverIndex = indexer.indexOf(seq);
-
-//            localRiver.set( riverIndex );
-
-
         }
+        RIVER_CASES[ turnIndex ] = (byte)
+                RiverCaseSet.valueOf(caseBuffer).ordinal();
+//        System.out.println(turnIndex + "\t" +
+//                           RiverCaseSet.valueOf(caseBuffer) );
+
+////        List<RiverCase> siblingCases =
+////                new ArrayList<RiverCase>(caseBuffer);
+//        Gapper localRiver = new Gapper();
+//        for (int riverCardIndex = 0;
+//                 riverCardIndex < 52 - 2 - 3 - 1;
+//                 riverCardIndex++)
+//        {
+//            Card riverCard = cards[ riverCardIndex ];
+//
+//            IsoFlop  isoFlop  = hole.isoFlop(flop);
+//            IsoTurn  isoTurn  = isoFlop.isoTurn(
+//                    hole.asArray(), flop, turn);
+//            IsoRiver isoRiver = isoTurn.isoRiver(
+//                    hole.asArray(), flop, turn, riverCard);
+//
+//            int offset = 0;
+//            for (RiverCase riverCase : caseBuffer)
+//            {
+//                if (riverCase.equals( isoRiver.riverCase() ))
+//                {
+//                    break;
+//                }
+//                offset += riverCase.size();
+//            }
+//            int localIndex = isoRiver.localSubIndex() + offset;
+//            localRiver.set( localIndex );
+//
+////            CardSequence seq = new LiteralCardSequence(hole,
+////                   new Community(flop[0], flop[1], flop[2],
+////                                 turn, riverCard));
+////            int riverIndex = indexer.indexOf(seq);
+//
+////            localRiver.set( riverIndex );
+//        }
+//        if (! localRiver.continuous() ||
+//              localRiver.length() != size)
+//        {
+//            System.out.println("size: " + size);
+//            localRiver.displayStatus();
+//        }
     }
 }
