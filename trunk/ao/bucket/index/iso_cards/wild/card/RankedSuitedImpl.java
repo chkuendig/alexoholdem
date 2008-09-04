@@ -8,7 +8,8 @@ import ao.holdem.model.card.Rank;
  * Time: 3:29:37 AM
  */
 public class RankedSuitedImpl<S extends WildSuitMarker<S>>
-        implements RankedSuited<Rank, S>
+        implements RankedSuited<Rank, S>,
+                   Comparable<RankedSuited<Rank, S>>
 {
     //--------------------------------------------------------------------
     private final Rank RANK;
@@ -33,6 +34,16 @@ public class RankedSuitedImpl<S extends WildSuitMarker<S>>
     public S suit()
     {
         return SUIT;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int compareTo(RankedSuited<Rank, S> b)
+    {
+        int suitCmp = SUIT.compareTo( b.suit() );
+        return (suitCmp == 0
+                   ? RANK.compareTo( b.rank() )
+                   : suitCmp);
     }
 
 

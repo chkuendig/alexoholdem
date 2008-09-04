@@ -47,7 +47,7 @@ public enum RiverCase
                 precedent.rank().ordinal() <  river.rank().ordinal())
                 offset++;
         }
-        return river.suit().ordinal() - offset;
+        return river.rank().ordinal() - offset;
     }
 
 //    public int

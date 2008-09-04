@@ -3,13 +3,11 @@ package ao.bucket.index.iso_turn;
 import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_cards.wild.card.RankedSuited;
 import ao.bucket.index.iso_cards.wild.card.WildCard;
-import ao.bucket.index.iso_cards.wild.suit.WildSuitMarker;
 import ao.bucket.index.iso_river.IsoRiver;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * Date: Aug 27, 2008
@@ -40,7 +38,7 @@ public class IsoTurn
         WildCard wildHole[] = new WildCard[]{
                 WildCard.newInstance(refined, hole[0]),
                 WildCard.newInstance(refined, hole[1])};
-        sort(wildHole);
+        Arrays.sort(wildHole);
         HOLE_A = wildHole[ 0 ];
         HOLE_B = wildHole[ 1 ];
 
@@ -48,7 +46,7 @@ public class IsoTurn
                 WildCard.newInstance(refined, flop[ 0 ]),
                 WildCard.newInstance(refined, flop[ 1 ]),
                 WildCard.newInstance(refined, flop[ 2 ])};
-        sort(wildFlop);
+        Arrays.sort(wildFlop);
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
@@ -60,19 +58,6 @@ public class IsoTurn
                 TURN);
     }
 
-    private <S extends WildSuitMarker<S>>
-            void sort(RankedSuited<Rank, S> wildCards[])
-    {
-        Arrays.sort(wildCards, new Comparator<RankedSuited<Rank, S>>()  {
-            public int compare(RankedSuited<Rank, S> a,
-                               RankedSuited<Rank, S> b) {
-                int suitCmp = a.suit().compareTo( b.suit() );
-                return (suitCmp == 0
-                           ? a.rank().compareTo( b.rank() )
-                           : suitCmp);
-            }
-        });
-    }
 
     //--------------------------------------------------------------------
     public Rank holeA()
