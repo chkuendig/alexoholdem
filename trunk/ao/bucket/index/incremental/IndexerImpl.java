@@ -2,6 +2,7 @@ package ao.bucket.index.incremental;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.iso_flop.IsoFlop;
+import ao.bucket.index.iso_turn.IsoTurn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.sequence.CardSequence;
 
@@ -12,12 +13,13 @@ import ao.holdem.model.card.sequence.CardSequence;
 public class IndexerImpl implements Indexer
 {
     //--------------------------------------------------------------------
-    private FlopIndexer flopIndexer = new FlopIndexer();
-    private TurnIndexer turnIndexer = new TurnIndexer();
+    private  FlopIndexer  flopIndexer = new  FlopIndexer();
+    private  TurnIndexer  turnIndexer = new  TurnIndexer();
+    private RiverIndexer riverIndexer = new RiverIndexer();
 
 
     //--------------------------------------------------------------------
-    public int indexOf(CardSequence cards)
+    public long indexOf(CardSequence cards)
     {
         if (cards.community().isPreflop())
         {
@@ -37,9 +39,23 @@ public class IndexerImpl implements Indexer
             }
             else
             {
-                return turnIndexer.indexOf(
-                        cards.hole(), flopCards, isoFlop, flopIndex,
-                        cards.community().turn());
+                Card    turnCard = cards.community().turn();
+                IsoTurn isoTurn  =
+                    isoFlop.isoTurn(
+                            cards.hole().asArray(), flopCards, turnCard);
+
+                int turnIndex = turnIndexer.indexOf(flopIndex, isoTurn);
+                if (! cards.community().hasRiver())
+                {
+                    return turnIndex;
+                }
+                else
+                {
+                    return riverIndexer.indexOf(
+                            cards.hole(), flopCards,
+                            turnCard, isoTurn, turnIndex,
+                            cards.community().river());
+                }
             }
         }
     }

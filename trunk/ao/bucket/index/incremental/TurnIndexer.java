@@ -196,7 +196,11 @@ public class TurnIndexer
         IsoTurn isoTurn =
                 isoFlop.isoTurn(
                         hole.asArray(), flop, turn);
-
+        return indexOf(flopIsoIndex, isoTurn);
+    }
+    public int indexOf(int     flopIsoIndex,
+                       IsoTurn isoTurn)
+    {
         TurnCase    turnCase = isoTurn.subCase();
         TurnCaseSet caseSet  = CASE_SETS[ flopIsoIndex ];
 

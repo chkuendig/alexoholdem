@@ -61,17 +61,25 @@ public enum RiverCaseSet
 
     //--------------------------------------------------------------------
     private final Set<RiverCase> RIVER_CASES;
+    private final int            SIZE;
+    private final int            OFFSETS[];
 
 
     //--------------------------------------------------------------------
     private RiverCaseSet(RiverCase... riverCases)
     {
         RIVER_CASES = EnumSet.copyOf(Arrays.asList(riverCases));
+        SIZE        = computeSize();
+        OFFSETS     = computeOffset();
     }
 
 
     //--------------------------------------------------------------------
     public int size()
+    {
+        return SIZE;
+    }
+    private int computeSize()
     {
         int size = 0;
         for (RiverCase riverCase : RIVER_CASES)
@@ -81,17 +89,21 @@ public enum RiverCaseSet
         return size;
     }
 
+
+    //--------------------------------------------------------------------
     public int offset(RiverCase of)
     {
-        int offset = 0;
+        return OFFSETS[ of.ordinal() ];
+    }
+    public int[] computeOffset()
+    {
+        int offset    = 0;
+        int offsets[] = new int[RiverCase.VALUES.length];
         for (RiverCase riverCase : RIVER_CASES)
         {
-            if (riverCase == of)
-            {
-                return offset;
-            }
+            offsets[ riverCase.ordinal() ] = offset;
             offset += riverCase.size();
         }
-        return -1;
+        return offsets;
     }
 }
