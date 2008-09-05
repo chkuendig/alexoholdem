@@ -8,5 +8,5 @@ import ao.holdem.model.card.sequence.CardSequence;
  */
 public interface Indexer
 {
-    public int indexOf(CardSequence cards);
+    public long indexOf(CardSequence cards);
 }

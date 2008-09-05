@@ -17,6 +17,8 @@ public enum RiverCase
     FIVE(5),
     SIX(6);
 
+    public static RiverCase VALUES[] = values();
+
 
     //--------------------------------------------------------------------
     private final int PRERIVER_SUITED;
