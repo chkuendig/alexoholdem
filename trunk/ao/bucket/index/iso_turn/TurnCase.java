@@ -104,7 +104,6 @@ public enum TurnCase
 //[ONE, TWO][ONE, TWO, THREE][TWO]
 //[ONE, TWO][ONE, TWO, THREE][THREE]
 //[ONE, TWO][ONE, TWO, THREE][FOUR]
-    // todo: see why turnSuits are interpreted out of order 
     OT_OTR(ONE, TWO, ONE, TWO, THREE,
            ONE, TWO, THREE, FOUR),
 
