@@ -14,7 +14,6 @@ import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
@@ -76,6 +75,7 @@ public class GenericIndexerTest
     {
         final BitSet seenFlops = new BitSet();
 
+        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -104,8 +104,6 @@ public class GenericIndexerTest
                 swap(cards, flopB, 51-3);
                 swap(cards, flopC, 51-2);
             }});
-
-        System.out.println(hole);
     }
 
     public void iterateTurns(
@@ -139,8 +137,8 @@ public class GenericIndexerTest
             int     turnIndex,
             Indexer indexer)
     {
-        System.out.println(
-                Arrays.toString(flop) + "\t" + turn);
+//        System.out.println(
+//                Arrays.toString(flop) + "\t" + turn);
 
         Gapper localRiver = new Gapper();
         for (int riverCardIndex = 0;
@@ -155,7 +153,7 @@ public class GenericIndexerTest
             int riverIndex = (int) indexer.indexOf(seq);
 
             localRiver.set( riverIndex );
-            System.out.println(seq + "\t" + riverIndex);
+//            System.out.println(seq + "\t" + riverIndex);
         }
 
         RiverCaseSet rcs = RiverIndexer.riverCaseSet(turnIndex);

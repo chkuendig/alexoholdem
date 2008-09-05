@@ -43,6 +43,9 @@ public class RiverIndexer
 
     public static final long CODED_TURNS[] = computeEncoding();
 
+    private static final int COMPRESSED_SIZE =  3452841;
+    private static final int        RAW_SIZE = 51520872;
+
 
     //--------------------------------------------------------------------
     public static void main(String[] args)
@@ -179,7 +182,7 @@ public class RiverIndexer
     private static long[] computeEncoding()
     {
         byte zipRivers[] = compressedCases();
-        long encoded[]   = new long[3452840];
+        long encoded[]   = new long[ COMPRESSED_SIZE ];
 
         int  index        = 0;
         int  flopIndex    = 0;
@@ -211,13 +214,15 @@ public class RiverIndexer
         {
             zipRivers = compressRawCases();
             PersistentBytes.persist(zipRivers, ZIP_RIVER_CASES);
+
+            testCompression(zipRivers, rawCases());
         }
         return zipRivers;
     }
     private static byte[] compressRawCases()
     {
         byte riverCases[] = rawCases();
-        byte zipRivers[]  = new byte[3452840];
+        byte zipRivers[]  = new byte[ COMPRESSED_SIZE ];
 
         int  groups =  0;
         int  count  =  0;
@@ -229,7 +234,7 @@ public class RiverIndexer
                 if (count != 0)
                 {
                     CaseCount caseCount = CaseCount.valueOf(
-                            RiverCaseSet.VALUES[ riverCase ],
+                            RiverCaseSet.VALUES[ prev ],
                             Count.valueOf( count ));
                     zipRivers[ groups++ ] = (byte) caseCount.ordinal();
                 }
@@ -241,8 +246,36 @@ public class RiverIndexer
                 count++;
             }
         }
+        if (count != 0)
+        {
+            CaseCount caseCount = CaseCount.valueOf(
+                    RiverCaseSet.VALUES[ prev ],
+                    Count.valueOf( count ));
+            zipRivers[ groups ] = (byte) caseCount.ordinal();
+        }
 
         return zipRivers;
+    }
+    private static void testCompression(
+            byte compressed[],
+            byte raw[])
+    {
+        int index = 0;
+        for (byte zipCase : compressed)
+        {
+            CaseCount caseCount = CaseCount.VALUES[ zipCase ];
+
+            for (int i = 0; i < caseCount.count(); i++)
+            {
+                RiverCaseSet caseSet =
+                    RiverCaseSet.VALUES[ raw[index++] ];
+                if (caseCount.caseSet() != caseSet)
+                {
+                    System.out.println(
+                            caseCount.caseSet() + "\t" + caseSet);
+                }
+            }
+        }
     }
 
     
@@ -262,7 +295,7 @@ public class RiverIndexer
         final Card    cards[]      = values();
         final Indexer indexer      = new IndexerImpl();
         final Gapper  seenTurns    = new Gapper();
-        final byte    riverCases[] = new byte[51520872];
+        final byte    riverCases[] = new byte[ RAW_SIZE ];
 
         final BitSet seenHoles  = new BitSet();
         new FastIntCombiner(INDEXES, INDEXES.length).combine(
