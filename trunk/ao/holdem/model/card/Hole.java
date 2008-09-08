@@ -169,6 +169,11 @@ public class Hole
         return new IsoFlop(ORDERING, asArray(), flop);
     }
 
+    public Ordering ordering()
+    {
+        return ORDERING;
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()

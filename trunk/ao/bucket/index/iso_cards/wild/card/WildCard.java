@@ -10,6 +10,7 @@ import ao.holdem.model.card.Rank;
  * Date: Aug 23, 2008
  * Time: 2:55:42 PM
  */
+// todo: optimize by turning into enum 
 public class WildCard extends RankedSuitedImpl<WildSuit>
 {
     //--------------------------------------------------------------------

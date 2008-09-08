@@ -57,6 +57,7 @@ public class IsoCaseUtils
 
 
     //--------------------------------------------------------------------
+    // todo: optimize, sort in-place?
     public static Card[] sortByRank(Card... cards)
     {
         Card copy[] = cards.clone();
