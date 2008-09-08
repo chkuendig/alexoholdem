@@ -36,7 +36,8 @@ public class IsoFlop
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
         ORDER = refined;
-
+        
+        // todo: optimize, only sort if previosly WILD, eliminate array
         WildCard wildHole[] = new WildCard[]{
                 WildCard.newInstance(refined, hole[0]),
                 WildCard.newInstance(refined, hole[1])};
@@ -45,6 +46,7 @@ public class IsoFlop
         HOLE_B = wildHole[ 1 ].mark(
                     countLeftRankMatches(hole, hole[1], 1));
 
+        // todo: optimize, eliminate array?o
         WildCard wildFlop[] = new WildCard[]{
                 WildCard.newInstance(refined, flop[ 0 ]),
                 WildCard.newInstance(refined, flop[ 1 ]),
@@ -127,7 +129,12 @@ public class IsoFlop
         return new IsoTurn(ORDER, hole, flop, turnCard);
     }
 
+    public Ordering order()
+    {
+        return ORDER;
+    }
 
+    
     //--------------------------------------------------------------------
     private Ordering orderSuitsBy(Card... flop)
     {

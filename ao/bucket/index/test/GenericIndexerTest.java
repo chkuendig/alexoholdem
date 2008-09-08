@@ -3,6 +3,8 @@ package ao.bucket.index.test;
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
 import ao.bucket.index.incremental.RiverIndexer;
+import ao.bucket.index.iso_cards.Ordering;
+import ao.bucket.index.iso_flop.IsoFlop;
 import ao.bucket.index.iso_river.RiverCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -15,6 +17,8 @@ import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
 import java.util.BitSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Date: Aug 21, 2008
@@ -36,6 +40,11 @@ public class GenericIndexerTest
     private Gapper seenTurns = new Gapper();
     private Gapper riverGaps = new Gapper();
 
+    private Set<Ordering> ordersHole  = new LinkedHashSet<Ordering>();
+    private Set<Ordering> ordersFlop  = new LinkedHashSet<Ordering>();
+    private Set<Ordering> ordersTurn  = new LinkedHashSet<Ordering>();
+    private Set<Ordering> ordersRiver = new LinkedHashSet<Ordering>();
+
 
     //--------------------------------------------------------------------
     public synchronized void test(final Indexer indexer)
@@ -51,20 +60,29 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
-                seenHoles.set( hole.suitIsomorphicIndex() );
+//                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
+//                seenHoles.set( hole.suitIsomorphicIndex() );
 
+                if (ordersHole.add( hole.ordering() ))
+                {
+                    System.out.println("hole\t" + hole.ordering());
+                }
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
 
                 iterateFlops(hole, indexer);
-                System.out.println(System.currentTimeMillis() - prevTime);
+//                System.out.println(System.currentTimeMillis() - prevTime);
                 prevTime = System.currentTimeMillis();
 
                 swap(cards, holeA, 51-1);
                 swap(cards, holeB, 51  );
             }
         });
+
+//        for (Ordering order : orders)
+//        {
+//            System.out.println(order);
+//        }
     }
 
 
@@ -75,7 +93,7 @@ public class GenericIndexerTest
     {
         final BitSet seenFlops = new BitSet();
 
-        System.out.println(hole);
+//        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -83,26 +101,31 @@ public class GenericIndexerTest
                 Card flopCards[] =
                         {cards[flopA], cards[flopB], cards[flopC]};
 
-                swap(cards, flopC, 51-2);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopA, 51-4);
+                IsoFlop isoFlop = hole.isoFlop(flopCards);
+                if (ordersFlop.add( isoFlop.order() ) &&
+                        !ordersHole.contains( isoFlop.order() ))
+                {
+                    System.out.println("flop\t" + isoFlop.order());
+                }
 
                 CardSequence cardSeq =
                     new LiteralCardSequence(
                             hole, new Community(
                             flopCards[0], flopCards[1], flopCards[2]));
-                int index = (int)indexer.indexOf(cardSeq);
+                int index = (int) indexer.indexOf(cardSeq);
+                if (seenFlops.get( index )) return;
+                seenFlops.set( index );
 
-                if (! seenFlops.get( index ))
-                {
-                    seenFlops.set( index );
-                    iterateTurns(
-                            hole, flopCards, indexer);
-                }
-
-                swap(cards, flopA, 51-4);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopC, 51-2);
+//                swap(cards, flopC, 51-2);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopA, 51-4);
+//
+//                iterateTurns(
+//                        hole, flopCards, indexer);
+//
+//                swap(cards, flopA, 51-4);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopC, 51-2);
             }});
     }
 

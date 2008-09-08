@@ -23,8 +23,6 @@ import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.BitSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,36 +71,36 @@ public class RiverIndexer
                ).caseSet();
     }
 
-    public static RiverCaseSet readRiverCaseSet(int forTurnIndex)
-    {
-        RandomAccessFile f = null;
-        try
-        {
-            f = new RandomAccessFile(RAW_RIVER_CASES, "r");
-            f.seek(forTurnIndex);
-            byte riverCaseSetOrdinal = f.readByte();
-            return RiverCaseSet.VALUES[
-                    riverCaseSetOrdinal ];
-        }
-        catch (IOException e)
-        {
-            throw new Error( e );
-        }
-        finally
-        {
-            if (f != null)
-            {
-                try
-                {
-                    f.close();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    public static RiverCaseSet readRiverCaseSet(int forTurnIndex)
+//    {
+//        RandomAccessFile f = null;
+//        try
+//        {
+//            f = new RandomAccessFile(RAW_RIVER_CASES, "r");
+//            f.seek(forTurnIndex);
+//            byte riverCaseSetOrdinal = f.readByte();
+//            return RiverCaseSet.VALUES[
+//                    riverCaseSetOrdinal ];
+//        }
+//        catch (IOException e)
+//        {
+//            throw new Error( e );
+//        }
+//        finally
+//        {
+//            if (f != null)
+//            {
+//                try
+//                {
+//                    f.close();
+//                }
+//                catch (IOException e)
+//                {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
 
     //--------------------------------------------------------------------

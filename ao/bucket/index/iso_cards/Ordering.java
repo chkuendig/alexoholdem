@@ -12,6 +12,7 @@ import java.util.List;
 /**
  *
  */
+// todo: define as enum?
 public class Ordering
 {
     //--------------------------------------------------------------------
@@ -91,6 +92,7 @@ public class Ordering
 
 
     //--------------------------------------------------------------------
+    // todo: optimize
     public Ordering refine(Ordering with)
     {
         Suit[][] refined = new Suit[4][];
@@ -107,11 +109,12 @@ public class Ordering
         return new Ordering(Arrays.copyOf(refined, index));
     }
 
-    public Suit[][] refine(Suit group[])
+    // todo: optimize
+    private Suit[][] refine(Suit group[])
     {
         List<Suit[]> subGroups = new ArrayList<Suit[]>();
 
-        for (Suit[] myGroup : ORDER)
+        for (Suit myGroup[] : ORDER)
         {
             int  index      = 0;
             Suit subGroup[] = new Suit[ group.length ];
@@ -173,6 +176,7 @@ public class Ordering
 
     
     //--------------------------------------------------------------------
+    // todo: optimize
     private static Suit[] complement(Suit head, Suit... tail)
     {
         EnumSet<Suit> s = EnumSet.complementOf(EnumSet.of(head, tail));

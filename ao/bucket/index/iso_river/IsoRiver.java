@@ -46,6 +46,7 @@ public class IsoRiver
 
         refined.asWild( hole[0].suit() );
 
+        // todo: optimize, only sort if previosly WILD, eliminate array
         WildCard wildHole[] = new WildCard[]{
                 WildCard.newInstance(refined, hole[0]),
                 WildCard.newInstance(refined, hole[1])};
@@ -53,6 +54,7 @@ public class IsoRiver
         HOLE_A = wildHole[ 0 ];
         HOLE_B = wildHole[ 1 ];
 
+        // todo: optimize, only sort if previosly WILD, eliminate array
         WildCard wildFlop[] = new WildCard[]{
                 WildCard.newInstance(refined, flop[ 0 ]),
                 WildCard.newInstance(refined, flop[ 1 ]),
@@ -62,6 +64,7 @@ public class IsoRiver
         FLOP_B = wildFlop[ 1 ];
         FLOP_C = wildFlop[ 2 ];
 
+        // todo: optimize, only need new instance of it was WILD
         TURN  = WildCard.newInstance(refined, turn);
         RIVER = WildCard.newInstance(refined, river);
     }
