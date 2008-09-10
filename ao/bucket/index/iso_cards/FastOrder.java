@@ -4,31 +4,7 @@ package ao.bucket.index.iso_cards;
  * Date: Sep 7, 2008
  * Time: 1:51:10 PM
  *
- * Hole:
-    [[c], [d, h, s]]
-    [[c, d], [h, s]]
-    [[d], [c], [h, s]]
-    [[c, h], [d, s]]
-    [[h], [c], [d, s]]
-    [[c, s], [d, h]]
-    [[s], [c], [d, h]]
-    [[c], [d], [h, s]]
-    [[c], [h], [d, s]]
-    [[c], [s], [d, h]]
-    [[d], [c, h, s]]
-    [[d, h], [c, s]]
-    [[h], [d], [c, s]]
-    [[d, s], [c, h]]
-    [[s], [d], [c, h]]
-    [[d], [h], [c, s]]
-    [[d], [s], [c, h]]
-    [[h], [c, d, s]]
-    [[h, s], [c, d]]
-    [[s], [h], [c, d]]
-    [[h], [s], [c, d]]
-    [[s], [c, d, h]]
- *
- *
+ * mass boilerplate
  */
 public enum FastOrder
 {
@@ -83,183 +59,105 @@ public enum FastOrder
         return this; }},
 
     C_S_DH(0, 2, 2, 1) { public FastOrder refine(FastOrder with) {
-        return   with.PRECEDENCE[1] < with.PRECEDENCE[2]
-               ? valueOf(0, 2, 3, 1)
-               : with.PRECEDENCE[1] > with.PRECEDENCE[2]
-               ? valueOf(0, 3, 2, 1)
-               : this;
-    }},
+        return FastOrder.refinePair(this, 1, 2, with); }},
     C_DS_H(0, 1, 2, 1) { public FastOrder refine(FastOrder with) {
-        return   with.PRECEDENCE[1] < with.PRECEDENCE[3]
-               ? valueOf(0, 1, 3, 2)
-               : with.PRECEDENCE[1] > with.PRECEDENCE[3]
-               ? valueOf(0, 2, 3, 1)
-               : this;
-    }},
+        return FastOrder.refinePair(this, 2, 1, 3, with); }},
     C_HS_D(0, 2, 1, 1) { public FastOrder refine(FastOrder with) {
-        return   with.PRECEDENCE[2] < with.PRECEDENCE[3]
-               ? valueOf(0, 3, 1, 2)
-               : with.PRECEDENCE[1] > with.PRECEDENCE[3]
-               ? valueOf(0, 3, 2, 1)
-               : this;
-    }},
+        return FastOrder.refinePair(this, 1, 2, 3, with); }},
     C_DH_S(0, 1, 1, 2) { public FastOrder refine(FastOrder with) {
-        return   with.PRECEDENCE[1] < with.PRECEDENCE[2]
-               ? valueOf(0, 1, 2, 3)
-               : with.PRECEDENCE[1] > with.PRECEDENCE[2]
-               ? valueOf(0, 2, 1, 3)
-               : this;
-    }},
+        return FastOrder.refinePair(this, 3, 1, 2, with); }},
     C_D_HS(0, 1, 2, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 1, 2, 3, with); }},
     C_H_DS(0, 2, 1, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    CD_HS(0, 0, 1, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 1, 3, with); }},
     CD_S_H(0, 0, 2, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 3, 2, 0, 1, with); }},
     D_C_HS(1, 0, 2, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 2, 3, with); }},
     CD_H_S(0, 0, 1, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    CH_DS(0, 1, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 2, 3, 0, 1, with); }},
     CH_S_D(0, 2, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 3, 1, 0, 2, with); }},
     CH_D_S(0, 1, 0, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refinePair(this, 1, 3, 0, 2, with); }},
     H_C_DS(1, 2, 0, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 1, 3, with); }},
+    S_C_DH(1, 2, 2, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 1, 2, with); }},
+    CS_D_H(0, 1, 2, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 1, 2, 0, 3, with); }},
+    CS_H_D(0, 2, 1, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 2, 1, 0, 3, with); }},
+    D_CH_S(1, 0, 1, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 3, 0, 3, with); }},
+    D_HS_C(2, 0, 1, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 2, 3, with); }},
+    D_CS_H(1, 0, 2, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 2, 0, 3, with); }},
+    D_S_CH(2, 0, 2, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 2, with); }},
+    D_H_CS(2, 0, 1, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 3, with); }},
+    DH_C_S(1, 0, 0, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 3, 1, 2, with); }},
+    DH_S_C(2, 0, 0, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 3, 0, 1, 2, with); }},
+    H_D_CS(2, 1, 0, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 3, with); }},
+    DS_C_H(1, 0, 2, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 2, 1, 3, with); }},
+    S_D_CH(2, 1, 2, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 2, with); }},
+    DS_H_C(2, 0, 1, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 2, 0, 1, 3, with); }},
+    H_CD_S(1, 1, 0, 2) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 3, 0, 1, with); }},
+    H_CS_D(1, 2, 0, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 3, with); }},
+    H_DS_C(2, 1, 0, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 1, 3, with); }},
+    HS_C_D(1, 2, 0, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 1, 2, 3, with); }},
+    HS_D_C(2, 1, 0, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 1, 0, 2, 3, with); }},
+    S_H_CD(2, 2, 1, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 1, with); }},
+    S_CD_H(1, 1, 2, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 2, 0, 1, with); }},
+    S_CH_D(1, 2, 1, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 1, 0, 2, with); }},
+    S_DH_C(2, 1, 1, 0) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 1, 2, with); }},
+    H_S_CD(2, 2, 0, 1) { public FastOrder refine(FastOrder with) {
+        return FastOrder.refinePair(this, 0, 1, with); }},
+
+    HS_CD(1, 1, 0, 0) { public FastOrder refine(FastOrder with) {
         return null;
     }},
     CS_DH(0, 1, 1, 0) { public FastOrder refine(FastOrder with) {
         return null;
     }},
-    S_C_DH(1, 2, 2, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    CS_D_H(0, 1, 2, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    CS_H_D(0, 2, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    D_CH_S(1, 0, 1, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    D_HS_C(2, 0, 1, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    D_CS_H(1, 0, 2, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    D_S_CH(2, 0, 2, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    D_H_CS(2, 0, 1, 2) { public FastOrder refine(FastOrder with) {
+    CD_HS(0, 0, 1, 1) { public FastOrder refine(FastOrder with) {
         return null;
     }},
     DH_CS(1, 0, 0, 1) { public FastOrder refine(FastOrder with) {
         return null;
     }},
-    DH_C_S(1, 0, 0, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    DH_S_C(2, 0, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    H_D_CS(2, 1, 0, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
     DS_CH(1, 0, 1, 0) { public FastOrder refine(FastOrder with) {
         return null;
     }},
-    DS_C_H(1, 0, 2, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    S_D_CH(2, 1, 2, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    DS_H_C(2, 0, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    H_CD_S(1, 1, 0, 2) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    H_CS_D(1, 2, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    H_DS_C(2, 1, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    H_S_CD(2, 2, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    HS_CD(1, 1, 0, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    HS_C_D(1, 2, 0, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    HS_D_C(2, 1, 0, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    S_H_CD(2, 2, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    S_CD_H(1, 1, 2, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    S_CH_D(1, 2, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
-    S_DH_C(2, 1, 1, 0) { public FastOrder refine(FastOrder with) {
+    CH_DS(0, 1, 0, 1) { public FastOrder refine(FastOrder with) {
         return null;
     }},
 
     C_DHS(0, 1, 1, 1) {public FastOrder refine(FastOrder with){
-        if (with.PRECEDENCE[1] < with.PRECEDENCE[2])
-        {
-            return   with.PRECEDENCE[2] < with.PRECEDENCE[3]
-                   ? valueOf(0, 1, 2, 3)
-                   : with.PRECEDENCE[2] > with.PRECEDENCE[3]
-                   ? valueOf(0, 1, 3, 2)
-                   : valueOf(0, 1, 2, 2);
-        }
-        else if (with.PRECEDENCE[1] < with.PRECEDENCE[3])
-        {
-            return   with.PRECEDENCE[3] < with.PRECEDENCE[2]
-                   ? valueOf(0, 1, 3, 2)
-                   : with.PRECEDENCE[3] > with.PRECEDENCE[2]
-                   ? valueOf(0, 1, 2, 3)
-                   : valueOf(0, 1, 2, 2);
-        }
-        else // if (with.PRECEDENCE[2] < with.PRECEDENCE[3])
-        {
-            return   with.PRECEDENCE[3] < with.PRECEDENCE[1]
-                   ? valueOf(0, 3, 1, 2)
-                   : with.PRECEDENCE[3] > with.PRECEDENCE[1]
-                   ? valueOf(0, 2, 1, 3)
-                   : valueOf(0, 2, 1, 2);
-        }
-    }},
+        return FastOrder.refineTriplet(this, 1, 2, 3, with); }},
     D_CHS(1, 0, 1, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTriplet(this, 0, 2, 3, with); }},
     H_CDS(1, 1, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTriplet(this, 0, 1, 3, with); }},
     S_CDH(1, 1, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTriplet(this, 0, 1, 2, with); }},
     ;
 
 
@@ -274,6 +172,12 @@ public enum FastOrder
 //                             precedenceDiamond,
 //                             precedenceHeart,
 //                             precedenceSpade);
+        return null;
+    }
+
+    private static FastOrder valueOf(
+            int precedence[])
+    {
         return null;
     }
 
@@ -294,46 +198,201 @@ public enum FastOrder
                       int precedenceHeart,
                       int precedenceSpade)
     {
-        PRECEDENCE = new int[]{
+        this(new int[]{
                 precedenceClub,
                 precedenceDiamond,
                 precedenceHeart,
                 precedenceSpade
-        };
-//        PRECEDENCE_CLUB    = precedenceClub;
-//        PRECEDENCE_DIAMOND = precedenceDiamond;
-//        PRECEDENCE_HEART   = precedenceHeart;
-//        PRECEDENCE_SPADE   = precedenceSpade;
+            });
+    }
+
+    private FastOrder(int precedence[])
+    {
+        PRECEDENCE = precedence;
     }
 
 
     //--------------------------------------------------------------------
     // break suit symmetries
     public abstract FastOrder refine(FastOrder with);
-//    {
-//
-//        if (PRECEDENCE_CLUB == PRECEDENCE_DIAMOND)
-//        {
-//
-//        }
-//        else
-//        {
-//
-//        }
-//
-//        return null;
-//    }
-//    {
-//        if (PRECEDENCE_CLUB == PRECEDENCE_DIAMOND)
-//        {
-//
-//        }
-//        else if (PRECEDENCE_CLUB == PRECEDENCE_HEART)
-//        {
-//
-//        }
-//        else if (PRECEDENCE_CLUB == )
-//
-//        return null;
-//    }
+
+
+
+    //--------------------------------------------------------------------
+    private static FastOrder refinePair(
+            FastOrder order,
+            int       orderDupeA,
+            int       orderDupeB,
+            FastOrder with)
+    {
+        int precedences[] = refinePair(
+                order.PRECEDENCE, orderDupeA, orderDupeB, with);
+        return precedences == order.PRECEDENCE
+               ? order
+               : valueOf( precedences );
+    }
+
+    private static FastOrder refinePair(
+            FastOrder order,
+            int       orderUnique2,
+            int       orderDupeA,
+            int       orderDupeB,
+            FastOrder with)
+    {
+        int precedences[] = refinePair(
+                order.PRECEDENCE, orderDupeA, orderDupeB, with);
+        if (precedences == order.PRECEDENCE)
+        {
+            return order;
+        }
+        else
+        {
+            precedences[ orderUnique2 ] = 3;
+            return valueOf(precedences);
+        }
+    }
+
+    private static FastOrder refinePair(
+            FastOrder order,
+            int       orderUnique1,
+            int       orderUnique2,
+            int       orderDupeA,
+            int       orderDupeB,
+            FastOrder with)
+    {
+         int precedences[] = refinePair(
+                order.PRECEDENCE, orderDupeA, orderDupeB, with);
+        if (precedences == order.PRECEDENCE)
+        {
+            return order;
+        }
+        else
+        {
+            precedences[ orderUnique1 ] = 2;
+            precedences[ orderUnique2 ] = 3;
+            return valueOf(precedences);
+        }
+    }
+
+    private static int[] refinePair(
+            int       orderPrecedences[],
+            int       orderDupeA,
+            int       orderDupeB,
+            FastOrder with)
+    {
+        int swapA, swapB;
+        if (with.PRECEDENCE[orderDupeA] >
+                    with.PRECEDENCE[orderDupeB])
+        {
+            swapA = orderDupeA;
+            swapB = orderDupeB;
+        }
+        else if (with.PRECEDENCE[orderDupeA] >
+                    with.PRECEDENCE[orderDupeB])
+        {
+            swapA = orderDupeB;
+            swapB = orderDupeA;
+        }
+        else
+        {
+            return orderPrecedences;
+        }
+
+        int orderPrecedencesDupe[] = orderPrecedences.clone();
+        orderPrecedencesDupe[ swapA ] =
+                orderPrecedencesDupe[ swapB ] + 1;
+        return orderPrecedencesDupe;
+    }
+
+
+    //--------------------------------------------------------------------
+    private static FastOrder refineTriplet(
+            FastOrder order,
+            int       orderDupeA,
+            int       orderDupeB,
+            int       orderDupeC,
+            FastOrder with)
+    {
+        int precedences[] = order.PRECEDENCE.clone();
+        if (with.PRECEDENCE[orderDupeA] <
+                with.PRECEDENCE[orderDupeB])
+        {
+            // a < b
+            if (with.PRECEDENCE[orderDupeB] ==
+                    with.PRECEDENCE[orderDupeC])
+            {
+                // a < b = c
+                // a < c = b
+                with.PRECEDENCE[orderDupeB] = 2;
+                with.PRECEDENCE[orderDupeC] = 2;
+            }
+            else if (with.PRECEDENCE[orderDupeB] <
+                        with.PRECEDENCE[orderDupeC])
+            {
+                // a < b < c
+                precedences[orderDupeB] = 2;
+                precedences[orderDupeC] = 3;
+            }
+            else if (with.PRECEDENCE[orderDupeA] <
+                        with.PRECEDENCE[orderDupeC])
+            {
+                // a < c < b
+                precedences[orderDupeC] = 2;
+                precedences[orderDupeB] = 3;
+            }
+            else
+            {
+                // c < a < b
+                precedences[orderDupeA] = 2;
+                precedences[orderDupeB] = 3;
+            }
+        }
+        else if (with.PRECEDENCE[orderDupeA] <
+                    with.PRECEDENCE[orderDupeC])
+        {
+            // a >= b
+            // a < c
+            // b <= a < c
+            if (with.PRECEDENCE[orderDupeA] ==
+                        with.PRECEDENCE[orderDupeB])
+            {
+                // b = a < c
+                precedences[orderDupeA] = 2;
+                precedences[orderDupeB] = 2;
+            }
+            else //if (with.PRECEDENCE[orderDupeB] <
+                 //       with.PRECEDENCE[orderDupeA])
+            {
+                // b < a < c
+                precedences[orderDupeA] = 2;
+                precedences[orderDupeC] = 3;
+            }
+        }
+        else // if (with.PRECEDENCE[orderDupeB] <
+             //         with.PRECEDENCE[orderDupeC])
+        {
+            // a >= b
+            // a >= c
+            // b < c
+
+            // can't have this: b = a = c
+            if (with.PRECEDENCE[orderDupeA] ==
+                        with.PRECEDENCE[orderDupeC])
+            {
+                // b < c = a
+                // b < a = c
+                precedences[orderDupeA] = 2;
+                precedences[orderDupeC] = 2;
+            }
+            else //if (with.PRECEDENCE[orderDupeC] <
+                 //       with.PRECEDENCE[orderDupeA])
+            {
+                // b < c < a
+                precedences[orderDupeC] = 2;
+                precedences[orderDupeA] = 3;
+            }
+        }
+
+        return valueOf(precedences);
+    }
 }
