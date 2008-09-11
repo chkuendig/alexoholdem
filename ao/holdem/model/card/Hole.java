@@ -1,5 +1,6 @@
 package ao.holdem.model.card;
 
+import ao.bucket.index.iso_cards.FastOrder;
 import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_flop.IsoFlop;
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -58,6 +59,12 @@ public class Hole
         B         = b;
         ISO_INDEX = computeSuitIsomorphicIndex();
         ORDERING  = computeOrdering();
+//        if (! ORDERING.equals( computeFastOrder().toOrdering() ))
+//        {
+//            System.out.println(
+//                    ORDERING + "\t\t" +
+//                    computeFastOrder().toOrdering());
+//        }
     }
 
 
@@ -89,6 +96,16 @@ public class Hole
                 : suited()
                   ? Ordering.suited  (A.suit())
                   : Ordering.unsuited(hi().suit(), lo().suit());
+    }
+
+
+    public FastOrder fastOrder()
+    {
+        return paired()
+                ? FastOrder.pair(A.suit(), B.suit())
+                : suited()
+                  ? FastOrder.suited  (A.suit())
+                  : FastOrder.unsuited(hi().suit(), lo().suit());
     }
 
 

@@ -1,5 +1,11 @@
 package ao.bucket.index.iso_cards;
 
+import ao.holdem.model.card.Suit;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Date: Sep 7, 2008
  * Time: 1:51:10 PM
@@ -132,23 +138,17 @@ public enum FastOrder
         return FastOrder.refinePair(this, 0, 1, with); }},
 
     HS_CD(1, 1, 0, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 2, 3, 0, 1, with); }},
     CS_DH(0, 1, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 0, 3, 1, 2, with); }},
     CD_HS(0, 0, 1, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 0, 1, 2, 3, with); }},
     DH_CS(1, 0, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 1, 2, 0, 3, with); }},
     DS_CH(1, 0, 1, 0) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 1, 3, 0, 2, with); }},
     CH_DS(0, 1, 0, 1) { public FastOrder refine(FastOrder with) {
-        return null;
-    }},
+        return FastOrder.refineTwoPair(this, 0, 2, 1, 3, with); }},
 
     C_DHS(0, 1, 1, 1) {public FastOrder refine(FastOrder with){
         return FastOrder.refineTriplet(this, 1, 2, 3, with); }},
@@ -160,6 +160,136 @@ public enum FastOrder
         return FastOrder.refineTriplet(this, 0, 1, 2, with); }},
     ;
 
+    public static final FastOrder VALUES[] = values();
+
+    private static final FastOrder INDEX[][][][];
+    static
+    {
+        INDEX = new FastOrder[4][4][4][4];
+
+        for (int a = 0; a < 4; a++)
+        {
+            for (int b = 0; b < 4; b++)
+            {
+                for (int c = 0; c < 4; c++)
+                {
+                    for (int d = 0; d < 4; d++)
+                    {
+                        INDEX[a][b][c][d] = computeValueOf(a, b, c, d);
+                    }
+                }
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    private static final FastOrder PAIR_INDEX[][];
+    static
+    {
+        PAIR_INDEX = new FastOrder[Suit.VALUES.length]
+                                  [Suit.VALUES.length];
+        for (int a = 0; a < Suit.VALUES.length; a++)
+        {
+            for (int b = 0; b < Suit.VALUES.length; b++)
+            {
+                PAIR_INDEX[a][b] = computePair(
+                        Suit.VALUES[a], Suit.VALUES[b]);
+            }
+        }
+    }
+    public static FastOrder pair(Suit aheadA, Suit aheadB)
+    {
+        return PAIR_INDEX[aheadA.ordinal()]
+                         [aheadB.ordinal()];
+    }
+    private static FastOrder computePair(Suit aheadA, Suit aheadB)
+    {
+        boolean behind[] = new boolean[4];
+        for (Suit suit : Suit.VALUES) behind[suit.ordinal()] =
+                                      (suit != aheadA && suit != aheadB);
+        return valueOf(behind);
+    }
+
+    //--------------------------------------------------------------------
+    private static final FastOrder SUITED_INDEX[];
+    static
+    {
+        SUITED_INDEX = new FastOrder[Suit.VALUES.length];
+        for (int a = 0; a < Suit.VALUES.length; a++)
+        {
+            SUITED_INDEX[a] = computeSuited(Suit.VALUES[a]);
+        }
+    }
+    public static FastOrder suited(Suit ahead)
+    {
+        return SUITED_INDEX[ahead.ordinal()];
+    }
+    private static FastOrder computeSuited(Suit ahead)
+    {
+        boolean behind[] = new boolean[4];
+        for (Suit suit : Suit.VALUES) behind[suit.ordinal()] =
+                                        (suit != ahead);
+        return valueOf(behind);
+    }
+
+    //--------------------------------------------------------------------
+    private static final FastOrder UNSUITED_INDEX[][];
+    static
+    {
+        UNSUITED_INDEX = new FastOrder[Suit.VALUES.length]
+                                      [Suit.VALUES.length];
+        for (int a = 0; a < Suit.VALUES.length; a++)
+        {
+            for (int b = 0; b < Suit.VALUES.length; b++)
+            {
+                UNSUITED_INDEX[a][b] = computeUnsuited(
+                        Suit.VALUES[a], Suit.VALUES[b]);
+            }
+        }
+    }
+    public static FastOrder unsuited(Suit ahead, Suit behind)
+    {
+        return UNSUITED_INDEX[ahead .ordinal()]
+                             [behind.ordinal()];
+    }
+    private static FastOrder computeUnsuited(Suit ahead, Suit behind)
+    {
+        int precedence[] = new int[Suit.VALUES.length];
+        for (Suit suit : Suit.VALUES)
+        {
+            precedence[suit.ordinal()] =
+                          (suit == ahead )
+                    ? 0 : (suit == behind)
+                    ? 1 : 2;
+        }
+        return valueOf(precedence);
+    }
+
+
+    //--------------------------------------------------------------------
+//    public static FastOrder triplet(
+//            Suit aheadA, Suit aheadB, Suit aheadC)
+//    {
+//
+//    }
+//    public static FastOrder computeTriplet(
+//            Suit aheadA, Suit aheadB, Suit aheadC)
+//    {
+//        boolean behind[] = new boolean[4];
+//        for (Suit suit : Suit.VALUES) behind[suit.ordinal()] =
+//                                      (suit != ahead);
+//        return valueOf(behind);
+//    }
+
+//    public static Ordering triplet(
+//            Suit aheadA, Suit aheadB, Suit aheadC)
+//    {
+//        return new Ordering(
+//                new Suit[][]{{aheadA, aheadB, aheadC},
+//                             complement(aheadA, aheadB, aheadC)});
+//    }
+
 
     //--------------------------------------------------------------------
     public static FastOrder valueOf(
@@ -168,16 +298,47 @@ public enum FastOrder
             int precedenceHeart,
             int precedenceSpade)
     {
-//        return new FastOrder(precedenceClub,
-//                             precedenceDiamond,
-//                             precedenceHeart,
-//                             precedenceSpade);
-        return null;
+        return INDEX [precedenceClub   ]
+                     [precedenceDiamond]
+                     [precedenceHeart  ]
+                     [precedenceSpade  ];
     }
 
     private static FastOrder valueOf(
             int precedence[])
     {
+        return valueOf(precedence[0], precedence[1],
+                       precedence[2], precedence[3]);
+    }
+
+    private static FastOrder valueOf(
+            boolean ones[])
+    {
+        return valueOf(ones[0] ? 1 : 0,
+                       ones[1] ? 1 : 0,
+                       ones[2] ? 1 : 0,
+                       ones[3] ? 1 : 0);
+    }
+
+
+    //--------------------------------------------------------------------
+    private static FastOrder computeValueOf(
+            int precedenceClub,
+            int precedenceDiamond,
+            int precedenceHeart,
+            int precedenceSpade)
+    {
+        int preferences[] = new int[]{precedenceClub,
+                                      precedenceDiamond,
+                                      precedenceHeart,
+                                      precedenceSpade};
+        for (FastOrder order : VALUES)
+        {
+            if (Arrays.equals(order.PRECEDENCE, preferences))
+            {
+                return order;
+            }
+        }
         return null;
     }
 
@@ -212,12 +373,41 @@ public enum FastOrder
     }
 
 
+
+    //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
     //--------------------------------------------------------------------
     // break suit symmetries
     public abstract FastOrder refine(FastOrder with);
 
 
+    //--------------------------------------------------------------------
+    public Ordering toOrdering()
+    {
+        List<Suit[]> ordering = new ArrayList<Suit[]>();
+        for (int count = 0; count < PRECEDENCE.length; count++)
+        {
+            List<Suit> countSuits = new ArrayList<Suit>();
+            for (Suit suit : Suit.VALUES)
+            {
+                if (PRECEDENCE[suit.ordinal()] == count)
+                {
+                    countSuits.add( suit );
+                }
+            }
+            if (! countSuits.isEmpty())
+            {
+                ordering.add(countSuits.toArray(
+                                new Suit[countSuits.size()]));
+            }
+        }
+        return new Ordering(ordering.toArray(
+                        new Suit[ ordering.size() ][]));
+    }
 
+
+    //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
     //--------------------------------------------------------------------
     private static FastOrder refinePair(
             FastOrder order,
@@ -274,6 +464,47 @@ public enum FastOrder
         }
     }
 
+    private static FastOrder refineTwoPair(
+            FastOrder order,
+            int       orderZeroDupeA,
+            int       orderZeroDupeB,
+            int       orderOneDupeA,
+            int       orderOneDupeB,
+            FastOrder with)
+    {
+        int offset             = 0;
+        int orderPrecedences[] = order.PRECEDENCE.clone();
+        if (with.PRECEDENCE[orderZeroDupeA] <
+                with.PRECEDENCE[orderZeroDupeB])
+        {
+            // a < b
+            orderPrecedences[orderZeroDupeB] = ++offset;
+        }
+        else if (with.PRECEDENCE[orderZeroDupeB] <
+                    with.PRECEDENCE[orderZeroDupeA])
+        {
+            // b < a
+            orderPrecedences[orderZeroDupeA] = ++offset;
+        }
+
+        if (with.PRECEDENCE[orderOneDupeA] <
+                with.PRECEDENCE[orderOneDupeB])
+        {
+            // a < b
+            orderPrecedences[orderOneDupeA] += offset++;
+            orderPrecedences[orderOneDupeB] += offset;
+        }
+        else if (with.PRECEDENCE[orderOneDupeB] <
+                    with.PRECEDENCE[orderOneDupeA])
+        {
+            // b < a
+            orderPrecedences[orderOneDupeB] += offset++;
+            orderPrecedences[orderOneDupeA] += offset;
+        }
+
+        return valueOf( orderPrecedences );
+    }
+
     private static int[] refinePair(
             int       orderPrecedences[],
             int       orderDupeA,
@@ -282,7 +513,7 @@ public enum FastOrder
     {
         int swapA, swapB;
         if (with.PRECEDENCE[orderDupeA] >
-                    with.PRECEDENCE[orderDupeB])
+                with.PRECEDENCE[orderDupeB])
         {
             swapA = orderDupeA;
             swapB = orderDupeB;

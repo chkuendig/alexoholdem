@@ -72,7 +72,7 @@ public class Ordering
 
 
     //--------------------------------------------------------------------
-    private Ordering(Suit order[][])
+    public Ordering(Suit order[][])
     {
         ORDER = order;
     }
@@ -165,8 +165,18 @@ public class Ordering
     //--------------------------------------------------------------------
     public boolean equals(Object o)
     {
-        return !(o == null || getClass() != o.getClass()) &&
-               Arrays.deepEquals(ORDER, ((Ordering) o).ORDER);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ordering other = (Ordering) o;
+        if (ORDER.length != other.ORDER.length) return false;
+
+        for (int i = 0; i < ORDER.length; i++)
+        {
+            if (ORDER[i].length != other.ORDER[i].length ||
+                !Arrays.asList(ORDER[i]).containsAll(
+                        Arrays.asList(other.ORDER[i]))) return false;
+        }
+        return true;
     }
 
     public int hashCode()
