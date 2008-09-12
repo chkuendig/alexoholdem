@@ -1,14 +1,14 @@
 package ao.bucket.index.incremental;
 
 import ao.bucket.index.Indexer;
-import ao.bucket.index.iso_flop.IsoFlop;
-import ao.bucket.index.iso_river.IsoRiver;
-import ao.bucket.index.iso_river.RiverCase;
-import ao.bucket.index.iso_river.RiverCaseSet;
-import ao.bucket.index.iso_river.encode.CaseCount;
-import ao.bucket.index.iso_river.encode.Count;
-import ao.bucket.index.iso_river.encode.Encoder;
-import ao.bucket.index.iso_turn.IsoTurn;
+import ao.bucket.index.flop.IsoFlop;
+import ao.bucket.index.post_flop.river.IsoRiver;
+import ao.bucket.index.post_flop.river.RiverCase;
+import ao.bucket.index.post_flop.river.RiverCaseSet;
+import ao.bucket.index.post_flop.river.encode.CaseCount;
+import ao.bucket.index.post_flop.river.encode.Count;
+import ao.bucket.index.post_flop.river.encode.Encoder;
+import ao.bucket.index.post_flop.turn.IsoTurn;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
 import static ao.holdem.model.card.Card.INDEXES;

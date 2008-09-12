@@ -3,7 +3,7 @@ package ao.bucket.index.test;
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
 import ao.bucket.index.incremental.RiverIndexer;
-import ao.bucket.index.iso_river.RiverCaseSet;
+import ao.bucket.index.post_flop.river.RiverCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

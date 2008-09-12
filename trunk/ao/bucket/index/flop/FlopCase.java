@@ -1,8 +1,8 @@
-package ao.bucket.index.iso_flop;
+package ao.bucket.index.flop;
 
-import ao.bucket.index.iso_cards.wild.suit.WildSuit;
-import static ao.bucket.index.iso_util.IsoCaseUtils.offset;
-import static ao.bucket.index.iso_util.IsoCaseUtils.sortColex;
+import ao.bucket.index.card.CanonSuit;
+import static ao.bucket.index.flop.IsoFlopUtils.offset;
+import static ao.bucket.index.flop.IsoFlopUtils.sortColex;
 import static ao.util.stats.Combo.colex;
 
 /**
@@ -299,12 +299,12 @@ public enum FlopCase
     //--------------------------------------------------------------------
     public static FlopCase newInstance(
             boolean  isHolePair,
-            WildSuit holeA, WildSuit holeB,
-            WildSuit flopA, WildSuit flopB, WildSuit flopC)
+            CanonSuit holeA, CanonSuit holeB,
+            CanonSuit flopA, CanonSuit flopB, CanonSuit flopC)
     {
-        if (holeA == WildSuit.FIRST)
+        if (holeA == CanonSuit.FIRST)
         {
-            if (holeB == WildSuit.FIRST)
+            if (holeB == CanonSuit.FIRST)
             {
                 switch (flopA)
                 {
@@ -312,28 +312,28 @@ public enum FlopCase
                         switch (flopB)
                         {
                             case FIRST:
-                                return (flopC == WildSuit.FIRST)
+                                return (flopC == CanonSuit.FIRST)
                                        ? OO_OOO
                                        : OO_OOT;
                             case SECOND:
-                                return (flopC == WildSuit.SECOND)
+                                return (flopC == CanonSuit.SECOND)
                                        ? OO_OTT
                                        : OO_OTR;
                             default:
                                 return OO_OWW;
                         }
                     case SECOND:
-                        return (flopC == WildSuit.SECOND)
+                        return (flopC == CanonSuit.SECOND)
                                ? OO_TTT
-                               : (flopC == WildSuit.THIRD)
+                               : (flopC == CanonSuit.THIRD)
                                  ? OO_TTR
                                  : OO_TRF;
                     default:
-                        return (flopA == WildSuit.THIRD)
+                        return (flopA == CanonSuit.THIRD)
                                ? OO_RWW : OO_WWW;
                 }
             }
-            else if (! isHolePair) // && holeB == WildSuit.SECOND
+            else if (! isHolePair) // && holeB == CanonSuit.SECOND
             {
                 switch (flopA)
                 {
@@ -341,17 +341,17 @@ public enum FlopCase
                         switch (flopB)
                         {
                             case FIRST:
-                                return (flopC == WildSuit.FIRST)
+                                return (flopC == CanonSuit.FIRST)
                                        ? OT_OOO
-                                       : (flopC == WildSuit.SECOND)
+                                       : (flopC == CanonSuit.SECOND)
                                          ? OT_OOT
                                          : OT_OOR;
                             case SECOND:
-                                return (flopC == WildSuit.SECOND)
+                                return (flopC == CanonSuit.SECOND)
                                        ? OT_OTT
                                        : OT_OTR;
                             case THIRD:
-                                return (flopC == WildSuit.THIRD)
+                                return (flopC == CanonSuit.THIRD)
                                        ? OT_ORR
                                        : OT_ORF;
                             default:
@@ -361,48 +361,48 @@ public enum FlopCase
                         switch (flopB)
                         {
                             case SECOND:
-                                return (flopC == WildSuit.SECOND)
+                                return (flopC == CanonSuit.SECOND)
                                        ? OT_TTT
                                        : OT_TTR;
                             case THIRD:
-                                return (flopC == WildSuit.THIRD)
+                                return (flopC == CanonSuit.THIRD)
                                        ? OT_TRR
                                        : OT_TRF;
                             default:
                                 return OT_TWW;
                         }
                     default:
-                        return (flopC == WildSuit.THIRD)
+                        return (flopC == CanonSuit.THIRD)
                                ? OT_RRR
                                : OT_RRF;
                 }
             }
-            else //if (holeB == WildSuit.SECOND && isHolePair)
+            else //if (holeB == CanonSuit.SECOND && isHolePair)
             {
                 switch (flopB)
                 {
                     case FIRST:
-                        return (flopC == WildSuit.FIRST)
+                        return (flopC == CanonSuit.FIRST)
                                ? P_OT_OOO
-                               : (flopC == WildSuit.SECOND)
+                               : (flopC == CanonSuit.SECOND)
                                  ? P_OT_OOT
                                  : P_OT_OOR;
                     case THIRD:
-                        return (flopC == WildSuit.FOURTH)
+                        return (flopC == CanonSuit.FOURTH)
                                ? P_OT_ORF
                                : P_OT_ORR;
                     default:
-                        return (flopB == WildSuit.SECOND)
+                        return (flopB == CanonSuit.SECOND)
                                ? P_OT_OTR
                                : P_OT_OWW;
                 }
             }
         }
-        else // if (holeA == WildSuit.WILD)
+        else // if (holeA == CanonSuit.WILD)
         {
-            return (flopC == WildSuit.SECOND)
+            return (flopC == CanonSuit.SECOND)
                     ? P_WW_TTT
-                    : (flopC == WildSuit.THIRD)
+                    : (flopC == CanonSuit.THIRD)
                        ? P_WW_TTR
                        : P_WW_TWW;
         }

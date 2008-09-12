@@ -1,9 +1,9 @@
-package ao.bucket.index.iso_flop;
+package ao.bucket.index.flop;
 
-import ao.bucket.index.iso_cards.FastOrder;
-import ao.bucket.index.iso_cards.wild.card.FastWildCard;
-import ao.bucket.index.iso_turn.IsoTurn;
-import static ao.bucket.index.iso_util.IsoCaseUtils.distinct;
+import ao.bucket.index.card.CanonCard;
+import ao.bucket.index.card.Order;
+import static ao.bucket.index.flop.IsoFlopUtils.distinct;
+import ao.bucket.index.post_flop.turn.IsoTurn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Suit;
@@ -18,9 +18,9 @@ public class IsoFlop
 {
     //--------------------------------------------------------------------
     private final boolean      IS_HOLE_PAIR;
-    private final FastWildCard HOLE[];
-    private final FastWildCard FLOP[];
-    private final FastOrder    ORDER;
+    private final CanonCard HOLE[];
+    private final CanonCard FLOP[];
+    private final Order ORDER;
     private final FlopCase     FLOP_CASE;
 
 
@@ -35,7 +35,7 @@ public class IsoFlop
         HOLE         = hole.asWild(ORDER);
         IS_HOLE_PAIR = hole.paired();
 
-        FLOP = new FastWildCard[]{
+        FLOP = new CanonCard[]{
                 ORDER.asWild(flopA),
                 ORDER.asWild(flopB),
                 ORDER.asWild(flopC)};
@@ -76,14 +76,14 @@ public class IsoFlop
         return null;
     }
 
-    public FastOrder order()
+    public Order order()
     {
         return ORDER;
     }
 
     
     //--------------------------------------------------------------------
-    private static FastOrder orderSuitsBy(
+    private static Order orderSuitsBy(
             Card flopA, Card flopB, Card flopC)
     {
         // sort by rank
@@ -117,47 +117,47 @@ public class IsoFlop
 
         if (distinctRanks == 1)
         {
-            return FastOrder.triplet(sA, sB, sC);
+            return Order.triplet(sA, sB, sC);
         }
         else if (distinctRanks == 2)
         {
             if (distinctSuits == 2)
             {
-                return fastSuitedPlus(sA, sB, sC);
+                return partSuited(sA, sB, sC);
             }
             else
             {
                 return flopA.rank() == flopB.rank()
-                       ? FastOrder.partSuited(sA, sB, sC)
+                       ? Order.partSuited(sA, sB, sC)
                        : flopA.rank() == flopC.rank()
-                         ? FastOrder.partSuited(sA, sC, sB)
-                         : FastOrder.partSuited(sB, sC, sA);
+                         ? Order.partSuited(sA, sC, sB)
+                         : Order.partSuited(sB, sC, sA);
             }
         }
         else
         {
             if (distinctSuits == 1)
             {
-                return FastOrder.suited(sA);
+                return Order.suited(sA);
             }
             else if (distinctSuits == 2)
             {
-                return fastSuitedPlus(sA, sB, sC);
+                return partSuited(sA, sB, sC);
             }
             else
             {
-                return FastOrder.ordered(sA, sB, sC);
+                return Order.ordered(sA, sB, sC);
             }
         }
     }
 
-    private static FastOrder fastSuitedPlus(Suit a, Suit b, Suit c)
+    private static Order partSuited(Suit a, Suit b, Suit c)
     {
         return a == b
-               ? FastOrder.partSuited(a, c)
+               ? Order.partSuited(a, c)
                : a == c
-                 ? FastOrder.partSuited(a, b)
-                 : FastOrder.partSuited(b, a);
+                 ? Order.partSuited(a, b)
+                 : Order.partSuited(b, a);
     }
 
 

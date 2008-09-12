@@ -1,9 +1,9 @@
 package ao.bucket.index.incremental;
 
-import ao.bucket.index.iso_flop.IsoFlop;
-import ao.bucket.index.iso_turn.IsoTurn;
-import ao.bucket.index.iso_turn.TurnCase;
-import ao.bucket.index.iso_turn.TurnCaseSet;
+import ao.bucket.index.flop.IsoFlop;
+import ao.bucket.index.post_flop.turn.IsoTurn;
+import ao.bucket.index.post_flop.turn.TurnCase;
+import ao.bucket.index.post_flop.turn.TurnCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.util.data.Arr;

@@ -1,8 +1,7 @@
-package ao.bucket.index.iso_turn;
+package ao.bucket.index.post_flop.turn;
 
-import ao.bucket.index.iso_cards.wild.card.WildCard;
-import ao.bucket.index.iso_cards.wild.suit.WildSuit;
-import static ao.bucket.index.iso_cards.wild.suit.WildSuit.*;
+import ao.bucket.index.card.CanonSuit;
+import static ao.bucket.index.card.CanonSuit.*;
 import ao.util.data.Arr;
 
 /**
@@ -218,7 +217,7 @@ public enum TurnCase
             WildCard flopCardA, WildCard flopCardB, WildCard flopCardC,
             WildCard turnCard)
     {
-        WildSuit holeA = holeCardA.suit(),
+        CanonSuit holeA = holeCardA.suit(),
                  holeB = holeCardB.suit(),
                  flopA = flopCardA.suit(),
                  flopB = flopCardB.suit(),
@@ -350,15 +349,15 @@ public enum TurnCase
 
 
     //--------------------------------------------------------------------
-    private final WildSuit TURN_SUITS[];
+    private final CanonSuit TURN_SUITS[];
     private final int      PRETURN_SUIT_MATCHES[];
     
 
     //--------------------------------------------------------------------
     private TurnCase(
-            WildSuit holeA, WildSuit holeB,
-            WildSuit flopA, WildSuit flopB, WildSuit flopC,
-            WildSuit... turnSuits)
+            CanonSuit holeA, CanonSuit holeB,
+            CanonSuit flopA, CanonSuit flopB, CanonSuit flopC,
+            CanonSuit... turnSuits)
     {
         TURN_SUITS           = turnSuits;
         PRETURN_SUIT_MATCHES = new int[ TURN_SUITS.length ];
@@ -379,7 +378,7 @@ public enum TurnCase
 
     
     //--------------------------------------------------------------------
-    public int localOffset(WildSuit forTurn)
+    public int localOffset(CanonSuit forTurn)
     {
         int offset = 0;
         for (int i = 0; i < TURN_SUITS.length; i++)
@@ -412,7 +411,7 @@ public enum TurnCase
     
     
     //--------------------------------------------------------------------
-    public int indexOf(WildSuit turn)
+    public int indexOf(CanonSuit turn)
     {
         return Arr.indexOf(TURN_SUITS, turn);
     }

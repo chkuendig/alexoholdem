@@ -1,8 +1,8 @@
-package ao.bucket.index.iso_river.encode;
+package ao.bucket.index.post_flop.river.encode;
 
-import ao.bucket.index.iso_river.RiverCaseSet;
-import static ao.bucket.index.iso_river.RiverCaseSet.*;
-import static ao.bucket.index.iso_river.encode.Count.*;
+import ao.bucket.index.post_flop.river.RiverCaseSet;
+import static ao.bucket.index.post_flop.river.RiverCaseSet.*;
+import static ao.bucket.index.post_flop.river.encode.Count.*;
 
 /**
  * Date: Sep 4, 2008

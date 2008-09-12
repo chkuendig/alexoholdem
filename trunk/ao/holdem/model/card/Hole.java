@@ -1,8 +1,8 @@
 package ao.holdem.model.card;
 
-import ao.bucket.index.iso_cards.FastOrder;
-import ao.bucket.index.iso_cards.wild.card.FastWildCard;
-import ao.bucket.index.iso_flop.IsoFlop;
+import ao.bucket.index.card.CanonCard;
+import ao.bucket.index.card.Order;
+import ao.bucket.index.flop.IsoFlop;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -48,9 +48,9 @@ public class Hole
     private final Card         A;
     private final Card         B;
     private final int          ISO_INDEX;
-    private final FastOrder    ORDER;
+    private final Order ORDER;
     private final boolean      IS_PAIR;
-    private final FastWildCard WILD[];
+    private final CanonCard WILD[];
 
 
     //--------------------------------------------------------------------
@@ -65,7 +65,7 @@ public class Hole
         ISO_INDEX = computeSuitIsomorphicIndex();
         ORDER     = computeOrder();
 
-        WILD = new FastWildCard[]{
+        WILD = new CanonCard[]{
                 ORDER.asWild(a), ORDER.asWild(b)};
         Arrays.sort(WILD);
     }
@@ -92,13 +92,13 @@ public class Hole
         }
     }
 
-    private FastOrder computeOrder()
+    private Order computeOrder()
     {
         return paired()
-               ? FastOrder.pair(A.suit(), B.suit())
+               ? Order.pair(A.suit(), B.suit())
                : suited()
-                 ? FastOrder.suited  (A.suit())
-                 : FastOrder.unsuited(hi().suit(), lo().suit());
+                 ? Order.suited  (A.suit())
+                 : Order.unsuited(hi().suit(), lo().suit());
     }
 
 
@@ -185,21 +185,21 @@ public class Hole
                 flopA, flopB, flopC);
     }
 
-    public FastOrder order()
+    public Order order()
     {
         return ORDER;
     }
 
-    public FastWildCard[] asWild(FastOrder refineWith)
+    public CanonCard[] asWild(Order refineWith)
     {
         if (! paired()) return WILD;
 
-        FastWildCard refinedA = refineWith.asWild(A);
-        FastWildCard refinedB = refineWith.asWild(B);
+        CanonCard refinedA = refineWith.asWild(A);
+        CanonCard refinedB = refineWith.asWild(B);
 
         return (refinedA.ordinal() < refinedB.ordinal())
-               ? new FastWildCard[] {refinedA, refinedB}
-               : new FastWildCard[] {refinedB, refinedA};
+               ? new CanonCard[] {refinedA, refinedB}
+               : new CanonCard[] {refinedB, refinedA};
     }
 
 
