@@ -4,7 +4,6 @@ import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
 import ao.bucket.index.incremental.RiverIndexer;
 import ao.bucket.index.iso_cards.Ordering;
-import ao.bucket.index.iso_flop.IsoFlop;
 import ao.bucket.index.iso_river.RiverCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -60,8 +59,8 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-//                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
-//                seenHoles.set( hole.suitIsomorphicIndex() );
+                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
+                seenHoles.set( hole.suitIsomorphicIndex() );
 
                 if (ordersHole.add( hole.ordering() ))
                 {
@@ -101,12 +100,12 @@ public class GenericIndexerTest
                 Card flopCards[] =
                         {cards[flopA], cards[flopB], cards[flopC]};
 
-                IsoFlop isoFlop = hole.isoFlop(flopCards);
-                if (ordersFlop.add( isoFlop.order() ) &&
-                        !ordersHole.contains( isoFlop.order() ))
-                {
-                    System.out.println("flop\t" + isoFlop.order());
-                }
+//                IsoFlop isoFlop = hole.isoFlop(flopCards);
+//                if (ordersFlop.add( isoFlop.order() ) &&
+//                        !ordersHole.contains( isoFlop.order() ))
+//                {
+//                    System.out.println("flop\t" + isoFlop.order());
+//                }
 
                 CardSequence cardSeq =
                     new LiteralCardSequence(

@@ -1,5 +1,6 @@
 package ao.bucket.index.iso_flop;
 
+import ao.bucket.index.iso_cards.FastOrder;
 import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_cards.wild.card.RankedSuited;
 import ao.bucket.index.iso_cards.wild.card.WildCard;
@@ -8,6 +9,7 @@ import ao.bucket.index.iso_turn.IsoTurn;
 import static ao.bucket.index.iso_util.IsoCaseUtils.distinct;
 import static ao.bucket.index.iso_util.IsoCaseUtils.sortByRank;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 
@@ -36,11 +38,30 @@ public class IsoFlop
         Ordering byFlop  = orderSuitsBy(flop);
         Ordering refined = holeOrder.refine( byFlop );
         ORDER = refined;
-        
+
+        FastOrder fastHoleOrder =
+                Hole.valueOf(hole[0], hole[1]).fastOrder();
+        FastOrder fastByFlop  = fastOrderSuitsBy(flop);
+        if (fastByFlop == null)
+        {
+            fastOrderSuitsBy(flop);
+        }
+        FastOrder fastRefined = fastHoleOrder.refine(fastByFlop);
+        if (! refined.equals( fastRefined.toOrdering() ))
+        {
+            System.out.println(holeOrder + "\t\t" + fastHoleOrder);
+            System.out.println(byFlop + "\t\t" + fastByFlop);
+            System.out.println(refined + "\t\t" + fastRefined);
+            fastHoleOrder.refine(fastByFlop);
+        }
+
         // todo: optimize, only sort if previosly WILD, eliminate array
         WildCard wildHole[] = new WildCard[]{
                 WildCard.newInstance(refined, hole[0]),
                 WildCard.newInstance(refined, hole[1])};
+        assert wildHole[0].equals( fastRefined.asWild(hole[0]) );
+        assert wildHole[1].equals( fastRefined.asWild(hole[1]) );
+
         Arrays.sort(wildHole);
         HOLE_A = wildHole[ 0 ].mark(0);
         HOLE_B = wildHole[ 1 ].mark(
@@ -51,6 +72,10 @@ public class IsoFlop
                 WildCard.newInstance(refined, flop[ 0 ]),
                 WildCard.newInstance(refined, flop[ 1 ]),
                 WildCard.newInstance(refined, flop[ 2 ])};
+        assert wildFlop[0].equals( fastRefined.asWild(flop[0]) );
+        assert wildFlop[1].equals( fastRefined.asWild(flop[1]) );
+        assert wildFlop[2].equals( fastRefined.asWild(flop[2]) );
+
         Arrays.sort(wildFlop);
         FLOP_A = wildFlop[ 0 ];
         FLOP_B = wildFlop[ 1 ];
@@ -188,6 +213,54 @@ public class IsoFlop
             }
         }
     }
+    private FastOrder fastOrderSuitsBy(Card... flop)
+    {
+        Card byRank[] = sortByRank(flop);
+        Card a = byRank[0],
+             b = byRank[1],
+             c = byRank[2];
+        Suit sA = a.suit(),
+             sB = b.suit(),
+             sC = c.suit();
+
+        int distinctRanks = distinct(a.rank(), b.rank(), c.rank());
+        int distinctSuits = distinct(sA      , sB      , sC      );
+
+        if (distinctRanks == 1)
+        {
+            return FastOrder.triplet(sA, sB, sC);
+        }
+        else if (distinctRanks == 2)
+        {
+            if (distinctSuits == 2)
+            {
+                return fastSuitedPlus(sA, sB, sC);
+            }
+            else
+            {
+                return a.rank() == b.rank()
+                       ? FastOrder.partSuited(sA, sB, sC)
+                       : a.rank() == c.rank()
+                         ? FastOrder.partSuited(sA, sC, sB)
+                         : FastOrder.partSuited(sB, sC, sA);
+            }
+        }
+        else
+        {
+            if (distinctSuits == 1)
+            {
+                return FastOrder.suited(sA);
+            }
+            else if (distinctSuits == 2)
+            {
+                return fastSuitedPlus(sA, sB, sC);
+            }
+            else
+            {
+                return FastOrder.ordered(sA, sB, sC);
+            }
+        }
+    }
 
 
     //--------------------------------------------------------------------
@@ -252,5 +325,13 @@ public class IsoFlop
                : a == c
                  ? Ordering.partSuited(a, b)
                  : Ordering.partSuited(b, a);
+    }
+    private static FastOrder fastSuitedPlus(Suit a, Suit b, Suit c)
+    {
+        return a == b
+               ? FastOrder.partSuited(a, c)
+               : a == c
+                 ? FastOrder.partSuited(a, b)
+                 : FastOrder.partSuited(b, a);
     }
 }

@@ -7,25 +7,25 @@ package ao.bucket.index.iso_cards.wild.suit;
 public enum WildMarkedSuit implements WildSuitMarker<WildMarkedSuit>
 {
     //--------------------------------------------------------------------
-    ONE_0(WildSuit.ONE, 0),
-    ONE_1(WildSuit.ONE, 1),
-    ONE_2(WildSuit.ONE, 2),
-    ONE_3(WildSuit.ONE, 3),
+    ONE_0(WildSuit.FIRST, 0),
+    ONE_1(WildSuit.FIRST, 1),
+    ONE_2(WildSuit.FIRST, 2),
+    ONE_3(WildSuit.FIRST, 3),
 
-    TWO_0(WildSuit.TWO, 0),
-    TWO_1(WildSuit.TWO, 1),
-    TWO_2(WildSuit.TWO, 2),
-    TWO_3(WildSuit.TWO, 3),
+    TWO_0(WildSuit.SECOND, 0),
+    TWO_1(WildSuit.SECOND, 1),
+    TWO_2(WildSuit.SECOND, 2),
+    TWO_3(WildSuit.SECOND, 3),
 
-    THREE_0(WildSuit.THREE, 0),
-    THREE_1(WildSuit.THREE, 1),
-    THREE_2(WildSuit.THREE, 2),
-    THREE_3(WildSuit.THREE, 3),
+    THREE_0(WildSuit.THIRD, 0),
+    THREE_1(WildSuit.THIRD, 1),
+    THREE_2(WildSuit.THIRD, 2),
+    THREE_3(WildSuit.THIRD, 3),
 
-    FOUR_0(WildSuit.FOUR, 0),
-    FOUR_1(WildSuit.FOUR, 1),
-    FOUR_2(WildSuit.FOUR, 2),
-    FOUR_3(WildSuit.FOUR, 3),
+    FOUR_0(WildSuit.FOURTH, 0),
+    FOUR_1(WildSuit.FOURTH, 1),
+    FOUR_2(WildSuit.FOURTH, 2),
+    FOUR_3(WildSuit.FOURTH, 3),
 
     WILD_0(WildSuit.WILD, 0),
     WILD_1(WildSuit.WILD, 1),
