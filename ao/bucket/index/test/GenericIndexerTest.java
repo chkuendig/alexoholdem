@@ -3,7 +3,6 @@ package ao.bucket.index.test;
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
 import ao.bucket.index.incremental.RiverIndexer;
-import ao.bucket.index.iso_cards.Ordering;
 import ao.bucket.index.iso_river.RiverCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -16,8 +15,6 @@ import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
 import java.util.BitSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Date: Aug 21, 2008
@@ -36,13 +33,14 @@ public class GenericIndexerTest
 
     //--------------------------------------------------------------------
     private Card   cards[]   = Card.values();
+    private Gapper seenFlops = new Gapper();
     private Gapper seenTurns = new Gapper();
     private Gapper riverGaps = new Gapper();
 
-    private Set<Ordering> ordersHole  = new LinkedHashSet<Ordering>();
-    private Set<Ordering> ordersFlop  = new LinkedHashSet<Ordering>();
-    private Set<Ordering> ordersTurn  = new LinkedHashSet<Ordering>();
-    private Set<Ordering> ordersRiver = new LinkedHashSet<Ordering>();
+//    private Set<Ordering> ordersHole  = new LinkedHashSet<Ordering>();
+//    private Set<Ordering> ordersFlop  = new LinkedHashSet<Ordering>();
+//    private Set<Ordering> ordersTurn  = new LinkedHashSet<Ordering>();
+//    private Set<Ordering> ordersRiver = new LinkedHashSet<Ordering>();
 
 
     //--------------------------------------------------------------------
@@ -59,13 +57,9 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
+//                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
                 seenHoles.set( hole.suitIsomorphicIndex() );
 
-                if (ordersHole.add( hole.ordering() ))
-                {
-                    System.out.println("hole\t" + hole.ordering());
-                }
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
 
@@ -78,10 +72,8 @@ public class GenericIndexerTest
             }
         });
 
-//        for (Ordering order : orders)
-//        {
-//            System.out.println(order);
-//        }
+        System.out.println("Flop Gapper Status:");
+        seenFlops.displayStatus();
     }
 
 
@@ -90,15 +82,15 @@ public class GenericIndexerTest
             final Hole    hole,
             final Indexer indexer)
     {
-        final BitSet seenFlops = new BitSet();
+//        final BitSet seenFlops = new BitSet();
 
 //        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
-                Card flopCards[] =
-                        {cards[flopA], cards[flopB], cards[flopC]};
+//                Card flopCards[] =
+//                        {cards[flopA], cards[flopB], cards[flopC]};
 
 //                IsoFlop isoFlop = hole.isoFlop(flopCards);
 //                if (ordersFlop.add( isoFlop.order() ) &&
@@ -110,9 +102,9 @@ public class GenericIndexerTest
                 CardSequence cardSeq =
                     new LiteralCardSequence(
                             hole, new Community(
-                            flopCards[0], flopCards[1], flopCards[2]));
+                            cards[flopA], cards[flopB], cards[flopC]));
                 int index = (int) indexer.indexOf(cardSeq);
-                if (seenFlops.get( index )) return;
+//                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
 
 //                swap(cards, flopC, 51-2);

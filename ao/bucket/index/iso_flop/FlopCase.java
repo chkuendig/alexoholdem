@@ -1,6 +1,5 @@
 package ao.bucket.index.iso_flop;
 
-import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
 import ao.bucket.index.iso_cards.wild.suit.WildSuit;
 import static ao.bucket.index.iso_util.IsoCaseUtils.offset;
 import static ao.bucket.index.iso_util.IsoCaseUtils.sortColex;
@@ -13,21 +12,21 @@ import static ao.util.stats.Combo.colex;
 public enum FlopCase
 {
     //--------------------------------------------------------------------
-    //[ONE_0, ONE_0][ONE, TWO, TWO]
+    //[ONE, ONE][ONE, TWO, TWO]
     OO_OTT(858) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopB, flopC) * 11 +
                    (offset(holeA, holeB, flopA) + flopA);
     }},
 
-    //[ONE_0, ONE_0][TWO, TWO, THREE]
+    //[ONE, ONE][TWO, TWO, THREE]
     OO_TTR(1014) { public int subIndex(int holeA, int holeB,
                                        int flopA, int flopB, int flopC) {
             return sortColex(flopA, flopB) * 13 + flopC;
     }},
 
 
-    //[ONE_0, ONE_0][TWO, TWO, TWO]
+    //[ONE, ONE][TWO, TWO, TWO]
     OO_TTT(286) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA, flopB, flopC);
@@ -35,7 +34,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, ONE_0][ONE, ONE, TWO]
+    //[ONE, ONE][ONE, ONE, TWO]
     OO_OOT(715) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, holeB, flopA),
@@ -44,7 +43,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, ONE_0][ONE, TWO, THREE]
+    //[ONE, ONE][ONE, TWO, THREE]
     OO_OTR(858) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopB, flopC) * 11 +
@@ -52,14 +51,14 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, ONE_0][ONE, WILD, WILD]
+    //[ONE, ONE][ONE, WILD, WILD]
     OO_OWW(143) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return (flopA + offset(holeA, holeB, flopA)) * 13 + flopB;
         }
     },
 
-    //[ONE_0, ONE_0][THREE, WILD, WILD]
+    //[ONE, ONE][THREE, WILD, WILD]
     OO_RWW(156) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return (flopB + offset(flopA, flopB)) * 13 +
@@ -67,21 +66,21 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, ONE_0][TWO, THREE, FOUR]
+    //[ONE, ONE][TWO, THREE, FOUR]
     OO_TRF(286) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopC, flopB, flopA);
         }
     },
 
-    //[ONE_0, ONE_0][WILD, WILD, WILD]
+    //[ONE, ONE][WILD, WILD, WILD]
     OO_WWW(13) { public int subIndex(int holeA, int holeB,
                                      int flopA, int flopB, int flopC) {
             return flopA;
         }
     },
 
-    //[ONE_0, ONE_0][ONE, ONE, ONE]
+    //[ONE, ONE][ONE, ONE, ONE]
     OO_OOO(165) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, holeB, flopA),
@@ -90,7 +89,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, ONE, THREE]
+    //pair [ONE, TWO][ONE, ONE, THREE]
     P_OT_OOR(858) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -98,7 +97,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, THREE, THREE]
+    //pair [ONE, TWO][ONE, THREE, THREE]
     P_OT_ORR(936) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return colex(flopB, flopC) * 12 +
@@ -106,7 +105,7 @@ public enum FlopCase
         }
     },
 
-    //[WILD_0, WILD_1][TWO, WILD, WILD]
+    //pair [WILD, WILD][TWO, WILD, WILD]
     P_WW_TWW(156) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return (flopB + offset(holeA, flopB)) * 13 +
@@ -114,7 +113,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, TWO, THREE]
+    //pair [ONE, TWO][ONE, TWO, THREE]
     P_OT_OTR(858) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return sortColex(flopA + offset(holeA, flopA),
@@ -123,7 +122,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, THREE, FOUR]
+    //pair [ONE, TWO][ONE, THREE, FOUR]
     P_OT_ORF(936) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return sortColex(flopB, flopC) * 12 +
@@ -131,7 +130,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, WILD, WILD]
+    //pair [ONE, TWO][ONE, WILD, WILD]
     P_OT_OWW(156) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return (flopA + offset(holeA, flopA)) * 13 +
@@ -139,21 +138,21 @@ public enum FlopCase
         }
     },
 
-    //[WILD_0, WILD_1][TWO, TWO, THREE]
+    //pair [WILD, WILD][TWO, TWO, THREE]
     P_WW_TTR(1014) { public int subIndex(int holeA, int holeB,
                                          int flopA, int flopB, int flopC) {
             return sortColex(flopA, flopB) * 13 + flopC;
         }
     },
 
-    //[WILD_0, WILD_1][TWO, TWO, TWO]
+    //pair [WILD, WILD][TWO, TWO, TWO]
     P_WW_TTT(286) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return colex(flopA, flopB, flopC);
         }
     },
 
-    //[ONE_0, TWO_1][ONE, ONE, ONE]
+    //pair [ONE, TWO][ONE, ONE, ONE]
     P_OT_OOO(220) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -162,7 +161,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_1][ONE, ONE, TWO]
+    //pair [ONE, TWO][ONE, ONE, TWO]
     P_OT_OOT(792) { public int subIndex(int holeA, int holeB,
                                         int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -171,7 +170,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][TWO, TWO, THREE]
+    //[ONE, TWO][TWO, TWO, THREE]
     OT_TTR(858) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopA + offset(holeB, flopA),
@@ -180,7 +179,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, TWO, THREE]
+    //[ONE, TWO][ONE, TWO, THREE]
     OT_OTR(871) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopA + offset(holeA, flopA),
@@ -189,7 +188,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][TWO, THREE, THREE]
+    //[ONE, TWO][TWO, THREE, THREE]
     OT_TRR(936) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopB, flopC) * 12 +
@@ -197,7 +196,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][TWO, THREE, FOUR]
+    //[ONE, TWO][TWO, THREE, FOUR]
     OT_TRF(936) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopB, flopC) * 12 +
@@ -205,7 +204,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][TWO, WILD, WILD]
+    //[ONE, TWO][TWO, WILD, WILD]
     OT_TWW(156) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return flopB * 12 +
@@ -213,7 +212,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, THREE, THREE]
+    //[ONE, TWO][ONE, THREE, THREE]
     OT_ORR(936) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopB, flopC) * 12 +
@@ -221,7 +220,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, ONE, THREE]
+    //[ONE, TWO][ONE, ONE, THREE]
     OT_OOR(858) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -229,7 +228,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, THREE, FOUR]
+    //[ONE, TWO][ONE, THREE, FOUR]
     OT_ORF(936) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return sortColex(flopB, flopC) * 12 +
@@ -237,28 +236,28 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, WILD, WILD]
+    //[ONE, TWO][ONE, WILD, WILD]
     OT_OWW(156) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return (flopA + offset(holeA, flopA)) * 13 + flopB;
         }
     },
 
-    //[ONE_0, TWO_0][THREE, THREE, FOUR]
+    //[ONE, TWO][THREE, THREE, FOUR]
     OT_RRF(1014) { public int subIndex(int holeA, int holeB,
                                        int flopA, int flopB, int flopC) {
             return colex(flopA, flopB) * 13 + flopC;
         }
     },
 
-    //[ONE_0, TWO_0][THREE, THREE, THREE]
+    //[ONE, TWO][THREE, THREE, THREE]
     OT_RRR(286) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA, flopB, flopC);
         }
     },
 
-    //[ONE_0, TWO_0][TWO, TWO, TWO]
+    //[ONE, TWO][TWO, TWO, TWO]
     OT_TTT(220) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeB, flopA),
@@ -267,7 +266,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, TWO, TWO]
+    //[ONE, TWO][ONE, TWO, TWO]
     OT_OTT(792) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopB + offset(holeB, flopB),
@@ -276,7 +275,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, ONE, TWO]
+    //[ONE, TWO][ONE, ONE, TWO]
     OT_OOT(792) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -285,7 +284,7 @@ public enum FlopCase
         }
     },
 
-    //[ONE_0, TWO_0][ONE, ONE, ONE]
+    //[ONE, TWO][ONE, ONE, ONE]
     OT_OOO(220) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
             return colex(flopA + offset(holeA, flopA),
@@ -299,12 +298,13 @@ public enum FlopCase
 
     //--------------------------------------------------------------------
     public static FlopCase newInstance(
-            WildMarkedSuit holeA, WildMarkedSuit holeB,
+            boolean  isHolePair,
+            WildSuit holeA, WildSuit holeB,
             WildSuit flopA, WildSuit flopB, WildSuit flopC)
     {
-        if (holeA == WildMarkedSuit.ONE_0)
+        if (holeA == WildSuit.FIRST)
         {
-            if (holeB == WildMarkedSuit.ONE_0)
+            if (holeB == WildSuit.FIRST)
             {
                 switch (flopA)
                 {
@@ -333,7 +333,7 @@ public enum FlopCase
                                ? OO_RWW : OO_WWW;
                 }
             }
-            else if (holeB == WildMarkedSuit.TWO_0)
+            else if (! isHolePair) // && holeB == WildSuit.SECOND
             {
                 switch (flopA)
                 {
@@ -377,7 +377,7 @@ public enum FlopCase
                                : OT_RRF;
                 }
             }
-            else //if (holeB == WildMarkedSuit.TWO_1)
+            else //if (holeB == WildSuit.SECOND && isHolePair)
             {
                 switch (flopB)
                 {
@@ -398,7 +398,7 @@ public enum FlopCase
                 }
             }
         }
-        else // if (holeA == WildMarkedSuit.WILD_0)
+        else // if (holeA == WildSuit.WILD)
         {
             return (flopC == WildSuit.SECOND)
                     ? P_WW_TTT

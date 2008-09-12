@@ -13,7 +13,6 @@ import java.util.Set;
 public enum RiverCaseSet
 {
     //--------------------------------------------------------------------
-
     //[ZERO, ONE, TWO, THREE]
     ZOTR(ZERO, ONE, TWO, THREE),
 

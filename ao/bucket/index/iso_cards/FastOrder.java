@@ -1,6 +1,6 @@
 package ao.bucket.index.iso_cards;
 
-import ao.bucket.index.iso_cards.wild.card.WildCard;
+import ao.bucket.index.iso_cards.wild.card.FastWildCard;
 import ao.bucket.index.iso_cards.wild.suit.WildSuit;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;
@@ -76,7 +76,7 @@ public enum FastOrder
     C_DH_S(0, 1, 1, 2) { public FastOrder refine(FastOrder with) {
         return FastOrder.refinePair(this, 3, 1, 2, with); }},
     C_D_HS(0, 1, 2, 2) { public FastOrder refine(FastOrder with) {
-        return FastOrder.refinePair(this, 1, 2, 3, with); }},
+        return FastOrder.refinePair(this, 2, 3, with); }},
     C_H_DS(0, 2, 1, 2) { public FastOrder refine(FastOrder with) {
         return FastOrder.refinePair(this, 1, 3, with); }},
     CD_S_H(0, 0, 2, 1) { public FastOrder refine(FastOrder with) {
@@ -506,9 +506,9 @@ public enum FastOrder
                : WildSuit.VALUES[
                     PRECEDENCE[ suit.ordinal() ]];
     }
-    public WildCard asWild(Card card)
+    public FastWildCard asWild(Card card)
     {
-        return WildCard.newInstance(
+        return FastWildCard.valueOf(
                 card.rank(),
                 asWild(card.suit()));
     }

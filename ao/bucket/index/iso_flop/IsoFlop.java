@@ -1,16 +1,11 @@
 package ao.bucket.index.iso_flop;
 
 import ao.bucket.index.iso_cards.FastOrder;
-import ao.bucket.index.iso_cards.Ordering;
-import ao.bucket.index.iso_cards.wild.card.RankedSuited;
-import ao.bucket.index.iso_cards.wild.card.WildCard;
-import ao.bucket.index.iso_cards.wild.suit.WildMarkedSuit;
+import ao.bucket.index.iso_cards.wild.card.FastWildCard;
 import ao.bucket.index.iso_turn.IsoTurn;
 import static ao.bucket.index.iso_util.IsoCaseUtils.distinct;
-import static ao.bucket.index.iso_util.IsoCaseUtils.sortByRank;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
@@ -22,106 +17,31 @@ import java.util.Arrays;
 public class IsoFlop
 {
     //--------------------------------------------------------------------
-    private final RankedSuited<Rank, WildMarkedSuit>
-                           HOLE_A, HOLE_B;
-    private final WildCard FLOP_A, FLOP_B, FLOP_C;
-
-    private final Ordering ORDER;
-    private final FlopCase FLOP_CASE;
+    private final boolean      IS_HOLE_PAIR;
+    private final FastWildCard HOLE[];
+    private final FastWildCard FLOP[];
+    private final FastOrder    ORDER;
+    private final FlopCase     FLOP_CASE;
 
 
     //--------------------------------------------------------------------
-    public IsoFlop(Ordering holeOrder,
-                   Card     hole[],
-                   Card...  flop)
+    public IsoFlop(Hole hole,
+                   Card flopA,
+                   Card flopB,
+                   Card flopC)
     {
-        Ordering byFlop  = orderSuitsBy(flop);
-        Ordering refined = holeOrder.refine( byFlop );
-        ORDER = refined;
+        ORDER        = hole.order().refine(
+                            orderSuitsBy(flopA, flopB, flopC));
+        HOLE         = hole.asWild(ORDER);
+        IS_HOLE_PAIR = hole.paired();
 
-        FastOrder fastHoleOrder =
-                Hole.valueOf(hole[0], hole[1]).fastOrder();
-        FastOrder fastByFlop  = fastOrderSuitsBy(flop);
-        if (fastByFlop == null)
-        {
-            fastOrderSuitsBy(flop);
-        }
-        FastOrder fastRefined = fastHoleOrder.refine(fastByFlop);
-        if (! refined.equals( fastRefined.toOrdering() ))
-        {
-            System.out.println(holeOrder + "\t\t" + fastHoleOrder);
-            System.out.println(byFlop + "\t\t" + fastByFlop);
-            System.out.println(refined + "\t\t" + fastRefined);
-            fastHoleOrder.refine(fastByFlop);
-        }
-
-        // todo: optimize, only sort if previosly WILD, eliminate array
-        WildCard wildHole[] = new WildCard[]{
-                WildCard.newInstance(refined, hole[0]),
-                WildCard.newInstance(refined, hole[1])};
-        assert wildHole[0].equals( fastRefined.asWild(hole[0]) );
-        assert wildHole[1].equals( fastRefined.asWild(hole[1]) );
-
-        Arrays.sort(wildHole);
-        HOLE_A = wildHole[ 0 ].mark(0);
-        HOLE_B = wildHole[ 1 ].mark(
-                    countLeftRankMatches(hole, hole[1], 1));
-
-        // todo: optimize, eliminate array?o
-        WildCard wildFlop[] = new WildCard[]{
-                WildCard.newInstance(refined, flop[ 0 ]),
-                WildCard.newInstance(refined, flop[ 1 ]),
-                WildCard.newInstance(refined, flop[ 2 ])};
-        assert wildFlop[0].equals( fastRefined.asWild(flop[0]) );
-        assert wildFlop[1].equals( fastRefined.asWild(flop[1]) );
-        assert wildFlop[2].equals( fastRefined.asWild(flop[2]) );
-
-        Arrays.sort(wildFlop);
-        FLOP_A = wildFlop[ 0 ];
-        FLOP_B = wildFlop[ 1 ];
-        FLOP_C = wildFlop[ 2 ];
+        FLOP = new FastWildCard[]{
+                ORDER.asWild(flopA),
+                ORDER.asWild(flopB),
+                ORDER.asWild(flopC)};
+        Arrays.sort(FLOP);
 
         FLOP_CASE = computeFlopCase();
-    }
-
-
-    //--------------------------------------------------------------------
-    private int countLeftRankMatches(
-            Card in[], Card of, int upTo)
-    {
-        int count = 0;
-        for (int i = 0; i < upTo; i++)
-        {
-            if (in[i].rank() == of.rank())
-            {
-                count++;
-            }
-        }
-        return count;
-    }
-
-
-    //--------------------------------------------------------------------
-    public Rank holeA()
-    {
-        return HOLE_A.rank();
-    }
-    public Rank holeB()
-    {
-        return HOLE_B.rank();
-    }
-
-    public Rank flopA()
-    {
-        return FLOP_A.rank();
-    }
-    public Rank flopB()
-    {
-        return FLOP_B.rank();
-    }
-    public Rank flopC()
-    {
-        return FLOP_C.rank();
     }
 
 
@@ -130,19 +50,20 @@ public class IsoFlop
     {
         return FLOP_CASE;
     }
-
     private FlopCase computeFlopCase()
     {
         return FlopCase.newInstance(
-                HOLE_A.suit(), HOLE_B.suit(),
-                FLOP_A.suit(), FLOP_B.suit(), FLOP_C.suit());
+                IS_HOLE_PAIR,
+                HOLE[0].suit(), HOLE[1].suit(),
+                FLOP[0].suit(), FLOP[1].suit(), FLOP[2].suit());
     }
 
     public int subIndex()
     {
         return FLOP_CASE.subIndex(
-                holeA().ordinal(), holeB().ordinal(),
-                flopA().ordinal(), flopB().ordinal(), flopC().ordinal());
+                HOLE[0].rank().ordinal(), HOLE[1].rank().ordinal(),
+                FLOP[0].rank().ordinal(), FLOP[1].rank().ordinal(),
+                FLOP[2].rank().ordinal());
     }
 
 
@@ -151,80 +72,48 @@ public class IsoFlop
                            Card flop[],
                            Card turnCard)
     {
-        return new IsoTurn(ORDER, hole, flop, turnCard);
+//        return new IsoTurn(ORDER, hole, flop, turnCard);
+        return null;
     }
 
-    public Ordering order()
+    public FastOrder order()
     {
         return ORDER;
     }
 
     
     //--------------------------------------------------------------------
-    private Ordering orderSuitsBy(Card... flop)
+    private static FastOrder orderSuitsBy(
+            Card flopA, Card flopB, Card flopC)
     {
-        Card byRank[] = sortByRank(flop);
-        Card a = byRank[0],
-             b = byRank[1],
-             c = byRank[2];
-        Suit sA = a.suit(),
-             sB = b.suit(),
-             sC = c.suit();
-
-        int distinctRanks = distinct(a.rank(), b.rank(), c.rank());
-        int distinctSuits = distinct(sA      , sB      , sC      );
-
-        if (distinctRanks == 1)
+        // sort by rank
+        //if (Card.BY_RANK_DSC.compare(flopA, flopB) > 0)
+        if (flopA.ordinal() < flopB.ordinal())
         {
-            assert distinctSuits == 3;
-            return Ordering.triplet(sA, sB, sC);
+            Card temp = flopA;
+            flopA     = flopB;
+            flopB     = temp;
         }
-        else if (distinctRanks == 2)
+        if (flopB.ordinal() < flopC.ordinal())
         {
-            if (distinctSuits == 2)
-            {
-                return suitedPlus(sA, sB, sC);
-            }
-            else
-            {
-                assert distinctSuits == 3;
-                return a.rank() == b.rank()
-                       ? Ordering.partSuited(sA, sB, sC)
-                       : a.rank() == c.rank()
-                         ? Ordering.partSuited(sA, sC, sB)
-                         : Ordering.partSuited(sB, sC, sA);
-            }
+            Card temp = flopB;
+            flopB     = flopC;
+            flopC     = temp;
         }
-        else
+        if (flopA.ordinal() < flopB.ordinal())
         {
-            assert distinctRanks == 3;
-            if (distinctSuits == 1)
-            {
-                return Ordering.suited(sA);
-            }
-            else if (distinctSuits == 2)
-            {
-                return suitedPlus(sA, sB, sC);
-            }
-            else
-            {
-                assert distinctSuits == 3;
-                return Ordering.ordered(sA, sB, sC);
-            }
+            Card temp = flopA;
+            flopA     = flopB;
+            flopB     = temp;
         }
-    }
-    private FastOrder fastOrderSuitsBy(Card... flop)
-    {
-        Card byRank[] = sortByRank(flop);
-        Card a = byRank[0],
-             b = byRank[1],
-             c = byRank[2];
-        Suit sA = a.suit(),
-             sB = b.suit(),
-             sC = c.suit();
 
-        int distinctRanks = distinct(a.rank(), b.rank(), c.rank());
-        int distinctSuits = distinct(sA      , sB      , sC      );
+        Suit sA = flopA.suit(),
+             sB = flopB.suit(),
+             sC = flopC.suit();
+
+        int distinctRanks =
+                distinct(flopA.rank(), flopB.rank(), flopC.rank());
+        int distinctSuits = distinct(sA, sB, sC);
 
         if (distinctRanks == 1)
         {
@@ -238,9 +127,9 @@ public class IsoFlop
             }
             else
             {
-                return a.rank() == b.rank()
+                return flopA.rank() == flopB.rank()
                        ? FastOrder.partSuited(sA, sB, sC)
-                       : a.rank() == c.rank()
+                       : flopA.rank() == flopC.rank()
                          ? FastOrder.partSuited(sA, sC, sB)
                          : FastOrder.partSuited(sB, sC, sA);
             }
@@ -262,20 +151,22 @@ public class IsoFlop
         }
     }
 
+    private static FastOrder fastSuitedPlus(Suit a, Suit b, Suit c)
+    {
+        return a == b
+               ? FastOrder.partSuited(a, c)
+               : a == c
+                 ? FastOrder.partSuited(a, b)
+                 : FastOrder.partSuited(b, a);
+    }
+
 
     //--------------------------------------------------------------------
     public String toString()
     {
-        //return CASE + " -> " + ORDER;
-//        return CASE + " :: " + ORDER +  " -> " +
-//                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
-//        return CASE + " :: " + HOLE_ORDER +  " -> " +
-//                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
-//        return CASE +  " -> " +
-//                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
-        return //CASE +  " -> " +
-                Arrays.toString(new RankedSuited[]{HOLE_A, HOLE_B}) +
-                Arrays.toString(new WildCard[]{FLOP_A, FLOP_B, FLOP_C});
+        return  IS_HOLE_PAIR          +
+                Arrays.toString(HOLE) +
+                Arrays.toString(FLOP);
     }
 
 
@@ -288,50 +179,28 @@ public class IsoFlop
 
         IsoFlop isoFlop = (IsoFlop) o;
         return
-//               CASE .equals( isoFlop.CASE  ) &&
-//               HOLE_ORDER.equals( isoFlop.HOLE_ORDER ) &&
+               IS_HOLE_PAIR == isoFlop.IS_HOLE_PAIR &&
 
-               HOLE_A.equals(isoFlop.HOLE_A) &&
-               HOLE_B.equals(isoFlop.HOLE_B) &&
+               HOLE[0] == isoFlop.HOLE[0] &&
+               HOLE[1] == isoFlop.HOLE[1] &&
 
-               FLOP_A.equals(isoFlop.FLOP_A) &&
-               FLOP_B.equals(isoFlop.FLOP_B) &&
-               FLOP_C.equals(isoFlop.FLOP_C);
+               FLOP[0] == isoFlop.FLOP[0] &&
+               FLOP[1] == isoFlop.FLOP[1] &&
+               FLOP[2] == isoFlop.FLOP[2];
     }
 
     @Override
     public int hashCode()
     {
-        int result = 0;
-//        result = CASE.hashCode();
-//        result = 31 * result + HOLE_ORDER.hashCode();
+        int result = IS_HOLE_PAIR ? 1231 : 1237;
 
-        result = 31 * result + HOLE_A.hashCode();
-        result = 31 * result + HOLE_A.hashCode();
+        result = 31 * result + HOLE[0].hashCode();
+        result = 31 * result + HOLE[1].hashCode();
 
-        result = 31 * result + FLOP_A.hashCode();
-        result = 31 * result + FLOP_B.hashCode();
-        result = 31 * result + FLOP_C.hashCode();
+        result = 31 * result + FLOP[0].hashCode();
+        result = 31 * result + FLOP[1].hashCode();
+        result = 31 * result + FLOP[2].hashCode();
 
         return result;
-    }
-
-
-    //--------------------------------------------------------------------
-    private static Ordering suitedPlus(Suit a, Suit b, Suit c)
-    {
-        return a == b
-               ? Ordering.partSuited(a, c)
-               : a == c
-                 ? Ordering.partSuited(a, b)
-                 : Ordering.partSuited(b, a);
-    }
-    private static FastOrder fastSuitedPlus(Suit a, Suit b, Suit c)
-    {
-        return a == b
-               ? FastOrder.partSuited(a, c)
-               : a == c
-                 ? FastOrder.partSuited(a, b)
-                 : FastOrder.partSuited(b, a);
     }
 }

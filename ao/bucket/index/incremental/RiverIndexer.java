@@ -407,7 +407,7 @@ public class RiverIndexer
         {
             Card riverCard = cards[ riverCardIndex ];
 
-            IsoFlop isoFlop  = hole.isoFlop(flop);
+            IsoFlop isoFlop  = hole.isoFlop(flop[0], flop[1], flop[2]);
             IsoTurn isoTurn  = isoFlop.isoTurn(
                     hole.asArray(), flop, turn);
             IsoRiver isoRiver = isoTurn.isoRiver(
