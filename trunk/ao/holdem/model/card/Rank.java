@@ -11,6 +11,8 @@ public enum Rank
     TEN("T"), JACK("J"),  QUEEN("Q"), KING("K"),
     ACE("A");
 
+    public static final Rank VALUES[] = values();
+
 
     //--------------------------------------------------------------------
     private final String NAME;

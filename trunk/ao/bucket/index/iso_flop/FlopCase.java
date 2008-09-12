@@ -308,28 +308,28 @@ public enum FlopCase
             {
                 switch (flopA)
                 {
-                    case ONE:
+                    case FIRST:
                         switch (flopB)
                         {
-                            case ONE:
-                                return (flopC == WildSuit.ONE)
+                            case FIRST:
+                                return (flopC == WildSuit.FIRST)
                                        ? OO_OOO
                                        : OO_OOT;
-                            case TWO:
-                                return (flopC == WildSuit.TWO)
+                            case SECOND:
+                                return (flopC == WildSuit.SECOND)
                                        ? OO_OTT
                                        : OO_OTR;
                             default:
                                 return OO_OWW;
                         }
-                    case TWO:
-                        return (flopC == WildSuit.TWO)
+                    case SECOND:
+                        return (flopC == WildSuit.SECOND)
                                ? OO_TTT
-                               : (flopC == WildSuit.THREE)
+                               : (flopC == WildSuit.THIRD)
                                  ? OO_TTR
                                  : OO_TRF;
                     default:
-                        return (flopA == WildSuit.THREE)
+                        return (flopA == WildSuit.THIRD)
                                ? OO_RWW : OO_WWW;
                 }
             }
@@ -337,42 +337,42 @@ public enum FlopCase
             {
                 switch (flopA)
                 {
-                    case ONE:
+                    case FIRST:
                         switch (flopB)
                         {
-                            case ONE:
-                                return (flopC == WildSuit.ONE)
+                            case FIRST:
+                                return (flopC == WildSuit.FIRST)
                                        ? OT_OOO
-                                       : (flopC == WildSuit.TWO)
+                                       : (flopC == WildSuit.SECOND)
                                          ? OT_OOT
                                          : OT_OOR;
-                            case TWO:
-                                return (flopC == WildSuit.TWO)
+                            case SECOND:
+                                return (flopC == WildSuit.SECOND)
                                        ? OT_OTT
                                        : OT_OTR;
-                            case THREE:
-                                return (flopC == WildSuit.THREE)
+                            case THIRD:
+                                return (flopC == WildSuit.THIRD)
                                        ? OT_ORR
                                        : OT_ORF;
                             default:
                                 return OT_OWW;
                         }
-                    case TWO:
+                    case SECOND:
                         switch (flopB)
                         {
-                            case TWO:
-                                return (flopC == WildSuit.TWO)
+                            case SECOND:
+                                return (flopC == WildSuit.SECOND)
                                        ? OT_TTT
                                        : OT_TTR;
-                            case THREE:
-                                return (flopC == WildSuit.THREE)
+                            case THIRD:
+                                return (flopC == WildSuit.THIRD)
                                        ? OT_TRR
                                        : OT_TRF;
                             default:
                                 return OT_TWW;
                         }
                     default:
-                        return (flopC == WildSuit.THREE)
+                        return (flopC == WildSuit.THIRD)
                                ? OT_RRR
                                : OT_RRF;
                 }
@@ -381,18 +381,18 @@ public enum FlopCase
             {
                 switch (flopB)
                 {
-                    case ONE:
-                        return (flopC == WildSuit.ONE)
+                    case FIRST:
+                        return (flopC == WildSuit.FIRST)
                                ? P_OT_OOO
-                               : (flopC == WildSuit.TWO)
+                               : (flopC == WildSuit.SECOND)
                                  ? P_OT_OOT
                                  : P_OT_OOR;
-                    case THREE:
-                        return (flopC == WildSuit.FOUR)
+                    case THIRD:
+                        return (flopC == WildSuit.FOURTH)
                                ? P_OT_ORF
                                : P_OT_ORR;
                     default:
-                        return (flopB == WildSuit.TWO)
+                        return (flopB == WildSuit.SECOND)
                                ? P_OT_OTR
                                : P_OT_OWW;
                 }
@@ -400,9 +400,9 @@ public enum FlopCase
         }
         else // if (holeA == WildMarkedSuit.WILD_0)
         {
-            return (flopC == WildSuit.TWO)
+            return (flopC == WildSuit.SECOND)
                     ? P_WW_TTT
-                    : (flopC == WildSuit.THREE)
+                    : (flopC == WildSuit.THIRD)
                        ? P_WW_TTR
                        : P_WW_TWW;
         }
