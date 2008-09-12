@@ -1,6 +1,6 @@
-package ao.bucket.index.iso_river;
+package ao.bucket.index.post_flop.river;
 
-import static ao.bucket.index.iso_river.RiverCase.*;
+import static ao.bucket.index.post_flop.river.RiverCase.*;
 
 import java.util.Arrays;
 import java.util.EnumSet;

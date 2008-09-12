@@ -1,7 +1,7 @@
 package ao.bucket.index.incremental;
 
-import ao.bucket.index.iso_flop.FlopCase;
-import ao.bucket.index.iso_flop.IsoFlop;
+import ao.bucket.index.flop.FlopCase;
+import ao.bucket.index.flop.IsoFlop;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;

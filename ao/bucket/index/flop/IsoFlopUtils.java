@@ -1,18 +1,15 @@
-package ao.bucket.index.iso_util;
+package ao.bucket.index.flop;
 
-import ao.holdem.model.card.Card;
 import static ao.util.stats.Combo.colex;
-
-import java.util.Arrays;
 
 /**
  * Date: Aug 21, 2008
  * Time: 8:20:22 PM
  */
-public class IsoCaseUtils
+public class IsoFlopUtils
 {
     //--------------------------------------------------------------------
-    private IsoCaseUtils() {}
+    private IsoFlopUtils() {}
 
 
     //--------------------------------------------------------------------
@@ -25,17 +22,6 @@ public class IsoCaseUtils
 
     //--------------------------------------------------------------------
     public static int offset(
-            int    of,
-            int... precededBy)
-    {
-        int offset = 0;
-        for (int precedent : precededBy)
-        {
-            offset += offset(precedent, of);
-        }
-        return offset;
-    }
-    public static int offset(
             int precededByA,
             int precededByB,
             int of)
@@ -46,25 +32,17 @@ public class IsoCaseUtils
 
     public static int offset(int precededBy, int of)
     {
-        return Integer.signum(
-                 Integer.signum(precededBy - of) // -1 or +1
-                    - 1                          // -2 or 0
-               );                                // -1 or 0
+//        return Integer.signum(
+//                 Integer.signum(precededBy - of) // -1 or +1
+//                    - 1                          // -2 or 0
+//               );                                // -1 or 0
 
-//        return (precededBy < of)
-//                ? -1 : 0;
+        return (precededBy < of)
+                ? -1 : 0;
     }
 
 
     //--------------------------------------------------------------------
-    // todo: optimize, sort in-place?
-    public static Card[] sortByRank(Card... cards)
-    {
-        Card copy[] = cards.clone();
-        Arrays.sort(copy, Card.BY_RANK_DSC);
-        return copy;
-    }
-
     public static <T> int distinct(T a, T b, T c)
     {
         return a == b && b == c

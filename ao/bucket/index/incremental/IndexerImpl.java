@@ -1,7 +1,7 @@
 package ao.bucket.index.incremental;
 
 import ao.bucket.index.Indexer;
-import ao.bucket.index.iso_flop.IsoFlop;
+import ao.bucket.index.flop.IsoFlop;
 import ao.holdem.model.card.sequence.CardSequence;
 
 /**

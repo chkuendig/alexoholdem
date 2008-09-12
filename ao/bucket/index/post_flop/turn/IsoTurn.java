@@ -1,9 +1,6 @@
-package ao.bucket.index.iso_turn;
+package ao.bucket.index.post_flop.turn;
 
-import ao.bucket.index.iso_cards.Ordering;
-import ao.bucket.index.iso_cards.wild.card.RankedSuited;
-import ao.bucket.index.iso_cards.wild.card.WildCard;
-import ao.bucket.index.iso_river.IsoRiver;
+import ao.bucket.index.post_flop.river.IsoRiver;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 

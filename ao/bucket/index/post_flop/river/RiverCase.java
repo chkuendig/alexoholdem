@@ -1,6 +1,4 @@
-package ao.bucket.index.iso_river;
-
-import ao.bucket.index.iso_cards.wild.card.WildCard;
+package ao.bucket.index.post_flop.river;
 
 /**
  * Date: Sep 1, 2008
@@ -51,6 +49,4 @@ public enum RiverCase
         }
         return river.rank().ordinal() - offset;
     }
-
-//    public int
 }

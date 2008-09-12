@@ -1,7 +1,6 @@
-package ao.bucket.index.iso_cards.wild.card;
+package ao.bucket.index.card;
 
-import ao.bucket.index.iso_cards.wild.suit.WildSuit;
-import static ao.bucket.index.iso_cards.wild.suit.WildSuit.*;
+import static ao.bucket.index.card.CanonSuit.*;
 import ao.holdem.model.card.Rank;
 import static ao.holdem.model.card.Rank.*;
 
@@ -11,7 +10,7 @@ import static ao.holdem.model.card.Rank.*;
  *
  * Note: MUST be in [suit -> rank] order!!
  */
-public enum FastWildCard
+public enum CanonCard
 {
     //--------------------------------------------------------------------
     TWO_OF_FIRST  (TWO,   FIRST),
@@ -85,16 +84,17 @@ public enum FastWildCard
     ACE_OF_WILD  (ACE,   WILD),
     ;
 
-    public static final FastWildCard VALUES[] = values();
+    public static final CanonCard VALUES[] = values();
 
-    private static final FastWildCard INDEX[][];
+    private static final CanonCard INDEX[][];
+
     static
     {
-        INDEX = new FastWildCard[Rank.VALUES.length]
-                                [WildSuit.VALUES.length];
+        INDEX = new CanonCard[Rank.VALUES.length]
+                                [CanonSuit.VALUES.length];
         for (Rank rank : Rank.VALUES)
         {
-            for (WildSuit suit : WildSuit.VALUES)
+            for (CanonSuit suit : CanonSuit.VALUES)
             {
                 INDEX[rank.ordinal()]
                      [suit.ordinal()] =
@@ -102,14 +102,14 @@ public enum FastWildCard
             }
         }
     }
-    public static FastWildCard valueOf(Rank rank, WildSuit suit)
+    public static CanonCard valueOf(Rank rank, CanonSuit suit)
     {
         return INDEX[ rank.ordinal() ][ suit.ordinal() ];
     }
-    private static FastWildCard computeValueOf(
-            Rank rank, WildSuit suit)
+    private static CanonCard computeValueOf(
+            Rank rank, CanonSuit suit)
     {
-        for (FastWildCard wildCard : VALUES)
+        for (CanonCard wildCard : VALUES)
         {
             if (wildCard.RANK == rank &&
                     wildCard.SUIT == suit)
@@ -123,11 +123,11 @@ public enum FastWildCard
 
     //--------------------------------------------------------------------
     private final Rank     RANK;
-    private final WildSuit SUIT;
+    private final CanonSuit SUIT;
 
 
     //--------------------------------------------------------------------
-    private FastWildCard(Rank rank, WildSuit suit)
+    private CanonCard(Rank rank, CanonSuit suit)
     {
         RANK = rank;
         SUIT = suit;
@@ -140,7 +140,7 @@ public enum FastWildCard
         return RANK;
     }
 
-    public WildSuit suit()
+    public CanonSuit suit()
     {
         return SUIT;
     }

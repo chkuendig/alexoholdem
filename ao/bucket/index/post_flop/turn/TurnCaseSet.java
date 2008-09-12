@@ -1,6 +1,6 @@
-package ao.bucket.index.iso_turn;
+package ao.bucket.index.post_flop.turn;
 
-import static ao.bucket.index.iso_turn.TurnCase.*;
+import static ao.bucket.index.post_flop.turn.TurnCase.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
