@@ -1,11 +1,13 @@
 package ao.holdem.model.card;
 
 import ao.bucket.index.iso_cards.FastOrder;
-import ao.bucket.index.iso_cards.Ordering;
+import ao.bucket.index.iso_cards.wild.card.FastWildCard;
 import ao.bucket.index.iso_flop.IsoFlop;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
+
+import java.util.Arrays;
 
 
 /**
@@ -43,10 +45,12 @@ public class Hole
 
 
     //--------------------------------------------------------------------
-    private final Card     A;
-    private final Card     B;
-    private final int      ISO_INDEX;
-    private final Ordering ORDERING;
+    private final Card         A;
+    private final Card         B;
+    private final int          ISO_INDEX;
+    private final FastOrder    ORDER;
+    private final boolean      IS_PAIR;
+    private final FastWildCard WILD[];
 
 
     //--------------------------------------------------------------------
@@ -57,14 +61,13 @@ public class Hole
 
         A         = a;
         B         = b;
+        IS_PAIR   = computePaired();
         ISO_INDEX = computeSuitIsomorphicIndex();
-        ORDERING  = computeOrdering();
-//        if (! ORDERING.equals( computeFastOrder().toOrdering() ))
-//        {
-//            System.out.println(
-//                    ORDERING + "\t\t" +
-//                    computeFastOrder().toOrdering());
-//        }
+        ORDER     = computeOrder();
+
+        WILD = new FastWildCard[]{
+                ORDER.asWild(a), ORDER.asWild(b)};
+        Arrays.sort(WILD);
     }
 
 
@@ -89,23 +92,13 @@ public class Hole
         }
     }
 
-    private Ordering computeOrdering()
+    private FastOrder computeOrder()
     {
         return paired()
-                ? Ordering.pair(A.suit(), B.suit())
-                : suited()
-                  ? Ordering.suited  (A.suit())
-                  : Ordering.unsuited(hi().suit(), lo().suit());
-    }
-
-
-    public FastOrder fastOrder()
-    {
-        return paired()
-                ? FastOrder.pair(A.suit(), B.suit())
-                : suited()
-                  ? FastOrder.suited  (A.suit())
-                  : FastOrder.unsuited(hi().suit(), lo().suit());
+               ? FastOrder.pair(A.suit(), B.suit())
+               : suited()
+                 ? FastOrder.suited  (A.suit())
+                 : FastOrder.unsuited(hi().suit(), lo().suit());
     }
 
 
@@ -145,6 +138,10 @@ public class Hole
 
     public boolean paired()
     {
+        return IS_PAIR;
+    }
+    private boolean computePaired()
+    {
         return A.rank() == B.rank();
     }
 
@@ -181,14 +178,28 @@ public class Hole
     
 
     //--------------------------------------------------------------------
-    public IsoFlop isoFlop(Card... flop)
+    public IsoFlop isoFlop(Card flopA, Card flopB, Card flopC)
     {
-        return new IsoFlop(ORDERING, asArray(), flop);
+        return new IsoFlop(
+                this,
+                flopA, flopB, flopC);
     }
 
-    public Ordering ordering()
+    public FastOrder order()
     {
-        return ORDERING;
+        return ORDER;
+    }
+
+    public FastWildCard[] asWild(FastOrder refineWith)
+    {
+        if (! paired()) return WILD;
+
+        FastWildCard refinedA = refineWith.asWild(A);
+        FastWildCard refinedB = refineWith.asWild(B);
+
+        return (refinedA.ordinal() < refinedB.ordinal())
+               ? new FastWildCard[] {refinedA, refinedB}
+               : new FastWildCard[] {refinedB, refinedA};
     }
 
 

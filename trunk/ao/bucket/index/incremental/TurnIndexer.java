@@ -129,7 +129,10 @@ public class TurnIndexer
             {
                 Card flopCards[] =
                         {cards[flopA], cards[flopB], cards[flopC]};
-                IsoFlop isoFlop = hole.isoFlop( flopCards );
+                IsoFlop isoFlop = hole.isoFlop(
+                                    flopCards[0],
+                                    flopCards[1],
+                                    flopCards[2]);
                 int flopIndex = FLOPS.indexOf(hole, isoFlop);
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );

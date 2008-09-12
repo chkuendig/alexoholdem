@@ -27,7 +27,7 @@ public class IsoTurn
 
     //--------------------------------------------------------------------
     public IsoTurn(Ordering flopOrder,
-                   Card hole[],
+                   Card     hole[],
                    Card     flop[],
                    Card     turn)
     {

@@ -2,8 +2,6 @@ package ao.bucket.index.incremental;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.iso_flop.IsoFlop;
-import ao.bucket.index.iso_turn.IsoTurn;
-import ao.holdem.model.card.Card;
 import ao.holdem.model.card.sequence.CardSequence;
 
 /**
@@ -27,36 +25,40 @@ public class IndexerImpl implements Indexer
         }
         else
         {
-            Card flopCards[] = {cards.community().flopA(),
-                                cards.community().flopB(),
-                                cards.community().flopC()};
-            IsoFlop isoFlop = cards.hole().isoFlop(flopCards);
+//            Card flopCards[] = {cards.community().flopA(),
+//                                cards.community().flopB(),
+//                                cards.community().flopC()};
+            IsoFlop isoFlop = cards.hole().isoFlop(
+                    cards.community().flopA(),
+                    cards.community().flopB(),
+                    cards.community().flopC());
             int flopIndex   = flopIndexer.indexOf(cards.hole(), isoFlop);
 
             if (! cards.community().hasTurn())
             {
                 return flopIndex;
             }
-            else
-            {
-                Card    turnCard = cards.community().turn();
-                IsoTurn isoTurn  =
-                    isoFlop.isoTurn(
-                            cards.hole().asArray(), flopCards, turnCard);
-
-                int turnIndex = turnIndexer.indexOf(flopIndex, isoTurn);
-                if (! cards.community().hasRiver())
-                {
-                    return turnIndex;
-                }
-                else
-                {
-                    return riverIndexer.indexOf(
-                            cards.hole(), flopCards,
-                            turnCard, isoTurn, turnIndex,
-                            cards.community().river());
-                }
-            }
+            return -1;
+//            else
+//            {
+//                Card    turnCard = cards.community().turn();
+//                IsoTurn isoTurn  =
+//                    isoFlop.isoTurn(
+//                            cards.hole().asArray(), flopCards, turnCard);
+//
+//                int turnIndex = turnIndexer.indexOf(flopIndex, isoTurn);
+//                if (! cards.community().hasRiver())
+//                {
+//                    return turnIndex;
+//                }
+//                else
+//                {
+//                    return riverIndexer.indexOf(
+//                            cards.hole(), flopCards,
+//                            turnCard, isoTurn, turnIndex,
+//                            cards.community().river());
+//                }
+//            }
         }
     }
 }

@@ -94,7 +94,10 @@ public class FlopIndexer
 
             for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
             {
-                IsoFlop isoFlop = hole.isoFlop( flopCards );
+                IsoFlop isoFlop = hole.isoFlop(
+                                    flopCards[0],
+                                    flopCards[1],
+                                    flopCards[2]);
 
                 FlopCase flopCase = isoFlop.flopCase();
                 if (subOffsets[ flopCase.ordinal() ] != -1) continue;
