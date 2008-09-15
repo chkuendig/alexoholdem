@@ -84,7 +84,7 @@ public class GenericIndexerTest
             final Hole    hole,
             final Indexer indexer)
     {
-//        System.out.println(hole);
+        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -120,6 +120,11 @@ public class GenericIndexerTest
             int     flopIndex,
             Indexer indexer)
     {
+//        System.out.println(hole + Arrays.toString(flop));
+        
+//        Map<Integer, List<Card>> cardsByIndex =
+//                new TreeMap<Integer, List<Card>>();
+
 //        Gapper localTurns = new Gapper();
         for (int turnCardIndex = 0;
                  turnCardIndex < 52 - 2 - 3;
@@ -131,10 +136,13 @@ public class GenericIndexerTest
                    new Community(flop[0], flop[1], flop[2], turnCard));
             int turnIndex = (int) indexer.indexOf(seq);
 
-            if (turnIndex == 420420)
-            {
-                System.out.println(seq);
-            }
+//            List<Card> indexCards = cardsByIndex.get( turnIndex );
+//            if (indexCards == null)
+//            {
+//                indexCards = new ArrayList<Card>();
+//                cardsByIndex.put(turnIndex, indexCards);
+//            }
+//            indexCards.add( turnCard );
 
 //            localTurns.set( turnIndex );
 //            if (seenTurns.get( turnIndex )) continue;

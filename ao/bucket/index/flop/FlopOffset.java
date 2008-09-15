@@ -19,8 +19,10 @@ public class FlopOffset
 
 
     //--------------------------------------------------------------------
-    private static final String OFFSET_FILE = "lookup/flop_offsets.cache";
-    private static final int    OFFSETS[][] = retrieveOrCalculateOffsets();
+    private static final String OFFSET_FILE =
+            "lookup/canon/flop.offsets.cache";
+    private static final int    OFFSETS[][] =
+            retrieveOrCalculateOffsets();
 
 
     private static int[][] retrieveOrCalculateOffsets()

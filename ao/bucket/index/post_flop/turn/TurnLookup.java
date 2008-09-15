@@ -1,11 +1,15 @@
 package ao.bucket.index.post_flop.turn;
 
+import ao.bucket.index.card.CanonCard;
+import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopOffset;
-import ao.bucket.index.post_flop.common.PostFlopCase;
-import ao.bucket.index.post_flop.common.PostFlopCaseSet;
+import ao.bucket.index.post_flop.common.CanonSuitSet;
+import ao.bucket.index.post_flop.common.Codac;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.Rank;
+import ao.holdem.model.card.Suit;
 import static ao.util.data.Arr.swap;
 import ao.util.persist.PersistentBytes;
 import ao.util.stats.FastIntCombiner;
@@ -13,7 +17,7 @@ import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
 import java.util.BitSet;
-import java.util.LinkedHashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -23,22 +27,29 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
-    private static final String          CASE_FILE =
-                                             "lookup/new_turn_cases.cache";
-    private static final PostFlopCaseSet CASE_SETS[];
-    private static final int             GLOBAL_OFFSET[];
+    private static final String       RAW_CASE_FILE =
+                                        "lookup/canon/turn.cases.cache";
+    private static final int          CODED_OFFSET[][];
+//    private static final CanonSuitSet CASE_SETS[][];
+//    private static final int          GLOBAL_OFFSET[][];
 
     static
     {
-        CASE_SETS     = retrieveOrCalculateCaseSets();
-        GLOBAL_OFFSET = initGlopbalOffsets();
+        CanonSuitSet caseSets[][] =
+                retrieveOrCalculateCaseSets();
+        CODED_OFFSET = encodeOffsets(caseSets);
+    }
+
+    public static void main(String args[])
+    {
+        // initialize
     }
 
 
     //--------------------------------------------------------------------
-    private static PostFlopCaseSet[] retrieveOrCalculateCaseSets()
+    private static CanonSuitSet[][] retrieveOrCalculateCaseSets()
     {
-        PostFlopCaseSet[] caseSets = retrieveCaseSets();
+        CanonSuitSet[][] caseSets = retrieveCaseSets();
         if (caseSets == null)
         {
             caseSets = calculateCaseSets();
@@ -47,44 +58,55 @@ public class TurnLookup
         return caseSets;
     }
 
-    private static PostFlopCaseSet[] retrieveCaseSets()
+    private static CanonSuitSet[][] retrieveCaseSets()
     {
-        byte asBytes[] = PersistentBytes.retrieve(CASE_FILE);
+        byte asBytes[] = PersistentBytes.retrieve(RAW_CASE_FILE);
         if (asBytes == null) return null;
 
-        PostFlopCaseSet caseSets[] =
-                new PostFlopCaseSet[ asBytes.length ];
-        for (int i = 0; i < asBytes.length; i++)
+        int          flatIndex    = 0;
+        CanonSuitSet caseSets[][] =
+                new CanonSuitSet
+                        [ asBytes.length / Rank.VALUES.length ]
+                        [ Rank.VALUES.length                  ];
+        for (int i = 0; i < caseSets.length; i++)
         {
-            caseSets[ i ] = PostFlopCaseSet.VALUES[ asBytes[i] ];
+            for (int j = 0; j < Rank.VALUES.length; j++)
+            {
+                int ordinal = asBytes[flatIndex++];
+                if (ordinal >= 0)
+                {
+                    caseSets[ i ][ j ] =
+                            CanonSuitSet.VALUES[ ordinal ];
+                }
+            }
         }
         return caseSets;
     }
 
-    private static void storeCaseSets(PostFlopCaseSet caseSets[])
+    private static void storeCaseSets(CanonSuitSet caseSets[][])
     {
-        byte asBytes[] = new byte[ caseSets.length ];
-        for (int i = 0; i < caseSets.length; i++)
+        int  flatIndex = 0;
+        byte asBytes[] = new byte[ caseSets.length * Rank.VALUES.length ];
+        for (CanonSuitSet[] caseSet : caseSets)
         {
-            if (caseSets[ i ] == null)
+            for (CanonSuitSet aCaseSet : caseSet)
             {
-                System.out.println("MISSING\t" + i);
-                asBytes[ i ] = -1;
-            }
-            else
-            {
-                asBytes[ i ] = (byte) caseSets[ i ].ordinal();
+                asBytes[flatIndex++] = (byte) (
+                        (aCaseSet == null)
+                        ? -1
+                        : aCaseSet.ordinal());
             }
         }
-        PersistentBytes.persist(asBytes, CASE_FILE);
+        PersistentBytes.persist(asBytes, RAW_CASE_FILE);
     }
 
 
     //--------------------------------------------------------------------
-    private static PostFlopCaseSet[] calculateCaseSets()
+    private static CanonSuitSet[][] calculateCaseSets()
     {
-        final PostFlopCaseSet caseSets[] =
-                new PostFlopCaseSet[ FlopOffset.ISO_FLOP_COUNT ];
+        final CanonSuitSet caseSets[][] =
+                new CanonSuitSet[ FlopOffset.ISO_FLOP_COUNT ]
+                                [ /*Rank.VALUES.length   */ ];
 
         final Card   cards[]   = Card.values();
         final BitSet seenHoles = new BitSet();
@@ -113,9 +135,9 @@ public class TurnLookup
     }
 
     private static void iterateFlops(
-            final Hole            hole,
-            final Card            cards[],
-            final PostFlopCaseSet caseSets[])
+            final Hole         hole,
+            final Card         cards[],
+            final CanonSuitSet caseSets[][])
     {
         final BitSet seenFlops = new BitSet();
 
@@ -130,7 +152,6 @@ public class TurnLookup
                                     flopCards[1],
                                     flopCards[2]);
                 int flopIndex = isoFlop.canonIndex();
-//                        FLOPS.indexOf(hole, isoFlop);
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );
 
@@ -138,7 +159,8 @@ public class TurnLookup
                 swap(cards, flopB, 51-3);
                 swap(cards, flopA, 51-4);
 
-                caseSets[ flopIndex ] = iterateTurns(isoFlop, cards);
+                caseSets[ flopIndex ] =
+                        iterateTurns(isoFlop, cards);
 
                 swap(cards, flopA, 51-4);
                 swap(cards, flopB, 51-3);
@@ -146,80 +168,97 @@ public class TurnLookup
             }});
     }
 
-    private static PostFlopCaseSet iterateTurns(
+    private static CanonSuitSet[] iterateTurns(
             Flop isoFlop,
             Card cards[])
     {
-        Set<PostFlopCase> turnCaseBuffer = new LinkedHashSet<PostFlopCase>();
-        for (int turnCardIndex = 0;
-                 turnCardIndex < 52 - 2 - 3;
-                 turnCardIndex++)
+        CanonSuitSet turnCases[] =
+                new CanonSuitSet[ Rank.VALUES.length ];
+
+        for (Rank rank : Rank.VALUES)
         {
-            Card    turnCard = cards[ turnCardIndex ];
-            Turn isoTurn  = isoFlop.isoTurn(turnCard);
-            turnCaseBuffer.add( isoTurn.turnCase() );
+            Set<CanonSuit> buffer =
+                    EnumSet.noneOf( CanonSuit.class );
+
+            suits:
+            for (Suit suit : Suit.VALUES)
+            {
+                Card turnCard = Card.valueOf(rank, suit);
+                for (int i = 47; i < 52; i++)
+                {
+                    if (cards[ i ] == turnCard)
+                    {
+                        continue suits;
+                    }
+                }
+
+                Turn turn = isoFlop.isoTurn(turnCard);
+                buffer.add( turn.turnSuit() );
+
+//                System.out.println(
+//                        cards[49] + "," + cards[48 ]+ "," + cards[47] +
+//                        "|" + turnCard + "\t" +
+//                        turn.turnCase());
+            }
+
+            if (! buffer.isEmpty())
+            {
+                turnCases[ rank.ordinal() ] =
+                    CanonSuitSet.valueOf(buffer);
+            }
         }
-        PostFlopCaseSet caseSet = PostFlopCaseSet.valueOf(turnCaseBuffer);
-        if (caseSet == null)
-        {
-//            PostFlopCaseSet.valueOf(turnCaseBuffer);
-            System.out.println(
-                    "missing PostFlopCaseSet\t" + turnCaseBuffer);
-        }
-        return caseSet;
+        return turnCases;
     }
 
 
     //--------------------------------------------------------------------
-    private static int[] initGlopbalOffsets()
+    private static int[][] encodeOffsets(CanonSuitSet caseSets[][])
     {
-        int   offset        = 0;
-        int[] globalOffsets = new int[ CASE_SETS.length ];
-        for (int i = 0; i < CASE_SETS.length; i++)
+        int offset           = 0;
+        int codedOffsets[][] = new int[ caseSets.length   ]
+                                      [ Rank.VALUES.length ];
+        for (int i = 0; i < caseSets.length; i++)
         {
-            globalOffsets[ i ] = offset;
-            offset += CASE_SETS[ i ].size();
+            for (int j = 0; j < Rank.VALUES.length; j++)
+            {
+                CanonSuitSet caseSet = caseSets[ i ][ j ];
+                if (caseSet == null)
+                {
+                    codedOffsets[ i ][ j ] = -1;
+                }
+                else
+                {
+                    codedOffsets[ i ][ j ] =
+                            Codac.encodeTurn(caseSet, offset);
+                    offset += caseSet.size();
+                }
+            }
         }
-        return globalOffsets;
+        return codedOffsets;
     }
 
 
     //--------------------------------------------------------------------
-    public static PostFlopCaseSet caseSet(int flopIndex)
+    public static int canonIndex(
+            int flopIndex, CanonCard turn)
     {
-        return CASE_SETS[ flopIndex ];
+        int codedOffset = CODED_OFFSET[ flopIndex             ]
+                                      [ turn.rank().ordinal() ];
+        return Codac.decodeTurnOffset(codedOffset) +
+               Codac.decodeTurnSet(codedOffset).index( turn.suit() );
     }
 
-    public static int globalOffset(int flopIndex)
-    {
-        return GLOBAL_OFFSET[ flopIndex ];
-    }
-
-
-//    public int indexOf(Hole hole,
-//                       Card flop[], Flop isoFlop, int flopIsoIndex,
-//                       Card turn)
+//    public static CanonSuitSet caseSet(
+//            int flopIndex, Card turnCard)
 //    {
-////        IsoTurn isoTurn =
-////                isoFlop.isoTurn(
-////                        hole.asArray(), flop, turn);
-////        return indexOf(flopIsoIndex, isoTurn);
-//        return -1;
+//        return CASE_SETS[ flopIndex                 ]
+//                        [ turnCard.rank().ordinal() ];
 //    }
-//    public int indexOf(int     flopIsoIndex,
-//                       IsoTurn flop)
-//    {
-////        PostFlopCase turnCase = isoTurn.turnCase();
-////        return turnCase.subIndex();
-//        return flop.localSubIndex();
 //
-////        TurnCaseSet caseSet  = CASE_SETS[ flopIsoIndex ];
-////
-////        int turnCaseOffset = caseSet.offset(turnCase);
-////        int casedSubIndex  = isoTurn.casedSubIndex(caseSet);
-////        int localIndex     = turnCaseOffset + casedSubIndex;
-////
-////        return localIndex + GLOBAL_OFFSET[ flopIsoIndex ];
-//////        return localIndex;
+//    public static int globalOffset(
+//            int flopIndex, Card turnCard)
+//    {
+//        return GLOBAL_OFFSET[ flopIndex                 ]
+//                            [ turnCard.rank().ordinal() ];
 //    }
 }
