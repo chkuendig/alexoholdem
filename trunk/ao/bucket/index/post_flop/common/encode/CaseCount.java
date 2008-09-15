@@ -1,8 +1,8 @@
-package ao.bucket.index.post_flop.river.encode;
+package ao.bucket.index.post_flop.common.encode;
 
-import ao.bucket.index.post_flop.river.RiverCaseSet;
-import static ao.bucket.index.post_flop.river.RiverCaseSet.*;
-import static ao.bucket.index.post_flop.river.encode.Count.*;
+import ao.bucket.index.post_flop.common.PostFlopCaseSet;
+import static ao.bucket.index.post_flop.common.PostFlopCaseSet.*;
+import static ao.bucket.index.post_flop.common.encode.Count.*;
 
 /**
  * Date: Sep 4, 2008
@@ -23,9 +23,9 @@ public enum CaseCount
     ZOF_13(ZOF, C_13),
     ZOF_23(ZOF, C_23),
 
-    ZOI_9(ZOI, C_9),
-    ZOI_13(ZOI, C_13),
-    ZOI_22(ZOI, C_22),
+    ZOV_9(ZOV, C_9),
+    ZOV_13(ZOV, C_13),
+    ZOV_22(ZOV, C_22),
 
     ZT_22(ZT, C_12),
 
@@ -53,7 +53,7 @@ public enum CaseCount
 
     //--------------------------------------------------------------------
     public static CaseCount valueOf(
-            RiverCaseSet riverCaseSet,
+            PostFlopCaseSet riverCaseSet,
             Count count)
     {
 //        return new CaseCount(riverCaseSet, count);
@@ -71,11 +71,11 @@ public enum CaseCount
 
     //--------------------------------------------------------------------
     private Count        COUNT;
-    private RiverCaseSet CASE;
+    private PostFlopCaseSet CASE;
     
     
     //--------------------------------------------------------------------
-    private CaseCount(RiverCaseSet riverCaseSet,
+    private CaseCount(PostFlopCaseSet riverCaseSet,
                       Count        count)
     {
         COUNT = count;
@@ -89,7 +89,7 @@ public enum CaseCount
         return COUNT.count();
     }
 
-    public RiverCaseSet caseSet()
+    public PostFlopCaseSet caseSet()
     {
         return CASE;
     }

@@ -1,4 +1,4 @@
-package ao.bucket.index.post_flop.river.encode;
+package ao.bucket.index.post_flop.common.encode;
 
 /**
  * Date: Sep 4, 2008

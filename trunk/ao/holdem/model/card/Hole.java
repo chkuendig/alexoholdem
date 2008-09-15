@@ -2,7 +2,7 @@ package ao.holdem.model.card;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
-import ao.bucket.index.flop.IsoFlop;
+import ao.bucket.index.flop.Flop;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -45,12 +45,12 @@ public class Hole
 
 
     //--------------------------------------------------------------------
-    private final Card         A;
-    private final Card         B;
-    private final int          ISO_INDEX;
-    private final Order ORDER;
-    private final boolean      IS_PAIR;
-    private final CanonCard WILD[];
+    private final Card      A, B;
+    private final Card      AS_ARRAY[];
+    private final int CANON_INDEX;
+    private final Order     ORDER;
+    private final boolean   IS_PAIR;
+    private final CanonCard CANON[];
 
 
     //--------------------------------------------------------------------
@@ -61,18 +61,19 @@ public class Hole
 
         A         = a;
         B         = b;
+        AS_ARRAY  = new Card[]{A, B};
         IS_PAIR   = computePaired();
-        ISO_INDEX = computeSuitIsomorphicIndex();
+        CANON_INDEX = computeCanonicalIndex();
         ORDER     = computeOrder();
 
-        WILD = new CanonCard[]{
+        CANON = new CanonCard[]{
                 ORDER.asWild(a), ORDER.asWild(b)};
-        Arrays.sort(WILD);
+        Arrays.sort(CANON);
     }
 
 
     //--------------------------------------------------------------------
-    private int computeSuitIsomorphicIndex()
+    private int computeCanonicalIndex()
     {
         if (paired())
         {
@@ -113,9 +114,9 @@ public class Hole
         return B;
     }
 
-    public int suitIsomorphicIndex()
+    public int canonIndex()
     {
-        return ISO_INDEX;
+        return CANON_INDEX;
     }
 
 
@@ -173,14 +174,14 @@ public class Hole
 
     public Card[] asArray()
     {
-        return new Card[]{A, B};
+        return AS_ARRAY;
     }
     
 
     //--------------------------------------------------------------------
-    public IsoFlop isoFlop(Card flopA, Card flopB, Card flopC)
+    public Flop isoFlop(Card flopA, Card flopB, Card flopC)
     {
-        return new IsoFlop(
+        return new Flop(
                 this,
                 flopA, flopB, flopC);
     }
@@ -192,7 +193,14 @@ public class Hole
 
     public CanonCard[] asWild(Order refineWith)
     {
-        if (! paired()) return WILD;
+        return asWild(CANON, refineWith);
+    }
+    public CanonCard[] asWild(
+            CanonCard canon[],
+            Order     refineWith)
+    {
+        if (!(canon[0].isWild() ||
+              canon[1].isWild())) return canon;
 
         CanonCard refinedA = refineWith.asWild(A);
         CanonCard refinedB = refineWith.asWild(B);

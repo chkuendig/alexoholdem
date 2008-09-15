@@ -1,7 +1,5 @@
-package ao.bucket.index.incremental;
+package ao.bucket.index.flop;
 
-import ao.bucket.index.flop.FlopCase;
-import ao.bucket.index.flop.IsoFlop;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
@@ -14,7 +12,7 @@ import java.util.Arrays;
  * Date: Aug 16, 2008
  * Time: 2:48:07 PM
  */
-public class FlopIndexer
+public class FlopOffset
 {
     //--------------------------------------------------------------------
     public static final int ISO_FLOP_COUNT = 1208714;
@@ -82,19 +80,19 @@ public class FlopIndexer
             Hole hole = Hole.valueOf(
                             holeCards[0], holeCards[1]);
 
-            int subOffsets[] = offsets[ hole.suitIsomorphicIndex() ];
+            int subOffsets[] = offsets[ hole.canonIndex() ];
             if (subOffsets != null) continue;
             subOffsets = new int[ FlopCase.values().length ];
             Arrays.fill(subOffsets, -1);
 
-            offsets[ hole.suitIsomorphicIndex() ] = subOffsets;
+            offsets[ hole.canonIndex() ] = subOffsets;
 
             swap(cards, holeCards[1].ordinal(), 51  );
             swap(cards, holeCards[0].ordinal(), 51-1);
 
             for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
             {
-                IsoFlop isoFlop = hole.isoFlop(
+                Flop isoFlop = hole.isoFlop(
                                     flopCards[0],
                                     flopCards[1],
                                     flopCards[2]);
@@ -125,18 +123,16 @@ public class FlopIndexer
 
 
     //--------------------------------------------------------------------
-    public int indexOf(Hole hole,
-                       Card flopA, Card flopB, Card flopC)
+    public static int globalOffset(Hole hole, FlopCase flopCase)
     {
-        IsoFlop flop = hole.isoFlop(flopA, flopB, flopC);
-        return indexOf(hole, flop);
+        return OFFSETS[ hole.canonIndex()  ]
+                      [ flopCase.ordinal() ];
     }
-
-    public int indexOf(Hole hole, IsoFlop flop)
-    {
-        return OFFSETS[ hole.suitIsomorphicIndex() ]
-                      [ flop.flopCase().ordinal()  ] +
-                flop.subIndex();
-//        return flop.subIndex();
-    }
+//    public int indexOf(Hole hole, Flop flop)
+//    {
+//        return OFFSETS[ hole.suitIsomorphicIndex() ]
+//                      [ flop.flopCase().ordinal()  ] +
+//                flop.subIndex();
+////        return flop.subIndex();
+//    }
 }

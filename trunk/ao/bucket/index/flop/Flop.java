@@ -2,8 +2,8 @@ package ao.bucket.index.flop;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
-import static ao.bucket.index.flop.IsoFlopUtils.distinct;
-import ao.bucket.index.post_flop.turn.IsoTurn;
+import static ao.bucket.index.flop.FlopCanonUtils.distinct;
+import ao.bucket.index.post_flop.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Suit;
@@ -14,21 +14,26 @@ import java.util.Arrays;
  * Date: Jun 18, 2008
  * Time: 2:57:55 PM
  */
-public class IsoFlop
+public class Flop
 {
     //--------------------------------------------------------------------
-    private final boolean      IS_HOLE_PAIR;
+    private final boolean   IS_HOLE_PAIR;
     private final CanonCard HOLE[];
     private final CanonCard FLOP[];
-    private final Order ORDER;
-    private final FlopCase     FLOP_CASE;
+    private final Order     ORDER;
+    private final FlopCase  FLOP_CASE;
+
+    private final Hole      HOLE_CARDS;
+    private final Card      FLOP_A;
+    private final Card      FLOP_B;
+    private final Card      FLOP_C;
 
 
     //--------------------------------------------------------------------
-    public IsoFlop(Hole hole,
-                   Card flopA,
-                   Card flopB,
-                   Card flopC)
+    public Flop(Hole hole,
+                Card flopA,
+                Card flopB,
+                Card flopC)
     {
         ORDER        = hole.order().refine(
                             orderSuitsBy(flopA, flopB, flopC));
@@ -42,6 +47,11 @@ public class IsoFlop
         Arrays.sort(FLOP);
 
         FLOP_CASE = computeFlopCase();
+
+        HOLE_CARDS = hole;
+        FLOP_A     = flopA;
+        FLOP_B     = flopB;
+        FLOP_C     = flopC;
     }
 
 
@@ -57,8 +67,13 @@ public class IsoFlop
                 HOLE[0].suit(), HOLE[1].suit(),
                 FLOP[0].suit(), FLOP[1].suit(), FLOP[2].suit());
     }
+    public int canonIndex()
+    {
+        return FlopOffset.globalOffset(HOLE_CARDS, FLOP_CASE) +
+               subIndex();
+    }
 
-    public int subIndex()
+    private int subIndex()
     {
         return FLOP_CASE.subIndex(
                 HOLE[0].rank().ordinal(), HOLE[1].rank().ordinal(),
@@ -68,20 +83,66 @@ public class IsoFlop
 
 
     //--------------------------------------------------------------------
-    public IsoTurn isoTurn(Card hole[],
-                           Card flop[],
-                           Card turnCard)
+    public Turn isoTurn(Card turnCard)
     {
-//        return new IsoTurn(ORDER, hole, flop, turnCard);
-        return null;
+        return new Turn(this, turnCard);
     }
 
+    public Order refineOrder(Order with)
+    {
+        return ORDER.refine( with );
+    }
+
+
+    //--------------------------------------------------------------------
+    public CanonCard[] refineHole(Order with)
+    {
+        return HOLE_CARDS.asWild(HOLE, with);
+    }
+
+    public CanonCard[] refineFlop(Order with)
+    {
+        if (!(FLOP[0].isWild() ||
+              FLOP[1].isWild() ||
+              FLOP[2].isWild())) return FLOP;
+
+        CanonCard wildFlop[] = new CanonCard[]{
+                with.asWild(FLOP_A),
+                with.asWild(FLOP_B),
+                with.asWild(FLOP_C)};
+        Arrays.sort(wildFlop);
+        return wildFlop;
+    }
+
+
+    //--------------------------------------------------------------------
     public Order order()
     {
         return ORDER;
     }
 
-    
+    public CanonCard[] hole()
+    {
+        return HOLE;
+    }
+    public CanonCard[] flop()
+    {
+        return FLOP;
+    }
+
+
+    //--------------------------------------------------------------------
+    public boolean hasWildHole()
+    {
+        return HOLE[0].isWild() || HOLE[1].isWild();
+    }
+
+    public boolean hasWildFlop()
+    {
+        return FLOP[0].isWild() || FLOP[1].isWild() || FLOP[2].isWild();
+    }
+
+
     //--------------------------------------------------------------------
     private static Order orderSuitsBy(
             Card flopA, Card flopB, Card flopC)
@@ -177,7 +238,7 @@ public class IsoFlop
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        IsoFlop isoFlop = (IsoFlop) o;
+        Flop isoFlop = (Flop) o;
         return
                IS_HOLE_PAIR == isoFlop.IS_HOLE_PAIR &&
 
