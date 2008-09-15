@@ -51,6 +51,11 @@ public class Gapper
         return indexes.length();
     }
 
+    public double fillRatio()
+    {
+        return (double) count / indexes.length();
+    }
+
 
     //--------------------------------------------------------------------
     public boolean displayStatus()

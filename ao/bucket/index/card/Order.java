@@ -94,7 +94,7 @@ public enum Order
     CS_H_D(0, 2, 1, 0) { public Order refine(Order with) {
         return Order.refinePair(this, 2, 1, 0, 3, with); }},
     D_CH_S(1, 0, 1, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 3, 0, 3, with); }},
+        return Order.refinePair(this, 3, 0, 2, with); }},
     D_HS_C(2, 0, 1, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 0, 2, 3, with); }},
     D_CS_H(1, 0, 2, 1) { public Order refine(Order with) {
@@ -424,7 +424,8 @@ public enum Order
 //    private final int PRECEDENCE_DIAMOND;
 //    private final int PRECEDENCE_HEART;
 //    private final int PRECEDENCE_SPADE;
-    private final int     PRECEDENCE[];
+    private final int       PRECEDENCE[];
+    //private final CanonSuit AS_WILD[];
     private final boolean IS_WILD[];
 
 
@@ -445,23 +446,53 @@ public enum Order
     private Order(int precedence[])
     {
         PRECEDENCE = precedence;
+        //AS_WILD    = new CanonSuit[Suit.VALUES.length];
         IS_WILD    = new boolean[Suit.VALUES.length];
-
-        for (Suit s : Suit.VALUES)
+        initAsWild();
+    }
+    private void initAsWild()
+    {
+        for (Suit p : Suit.VALUES)
         {
-            for (Suit i : Suit.VALUES)
+            for (Suit q : Suit.VALUES)
             {
-                if (s == i) continue;
-                if (PRECEDENCE[s.ordinal()] ==
-                        PRECEDENCE[i.ordinal()])
+                if (p == q) continue;
+                if (PRECEDENCE[p.ordinal()] ==
+                        PRECEDENCE[q.ordinal()])
                 {
-                    IS_WILD[ s.ordinal() ] = true;
+                    IS_WILD[ p.ordinal() ] = true;
                     break;
                 }
             }
         }
     }
-
+//    private void initAsWild()
+//    {
+//        boolean isSecondWild = false;
+//        for (int i = 0; i < Suit.VALUES.length; i++)
+//        {
+//            boolean wildIndex = false;
+//            for (Suit p : Suit.VALUES)
+//            {
+//                for (Suit q : Suit.VALUES)
+//                {
+//                    if (p == q) continue;
+//                    if (i == PRECEDENCE[p.ordinal()] &&
+//                        PRECEDENCE[p.ordinal()] ==
+//                            PRECEDENCE[q.ordinal()])
+//                    {
+//                        AS_WILD[ p.ordinal() ] =
+//                                isSecondWild
+//                                ? CanonSuit.WILD
+//                                : CanonSuit.WILD_B;
+//                        wildIndex = true;
+//                        break;
+//                    }
+//                }
+//            }
+//            isSecondWild |= wildIndex;
+//        }
+//    }
 
 
     //--------------------------------------------------------------------
@@ -474,6 +505,11 @@ public enum Order
     //--------------------------------------------------------------------
     public CanonSuit asWild(Suit suit)
     {
+//        CanonSuit asWild = AS_WILD[ suit.ordinal() ];
+//        return asWild != null
+//               ? asWild
+//               : CanonSuit.VALUES[
+//                    PRECEDENCE[ suit.ordinal() ]];
         return IS_WILD[ suit.ordinal() ]
                ? CanonSuit.WILD
                : CanonSuit.VALUES[
@@ -492,8 +528,8 @@ public enum Order
     //--------------------------------------------------------------------
     private static Order refinePair(
             Order order,
-            int       orderDupeA,
-            int       orderDupeB,
+            int   orderDupeA,
+            int   orderDupeB,
             Order with)
     {
         int precedences[] = refinePair(
@@ -505,9 +541,9 @@ public enum Order
 
     private static Order refinePair(
             Order order,
-            int       orderUnique2,
-            int       orderDupeA,
-            int       orderDupeB,
+            int   orderUnique2,
+            int   orderDupeA,
+            int   orderDupeB,
             Order with)
     {
         int precedences[] = refinePair(
@@ -525,10 +561,10 @@ public enum Order
 
     private static Order refinePair(
             Order order,
-            int       orderUnique1,
-            int       orderUnique2,
-            int       orderDupeA,
-            int       orderDupeB,
+            int   orderUnique1,
+            int   orderUnique2,
+            int   orderDupeA,
+            int   orderDupeB,
             Order with)
     {
          int precedences[] = refinePair(
@@ -547,10 +583,10 @@ public enum Order
 
     private static Order refineTwoPair(
             Order order,
-            int       orderZeroDupeA,
-            int       orderZeroDupeB,
-            int       orderOneDupeA,
-            int       orderOneDupeB,
+            int   orderZeroDupeA,
+            int   orderZeroDupeB,
+            int   orderOneDupeA,
+            int   orderOneDupeB,
             Order with)
     {
         int offset             = 0;
@@ -592,9 +628,9 @@ public enum Order
     }
 
     private static int[] refinePair(
-            int       orderPrecedences[],
-            int       orderDupeA,
-            int       orderDupeB,
+            int   orderPrecedences[],
+            int   orderDupeA,
+            int   orderDupeB,
             Order with)
     {
         int swapA, swapB;
@@ -625,10 +661,10 @@ public enum Order
     //--------------------------------------------------------------------
     private static Order refineTriplet(
             Order order,
-            int       orderDupeA,
-            int       orderDupeB,
-            int       orderDupeC,
-            int       unique,
+            int   orderDupeA,
+            int   orderDupeB,
+            int   orderDupeC,
+            int   unique,
             Order with)
     {
         int precedences[] = order.PRECEDENCE.clone();
@@ -639,9 +675,9 @@ public enum Order
     }
     private static Order refineTriplet(
             Order order,
-            int       orderDupeA,
-            int       orderDupeB,
-            int       orderDupeC,
+            int   orderDupeA,
+            int   orderDupeB,
+            int   orderDupeC,
             Order with)
     {
         int precedences[] = order.PRECEDENCE.clone();
@@ -650,10 +686,10 @@ public enum Order
         return valueOf( precedences );
     }
     private static int refineTriplet(
-            int       precedences[],
-            int       orderDupeA,
-            int       orderDupeB,
-            int       orderDupeC,
+            int   precedences[],
+            int   orderDupeA,
+            int   orderDupeB,
+            int   orderDupeC,
             Order with)
     {
         if (with.PRECEDENCE[orderDupeA] ==
@@ -720,11 +756,11 @@ public enum Order
         return 2;
     }
     private static boolean refineHalfTriplet(
-            int       equalDupeA,
-            int       equalDupeB,
-            int       oddDupe,
+            int   equalDupeA,
+            int   equalDupeB,
+            int   oddDupe,
             Order with,
-            int       precedences[])
+            int   precedences[])
     {
          if (with.PRECEDENCE[equalDupeA] ==
                     with.PRECEDENCE[equalDupeB])

@@ -2,8 +2,6 @@ package ao.bucket.index.test;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.incremental.IndexerImpl;
-import ao.bucket.index.incremental.RiverIndexer;
-import ao.bucket.index.post_flop.river.RiverCaseSet;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -13,8 +11,6 @@ import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
-
-import java.util.BitSet;
 
 /**
  * Date: Aug 21, 2008
@@ -48,7 +44,7 @@ public class GenericIndexerTest
     {
         seenTurns.clear();
         riverGaps.clear();
-        final BitSet seenHoles  = new BitSet();
+        final Gapper seenHoles  = new Gapper();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
             private long prevTime = System.currentTimeMillis();
@@ -57,8 +53,8 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-//                if (seenHoles.get( hole.suitIsomorphicIndex() )) return;
-                seenHoles.set( hole.suitIsomorphicIndex() );
+//                if (seenHoles.get( hole.canonIndex() )) return;
+                seenHoles.set( hole.canonIndex() );
 
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
@@ -72,8 +68,14 @@ public class GenericIndexerTest
             }
         });
 
+        System.out.println("Hole Gapper Status:");
+        seenHoles.displayStatus();
+
         System.out.println("Flop Gapper Status:");
         seenFlops.displayStatus();
+
+        System.out.println("Turn Gapper Status:");
+        seenTurns.displayStatus();
     }
 
 
@@ -82,23 +84,11 @@ public class GenericIndexerTest
             final Hole    hole,
             final Indexer indexer)
     {
-//        final BitSet seenFlops = new BitSet();
-
 //        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
-//                Card flopCards[] =
-//                        {cards[flopA], cards[flopB], cards[flopC]};
-
-//                IsoFlop isoFlop = hole.isoFlop(flopCards);
-//                if (ordersFlop.add( isoFlop.order() ) &&
-//                        !ordersHole.contains( isoFlop.order() ))
-//                {
-//                    System.out.println("flop\t" + isoFlop.order());
-//                }
-
                 CardSequence cardSeq =
                     new LiteralCardSequence(
                             hole, new Community(
@@ -107,24 +97,30 @@ public class GenericIndexerTest
 //                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
 
-//                swap(cards, flopC, 51-2);
-//                swap(cards, flopB, 51-3);
-//                swap(cards, flopA, 51-4);
-//
-//                iterateTurns(
-//                        hole, flopCards, indexer);
-//
-//                swap(cards, flopA, 51-4);
-//                swap(cards, flopB, 51-3);
-//                swap(cards, flopC, 51-2);
+                // must come before swap
+                Card flopCards[] =
+                        {cards[flopA], cards[flopB], cards[flopC]};
+
+                swap(cards, flopC, 51-2);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopA, 51-4);
+
+                iterateTurns(
+                        hole, flopCards, index, indexer);
+
+                swap(cards, flopA, 51-4);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopC, 51-2);
             }});
     }
 
     public void iterateTurns(
             Hole    hole,
             Card    flop[],
+            int     flopIndex,
             Indexer indexer)
     {
+//        Gapper localTurns = new Gapper();
         for (int turnCardIndex = 0;
                  turnCardIndex < 52 - 2 - 3;
                  turnCardIndex++)
@@ -135,13 +131,32 @@ public class GenericIndexerTest
                    new Community(flop[0], flop[1], flop[2], turnCard));
             int turnIndex = (int) indexer.indexOf(seq);
 
-            if (seenTurns.get( turnIndex )) continue;
-                seenTurns.set( turnIndex );
+            if (turnIndex == 420420)
+            {
+                System.out.println(seq);
+            }
 
-            swap(cards, turnCardIndex, 51-5);
-            iterateRivers(hole, flop, turnCard, turnIndex, indexer);
-            swap(cards, turnCardIndex, 51-5);
+//            localTurns.set( turnIndex );
+//            if (seenTurns.get( turnIndex )) continue;
+            seenTurns.set( turnIndex );
+
+//            swap(cards, turnCardIndex, 51-5);
+//            iterateRivers(hole, flop, turnCard, turnIndex, indexer);
+//            swap(cards, turnCardIndex, 51-5);
         }
+
+//        if (! localTurns.continuous() ||
+//            localTurns.length() !=
+//                TurnLookup.caseSet(flopIndex).size() ||
+//            localTurns.fillRatio() > 24)
+//        {
+//            System.out.println(
+//                    hole + "\t" +
+//                    Arrays.toString(flop) + "\t" +
+//                    TurnLookup.caseSet(flopIndex).size() + "\t" +
+//                    localTurns.fillRatio());
+//            localTurns.displayStatus();
+//        }
     }
 
     public void iterateRivers(
@@ -170,15 +185,15 @@ public class GenericIndexerTest
 //            System.out.println(seq + "\t" + riverIndex);
         }
 
-        RiverCaseSet rcs = RiverIndexer.riverCaseSet(turnIndex);
-        //RiverCaseSet rcs = RiverIndexer.readRiverCaseSet(turnIndex);
+//        PostFlopCaseSet rcs = RiverIndexer.riverCaseSet(turnIndex);
+        //PostFlopCaseSet rcs = RiverIndexer.readRiverCaseSet(turnIndex);
 
-        int size = rcs.size();
-        if (! localRiver.continuous() ||
-              localRiver.length() != size)
-        {
-            System.out.println("size: " + size);
-            localRiver.displayStatus();
-        }
+//        int size = rcs.size();
+//        if (! localRiver.continuous() ||
+//              localRiver.length() != size)
+//        {
+//            System.out.println("size: " + size);
+//            localRiver.displayStatus();
+//        }
     }
 }
