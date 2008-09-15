@@ -10,6 +10,14 @@ import ao.util.persist.PersistentShorts;
 public class Eval5Lookup
 {
     //--------------------------------------------------------------------
+    private static final String DIR        = "lookup/eval5/";
+    private static final String F_UNIQUE5  = DIR + "unique5.txt";
+    private static final String F_FLUSHES  = DIR + "flushes.txt";
+    private static final String F_HASH_ADJ = DIR + "hash_adjust.txt";
+    private static final String F_HASH_VAL = DIR + "hash_vals.txt";
+
+
+    //--------------------------------------------------------------------
     private Eval5Lookup() {}
 
 
@@ -21,10 +29,10 @@ public class Eval5Lookup
 
     static
     {
-        unique5    = PersistentShorts.asArray("lookup/unique5.txt");
-        flushes    = PersistentShorts.asArray("lookup/flushes.txt");
-        hashAdjust = PersistentShorts.asArray("lookup/hash_adjust.txt");
-        hashVals   = PersistentShorts.asArray("lookup/hash_vals.txt");
+        unique5    = PersistentShorts.asArray(F_UNIQUE5);
+        flushes    = PersistentShorts.asArray(F_FLUSHES);
+        hashAdjust = PersistentShorts.asArray(F_HASH_ADJ);
+        hashVals   = PersistentShorts.asArray(F_HASH_VAL);
     }
 
 

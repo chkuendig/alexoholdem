@@ -15,6 +15,12 @@ import java.util.Arrays;
 public class Eval7Faster
 {
     //--------------------------------------------------------------------
+    private static final String DIR    = "lookup/eval7_faster/";
+    private static final String F_RANK = DIR + "ranks.cache";
+    private static final String F_KEY  = DIR + "keys.cache";
+
+
+    //--------------------------------------------------------------------
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
@@ -35,8 +41,8 @@ public class Eval7Faster
     //--------------------------------------------------------------------
     static
     {
-        handRanks = PersistentInts.retrieve("lookup/fast_ranks.cache");
-        keys      = PersistentLongs.retrieve("lookup/fast_keys.cache");
+        handRanks = PersistentInts.retrieve(F_RANK);
+        keys      = PersistentLongs.retrieve(F_KEY);
 
         if (handRanks == null || keys == null)
         {
@@ -45,8 +51,8 @@ public class Eval7Faster
 
             generateTables();
 
-            PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
-            PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
+            PersistentInts.persist(handRanks, F_RANK);
+            PersistentLongs.persist(keys,     F_KEY);
         }
     }
 
@@ -516,8 +522,8 @@ public class Eval7Faster
 	public static void main(String [] args) {
 //        generateTables();
 //        System.out.println("persisting");
-//        PersistentInts.persist(handRanks, "lookup/fast_ranks.cache");
-//        PersistentLongs.persist(keys,     "lookup/fast_keys.cache");
+//        PersistentInts.persist(handRanks, F_RANK);
+//        PersistentLongs.persist(keys,     F_KEY);
         
         int c0, c1, c2, c3, c4, c5, c6;
         int u0, u1, u2, u3, u4, u5;

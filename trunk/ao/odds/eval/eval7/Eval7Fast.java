@@ -51,7 +51,7 @@ public class Eval7Fast
 
     private static boolean doRead(short vals[]) throws Exception
     {
-        File cacheFile = new File("lookup/cache7.bin");
+        File cacheFile = new File(Eval7FastLookup.F_CACHE);
         if (! cacheFile.canRead()) return false;
 
         DataInputStream cache =
@@ -85,7 +85,7 @@ public class Eval7Fast
     {
         compute(vals);
 
-        File cacheFile = new File("lookup/cache7.bin");
+        File cacheFile = new File(Eval7FastLookup.F_CACHE);
         cacheFile.createNewFile();
 
         DataOutputStream cache =

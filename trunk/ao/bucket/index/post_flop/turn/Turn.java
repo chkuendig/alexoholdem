@@ -1,9 +1,9 @@
 package ao.bucket.index.post_flop.turn;
 
 import ao.bucket.index.card.CanonCard;
+import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.post_flop.common.PostFlopCase;
 import ao.holdem.model.card.Card;
 
 import java.util.Arrays;
@@ -19,7 +19,8 @@ public class Turn
     //--------------------------------------------------------------------
     private final CanonCard    HOLE[], FLOP[], TURN;
     private final Flop         FLOP_CARDS;
-    private final PostFlopCase CASE;
+    private final Card         TURN_CARD;
+//    private final PostFlopCase CASE;
     private final Order        ORDER;
 
 
@@ -32,9 +33,11 @@ public class Turn
         HOLE       = flop.refineHole(ORDER);
         FLOP       = flop.refineFlop(ORDER);
         TURN       = ORDER.asWild(turn);
-        CASE       = PostFlopCase.valueOf(HOLE, FLOP, TURN);
+//        CASE       = PostFlopCase.valueOf(HOLE, FLOP, TURN);
         FLOP_CARDS = flop;
+        TURN_CARD  = turn;
     }
+
 
 //    //--------------------------------------------------------------------
 //    public IsoRiver isoRiver(Card hole[],
@@ -50,9 +53,12 @@ public class Turn
     //--------------------------------------------------------------------
     public int canonIndex(int flopIndex)
     {
-        return TurnLookup.globalOffset(flopIndex) +
-               TurnLookup.caseSet(flopIndex).offset(CASE) +
-               CASE.subIndex(HOLE, FLOP, TURN);
+        return TurnLookup.canonIndex(flopIndex, TURN);
+
+//        return TurnLookup.globalOffset(flopIndex) +
+//               TurnLookup.caseSet(flopIndex).offset(CASE) +
+//               CASE.subIndex(HOLE, FLOP, TURN);
+
 //        int index =
 //                TurnLookup.caseSet(flopIndex).offset(CASE) +
 //                CASE.subIndex(HOLE, FLOP, TURN);
@@ -62,10 +68,16 @@ public class Turn
 //        return index;
     }
 
-    public PostFlopCase turnCase()
+//    public PostFlopCase turnCase()
+//    {
+//        return CASE;
+//    }
+
+    public CanonSuit turnSuit()
     {
-        return CASE;
+        return TURN.suit();
     }
+
 
 
 //    //--------------------------------------------------------------------
@@ -123,6 +135,7 @@ public class Turn
         return Arrays.toString(HOLE) +
                Arrays.toString(FLOP) +
                "[" + TURN + "]";
+//               + "\t" + CASE;
     }
 
 //
