@@ -2,8 +2,8 @@ package ao.bucket.index.flop;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
-import static ao.bucket.index.flop.FlopCanonUtils.distinct;
-import ao.bucket.index.post_flop.turn.Turn;
+import static ao.bucket.index.flop.FlopUtil.distinct;
+import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Suit;
@@ -77,7 +77,7 @@ public class Flop
 
     public int computeCanonIndex()
     {
-        return FlopOffset.globalOffset(HOLE_CARDS, FLOP_CASE) +
+        return FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) +
                subIndex();
     }
     private int subIndex()
@@ -224,8 +224,10 @@ public class Flop
     //--------------------------------------------------------------------
     public String toString()
     {
-        return  Arrays.toString(HOLE) +
-                Arrays.toString(FLOP);
+//        return  Arrays.toString(HOLE) +
+//                Arrays.toString(FLOP);
+        return HOLE_CARDS + "\t" +
+               FLOP_A + ", " + FLOP_B + ", " + FLOP_C;
     }
 
 

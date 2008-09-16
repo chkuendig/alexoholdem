@@ -1,9 +1,8 @@
-package ao.bucket.index.incremental;
+package ao.bucket.index;
 
-import ao.bucket.index.Indexer;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.post_flop.river.CanonRiver;
-import ao.bucket.index.post_flop.turn.Turn;
+import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.sequence.CardSequence;
 

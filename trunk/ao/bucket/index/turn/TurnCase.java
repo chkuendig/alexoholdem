@@ -1,4 +1,4 @@
-package ao.bucket.index.post_flop.common;
+package ao.bucket.index.turn;
 
 import ao.bucket.index.card.CanonSuit;
 import static ao.bucket.index.card.CanonSuit.*;
@@ -9,7 +9,7 @@ import java.util.*;
  * Date: Sep 15, 2008
  * Time: 4:09:49 PM
  */
-public enum CanonSuitSet
+public enum TurnCase
 {
     //--------------------------------------------------------------------
     F(FIRST),
@@ -32,13 +32,13 @@ public enum CanonSuitSet
     R(FOURTH),
     ;
 
-    public static CanonSuitSet VALUES[] = values();
+    public static TurnCase VALUES[] = values();
 
 
     //--------------------------------------------------------------------
-    public static CanonSuitSet valueOf(Set<CanonSuit> cases)
+    public static TurnCase valueOf(Set<CanonSuit> cases)
     {
-        for (CanonSuitSet riverCaseSet : VALUES)
+        for (TurnCase riverCaseSet : VALUES)
         {
             if (riverCaseSet.SUIT_CASES.equals( cases ))
             {
@@ -56,7 +56,7 @@ public enum CanonSuitSet
 
 
     //--------------------------------------------------------------------
-    private CanonSuitSet(CanonSuit... suitCases)
+    private TurnCase(CanonSuit... suitCases)
     {
         SUIT_CASES = EnumSet.copyOf(Arrays.asList(suitCases));
         INDEXES     = computeIndex();

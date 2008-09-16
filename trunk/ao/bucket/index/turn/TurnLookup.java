@@ -1,11 +1,9 @@
-package ao.bucket.index.post_flop.turn;
+package ao.bucket.index.turn;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopOffset;
-import ao.bucket.index.post_flop.common.CanonSuitSet;
-import ao.bucket.index.post_flop.common.Codac;
+import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Rank;
@@ -27,13 +25,17 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
+    public static final int CANON_TURN_COUNT = 51520872;
+
+
+    //--------------------------------------------------------------------
     private static final String       RAW_CASE_FILE =
                                         "lookup/canon/turn.cases.cache";
     private static final int          CODED_OFFSET[][];
 
     static
     {
-        CanonSuitSet caseSets[][] =
+        TurnCase caseSets[][] =
                 retrieveOrCalculateCaseSets();
         CODED_OFFSET = encodeOffsets(caseSets);
     }
@@ -45,9 +47,9 @@ public class TurnLookup
 
 
     //--------------------------------------------------------------------
-    private static CanonSuitSet[][] retrieveOrCalculateCaseSets()
+    private static TurnCase[][] retrieveOrCalculateCaseSets()
     {
-        CanonSuitSet[][] caseSets = retrieveCaseSets();
+        TurnCase[][] caseSets = retrieveCaseSets();
         if (caseSets == null)
         {
             caseSets = calculateCaseSets();
@@ -56,14 +58,14 @@ public class TurnLookup
         return caseSets;
     }
 
-    private static CanonSuitSet[][] retrieveCaseSets()
+    private static TurnCase[][] retrieveCaseSets()
     {
         byte asBytes[] = PersistentBytes.retrieve(RAW_CASE_FILE);
         if (asBytes == null) return null;
 
         int          flatIndex    = 0;
-        CanonSuitSet caseSets[][] =
-                new CanonSuitSet
+        TurnCase caseSets[][] =
+                new TurnCase
                         [ asBytes.length / Rank.VALUES.length ]
                         [ Rank.VALUES.length                  ];
         for (int i = 0; i < caseSets.length; i++)
@@ -74,20 +76,20 @@ public class TurnLookup
                 if (ordinal >= 0)
                 {
                     caseSets[ i ][ j ] =
-                            CanonSuitSet.VALUES[ ordinal ];
+                            TurnCase.VALUES[ ordinal ];
                 }
             }
         }
         return caseSets;
     }
 
-    private static void storeCaseSets(CanonSuitSet caseSets[][])
+    private static void storeCaseSets(TurnCase caseSets[][])
     {
         int  flatIndex = 0;
         byte asBytes[] = new byte[ caseSets.length * Rank.VALUES.length ];
-        for (CanonSuitSet[] caseSet : caseSets)
+        for (TurnCase[] caseSet : caseSets)
         {
-            for (CanonSuitSet aCaseSet : caseSet)
+            for (TurnCase aCaseSet : caseSet)
             {
                 asBytes[flatIndex++] = (byte) (
                         (aCaseSet == null)
@@ -100,10 +102,10 @@ public class TurnLookup
 
 
     //--------------------------------------------------------------------
-    private static CanonSuitSet[][] calculateCaseSets()
+    private static TurnCase[][] calculateCaseSets()
     {
-        final CanonSuitSet caseSets[][] =
-                new CanonSuitSet[ FlopOffset.ISO_FLOP_COUNT ]
+        final TurnCase caseSets[][] =
+                new TurnCase[ FlopLookup.CANON_FLOP_COUNT]
                                 [ /*Rank.VALUES.length   */ ];
 
         final Card   cards[]   = Card.values();
@@ -135,7 +137,7 @@ public class TurnLookup
     private static void iterateFlops(
             final Hole         hole,
             final Card         cards[],
-            final CanonSuitSet caseSets[][])
+            final TurnCase caseSets[][])
     {
         final BitSet seenFlops = new BitSet();
 
@@ -165,12 +167,12 @@ public class TurnLookup
             }});
     }
 
-    private static CanonSuitSet[] iterateTurns(
+    private static TurnCase[] iterateTurns(
             Flop flop,
             Card cards[])
     {
-        CanonSuitSet turnCases[] =
-                new CanonSuitSet[ Rank.VALUES.length ];
+        TurnCase turnCases[] =
+                new TurnCase[ Rank.VALUES.length ];
 
         for (Rank rank : Rank.VALUES)
         {
@@ -201,7 +203,7 @@ public class TurnLookup
             if (! buffer.isEmpty())
             {
                 turnCases[ rank.ordinal() ] =
-                    CanonSuitSet.valueOf(buffer);
+                    TurnCase.valueOf(buffer);
             }
         }
         return turnCases;
@@ -209,7 +211,7 @@ public class TurnLookup
 
 
     //--------------------------------------------------------------------
-    private static int[][] encodeOffsets(CanonSuitSet caseSets[][])
+    private static int[][] encodeOffsets(TurnCase caseSets[][])
     {
         int offset           = 0;
         int codedOffsets[][] = new int[ caseSets.length   ]
@@ -218,7 +220,7 @@ public class TurnLookup
         {
             for (int j = 0; j < Rank.VALUES.length; j++)
             {
-                CanonSuitSet caseSet = caseSets[ i ][ j ];
+                TurnCase caseSet = caseSets[ i ][ j ];
                 if (caseSet == null)
                 {
                     codedOffsets[ i ][ j ] = -1;
@@ -226,7 +228,7 @@ public class TurnLookup
                 else
                 {
                     codedOffsets[ i ][ j ] =
-                            Codac.encodeTurn(caseSet, offset);
+                            TurnUtil.encodeTurn(caseSet, offset);
                     offset += caseSet.size();
                 }
             }
@@ -241,11 +243,11 @@ public class TurnLookup
     {
         int codedOffset = CODED_OFFSET[ flopIndex             ]
                                       [ turn.rank().ordinal() ];
-        return Codac.decodeTurnOffset(codedOffset) +
-               Codac.decodeTurnSet(codedOffset).index( turn.suit() );
+        return TurnUtil.decodeTurnOffset(codedOffset) +
+               TurnUtil.decodeTurnSet(codedOffset).index( turn.suit() );
     }
 
-//    public static CanonSuitSet caseSet(
+//    public static TurnCase caseSet(
 //            int flopIndex, Card turnCard)
 //    {
 //        return CASE_SETS[ flopIndex                 ]

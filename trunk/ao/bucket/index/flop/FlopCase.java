@@ -1,8 +1,8 @@
 package ao.bucket.index.flop;
 
 import ao.bucket.index.card.CanonSuit;
-import static ao.bucket.index.flop.FlopCanonUtils.offset;
-import static ao.bucket.index.flop.FlopCanonUtils.sortColex;
+import static ao.bucket.index.flop.FlopUtil.offset;
+import static ao.bucket.index.flop.FlopUtil.sortColex;
 import static ao.util.stats.Combo.colex;
 
 /**

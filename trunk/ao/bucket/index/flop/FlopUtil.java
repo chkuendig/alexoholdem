@@ -6,10 +6,10 @@ import static ao.util.stats.Combo.colex;
  * Date: Aug 21, 2008
  * Time: 8:20:22 PM
  */
-public class FlopCanonUtils
+public class FlopUtil
 {
     //--------------------------------------------------------------------
-    private FlopCanonUtils() {}
+    private FlopUtil() {}
 
 
     //--------------------------------------------------------------------
