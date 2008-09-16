@@ -1,8 +1,8 @@
 package ao.bucket.index.test;
 
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.post_flop.river.CanonRiver;
-import ao.bucket.index.post_flop.turn.Turn;
+import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
@@ -69,6 +69,9 @@ public class GenericIndexerTest
 
         System.out.println("Turn Gapper Status:");
         seenTurns.displayStatus();
+
+        System.out.println("River Gapper Status:");
+        seenRivers.displayStatus();
     }
 
 
@@ -84,7 +87,7 @@ public class GenericIndexerTest
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
-//                if (seenFlops.get( index )) return;
+                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
 
                 swap(cards, flopC, 51-2);

@@ -1,13 +1,11 @@
-package ao.bucket.index.post_flop.turn;
+package ao.bucket.index.turn;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.post_flop.river.CanonRiver;
+import ao.bucket.index.river.CanonRiver;
 import ao.holdem.model.card.Card;
-
-import java.util.Arrays;
 
 /**
  * Date: Aug 27, 2008
@@ -138,10 +136,10 @@ public class Turn
     //--------------------------------------------------------------------
     public String toString()
     {
-        return Arrays.toString(HOLE) +
-               Arrays.toString(FLOP) +
-               "[" + TURN + "]";
-//               + "\t" + CASE;
+//        return Arrays.toString(HOLE) +
+//               Arrays.toString(FLOP) +
+//               "[" + TURN + "]";
+        return FLOP_CARDS + "\t" + TURN_CARD;
     }
 
 //

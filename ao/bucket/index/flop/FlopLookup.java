@@ -12,10 +12,10 @@ import java.util.Arrays;
  * Date: Aug 16, 2008
  * Time: 2:48:07 PM
  */
-public class FlopOffset
+public class FlopLookup
 {
     //--------------------------------------------------------------------
-    public static final int ISO_FLOP_COUNT = 1208714;
+    public static final int CANON_FLOP_COUNT = 1208714;
 
 
     //--------------------------------------------------------------------
@@ -130,11 +130,4 @@ public class FlopOffset
         return OFFSETS[ hole.canonIndex()  ]
                       [ flopCase.ordinal() ];
     }
-//    public int indexOf(Hole hole, Flop flop)
-//    {
-//        return OFFSETS[ hole.suitIsomorphicIndex() ]
-//                      [ flop.flopCase().ordinal()  ] +
-//                flop.subIndex();
-////        return flop.subIndex();
-//    }
 }
