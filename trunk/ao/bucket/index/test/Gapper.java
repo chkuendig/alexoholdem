@@ -9,26 +9,51 @@ import java.util.BitSet;
 public class Gapper
 {
     //--------------------------------------------------------------------
-    private BitSet indexes = new BitSet();
-    private int    count   = 0;
+    private BitSet indexes  = new BitSet();
+    private BitSet indexesB = new BitSet();
+    private long   count    = 0;
 
 
     //--------------------------------------------------------------------
-    public void set(int index)
+    // takes an unsigned int
+    public void set(long index)
     {
-//        if (indexes.get(index))
-//        {
-//            throw new Error("duplicate at " + index);
-//        }
-
+        validateIndex(index);
         count++;
-        indexes.set( index );
+
+        if (index > Integer.MAX_VALUE)
+        {
+            indexesB.set( signedPart(index) );
+        }
+        else
+        {
+            indexes.set( (int) index );
+        }
     }
 
 
-    public boolean get(int index)
+    public boolean get(long index)
     {
-        return indexes.get( index );
+        validateIndex(index);
+
+        if (index > Integer.MAX_VALUE)
+        {
+            return indexesB.get( signedPart(index) );
+        }
+        else
+        {
+            return indexes.get( (int) index );
+        }
+    }
+
+    private void validateIndex(long index)
+    {
+        assert index >= 0 : "must be non-negatve";
+        assert index < (1L << 32) : "must be 32 bit unsigned integer";
+    }
+    private int signedPart(long index)
+    {
+        return (int) (index - Integer.MAX_VALUE - 1);
     }
 
 
@@ -37,23 +62,26 @@ public class Gapper
     {
         count = 0;
         indexes.clear();
+        indexesB.clear();
     }
 
 
     //--------------------------------------------------------------------
     public boolean continuous()
     {
-        return indexes.nextClearBit(0) == indexes.length();
+        return  indexes.nextClearBit(0) ==  indexes.length() &&
+               indexesB.nextClearBit(0) == indexesB.length();
     }
 
-    public int length()
+    public long length()
     {
-        return indexes.length();
+        return  indexes.length() +
+               indexesB.length();
     }
 
     public double fillRatio()
     {
-        return (double) count / indexes.length();
+        return (double) count / length();
     }
 
 
@@ -65,14 +93,20 @@ public class Gapper
         {
             System.out.println(
                 "Compressed " + count + " into " +
-                    indexes.length() + " isomorphisms.");
+                    length() + " isomorphisms.");
 
         }
         else
         {
+            long gap = indexes.nextClearBit(0);
+            if (gap == indexes.length())
+            {
+                gap += indexesB.nextClearBit(0);
+            }
+
             System.out.println(
-                    "ERROR: gap at " + indexes.nextClearBit(0) +
-                        " of " + indexes.length() + " indexes.");
+                    "ERROR: gap at " + gap +
+                        " of " + length() + " indexes.");
         }
         return isContinuous;
     }

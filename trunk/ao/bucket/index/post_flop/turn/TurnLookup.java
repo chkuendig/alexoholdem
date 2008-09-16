@@ -30,8 +30,6 @@ public class TurnLookup
     private static final String       RAW_CASE_FILE =
                                         "lookup/canon/turn.cases.cache";
     private static final int          CODED_OFFSET[][];
-//    private static final CanonSuitSet CASE_SETS[][];
-//    private static final int          GLOBAL_OFFSET[][];
 
     static
     {
@@ -145,22 +143,21 @@ public class TurnLookup
                 .combine(new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
-                Card flopCards[] =
-                        {cards[flopA], cards[flopB], cards[flopC]};
-                Flop isoFlop = hole.isoFlop(
-                                    flopCards[0],
-                                    flopCards[1],
-                                    flopCards[2]);
-                int flopIndex = isoFlop.canonIndex();
+                Flop flop = hole.addFlop(
+                        cards[flopA], cards[flopB], cards[flopC]);
+                int flopIndex = flop.canonIndex();
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );
+
+                Card flopCards[] =
+                        {cards[flopA], cards[flopB], cards[flopC]};
 
                 swap(cards, flopC, 51-2);
                 swap(cards, flopB, 51-3);
                 swap(cards, flopA, 51-4);
 
                 caseSets[ flopIndex ] =
-                        iterateTurns(isoFlop, cards);
+                        iterateTurns(flop, cards);
 
                 swap(cards, flopA, 51-4);
                 swap(cards, flopB, 51-3);
@@ -169,7 +166,7 @@ public class TurnLookup
     }
 
     private static CanonSuitSet[] iterateTurns(
-            Flop isoFlop,
+            Flop flop,
             Card cards[])
     {
         CanonSuitSet turnCases[] =
@@ -192,7 +189,7 @@ public class TurnLookup
                     }
                 }
 
-                Turn turn = isoFlop.isoTurn(turnCard);
+                Turn turn = flop.addTurn(turnCard);
                 buffer.add( turn.turnSuit() );
 
 //                System.out.println(

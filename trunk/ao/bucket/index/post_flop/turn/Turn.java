@@ -4,6 +4,7 @@ import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.post_flop.river.CanonRiver;
 import ao.holdem.model.card.Card;
 
 import java.util.Arrays;
@@ -17,61 +18,66 @@ import java.util.Arrays;
 public class Turn
 {
     //--------------------------------------------------------------------
-    private final CanonCard    HOLE[], FLOP[], TURN;
-    private final Flop         FLOP_CARDS;
-    private final Card         TURN_CARD;
-//    private final PostFlopCase CASE;
-    private final Order        ORDER;
+    private final CanonCard HOLE[], FLOP[], TURN;
+    private final Flop      FLOP_CARDS;
+    private final Card      TURN_CARD;
+    private final Order     ORDER;
+    private final int       CANON_INDEX;
 
 
     //--------------------------------------------------------------------
     public Turn(Flop flop,
                 Card turn)
     {
-        ORDER      = flop.refineOrder(
-                        Order.suited(turn.suit()));
-        HOLE       = flop.refineHole(ORDER);
-        FLOP       = flop.refineFlop(ORDER);
-        TURN       = ORDER.asWild(turn);
-//        CASE       = PostFlopCase.valueOf(HOLE, FLOP, TURN);
-        FLOP_CARDS = flop;
-        TURN_CARD  = turn;
+        ORDER       = flop.refineOrder(
+                         Order.suited(turn.suit()));
+        HOLE        = flop.refineHole(ORDER);
+        FLOP        = flop.refineFlop(ORDER);
+        TURN        = ORDER.asCanon(turn);
+        FLOP_CARDS  = flop;
+        TURN_CARD   = turn;
+        CANON_INDEX = computeCanonIndex(flop.canonIndex());
     }
-
-
-//    //--------------------------------------------------------------------
-//    public IsoRiver isoRiver(Card hole[],
-//                             Card flop[],
-//                             Card turn,
-//                             Card river)
-//    {
-//        return new IsoRiver(ORDER,
-//                            hole, flop, turn, river);
-//    }
 
 
     //--------------------------------------------------------------------
-    public int canonIndex(int flopIndex)
+    public CanonRiver addRiver(Card river)
     {
-        return TurnLookup.canonIndex(flopIndex, TURN);
-
-//        return TurnLookup.globalOffset(flopIndex) +
-//               TurnLookup.caseSet(flopIndex).offset(CASE) +
-//               CASE.subIndex(HOLE, FLOP, TURN);
-
-//        int index =
-//                TurnLookup.caseSet(flopIndex).offset(CASE) +
-//                CASE.subIndex(HOLE, FLOP, TURN);
-//        System.out.println(this.toString() + "\t" +
-//                           TurnLookup.caseSet(flopIndex) + "\t" +
-//                           index);
-//        return index;
+        return new CanonRiver(this, river);
     }
 
-//    public PostFlopCase turnCase()
-//    {
-//        return CASE;
-//    }
+    public Order refineOrder(Order with)
+    {
+        return ORDER.refine( with );
+    }
+
+    public CanonCard[] refineHole(Order with)
+    {
+        return FLOP_CARDS.refineHole(HOLE, with);
+    }
+
+    public CanonCard[] refineFlop(Order with)
+    {
+        return FLOP_CARDS.refineFlop(FLOP, with);
+    }
+
+    public CanonCard refineTurn(Order with)
+    {
+        return TURN.isWild()
+               ? with.asCanon(TURN_CARD)
+               : TURN;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int canonIndex()
+    {
+        return CANON_INDEX;
+    }
+    public int computeCanonIndex(int flopIndex)
+    {
+        return TurnLookup.canonIndex(flopIndex, TURN);
+    }
 
     public CanonSuit turnSuit()
     {

@@ -67,7 +67,7 @@ public class Hole
         ORDER     = computeOrder();
 
         CANON = new CanonCard[]{
-                ORDER.asWild(a), ORDER.asWild(b)};
+                ORDER.asCanon(a), ORDER.asCanon(b)};
         Arrays.sort(CANON);
     }
 
@@ -179,7 +179,7 @@ public class Hole
     
 
     //--------------------------------------------------------------------
-    public Flop isoFlop(Card flopA, Card flopB, Card flopC)
+    public Flop addFlop(Card flopA, Card flopB, Card flopC)
     {
         return new Flop(
                 this,
@@ -202,8 +202,8 @@ public class Hole
         if (!(canon[0].isWild() ||
               canon[1].isWild())) return canon;
 
-        CanonCard refinedA = refineWith.asWild(A);
-        CanonCard refinedB = refineWith.asWild(B);
+        CanonCard refinedA = refineWith.asCanon(A);
+        CanonCard refinedB = refineWith.asCanon(B);
 
         return (refinedA.ordinal() < refinedB.ordinal())
                ? new CanonCard[] {refinedA, refinedB}

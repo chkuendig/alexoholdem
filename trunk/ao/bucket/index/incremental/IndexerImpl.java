@@ -2,8 +2,7 @@ package ao.bucket.index.incremental;
 
 import ao.bucket.index.Indexer;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopOffset;
-import ao.bucket.index.post_flop.river.RiverIndexer;
+import ao.bucket.index.post_flop.river.CanonRiver;
 import ao.bucket.index.post_flop.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -15,11 +14,6 @@ import ao.holdem.model.card.sequence.CardSequence;
 public class IndexerImpl implements Indexer
 {
     //--------------------------------------------------------------------
-    private FlopOffset   flopIndexer  = new FlopOffset();
-    private RiverIndexer riverIndexer = new RiverIndexer();
-
-
-    //--------------------------------------------------------------------
     public long indexOf(CardSequence cards)
     {
         if (cards.community().isPreflop())
@@ -28,7 +22,7 @@ public class IndexerImpl implements Indexer
         }
         else
         {
-            Flop isoFlop = cards.hole().isoFlop(
+            Flop isoFlop = cards.hole().addFlop(
                             cards.community().flopA(),
                             cards.community().flopB(),
                             cards.community().flopC());
@@ -41,23 +35,17 @@ public class IndexerImpl implements Indexer
             else
             {
                 Card turnCard = cards.community().turn();
-                Turn turn     = isoFlop.isoTurn(turnCard);
-
-//                if (!isoTurn.turnCase().equals( PostFlopCase.TWO )) return -1;
-
-//                int turnIndex = turnIndexer.indexOf(flopIndex, isoTurn);
-                int turnIndex = turn.canonIndex( flopIndex );
+                Turn turn     = isoFlop.addTurn(turnCard);
+                int turnIndex = turn.canonIndex();
                 if (! cards.community().hasRiver())
                 {
                     return turnIndex;
                 }
                 else
                 {
-                    return -1;
-//                    return riverIndexer.indexOf(
-//                            cards.hole(), flopCards,
-//                            turnCard, isoTurn, turnIndex,
-//                            cards.community().river());
+                    Card       riverCard = cards.community().river();
+                    CanonRiver river     = turn.addRiver(riverCard);
+                    return river.canonIndex();
                 }
             }
         }
