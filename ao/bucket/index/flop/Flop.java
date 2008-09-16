@@ -17,11 +17,10 @@ import java.util.Arrays;
 public class Flop
 {
     //--------------------------------------------------------------------
-    private final boolean   IS_HOLE_PAIR;
-    private final CanonCard HOLE[];
-    private final CanonCard FLOP[];
+    private final CanonCard HOLE[], FLOP[];
     private final Order     ORDER;
     private final FlopCase  FLOP_CASE;
+    private final int       CANON_INDEX;
 
     private final Hole      HOLE_CARDS;
     private final Card      FLOP_A;
@@ -38,20 +37,20 @@ public class Flop
         ORDER        = hole.order().refine(
                             orderSuitsBy(flopA, flopB, flopC));
         HOLE         = hole.asWild(ORDER);
-        IS_HOLE_PAIR = hole.paired();
 
         FLOP = new CanonCard[]{
-                ORDER.asWild(flopA),
-                ORDER.asWild(flopB),
-                ORDER.asWild(flopC)};
+                ORDER.asCanon(flopA),
+                ORDER.asCanon(flopB),
+                ORDER.asCanon(flopC)};
         Arrays.sort(FLOP);
-
-        FLOP_CASE = computeFlopCase();
 
         HOLE_CARDS = hole;
         FLOP_A     = flopA;
         FLOP_B     = flopB;
         FLOP_C     = flopC;
+        
+        FLOP_CASE   = computeFlopCase(hole.paired());
+        CANON_INDEX = computeCanonIndex();
     }
 
 
@@ -60,19 +59,27 @@ public class Flop
     {
         return FLOP_CASE;
     }
-    private FlopCase computeFlopCase()
+
+    private FlopCase computeFlopCase(boolean isHolePaired)
     {
         return FlopCase.newInstance(
-                IS_HOLE_PAIR,
+                isHolePaired,
                 HOLE[0].suit(), HOLE[1].suit(),
                 FLOP[0].suit(), FLOP[1].suit(), FLOP[2].suit());
     }
+
+
+    //--------------------------------------------------------------------
     public int canonIndex()
+    {
+        return CANON_INDEX;
+    }
+
+    public int computeCanonIndex()
     {
         return FlopOffset.globalOffset(HOLE_CARDS, FLOP_CASE) +
                subIndex();
     }
-
     private int subIndex()
     {
         return FLOP_CASE.subIndex(
@@ -83,7 +90,7 @@ public class Flop
 
 
     //--------------------------------------------------------------------
-    public Turn isoTurn(Card turnCard)
+    public Turn addTurn(Card turnCard)
     {
         return new Turn(this, turnCard);
     }
@@ -99,35 +106,27 @@ public class Flop
     {
         return HOLE_CARDS.asWild(HOLE, with);
     }
-
-    public CanonCard[] refineFlop(Order with)
+    public CanonCard[] refineHole(CanonCard hole[], Order with)
     {
-        if (!(FLOP[0].isWild() ||
-              FLOP[1].isWild() ||
-              FLOP[2].isWild())) return FLOP;
+        return HOLE_CARDS.asWild(hole, with);
+    }
+
+    public CanonCard[] refineFlop(CanonCard[] flop, Order with)
+    {
+        if (!(flop[0].isWild() ||
+              flop[1].isWild() ||
+              flop[2].isWild())) return flop;
 
         CanonCard wildFlop[] = new CanonCard[]{
-                with.asWild(FLOP_A),
-                with.asWild(FLOP_B),
-                with.asWild(FLOP_C)};
+                with.asCanon(FLOP_A),
+                with.asCanon(FLOP_B),
+                with.asCanon(FLOP_C)};
         Arrays.sort(wildFlop);
         return wildFlop;
     }
-
-
-    //--------------------------------------------------------------------
-    public Order order()
+    public CanonCard[] refineFlop(Order with)
     {
-        return ORDER;
-    }
-
-    public CanonCard[] hole()
-    {
-        return HOLE;
-    }
-    public CanonCard[] flop()
-    {
-        return FLOP;
+        return refineFlop(FLOP, with);
     }
 
 
@@ -225,8 +224,7 @@ public class Flop
     //--------------------------------------------------------------------
     public String toString()
     {
-        return  IS_HOLE_PAIR          +
-                Arrays.toString(HOLE) +
+        return  Arrays.toString(HOLE) +
                 Arrays.toString(FLOP);
     }
 
@@ -240,8 +238,6 @@ public class Flop
 
         Flop isoFlop = (Flop) o;
         return
-               IS_HOLE_PAIR == isoFlop.IS_HOLE_PAIR &&
-
                HOLE[0] == isoFlop.HOLE[0] &&
                HOLE[1] == isoFlop.HOLE[1] &&
 
@@ -253,7 +249,7 @@ public class Flop
     @Override
     public int hashCode()
     {
-        int result = IS_HOLE_PAIR ? 1231 : 1237;
+        int result = 0;
 
         result = 31 * result + HOLE[0].hashCode();
         result = 31 * result + HOLE[1].hashCode();

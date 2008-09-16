@@ -14,54 +14,30 @@ import java.util.Arrays;
 public enum Order
 {
     //--------------------------------------------------------------------
-    C_D_H_S(0, 1, 2, 3) { public Order refine(Order with) {
-        return this; }},
-    C_D_S_H(0, 1, 3, 2) { public Order refine(Order with) {
-        return this; }},
-    C_H_S_D(0, 3, 1, 2) { public Order refine(Order with) {
-        return this; }},
-    C_H_D_S(0, 2, 1, 3) { public Order refine(Order with) {
-        return this; }},
-    C_S_D_H(0, 2, 3, 1) { public Order refine(Order with) {
-        return this; }},
-    C_S_H_D(0, 3, 2, 1) { public Order refine(Order with) {
-        return this; }},
-    D_C_S_H(1, 0, 3, 2) { public Order refine(Order with) {
-        return this; }},
-    D_C_H_S(1, 0, 2, 3) { public Order refine(Order with) {
-        return this;}},
-    D_H_S_C(3, 0, 1, 2) { public Order refine(Order with) {
-        return this; }},
-    D_H_C_S(2, 0, 1, 3) { public Order refine(Order with) {
-        return this; }},
-    D_S_C_H(2, 0, 3, 1) { public Order refine(Order with) {
-        return this; }},
-    D_S_H_C(3, 0, 2, 1) { public Order refine(Order with) {
-        return this; }},
-    H_C_D_S(1, 2, 0, 3) { public Order refine(Order with) {
-        return this; }},
-    H_C_S_D(1, 3, 0, 2) { public Order refine(Order with) {
-        return this; }},
-    H_D_C_S(2, 1, 0, 3) { public Order refine(Order with) {
-        return this; }},
-    H_D_S_C(3, 1, 0, 2) { public Order refine(Order with) {
-        return this; }},
-    H_S_D_C(3, 2, 0, 1) { public Order refine(Order with) {
-        return this; }},
-    H_S_C_D(2, 3, 0, 1) { public Order refine(Order with) {
-        return this; }},
-    S_C_D_H(1, 2, 3, 0) { public Order refine(Order with) {
-        return this; }},
-    S_C_H_D(1, 3, 2, 0) { public Order refine(Order with) {
-        return this; }},
-    S_D_H_C(3, 1, 2, 0) { public Order refine(Order with) {
-        return this; }},
-    S_D_C_H(2, 1, 3, 0) { public Order refine(Order with) {
-        return this; }},
-    S_H_C_D(2, 3, 1, 0) { public Order refine(Order with) {
-        return this; }},
-    S_H_D_C(3, 2, 1, 0) { public Order refine(Order with) {
-        return this; }},
+    C_D_H_S(0, 1, 2, 3),
+    C_D_S_H(0, 1, 3, 2),
+    C_H_D_S(0, 2, 1, 3),
+    C_S_D_H(0, 2, 3, 1),
+    C_H_S_D(0, 3, 1, 2),
+    C_S_H_D(0, 3, 2, 1),
+    D_C_H_S(1, 0, 2, 3),
+    D_C_S_H(1, 0, 3, 2),
+    H_C_D_S(1, 2, 0, 3),
+    S_C_D_H(1, 2, 3, 0),
+    H_C_S_D(1, 3, 0, 2),
+    S_C_H_D(1, 3, 2, 0),
+    D_H_C_S(2, 0, 1, 3),
+    D_S_C_H(2, 0, 3, 1),
+    S_D_C_H(2, 1, 3, 0),
+    H_D_C_S(2, 1, 0, 3),
+    H_S_C_D(2, 3, 0, 1),
+    S_H_C_D(2, 3, 1, 0),
+    D_H_S_C(3, 0, 1, 2),
+    D_S_H_C(3, 0, 2, 1),
+    H_D_S_C(3, 1, 0, 2),
+    S_D_H_C(3, 1, 2, 0),
+    H_S_D_C(3, 2, 0, 1),
+    S_H_D_C(3, 2, 1, 0),
 
     C_S_DH(0, 2, 2, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 1, 2, with); }},
@@ -499,15 +475,19 @@ public enum Order
     //--------------------------------------------------------------------
     //--------------------------------------------------------------------
     // break suit symmetries
-    public abstract Order refine(Order with);
+//    public abstract Order refine(Order with);
+    public Order refine(Order with)
+    {
+        return this;
+    }
 
 
     //--------------------------------------------------------------------
     public CanonSuit asWild(Suit suit)
     {
-//        CanonSuit asWild = AS_WILD[ suit.ordinal() ];
-//        return asWild != null
-//               ? asWild
+//        CanonSuit asCanon = AS_WILD[ suit.ordinal() ];
+//        return asCanon != null
+//               ? asCanon
 //               : CanonSuit.VALUES[
 //                    PRECEDENCE[ suit.ordinal() ]];
         return IS_WILD[ suit.ordinal() ]
@@ -515,7 +495,7 @@ public enum Order
                : CanonSuit.VALUES[
                     PRECEDENCE[ suit.ordinal() ]];
     }
-    public CanonCard asWild(Card card)
+    public CanonCard asCanon(Card card)
     {
         return CanonCard.valueOf(
                 card.rank(),

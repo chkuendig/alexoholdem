@@ -1,12 +1,10 @@
 package ao.bucket.index.test;
 
-import ao.bucket.index.Indexer;
-import ao.bucket.index.incremental.IndexerImpl;
+import ao.bucket.index.flop.Flop;
+import ao.bucket.index.post_flop.river.CanonRiver;
+import ao.bucket.index.post_flop.turn.Turn;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
 import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
@@ -23,27 +21,22 @@ public class GenericIndexerTest
     {
         GenericIndexerTest indexerTest = new GenericIndexerTest();
 
-        indexerTest.test( new IndexerImpl() );
+        indexerTest.test(  );
     }
 
 
     //--------------------------------------------------------------------
-    private Card   cards[]   = Card.values();
-    private Gapper seenFlops = new Gapper();
-    private Gapper seenTurns = new Gapper();
-    private Gapper riverGaps = new Gapper();
-
-//    private Set<Ordering> ordersHole  = new LinkedHashSet<Ordering>();
-//    private Set<Ordering> ordersFlop  = new LinkedHashSet<Ordering>();
-//    private Set<Ordering> ordersTurn  = new LinkedHashSet<Ordering>();
-//    private Set<Ordering> ordersRiver = new LinkedHashSet<Ordering>();
+    private Card   cards[]    = Card.values();
+    private Gapper seenFlops  = new Gapper();
+    private Gapper seenTurns  = new Gapper();
+    private Gapper seenRivers = new Gapper();
 
 
     //--------------------------------------------------------------------
-    public synchronized void test(final Indexer indexer)
+    public synchronized void test()
     {
         seenTurns.clear();
-        riverGaps.clear();
+        seenRivers.clear();
         final Gapper seenHoles  = new Gapper();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
@@ -53,13 +46,13 @@ public class GenericIndexerTest
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-//                if (seenHoles.get( hole.canonIndex() )) return;
+                if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
 
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
 
-                iterateFlops(hole, indexer);
+                iterateFlops(hole);
 //                System.out.println(System.currentTimeMillis() - prevTime);
                 prevTime = System.currentTimeMillis();
 
@@ -81,32 +74,24 @@ public class GenericIndexerTest
 
     //--------------------------------------------------------------------
     public void iterateFlops(
-            final Hole    hole,
-            final Indexer indexer)
+            final Hole hole)
     {
         System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
-                CardSequence cardSeq =
-                    new LiteralCardSequence(
-                            hole, new Community(
-                            cards[flopA], cards[flopB], cards[flopC]));
-                int index = (int) indexer.indexOf(cardSeq);
+                Flop flop = hole.addFlop(
+                        cards[flopA], cards[flopB], cards[flopC]);
+                int index = flop.canonIndex();
 //                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
-
-                // must come before swap
-                Card flopCards[] =
-                        {cards[flopA], cards[flopB], cards[flopC]};
 
                 swap(cards, flopC, 51-2);
                 swap(cards, flopB, 51-3);
                 swap(cards, flopA, 51-4);
 
-                iterateTurns(
-                        hole, flopCards, index, indexer);
+                iterateTurns(flop);
 
                 swap(cards, flopA, 51-4);
                 swap(cards, flopB, 51-3);
@@ -114,87 +99,47 @@ public class GenericIndexerTest
             }});
     }
 
-    public void iterateTurns(
-            Hole    hole,
-            Card    flop[],
-            int     flopIndex,
-            Indexer indexer)
+    public void iterateTurns(Flop flop)
     {
-//        System.out.println(hole + Arrays.toString(flop));
-        
-//        Map<Integer, List<Card>> cardsByIndex =
-//                new TreeMap<Integer, List<Card>>();
-
-//        Gapper localTurns = new Gapper();
         for (int turnCardIndex = 0;
                  turnCardIndex < 52 - 2 - 3;
                  turnCardIndex++)
         {
-            Card turnCard = cards[ turnCardIndex ];
+            Card turnCard  = cards[ turnCardIndex ];
+            Turn turn      = flop.addTurn(turnCard);
+            int  turnIndex = turn.canonIndex();
 
-            CardSequence seq = new LiteralCardSequence(hole,
-                   new Community(flop[0], flop[1], flop[2], turnCard));
-            int turnIndex = (int) indexer.indexOf(seq);
-
-//            List<Card> indexCards = cardsByIndex.get( turnIndex );
-//            if (indexCards == null)
-//            {
-//                indexCards = new ArrayList<Card>();
-//                cardsByIndex.put(turnIndex, indexCards);
-//            }
-//            indexCards.add( turnCard );
-
-//            localTurns.set( turnIndex );
-//            if (seenTurns.get( turnIndex )) continue;
+            if (seenTurns.get( turnIndex )) continue;
             seenTurns.set( turnIndex );
 
-//            swap(cards, turnCardIndex, 51-5);
-//            iterateRivers(hole, flop, turnCard, turnIndex, indexer);
-//            swap(cards, turnCardIndex, 51-5);
+            swap(cards, turnCardIndex, 51-5);
+            iterateRivers(turn);
+            swap(cards, turnCardIndex, 51-5);
         }
-
-//        if (! localTurns.continuous() ||
-//            localTurns.length() !=
-//                TurnLookup.caseSet(flopIndex).size() ||
-//            localTurns.fillRatio() > 24)
-//        {
-//            System.out.println(
-//                    hole + "\t" +
-//                    Arrays.toString(flop) + "\t" +
-//                    TurnLookup.caseSet(flopIndex).size() + "\t" +
-//                    localTurns.fillRatio());
-//            localTurns.displayStatus();
-//        }
     }
 
-    public void iterateRivers(
-            Hole    hole,
-            Card    flop[],
-            Card    turn,
-            int     turnIndex,
-            Indexer indexer)
+    public void iterateRivers(Turn turn)
     {
 //        System.out.println(
 //                Arrays.toString(flop) + "\t" + turn);
 
-        Gapper localRiver = new Gapper();
+//        Gapper localRiver = new Gapper();
         for (int riverCardIndex = 0;
                  riverCardIndex < 52 - 2 - 3 - 1;
                  riverCardIndex++)
         {
-            Card riverCard = cards[ riverCardIndex ];
+            Card       riverCard  = cards[ riverCardIndex ];
+            CanonRiver river      = turn.addRiver( riverCard );
+            long       riverIndex = river.canonIndex();
 
-            CardSequence seq = new LiteralCardSequence(hole,
-                   new Community(flop[0], flop[1], flop[2],
-                                 turn, riverCard));
-            int riverIndex = (int) indexer.indexOf(seq);
+            seenRivers.set( riverIndex );
 
-            localRiver.set( riverIndex );
+//            localRiver.set( riverIndex );
 //            System.out.println(seq + "\t" + riverIndex);
         }
 
-//        PostFlopCaseSet rcs = RiverIndexer.riverCaseSet(turnIndex);
-        //PostFlopCaseSet rcs = RiverIndexer.readRiverCaseSet(turnIndex);
+//        PostFlopCaseSet rcs = RiverLookup.riverCaseSet(turnIndex);
+        //PostFlopCaseSet rcs = RiverLookup.readRiverCaseSet(turnIndex);
 
 //        int size = rcs.size();
 //        if (! localRiver.continuous() ||

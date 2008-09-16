@@ -94,7 +94,7 @@ public class FlopOffset
 
             for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
             {
-                Flop isoFlop = hole.isoFlop(
+                Flop isoFlop = hole.addFlop(
                                     flopCards[0],
                                     flopCards[1],
                                     flopCards[2]);

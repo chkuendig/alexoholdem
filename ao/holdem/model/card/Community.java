@@ -59,13 +59,13 @@ public class Community implements Prototype<Community>
     {
         assert FLOP_A == null && FLOP_B == null && FLOP_C == null ||
                FLOP_A != null && FLOP_B != null && FLOP_C != null :
-                "all 3 flop cards are delt atomically";
+                "all 3 flop cards must be delt atomically";
 
         assert TURN == null || FLOP_A != null :
-                "turn required the flop to be present";
+                "turn requires the flop to be present";
 
         assert RIVER == null || TURN != null :
-                "river required the turn to be present";
+                "river requires the turn to be present";
 
         assert hasRiver() &&
                  areUnique(FLOP_A, FLOP_B, FLOP_C, TURN, RIVER) ||

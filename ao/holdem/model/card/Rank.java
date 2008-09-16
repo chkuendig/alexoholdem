@@ -26,6 +26,13 @@ public enum Rank
 
 
     //--------------------------------------------------------------------
+    public boolean comesAfter(Rank rank)
+    {
+        return ordinal() > rank.ordinal();
+    }
+
+
+    //--------------------------------------------------------------------
     public String toString()
     {
         return NAME;
