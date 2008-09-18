@@ -2,6 +2,8 @@ package ao.bucket.index.test;
 
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.river.RiverCaseSet;
+import ao.bucket.index.river.RiverSparceLookup;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
@@ -45,6 +47,7 @@ public class GenericIndexerTest
             {
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
+                if (hole.suited()) return;
 
                 if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
@@ -87,18 +90,23 @@ public class GenericIndexerTest
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
-                if (seenFlops.get( index )) return;
+//                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
+                if (index == 61008)
+                {
+                    System.out.println(hole + " :: " + flop);
+                    flop.canonIndex();
+                }
 
-                swap(cards, flopC, 51-2);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopA, 51-4);
-
-                iterateTurns(flop);
-
-                swap(cards, flopA, 51-4);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopC, 51-2);
+//                swap(cards, flopC, 51-2);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopA, 51-4);
+//
+//                iterateTurns(flop);
+//
+//                swap(cards, flopA, 51-4);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopC, 51-2);
             }});
     }
 
@@ -112,21 +120,24 @@ public class GenericIndexerTest
             Turn turn      = flop.addTurn(turnCard);
             int  turnIndex = turn.canonIndex();
 
+            if (turnIndex == 2446794)
+            {
+                System.out.println(
+                        flop + "\t" + flop.canonIndex() + " :: " + turn);
+            }
+
             if (seenTurns.get( turnIndex )) continue;
             seenTurns.set( turnIndex );
 
-            swap(cards, turnCardIndex, 51-5);
-            iterateRivers(turn);
-            swap(cards, turnCardIndex, 51-5);
+//            swap(cards, turnCardIndex, 51-5);
+//            iterateRivers(turn);
+//            swap(cards, turnCardIndex, 51-5);
         }
     }
 
     public void iterateRivers(Turn turn)
     {
-//        System.out.println(
-//                Arrays.toString(flop) + "\t" + turn);
-
-//        Gapper localRiver = new Gapper();
+        Gapper localGapper = new Gapper();
         for (int riverCardIndex = 0;
                  riverCardIndex < 52 - 2 - 3 - 1;
                  riverCardIndex++)
@@ -134,22 +145,45 @@ public class GenericIndexerTest
             Card       riverCard  = cards[ riverCardIndex ];
             CanonRiver river      = turn.addRiver( riverCard );
             long       riverIndex = river.canonIndex();
+            if (riverIndex < 0)
+            {
+                river.canonIndex();
+            }
 
-            seenRivers.set( riverIndex );
+//            System.out.println(
+//                    turn + "\t" + riverCard + "\t" + riverIndex);
 
-//            localRiver.set( riverIndex );
-//            System.out.println(seq + "\t" + riverIndex);
+//            seenRivers.set( riverIndex );
+            localGapper.set( riverIndex );
         }
-
-//        PostFlopCaseSet rcs = RiverLookup.riverCaseSet(turnIndex);
-        //PostFlopCaseSet rcs = RiverLookup.readRiverCaseSet(turnIndex);
-
-//        int size = rcs.size();
-//        if (! localRiver.continuous() ||
-//              localRiver.length() != size)
+        
+        RiverCaseSet rcs = RiverSparceLookup.caseSet(turn.canonIndex());
+//        if (rcs.size() < 8)
 //        {
-//            System.out.println("size: " + size);
-//            localRiver.displayStatus();
+//            sout
 //        }
+
+        int size = rcs.size();
+        if (! localGapper.continuous() ||
+              localGapper.length() != size)
+        {
+            System.out.println(turn + "\t" + rcs);
+            System.out.println("size: " + size);
+            localGapper.displayStatus();
+
+            for (int riverCardIndex = 0;
+                     riverCardIndex < 52 - 2 - 3 - 1;
+                     riverCardIndex++)
+            {
+                Card       riverCard  = cards[ riverCardIndex ];
+                CanonRiver river      = turn.addRiver( riverCard );
+                long       riverIndex = river.canonIndex();
+
+                System.out.println(
+                        turn + "\t" + riverCard + "\t" +
+                        riverIndex + "\t" + river.riverCase());
+
+            }
+        }
     }
 }

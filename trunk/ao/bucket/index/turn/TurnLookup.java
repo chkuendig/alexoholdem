@@ -52,7 +52,7 @@ public class TurnLookup
         TurnCase[][] caseSets = retrieveCaseSets();
         if (caseSets == null)
         {
-            caseSets = calculateCaseSets();
+            caseSets = calculateCases();
             storeCaseSets(caseSets);
         }
         return caseSets;
@@ -102,11 +102,11 @@ public class TurnLookup
 
 
     //--------------------------------------------------------------------
-    private static TurnCase[][] calculateCaseSets()
+    private static TurnCase[][] calculateCases()
     {
         final TurnCase caseSets[][] =
-                new TurnCase[ FlopLookup.CANON_FLOP_COUNT]
-                                [ /*Rank.VALUES.length   */ ];
+                new TurnCase[ FlopLookup.CANON_FLOP_COUNT ]
+                            [ /*  Rank.VALUES.length   */ ];
 
         final Card   cards[]   = Card.values();
         final BitSet seenHoles = new BitSet();

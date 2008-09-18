@@ -3,7 +3,6 @@ package ao.bucket.index.river;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.test.Gapper;
 import ao.bucket.index.turn.Turn;
-import ao.bucket.index.turn.TurnCase;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
@@ -27,12 +26,9 @@ public class RiverLookup
     private static final String DIR = "lookup/canon/";
     private static final String F_RAW_CASES =
                                     DIR + "river.cases.raw.cache";
-//    private static final String F_ZIP_CASES =
-//                                    DIR + "river.cases.zip.cache";
 
-//    public static final long CODED_OFFSETS[] = computeEncoding();
-    private static final byte       CASES[]   = rawCases();
-    private static final int        OFFSETS[] = computeOffsets();
+    private static final byte   CASES[]   = rawCases();
+    private static final int    OFFSETS[] = null;//computeOffsets();
 
 
 
@@ -49,16 +45,6 @@ public class RiverLookup
             size += RiverCaseSet.VALUES[ CASES[ caseOrdinal ] ].size();
         }
         System.out.println(size);
-    }
-
-
-    //--------------------------------------------------------------------
-    public static TurnCase riverCaseSet(int forTurnIndex)
-    {
-//        return Encoder.caseCount(
-//                   encodingFor(forTurnIndex)
-//               ).caseSet();
-        return null;
     }
 
     //--------------------------------------------------------------------
@@ -85,6 +71,13 @@ public class RiverLookup
 ////        return localIndex + turnDeltaOffset + globalOffset;
 //    }
 //
+
+    //--------------------------------------------------------------------
+    public static RiverCaseSet caseSet(int canonTurn)
+    {
+        return RiverCaseSet.VALUES[ CASES[canonTurn] ];
+    }
+
 
     //--------------------------------------------------------------------
     public static long offset(int canonTurn)
@@ -142,6 +135,7 @@ public class RiverLookup
             {
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
+                if (hole.suited()) return;
 
                 if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
@@ -222,6 +216,11 @@ public class RiverLookup
             Turn  turn,
             Card  cards[])
     {
+        if (turn.canonIndex() == 2446794)
+        {
+            System.out.println(turn);
+        }
+
         Set<RiverCase> caseBuffer = EnumSet.noneOf( RiverCase.class );
         for (int riverCardIndex = 0;
                  riverCardIndex < 52 - 2 - 3 - 1;

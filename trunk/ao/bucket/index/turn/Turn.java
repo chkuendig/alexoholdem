@@ -20,7 +20,7 @@ public class Turn
     private final Flop      FLOP_CARDS;
     private final Card      TURN_CARD;
     private final Order     ORDER;
-    private final int       CANON_INDEX;
+    private       int       canonIndex = -1;
 
 
     //--------------------------------------------------------------------
@@ -34,7 +34,6 @@ public class Turn
         TURN        = ORDER.asCanon(turn);
         FLOP_CARDS  = flop;
         TURN_CARD   = turn;
-        CANON_INDEX = computeCanonIndex(flop.canonIndex());
     }
 
 
@@ -70,9 +69,13 @@ public class Turn
     //--------------------------------------------------------------------
     public int canonIndex()
     {
-        return CANON_INDEX;
+        if (canonIndex == -1)
+        {
+            canonIndex = computeCanonIndex(FLOP_CARDS.canonIndex());
+        }
+        return canonIndex;
     }
-    public int computeCanonIndex(int flopIndex)
+    private int computeCanonIndex(int flopIndex)
     {
         return TurnLookup.canonIndex(flopIndex, TURN);
     }
