@@ -20,7 +20,7 @@ public class Flop
     private final CanonCard HOLE[], FLOP[];
     private final Order     ORDER;
     private final FlopCase  FLOP_CASE;
-    private final int       CANON_INDEX;
+    private       int       canonIndex = -1;
 
     private final Hole      HOLE_CARDS;
     private final Card      FLOP_A;
@@ -50,7 +50,6 @@ public class Flop
         FLOP_C     = flopC;
         
         FLOP_CASE   = computeFlopCase(hole.paired());
-        CANON_INDEX = computeCanonIndex();
     }
 
 
@@ -72,7 +71,11 @@ public class Flop
     //--------------------------------------------------------------------
     public int canonIndex()
     {
-        return CANON_INDEX;
+        if (canonIndex == -1)
+        {
+            canonIndex = computeCanonIndex();
+        }
+        return canonIndex;
     }
 
     public int computeCanonIndex()
@@ -113,9 +116,10 @@ public class Flop
 
     public CanonCard[] refineFlop(CanonCard[] flop, Order with)
     {
-        if (!(flop[0].isWild() ||
-              flop[1].isWild() ||
-              flop[2].isWild())) return flop;
+//        HOLE[0].i
+//        if (!(flop[0].isWild() ||
+//              flop[1].isWild() ||
+//              flop[2].isWild())) return flop;
 
         CanonCard wildFlop[] = new CanonCard[]{
                 with.asCanon(FLOP_A),
@@ -148,19 +152,19 @@ public class Flop
     {
         // sort by rank
         //if (Card.BY_RANK_DSC.compare(flopA, flopB) > 0)
-        if (flopA.ordinal() < flopB.ordinal())
+        if (flopA.invertedIndex() < flopB.invertedIndex())
         {
             Card temp = flopA;
             flopA     = flopB;
             flopB     = temp;
         }
-        if (flopB.ordinal() < flopC.ordinal())
+        if (flopB.invertedIndex() < flopC.invertedIndex())
         {
             Card temp = flopB;
             flopB     = flopC;
             flopC     = temp;
         }
-        if (flopA.ordinal() < flopB.ordinal())
+        if (flopA.invertedIndex() < flopB.invertedIndex())
         {
             Card temp = flopA;
             flopA     = flopB;

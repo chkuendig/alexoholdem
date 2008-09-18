@@ -37,9 +37,30 @@ public enum RiverCase
 
     public static final RiverCase VALUES[] = values();
 
+    private static final RiverCase INDEX[][];
+    static
+    {
+        INDEX = new RiverCase[ CanonSuit.VALUES.length ][ 7 ];
+
+        for (CanonSuit suit : CanonSuit.VALUES)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                INDEX[ suit.ordinal() ][ i ] =
+                        findValueOf(suit, i);
+            }
+        }
+    }
+
 
     //--------------------------------------------------------------------
     public static RiverCase valueOf(
+            CanonSuit suit,
+            int       precedences)
+    {
+        return INDEX[ suit.ordinal() ][ precedences ];
+    }
+    private static RiverCase findValueOf(
             CanonSuit suit,
             int       precedences)
     {
@@ -51,7 +72,6 @@ public enum RiverCase
                 return riverCase;
             }
         }
-        System.err.println("can't find: " + suit + ", " + precedences);
         return null;
     }
 
