@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class FlopLookup
 {
     //--------------------------------------------------------------------
-    public static final int CANON_FLOP_COUNT = 1208714;
+    public static final int CANON_FLOP_COUNT = 1286792;
 
 
     //--------------------------------------------------------------------
@@ -42,8 +42,8 @@ public class FlopLookup
         if (flat == null) return null;
 
         int offsets[][] =
-                new int[ Hole.SUIT_ISOMORPHIC_COUNT ]
-                       [ FlopCase.VALUES.length     ];
+                new int[ Hole.CANONICAL_COUNT   ]
+                       [ FlopCase.VALUES.length ];
 
         for (int i = 0; i < flat.length; i++)
         {
@@ -73,7 +73,7 @@ public class FlopLookup
 
     private static int[][] calculateOffsets()
     {
-        int offsets[][] = new int[ Hole.SUIT_ISOMORPHIC_COUNT ][];
+        int offsets[][] = new int[ Hole.CANONICAL_COUNT ][];
 
         int  offset  = 0;
         Card cards[] = Card.values();
