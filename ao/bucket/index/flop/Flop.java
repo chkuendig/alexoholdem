@@ -6,6 +6,7 @@ import static ao.bucket.index.flop.FlopUtil.distinct;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
@@ -83,7 +84,7 @@ public class Flop
         return FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) +
                subIndex();
     }
-    private int subIndex()
+    public int subIndex()
     {
         return FLOP_CASE.subIndex(
                 HOLE[0].rank().ordinal(), HOLE[1].rank().ordinal(),
@@ -116,7 +117,6 @@ public class Flop
 
     public CanonCard[] refineFlop(CanonCard[] flop, Order with)
     {
-//        HOLE[0].i
 //        if (!(flop[0].isWild() ||
 //              flop[1].isWild() ||
 //              flop[2].isWild())) return flop;
@@ -143,6 +143,17 @@ public class Flop
     public boolean hasWildFlop()
     {
         return FLOP[0].isWild() || FLOP[1].isWild() || FLOP[2].isWild();
+    }
+
+    public CanonCard[] canonFlop()
+    {
+        return FLOP;
+    }
+
+    public Rank[] ranks()
+    {
+        return new Rank[]{
+                FLOP[0].rank(), FLOP[1].rank(), FLOP[2].rank()};
     }
 
 
@@ -231,7 +242,10 @@ public class Flop
 //        return  Arrays.toString(HOLE) +
 //                Arrays.toString(FLOP);
         return HOLE_CARDS + "\t" +
-               FLOP_A + ", " + FLOP_B + ", " + FLOP_C;
+               FLOP_A + ", " + FLOP_B + ", " + FLOP_C +
+               "\t" + FLOP_CASE + "\t" + ORDER +
+               "\t" + FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) +
+               "\t" + subIndex();
     }
 
 

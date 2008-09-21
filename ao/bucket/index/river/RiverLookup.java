@@ -216,10 +216,10 @@ public class RiverLookup
             Turn  turn,
             Card  cards[])
     {
-        if (turn.canonIndex() == 2446794)
-        {
-            System.out.println(turn);
-        }
+//        if (turn.canonIndex() == 2446794)
+//        {
+//            System.out.println(turn);
+//        }
 
         Set<RiverCase> caseBuffer = EnumSet.noneOf( RiverCase.class );
         for (int riverCardIndex = 0;

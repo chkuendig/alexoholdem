@@ -34,7 +34,7 @@ public class Hole
 
     private static final int PAIR_COUNT             = 13;
     private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
-    public  static final int SUIT_ISOMORPHIC_COUNT  = 169;
+    public  static final int CANONICAL_COUNT        = 169;
 
 
     //--------------------------------------------------------------------

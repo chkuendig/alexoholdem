@@ -180,12 +180,14 @@ public enum FlopCase
     },
 
     //[ONE, TWO][ONE, TWO, THREE]
-    OT_OTR(871) { public int subIndex(int holeA, int holeB,
+    OT_OTR(1872) { public int subIndex(int holeA, int holeB,
                                       int flopA, int flopB, int flopC) {
-            return sortColex(flopA + offset(holeA, flopA),
-                             flopB + offset(holeB, flopB)) * 13 +
-                   flopC;
-        }
+            return ((flopA + offset(holeA, flopA))  * 12 +
+                    (flopB + offset(holeB, flopB))) * 13 + flopC;
+//            return sortColex(flopA + offset(holeA, flopA),
+//                             flopB + offset(holeB, flopB)) * 13 +
+//                   flopC;
+        }                    
     },
 
     //[ONE, TWO][TWO, THREE, THREE]

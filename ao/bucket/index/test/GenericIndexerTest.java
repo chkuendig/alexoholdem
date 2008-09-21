@@ -7,6 +7,7 @@ import ao.bucket.index.river.RiverSparceLookup;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.Rank;
 import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
@@ -32,6 +33,8 @@ public class GenericIndexerTest
     private Gapper seenFlops  = new Gapper();
     private Gapper seenTurns  = new Gapper();
     private Gapper seenRivers = new Gapper();
+    private AutovivifiedList<Rank> turnLog =
+                new AutovivifiedList<Rank>();
 
 
     //--------------------------------------------------------------------
@@ -47,7 +50,7 @@ public class GenericIndexerTest
             {
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
-                if (hole.suited()) return;
+//                if (hole.suited()) return;
 
                 if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
@@ -90,23 +93,18 @@ public class GenericIndexerTest
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
-//                if (seenFlops.get( index )) return;
+                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
-                if (index == 61008)
-                {
-                    System.out.println(hole + " :: " + flop);
-                    flop.canonIndex();
-                }
 
-//                swap(cards, flopC, 51-2);
-//                swap(cards, flopB, 51-3);
-//                swap(cards, flopA, 51-4);
-//
-//                iterateTurns(flop);
-//
-//                swap(cards, flopA, 51-4);
-//                swap(cards, flopB, 51-3);
-//                swap(cards, flopC, 51-2);
+                swap(cards, flopC, 51-2);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopA, 51-4);
+
+                iterateTurns(flop);
+
+                swap(cards, flopA, 51-4);
+                swap(cards, flopB, 51-3);
+                swap(cards, flopC, 51-2);
             }});
     }
 
@@ -120,11 +118,15 @@ public class GenericIndexerTest
             Turn turn      = flop.addTurn(turnCard);
             int  turnIndex = turn.canonIndex();
 
-            if (turnIndex == 2446794)
-            {
-                System.out.println(
-                        flop + "\t" + flop.canonIndex() + " :: " + turn);
-            }
+//            Rank existing = turnLog.get( turnIndex );
+//            if (existing == null)
+//            {
+//                turnLog.set( turnIndex, turnCard.rank() );
+//            }
+//            else if (existing != turnCard.rank())
+//            {
+//                System.out.println(existing + " :: " + turnCard.rank());
+//            }
 
             if (seenTurns.get( turnIndex )) continue;
             seenTurns.set( turnIndex );
@@ -158,11 +160,6 @@ public class GenericIndexerTest
         }
         
         RiverCaseSet rcs = RiverSparceLookup.caseSet(turn.canonIndex());
-//        if (rcs.size() < 8)
-//        {
-//            sout
-//        }
-
         int size = rcs.size();
         if (! localGapper.continuous() ||
               localGapper.length() != size)
