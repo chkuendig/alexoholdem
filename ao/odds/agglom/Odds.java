@@ -6,6 +6,21 @@ package ao.odds.agglom;
 public class Odds
 {
     //--------------------------------------------------------------------
+    private static final Odds PURE_WIN   = new Odds(1, 0, 0);
+    private static final Odds PURE_LOSS  = new Odds(0, 1, 0);
+    private static final Odds PURE_SPLIT = new Odds(0, 0, 1);
+
+    public static Odds valueOf(short thisValue, short thatValue)
+    {
+        return   thisValue > thatValue
+               ? PURE_WIN
+               : thisValue < thatValue
+               ? PURE_LOSS
+               : PURE_SPLIT;
+    }
+
+
+    //--------------------------------------------------------------------
     private final long WIN;
     private final long LOSE;
     private final long SPLIT;
@@ -24,7 +39,7 @@ public class Odds
         SPLIT = splitOdds;
     }
 
-
+    
     //--------------------------------------------------------------------
     public Odds plus(Odds addend)
     {
@@ -95,5 +110,29 @@ public class Odds
 //               " (" + Math.round(splitPercent() * 100) + ")" + "]";
 //        return "new Odds(" + WIN + ", " + LOSE + ", " + SPLIT + ")";
         return WIN + "\t" + LOSE + "\t" + SPLIT;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Odds odds = (Odds) o;
+        return WIN   == odds.WIN  &&
+               LOSE  == odds.LOSE &&
+               SPLIT == odds.SPLIT;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = (int) (WIN ^ (WIN >>> 32));
+        result = 31 * result + (int) (LOSE ^ (LOSE >>> 32));
+        result = 31 * result + (int) (SPLIT ^ (SPLIT >>> 32));
+        return result;
     }
 }

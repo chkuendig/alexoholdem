@@ -135,7 +135,7 @@ public class RiverLookup
             {
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
-                if (hole.suited()) return;
+//                if (hole.suited()) return;
 
                 if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
@@ -169,6 +169,8 @@ public class RiverLookup
             {
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
+//                if (flop.flopCase() != FlopCase.OO_OTT) return;
+
                 int flopIndex = flop.canonIndex();
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );
@@ -216,11 +218,6 @@ public class RiverLookup
             Turn  turn,
             Card  cards[])
     {
-//        if (turn.canonIndex() == 2446794)
-//        {
-//            System.out.println(turn);
-//        }
-
         Set<RiverCase> caseBuffer = EnumSet.noneOf( RiverCase.class );
         for (int riverCardIndex = 0;
                  riverCardIndex < 52 - 2 - 3 - 1;
@@ -232,6 +229,12 @@ public class RiverLookup
 
             caseBuffer.add( riverCase );
         }
+
+//        if (turn.canonIndex() == 28820)
+//        {
+//            System.out.println(turn);
+//            System.out.println(caseBuffer);
+//        }
 
         return RiverCaseSet.valueOf(caseBuffer);
     }
