@@ -1,12 +1,16 @@
 package ao.odds.agglom.impl;
 
-import ao.holdem.model.card.*;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import static ao.holdem.model.card.Rank.*;
+import static ao.holdem.model.card.Suit.*;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
-import static ao.util.data.Arr.sequence;
 import static ao.util.data.Arr.swap;
-import ao.util.stats.FastIntCombiner;
+
+import java.util.EnumSet;
 
 /**
  * does NOT match numbers from:
@@ -16,16 +20,19 @@ import ao.util.stats.FastIntCombiner;
 public class GeneralOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
-    public static final int HOLE_A = 52 - 1,
-                            HOLE_B = 52 - 2,
-                            COM_A  = 52 - (2 + 1),
-                            COM_B  = 52 - (2 + 2),
-                            COM_C  = 52 - (2 + 3),
-                            COM_D  = 52 - (2 + 4),
-                            COM_E  = 52 - (2 + 5),
-                            OPPS   = 52 - (2 + 5 + 1);
+    private static final int HOLE_A = 51 - 1,
+                             HOLE_B = 51,
 
-    public static final int INDEXES[] = sequence( Card.VALUES.length );
+                             FLOP_A = 51 - 4,
+                             FLOP_B = 51 - 3,
+                             FLOP_C = 51 - 2,
+
+                             TURN   = 51 - 5,
+
+                             RIVER  = 51 - 6,
+
+                             OPP_A  = 51 - 8,
+                             OPP_B  = 51 - 7;
 
 
     //--------------------------------------------------------------------
@@ -33,263 +40,169 @@ public class GeneralOddFinder implements OddFinder
                         Community community,
                         int       activeOpponents)
     {
-        // selected from right [51] to left [0]
-        //  meaning rightmost elements of indexes[] are
-        //  personal hole cards, and common community cards,
-        //  and to the left of those (0..44, ie. < 52 - 2 - 5)
-        //  are opponents' simulated cards.
-        Card cards[]   = Card.values();
+        assert activeOpponents == 1 : "must be heads up";
+        return compute(hole, community);
+    }
 
-        initKnownCardsToEnd(cards, hole, community);
+    public Odds compute(Hole      hole,
+                        Community community)
+    {
 
-        int unknownCount = 52 - 2 - community.knownCount();
-        FastIntCombiner fc =
-                    new FastIntCombiner(INDEXES, unknownCount);
+        Card cards[] = initKnownCardsToEnd(hole, community);
+        return rollOutCommunity(
+                cards,
+                community.knownCount());
+    }
 
-        switch (community.knownCount())
+
+    //--------------------------------------------------------------------
+    private static Odds rollOutCommunity(
+            Card cards[],
+            int  knownCount)
+    {
+        return   knownCount == 0
+               ? rollOutFlopTurnRiver(cards)
+               : knownCount == 3
+               ? rollOutTurnRiver(cards)
+               : knownCount == 4
+               ? rollOutRiver(cards)
+               : null;
+    }
+
+    private static Odds rollOutFlopTurnRiver(Card cards[])
+    {
+        return null;
+    }
+
+    private static Odds rollOutTurnRiver(Card cards[])
+    {
+        Odds odds = new Odds();
+        for (int turnIndex =  1;
+                 turnIndex <= TURN;
+                 turnIndex++)
         {
-            case 0:
-                CommunityVisitor5 c5 =
-                        new CommunityVisitor5(
-                                activeOpponents, cards);
-                fc.combine(c5);
-                return c5.odds();
+            Card turn = cards[ turnIndex ];
+            swap(cards, turnIndex, TURN);
+            for (int riverIndex = 0;
+                     riverIndex < turnIndex;
+                     riverIndex++)
+            {
+                Card river = cards[ riverIndex ];
+                swap(cards, riverIndex, RIVER);
 
-            case 3:
-                CommunityVisitor2 c2 =
-                        new CommunityVisitor2(
-                                activeOpponents, cards);
-                fc.combine(c2);
-                return c2.odds();
+                System.out.println(
+                        turn + "|" + river);
+//                System.out.println(
+//                        cards[ HOLE_A ] + "," +
+//                        cards[ HOLE_B ] + "|" +
+//                        cards[ FLOP_A ] + "," +
+//                        cards[ FLOP_B ] + "," +
+//                        cards[ FLOP_C ] + "|" +
+//                        turn + "|" + river);
 
-            case 4:
-                CommunityVisitor1 c1 =
-                        new CommunityVisitor1(
-                                activeOpponents, cards);
-                fc.combine(c1);
-                return c1.odds();
+//                int   shortcut =
+//                    Eval7Faster.shortcutFor(
+//                            cards[ FLOP_A ],
+//                            cards[ FLOP_B ],
+//                            cards[ FLOP_C ],
+//                            turn, river);
+//                short thisVal  =
+//                    Eval7Faster.fastValueOf(
+//                            shortcut,
+//                            cards[ HOLE_A ], cards[ HOLE_B ]);
+//
+//                odds = odds.plus(
+//                        rollOutOpp(cards, shortcut, thisVal));
 
-            case 5:
-                return computeOppCards(activeOpponents, cards);
+                swap(cards, riverIndex, RIVER);
+            }
+            swap(cards, turnIndex, TURN);
         }
+        return odds;
+    }
+
+    private static Odds rollOutRiver(
+            Card  cards[])
+    {
         return null;
     }
 
 
     //--------------------------------------------------------------------
-    private static class CommunityVisitor5
-            implements FastIntCombiner.CombinationVisitor5
+    private static Odds rollOutOpp(
+            Card  cards[],
+            int   shortcut,
+            short thisVal)
     {
-        private Card cards[];
-        private int  activeOpponents;
-        private Odds odds = new Odds();
-
-        public CommunityVisitor5(
-                int  activeOpps,
-                Card cards[])
+        Odds odds = new Odds();
+        for (int oppIndexB = 1; oppIndexB < OPP_B; oppIndexB++)
         {
-            activeOpponents = activeOpps;
-            this.cards      = cards;
+            for (int oppIndexA = 0;
+                     oppIndexA < oppIndexB;
+                     oppIndexA++)
+            {
+                short thatVal =
+                        Eval7Faster.fastValueOf(
+                                shortcut,
+                                cards[ OPP_A ], cards[ OPP_B ]);
+                odds = odds.plus(
+                        Odds.valueOf(thisVal, thatVal));
+            }
         }
-
-        public void visit(int a, int b, int c, int d, int e)
-        {
-            swap(cards, a, COM_A);
-            swap(cards, b, COM_B);
-            swap(cards, c, COM_C);
-            swap(cards, d, COM_D);
-            swap(cards, e, COM_E);
-
-            odds = odds.plus(
-                    computeOppCards(activeOpponents, cards));
-
-            swap(cards, e, COM_E);
-            swap(cards, d, COM_D);
-            swap(cards, c, COM_C);
-            swap(cards, b, COM_B);
-            swap(cards, a, COM_A);
-        }
-
-        public Odds odds()
-        {
-            return odds;
-        }
-    }
-    private static class CommunityVisitor2
-            implements FastIntCombiner.CombinationVisitor2
-    {
-        private Card cards[];
-        private int  activeOpponents;
-        private Odds odds = new Odds();
-
-        public CommunityVisitor2(
-                int  activeOpps,
-                Card cards[])
-        {
-            activeOpponents = activeOpps;
-            this.cards      = cards;
-        }
-
-        public void visit(int d, int e)
-        {
-            swap(cards, d, COM_D);
-            swap(cards, e, COM_E);
-
-            odds = odds.plus(
-                    computeOppCards(activeOpponents, cards));
-
-            swap(cards, e, COM_E);
-            swap(cards, d, COM_D);
-        }
-
-        public Odds odds() {  return odds;  }
-    }
-    private static class CommunityVisitor1
-            implements FastIntCombiner.CombinationVisitor1
-    {
-        private Card cards[];
-        private int  activeOpponents;
-        private Odds odds = new Odds();
-
-        public CommunityVisitor1(
-                int  activeOpps,
-                Card cards[])
-        {
-            activeOpponents = activeOpps;
-            this.cards      = cards;
-        }
-
-        public void visit(int e)
-        {
-            swap(cards, e, COM_E);
-            odds = odds.plus(
-                    computeOppCards(activeOpponents, cards));
-            swap(cards, e, COM_E);
-        }
-
-        public Odds odds() {  return odds;  }
+        return odds;
     }
 
 
     //--------------------------------------------------------------------
-    private static Odds computeOppCards(
-            int  activeOpps,
-            Card cards[])
+    public static Card[] initKnownCardsToEnd(
+            Hole hole, Community community)
     {
-        Card comA = cards[ COM_A ],
-             comB = cards[ COM_B ],
-             comC = cards[ COM_C ],
-             comD = cards[ COM_D ],
-             comE = cards[ COM_E ];
+        EnumSet<Card> known = asSet(hole, community);
 
-        int shortcut =
-                Eval7Faster.shortcutFor(comA, comB, comC, comD, comE);
-
-//        short myVal = evalHand(comA, comB, comC, comD, comE,
-//                               cards[ indexes[HOLE_A] ],
-//                               cards[ indexes[HOLE_B] ]);
-        short myVal = Eval7Faster.fastValueOf(shortcut,
-                                          cards[ HOLE_A ],
-                                          cards[ HOLE_B ]);
-
-        FastIntCombiner fc = new FastIntCombiner(INDEXES, 52 - 2 - 5);
-        switch (activeOpps)
+        int  index   = 0;
+        Card cards[] = new Card[ Card.VALUES.length ];
+        for (Card card : Card.VALUES)
         {
-            case 1:
-//                HeadsUpVisitor huv =
-//                        new HeadsUpVisitor(cards, myVal,
-//                                           comA, comB, comC, comD, comE);
-                HeadsUpVisitor huv =
-                        new HeadsUpVisitor(cards, myVal, shortcut);
-                fc.combine(huv);
-                return huv.odds();
-
-            case 2:
-            case 3:
-            default:
-                throw new IllegalArgumentException(
-                        "intractable # of opponents: " + activeOpps);
+            if (! known.contains(card))
+            {
+                cards[ index++ ] = card;
+            }
         }
 
-//        return null;
-    }
-
-    //--------------------------------------------------------------------
-    private static class HeadsUpVisitor
-            implements FastIntCombiner.CombinationVisitor2,
-                       OddsCalculator
-    {
-        private final short myVal;
-        private final Card  cards[];
-        //private final Card  comA, comB, comC, comD, comE;
-        private final int shortcut;
-        private int wins, losses, splits;
-
-        public HeadsUpVisitor(Card  cards[],
-                              short vsVal,
-                              int   shortcut)
-//                              Card  comA, Card comB,
-//                              Card  comC, Card comD, Card comE)
-        {
-            this.cards    = cards;
-            this.myVal    = vsVal;
-            this.shortcut = shortcut;
-//            this.comA = comA; this.comB = comB;
-//            this.comC = comC; this.comD = comD; this.comE = comE;
-        }
-
-        public void visit(int a, int b)
-        {
-//            short oppVal = evalHand(comA, comB, comC, comD, comE,
-//                                    cards[ a ], cards[ b ]);
-            short oppVal = Eval7Faster.fastValueOf(
-                                shortcut, cards[ a ], cards[ b ]);
-
-            if      (myVal > oppVal) { wins++;   }
-            else if (myVal < oppVal) { losses++; }
-            else                     { splits++; }
-        }
-
-        public Odds odds()
-        {
-            return new Odds(wins, losses, splits);
-        }
-    }
-
-
-    //--------------------------------------------------------------------
-    private static interface OddsCalculator
-    {
-        public Odds odds();
-    }
-
-    public static short evalHand(Card a, Card b, Card c,
-                                 Card d, Card e, Card f, Card g)
-    {
-        return Eval7Faster.valueOf(a, b, c, d, e, f, g);
-    }
-
-
-    //--------------------------------------------------------------------
-    public static void initKnownCardsToEnd(
-            Card cards[], Hole hole, Community community)
-    {
-        swap(cards, hole.a().ordinal(), HOLE_A);
-        swap(cards, hole.b().ordinal(), HOLE_B);
-
+        cards[ HOLE_A ] = hole.a();
+        cards[ HOLE_B ] = hole.b();
         switch (community.knownCount())
         {
             case 5:
-                swap(cards, community.river().ordinal(), COM_E);
+                cards[ RIVER  ] = community.river();
 
             case 4:
-                swap(cards, community.turn().ordinal(),  COM_D);
+                cards[ TURN   ] = community.turn();
 
             case 3:
-                swap(cards, community.flopC().ordinal(), COM_C);
-                swap(cards, community.flopB().ordinal(), COM_B);
-                swap(cards, community.flopA().ordinal(), COM_A);
+                cards[ FLOP_A ] = community.flopA();
+                cards[ FLOP_B ] = community.flopB();
+                cards[ FLOP_C ] = community.flopC();
         }
+        return cards;
+    }
+
+    private static EnumSet<Card> asSet(
+            Hole hole, Community community)
+    {
+        EnumSet<Card> seq = EnumSet.of(hole.a(), hole.b());
+        if (community.hasRiver()) {
+            seq.add( community.river() );
+        }
+        if (community.hasTurn()) {
+            seq.add( community.turn() );
+        }
+        if (community.hasFlop()) {
+            seq.add( community.flopA() );
+            seq.add( community.flopB() );
+            seq.add( community.flopC() );
+        }
+        return seq;
     }
 
     
@@ -298,27 +211,92 @@ public class GeneralOddFinder implements OddFinder
     {
         OddFinder oddFinder = new GeneralOddFinder();
 
-        Suit a = Suit.SPADES;
-        Suit b = Suit.HEARTS;
-        Suit c = Suit.DIAMONDS;
-        Suit d = Suit.CLUBS;
-
-        Odds odds = oddFinder.compute(
-//                Hole.newInstance(Card.TWO_OF_HEARTS,
-//                                 Card.TWO_OF_SPADES),
-//                new Community(Card.TEN_OF_DIAMONDS,
-//                              Card.TEN_OF_CLUBS,
-//                              Card.JACK_OF_HEARTS,
-//                              Card.JACK_OF_SPADES,
-//                              Card.FIVE_OF_DIAMONDS),
-                Hole.valueOf(Card.valueOf(Rank.TWO, a),
-                                 Card.valueOf(Rank.TWO, b)),
-                new Community(Card.valueOf(Rank.TEN, c),
-                              Card.valueOf(Rank.TEN, d),
-                              Card.valueOf(Rank.JACK, a),
-                              Card.valueOf(Rank.JACK, b),
-                              Card.valueOf(Rank.FIVE, c)),
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Odds oddsA = oddFinder.compute(
+                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
+                             Card.valueOf(THREE, CLUBS)),
+                new Community(Card.valueOf(ACE,  SPADES),
+                              Card.valueOf(KING, SPADES),
+                              Card.valueOf(KING, CLUBS)),
                 1);
-        System.out.println( odds );
+//        Odds oddsA = compute(
+//                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
+//                             Card.valueOf(THREE, CLUBS)),
+//                Card.valueOf(ACE,  SPADES),
+//                Card.valueOf(KING, SPADES),
+//                Card.valueOf(KING, CLUBS));
+
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Odds oddsB = oddFinder.compute(
+                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
+                             Card.valueOf(THREE, CLUBS)),
+                new Community(Card.valueOf(ACE,  DIAMONDS),
+                              Card.valueOf(KING, DIAMONDS),
+                              Card.valueOf(KING, CLUBS)),
+                1);
+//        Odds oddsB = compute(
+//                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
+//                             Card.valueOf(THREE, CLUBS)),
+//                Card.valueOf(ACE,  DIAMONDS),
+//                Card.valueOf(KING, DIAMONDS),
+//                Card.valueOf(KING, CLUBS));
+
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println( oddsA );
+        System.out.println( oddsB );
+    }
+
+    private static Odds compute(
+            Hole hole,
+            Card flopA, Card flopB, Card flopC)
+    {
+        Odds odds = new Odds();
+        for (Card turn : Card.VALUES)
+        {
+            for (Card river : Card.VALUES)
+            {
+                if (turn.ordinal() >= river.ordinal()) continue;
+                EnumSet<Card> sequence =
+                        EnumSet.of(
+                                hole.a(), hole.b(),
+                                flopA, flopB, flopC,
+                                turn, river);
+                if (sequence.size() < 7) continue;
+
+                System.out.println(
+                        turn + "|" + river);
+//                System.out.println(
+//                        hole.a() + "," +
+//                        hole.b() + "|" +
+//                        flopA + "," +
+//                        flopB + "," +
+//                        flopC + "|" +
+//                        turn + "|" + river);
+
+//                int   shortcut =
+//                        Eval7Faster.shortcutFor(
+//                                flopA, flopB, flopC, turn, river);
+//                short val      =
+//                        Eval7Faster.fastValueOf(
+//                                shortcut, hole.a(), hole.b());
+//
+//                for (Card oppA : Card.VALUES)
+//                {
+//                    for (Card oppB : Card.VALUES)
+//                    {
+////                        if (river.ordinal() >= oppA.ordinal()) continue;
+//                        if ( oppA.ordinal() >= oppB.ordinal()) continue;
+//                        if (sequence.contains(oppA) ||
+//                                sequence.contains(oppB)) continue;
+//
+//                        short oppVal = Eval7Faster.fastValueOf(
+//                                            shortcut, oppA, oppB);
+//                        Odds  addend = Odds.valueOf(val, oppVal);
+//                        odds         = odds.plus( addend );
+//                    }
+//                }
+            }
+        }
+        return odds;
     }
 }

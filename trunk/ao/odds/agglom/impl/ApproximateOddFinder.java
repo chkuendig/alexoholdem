@@ -5,7 +5,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
-import static ao.odds.agglom.impl.GeneralOddFinder.*;
+import static ao.odds.agglom.impl.GeneralOddFinder.initKnownCardsToEnd;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
 import ao.util.rand.MersenneTwisterFast;
@@ -17,6 +17,15 @@ import ao.util.stats.FastIntCombiner;
 public class ApproximateOddFinder implements OddFinder
 {
     //--------------------------------------------------------------------
+    private static final int HOLE_A = 52 -      1,
+                             HOLE_B = 52 - (1 + 1),
+                             COM_A  = 52 - (2 + 1),
+                             COM_B  = 52 - (2 + 2),
+                             COM_C  = 52 - (2 + 3),
+                             COM_D  = 52 - (2 + 4),
+                             COM_E  = 52 - (2 + 5),
+                             OPP_A  = 52 - (2 + 5 + 1);
+
     private static final int  DEFAULT_FLOP_ITR = 1000; // 300
     private static final long DEFAULT_HOLE_ITR =  600; // 200
 
@@ -49,10 +58,7 @@ public class ApproximateOddFinder implements OddFinder
         int  flops = FLOP_ITR;
         long holes = HOLE_ITR;
 
-        Card cards[]   = Card.values();
-
-        initKnownCardsToEnd(
-                cards, hole, community);
+        Card cards[] = initKnownCardsToEnd(hole, community);
 
         MersenneTwisterFast rand = new MersenneTwisterFast();
         switch (community.knownCount())
@@ -130,7 +136,7 @@ public class ApproximateOddFinder implements OddFinder
         {
             int unknownCount = 52 - 2 - 3;
             FastIntCombiner fc =
-                new FastIntCombiner(INDEXES, unknownCount);
+                new FastIntCombiner(Card.INDEXES, unknownCount);
 
             TurnCommunityVisitor turn =
                     new TurnCommunityVisitor(
@@ -174,7 +180,7 @@ public class ApproximateOddFinder implements OddFinder
 
         int unknownCount = 52 - 2 - 4;
         FastIntCombiner fc =
-            new FastIntCombiner(INDEXES, unknownCount);
+            new FastIntCombiner(Card.INDEXES, unknownCount);
 
         RiverCommunityVisitor river =
                 new RiverCommunityVisitor(
@@ -315,7 +321,7 @@ public class ApproximateOddFinder implements OddFinder
             return Short.MIN_VALUE;
         }
 
-        int holeDestA = OPPS - atOpp*2;
+        int holeDestA = OPP_A - atOpp*2;
         int holeDestB = holeDestA - 1;
 
         int xOppA = rand.nextInt( holeDestA + 1 );

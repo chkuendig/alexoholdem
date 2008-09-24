@@ -6,12 +6,17 @@ import ao.bucket.index.river.RiverCaseSet;
 import ao.bucket.index.river.RiverSparceLookup;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Rank;
+import ao.odds.agglom.Odds;
+import ao.odds.agglom.impl.GeneralOddFinder;
 import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
+
+import java.util.Arrays;
 
 /**
  * Date: Aug 21, 2008
@@ -33,8 +38,8 @@ public class GenericIndexerTest
     private Gapper seenFlops  = new Gapper();
     private Gapper seenTurns  = new Gapper();
     private Gapper seenRivers = new Gapper();
-    private AutovivifiedList<Rank> turnLog =
-                new AutovivifiedList<Rank>();
+    private AutovivifiedList<Rank[]> turnLog =
+                new AutovivifiedList<Rank[]>();
 
 
     //--------------------------------------------------------------------
@@ -85,7 +90,7 @@ public class GenericIndexerTest
     public void iterateFlops(
             final Hole hole)
     {
-        System.out.println(hole);
+//        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
                 new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -93,18 +98,32 @@ public class GenericIndexerTest
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
-                if (seenFlops.get( index )) return;
-                seenFlops.set( index );
 
-                swap(cards, flopC, 51-2);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopA, 51-4);
+                if (index == 1870)
+                {
+                    Odds odds =
+                            new GeneralOddFinder().compute(
+                                    hole,
+                                    new Community(
+                                            cards[flopA],
+                                            cards[flopB],
+                                            cards[flopC]),
+                                    1);
+                    System.out.println(flop + "\t" + odds);
+                }
 
-                iterateTurns(flop);
-
-                swap(cards, flopA, 51-4);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopC, 51-2);
+//                if (seenFlops.get( index )) return;
+//                seenFlops.set( index );
+//
+//                swap(cards, flopC, 51-2);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopA, 51-4);
+//
+//                iterateTurns(flop);
+//
+//                swap(cards, flopA, 51-4);
+//                swap(cards, flopB, 51-3);
+//                swap(cards, flopC, 51-2);
             }});
     }
 
@@ -118,15 +137,23 @@ public class GenericIndexerTest
             Turn turn      = flop.addTurn(turnCard);
             int  turnIndex = turn.canonIndex();
 
-//            Rank existing = turnLog.get( turnIndex );
-//            if (existing == null)
+//            if (turnIndex == 28820)
 //            {
-//                turnLog.set( turnIndex, turnCard.rank() );
+//                System.out.println(turn);
+//                turn.canonIndex();
 //            }
-//            else if (existing != turnCard.rank())
-//            {
-//                System.out.println(existing + " :: " + turnCard.rank());
-//            }
+
+            Rank existing[] = turnLog.get( turnIndex );
+            if (existing == null)
+            {
+                turnLog.set(turnIndex, flop.ranks());
+            }
+            else if (!Arrays.equals(existing, flop.ranks()))
+            {
+                System.out.println(
+                        Arrays.toString(existing) + " :: " +
+                        Arrays.toString(flop.ranks()));
+            }
 
             if (seenTurns.get( turnIndex )) continue;
             seenTurns.set( turnIndex );
@@ -149,6 +176,7 @@ public class GenericIndexerTest
             long       riverIndex = river.canonIndex();
             if (riverIndex < 0)
             {
+                System.out.println(river);
                 river.canonIndex();
             }
 
