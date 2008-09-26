@@ -88,6 +88,11 @@ public class CanonRiver
         return CASE;
     }
 
+    public CanonCard riverCard()
+    {
+        return RIVER;
+    }
+
     public long canonIndex()
     {
 //        long globalOffset =

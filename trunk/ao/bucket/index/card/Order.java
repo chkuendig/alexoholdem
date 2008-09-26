@@ -475,7 +475,7 @@ public enum Order
     //--------------------------------------------------------------------
     //--------------------------------------------------------------------
     // break suit symmetries
-//    public abstract Order refine(Order with);
+    // public abstract Order refine(Order with);
     public Order refine(Order with)
     {
         return this;

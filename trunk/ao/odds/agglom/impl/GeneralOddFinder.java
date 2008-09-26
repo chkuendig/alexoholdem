@@ -3,8 +3,10 @@ package ao.odds.agglom.impl;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import static ao.holdem.model.card.Rank.*;
-import static ao.holdem.model.card.Suit.*;
+import static ao.holdem.model.card.Rank.THREE;
+import static ao.holdem.model.card.Rank.TWO;
+import static ao.holdem.model.card.Suit.CLUBS;
+import static ao.holdem.model.card.Suit.SPADES;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
@@ -69,11 +71,72 @@ public class GeneralOddFinder implements OddFinder
                : null;
     }
 
+
+    //--------------------------------------------------------------------
     private static Odds rollOutFlopTurnRiver(Card cards[])
     {
-        return null;
+        Odds odds = new Odds();
+        for (int flopIndexC = 4; flopIndexC <= FLOP_C; flopIndexC++)
+        {
+            Card flopC = cards[ flopIndexC ];
+            swap(cards, flopIndexC, FLOP_C);
+
+            for (int flopIndexB = 3;
+                     flopIndexB < flopIndexC; flopIndexB++)
+            {
+                Card flopB = cards[ flopIndexB ];
+                swap(cards, flopIndexB, FLOP_B);
+
+                for (int flopIndexA = 2;
+                         flopIndexA < flopIndexB; flopIndexA++)
+                {
+                    Card flopA = cards[ flopIndexA ];
+                    swap(cards, flopIndexA, FLOP_A);
+
+                    for (int turnIndex = 1;
+                             turnIndex < flopIndexA; turnIndex++)
+                    {
+                        Card turn = cards[ turnIndex ];
+                        swap(cards, turnIndex, TURN);
+
+                        for (int riverIndex = 0;
+                                 riverIndex < turnIndex; riverIndex++)
+                        {
+                            Card river = cards[ riverIndex ];
+                            swap(cards, riverIndex, RIVER);
+
+                            int   shortcut =
+                            Eval7Faster.shortcutFor(
+                                    flopA, flopB, flopC,
+                                    turn, river);
+                            short thisVal  =
+                                    Eval7Faster.fastValueOf(
+                                            shortcut,
+                                            cards[ HOLE_A ],
+                                            cards[ HOLE_B ]);
+
+                            odds = odds.plus(
+                                    rollOutOpp(cards, shortcut, thisVal));
+
+                            swap(cards, riverIndex, RIVER);
+                        }
+
+                        swap(cards, turnIndex, TURN);
+                    }
+
+                    swap(cards, flopIndexA, FLOP_A);
+                }
+
+                swap(cards, flopIndexB, FLOP_B);
+            }
+
+            swap(cards, flopIndexC, FLOP_C);
+        }
+        return odds;
     }
 
+
+    //--------------------------------------------------------------------
     private static Odds rollOutTurnRiver(Card cards[])
     {
         Odds odds = new Odds();
@@ -81,38 +144,28 @@ public class GeneralOddFinder implements OddFinder
                  turnIndex <= TURN;
                  turnIndex++)
         {
-            Card turn = cards[ turnIndex ];
+            Card turnCard = cards[ turnIndex ];
             swap(cards, turnIndex, TURN);
             for (int riverIndex = 0;
                      riverIndex < turnIndex;
                      riverIndex++)
             {
-                Card river = cards[ riverIndex ];
+                Card riverCard = cards[ riverIndex ];
                 swap(cards, riverIndex, RIVER);
 
-                System.out.println(
-                        turn + "|" + river);
-//                System.out.println(
-//                        cards[ HOLE_A ] + "," +
-//                        cards[ HOLE_B ] + "|" +
-//                        cards[ FLOP_A ] + "," +
-//                        cards[ FLOP_B ] + "," +
-//                        cards[ FLOP_C ] + "|" +
-//                        turn + "|" + river);
+                int   shortcut =
+                    Eval7Faster.shortcutFor(
+                            cards[ FLOP_A ],
+                            cards[ FLOP_B ],
+                            cards[ FLOP_C ],
+                            turnCard, riverCard);
+                short thisVal  =
+                    Eval7Faster.fastValueOf(
+                            shortcut,
+                            cards[ HOLE_A ], cards[ HOLE_B ]);
 
-//                int   shortcut =
-//                    Eval7Faster.shortcutFor(
-//                            cards[ FLOP_A ],
-//                            cards[ FLOP_B ],
-//                            cards[ FLOP_C ],
-//                            turn, river);
-//                short thisVal  =
-//                    Eval7Faster.fastValueOf(
-//                            shortcut,
-//                            cards[ HOLE_A ], cards[ HOLE_B ]);
-//
-//                odds = odds.plus(
-//                        rollOutOpp(cards, shortcut, thisVal));
+                odds = odds.plus(
+                        rollOutOpp(cards, shortcut, thisVal));
 
                 swap(cards, riverIndex, RIVER);
             }
@@ -121,10 +174,37 @@ public class GeneralOddFinder implements OddFinder
         return odds;
     }
 
+
+    //--------------------------------------------------------------------
     private static Odds rollOutRiver(
             Card  cards[])
     {
-        return null;
+        Odds odds = new Odds();
+        for (int riverIndex = 0;
+                 riverIndex <= RIVER;
+                 riverIndex++)
+        {
+            Card riverCard = cards[ riverIndex ];
+            swap(cards, riverIndex, RIVER);
+
+            int   shortcut =
+                Eval7Faster.shortcutFor(
+                        cards[ FLOP_A ],
+                        cards[ FLOP_B ],
+                        cards[ FLOP_C ],
+                        cards[ TURN ],
+                        riverCard);
+            short thisVal  =
+                Eval7Faster.fastValueOf(
+                        shortcut,
+                        cards[ HOLE_A ], cards[ HOLE_B ]);
+
+            odds = odds.plus(
+                    rollOutOpp(cards, shortcut, thisVal));
+
+            swap(cards, riverIndex, RIVER);
+        }
+        return odds;
     }
 
 
@@ -135,7 +215,7 @@ public class GeneralOddFinder implements OddFinder
             short thisVal)
     {
         Odds odds = new Odds();
-        for (int oppIndexB = 1; oppIndexB < OPP_B; oppIndexB++)
+        for (int oppIndexB = 1; oppIndexB <= OPP_B; oppIndexB++)
         {
             for (int oppIndexA = 0;
                      oppIndexA < oppIndexB;
@@ -144,7 +224,7 @@ public class GeneralOddFinder implements OddFinder
                 short thatVal =
                         Eval7Faster.fastValueOf(
                                 shortcut,
-                                cards[ OPP_A ], cards[ OPP_B ]);
+                                cards[ oppIndexA ], cards[ oppIndexB ]);
                 odds = odds.plus(
                         Odds.valueOf(thisVal, thatVal));
             }
@@ -212,91 +292,23 @@ public class GeneralOddFinder implements OddFinder
         OddFinder oddFinder = new GeneralOddFinder();
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Odds oddsA = oddFinder.compute(
-                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
-                             Card.valueOf(THREE, CLUBS)),
-                new Community(Card.valueOf(ACE,  SPADES),
-                              Card.valueOf(KING, SPADES),
-                              Card.valueOf(KING, CLUBS)),
-                1);
-//        Odds oddsA = compute(
-//                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
-//                             Card.valueOf(THREE, CLUBS)),
-//                Card.valueOf(ACE,  SPADES),
-//                Card.valueOf(KING, SPADES),
-//                Card.valueOf(KING, CLUBS));
+        Odds oddsA =
+                oddFinder.compute(
+                    Hole.valueOf(Card.valueOf(TWO,   CLUBS),
+                                 Card.valueOf(THREE, CLUBS)),
+                    new Community(),
+                    1);
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Odds oddsB = oddFinder.compute(
-                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
-                             Card.valueOf(THREE, CLUBS)),
-                new Community(Card.valueOf(ACE,  DIAMONDS),
-                              Card.valueOf(KING, DIAMONDS),
-                              Card.valueOf(KING, CLUBS)),
-                1);
-//        Odds oddsB = compute(
-//                Hole.valueOf(Card.valueOf(TWO,   CLUBS),
-//                             Card.valueOf(THREE, CLUBS)),
-//                Card.valueOf(ACE,  DIAMONDS),
-//                Card.valueOf(KING, DIAMONDS),
-//                Card.valueOf(KING, CLUBS));
+        Odds oddsB =
+                oddFinder.compute(
+                    Hole.valueOf(Card.valueOf(TWO,   SPADES),
+                                 Card.valueOf(THREE, SPADES)),
+                    new Community(),
+                    1);
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println( oddsA );
         System.out.println( oddsB );
-    }
-
-    private static Odds compute(
-            Hole hole,
-            Card flopA, Card flopB, Card flopC)
-    {
-        Odds odds = new Odds();
-        for (Card turn : Card.VALUES)
-        {
-            for (Card river : Card.VALUES)
-            {
-                if (turn.ordinal() >= river.ordinal()) continue;
-                EnumSet<Card> sequence =
-                        EnumSet.of(
-                                hole.a(), hole.b(),
-                                flopA, flopB, flopC,
-                                turn, river);
-                if (sequence.size() < 7) continue;
-
-                System.out.println(
-                        turn + "|" + river);
-//                System.out.println(
-//                        hole.a() + "," +
-//                        hole.b() + "|" +
-//                        flopA + "," +
-//                        flopB + "," +
-//                        flopC + "|" +
-//                        turn + "|" + river);
-
-//                int   shortcut =
-//                        Eval7Faster.shortcutFor(
-//                                flopA, flopB, flopC, turn, river);
-//                short val      =
-//                        Eval7Faster.fastValueOf(
-//                                shortcut, hole.a(), hole.b());
-//
-//                for (Card oppA : Card.VALUES)
-//                {
-//                    for (Card oppB : Card.VALUES)
-//                    {
-////                        if (river.ordinal() >= oppA.ordinal()) continue;
-//                        if ( oppA.ordinal() >= oppB.ordinal()) continue;
-//                        if (sequence.contains(oppA) ||
-//                                sequence.contains(oppB)) continue;
-//
-//                        short oppVal = Eval7Faster.fastValueOf(
-//                                            shortcut, oppA, oppB);
-//                        Odds  addend = Odds.valueOf(val, oppVal);
-//                        odds         = odds.plus( addend );
-//                    }
-//                }
-            }
-        }
-        return odds;
     }
 }
