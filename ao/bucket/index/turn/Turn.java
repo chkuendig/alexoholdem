@@ -80,6 +80,10 @@ public class Turn
         return TurnLookup.canonIndex(flopIndex, TURN);
     }
 
+    public CanonCard turnCard()
+    {
+        return TURN;
+    }
     public CanonSuit turnSuit()
     {
         return TURN.suit();
