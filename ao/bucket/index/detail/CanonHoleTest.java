@@ -1,12 +1,15 @@
 package ao.bucket.index.detail;
 
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.test.AutovivifiedList;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.OddHist;
 import ao.odds.agglom.Odds;
+import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.agglom.impl.GeneralOddFinder;
 import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
@@ -23,33 +26,57 @@ import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 public class CanonHoleTest
 {
     //-----------------------------------------------------------------------
+    private static final String DIR       = "lookup/canon/detail/";
+    private static final String HOLE_FILE = DIR + "hole.lookup";
+    private static final String FLOP_FILE = DIR + "flop.lookup";
+
+
+    //-----------------------------------------------------------------------
     public static void main(String[] args)
     {
+//        new CanonHoleTest().testHoles();
+//        new CanonHoleTest().testHolesFast();
         new CanonHoleTest().testFlops();
     }
 
 
     //-----------------------------------------------------------------------
-    private final Card                       CARDS[]   = Card.values();
-    private final AutovivifiedList<OddCount> HOLES     =
+    private final Card                       CARDS[]    = Card.values();
+    private final AutovivifiedList<OddCount> HOLES      =
             new AutovivifiedList<OddCount>();
-    private final AutovivifiedList<OddCount> FLOPS     =
+    private final AutovivifiedList<OddHist>  HOLES_FAST =
+            new AutovivifiedList<OddHist>();
+    private final AutovivifiedList<OddCount> FLOPS      =
             new AutovivifiedList<OddCount>();
-    private final Gapper                     seenHoles = new Gapper();
-    private final Gapper                     seenFlops = new Gapper();
+    private       long                       FLOPS_FAST[];
+    private final Gapper                     seenHoles  = new Gapper();
+    private final Gapper                     seenFlops  = new Gapper();
 
 
     //-----------------------------------------------------------------------
     public synchronized void testHoles()
     {
         HOLES.clear();
+        seenHoles.clear();
+
+//        read(HOLES, OddCount.BINDING, HOLE_FILE);
+//        if (! HOLES.isEmpty())
+//        {
+//            for (OddCount oc : HOLES)
+//            {
+//                System.out.println(oc);
+//            }
+//        }
+
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
                 Hole hole = Hole.valueOf(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
-
+                if (seenHoles.get(hole.canonIndex())) return;
+                seenHoles.set( hole.canonIndex() );
+                
                 Odds     odds     = new GeneralOddFinder().compute(
                                             hole, Community.PREFLOP, 1);
                 OddCount oddCount = HOLES.get( hole.canonIndex() );
@@ -70,20 +97,52 @@ public class CanonHoleTest
             }
         });
 
-        for (int i = 0; i < HOLES.size(); i++)
-        {
-            OddCount oddCount = HOLES.get( i );
-            System.out.println(i + "\t" + oddCount);
-        }
+//        write(HOLES_FAST, OddCount.BINDING, HOLE_FILE);
+    }
+
+
+    //-----------------------------------------------------------------------
+    public synchronized void testHolesFast()
+    {
+        HOLES_FAST.clear();
+        seenHoles.clear();
+
+        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
+                new CombinationVisitor2() {
+            public void visit(int holeA, int holeB)
+            {
+                Hole hole = Hole.valueOf(
+                        Card.VALUES[holeA], Card.VALUES[holeB]);
+//                if (seenHoles.get(hole.canonIndex())) return;
+                seenHoles.set( hole.canonIndex() );
+                System.out.println(hole);
+
+                OddHist odds     = new GeneralHistFinder().compute(
+                                            hole, Community.PREFLOP);
+                OddHist existing = HOLES_FAST.get( hole.canonIndex() );
+                if (existing == null)
+                {
+                    HOLES_FAST.set( hole.canonIndex(), odds );
+                }
+                else if (! existing.equals( odds ))
+                {
+                    System.out.println("ERROR AT: " + hole);
+                }
+            }
+        });
+
+//        write(HOLES, OddCount.BINDING, HOLE_FILE);
     }
 
 
     //-----------------------------------------------------------------------
     public synchronized void testFlops()
     {
-        FLOPS.clear();
-        seenHoles.clear();
-        seenFlops.clear();
+//        FLOPS.clear();
+//        seenHoles.clear();
+//        seenFlops.clear();
+
+        FLOPS_FAST = new long[ FlopLookup.CANON_FLOP_COUNT ];
 
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
@@ -106,18 +165,19 @@ public class CanonHoleTest
             }
         });
 
-        for (int i = 0; i < FLOPS.size(); i++)
-        {
-            OddCount oddCount = FLOPS.get( i );
-            System.out.println(i + "\t" + oddCount);
-        }
+//        write(FLOPS, OddCount.BINDING, FLOP_FILE);
+//        for (int i = 0; i < FLOPS.size(); i++)
+//        {
+//            OddCount oddCount = FLOPS.get( i );
+//            System.out.println(i + "\t" + oddCount);
+//        }
     }
 
     public void iterateFlops(
             final Hole hole)
     {
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
-                new CombinationVisitor3() {
+        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
+                .combine(new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
                 Flop flop = hole.addFlop(
@@ -126,26 +186,102 @@ public class CanonHoleTest
 //                if (seenFlops.get( index )) return;
                 seenFlops.set( index );
 
-                Odds     odds     =
-                        new GeneralOddFinder().compute(
+                OddHist odds     =
+                        new GeneralHistFinder().compute(
                                 hole,
                                 new Community(
                                         CARDS[flopA],
                                         CARDS[flopB],
-                                        CARDS[flopC]),
-                                1);
-                OddCount oddCount = FLOPS.get( index );
-                if (oddCount == null)
+                                        CARDS[flopC]));
+                long existing = FLOPS_FAST[ index ];
+                if (existing == 0)
                 {
-                    oddCount = new OddCount(odds);
-                    FLOPS.set( index, oddCount );
+                    FLOPS_FAST[ index ] = odds.secureHashCode();
                 }
-                else if (! oddCount.oddsEqual( odds ))
+                else if (existing != odds.secureHashCode())
                 {
-                    System.out.println(flop + " :: " +
-                            oddCount + " vs " + odds);
+                    System.out.println("ERROR AT: " + flop);
                 }
-                oddCount.increment();
             }});
     }
+
+
+    //-----------------------------------------------------------------------
+//    private static void read(
+//            Collection<OddCount>     to,
+//            GenericBinding<OddCount> binding,
+//            String                   filename)
+//    {
+//        try
+//        {
+//            doRead(to, binding, filename);
+//        }
+//        catch (IOException e)
+//        {
+//            throw new Error( e );
+//        }
+//    }
+//    private static void doRead(
+//            Collection<OddCount>     to,
+//            GenericBinding<OddCount> binding,
+//            String                   filename)
+//                throws IOException
+//    {
+//        File        inFile = new File(filename);
+//        InputStream in     =
+//                new FileInputStream(filename);
+//        byte content[];
+//        try
+//        {
+//            content = new byte[ (int) inFile.length() ];
+//            if (in.read( content ) == -1) return;
+//        }
+//        finally
+//        {
+//            in.close();
+//        }
+//
+//        TupleInput ti = new TupleInput(content);
+//        while (ti.available() > 0)
+//        {
+//            to.add( binding.read(ti) );
+//        }
+//    }
+//
+//
+//    //-----------------------------------------------------------------------
+//    private static void write(
+//            List<OddCount>           counts,
+//            GenericBinding<OddCount> binding,
+//            String                   filename)
+//    {
+//        try
+//        {
+//            doWrite(counts, binding, filename);
+//        }
+//        catch (IOException e)
+//        {
+//            throw new Error( e );
+//        }
+//    }
+//    private static void doWrite(
+//            List<OddCount>           counts,
+//            GenericBinding<OddCount> binding,
+//            String                   filename) throws IOException
+//    {
+//        OutputStream out =
+//                new FileOutputStream(filename);
+//
+//        TupleOutput to = new TupleOutput();
+//        for (OddCount oddCount : counts)
+//        {
+//            binding.write(oddCount, to);
+//
+//            byte bytes[] = to.getBufferBytes();
+//            out.write( bytes, 0, to.getBufferLength() );
+//            to = new TupleOutput(bytes);
+//        }
+//
+//        out.close();
+//    }
 }
