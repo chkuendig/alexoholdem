@@ -24,15 +24,15 @@ public class Eval7Faster
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
-	private static int[]   handRanks = null;        // array to hold hand rank lookup table
-	private static boolean verbose   = true;		// toggles verbose mode
+	private static int[]   handRanks = null;      // hand rank lookup
+	private static boolean verbose   = true;	  // toggles verbose mode
 
-	private static int[]  hand; 					// re-usable array to hold cards in a hand
-	private static long[] keys             = null;	// array to hold key lookup table
-	private static int    numKeys          = 1;		// counter for number of defined keys in key array
-	private static long   maxKey           = 0;		// holds current maximum key value
-	private static int    numCards         = 0;		// re-usable counter for number of cards in a hand
-	private static int    cardIndex        = 0;		// re-usable index for cards in a hands
+	private static int[]  hand; 				  // cards in a hand
+	private static long[] keys             = null;// key lookup table
+	private static int    numKeys          = 1;	  // # of defined keys
+	private static long   maxKey           = 0;	  // current max key value
+	private static int    numCards         = 0;	  // # of cards in a hand
+	private static int    cardIndex        = 0;	  // cards in a hands
 
     private static long   startTimer;
 	private static long   stopTimer;
@@ -68,7 +68,8 @@ public class Eval7Faster
 		// short circuit insertion for most common cases
 		if (key >= maxKey) {
 			if (key > maxKey) {
-				keys[numKeys++] = key;	// appends the new key to the key array
+                // appends the new key to the key array
+				keys[numKeys++] = key;
 				maxKey = key;
 			}
 			return numKeys - 1;
@@ -104,29 +105,35 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
-	// Returns a key for the hand created by adding a new card to the hand
-	// represented by the given key.  Returns 0 if new card already appears in hand.
+	// Returns a key for the hand created by adding a new card to the
+    //  hand represented by the given key.
+    // Returns 0 if new card already appears in hand.
 	private static long makeKey(long baseKey, int newCard) {
 
-		int[] suitCount = new int[NUM_SUITS + 1]; 	// number of times a suit appears in a hand
-		int[] rankCount = new int[NUM_RANKS + 1];	// number of times a rank appears in a hand
+        // number of times a suit appears in a hand
+		int[] suitCount = new int[NUM_SUITS + 1];
+        // number of times a rank appears in a hand
+		int[] rankCount = new int[NUM_RANKS + 1];
 		hand = new int[8];
 
 		// extract the hand represented by the key value
 		for (cardIndex = 0; cardIndex < 6; cardIndex++) {
 
 			// hand[0] is used to hold the new card
-			hand[cardIndex + 1] = (int)((baseKey >>> (8 * cardIndex)) & 0xFF);
+			hand[cardIndex + 1] =
+                    (int)((baseKey >>> (8 * cardIndex)) & 0xFF);
 		}
 
 		hand[0] = formatCard8bit(newCard);
 
-		// examine the hand to determine number of cards and rank/suit counts
+		// examine the hand to determine number
+        //  of cards and rank/suit counts
 		for (numCards = 0; hand[numCards] != 0; numCards++) {
 			suitCount[hand[numCards] & 0xF]++;
 			rankCount[(hand[numCards] >>> 4) & 0xF]++;
 
-			// check to see if new card is already contained in hand (rank and suit considered)
+			// check to see if new card is already contained
+            //  in hand (rank and suit considered)
 			if (numCards != 0 && hand[0] == hand[numCards]) {
 				return 0;
 			}
@@ -139,14 +146,16 @@ public class Eval7Faster
 			}
 		}
 
-		// determine the minimum number of suits required for a flush to be possible
+		// determine the minimum number of suits required
+        //  for a flush to be possible
 		int minSuitCount = numCards - 2;
 
 		// check to see if suit is significant
 		if (minSuitCount > 1) {
 			// examine each card in the hand
 			for (cardIndex = 0; cardIndex < numCards; cardIndex++) {
-				// if the suit is not significant then strip it from the card
+				// if the suit is not significant
+                //  then strip it from the card
 				if (suitCount[hand[cardIndex] & 0xF] < minSuitCount) {
 					hand[cardIndex] &= 0xF0;
 				}
@@ -172,8 +181,10 @@ public class Eval7Faster
         // +--------+
         // |rrrr--ss|
         // +--------+
-        // r = rank of card		(deuce = 1, trey = 2, four = 3, five = 4,..., ace = 13)
-		// s = suit of card		(suits are arbitrary, can take value from 0 to 3)
+        // r = rank of card
+        //  (deuce = 1, trey = 2, four = 3, five = 4,..., ace = 13)
+		// s = suit of card
+        //  (suits are arbitrary, can take value from 0 to 3)
 
 		card--;
 		return (((card >>> 2) + 1) << 4) + (card & 3) + 1;
@@ -213,10 +224,12 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
-	// Determines the relative strength of a hand (the hand is given by its unique key value).
+	// Determines the relative strength of a hand
+    //  (the hand is given by its unique key value).
 	private static int getHandRank(long key) {
-        // The following method implements a modified version of "Cactus Kev's Five-Card
-		// Poker Hand Evaluator" to determine the relative strength of two five-card hands.
+        // The following method implements a modified version of
+        //  "Cactus Kev's Five-Card Poker Hand Evaluator" to determine
+        //  the relative strength of two five-card hands.
 		// Reference: http://www.suffecool.net/poker/evaluator.html
 
 		hand = new int[8];
@@ -250,11 +263,17 @@ public class Eval7Faster
                 suit = currentCard & 0xF; //0..4, 0 = don't care.
 
                 // covert suit to ordinal() 0..3
-                if (suit == 0) {		// if suit wasn't significant though...
-                    suit = suititerator++;   // Cactus Kev needs a suit!
-                    if (suititerator == 5)	 // loop through available suits
+                // if suit wasn't significant though...
+                if (suit == 0) {
+                    // Cactus Kev needs a suit!
+                    suit = suititerator++;
+
+                    // loop through available suits
+                    if (suititerator == 5)
                         suititerator = 1;
-                    if (suit == mainsuit) {   // if it was the sigificant suit...  Don't want extras!!
+
+                    // if it was the sigificant suit... Don't want extras
+                    if (suit == mainsuit) {
                         suit = suititerator++;    // skip it
                         if (suititerator == 5)	  // roll 1-4
                             suititerator = 1;
@@ -263,51 +282,31 @@ public class Eval7Faster
 
                 // change card representation to Cactus Kev Representation
                 hand[cardIndex] = Eval5.asCactusKevsFormat(rank, suit-1);
-//                handCards[cardIndex] =
-//                        Card.valueOf(Card.Rank.values()[rank],
-//                                     Card.Suit.values()[suit-1]);
-//                if (! lastCardIsUnique(handCards, cardIndex))
-//                {
-//                    System.out.println("!!WTF: not unique");
-//                }
             }
 
             switch (numCards) {
                 case 5 :
                     handRank = EvalSlow.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4]);
-//                    if (handRank != EvalSlow.valueOf(
-//                            handCards[0], handCards[1],
-//                            handCards[2], handCards[3], handCards[4]))
-//                    {
-//                        System.out.println("!!WTF: unequal 5 value");
-//                    }
                     break;
 
                 case 6 :
                     handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5]);
-//                    if (handRank != EvalSlow.valueOf(
-//                            hand[0], hand[1], hand[2],
-//                            hand[3], hand[4], hand[5]))
-//                    {
-//                        System.out.println("!!WTF: unequal 6 value");
-//                    }
+                            hand[0],hand[1],
+                            hand[2],hand[3],hand[4],
+                            hand[5]);
                     break;
 
                 case 7 :
                     handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],hand[2],hand[3],hand[4],hand[5],hand[6]);
-//                    if (handRank != EvalSlow.valueOf(
-//                            handCards[0], handCards[1], handCards[2],
-//                            handCards[3], handCards[4], handCards[5], handCards[6]))
-//                    {
-//                        System.out.println("!!WTF: unequal 7 value");
-//                    }
+                            hand[0],hand[1],
+                            hand[2],hand[3],hand[4],
+                            hand[5],hand[6]);
                     break;
 
                 default :
-                    System.out.println("ERROR: Invalid hand in GetRank method.");
+                    System.out.println(
+                            "ERROR: Invalid hand in GetRank method.");
                     break;
             }
         }
@@ -341,50 +340,70 @@ public class Eval7Faster
             startTimer = System.currentTimeMillis();
         }
 
-        for (keyIndex = 0; keys[keyIndex] != 0 || keyIndex == 0; keyIndex++) {
-//            if (keyIndex % 1000 == 0) System.out.println("key: " + keyIndex);
+        for (keyIndex = 0;
+             keys[keyIndex] != 0 || keyIndex == 0;
+             keyIndex++) {
 
-            for (int card = 1; card < 53; card++) {	      		// add a card to each previously calculated key
-                key = makeKey(keys[keyIndex], card);  			// create the new key
+            // add a card to each previously calculated key
+            for (int card = 1; card < 53; card++) {
+                // create the new key
+                key = makeKey(keys[keyIndex], card);
 
-                if (numCards < 7) insertKey(key);				// insert the new key into the key lookup table
+
+                // insert the new key into the key lookup table
+                if (numCards < 7) insertKey(key);
             }
         }
 
         if (verbose) {
             stopTimer = System.currentTimeMillis();
-            System.out.printf("done.\n\n%35s %d\n", "Number of Keys Generated:", (keyIndex + 1));
-            System.out.printf("%35s %f seconds\n\n", "Time Required:", ((stopTimer - startTimer) / 1000.0));
+            System.out.printf(
+                    "done.\n\n%35s %d\n",
+                    "Number of Keys Generated:",
+                    (keyIndex + 1));
+            System.out.printf(
+                    "%35s %f seconds\n\n",
+                    "Time Required:",
+                    ((stopTimer - startTimer) / 1000.0));
             System.out.print("Generating hand ranks...");
             startTimer = System.currentTimeMillis();
         }
 
-        for (keyIndex = 0; keys[keyIndex] != 0 || keyIndex == 0; keyIndex++) {
+        for (keyIndex = 0;
+             keys[keyIndex] != 0 || keyIndex == 0;
+             keyIndex++) {
 
             for (int card = 1; card < 53; card++) {
                 key = makeKey(keys[keyIndex], card);
 
                 if (numCards < 7) {
-                    handRank = insertKey(key) * 53 + 53;  		// if number of cards is < 7 insert key
+                    // if number of cards is < 7 insert key
+                    handRank = insertKey(key) * 53 + 53;
                 }
                 else {
-                    handRank = getHandRank(key);   				// if number of cards is 7 insert hand rank
+                    // if number of cards is 7 insert hand rank
+                    handRank = getHandRank(key);
                 }
 
                 int maxHandRankIndex = keyIndex * 53 + card + 53;
-                handRanks[maxHandRankIndex] = handRank;			// populate hand rank lookup table with appropriate value
+                // populate hand rank lookup table with appropriate value
+                handRanks[maxHandRankIndex] = handRank;
             }
 
             if (numCards == 6 || numCards == 7) {
                 // insert the hand rank into the hand rank lookup table
-                handRanks[keyIndex * 53 + 53] = getHandRank(keys[keyIndex]);
+                handRanks[keyIndex * 53 + 53] =
+                        getHandRank(keys[keyIndex]);
 //                handRanks[keyIndex * 53 + 53] = -1000000000;
             }
         }
 
         if (verbose) {
             stopTimer = System.currentTimeMillis();
-            System.out.printf("done.\n\n%35s %f seconds\n\n", "Time Required:", ((stopTimer - startTimer) / 1000.0));
+            System.out.printf(
+                    "done.\n\n%35s %f seconds\n\n",
+                    "Time Required:",
+                    ((stopTimer - startTimer) / 1000.0));
         }
     }
 
@@ -401,14 +420,10 @@ public class Eval7Faster
             int invIndex1, int invIndex2, int invIndex3,
             int invIndex4, int invIndex5, int invIndex6)
     {
-//        return (short) (handRanks[handRanks[handRanks[handRanks[
-//                handRanks[handRanks[handRanks[
-//                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
-//                           invIndex5] + invIndex6]]);
         return (short) (handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
-                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
-                           invIndex5] + invIndex6]]);
+                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4]
+                          + invIndex5] + invIndex6]]);
     }
 
     public static short valueOf(Card... sevenCards)
@@ -421,32 +436,37 @@ public class Eval7Faster
             Card c1, Card c2, Card c3, Card c4,
             Card c5, Card c6, Card c7)
     {
-        return valueOf(c1.invertedIndex(), c2.invertedIndex(), c3.invertedIndex(),
-                       c4.invertedIndex(), c5.invertedIndex(), c6.invertedIndex(),
+        return valueOf(c1.invertedIndex(), c2.invertedIndex(),
+                       c3.invertedIndex(), c4.invertedIndex(),
+                       c5.invertedIndex(), c6.invertedIndex(),
                        c7.invertedIndex());
     }
     public static short valueOf(
             int invIndex1, int invIndex2, int invIndex3, int invIndex4,
             int invIndex5, int invIndex6, int invIndex7)
     {
-//        HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
+// HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
 
         return (short) handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
-                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4] +
-                           invIndex5] + invIndex6] + invIndex7];
-//        return (short) handRanks[handRanks[handRanks[handRanks[
-//                index1 * 140660 - index2 * 2704 + index3 * 52 - index4] +
-//                           index5] + index6] + index7];
+                    53 + invIndex1] + invIndex2] + invIndex3] + invIndex4]
+                         + invIndex5] + invIndex6] + invIndex7];
     }
 
     //--------------------------------------------------------------------
     public static int shortcutFor(
-            Card c1, Card c2, Card c3, Card c4, Card c5)
+            Card a, Card b, Card c, Card d, Card e, Card f)
     {
-        return shortcutFor(c1.invertedIndex(),
-                           c2.invertedIndex(), c3.invertedIndex(),
-                           c4.invertedIndex(), c5.invertedIndex());
+        return shortcutFor(a.invertedIndex(), b.invertedIndex(),
+                           c.invertedIndex(), d.invertedIndex(),
+                           e.invertedIndex(), f.invertedIndex());
+    }
+    public static int shortcutFor(
+            Card a, Card b, Card c, Card d, Card e)
+    {
+        return shortcutFor(a.invertedIndex(),
+                           b.invertedIndex(), c.invertedIndex(),
+                           d.invertedIndex(), e.invertedIndex());
     }
     public static int shortcutFor(
             Card c1, Card c2, Card c3, Card c4)
@@ -461,25 +481,48 @@ public class Eval7Faster
                            c2.invertedIndex(), c3.invertedIndex());
     }
     public static int shortcutFor(
-            Card[] threeToFiveCards)
+            Card c1, Card c2)
     {
-        switch (threeToFiveCards.length)
+        return shortcutFor(c1.invertedIndex(), c2.invertedIndex());
+    }
+    public static int nextShortcut(int from, Card card)
+    {
+        return nextShortcut(from, card.invertedIndex());
+    }
+    public static int shortcutFor(
+            Card[] twoToFiveCards)
+    {
+        switch (twoToFiveCards.length)
         {
+            case 2: return shortcutFor(
+                        twoToFiveCards[0], twoToFiveCards[1]);
             case 3: return shortcutFor(
-                        threeToFiveCards[0],
-                        threeToFiveCards[1], threeToFiveCards[2]);
+                        twoToFiveCards[0],
+                        twoToFiveCards[1], twoToFiveCards[2]);
             case 4: return shortcutFor(
-                        threeToFiveCards[0], threeToFiveCards[1],
-                        threeToFiveCards[2], threeToFiveCards[3]);
+                        twoToFiveCards[0], twoToFiveCards[1],
+                        twoToFiveCards[2], twoToFiveCards[3]);
             case 5: return shortcutFor(
-                        threeToFiveCards[0],
-                        threeToFiveCards[1], threeToFiveCards[2],
-                        threeToFiveCards[3], threeToFiveCards[4]);
+                        twoToFiveCards[0],
+                        twoToFiveCards[1], twoToFiveCards[2],
+                        twoToFiveCards[3], twoToFiveCards[4]);
+            case 6: return shortcutFor(
+                        twoToFiveCards[0], twoToFiveCards[1],
+                        twoToFiveCards[2], twoToFiveCards[3],
+                        twoToFiveCards[4], twoToFiveCards[5]);
             default:
-                throw new Error("must give 3..5 cards!!");
+                throw new Error("must give 2..6 cards!!");
         }
     }
 
+    public static int shortcutFor(
+            int invIndex1, int invIndex2, int invIndex3,
+            int invIndex4, int invIndex5, int invIndex6)
+    {
+        return handRanks[shortcutFor(
+                invIndex1, invIndex2, invIndex3, invIndex4, invIndex5)
+                 + invIndex6];
+    }
     public static int shortcutFor(
             int invIndex1, int invIndex2,
             int invIndex3, int invIndex4, int invIndex5)
@@ -489,32 +532,52 @@ public class Eval7Faster
                     invIndex5];
     }
     public static int shortcutFor(
-            int invIndex1, int invIndex2,
-            int invIndex3, int invIndex4)
+            int invIndexA, int invIndexB, int invIndexC, int invIndexD)
     {
-        return handRanks[shortcutFor(invIndex1, invIndex2, invIndex3) +
-                            invIndex4];
+        return handRanks[shortcutFor(invIndexA, invIndexB, invIndexC) +
+                            invIndexD];
     }
     public static int shortcutFor(
-            int invIndex1, int invIndex2, int invIndex3)
+            int invIndexA, int invIndexB, int invIndexC)
     {
-        return handRanks[handRanks[handRanks[
-                    53 + invIndex1] + invIndex2] + invIndex3];
+        return handRanks[shortcutFor(invIndexA, invIndexB) +
+                         invIndexC];
+    }
+    public static int shortcutFor(
+            int invIndexA, int invIndexB)
+    {
+        return handRanks[handRanks[
+                    53 + invIndexA] + invIndexB];
+    }
+    public static int nextShortcut(int from, int invIndex)
+    {
+        return handRanks[from + invIndex];
     }
 
 
     //--------------------------------------------------------------------
+    public static short fastValueOf(int shortcut, Card card)
+    {
+        return fastValueOf(shortcut, card.invertedIndex());
+    }
     public static short fastValueOf(
             int shortcut, Card cardA, Card cardB)
     {
         return fastValueOf(shortcut,
                            cardA.invertedIndex(), cardB.invertedIndex());
     }
+
     public static short fastValueOf(
             int shortcut, int invIndexA, int invIndexB)
     {
         return (short) handRanks[handRanks[
                         shortcut + invIndexA] + invIndexB];
+    }
+
+    public static short fastValueOf(
+            int shortcut, int invIndex)
+    {
+        return (short) handRanks[shortcut + invIndex];
     }
 
 
@@ -527,15 +590,10 @@ public class Eval7Faster
         
         int c0, c1, c2, c3, c4, c5, c6;
         int u0, u1, u2, u3, u4, u5;
-//		int numHands = 0;
-//		int handRank;
-//        int[]          handEnumerations = new int[10];
-//        int[][] equivalencyEnumerations = new int[10][3000];
-//        String[] handDescriptions = {"Invalid Hand", "High Card", "One Pair", "Two Pair", "Three of a Kind",
-//        		                     "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush"};
 
         if (verbose) {
-        	System.out.print("Enumerating hand frequencies and equivalency classes...");
+        	System.out.print(
+                    "Enumerating hand frequencies...");
         	startTimer = System.currentTimeMillis();
         }
         int frequency[] = new int[ HandRank.values().length ];
@@ -552,33 +610,13 @@ public class Eval7Faster
                             u4 = handRanks[u3 + c4];
                             for (c5 = c4 + 1; c5 < 53; c5++) {
                                 u5 = handRanks[u4 + c5];
-                                for (c6 = c5 + 1; c6 < 53; c6++) {
-
+                                for (c6 = c5 + 1; c6 < 53; c6++)
+                                {
                                     final int value = handRanks[u5 + c6];
-
-//                                    FastIntCombiner c =
-//                                            new FastIntCombiner(new int[]{c0, c1, c2, c3, c4, c5, c6});
-//                                    c.combine(new FastIntCombiner.CombinationVisitor7() {
-//                                        public void visit(int i, int i1, int i2, int i3, int i4, int i5, int i6)
-//                                        {
-//                                            if (value != valueOf(i, i1, i2, i3, i4, i5, i6))
-//                                            {
-//                                                System.out.println("wtf!!!");
-//                                            }
-//                                        }
-//                                    });
-
-//                                    handRank = handRanks[u5 + c6];
-
-//                                    handRank = handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[handRanks[
-//                                            53 + c0] + c1] + c2] + c3] + c4] + c5] + c6];
-
-//                                    int value = valueOf(c0, c1, c2, c3, c4, c5, c6);
-                                    frequency[ HandRank.fromValue(value).ordinal() ]++;
-
-//                                    handEnumerations[handRank >>> 12]++;
-//                                	equivalencyEnumerations[handRank >>> 12][handRank & 0xFFF]++;
-//                                	numHands++;
+                                    frequency[
+                                            HandRank.fromValue(value)
+                                                    .ordinal()
+                                            ]++;
                                 }
                             }
                         }
@@ -589,27 +627,12 @@ public class Eval7Faster
 
         if (verbose) {
         	stopTimer = System.currentTimeMillis();
-        	System.out.printf("done.\n\n%35s %f seconds\n\n", "Time Required:", ((stopTimer - startTimer) / 1000.0));
+        	System.out.printf(
+                    "done.\n\n%35s %f seconds\n\n",
+                    "Time Required:",
+                    ((stopTimer - startTimer) / 1000.0));
         }
 
         System.out.println(Arrays.toString(frequency));
-
-//        System.out.println("SEVEN-CARD POKER HAND FREQUENCIES AND EQUIVALENCY CLASSES\n");
-//        System.out.printf("    %-17s %15s %15s\n", "HAND", "FREQUENCY", "CLASSES");
-//        System.out.println("    -------------------------------------------------");
-//
-//        int sumEquivalency;
-//        int numClasses = 0;
-//        for (int i = handEnumerations.length - 1; i >= 0; i--) {
-//        	sumEquivalency = 0;
-//        	for (int j = 0; j < equivalencyEnumerations[i].length; j++) {
-//        		if (equivalencyEnumerations[i][j] != 0) sumEquivalency++;
-//        	}
-//        	numClasses += sumEquivalency;
-//        	System.out.printf("    %-17s %15d %15d\n", handDescriptions[i], handEnumerations[i], sumEquivalency);
-//        }
-//        System.out.println("    -------------------------------------------------");
-//        System.out.printf("    %-17s %15d %15d\n", "TOTAL", numHands, numClasses);
 	}
-
 }

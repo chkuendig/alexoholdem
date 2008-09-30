@@ -5,6 +5,7 @@ package ao.odds.eval;
  */
 public enum HandRank
 {
+    //--------------------------------------------------------------------
     HIGH_CARD,
     ONE_PAIR,
     TWO_PAIR,
@@ -15,6 +16,8 @@ public enum HandRank
     FOUR_OF_A_KIND,
     STRAIGHT_FLUSH;
 
+
+    //--------------------------------------------------------------------
     public static HandRank fromValue(int val)
     {
 //            (7462 - bestFiveRank())

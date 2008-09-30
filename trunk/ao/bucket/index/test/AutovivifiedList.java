@@ -36,6 +36,15 @@ public class AutovivifiedList<T> extends AbstractList<T>
 
     //--------------------------------------------------------------------
     @Override
+    public boolean add(T element)
+    {
+        set(size(), element);
+        return true;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
     public T set(int index, T element)
     {
         T val = get(index);
@@ -52,6 +61,7 @@ public class AutovivifiedList<T> extends AbstractList<T>
 
 
     //--------------------------------------------------------------------
+    @Override
     public int size()
     {
         return DELEGET.size();

@@ -9,8 +9,9 @@ import ao.holdem.model.card.Card;
 public class Eval5
 {
     //--------------------------------------------------------------------
-    public static final short LOWEST  = 0;
-    public static final short HIGHEST = 7461;
+    public static final short LOWEST      = 0;
+    public static final short HIGHEST     = 7461;
+    public static final short VALUE_COUNT = HIGHEST + 1;
 
 
     //--------------------------------------------------------------------
@@ -53,7 +54,8 @@ public class Eval5
 
     //--------------------------------------------------------------------
     //from 7462 (lowest) .. 1 (highest)
-    private static short kevsValueOf(int ck1, int ck2, int ck3, int ck4, int ck5)
+    private static short kevsValueOf(
+            int ck1, int ck2, int ck3, int ck4, int ck5)
     {
         int index = (ck1 | ck2 | ck3 | ck4 | ck5) >> 16;
 
