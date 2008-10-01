@@ -115,6 +115,7 @@ public class GeneralHistFinder implements HistFinder
     private static OddHist rollOutTurnRiver(Card cards[])
     {
         int flopShortcut = Eval7Faster.shortcutFor(
+                cards[ HOLE_A ], cards[ HOLE_B ],
                 cards[ FLOP_A ], cards[ FLOP_B ], cards[ FLOP_C ]);
 
         OddHist odds = new OddHist();
@@ -129,12 +130,9 @@ public class GeneralHistFinder implements HistFinder
                      riverIndex++)
             {
                 Card riverCard     = cards[ riverIndex ];
-                int  riverShortcut = Eval7Faster.nextShortcut(
-                                        turnShortcut, riverCard);
                 short val  =
                     Eval7Faster.fastValueOf(
-                            riverShortcut,
-                            cards[ HOLE_A ], cards[ HOLE_B ]);
+                            turnShortcut, riverCard);
                 odds.count( val );
             }
         }

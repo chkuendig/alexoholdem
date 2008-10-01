@@ -111,4 +111,21 @@ public class OddHist
             }
         }
     }
+
+
+    //--------------------------------------------------------------------
+    public static void main(String[] args)
+    {
+        OddHist h = new OddHist();
+        System.out.println(h.secureHashCode());
+
+        h.count((short) 0);
+        System.out.println(h.secureHashCode());
+
+        h.count((short) 1);
+        System.out.println(h.secureHashCode());
+
+        h.count((short) 2);
+        System.out.println(h.secureHashCode());
+    }
 }

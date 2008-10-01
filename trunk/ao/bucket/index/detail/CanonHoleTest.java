@@ -1,7 +1,5 @@
 package ao.bucket.index.detail;
 
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.test.AutovivifiedList;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
@@ -11,10 +9,8 @@ import ao.odds.agglom.OddHist;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.agglom.impl.GeneralOddFinder;
-import static ao.util.data.Arr.swap;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 
 /**
  * Date: Sep 22, 2008
@@ -26,9 +22,9 @@ import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 public class CanonHoleTest
 {
     //-----------------------------------------------------------------------
-    private static final String DIR       = "lookup/canon/detail/";
-    private static final String HOLE_FILE = DIR + "hole.lookup";
-    private static final String FLOP_FILE = DIR + "flop.lookup";
+//    private static final String DIR       = "lookup/canon/detail/";
+//    private static final String HOLE_FILE = DIR + "hole.lookup";
+//    private static final String FLOP_FILE = DIR + "flop.lookup";
 
 
     //-----------------------------------------------------------------------
@@ -36,21 +32,18 @@ public class CanonHoleTest
     {
 //        new CanonHoleTest().testHoles();
 //        new CanonHoleTest().testHolesFast();
-        new CanonHoleTest().testFlops();
+//        new CanonHoleTest().testFlops();
+
+        new CanonTurnTest().testTurns(); 
     }
 
 
     //-----------------------------------------------------------------------
-    private final Card                       CARDS[]    = Card.values();
     private final AutovivifiedList<OddCount> HOLES      =
             new AutovivifiedList<OddCount>();
     private final AutovivifiedList<OddHist>  HOLES_FAST =
             new AutovivifiedList<OddHist>();
-    private final AutovivifiedList<OddCount> FLOPS      =
-            new AutovivifiedList<OddCount>();
-    private       long                       FLOPS_FAST[];
     private final Gapper                     seenHoles  = new Gapper();
-    private final Gapper                     seenFlops  = new Gapper();
 
 
     //-----------------------------------------------------------------------
@@ -136,75 +129,8 @@ public class CanonHoleTest
 
 
     //-----------------------------------------------------------------------
-    public synchronized void testFlops()
-    {
-//        FLOPS.clear();
-//        seenHoles.clear();
-//        seenFlops.clear();
-
-        FLOPS_FAST = new long[ FlopLookup.CANON_FLOP_COUNT ];
-
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
-                new CombinationVisitor2() {
-            public void visit(int holeA, int holeB)
-            {
-                Hole hole = Hole.valueOf(
-                        Card.VALUES[holeA], Card.VALUES[holeB]);
-                System.out.println(hole);
-
-//                if (seenHoles.get( hole.canonIndex() )) return;
-                seenHoles.set( hole.canonIndex() );
-
-                swap(CARDS, holeB, 51  );
-                swap(CARDS, holeA, 51-1);
-
-                iterateFlops(hole);
-
-                swap(CARDS, holeA, 51-1);
-                swap(CARDS, holeB, 51  );
-            }
-        });
-
-//        write(FLOPS, OddCount.BINDING, FLOP_FILE);
-//        for (int i = 0; i < FLOPS.size(); i++)
-//        {
-//            OddCount oddCount = FLOPS.get( i );
-//            System.out.println(i + "\t" + oddCount);
-//        }
-    }
-
-    public void iterateFlops(
-            final Hole hole)
-    {
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
-                .combine(new CombinationVisitor3() {
-            public void visit(int flopA, int flopB, int flopC)
-            {
-                Flop flop = hole.addFlop(
-                        CARDS[flopA], CARDS[flopB], CARDS[flopC]);
-                int index = flop.canonIndex();
-//                if (seenFlops.get( index )) return;
-                seenFlops.set( index );
-
-                OddHist odds     =
-                        new GeneralHistFinder().compute(
-                                hole,
-                                new Community(
-                                        CARDS[flopA],
-                                        CARDS[flopB],
-                                        CARDS[flopC]));
-                long existing = FLOPS_FAST[ index ];
-                if (existing == 0)
-                {
-                    FLOPS_FAST[ index ] = odds.secureHashCode();
-                }
-                else if (existing != odds.secureHashCode())
-                {
-                    System.out.println("ERROR AT: " + flop);
-                }
-            }});
-    }
-
+    // testTurns()
+    
 
     //-----------------------------------------------------------------------
 //    private static void read(
