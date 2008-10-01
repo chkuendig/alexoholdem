@@ -24,15 +24,15 @@ public class Eval7Faster
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
-	private static int[]   handRanks = null;      // hand rank lookup
-	private static boolean verbose   = true;	  // toggles verbose mode
+	private static int[]   handRanks   = null; // hand rank lookup
+	private static boolean verbose     = true; // toggles verbose mode
 
-	private static int[]  hand; 				  // cards in a hand
-	private static long[] keys             = null;// key lookup table
-	private static int    numKeys          = 1;	  // # of defined keys
-	private static long   maxKey           = 0;	  // current max key value
-	private static int    numCards         = 0;	  // # of cards in a hand
-	private static int    cardIndex        = 0;	  // cards in a hands
+	private static int[]  hand; 			   // cards in a hand
+	private static long[] keys         = null; // key lookup table
+	private static int    numKeys      = 1;	   // # of defined keys
+	private static long   maxKey       = 0;	   // current max key value
+	private static int    numCards     = 0;	   // # of cards in a hand
+	private static int    cardIndex    = 0;	   // cards in a hands
 
     private static long   startTimer;
 	private static long   stopTimer;
