@@ -34,16 +34,19 @@ public class CanonHoleTest
 //        new CanonHoleTest().testHolesFast();
 //        new CanonHoleTest().testFlops();
 
-        new CanonTurnTest().testTurns(); 
+//        new CanonTurnTest().testTurns();
+
+        new CanonRiverTest().testRivers();
     }
 
 
     //-----------------------------------------------------------------------
-    private final AutovivifiedList<OddCount> HOLES      =
-            new AutovivifiedList<OddCount>();
-    private final AutovivifiedList<OddHist>  HOLES_FAST =
-            new AutovivifiedList<OddHist>();
-    private final Gapper                     seenHoles  = new Gapper();
+    private final AutovivifiedList<SeenCount<Odds>>    HOLES      =
+            new AutovivifiedList<SeenCount<Odds>>();
+    private final AutovivifiedList<SeenCount<OddHist>> HOLES_FAST =
+            new AutovivifiedList<SeenCount<OddHist>>();
+
+    private final Gapper seenHoles  = new Gapper();
 
 
     //-----------------------------------------------------------------------
@@ -72,13 +75,13 @@ public class CanonHoleTest
                 
                 Odds     odds     = new GeneralOddFinder().compute(
                                             hole, Community.PREFLOP, 1);
-                OddCount oddCount = HOLES.get( hole.canonIndex() );
+                SeenCount<Odds> oddCount = HOLES.get( hole.canonIndex() );
                 if (oddCount == null)
                 {
-                    oddCount = new OddCount(odds);
+                    oddCount = new SeenCount<Odds>(odds);
                     HOLES.set( hole.canonIndex(), oddCount );
                 }
-                else if (! oddCount.oddsEqual( odds ))
+                else if (! oddCount.payloadEquals( odds ))
                 {
                     System.out.println(hole + " :: " +
                             oddCount + " vs " + odds);
@@ -110,21 +113,38 @@ public class CanonHoleTest
                 seenHoles.set( hole.canonIndex() );
                 System.out.println(hole);
 
-                OddHist odds     = new GeneralHistFinder().compute(
-                                            hole, Community.PREFLOP);
-                OddHist existing = HOLES_FAST.get( hole.canonIndex() );
+                OddHist odds = new GeneralHistFinder().compute(
+                                        hole, Community.PREFLOP);
+                SeenCount<OddHist> existing =
+                        HOLES_FAST.get( hole.canonIndex() );
                 if (existing == null)
                 {
-                    HOLES_FAST.set( hole.canonIndex(), odds );
+                    HOLES_FAST.set(
+                            hole.canonIndex(),
+                            new SeenCount<OddHist>(odds, 1));
                 }
-                else if (! existing.equals( odds ))
+                else if (! existing.payloadEquals( odds ))
                 {
                     System.out.println("ERROR AT: " + hole);
+                }
+                else
+                {
+                    existing.increment();
                 }
             }
         });
 
 //        write(HOLES, OddCount.BINDING, HOLE_FILE);
+        int maxCount = 0;
+        for (SeenCount<OddHist> oh : HOLES_FAST)
+        {
+            int count = oh.payload().maxCount();
+            if (count > maxCount)
+            {
+                maxCount = count;
+            }
+        }
+        System.out.println("max count: " + maxCount);
     }
 
 

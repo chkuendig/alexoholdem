@@ -4,7 +4,7 @@ import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.river.River;
 import ao.holdem.model.card.Card;
 
 /**
@@ -38,9 +38,9 @@ public class Turn
 
 
     //--------------------------------------------------------------------
-    public CanonRiver addRiver(Card river)
+    public River addRiver(Card river)
     {
-        return new CanonRiver(this, river);
+        return new River(this, river);
     }
 
     public Order refineOrder(Order with)
@@ -88,6 +88,13 @@ public class Turn
     {
         return TURN.suit();
     }
+
+
+    //--------------------------------------------------------------------
+//    public long identity(Card river)
+//    {
+//        return FLOP_CARDS.identity(TURN_CARD, river);
+//    }
 
 
     //--------------------------------------------------------------------

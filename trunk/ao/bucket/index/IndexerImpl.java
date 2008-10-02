@@ -1,7 +1,7 @@
 package ao.bucket.index;
 
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -43,7 +43,7 @@ public class IndexerImpl implements Indexer
                 else
                 {
                     Card       riverCard = cards.community().river();
-                    CanonRiver river     = turn.addRiver(riverCard);
+                    River river     = turn.addRiver(riverCard);
                     return river.canonIndex();
                 }
             }

@@ -1,7 +1,7 @@
 package ao.bucket.index.test;
 
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.river.CanonRiver;
+import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverCaseSet;
 import ao.bucket.index.river.RiverSparceLookup;
 import ao.bucket.index.turn.Turn;
@@ -172,7 +172,7 @@ public class GenericIndexerTest
                  riverCardIndex++)
         {
             Card       riverCard  = cards[ riverCardIndex ];
-            CanonRiver river      = turn.addRiver( riverCard );
+            River river      = turn.addRiver( riverCard );
             long       riverIndex = river.canonIndex();
             if (riverIndex < 0)
             {
@@ -201,7 +201,7 @@ public class GenericIndexerTest
                      riverCardIndex++)
             {
                 Card       riverCard  = cards[ riverCardIndex ];
-                CanonRiver river      = turn.addRiver( riverCard );
+                River river      = turn.addRiver( riverCard );
                 long       riverIndex = river.canonIndex();
 
                 System.out.println(

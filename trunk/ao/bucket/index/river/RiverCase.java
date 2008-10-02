@@ -6,6 +6,8 @@ import static ao.bucket.index.card.CanonSuit.*;
 /**
  * Date: Sep 16, 2008
  * Time: 8:40:01 AM
+ *
+ * also split cases by how many other cards are in their equivalence class
  */
 public enum RiverCase
 {

@@ -31,7 +31,6 @@ public class RiverLookup
     private static final int    OFFSETS[] = null;//computeOffsets();
 
 
-
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
@@ -127,7 +126,7 @@ public class RiverLookup
         final byte    riverCases[] =
                 new byte[ TurnLookup.CANON_TURN_COUNT ];
 
-        final BitSet seenHoles  = new BitSet();
+        final BitSet seenHoles = new BitSet();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
             private long prevTime = System.currentTimeMillis();
@@ -169,7 +168,6 @@ public class RiverLookup
             {
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
-//                if (flop.flopCase() != FlopCase.OO_OTT) return;
 
                 int flopIndex = flop.canonIndex();
                 if (seenFlops.get( flopIndex )) return;
@@ -197,7 +195,7 @@ public class RiverLookup
             byte   riverCases[])
     {
         for (int turnCardIndex = 0;
-                 turnCardIndex < 52 - 2 - 3;
+                 turnCardIndex < 51 - 4;
                  turnCardIndex++)
         {
             Card turnCard = cards[ turnCardIndex ];
@@ -215,27 +213,48 @@ public class RiverLookup
     }
 
     private static RiverCaseSet iterateRivers(
-            Turn  turn,
-            Card  cards[])
+            Turn turn, Card cards[])
     {
         Set<RiverCase> caseBuffer = EnumSet.noneOf( RiverCase.class );
+//        EnumMap<RiverCase, int[]> caseBuffer =
+//                new EnumMap<RiverCase, int[]>( RiverCase.class );
         for (int riverCardIndex = 0;
-                 riverCardIndex < 52 - 2 - 3 - 1;
+                 riverCardIndex < 51 - 5;
                  riverCardIndex++)
         {
             Card       riverCard = cards[ riverCardIndex ];
-            CanonRiver river     = turn.addRiver(riverCard);
+            River river     = turn.addRiver(riverCard);
             RiverCase  riverCase = river.riverCase();
 
+//            if (riverCase != RiverCase.T0) continue;
+//            System.out.println(
+//                    turn + "\t" +
+//                    riverCard + "\t" + riverCase);
+
             caseBuffer.add( riverCase );
+//            int count[] = caseBuffer.get( riverCase );
+//            if (count == null)
+//            {
+//                count = new int[]{ 1 };
+//                caseBuffer.put( riverCase, count );
+//            }
+//            else
+//            {
+//                count[0]++;
+//            }
         }
 
-//        if (turn.canonIndex() == 28820)
+//        for (Map.Entry<RiverCase, int[]> e : caseBuffer.entrySet())
 //        {
-//            System.out.println(turn);
-//            System.out.println(caseBuffer);
+//            if (e.getKey().size() != e.getValue()[0])
+//            {
+//                System.out.println(
+//                        "MISMATCH: " + turn + "\t" +
+//                        e.getKey() + "\t" + e.getValue()[0]);
+//            }
 //        }
-
-        return RiverCaseSet.valueOf(caseBuffer);
+//
+        return RiverCaseSet.valueOf( caseBuffer );
+//        return RiverCaseSet.valueOf(caseBuffer.keySet());
     }
 }
