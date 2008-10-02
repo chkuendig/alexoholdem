@@ -27,6 +27,7 @@ public class FlopLookup
 
     private static int[][] retrieveOrCalculateOffsets()
     {
+        System.out.println("FlopLookup.retrieveOrCalculateOffsets");
         int offsets[][] = retrieveOffsets();
         if (offsets == null)
         {

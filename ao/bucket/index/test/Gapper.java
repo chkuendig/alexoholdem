@@ -75,8 +75,8 @@ public class Gapper
 
     public long length()
     {
-        return  indexes.length() +
-               indexesB.length();
+        return (long) indexes.length() +
+                     indexesB.length();
     }
 
     public double fillRatio()
