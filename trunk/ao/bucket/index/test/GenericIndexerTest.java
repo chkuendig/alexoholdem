@@ -166,14 +166,15 @@ public class GenericIndexerTest
             Card  riverCard  = cards[ riverCardIndex ];
             River river      = turn.addRiver( riverCard );
             long  riverIndex = river.canonIndex();
+            if (riverIndex > 224) return;
 //            if (riverIndex < 0)
 //            {
 //                System.out.println(river);
 //                river.canonIndex();
 //            }
 
-//            System.out.println(
-//                    turn + "\t" + riverCard + "\t" + riverIndex);
+            System.out.println(
+                    turn + "\t" + riverCard + "\t" + riverIndex);
 
             seenRivers.set( riverIndex );
 //            localGapper.set( riverIndex );
