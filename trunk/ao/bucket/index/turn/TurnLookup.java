@@ -25,7 +25,7 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
-    public static final int CANON_TURN_COUNT =  55190538;
+    public static final int CANON_TURN_COUNT = 55190538;
 
 
     //--------------------------------------------------------------------
@@ -49,6 +49,7 @@ public class TurnLookup
     //--------------------------------------------------------------------
     private static TurnCase[][] retrieveOrCalculateCaseSets()
     {
+        System.out.println("TurnLookup.retrieveOrCalculateCaseSets");
         TurnCase[][] caseSets = retrieveCaseSets();
         if (caseSets == null)
         {
@@ -135,8 +136,8 @@ public class TurnLookup
     }
 
     private static void iterateFlops(
-            final Hole         hole,
-            final Card         cards[],
+            final Hole     hole,
+            final Card     cards[],
             final TurnCase caseSets[][])
     {
         final BitSet seenFlops = new BitSet();
@@ -151,8 +152,8 @@ public class TurnLookup
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );
 
-                Card flopCards[] =
-                        {cards[flopA], cards[flopB], cards[flopC]};
+//                Card flopCards[] =
+//                        {cards[flopA], cards[flopB], cards[flopC]};
 
                 swap(cards, flopC, 51-2);
                 swap(cards, flopB, 51-3);
@@ -213,6 +214,7 @@ public class TurnLookup
     //--------------------------------------------------------------------
     private static int[][] encodeOffsets(TurnCase caseSets[][])
     {
+        System.out.println("TurnLookup.encodeOffsets");
         int offset           = 0;
         int codedOffsets[][] = new int[ caseSets.length   ]
                                       [ Rank.VALUES.length ];
@@ -233,6 +235,7 @@ public class TurnLookup
                 }
             }
         }
+        System.out.println("TurnLookup.encodeOffsets end " + offset);
         return codedOffsets;
     }
 

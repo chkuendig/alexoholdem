@@ -14,11 +14,10 @@ public class RiverSparceLookup
     private static final String F_RAW_CASES =
                                     DIR + "river.cases.raw.cache";
 
-    private static final int    SHRINK    = 4;
-    private static final int    MASK      = (1 << (SHRINK)) - 1;
-    private static final byte   CASES[]   = rawCases();
-    private static final int    OFFSETS[] = computeOffsets();
-
+    private static final int  SHRINK    = 4;
+    private static final int  CHUNK     = (1 << (SHRINK));
+    private static final byte CASES[]   = rawCases();
+    private static final int  OFFSETS[] = computeOffsets();
 
 
     //--------------------------------------------------------------------
@@ -47,12 +46,11 @@ public class RiverSparceLookup
     //--------------------------------------------------------------------
     public static long offset(int canonTurn)
     {
-//        return -1;
-        int  index = canonTurn >> SHRINK;
+        int  index = canonTurn / CHUNK;
         long base  = unsigned(OFFSETS[ index ]);
 
         int  addend = 0;
-        int  delta  = canonTurn & MASK;
+        int  delta  = canonTurn % CHUNK;
         for (int i = 1; i <= delta; i++)
         {
             addend += caseSet(index + i).size();
@@ -62,14 +60,21 @@ public class RiverSparceLookup
     }
     private static int[] computeOffsets()
     {
+        System.out.println("RiverSparceLookup.computeOffsets");
         int offset    = 0;
         int offsets[] =
-                new int[ TurnLookup.CANON_TURN_COUNT >> SHRINK ];
+                new int[ TurnLookup.CANON_TURN_COUNT / CHUNK + 1 ];
 
         int prevIndex = -1;
         for (int i = 0; i < TurnLookup.CANON_TURN_COUNT; i++)
         {
-            int index = i >> SHRINK;
+            if (i % 1000000 == 0)
+            {
+                System.out.print(".");
+                System.out.flush();
+            }
+
+            int index = i / CHUNK;
             if (prevIndex != index)
             {
                 offsets[ index ] = offset;
@@ -79,6 +84,7 @@ public class RiverSparceLookup
             offset += caseSet.size();
         }
 
+        System.out.println("\nRiverSparceLookup.computeOffsets end");
         return offsets;
     }
 
@@ -94,11 +100,15 @@ public class RiverSparceLookup
     //--------------------------------------------------------------------
     private static byte[] rawCases()
     {
+        System.out.println("RiverSparceLookup.rawCases");
+
         byte[] rawCases = PersistentBytes.retrieve(F_RAW_CASES);
         if (rawCases == null)
         {
             throw new Error("lookup missing");
         }
+
+        System.out.println("RiverSparceLookup.rawCases end");
         return rawCases;
     }
 }

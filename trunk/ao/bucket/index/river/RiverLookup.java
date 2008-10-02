@@ -111,6 +111,7 @@ public class RiverLookup
     //--------------------------------------------------------------------
     private static byte[] rawCases()
     {
+        System.out.println("RiverLookup.rawCases");
         byte[] rawCases = PersistentBytes.retrieve(F_RAW_CASES);
         if (rawCases == null)
         {
