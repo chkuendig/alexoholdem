@@ -27,11 +27,9 @@ public class CanonTurnTest
 
                              FLOP_A = 51 - 4,
                              FLOP_B = 51 - 3,
-                             FLOP_C = 51 - 2;//,
-//
-//                             TURN   = 51 - 5,
-//
-//                             RIVER  = 51 - 6;
+                             FLOP_C = 51 - 2,
+
+                             TURN   = 51 - 5;
 
 
     //--------------------------------------------------------------------
@@ -101,7 +99,7 @@ public class CanonTurnTest
             final Hole hole,
             final Flop flop)
     {
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2 - 3)
+        new FastIntCombiner(Card.INDEXES, TURN + 1)
                 .combine(new CombinationVisitor1() {
             public void visit(int turnIndex)
             {

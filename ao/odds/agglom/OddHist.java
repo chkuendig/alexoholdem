@@ -41,6 +41,26 @@ public class OddHist
 
 
     //--------------------------------------------------------------------
+    public int get(short value)
+    {
+        return HIST[ value ];
+    }
+
+    public int maxCount()
+    {
+        int maxCount = 0;
+        for (int count : HIST)
+        {
+            if (maxCount < count)
+            {
+                maxCount = count;
+            }
+        }
+        return maxCount;
+    }
+
+
+    //--------------------------------------------------------------------
     public long secureHashCode()
     {
         try

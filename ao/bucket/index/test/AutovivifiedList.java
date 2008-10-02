@@ -62,6 +62,14 @@ public class AutovivifiedList<T> extends AbstractList<T>
 
     //--------------------------------------------------------------------
     @Override
+    public void clear()
+    {
+        DELEGET.clear();
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
     public int size()
     {
         return DELEGET.size();

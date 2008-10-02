@@ -9,13 +9,13 @@ import ao.holdem.model.card.Card;
  * Date: Sep 1, 2008
  * Time: 8:36:13 PM
  */
-public class CanonRiver
+public class River
 {
     //--------------------------------------------------------------------
 //    private final CanonCard HOLE[], FLOP[], TURN, RIVER;
 //    private final Order     ORDER;
     private final CanonCard RIVER;
-//    private final int       RANK_INDEX;
+    private final Card      RIVER_CARD;
     private final RiverCase CASE;
     private final Turn      TURN_CARDS;
 
@@ -25,7 +25,7 @@ public class CanonRiver
 
 
     //--------------------------------------------------------------------
-    public CanonRiver(
+    public River(
             Turn turnCards,
             Card riverCard)
     {
@@ -44,6 +44,7 @@ public class CanonRiver
         CASE = RiverCase.valueOf(
                 RIVER.suit(), PRECEDENCES);
         TURN_CARDS = turnCards;
+        RIVER_CARD = riverCard;
     }
 
 
@@ -83,6 +84,13 @@ public class CanonRiver
 
 
     //--------------------------------------------------------------------
+//    public long identity()
+//    {
+//        return TURN_CARDS.identity( RIVER_CARD );
+//    }
+
+
+    //--------------------------------------------------------------------
     public RiverCase riverCase()
     {
         return CASE;
@@ -95,18 +103,18 @@ public class CanonRiver
 
     public long canonIndex()
     {
-//        long globalOffset =
-//                RiverSparceLookup.offset(turnCards.canonIndex());
+        long globalOffset =
+                RiverSparceLookup.offset(TURN_CARDS.canonIndex());
         RiverCaseSet caseSet =
                 RiverSparceLookup.caseSet(TURN_CARDS.canonIndex());
         int caseOffset = caseSet.offsetOf( CASE );
 
-        return caseOffset +
-               (RIVER.rank().ordinal() - RANK_OFFSET);
+//        return caseOffset +
+//               (RIVER.rank().ordinal() - RANK_OFFSET);
 
-//        CANON_INDEX = //globalOffset +
-//                      caseOffset +
-//                      (RIVER.rank().ordinal() - RANK_OFFSET);
+        return globalOffset +
+               caseOffset +
+               (RIVER.rank().ordinal() - RANK_OFFSET);
 
 //        return CANON_INDEX;
     }

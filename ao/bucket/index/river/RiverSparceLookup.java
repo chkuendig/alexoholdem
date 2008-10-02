@@ -17,7 +17,7 @@ public class RiverSparceLookup
     private static final int    SHRINK    = 4;
     private static final int    MASK      = (1 << (SHRINK)) - 1;
     private static final byte   CASES[]   = rawCases();
-//    private static final int    OFFSETS[] = computeOffsets();
+    private static final int    OFFSETS[] = computeOffsets();
 
 
 
@@ -47,18 +47,18 @@ public class RiverSparceLookup
     //--------------------------------------------------------------------
     public static long offset(int canonTurn)
     {
-        return -1;
-//        int  index = canonTurn >> SHRINK;
-//        long base  = unsigned(OFFSETS[ index ]);
-//
-//        int  addend = 0;
-//        int  delta  = canonTurn & MASK;
-//        for (int i = 1; i <= delta; i++)
-//        {
-//            addend += caseSet(index + i).size();
-//        }
-//
-//        return base + addend;
+//        return -1;
+        int  index = canonTurn >> SHRINK;
+        long base  = unsigned(OFFSETS[ index ]);
+
+        int  addend = 0;
+        int  delta  = canonTurn & MASK;
+        for (int i = 1; i <= delta; i++)
+        {
+            addend += caseSet(index + i).size();
+        }
+
+        return base + addend;
     }
     private static int[] computeOffsets()
     {

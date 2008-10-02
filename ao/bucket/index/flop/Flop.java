@@ -158,6 +158,21 @@ public class Flop
 
 
     //--------------------------------------------------------------------
+//    public long identity(Card turn, Card river)
+//    {
+//        GeneralHistFinder identifyer =
+//                new GeneralHistFinder();
+//        OddHist hist =
+//                identifyer.compute(
+//                        HOLE_CARDS,
+//                        new Community(
+//                                FLOP_A, FLOP_B, FLOP_C,
+//                                turn, river));
+//        return hist.secureHashCode();
+//    }
+
+
+    //--------------------------------------------------------------------
     private static Order orderSuitsBy(
             Card flopA, Card flopB, Card flopC)
     {
