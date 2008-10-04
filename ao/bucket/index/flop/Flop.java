@@ -257,13 +257,13 @@ public class Flop
 //        return  Arrays.toString(HOLE) +
 //                Arrays.toString(FLOP);
         return HOLE_CARDS + "\t" +
-               FLOP_A + ", " + FLOP_B + ", " + FLOP_C + "\t" +
+               FLOP_A + ", " + FLOP_B + ", " + FLOP_C;// + "\t" +
 //               Arrays.toString(HOLE) + "\t" +
 //               Arrays.toString(FLOP) + "\t" +
-               FLOP_CASE + "\t" +
-               ORDER     + "\t" +
-               FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) + "\t" +
-               subIndex();
+//               FLOP_CASE + "\t" +
+//               ORDER     + "\t" +
+//               FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) + "\t" +
+//               subIndex();
     }
 
 

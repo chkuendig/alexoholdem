@@ -47,13 +47,13 @@ public class RiverSparceLookup
     public static long offset(int canonTurn)
     {
         int  index = canonTurn / CHUNK;
-        long base  = unsigned(OFFSETS[ index ]);
+        long base  = RiverUtil.unsigned(OFFSETS[ index ]);
 
         int  addend = 0;
         int  delta  = canonTurn % CHUNK;
-        for (int i = 1; i <= delta; i++)
+        for (int i = 0; i < delta; i++)
         {
-            addend += caseSet(index + i).size();
+            addend += caseSet(index * CHUNK + i).size();
         }
 
         return base + addend;
@@ -88,13 +88,13 @@ public class RiverSparceLookup
         return offsets;
     }
 
-    private static long unsigned(int value)
-    {
-        return value >= 0
-               ? value
-               : (long)(Integer.MAX_VALUE + value) +
-                 (long)(Integer.MAX_VALUE        ) + 2;
-    }
+//    private static long unsigned(int value)
+//    {
+//        return value >= 0
+//               ? value
+//               : (long)(Integer.MAX_VALUE + value) +
+//                 (long)(Integer.MAX_VALUE        ) + 2;
+//    }
 
 
     //--------------------------------------------------------------------

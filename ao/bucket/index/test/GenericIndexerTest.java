@@ -42,7 +42,7 @@ public class GenericIndexerTest
         final Gapper seenHoles  = new Gapper();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
-            private long prevTime = System.currentTimeMillis();
+//            private long prevTime = System.currentTimeMillis();
             public void visit(int holeA, int holeB)
             {
                 Hole hole = Hole.valueOf(
@@ -57,7 +57,7 @@ public class GenericIndexerTest
 
                 iterateFlops(hole);
 //                System.out.println(System.currentTimeMillis() - prevTime);
-                prevTime = System.currentTimeMillis();
+//                prevTime = System.currentTimeMillis();
 
                 swap(cards, holeA, 51-1);
                 swap(cards, holeB, 51  );
@@ -91,19 +91,6 @@ public class GenericIndexerTest
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
 
-//                if (index == 1870)
-//                {
-//                    Odds odds =
-//                            new GeneralOddFinder().compute(
-//                                    hole,
-//                                    new Community(
-//                                            cards[flopA],
-//                                            cards[flopB],
-//                                            cards[flopC]),
-//                                    1);
-//                    System.out.println(flop + "\t" + odds);
-//                }
-
                 if (seenFlops.get( index )) return;
                 seenFlops.set( index );
 
@@ -129,24 +116,6 @@ public class GenericIndexerTest
             Turn turn      = flop.addTurn(turnCard);
             int  turnIndex = turn.canonIndex();
 
-//            if (turnIndex == 28820)
-//            {
-//                System.out.println(turn);
-//                turn.canonIndex();
-//            }
-
-//            Rank existing[] = turnLog.get( turnIndex );
-//            if (existing == null)
-//            {
-//                turnLog.set(turnIndex, flop.ranks());
-//            }
-//            else if (!Arrays.equals(existing, flop.ranks()))
-//            {
-//                System.out.println(
-//                        Arrays.toString(existing) + " :: " +
-//                        Arrays.toString(flop.ranks()));
-//            }
-
             if (seenTurns.get( turnIndex )) continue;
             seenTurns.set( turnIndex );
 
@@ -166,15 +135,17 @@ public class GenericIndexerTest
             Card  riverCard  = cards[ riverCardIndex ];
             River river      = turn.addRiver( riverCard );
             long  riverIndex = river.canonIndex();
-            if (riverIndex > 224) return;
-//            if (riverIndex < 0)
+//            if (riverIndex > 150) return;
+//            if (!(600 < riverIndex && riverIndex < 700)) return;
+
+//            System.out.println(
+//                    turn + "\t" +
+//                    turn.canonIndex() + "\t" +
+//                    riverCard + "\t" + riverIndex);
+//            if (turn.canonIndex() == 2)
 //            {
-//                System.out.println(river);
 //                river.canonIndex();
 //            }
-
-            System.out.println(
-                    turn + "\t" + riverCard + "\t" + riverIndex);
 
             seenRivers.set( riverIndex );
 //            localGapper.set( riverIndex );

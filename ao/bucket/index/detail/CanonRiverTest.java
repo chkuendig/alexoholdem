@@ -25,9 +25,10 @@ import java.io.RandomAccessFile;
 public class CanonRiverTest
 {
     //--------------------------------------------------------------------
-    private static final int    PER_FILE   = 2 << 31;
+    private static final int    PER_FILE   = 1 << 30;
     private static final String DIR        = "lookup/enum/";
     private static final String RIVER_FILE = DIR + "river.bin";
+    private static final int    STEP       = Short.SIZE / 8;
 
 
     //--------------------------------------------------------------------
@@ -61,7 +62,7 @@ public class CanonRiverTest
             {
                 Hole hole = Hole.valueOf(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
-                System.out.println(hole);
+//                System.out.println(hole);
 
 //                if (seenHoles.get( hole.canonIndex() )) return;
                 seenHoles.set( hole.canonIndex() );
@@ -69,11 +70,18 @@ public class CanonRiverTest
                 swap(CARDS, holeB, HOLE_B );
                 swap(CARDS, holeA, HOLE_A );
 
-                int prevShortcut = shortcut;
+                long start        = System.currentTimeMillis();
+                int  prevShortcut = shortcut;
                 shortcut = Eval7Faster.shortcutFor(
                             hole.a(), hole.b());
-                iterateFlops(hole);
+                int numFlops =
+                        iterateFlops(hole);
                 shortcut = prevShortcut;
+                long duration = (System.currentTimeMillis() - start);
+                System.out.println(
+                        hole     + "\t" +
+                        duration + "\t" +
+                        ((double) numFlops / duration));
 
                 swap(CARDS, holeA, HOLE_A );
                 swap(CARDS, holeB, HOLE_B );
@@ -83,9 +91,10 @@ public class CanonRiverTest
         closeTargets();
     }
 
-    private void iterateFlops(
+    private int iterateFlops(
             final Hole hole)
     {
+        final int flops[] = {0};
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
                 .combine(new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -104,26 +113,19 @@ public class CanonRiverTest
                 swap(CARDS, flopB, FLOP_B);
                 swap(CARDS, flopA, FLOP_A);
 
-                long start        = System.currentTimeMillis();
                 int  prevShortcut = shortcut;
                 shortcut = Eval7Faster.nextShortcut(shortcut, flopCardA);
                 shortcut = Eval7Faster.nextShortcut(shortcut, flopCardB);
                 shortcut = Eval7Faster.nextShortcut(shortcut, flopCardC);
-                int turnRivers =
+                flops[0] =+
                         iterateTurnsRivers(flop);
                 shortcut = prevShortcut;
-
-                long duration = (System.currentTimeMillis() - start);
-                System.out.println(
-                        flop + "\t" +
-                        duration+ "\t" +
-                        turnRivers + "\t" +
-                        ((double) turnRivers / duration));
 
                 swap(CARDS, flopA, FLOP_A);
                 swap(CARDS, flopB, FLOP_B);
                 swap(CARDS, flopC, FLOP_C);
             }});
+        return flops[0];
     }
 
     private int iterateTurnsRivers(Flop flop)
@@ -158,19 +160,20 @@ public class CanonRiverTest
     //--------------------------------------------------------------------
     private void process(River river, short identity)
     {
+        short trueIdentity     = (short) (identity + 1);
         long  canonIndex       = river.canonIndex();
         short existingIdentity = get( canonIndex );
 
-        if (existingIdentity == -1)
+        if (existingIdentity == 0)
         {
-            set( canonIndex, identity );
+            set( canonIndex, trueIdentity );
         }
-        else if (existingIdentity != identity)
+        else if (existingIdentity != trueIdentity)
         {
             System.out.println(
                     "MISMATCH ON:\t" +
                     river + "\t" +
-                    existingIdentity + "\t" + identity);
+                    existingIdentity + "\t" + trueIdentity);
         }
     }
 
@@ -193,13 +196,13 @@ public class CanonRiverTest
     private static short doGet(long index)
             throws IOException
     {
-        long fragment = index / PER_FILE;
-        long offset   = index % PER_FILE;
+        long fragment =  index / PER_FILE;
+        long offset   = (index % PER_FILE) * STEP;
 
         RandomAccessFile target = target( (int) fragment );
-        if (target.length() < offset)
+        if (target.length() < (offset + STEP))
         {
-            return -1;
+            return 0;
         }
 
         target.seek( offset );
@@ -223,8 +226,8 @@ public class CanonRiverTest
     private static void doSet(
             long index, short identity) throws IOException
     {
-        long fragment = index / PER_FILE;
-        long offset   = index % PER_FILE;
+        long fragment =  index / PER_FILE;
+        long offset   = (index % PER_FILE) * STEP;
 
         RandomAccessFile target = target( (int) fragment );
         target.seek( offset );

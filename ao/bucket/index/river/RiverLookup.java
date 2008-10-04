@@ -81,7 +81,7 @@ public class RiverLookup
     //--------------------------------------------------------------------
     public static long offset(int canonTurn)
     {
-        return unsigned(OFFSETS[ canonTurn ]);
+        return RiverUtil.unsigned(OFFSETS[ canonTurn ]);
     }
     private static int[] computeOffsets()
     {
@@ -97,14 +97,6 @@ public class RiverLookup
         }
 
         return offsets;
-    }
-
-    private static long unsigned(int value)
-    {
-        return value >= 0
-               ? value
-               : (long)(Integer.MAX_VALUE + value) +
-                 (long)(Integer.MAX_VALUE        ) + 2;
     }
 
 
