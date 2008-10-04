@@ -1,5 +1,7 @@
 package ao.bucket.index.test;
 
+import ao.bucket.index.river.RiverUtil;
+
 import java.util.BitSet;
 
 /**
@@ -75,8 +77,9 @@ public class Gapper
 
     public long length()
     {
-        return (long) indexes.length() +
-                     indexesB.length();
+        return RiverUtil.unsigned(
+                indexes .length() +
+                indexesB.length());
     }
 
     public double fillRatio()

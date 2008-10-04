@@ -118,4 +118,16 @@ public class River
 
 //        return CANON_INDEX;
     }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public String toString() {
+        return "River{" +
+                "RIVER_CARD=" + RIVER_CARD +
+                ", TURN_CARDS=" + TURN_CARDS +
+                '}';
+    }
+
+    
 }
