@@ -104,9 +104,9 @@ public class River
     public long canonIndex()
     {
         long globalOffset =
-                RiverSparceLookup.offset(TURN_CARDS.canonIndex());
+                RiverLookup.offset(TURN_CARDS.canonIndex());
         RiverCaseSet caseSet =
-                RiverSparceLookup.caseSet(TURN_CARDS.canonIndex());
+                RiverRawLookup.caseSet(TURN_CARDS.canonIndex());
         int caseOffset = caseSet.offsetOf( CASE );
 
 //        return caseOffset +

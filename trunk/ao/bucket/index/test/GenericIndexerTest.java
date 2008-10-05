@@ -138,10 +138,13 @@ public class GenericIndexerTest
 //            if (riverIndex > 150) return;
 //            if (!(600 < riverIndex && riverIndex < 700)) return;
 
-//            System.out.println(
-//                    turn + "\t" +
-//                    turn.canonIndex() + "\t" +
-//                    riverCard + "\t" + riverIndex);
+            if (riverIndex >= 2428287400L)
+            {
+                System.out.println(
+                        turn + "\t" +
+                        turn.canonIndex() + "\t" +
+                        riverCard + "\t" + riverIndex);
+            }
 //            if (turn.canonIndex() == 2)
 //            {
 //                river.canonIndex();
