@@ -19,7 +19,7 @@ public class River
     private final RiverCase CASE;
     private final Turn      TURN_CARDS;
 
-    private final int       PRECEDENCES;
+//    private final int       PRECEDENCES;
     private final int       RANK_OFFSET;
 //    private final long      CANON_INDEX;
 
@@ -32,62 +32,44 @@ public class River
         Order order      = turnCards.refineOrder(
                                Order.suited(riverCard.suit()));
         CanonCard hole[] = turnCards.refineHole(order);
-        CanonCard flop[] = turnCards.refineFlop(order);
+        CanonCard flop[] = turnCards.refineFlop(hole, order);
         CanonCard turn   = turnCards.refineTurn(order);
         RIVER            = order.asCanon(riverCard);
 
-        int precedencesAndOffset[] =
-                initPrecedencesAndOffset(hole, flop, turn);
-        PRECEDENCES = precedencesAndOffset[0];
-        RANK_OFFSET = precedencesAndOffset[1];
+        {
+            int precedences = 0, offset = 0;
+            if (RIVER.suit() == hole[0].suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( hole[0].rank() )) offset++;
+            }
+            if (RIVER.suit() == hole[1].suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( hole[1].rank() )) offset++;
+            }
+            if (RIVER.suit() == flop[0].suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( flop[0].rank() )) offset++;
+            }
+            if (RIVER.suit() == flop[1].suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( flop[1].rank() )) offset++;
+            }
+            if (RIVER.suit() == flop[2].suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( flop[2].rank() )) offset++;
+            }
+            if (RIVER.suit() == turn.suit()) {
+                precedences++;
+                if (RIVER.rank().comesAfter( turn.rank() )) offset++;
+            }
+            RANK_OFFSET = offset;
+            CASE        = RiverCase.valueOf(
+                            RIVER.suit(), precedences);
+        }
 
-        CASE = RiverCase.valueOf(
-                RIVER.suit(), PRECEDENCES);
         TURN_CARDS = turnCards;
         RIVER_CARD = riverCard;
     }
-
-
-    //--------------------------------------------------------------------
-    private int[] initPrecedencesAndOffset(
-            CanonCard hole[],
-            CanonCard flop[],
-            CanonCard turn)
-    {
-        int precedences = 0, offset = 0;
-        if (RIVER.suit() == hole[0].suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( hole[0].rank() )) offset++;
-        }
-        if (RIVER.suit() == hole[1].suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( hole[1].rank() )) offset++;
-        }
-        if (RIVER.suit() == flop[0].suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( flop[0].rank() )) offset++;
-        }
-        if (RIVER.suit() == flop[1].suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( flop[1].rank() )) offset++;
-        }
-        if (RIVER.suit() == flop[2].suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( flop[2].rank() )) offset++;
-        }
-        if (RIVER.suit() == turn.suit()) {
-            precedences++;
-            if (RIVER.rank().comesAfter( turn.rank() )) offset++;
-        }
-        return new int[]{precedences, offset};
-    }
-
-
-    //--------------------------------------------------------------------
-//    public long identity()
-//    {
-//        return TURN_CARDS.identity( RIVER_CARD );
-//    }
 
 
     //--------------------------------------------------------------------
@@ -109,14 +91,9 @@ public class River
                 RiverRawLookup.caseSet(TURN_CARDS.canonIndex());
         int caseOffset = caseSet.offsetOf( CASE );
 
-//        return caseOffset +
-//               (RIVER.rank().ordinal() - RANK_OFFSET);
-
         return globalOffset +
                caseOffset +
                (RIVER.rank().ordinal() - RANK_OFFSET);
-
-//        return CANON_INDEX;
     }
 
 
@@ -128,6 +105,4 @@ public class River
                 ", TURN_CARDS=" + TURN_CARDS +
                 '}';
     }
-
-    
 }

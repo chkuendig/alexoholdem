@@ -9,7 +9,7 @@ import ao.bucket.index.turn.TurnLookup;
 public class RiverLookup
 {
     //--------------------------------------------------------------------
-    private static final int  SHRINK    = 4;
+    private static final int  SHRINK    = 3;
     private static final int  CHUNK     = (1 << (SHRINK));
     private static final int  OFFSETS[] = computeOffsets();
 
@@ -49,7 +49,7 @@ public class RiverLookup
         int prevIndex = -1;
         for (int i = 0; i < TurnLookup.CANON_TURN_COUNT; i++)
         {
-            if (i % 1000000 == 0)
+            if (i % 1000000 == 1)
             {
                 System.out.print(".");
                 System.out.flush();

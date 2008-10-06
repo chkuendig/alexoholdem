@@ -115,12 +115,16 @@ public class Flop
         return HOLE_CARDS.asWild(hole, with);
     }
 
-    public CanonCard[] refineFlop(CanonCard[] flop, Order with)
+    public CanonCard[] refineFlop(
+            boolean     refinedHole,
+            CanonCard[] flop,
+            Order       with)
     {
-//        if (!(flop[0].isWild() ||
+//        if (!(refinedHole      ||
+//              flop[0].isWild() ||
 //              flop[1].isWild() ||
 //              flop[2].isWild())) return flop;
-
+        
         CanonCard wildFlop[] = new CanonCard[]{
                 with.asCanon(FLOP_A),
                 with.asCanon(FLOP_B),
@@ -128,9 +132,11 @@ public class Flop
         Arrays.sort(wildFlop);
         return wildFlop;
     }
-    public CanonCard[] refineFlop(Order with)
+    public CanonCard[] refineFlop(
+            boolean refinedHole,
+            Order   with)
     {
-        return refineFlop(FLOP, with);
+        return refineFlop(refinedHole, FLOP, with);
     }
 
 
@@ -156,20 +162,11 @@ public class Flop
                 FLOP[0].rank(), FLOP[1].rank(), FLOP[2].rank()};
     }
 
-
-    //--------------------------------------------------------------------
-//    public long identity(Card turn, Card river)
-//    {
-//        GeneralHistFinder identifyer =
-//                new GeneralHistFinder();
-//        OddHist hist =
-//                identifyer.compute(
-//                        HOLE_CARDS,
-//                        new Community(
-//                                FLOP_A, FLOP_B, FLOP_C,
-//                                turn, river));
-//        return hist.secureHashCode();
-//    }
+    public boolean holeEquals(CanonCard hole[])
+    {
+        return HOLE[0] == hole[0] &&
+               HOLE[1] == hole[1];
+    }
 
 
     //--------------------------------------------------------------------

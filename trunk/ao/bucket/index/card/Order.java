@@ -184,6 +184,7 @@ public enum Order
         return valueOf(behind);
     }
 
+
     //--------------------------------------------------------------------
     private static final Order SUITED_INDEX[];
     static
@@ -203,6 +204,7 @@ public enum Order
                                         (suit != ahead);
         return valueOf(behind);
     }
+
 
     //--------------------------------------------------------------------
     private static final Order UNSUITED_INDEX[][];
@@ -232,6 +234,7 @@ public enum Order
         }
         return valueOf(precedence);
     }
+
 
     //--------------------------------------------------------------------
     private static final Order TRIPLET_INDEX[][][];
@@ -265,12 +268,14 @@ public enum Order
         return valueOf(behind);
     }
 
+
     //--------------------------------------------------------------------
     public static Order partSuited(
             Suit ahead, Suit mid)
     {
         return unsuited(ahead, mid);
     }
+
 
     //--------------------------------------------------------------------
     private static final Order PART_INDEX[][][];
@@ -306,6 +311,7 @@ public enum Order
         return valueOf(precedence);
     }
 
+
     //--------------------------------------------------------------------
     private static final Order ORDERED_INDEX[][][];
     static
@@ -340,6 +346,7 @@ public enum Order
         }
         return valueOf(precedence);
     }
+
 
     //--------------------------------------------------------------------
     public static Order valueOf(
@@ -519,6 +526,7 @@ public enum Order
                : valueOf( precedences );
     }
 
+
     private static Order refinePair(
             Order order,
             int   orderUnique2,
@@ -538,6 +546,7 @@ public enum Order
             return valueOf(precedences);
         }
     }
+
 
     private static Order refinePair(
             Order order,
@@ -560,6 +569,7 @@ public enum Order
             return valueOf(precedences);
         }
     }
+
 
     private static Order refineTwoPair(
             Order order,
@@ -606,6 +616,7 @@ public enum Order
 
         return valueOf( orderPrecedences );
     }
+
 
     private static int[] refinePair(
             int   orderPrecedences[],

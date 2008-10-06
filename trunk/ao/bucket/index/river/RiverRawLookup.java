@@ -54,28 +54,6 @@ public class RiverRawLookup
 
 
     //--------------------------------------------------------------------
-//    public static long offset(int canonTurn)
-//    {
-//        return RiverUtil.unsigned(OFFSETS[ canonTurn ]);
-//    }
-//    private static int[] computeOffsets()
-//    {
-//        int offset    = 0;
-//        int offsets[] = new int[ TurnLookup.CANON_TURN_COUNT ];
-//
-//        for (int i = 0; i < TurnLookup.CANON_TURN_COUNT; i++)
-//        {
-//            offsets[ i ] = offset;
-//            RiverCaseSet caseSet =
-//                    RiverCaseSet.VALUES[ CASES[ i ] ];
-//            offset += caseSet.size();
-//        }
-//
-//        return offsets;
-//    }
-
-
-    //--------------------------------------------------------------------
     private static byte[] rawCases()
     {
         System.out.println("RiverLookup.rawCases");

@@ -199,8 +199,8 @@ public class Hole
             CanonCard canon[],
             Order     refineWith)
     {
-//        if (!(canon[0].isWild() ||
-//              canon[1].isWild())) return canon;
+        if (!(canon[0].isWild() ||
+              canon[1].isWild())) return canon;
 
         CanonCard refinedA = refineWith.asCanon(A);
         CanonCard refinedB = refineWith.asCanon(B);
