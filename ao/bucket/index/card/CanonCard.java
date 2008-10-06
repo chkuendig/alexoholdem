@@ -90,14 +90,14 @@ public enum CanonCard
 
     static
     {
-        INDEX = new CanonCard[Rank.VALUES.length]
-                                [CanonSuit.VALUES.length];
+        INDEX = new CanonCard[      Rank.VALUES.length ]
+                             [ CanonSuit.VALUES.length ];
         for (Rank rank : Rank.VALUES)
         {
             for (CanonSuit suit : CanonSuit.VALUES)
             {
-                INDEX[rank.ordinal()]
-                     [suit.ordinal()] =
+                INDEX[ rank.ordinal() ]
+                     [ suit.ordinal() ] =
                         computeValueOf(rank, suit);
             }
         }

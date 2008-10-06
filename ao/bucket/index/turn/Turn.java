@@ -30,7 +30,7 @@ public class Turn
         ORDER       = flop.refineOrder(
                          Order.suited(turn.suit()));
         HOLE        = flop.refineHole(ORDER);
-        FLOP        = flop.refineFlop(ORDER);
+        FLOP        = flop.refineFlop(flop.holeEquals(HOLE), ORDER);
         TURN        = ORDER.asCanon(turn);
         FLOP_CARDS  = flop;
         TURN_CARD   = turn;
@@ -53,16 +53,31 @@ public class Turn
         return FLOP_CARDS.refineHole(HOLE, with);
     }
 
-    public CanonCard[] refineFlop(Order with)
+    public CanonCard[] refineFlop(
+            CanonCard hole[],
+            Order     with)
     {
-        return FLOP_CARDS.refineFlop(FLOP, with);
+        return FLOP_CARDS.refineFlop(
+                FLOP_CARDS.holeEquals(hole),
+                FLOP, with);
     }
 
-    public CanonCard refineTurn(Order with)
+    public CanonCard refineTurn(
+//            CanonCard hole[],
+//            CanonCard flop[],
+            Order     with)
     {
+//        return  TURN.isWild() ||
+//               !FLOP_CARDS.holeEquals(hole) ||
+//                FLOP[0] != flop[0] ||
+//                FLOP[1] != flop[1] ||
+//                FLOP[2] != flop[2]
+//                ? with.asCanon(TURN_CARD)
+//                : TURN;
         return TURN.isWild()
                ? with.asCanon(TURN_CARD)
                : TURN;
+//        return with.asCanon(TURN_CARD);
     }
 
 
