@@ -12,16 +12,11 @@ import ao.holdem.model.card.Card;
 public class River
 {
     //--------------------------------------------------------------------
-//    private final CanonCard HOLE[], FLOP[], TURN, RIVER;
-//    private final Order     ORDER;
     private final CanonCard RIVER;
     private final Card      RIVER_CARD;
     private final RiverCase CASE;
     private final Turn      TURN_CARDS;
-
-//    private final int       PRECEDENCES;
     private final int       RANK_OFFSET;
-//    private final long      CANON_INDEX;
 
 
     //--------------------------------------------------------------------
@@ -32,7 +27,7 @@ public class River
         Order order      = turnCards.refineOrder(
                                Order.suited(riverCard.suit()));
         CanonCard hole[] = turnCards.refineHole(order);
-        CanonCard flop[] = turnCards.refineFlop(hole, order);
+        CanonCard flop[] = turnCards.refineFlop(order);
         CanonCard turn   = turnCards.refineTurn(order);
         RIVER            = order.asCanon(riverCard);
 

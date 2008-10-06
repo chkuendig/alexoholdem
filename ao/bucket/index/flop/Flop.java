@@ -18,6 +18,36 @@ import java.util.Arrays;
 public class Flop
 {
     //--------------------------------------------------------------------
+    private static final CanonCard FLOPS[][][][];
+    static
+    {
+        FLOPS = new CanonCard[ CanonCard.VALUES.length ]
+                             [ CanonCard.VALUES.length ]
+                             [ CanonCard.VALUES.length ]
+                             [                         ];
+        for (CanonCard flopA : CanonCard.VALUES)
+        {
+            for (CanonCard flopB : CanonCard.VALUES)
+            {
+//                if (flopA == flopB) continue;
+                for (CanonCard flopC : CanonCard.VALUES)
+                {
+//                    if (flopA == flopC || flopB == flopC) continue;
+
+                    CanonCard flop[] =
+                            new CanonCard[] {
+                                    flopA, flopB, flopC};
+                    Arrays.sort(flop);
+                    FLOPS[ flopA.ordinal() ]
+                         [ flopB.ordinal() ]
+                         [ flopC.ordinal() ] = flop;
+                }
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------
     private final CanonCard HOLE[], FLOP[];
     private final Order     ORDER;
     private final FlopCase  FLOP_CASE;
@@ -35,22 +65,16 @@ public class Flop
                 Card flopB,
                 Card flopC)
     {
-        ORDER        = hole.order().refine(
-                            orderSuitsBy(flopA, flopB, flopC));
-        HOLE         = hole.asWild(ORDER);
-
-        FLOP = new CanonCard[]{
-                ORDER.asCanon(flopA),
-                ORDER.asCanon(flopB),
-                ORDER.asCanon(flopC)};
-        Arrays.sort(FLOP);
-
         HOLE_CARDS = hole;
         FLOP_A     = flopA;
         FLOP_B     = flopB;
         FLOP_C     = flopC;
-        
-        FLOP_CASE   = computeFlopCase(hole.paired());
+
+        ORDER      = hole.order().refine(
+                            orderSuitsBy(flopA, flopB, flopC));
+        HOLE       = hole.asWild(ORDER);
+        FLOP       = refineFlop(ORDER);
+        FLOP_CASE  = computeFlopCase(hole.paired());
     }
 
 
@@ -115,29 +139,11 @@ public class Flop
         return HOLE_CARDS.asWild(hole, with);
     }
 
-    public CanonCard[] refineFlop(
-            CanonCard[] hole,
-            CanonCard[] flop,
-            Order       with)
+    public CanonCard[] refineFlop(Order with)
     {
-        if (!(hole[0].isWild() ||
-              hole[1].isWild() ||
-              flop[0].isWild() ||
-              flop[1].isWild() ||
-              flop[2].isWild())) return flop;
-        
-        CanonCard wildFlop[] = new CanonCard[]{
-                with.asCanon(FLOP_A),
-                with.asCanon(FLOP_B),
-                with.asCanon(FLOP_C)};
-        Arrays.sort(wildFlop);
-        return wildFlop;
-    }
-    public CanonCard[] refineFlop(
-            CanonCard hole[],
-            Order     with)
-    {
-        return refineFlop(hole, FLOP, with);
+        return FLOPS[ with.asCanon(FLOP_A).ordinal() ]
+                    [ with.asCanon(FLOP_B).ordinal() ]
+                    [ with.asCanon(FLOP_C).ordinal() ];
     }
 
 
