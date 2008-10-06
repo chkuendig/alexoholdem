@@ -16,7 +16,9 @@ import ao.holdem.model.card.Card;
 public class Turn
 {
     //--------------------------------------------------------------------
-    private final CanonCard HOLE[], FLOP[], TURN;
+    private final CanonCard HOLE[],
+//                            FLOP[],
+                            TURN;
     private final Flop      FLOP_CARDS;
     private final Card      TURN_CARD;
     private final Order     ORDER;
@@ -30,7 +32,7 @@ public class Turn
         ORDER       = flop.refineOrder(
                          Order.suited(turn.suit()));
         HOLE        = flop.refineHole(ORDER);
-        FLOP        = flop.refineFlop(HOLE, ORDER);
+//        FLOP        = flop.refineFlop(ORDER);
         TURN        = ORDER.asCanon(turn);
         FLOP_CARDS  = flop;
         TURN_CARD   = turn;
@@ -45,7 +47,7 @@ public class Turn
 
     public Order refineOrder(Order with)
     {
-        return ORDER.refine( with );
+        return ORDER.refine(with);
     }
 
     public CanonCard[] refineHole(Order with)
@@ -53,31 +55,16 @@ public class Turn
         return FLOP_CARDS.refineHole(HOLE, with);
     }
 
-    public CanonCard[] refineFlop(
-            CanonCard hole[],
-            Order     with)
+    public CanonCard[] refineFlop(Order with)
     {
-        return FLOP_CARDS.refineFlop(
-                FLOP_CARDS.holeEquals(hole),
-                FLOP, with);
+        return FLOP_CARDS.refineFlop(with);
     }
 
-    public CanonCard refineTurn(
-//            CanonCard hole[],
-//            CanonCard flop[],
-            Order     with)
+    public CanonCard refineTurn(Order with)
     {
-//        return  TURN.isWild() ||
-//               !FLOP_CARDS.holeEquals(hole) ||
-//                FLOP[0] != flop[0] ||
-//                FLOP[1] != flop[1] ||
-//                FLOP[2] != flop[2]
-//                ? with.asCanon(TURN_CARD)
-//                : TURN;
         return TURN.isWild()
                ? with.asCanon(TURN_CARD)
                : TURN;
-//        return with.asCanon(TURN_CARD);
     }
 
 
@@ -103,13 +90,6 @@ public class Turn
     {
         return TURN.suit();
     }
-
-
-    //--------------------------------------------------------------------
-//    public long identity(Card river)
-//    {
-//        return FLOP_CARDS.identity(TURN_CARD, river);
-//    }
 
 
     //--------------------------------------------------------------------
