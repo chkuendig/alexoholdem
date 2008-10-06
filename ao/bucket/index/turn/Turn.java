@@ -30,7 +30,7 @@ public class Turn
         ORDER       = flop.refineOrder(
                          Order.suited(turn.suit()));
         HOLE        = flop.refineHole(ORDER);
-        FLOP        = flop.refineFlop(flop.holeEquals(HOLE), ORDER);
+        FLOP        = flop.refineFlop(HOLE, ORDER);
         TURN        = ORDER.asCanon(turn);
         FLOP_CARDS  = flop;
         TURN_CARD   = turn;

@@ -116,14 +116,15 @@ public class Flop
     }
 
     public CanonCard[] refineFlop(
-            boolean     refinedHole,
+            CanonCard[] hole,
             CanonCard[] flop,
             Order       with)
     {
-//        if (!(refinedHole      ||
-//              flop[0].isWild() ||
-//              flop[1].isWild() ||
-//              flop[2].isWild())) return flop;
+        if (!(hole[0].isWild() ||
+              hole[1].isWild() ||
+              flop[0].isWild() ||
+              flop[1].isWild() ||
+              flop[2].isWild())) return flop;
         
         CanonCard wildFlop[] = new CanonCard[]{
                 with.asCanon(FLOP_A),
@@ -133,10 +134,10 @@ public class Flop
         return wildFlop;
     }
     public CanonCard[] refineFlop(
-            boolean refinedHole,
-            Order   with)
+            CanonCard hole[],
+            Order     with)
     {
-        return refineFlop(refinedHole, FLOP, with);
+        return refineFlop(hole, FLOP, with);
     }
 
 
