@@ -16,7 +16,7 @@ import java.util.Arrays;
  *
  * Histogram of possible strengths of hands.
  */
-public class OddHist
+public class OddHist implements Comparable<OddHist>
 {
     //--------------------------------------------------------------------
     private final int HIST[];
@@ -86,6 +86,32 @@ public class OddHist
         }
 
         return new BigInteger(1, m.digest()).longValue();
+    }
+
+
+    //--------------------------------------------------------------------
+    public double mean()
+    {
+        double total = 0;
+        int    count = 0;
+
+        for (int i = 0; i < HIST.length; i++)
+        {
+            int hist = HIST[i];
+
+            total += hist * i;
+            count += hist;
+        }
+
+        return total / count;
+    }
+
+
+
+    //--------------------------------------------------------------------
+    public int compareTo(OddHist o)
+    {
+        return Double.compare(mean(), o.mean());
     }
 
 

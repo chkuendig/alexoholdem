@@ -24,7 +24,7 @@ public class River
             Turn turnCards,
             Card riverCard)
     {
-        Order order      = turnCards.refineOrder(
+        Order     order  = turnCards.refineOrder(
                                Order.suited(riverCard.suit()));
         CanonCard hole[] = turnCards.refineHole(order);
         CanonCard flop[] = turnCards.refineFlop(order);

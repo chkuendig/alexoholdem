@@ -47,7 +47,7 @@ public class Hole
     //--------------------------------------------------------------------
     private final Card      A, B;
     private final Card      AS_ARRAY[];
-    private final int CANON_INDEX;
+    private final int       CANON_INDEX;
     private final Order     ORDER;
     private final boolean   IS_PAIR;
     private final CanonCard CANON[];
