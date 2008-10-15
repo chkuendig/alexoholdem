@@ -4,10 +4,7 @@ import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
 import static ao.bucket.index.flop.FlopUtil.distinct;
 import ao.bucket.index.turn.Turn;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.Rank;
-import ao.holdem.model.card.Suit;
+import ao.holdem.model.card.*;
 
 import java.util.Arrays;
 
@@ -268,6 +265,11 @@ public class Flop
 //               ORDER     + "\t" +
 //               FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) + "\t" +
 //               subIndex();
+    }
+
+    public Community toCommunity()
+    {
+        return new Community(FLOP_A, FLOP_B, FLOP_C);
     }
 
 

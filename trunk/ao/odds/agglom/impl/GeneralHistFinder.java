@@ -3,6 +3,7 @@ package ao.odds.agglom.impl;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.HistFinder;
 import ao.odds.agglom.OddHist;
 import ao.odds.eval.eval7.Eval7Faster;
@@ -36,6 +37,17 @@ public class GeneralHistFinder implements HistFinder
         assert activeOpponents == 1 : "must be heads up";
         return compute(hole, community);
     }
+
+    public OddHist compute(CardSequence cards, int activeOpponents)
+    {
+        return compute(cards.hole(), cards.community(), activeOpponents);
+    }
+
+    public OddHist compute(CardSequence cards)
+    {
+        return compute(cards.hole(), cards.community());
+    }
+
 
     public OddHist compute(Hole      hole,
                            Community community)

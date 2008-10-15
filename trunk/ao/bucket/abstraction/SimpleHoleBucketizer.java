@@ -23,20 +23,6 @@ public class SimpleHoleBucketizer
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        SimpleHoleBucketizer bucketizer = new SimpleHoleBucketizer();
-
-        for (int i = 2; i <= 64; i++)
-        {
-            System.out.println("---------------------------------------");
-            bucketizer.display(
-                    bucketizer.bucketize(i) );
-        }
-    }
-
-
-    //--------------------------------------------------------------------
     public SimpleHoleBucketizer()
     {
         revIndex   = new Hole   [ Hole.CANONICAL_COUNT ];
@@ -88,9 +74,7 @@ public class SimpleHoleBucketizer
                      j < chunk && index < histograms.length;
                      j++)
             {
-                holes[ i ][ j ] = inOrder[ index ];
-
-                index++;
+                holes[ i ][ j ] = inOrder[ index++ ];
             }
         }
 
@@ -103,13 +87,17 @@ public class SimpleHoleBucketizer
     {
         for (short canons[] : buckets)
         {
-            if (canons.length == 0) continue;
-
-            for (short canon : canons)
-            {
-                System.out.print( revIndex[ canon ] + "\t" );
-            }
-            System.out.println();
+            display( canons );
         }
+    }
+    public void display(short canons[])
+    {
+        if (canons.length == 0) return;
+
+        for (short canon : canons)
+        {
+            System.out.print( revIndex[ canon ] + "\t" );
+        }
+        System.out.println();
     }
 }
