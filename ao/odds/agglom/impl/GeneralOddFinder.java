@@ -11,6 +11,8 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
+import ao.util.persist.PersistentLongs;
+import org.apache.log4j.Logger;
 
 import java.util.EnumSet;
 
@@ -21,6 +23,11 @@ import java.util.EnumSet;
  */
 public class GeneralOddFinder implements OddFinder
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(GeneralOddFinder.class);
+
+
     //--------------------------------------------------------------------
     private static final int HOLE_A = 51 - 1,
                              HOLE_B = 51,
@@ -33,8 +40,88 @@ public class GeneralOddFinder implements OddFinder
 
                              RIVER  = 51 - 6,
 
-                             OPP_A  = 51 - 8,
+//                             OPP_A  = 51 - 8,
                              OPP_B  = 51 - 7;
+
+
+    //--------------------------------------------------------------------
+    private static final String HOLE_DIR    = "lookup/odds/";
+    private static final String HOLE_WINS   =
+            HOLE_DIR + "wins.preflop.cache";
+    private static final String HOLE_LOSES  =
+            HOLE_DIR + "losses.preflop.cache";
+    private static final String HOLE_SPLITS =
+            HOLE_DIR + "splits.preflop.cache";
+    private static final Odds   PREFLOP[] = retrieveOrComputeOdds();
+
+    private static Odds[] retrieveOrComputeOdds()
+    {
+        Odds[] cache = retrieveOdds();
+        if (cache == null)
+        {
+            cache = computeOdds();
+            storeOdds( cache );
+        }
+        return cache;
+    }
+
+    private static Odds[] retrieveOdds()
+    {
+        Odds cache[] = new Odds[ Hole.CANONICAL_COUNT ];
+
+        long wins[]   = PersistentLongs.retrieve(HOLE_WINS  );
+        long loses[]  = PersistentLongs.retrieve(HOLE_LOSES );
+        long splits[] = PersistentLongs.retrieve(HOLE_SPLITS);
+
+        if (wins == null || loses == null || splits == null) return null;
+
+        for (int i = 0; i < wins.length; i++)
+        {
+            cache[ i ] = new Odds(wins[i], loses[i], splits[i]);
+        }
+
+        return cache;
+    }
+
+    private static Odds[] computeOdds()
+    {
+        Odds cache[] = new Odds[ Hole.CANONICAL_COUNT ];
+
+        for (Card a : Card.VALUES)
+        {
+            for (Card b : Card.VALUES)
+            {
+                if (a.ordinal() >= b.ordinal()) continue;
+                Hole hole = Hole.valueOf(a, b);
+
+                if (cache[ hole.canonIndex() ] != null) continue;
+                cache[ hole.canonIndex() ] =
+                        new GeneralOddFinder().compute(
+                                hole, Community.PREFLOP);
+                LOG.info("pre-computing Odds for " + hole);
+            }
+        }
+
+        return cache;
+    }
+
+    private static void storeOdds(Odds cache[])
+    {
+        long wins[]   = new long[ Hole.CANONICAL_COUNT ];
+        long loses[]  = new long[ Hole.CANONICAL_COUNT ];
+        long splits[] = new long[ Hole.CANONICAL_COUNT ];
+
+        for (int i = 0; i < cache.length; i++)
+        {
+            wins  [ i ] = cache[ i ].winOdds();
+            loses [ i ] = cache[ i ].loseOdds();
+            splits[ i ] = cache[ i ].splitOdds();
+        }
+
+        PersistentLongs.persist(wins, HOLE_WINS);
+        PersistentLongs.persist(loses, HOLE_LOSES);
+        PersistentLongs.persist(splits, HOLE_SPLITS);
+    }
 
 
     //--------------------------------------------------------------------
@@ -49,6 +136,11 @@ public class GeneralOddFinder implements OddFinder
     public Odds compute(Hole      hole,
                         Community community)
     {
+        if (community.equals( Community.PREFLOP ) &&
+                PREFLOP != null) // called for pre-calculation
+        {
+            return PREFLOP[ hole.canonIndex() ];
+        }
 
         Card cards[] = initKnownCardsToEnd(hole, community);
         return rollOutCommunity(

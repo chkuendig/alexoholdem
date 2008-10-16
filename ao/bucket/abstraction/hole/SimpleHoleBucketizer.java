@@ -1,12 +1,11 @@
-package ao.bucket.abstraction;
+package ao.bucket.abstraction.hole;
 
 import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.CanonTraverser.Traverser;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.agglom.OddHist;
-import ao.odds.agglom.impl.GeneralHistFinder;
+import ao.odds.agglom.impl.GeneralOddFinder;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -14,22 +13,20 @@ import java.util.Comparator;
 /**
  *
  */
-public class SimpleHoleBucketizer
+public class SimpleHoleBucketizer implements HoleBucketizer
 {
     //--------------------------------------------------------------------
-    private final Hole    revIndex[];
-    private final OddHist histograms[];
-    private final Short   inOrder[];
+    private final Hole   revIndex[];
+    private final Double histograms[];
+    private final Short  inOrder[];
 
 
     //--------------------------------------------------------------------
     public SimpleHoleBucketizer()
     {
-        revIndex   = new Hole   [ Hole.CANONICAL_COUNT ];
-        histograms = new OddHist[ Hole.CANONICAL_COUNT ];
-        inOrder    = new Short  [ Hole.CANONICAL_COUNT ];
-
-        initOrder();
+        revIndex   = new Hole  [ Hole.CANONICAL_COUNT ];
+        histograms = new Double[ Hole.CANONICAL_COUNT ];
+        inOrder    = new Short [ Hole.CANONICAL_COUNT ];
     }
 
 
@@ -40,9 +37,12 @@ public class SimpleHoleBucketizer
             public void traverse(CardSequence cards) {
                 Hole hole = cards.hole();
 
-                GeneralHistFinder histFinder = new GeneralHistFinder();
                 histograms[ hole.canonIndex() ] =
-                        histFinder.compute(hole, Community.PREFLOP);
+                        new GeneralOddFinder().compute(
+                                hole, Community.PREFLOP
+                        ).strengthVsRandom();
+//                        new GeneralHistFinder().compute(
+//                                hole, Community.PREFLOP).mean();
                 revIndex  [ hole.canonIndex() ] = hole;
             }
         });
@@ -60,6 +60,8 @@ public class SimpleHoleBucketizer
     //--------------------------------------------------------------------
     public short[][] bucketize( int buckets )
     {
+        if (histograms[0] == null) initOrder();
+
         short holes[][] = new short[ buckets ][];
 
         int index = 0;
@@ -93,6 +95,7 @@ public class SimpleHoleBucketizer
     public void display(short canons[])
     {
         if (canons.length == 0) return;
+        if (histograms[0] == null) initOrder();
 
         for (short canon : canons)
         {

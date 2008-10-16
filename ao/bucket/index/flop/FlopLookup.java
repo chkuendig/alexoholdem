@@ -5,6 +5,7 @@ import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
 import ao.util.persist.PersistentInts;
 import ao.util.stats.Combiner;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -14,6 +15,10 @@ import java.util.Arrays;
  */
 public class FlopLookup
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG = Logger.getLogger(FlopLookup.class);
+
+
     //--------------------------------------------------------------------
     public static final int CANON_FLOP_COUNT = 1286792;
 
@@ -25,23 +30,13 @@ public class FlopLookup
             retrieveOrCalculateOffsets();
 
 
-    private static int[][] retrieveOrCalculateOffsets()
-    {
-        System.out.println("FlopLookup.retrieveOrCalculateOffsets");
-        int offsets[][] = retrieveOffsets();
-        if (offsets == null)
-        {
-            offsets = calculateOffsets();
-            storeOffsets( offsets );
-        }
-        return offsets;
-    }
-
     private static int[][] retrieveOffsets()
     {
+        LOG.info("attempting to retrieveOffsets");
         int flat[] = PersistentInts.retrieve(OFFSET_FILE);
         if (flat == null) return null;
 
+        LOG.info("indexing retrieved offsets");
         int offsets[][] =
                 new int[ Hole.CANONICAL_COUNT   ]
                        [ FlopCase.VALUES.length ];
@@ -57,8 +52,22 @@ public class FlopLookup
         return offsets;
     }
 
+    private static int[][] retrieveOrCalculateOffsets()
+    {
+        int offsets[][] = retrieveOffsets();
+        if (offsets == null)
+        {
+            offsets = calculateOffsets();
+            storeOffsets( offsets );
+        }
+        
+        LOG.info("finished retrieveOrCalculateOffsets");
+        return offsets;
+    }
+
     private static void storeOffsets(int offsets[][])
     {
+        LOG.info("storing offsets");
         int flat[] = new int[ offsets.length * offsets[0].length ];
 
         int index = 0;
@@ -74,6 +83,7 @@ public class FlopLookup
 
     private static int[][] calculateOffsets()
     {
+        LOG.info("calculating offsets");
         int offsets[][] = new int[ Hole.CANONICAL_COUNT ][];
 
         int  offset  = 0;

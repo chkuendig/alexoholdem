@@ -19,7 +19,8 @@ import java.util.Arrays;
 public class OddHist implements Comparable<OddHist>
 {
     //--------------------------------------------------------------------
-    private final int HIST[];
+    private final int    HIST[];
+    private       double mean = Double.NaN;
 
 
     //--------------------------------------------------------------------
@@ -37,6 +38,7 @@ public class OddHist implements Comparable<OddHist>
     public void count(short value)
     {
         HIST[ value ]++;
+        mean = Double.NaN;
     }
 
 
@@ -91,6 +93,14 @@ public class OddHist implements Comparable<OddHist>
 
     //--------------------------------------------------------------------
     public double mean()
+    {
+        if (Double.isNaN(mean))
+        {
+            mean = calculateMean();
+        }
+        return mean;
+    }
+    private double calculateMean()
     {
         double total = 0;
         int    count = 0;
