@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.hole;
 
-import ao.bucket.index.test.AutovivifiedList;
 import ao.holdem.model.card.Hole;
+import ao.util.data.AutovivifiedList;
 import ao.util.persist.PersistentBytes;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public class HoleBucketLookup
 {
     //--------------------------------------------------------------------
-    private final String DIR = "lookup/bucket/hole/";
+    private final static String DIR = "lookup/bucket/hole/";
 
 
     //--------------------------------------------------------------------
@@ -61,13 +61,13 @@ public class HoleBucketLookup
     //--------------------------------------------------------------------
     private String bucketFile(int totalHoleBuckets)
     {
-        return DIR + BUCKETIZER.getClass().getSimpleName() +
+        return DIR + BUCKETIZER.id() +
                "." + totalHoleBuckets + ".cache";
     }
 
 
     //--------------------------------------------------------------------
-    public int bucket(int totalHoleBuckets, int forCanonHole)
+    public short bucket(int totalHoleBuckets, int forCanonHole)
     {
         return retrieveOrCreate( totalHoleBuckets )[ forCanonHole ];
     }
