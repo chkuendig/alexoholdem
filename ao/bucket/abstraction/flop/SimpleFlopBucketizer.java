@@ -7,13 +7,14 @@ import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.eval.eval5.Eval5;
+import ao.util.data.IntList;
 import org.apache.log4j.Logger;
 
 /**
  * Date: Oct 14, 2008
  * Time: 6:52:10 PM
  */
-public class SimpleFlopBucketizer
+public class SimpleFlopBucketizer implements FlopBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -63,36 +64,37 @@ public class SimpleFlopBucketizer
     //--------------------------------------------------------------------
     public int[][] bucketize(int numBuckets)
     {
+        int count     = 0;
+        int partStart = 0;
+        int flopIndex = 0;
         int flops[][] = new int[ numBuckets ][];
-
-        int index  = 0;
-        int mean   = 0;
-        int inMean = 0;
-        int chunk  = (int) Math.ceil(
-                      ((double) meanCount) / flops.length);
-        for (int i = 0; i < flops.length; i++)
+        int partition = (int) Math.ceil(
+                           ((double) meanCount) / numBuckets);
+        for (int mean = 0; mean < byMean.length; mean++)
         {
-            flops[ i ] = new int[
-                    Math.min(chunk,
-                             meanCount - index) ];
-            for (int j = 0;
-                     j < flops[ i ].length;
-                     j++)
+            if (count >= partition ||
+                    mean == (byMean.length - 1))
             {
-                if (inMean >= IntList.sizeOf( byMean[ mean ] ))
+                int bucket[]         = new int[ count ];
+                int bucketIndex      = 0;
+                flops[ flopIndex++ ] = bucket;
+                for (int bucketMean = partStart;
+                         bucketMean < mean;
+                         bucketMean++)
                 {
-                    if    (byMean[ mean ] != null) mean++;
-                    while (byMean[ mean ] == null)
+                    if (byMean[ bucketMean ] == null) continue; 
+                    for (int flop : byMean[ bucketMean ].toArray())
                     {
-                        mean++;
+                        bucket[ bucketIndex++ ] = flop;
                     }
-                    inMean = 0;
                 }
 
-                flops[ i ][ j ] = byMean[ mean ].get( inMean++ );
+                partStart = mean;
+                count     = 0;
             }
-        }
 
+            count += IntList.sizeOf( byMean[ mean ] );
+        }
         return flops;
     }
 
