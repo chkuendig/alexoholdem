@@ -6,6 +6,7 @@ import ao.bucket.abstraction.hole.HoleBucketLookup;
 import ao.bucket.abstraction.hole.SimpleHoleBucketizer;
 import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Hole;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Oct 14, 2008
@@ -14,11 +15,16 @@ import ao.holdem.model.card.Hole;
 public class BucketizerTest
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketizerTest.class);
+
+
+    //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        testFlopBucketLookup();
+        testFlopBucketLookup();
 //        testFlopBucketizer();
-        testBucketLookup();
+//        testBucketLookup();
     }
 
 
@@ -29,32 +35,30 @@ public class BucketizerTest
         short                flopBuckets = 3;
         SimpleHoleBucketizer bucketizer  = new SimpleHoleBucketizer();
 
-        short holeBucket = 0;
-        for (short[] canonHoles : bucketizer.bucketize( holeBuckets ))
-        {
-            System.out.println("hole bucket: " + canonHoles.length);
-            SimpleFlopBucketizer flopBucketizer =
-                    new SimpleFlopBucketizer( canonHoles );
-
-            FlopBucketLookup flopBucketLookup =
+        FlopBucketLookup flopBucketLookup =
                     new FlopBucketLookup(
                             bucketizer.id(),
-                            holeBuckets,
-                            flopBucketizer);
+                            bucketizer.bucketize( holeBuckets ),
+                            SimpleFlopBucketizer.FACTORY);
 
-            int counts[] = new int[ holeBuckets * flopBuckets + 1 ];
-            for (int i = 0; i < FlopLookup.CANON_FLOP_COUNT; i++)
+        int counts[] = new int[ holeBuckets * flopBuckets + 1 ];
+
+        for (int i = 0; i < FlopLookup.CANON_FLOP_COUNT; i++)
+        {
+            if (i % 1000 == 0)
             {
-                short flopBucket =
-                        flopBucketLookup.bucket(
-                                holeBucket,
-                                flopBuckets, i );
-                counts[ flopBucket + 1 ]++;
+                LOG.info("now on " + i);
             }
-            for (int i = 0; i < counts.length; i++)
-            {
-                System.out.println("\t" + (i - 1) + "\t" + counts[i]);
-            }
+
+            short flopBucket =
+                    flopBucketLookup.bucket(
+                            flopBuckets, i );
+            counts[ flopBucket + 1 ]++;
+        }
+
+        for (int i = 0; i < counts.length; i++)
+        {
+            System.out.println("\t" + (i - 1) + "\t" + counts[i]);
         }
     }
 
