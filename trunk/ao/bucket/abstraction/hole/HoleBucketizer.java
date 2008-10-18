@@ -8,4 +8,8 @@ public interface HoleBucketizer
 {
     //--------------------------------------------------------------------
     public short[][] bucketize( int buckets );
+
+
+    //--------------------------------------------------------------------
+    public String id();
 }

@@ -1,4 +1,4 @@
-package ao.bucket.index.detail;
+package ao.bucket.index.test.detail;
 
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;

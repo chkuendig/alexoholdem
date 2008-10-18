@@ -1,4 +1,4 @@
-package ao.bucket.index.detail;
+package ao.bucket.index.test.detail;
 
 import ao.holdem.persist.GenericBinding;
 import com.sleepycat.bind.tuple.TupleInput;

@@ -83,7 +83,7 @@ public class SimpleHoleBucketizer implements HoleBucketizer
         return holes;
     }
 
-    
+
     //--------------------------------------------------------------------
     public void display( short buckets[][] )
     {
@@ -102,5 +102,17 @@ public class SimpleHoleBucketizer implements HoleBucketizer
             System.out.print( revIndex[ canon ] + "\t" );
         }
         System.out.println();
+    }
+
+
+    //--------------------------------------------------------------------
+    public String id()
+    {
+        return "simple_odds";
+//        return "simple_histograms";
+    }
+    public String toString()
+    {
+        return id();
     }
 }

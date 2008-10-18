@@ -1,5 +1,6 @@
 package ao.bucket.abstraction.flop;
 
+import ao.bucket.abstraction.flop.FlopBucketizer.Factory;
 import ao.bucket.index.flop.FlopLookup;
 import ao.util.data.AutovivifiedList;
 import ao.util.persist.PersistentShorts;
@@ -29,24 +30,26 @@ public class FlopBucketLookup
     //--------------------------------------------------------------------
     private final List<RandomAccessFile> FILES;
     private final File                   BUCKET_DIR;
-    private final FlopBucketizer         BUCKETIZER;
+    private final Factory                BUCKETIZER;
+    private final short[][]              HOLE_BUCKETS;
 
 
     //--------------------------------------------------------------------
     public FlopBucketLookup(
-            String         holeBucketizerId,
-            int            holeBuckets,
-            FlopBucketizer bucketizer)
+            String    holeBucketizerId,
+            short[][] holeBuckets,
+            Factory   bucketizer)
     {
         FILES        = new AutovivifiedList<RandomAccessFile>();
         BUCKETIZER   = bucketizer;
-        BUCKET_DIR   = bucketFolder(holeBucketizerId, holeBuckets);
+        BUCKET_DIR   = bucketFolder(
+                holeBucketizerId, holeBuckets.length);
+        HOLE_BUCKETS = holeBuckets;
     }
 
 
     //--------------------------------------------------------------------
     public short bucket(
-            short holeBucket,
             short flopBucketsPerHoleBucket,
             int   forCanonFlop)
     {
@@ -54,7 +57,6 @@ public class FlopBucketLookup
         if (! bucketFile.exists())
         {
             calculateBuckets(
-                    (short)(holeBucket * flopBucketsPerHoleBucket),
                     flopBucketsPerHoleBucket,
                     bucketFile);
         }
@@ -91,23 +93,32 @@ public class FlopBucketLookup
 
     //--------------------------------------------------------------------
     private void calculateBuckets(
-            short bucketOffset,
             int   numBuckets,
             File  bucketFile)
     {
-        LOG.info("calculateBuckets " + bucketOffset + " " + numBuckets);
+        LOG.info("calculateBuckets " + numBuckets);
 
-        short byCanon[]   = new short[ FlopLookup.CANON_FLOP_COUNT ];
+        short byCanon[] = new short[ FlopLookup.CANON_FLOP_COUNT ];
         Arrays.fill(byCanon, (short) -1);
 
-        int   buckets[][] = BUCKETIZER.bucketize( numBuckets );
-        for (short bucket = 0; bucket < buckets.length; bucket++)
+        int bucketOffset = 0;
+        for (short[] holeHucket : HOLE_BUCKETS)
         {
-            for (int canon : buckets[ bucket ])
+            int buckets[][] =
+                    BUCKETIZER.newInstance( holeHucket )
+                              .bucketize  ( numBuckets );
+
+            for (short bucket = 0; bucket < buckets.length; bucket++)
             {
-                byCanon[ canon ] = (short)(bucketOffset + bucket);
+                for (int canon : buckets[ bucket ])
+                {
+                    byCanon[ canon ] = (short)(bucketOffset + bucket);
+                }
             }
+
+            bucketOffset += buckets.length;
         }
+
         PersistentShorts.writeBinary(
                 byCanon, bucketFile.toString());
     }

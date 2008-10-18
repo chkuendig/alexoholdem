@@ -22,6 +22,14 @@ public class SimpleFlopBucketizer implements FlopBucketizer
 
 
     //--------------------------------------------------------------------
+    public static Factory FACTORY = new Factory() {
+        public FlopBucketizer newInstance(short[] canonHoles) {
+            return new SimpleFlopBucketizer( canonHoles );
+        }
+    };
+
+
+    //--------------------------------------------------------------------
     private final IntList byMean[];
     private       int     meanCount;
 
