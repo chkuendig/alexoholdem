@@ -117,7 +117,6 @@ public class OddHist implements Comparable<OddHist>
     }
 
 
-
     //--------------------------------------------------------------------
     public int compareTo(OddHist o)
     {
