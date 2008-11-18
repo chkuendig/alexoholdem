@@ -165,7 +165,7 @@ public class Main
 
         Community c  = new Community();
         OddFinder fa = new ApproximateOddFinder();
-//        OddFinder fg = new GeneralOddFinder();
+//        OddFinder fg = new PreciseHeadsUpOdds();
         for (int opps = 1; opps <= 1; opps++)
         {
             for (Card holes[] : new Combiner<Card>(Card.values(), 2))

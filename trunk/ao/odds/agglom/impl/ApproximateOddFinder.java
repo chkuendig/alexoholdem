@@ -5,7 +5,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
-import static ao.odds.agglom.impl.GeneralOddFinder.initKnownCardsToEnd;
+import static ao.odds.agglom.impl.PreciseHeadsUpOdds.initKnownCardsToEnd;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
 import ao.util.rand.MersenneTwisterFast;
@@ -169,13 +169,13 @@ public class ApproximateOddFinder implements OddFinder
     {
 //        for (int i = 0; i < flops; i++)
 //        {
-//            int xComE = rand.nextInt( GeneralOddFinder.COM_E + 1 );
-//            swap(cards, xComE, GeneralOddFinder.COM_E);
+//            int xComE = rand.nextInt( PreciseHeadsUpOdds.COM_E + 1 );
+//            swap(cards, xComE, PreciseHeadsUpOdds.COM_E);
 //
 //            odds = odds.plus(computeOppOdds(
 //                        activeOpponents, cards, rand));
 //
-//            swap(cards, xComE, GeneralOddFinder.COM_E);
+//            swap(cards, xComE, PreciseHeadsUpOdds.COM_E);
 //        }
 
         int unknownCount = 52 - 2 - 4;

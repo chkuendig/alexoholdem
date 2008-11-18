@@ -1,8 +1,8 @@
 package ao.bucket.abstraction.hole;
 
-import ao.holdem.model.card.Hole;
+import ao.bucket.abstraction.set.BucketSet;
+import ao.bucket.abstraction.set.BucketSetImpl;
 import ao.util.data.AutovivifiedList;
-import ao.util.persist.PersistentBytes;
 
 import java.util.List;
 
@@ -17,40 +17,30 @@ public class HoleBucketLookup
 
 
     //--------------------------------------------------------------------
-    private final List< byte[] > CACHE;
-    private final HoleBucketizer BUCKETIZER;
+    private final List<BucketSetImpl> CACHE;
+    private final HoleBucketizer     BUCKETIZER;
 
 
     //--------------------------------------------------------------------
     public HoleBucketLookup(HoleBucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
-        CACHE      = new AutovivifiedList<byte[]>();
+        CACHE      = new AutovivifiedList<BucketSetImpl>();
     }
 
 
     //--------------------------------------------------------------------
-    private byte[] retrieveOrCreate(int totalHoleBuckets)
+    public BucketSet buckets(char totalHoleBuckets)
     {
-        byte cache[] = CACHE.get( totalHoleBuckets );
+        BucketSetImpl cache = CACHE.get( totalHoleBuckets );
         if (cache != null) return cache;
 
         String file = bucketFile( totalHoleBuckets );
-        cache = PersistentBytes.retrieve(file);
+        cache = BucketSetImpl.retrieve( file );
         if (cache == null)
         {
-            cache = new byte[ Hole.CANONICAL_COUNT ];
-
-            short buckets[][] =
-                    BUCKETIZER.bucketize( totalHoleBuckets );
-            for (byte bucket = 0; bucket < buckets.length; bucket++)
-            {
-                for (short canon : buckets[ bucket ])
-                {
-                    cache[ canon ] = bucket;
-                }
-            }
-            PersistentBytes.persist(cache, file);
+            cache = BUCKETIZER.bucketize( totalHoleBuckets );
+            BucketSetImpl.persist(cache, file);
         }
         
         CACHE.set(totalHoleBuckets, cache);
@@ -63,12 +53,5 @@ public class HoleBucketLookup
     {
         return DIR + BUCKETIZER.id() +
                "." + totalHoleBuckets + ".cache";
-    }
-
-
-    //--------------------------------------------------------------------
-    public short bucket(int totalHoleBuckets, int forCanonHole)
-    {
-        return retrieveOrCreate( totalHoleBuckets )[ forCanonHole ];
     }
 }

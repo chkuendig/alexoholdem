@@ -25,7 +25,7 @@ public class Gapper
 
         if (index > Integer.MAX_VALUE)
         {
-            indexesB.set( signedPart(index) );
+            indexesB.set( MathUtil.signedPart(index) );
         }
         else
         {
@@ -40,7 +40,7 @@ public class Gapper
 
         if (index > Integer.MAX_VALUE)
         {
-            return indexesB.get( signedPart(index) );
+            return indexesB.get( MathUtil.signedPart(index) );
         }
         else
         {
@@ -52,10 +52,6 @@ public class Gapper
     {
         assert index >= 0 : "must be non-negatve";
         assert index < (1L << 32) : "must be 32 bit unsigned integer";
-    }
-    private int signedPart(long index)
-    {
-        return (int) (index - Integer.MAX_VALUE - 1);
     }
 
 
