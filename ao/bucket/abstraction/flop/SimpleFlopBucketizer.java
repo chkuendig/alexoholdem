@@ -1,8 +1,7 @@
 package ao.bucket.abstraction.flop;
 
-import ao.bucket.index.CanonTraverser;
-import ao.bucket.index.CanonTraverser.Traverser;
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.CanonTraverser;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.impl.GeneralHistFinder;
@@ -48,7 +47,8 @@ public class SimpleFlopBucketizer implements FlopBucketizer
         LOG.info("initializing means");
         final IntList hist[] = new IntList[ Eval5.VALUE_COUNT ];
 
-        new CanonTraverser().traverseFlops(canonHoles, new Traverser() {
+        new CanonTraverser().traverseFlops(canonHoles,
+                new CanonTraverser.Traverser() {
             public void traverse(CardSequence cards) {
                 Hole hole = cards.hole();
                 Flop flop = hole.addFlop(

@@ -1,14 +1,17 @@
 package ao.bucket.abstraction.hole;
 
+import ao.bucket.abstraction.set.BucketSetImpl;
 import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.CanonTraverser.Traverser;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.agglom.impl.GeneralOddFinder;
+import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Comparator;
+
 
 /**
  *
@@ -16,92 +19,73 @@ import java.util.Comparator;
 public class SimpleHoleBucketizer implements HoleBucketizer
 {
     //--------------------------------------------------------------------
-    private final Hole   revIndex[];
-    private final Double histograms[];
-    private final Short  inOrder[];
+    private static final Logger LOG =
+            Logger.getLogger(SimpleHoleBucketizer.class);
 
 
     //--------------------------------------------------------------------
-    public SimpleHoleBucketizer()
-    {
-        revIndex   = new Hole  [ Hole.CANONICAL_COUNT ];
-        histograms = new Double[ Hole.CANONICAL_COUNT ];
-        inOrder    = new Short [ Hole.CANONICAL_COUNT ];
-    }
+//    private static final Hole   revIndex[]  =
+//            new Hole  [ Hole.CANONICAL_COUNT ];
+    private static final Double strengths[] =
+            new Double[ Hole.CANONICAL_COUNT ];
+    private static final Short  inOrder[]   =
+            new Short [ Hole.CANONICAL_COUNT ];
 
-
-    //--------------------------------------------------------------------
-    private void initOrder()
+    private static void initCanonHoles()
     {
+        LOG.info("computing hole strengths");
+
         new CanonTraverser().traverse(new Traverser() {
             public void traverse(CardSequence cards) {
                 Hole hole = cards.hole();
 
-                histograms[ hole.canonIndex() ] =
-                        new GeneralOddFinder().compute(
+                strengths[ hole.canonIndex() ] =
+                        new PreciseHeadsUpOdds().compute(
                                 hole, Community.PREFLOP
                         ).strengthVsRandom();
-//                        new GeneralHistFinder().compute(
+//                         new GeneralHistFinder().compute(
 //                                hole, Community.PREFLOP).mean();
-                revIndex  [ hole.canonIndex() ] = hole;
+//                revIndex  [ hole.canonIndex() ] = hole;
             }
         });
 
         for (short i = 0; i < inOrder.length; i++) inOrder[ i ] = i;
         Arrays.sort(inOrder, new Comparator<Short>() {
             public int compare(Short a, Short b) {
-                return histograms[ a ].compareTo(
-                            histograms[ b ]);
+                return strengths[ a ].compareTo(
+                            strengths[ b ]);
             }
         });
     }
 
 
-    //--------------------------------------------------------------------
-    public short[][] bucketize( int buckets )
-    {
-        if (histograms[0] == null) initOrder();
 
-        short holes[][] = new short[ buckets ][];
+    //--------------------------------------------------------------------
+    public SimpleHoleBucketizer() {}
+
+
+    //--------------------------------------------------------------------
+    public BucketSetImpl bucketize(char nBuckets)
+    {
+        if (strengths[0] == null) initCanonHoles();
+
+        BucketSetImpl buckets = new BucketSetImpl(
+                                    Hole.CANONICAL_COUNT, nBuckets);
 
         int index = 0;
         int chunk = (int) Math.ceil(
-                      ((double) histograms.length) / holes.length);
-        for (int i = 0; i < holes.length; i++)
+                      ((double) strengths.length) / nBuckets);
+        for (char bucket = 0; bucket < nBuckets; bucket++)
         {
-            holes[ i ] = new short[
-                    Math.min(chunk,
-                             histograms.length - index) ];
             for (int j = 0;
-                     j < chunk && index < histograms.length;
+                     j < chunk && index < strengths.length;
                      j++)
             {
-                holes[ i ][ j ] = inOrder[ index++ ];
+                buckets.add(inOrder[ index++ ], bucket);
             }
         }
 
-        return holes;
-    }
-
-
-    //--------------------------------------------------------------------
-    public void display( short buckets[][] )
-    {
-        for (short canons[] : buckets)
-        {
-            display( canons );
-        }
-    }
-    public void display(short canons[])
-    {
-        if (canons.length == 0) return;
-        if (histograms[0] == null) initOrder();
-
-        for (short canon : canons)
-        {
-            System.out.print( revIndex[ canon ] + "\t" );
-        }
-        System.out.println();
+        return buckets;
     }
 
 
@@ -109,8 +93,9 @@ public class SimpleHoleBucketizer implements HoleBucketizer
     public String id()
     {
         return "simple_odds";
-//        return "simple_histograms";
     }
+
+    @Override
     public String toString()
     {
         return id();

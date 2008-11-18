@@ -7,7 +7,7 @@ import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddHist;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.GeneralHistFinder;
-import ao.odds.agglom.impl.GeneralOddFinder;
+import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.AutovivifiedList;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
@@ -75,7 +75,7 @@ public class CanonHoleTest
                 if (seenHoles.get(hole.canonIndex())) return;
                 seenHoles.set( hole.canonIndex() );
                 
-                Odds     odds     = new GeneralOddFinder().compute(
+                Odds     odds     = new PreciseHeadsUpOdds().compute(
                                             hole, Community.PREFLOP, 1);
                 SeenCount<Odds> oddCount = HOLES.get( hole.canonIndex() );
                 if (oddCount == null)

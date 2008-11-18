@@ -21,11 +21,11 @@ import java.util.EnumSet;
  *  http://wizardofodds.com/holdem/2players.html
  * wtf?!?!
  */
-public class GeneralOddFinder implements OddFinder
+public class PreciseHeadsUpOdds implements OddFinder
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(GeneralOddFinder.class);
+            Logger.getLogger(PreciseHeadsUpOdds.class);
 
 
     //--------------------------------------------------------------------
@@ -96,7 +96,7 @@ public class GeneralOddFinder implements OddFinder
 
                 if (cache[ hole.canonIndex() ] != null) continue;
                 cache[ hole.canonIndex() ] =
-                        new GeneralOddFinder().compute(
+                        new PreciseHeadsUpOdds().compute(
                                 hole, Community.PREFLOP);
                 LOG.info("pre-computing Odds for " + hole);
             }
@@ -118,8 +118,8 @@ public class GeneralOddFinder implements OddFinder
             splits[ i ] = cache[ i ].splitOdds();
         }
 
-        PersistentLongs.persist(wins, HOLE_WINS);
-        PersistentLongs.persist(loses, HOLE_LOSES);
+        PersistentLongs.persist(wins,   HOLE_WINS  );
+        PersistentLongs.persist(loses,  HOLE_LOSES );
         PersistentLongs.persist(splits, HOLE_SPLITS);
     }
 
@@ -381,7 +381,7 @@ public class GeneralOddFinder implements OddFinder
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
-        OddFinder oddFinder = new GeneralOddFinder();
+        OddFinder oddFinder = new PreciseHeadsUpOdds();
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         Odds oddsA =
