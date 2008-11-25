@@ -7,7 +7,9 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -18,29 +20,50 @@ import java.util.Arrays;
 public class Hole
 {
     //--------------------------------------------------------------------
-    private static final Hole[][] VALUES = new Hole[52][52];
+    private static final int PAIR_COUNT             = 13;
+    private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
+    public  static final int CANONICAL_COUNT        = 169;
+
+    private static final Hole[][] REVERSE = new Hole[CANONICAL_COUNT][];
+    private static final Hole[][] VALUES  = new Hole[52][52];
     static
     {
+        List<List<Hole>> reverse = new ArrayList<List<Hole>>();
+        for (int i = 0; i < CANONICAL_COUNT; i++)
+        {
+            reverse.add( new ArrayList<Hole>() );
+        }
+
         Card cards[] = Card.VALUES;
         for (int i = 0; i < 52; i++)
         {
             for (int j = 0; j < 52; j++)
             {
                 if (i == j) continue;
-                VALUES[i][j] = new Hole(cards[i], cards[j]);
+                Hole hole    = new Hole(cards[i], cards[j]);
+                VALUES[i][j] = hole;
+
+                reverse.get( hole.canonIndex() ).add( hole );
             }
         }
-    }
 
-    private static final int PAIR_COUNT             = 13;
-    private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
-    public  static final int CANONICAL_COUNT        = 169;
+        for (int i = 0; i < CANONICAL_COUNT; i++)
+        {
+            REVERSE[ i ] = reverse.get( i ).toArray(
+                              new Hole[ reverse.get(i).size() ]);
+        }
+    }
 
 
     //--------------------------------------------------------------------
     public static Hole valueOf(Card a, Card b)
     {
         return VALUES[ a.ordinal() ][ b.ordinal() ];
+    }
+
+    public static Hole[] reify(int canonicalIndex)
+    {
+        return REVERSE[ canonicalIndex ];
     }
 
 
@@ -59,12 +82,12 @@ public class Hole
         assert a != null && b != null;
         assert a != b;
 
-        A         = a;
-        B         = b;
-        AS_ARRAY  = new Card[]{A, B};
-        IS_PAIR   = computePaired();
+        A           = a;
+        B           = b;
+        AS_ARRAY    = new Card[]{A, B};
+        IS_PAIR     = computePaired();
         CANON_INDEX = computeCanonicalIndex();
-        ORDER     = computeOrder();
+        ORDER       = computeOrder();
 
         CANON = new CanonCard[]{
                 ORDER.asCanon(a), ORDER.asCanon(b)};

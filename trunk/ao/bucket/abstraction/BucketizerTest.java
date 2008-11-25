@@ -87,12 +87,13 @@ public class BucketizerTest
 
         HoleBucketLookup lookup =
                 new HoleBucketLookup(new SimpleHoleBucketizer());
-        BucketSet buckets = lookup.buckets( (char) 3 );
+        BucketSet buckets = lookup.buckets( (char) 13 );
         for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
         {
             System.out.println(
-                    i + "\t" +
-                    buckets.bucketOf(i));
+                    i                  + "\t" +
+                    Hole.reify( i )[0] + "\t" +
+                    (int) buckets.bucketOf(i));
         }
     }
 
