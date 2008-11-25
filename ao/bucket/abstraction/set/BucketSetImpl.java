@@ -4,6 +4,7 @@ import ao.bucket.index.test.MathUtil;
 import ao.util.persist.PersistentChars;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.Arrays;
 
 
@@ -17,9 +18,16 @@ public class BucketSetImpl implements BucketSet
     private static final Logger LOG =
             Logger.getLogger(BucketSetImpl.class);
 
+
     //--------------------------------------------------------------------
     public static void persist(BucketSetImpl bucketSet, String toFilename)
     {
+        File toFile = new File( toFilename );
+        if (toFile.mkdirs())
+        {
+            LOG.info("created directories " + toFile.getPath());
+        }
+
         LOG.info("persisting bucket set to " + toFilename);
 
         PersistentChars.persist(
@@ -28,8 +36,13 @@ public class BucketSetImpl implements BucketSet
         PersistentChars.persist(
                 bucketSet.BUCKETS_A,
                 toFilename + ".buckets_a");
+
+        char[] bOrEmpyty =
+                  bucketSet.BUCKETS_B != null
+                ? bucketSet.BUCKETS_B
+                : new char[0];
         PersistentChars.persist(
-                bucketSet.BUCKETS_B,
+                bOrEmpyty,
                 toFilename + ".buckets_b");
     }
 
@@ -46,7 +59,10 @@ public class BucketSetImpl implements BucketSet
         char bucketsB[]  = PersistentChars.retrieve(
                                 fromFilename + ".buckets_b");
 
-        return new BucketSetImpl(bucketsA, bucketsB, bucketCount);
+        LOG.info("finished reading " + (int)(bucketCount) + " buckets");
+        return new BucketSetImpl(bucketsA,
+                                 bucketsB.length > 0 ? bucketsB : null,
+                                 bucketCount);
     }
 
 
