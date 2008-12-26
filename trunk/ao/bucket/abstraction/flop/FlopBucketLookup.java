@@ -1,16 +1,10 @@
 package ao.bucket.abstraction.flop;
 
-import ao.bucket.abstraction.flop.FlopBucketizer.Factory;
-import ao.bucket.index.flop.FlopLookup;
-import ao.util.data.AutovivifiedList;
-import ao.util.persist.PersistentShorts;
+import ao.bucket.abstraction.set.BucketSet;
+import ao.bucket.abstraction.set.BucketSetImpl;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Date: Oct 17, 2008
@@ -28,109 +22,59 @@ public class FlopBucketLookup
 
 
     //--------------------------------------------------------------------
-    private final List<RandomAccessFile> FILES;
+//    private final List<RandomAccessFile> FILES;
+    private final FlopBucketizer         BUCKETIZER;
     private final File                   BUCKET_DIR;
-    private final Factory                BUCKETIZER;
-    private final short[][]              HOLE_BUCKETS;
 
 
     //--------------------------------------------------------------------
-    public FlopBucketLookup(
-            String    holeBucketizerId,
-            short[][] holeBuckets,
-            Factory   bucketizer)
+    public FlopBucketLookup(FlopBucketizer bucketizer)
     {
-        FILES        = new AutovivifiedList<RandomAccessFile>();
+//        FILES        = new AutovivifiedList<RandomAccessFile>();
         BUCKETIZER   = bucketizer;
-        BUCKET_DIR   = bucketFolder(
-                holeBucketizerId, holeBuckets.length);
-        HOLE_BUCKETS = holeBuckets;
+        BUCKET_DIR   = bucketFolder(bucketizer.id());
     }
 
 
     //--------------------------------------------------------------------
-    public short bucket(
-            short flopBucketsPerHoleBucket,
-            int   forCanonFlop)
+    public BucketSet buckets(
+            BucketSet onTopOf,
+            char      flopBucketCount)
     {
-        File bucketFile = bucketFile(flopBucketsPerHoleBucket);
-        if (! bucketFile.exists())
+        BucketSet.Builder builder =
+                new BucketSetImpl.BuilderImpl(
+                        bucketDir( onTopOf.id(), flopBucketCount ) );
+        BucketSet cache = builder.retrieve();
+        if (cache == null)
         {
-            calculateBuckets(
-                    flopBucketsPerHoleBucket,
-                    bucketFile);
+            cache = BUCKETIZER.bucketize( onTopOf, flopBucketCount );
+            cache.persist();
         }
-        return read(bucketFile, flopBucketsPerHoleBucket, forCanonFlop);
+        return cache;
     }
 
-    private short read(File from, int flopBuckets, int canonIndex)
-    {
-        try
-        {
-            return doRead(from, flopBuckets, canonIndex);
-        }
-        catch (IOException e)
-        {
-            throw new Error( e );
-        }
-    }
-    private short doRead(File from, int flopBuckets, int canonIndex)
-            throws IOException
-    {
-        RandomAccessFile target =
-                FILES.get( flopBuckets );
-        if (target == null)
-        {
-            target = new RandomAccessFile(from, "rw");
-            FILES.set(flopBuckets, target);
-        }
-
-        int offset = canonIndex * Short.SIZE / 8;
-        target.seek( offset );
-        return target.readShort();
-    }
+//    private short doRead(File from, int flopBuckets, int canonIndex)
+//            throws IOException
+//    {
+//        RandomAccessFile target =
+//                FILES.get( flopBuckets );
+//        if (target == null)
+//        {
+//            target = new RandomAccessFile(from, "rw");
+//            FILES.set(flopBuckets, target);
+//        }
+//
+//        int offset = canonIndex * Short.SIZE / 8;
+//        target.seek( offset );
+//        return target.readShort();
+//    }
 
 
     //--------------------------------------------------------------------
-    private void calculateBuckets(
-            int   numBuckets,
-            File  bucketFile)
-    {
-        LOG.info("calculateBuckets " + numBuckets);
-
-        short byCanon[] = new short[ FlopLookup.CANON_FLOP_COUNT ];
-        Arrays.fill(byCanon, (short) -1);
-
-        int bucketOffset = 0;
-        for (short[] holeHucket : HOLE_BUCKETS)
-        {
-            int buckets[][] =
-                    BUCKETIZER.newInstance( holeHucket )
-                              .bucketize  ( numBuckets );
-
-            for (short bucket = 0; bucket < buckets.length; bucket++)
-            {
-                for (int canon : buckets[ bucket ])
-                {
-                    byCanon[ canon ] = (short)(bucketOffset + bucket);
-                }
-            }
-
-            bucketOffset += buckets.length;
-        }
-
-        PersistentShorts.writeBinary(
-                byCanon, bucketFile.toString());
-    }
-
-
-    //--------------------------------------------------------------------
-    private static File bucketFolder(
-            String holeBucketizerId,
-            int    numHoleBuckets)
+    private static File bucketFolder(String bucketizerId)
     {
         File folder = new File(
-                DIR + holeBucketizerId + "." + numHoleBuckets + "/");
+                DIR + bucketizerId + "/");
         if ( folder.mkdirs() )
         {
             LOG.info("created " + folder);
@@ -138,8 +82,12 @@ public class FlopBucketLookup
         return folder;
     }
 
-    private File bucketFile(int totalFlopBuckets)
+    private String bucketDir(
+            String holeBucketingId,
+            int    flopBucketCount)
     {
-        return new File(BUCKET_DIR, totalFlopBuckets + ".cache");
+        return BUCKET_DIR +
+               holeBucketingId + "." +
+               flopBucketCount + "/";
     }
 }

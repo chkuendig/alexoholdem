@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.hole;
 
-import ao.bucket.abstraction.set.BucketSetImpl;
+import ao.bucket.abstraction.set.BucketSet;
 
 
 /**
@@ -10,7 +10,8 @@ import ao.bucket.abstraction.set.BucketSetImpl;
 public interface HoleBucketizer
 {
     //--------------------------------------------------------------------
-    public BucketSetImpl bucketize( char nBuckets );
+    public <T extends BucketSet> T
+            bucketize( char nBuckets, BucketSet.Builder<T> into );
 
 
     //--------------------------------------------------------------------

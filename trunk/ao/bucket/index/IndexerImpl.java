@@ -42,7 +42,7 @@ public class IndexerImpl implements Indexer
                 }
                 else
                 {
-                    Card       riverCard = cards.community().river();
+                    Card  riverCard = cards.community().river();
                     River river     = turn.addRiver(riverCard);
                     return river.canonIndex();
                 }

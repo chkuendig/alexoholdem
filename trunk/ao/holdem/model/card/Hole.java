@@ -13,9 +13,8 @@ import java.util.List;
 
 
 /**
- * Hole cards.
- *
- * Both cards are defined (not null).
+ * Hole cards, with canonical indexing
+ *          (accounting for suit isomorphisms).
  */
 public class Hole
 {

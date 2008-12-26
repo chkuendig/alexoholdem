@@ -1,12 +1,12 @@
 package ao.bucket.index;
 
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.river.River;
+import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
 import static ao.util.data.Arr.swap;
+import ao.util.misc.Traverser;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
@@ -20,7 +20,7 @@ import java.util.BitSet;
 public class CanonTraverser
 {
     //--------------------------------------------------------------------
-    public void traverse(Traverser holeTraverser)
+    public void traverseHoles(Traverser<Hole> holeTraverser)
     {
         BitSet seen = new BitSet();
         for (Card holeA : Card.VALUES)
@@ -34,24 +34,26 @@ public class CanonTraverser
                 if (seen.get( canonIndex )) continue;
                 seen.set( canonIndex );
 
-                holeTraverser.traverse(
-                        new LiteralCardSequence(
-                                hole, Community.PREFLOP));
+                holeTraverser.traverse( hole );
             }
         }
     }
 
 
     //--------------------------------------------------------------------
-    public void traverseFlops(
-            final short     canonHoles[],
-            final Traverser flopTraverser)
+    public void traverseFlops(Traverser<Flop> flopTraverser)
     {
-        final BitSet holes = new BitSet();
-        for (int canonHole : canonHoles)
-        {
-            holes.set( canonHole );
-        }
+        traverseFlops(null, flopTraverser);
+    }
+    public void traverseFlops(
+            final short           canonHoles[],
+            final Traverser<Flop> flopTraverser)
+    {
+        final BitSet holes = canonHoles == null
+                             ? null : new BitSet();
+        if (holes != null)
+            for (int canonHole : canonHoles)
+                holes.set( canonHole );
 
         final Card   cards[]   = Card.values();
         final BitSet seenFlops = new BitSet();
@@ -62,7 +64,8 @@ public class CanonTraverser
             {
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
-                if (! holes.get( hole.canonIndex() )) return;
+                if ( holes != null &&
+                    !holes.get( hole.canonIndex() )) return;
 
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
@@ -76,10 +79,10 @@ public class CanonTraverser
     }
 
     private void iterateFlops(
-            final Hole      hole,
-            final Card      cards[],
-            final BitSet    seenFlops,
-            final Traverser traverser)
+            final Hole            hole,
+            final Card            cards[],
+            final BitSet          seenFlops,
+            final Traverser<Flop> traverser)
     {
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
                 .combine(new CombinationVisitor3() {
@@ -92,28 +95,23 @@ public class CanonTraverser
                 if (seenFlops.get( flopIndex )) return;
                 seenFlops.set( flopIndex );
 
-                traverser.traverse(new LiteralCardSequence(
-                                    hole, flop.toCommunity()));
+                traverser.traverse( flop );
             }});
     }
 
 
-
     //--------------------------------------------------------------------
-    public void traverseTurns(int canonFlop, Traverser turnTraverser)
+    public void traverseTurns(
+            int canonFlop, Traverser<Turn> turnTraverser)
     {
 
     }
 
-    public void traverseRiver(int canonTurn, Traverser riverTraverser)
-    {
-
-    }
-
-
+    
     //--------------------------------------------------------------------
-    public static interface Traverser
+    public void traverseRiver(
+            int canonTurn, Traverser<River> riverTraverser)
     {
-        public void traverse(CardSequence cards);
+
     }
 }

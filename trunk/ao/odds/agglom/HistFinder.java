@@ -14,7 +14,6 @@ public interface HistFinder
                            Community community,
                            int       activeOpponents);
 
-
     public OddHist compute(CardSequence cards,
                            int          activeOpponents);
 }
