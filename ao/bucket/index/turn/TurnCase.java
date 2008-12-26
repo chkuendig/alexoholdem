@@ -12,21 +12,21 @@ import java.util.*;
 public enum TurnCase
 {
     //--------------------------------------------------------------------
-    F(FIRST),
-    FS(FIRST, SECOND),
-    FST(FIRST, SECOND, THIRD),
-    FSR(FIRST, SECOND, FOURTH),
+    F   (FIRST),
+    FS  (FIRST, SECOND),
+    FST (FIRST, SECOND, THIRD),
+    FSR (FIRST, SECOND, FOURTH),
     FSTR(FIRST, SECOND, THIRD, FOURTH),
-    FT(FIRST, THIRD),
-    FTR(FIRST, THIRD, FOURTH),
-    FR(FIRST, FOURTH),
+    FT  (FIRST, THIRD),
+    FTR (FIRST, THIRD, FOURTH),
+    FR  (FIRST, FOURTH),
 
-    S(SECOND),
-    ST(SECOND, THIRD),
+    S  (SECOND),
+    ST (SECOND, THIRD),
     STF(SECOND, THIRD, FOURTH),
-    SF(SECOND, FOURTH),
+    SF (SECOND, FOURTH),
 
-    T(THIRD),
+    T (THIRD),
     TR(THIRD, FOURTH),
 
     R(FOURTH),

@@ -1,18 +1,18 @@
 package ao.bucket.abstraction.flop;
 
+import ao.bucket.abstraction.set.BucketSet;
+
+
 /**
  * Date: Oct 17, 2008
  * Time: 1:47:45 PM
  */
-public interface FlopBucketizer
+public interface FlopBucketizer<T extends BucketSet>
 {
     //--------------------------------------------------------------------
-    int[][] bucketize(int numBuckets);
+    public T bucketize(BucketSet onTopOf, char numBuckets);
 
 
     //--------------------------------------------------------------------
-    public static interface Factory
-    {
-        public FlopBucketizer newInstance(short canonHoles[]);
-    }
+    public String id();
 }

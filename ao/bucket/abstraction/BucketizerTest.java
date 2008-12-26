@@ -87,7 +87,7 @@ public class BucketizerTest
 
         HoleBucketLookup lookup =
                 new HoleBucketLookup(new SimpleHoleBucketizer());
-        BucketSet buckets = lookup.buckets( (char) 13 );
+        BucketSet buckets = lookup.buckets( (char) 3 );
         for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
         {
             System.out.println(
@@ -98,14 +98,14 @@ public class BucketizerTest
     }
 
 
-    //--------------------------------------------------------------------
-    public static void testBucketizer()
-    {
-        SimpleHoleBucketizer bucketizer = new SimpleHoleBucketizer();
-//        for (int i = 2; i <= 64; i++)
-//        {
-//            System.out.println("---------------------------------------");
-            bucketizer.bucketize( (char) 20 ).display();
-//        }
-    }
+//    //--------------------------------------------------------------------
+//    public static void testBucketizer()
+//    {
+//        SimpleHoleBucketizer bucketizer = new SimpleHoleBucketizer();
+////        for (int i = 2; i <= 64; i++)
+////        {
+////            System.out.println("---------------------------------------");
+//            bucketizer.bucketize( (char) 20 ).display();
+////        }
+//    }
 }

@@ -17,30 +17,32 @@ public class HoleBucketLookup
 
 
     //--------------------------------------------------------------------
-    private final List<BucketSetImpl> CACHE;
-    private final HoleBucketizer     BUCKETIZER;
+    private final List<BucketSet> CACHE;
+    private final HoleBucketizer  BUCKETIZER;
 
 
     //--------------------------------------------------------------------
     public HoleBucketLookup(HoleBucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
-        CACHE      = new AutovivifiedList<BucketSetImpl>();
+        CACHE      = new AutovivifiedList<BucketSet>();
     }
 
 
     //--------------------------------------------------------------------
     public BucketSet buckets(char totalHoleBuckets)
     {
-        BucketSetImpl cache = CACHE.get( totalHoleBuckets );
+        BucketSet cache = CACHE.get( totalHoleBuckets );
         if (cache != null) return cache;
 
-        String file = bucketFile( totalHoleBuckets );
-        cache = BucketSetImpl.retrieve( file );
+        BucketSet.Builder<BucketSetImpl> builder =
+                new BucketSetImpl.BuilderImpl(
+                        bucketDir( totalHoleBuckets ) );
+        cache = builder.retrieve();
         if (cache == null)
         {
-            cache = BUCKETIZER.bucketize( totalHoleBuckets );
-            BucketSetImpl.persist(cache, file);
+            cache = BUCKETIZER.bucketize( totalHoleBuckets, builder );
+            cache.persist();
         }
         
         CACHE.set(totalHoleBuckets, cache);
@@ -49,9 +51,9 @@ public class HoleBucketLookup
 
 
     //--------------------------------------------------------------------
-    private String bucketFile(int totalHoleBuckets)
+    private String bucketDir(int totalHoleBuckets)
     {
         return DIR + BUCKETIZER.id() +
-               "." + totalHoleBuckets + ".cache";
+               "." + totalHoleBuckets + "/";
     }
 }

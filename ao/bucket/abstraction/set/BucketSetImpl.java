@@ -1,7 +1,11 @@
 package ao.bucket.abstraction.set;
 
 import ao.bucket.index.test.MathUtil;
+import ao.util.crypt.MD5;
+import ao.util.crypt.SecureHash;
 import ao.util.persist.PersistentChars;
+import bak.pcj.list.LongArrayList;
+import bak.pcj.list.LongList;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -18,71 +22,30 @@ public class BucketSetImpl implements BucketSet
     private static final Logger LOG =
             Logger.getLogger(BucketSetImpl.class);
 
-
-    //--------------------------------------------------------------------
-    public static void persist(BucketSetImpl bucketSet, String toFilename)
-    {
-        File toFile = new File( toFilename );
-        if (toFile.mkdirs())
-        {
-            LOG.info("created directories " + toFile.getPath());
-        }
-
-        LOG.info("persisting bucket set to " + toFilename);
-
-        PersistentChars.persist(
-                new char[]{ bucketSet.BUCKET_COUNT },
-                toFilename + ".count");
-        PersistentChars.persist(
-                bucketSet.BUCKETS_A,
-                toFilename + ".buckets_a");
-
-        char[] bOrEmpyty =
-                  bucketSet.BUCKETS_B != null
-                ? bucketSet.BUCKETS_B
-                : new char[0];
-        PersistentChars.persist(
-                bOrEmpyty,
-                toFilename + ".buckets_b");
-    }
-
-    public static BucketSetImpl retrieve(String fromFilename)
-    {
-        char bucketCounts[] = PersistentChars.retrieve(
-                                fromFilename + ".count");
-        if (bucketCounts == null) return null;
-        LOG.info("retrieving bucket set from " + fromFilename);
-
-        char bucketCount = bucketCounts[ 0 ];
-        char bucketsA[]  = PersistentChars.retrieve(
-                                fromFilename + ".buckets_a");
-        char bucketsB[]  = PersistentChars.retrieve(
-                                fromFilename + ".buckets_b");
-
-        LOG.info("finished reading " + (int)(bucketCount) + " buckets");
-        return new BucketSetImpl(bucketsA,
-                                 bucketsB.length > 0 ? bucketsB : null,
-                                 bucketCount);
-    }
+    private static final char   SENTINAL = Character.MAX_VALUE;
 
 
     //--------------------------------------------------------------------
-//    private final SecureHash uniqueId = new MD5();
     private final char[]     BUCKETS_A;
     private final char[]     BUCKETS_B;
     private final char       BUCKET_COUNT;
+    private final String     FOLDER;
+    private       String     id = null;
 
 
     //--------------------------------------------------------------------
     private BucketSetImpl(char[] bucketsA,
                           char[] bucketsB,
-                          char bucketCount)
+                          char   bucketCount,
+                          String atFolder)
     {
         BUCKETS_A    = bucketsA;
         BUCKETS_B    = bucketsB;
         BUCKET_COUNT = bucketCount;
+        FOLDER       = atFolder;
     }
-    public BucketSetImpl(long canonIndexCount, char bucketCount)
+    private BucketSetImpl(
+            long canonIndexCount, char bucketCount, String atFolder)
     {
         assert canonIndexCount <= (long) (Integer.MAX_VALUE - 1) * 2;
 
@@ -101,6 +64,7 @@ public class BucketSetImpl implements BucketSet
         Arrays.fill(BUCKETS_A, Character.MAX_VALUE);
 
         BUCKET_COUNT = bucketCount;
+        FOLDER       = atFolder;
     }
 
 
@@ -114,9 +78,29 @@ public class BucketSetImpl implements BucketSet
 
 
     //--------------------------------------------------------------------
+    public long[] canonsOf(char bucket)
+    {
+        LongList canons = new LongArrayList();
+        long canonCount = canonCount();
+        for (long canonIndex = 0; canonIndex < canonCount; canonIndex++)
+        {
+            if (bucketOf(canonIndex) == bucket)
+            {
+                canons.add( canonIndex );
+            }
+        }
+        return canons.toArray();
+    }
+    private long canonCount()
+    {
+        return BUCKETS_A.length + BUCKETS_B.length;
+    }
+
+
+    //--------------------------------------------------------------------
     public void add(long canonIndex, char bucket)
     {
-        assert bucket != Character.MAX_VALUE;
+        assert bucket != SENTINAL;
 
         char prevValue;
         if (canonIndex <= Integer.MAX_VALUE)
@@ -130,10 +114,9 @@ public class BucketSetImpl implements BucketSet
             prevValue = BUCKETS_B[ index ];
                         BUCKETS_B[ index ] = bucket;
         }
-        assert prevValue == Character.MAX_VALUE;
+        assert prevValue == SENTINAL;
 
-//        uniqueId.feed( canonIndex );
-//        uniqueId.feed( bucket     );
+        id = null;
     }
 
 
@@ -160,15 +143,37 @@ public class BucketSetImpl implements BucketSet
 
 
     //--------------------------------------------------------------------
-//    public String id()
-//    {
-//        return uniqueId.hexDigest();
-//    }
+    public char bucketCount()
+    {
+        return BUCKET_COUNT;
+    }
 
+
+    //--------------------------------------------------------------------
+    public String id()
+    {
+        if (id == null)
+        {
+            id = computeId();
+        }
+        return id;
+    }
+    private String computeId()
+    {
+        SecureHash message = new MD5();
+
+        message.feed( BUCKET_COUNT );
+        message.feed( BUCKETS_A    );
+        message.feed( BUCKETS_B    );
+
+        return message.hexDigest();
+    }
+
+
+    //--------------------------------------------------------------------
     @Override public String toString()
     {
-//        return id();
-        return "BucketSetImpl";
+        return id();
     }
 
 
@@ -179,21 +184,94 @@ public class BucketSetImpl implements BucketSet
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BucketSetImpl that = (BucketSetImpl) o;
-
-//        return uniqueId.equals( that.uniqueId );
-        return Arrays.equals(BUCKETS_A, that.BUCKETS_A) &&
-                Arrays.equals(BUCKETS_B, that.BUCKETS_B);
+        BucketSetImpl bucketSet = (BucketSetImpl) o;
+        return BUCKET_COUNT == bucketSet.BUCKET_COUNT        &&
+               Arrays.equals(BUCKETS_A, bucketSet.BUCKETS_A) &&
+               Arrays.equals(BUCKETS_B, bucketSet.BUCKETS_B);
     }
 
     @Override
     public int hashCode()
     {
-//        return uniqueId.bigDigest().intValue();
-
         int result = Arrays.hashCode(BUCKETS_A);
         result = 31 * result +
-                (BUCKETS_B != null ? Arrays.hashCode(BUCKETS_B) : 0);
+                 (BUCKETS_B != null ? Arrays.hashCode(BUCKETS_B) : 0);
+        result = 31 * result + (int) BUCKET_COUNT;
         return result;
+    }
+
+
+    //--------------------------------------------------------------------
+    public static class BuilderImpl implements Builder<BucketSetImpl>
+    {
+        private final String HOME_FOLDER;
+
+        public BuilderImpl(String holeFolder) {
+            HOME_FOLDER = holeFolder;
+        }
+
+        public BucketSetImpl newInstance(
+                long   canonIndexCount,
+                char   bucketCount) {
+            return new BucketSetImpl(
+                    canonIndexCount, bucketCount, HOME_FOLDER);
+        }
+
+        public BucketSetImpl retrieve() {
+            char bucketCounts[] = PersistentChars.retrieve(
+                                    HOME_FOLDER + ".count");
+            if (bucketCounts == null) return null;
+            LOG.info("retrieving bucket set from " + HOME_FOLDER);
+
+            char bucketCount = bucketCounts[ 0 ];
+            char bucketsA[]  = PersistentChars.retrieve(
+                                    HOME_FOLDER + ".buckets_a");
+            char bucketsB[]  = PersistentChars.retrieve(
+                                    HOME_FOLDER + ".buckets_b");
+
+            LOG.info("finished reading " + (int)(bucketCount) + " buckets");
+            BucketSetImpl instance = new BucketSetImpl(
+                    bucketsA,
+                    bucketsB.length > 0 ? bucketsB : null,
+                    bucketCount,
+                    HOME_FOLDER);
+            
+            String id = new String(PersistentChars.retrieve(
+                                    HOME_FOLDER + ".id"));
+            if (! id.equals( instance.id() ))
+            {
+                LOG.error("id mismatch");
+                return null;
+            }
+            return instance;
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    public void persist()
+    {
+        String filename = filename(FOLDER);
+        File   toFile   = new File( filename );
+        if (toFile.mkdirs())
+            LOG.info("created directories " + toFile.getPath());
+
+        LOG.info("persisting bucket set to " + filename);
+
+        PersistentChars.persist(
+                new char[]{ BUCKET_COUNT },
+                filename + ".count");
+        PersistentChars.persist( BUCKETS_A, filename + ".a" );
+
+        char[] bOrEmpyty =
+                (BUCKETS_B != null ? BUCKETS_B : new char[0]);
+        PersistentChars.persist( bOrEmpyty, filename + ".b" );
+
+        PersistentChars.persist( id().toCharArray(), filename + ".id" );
+    }
+
+    private static String filename(String inFolder)
+    {
+        return inFolder + "/impl";
     }
 }

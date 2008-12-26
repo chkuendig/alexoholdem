@@ -1,12 +1,11 @@
 package ao.bucket.abstraction.hole;
 
-import ao.bucket.abstraction.set.BucketSetImpl;
+import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.CanonTraverser;
-import ao.bucket.index.CanonTraverser.Traverser;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -16,7 +15,8 @@ import java.util.Comparator;
 /**
  *
  */
-public class SimpleHoleBucketizer implements HoleBucketizer
+public class SimpleHoleBucketizer
+        implements HoleBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -35,9 +35,8 @@ public class SimpleHoleBucketizer implements HoleBucketizer
     {
         LOG.info("computing hole strengths");
 
-        new CanonTraverser().traverse(new Traverser() {
-            public void traverse(CardSequence cards) {
-                Hole hole = cards.hole();
+        new CanonTraverser().traverseHoles(new Traverser<Hole>() {
+            public void traverse(Hole hole) {
 
                 strengths[ hole.canonIndex() ] =
                         new PreciseHeadsUpOdds().compute(
@@ -59,22 +58,28 @@ public class SimpleHoleBucketizer implements HoleBucketizer
     }
 
 
+    //--------------------------------------------------------------------
+//    private final BucketSet.Builder<T> BUCKET_SET_BUILDER;
+
 
     //--------------------------------------------------------------------
-    public SimpleHoleBucketizer() {}
+//    public SimpleHoleBucketizer(BucketSet.Builder<T> bucketSetBuilder)
+//    {
+//        BUCKET_SET_BUILDER = bucketSetBuilder;
+//    }
 
 
     //--------------------------------------------------------------------
-    public BucketSetImpl bucketize(char nBuckets)
+    public <T extends BucketSet> T
+            bucketize(char nBuckets, BucketSet.Builder<T> into)
     {
         if (strengths[0] == null) initCanonHoles();
 
-        BucketSetImpl buckets = new BucketSetImpl(
-                                    Hole.CANONICAL_COUNT, nBuckets);
-
-        int index = 0;
-        int chunk = (int) Math.ceil(
-                      ((double) strengths.length) / nBuckets);
+        T   buckets = into.newInstance(
+                        Hole.CANONICAL_COUNT, nBuckets);
+        int index   = 0;
+        int chunk   = (int) Math.ceil(
+                             ((double) strengths.length) / nBuckets);
         for (char bucket = 0; bucket < nBuckets; bucket++)
         {
             for (int j = 0;

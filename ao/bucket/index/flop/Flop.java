@@ -100,12 +100,12 @@ public class Flop
         return canonIndex;
     }
 
-    public int computeCanonIndex()
+    private int computeCanonIndex()
     {
         return FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) +
                subIndex();
     }
-    public int subIndex()
+    private int subIndex()
     {
         return FLOP_CASE.subIndex(
                 HOLE[0].rank().ordinal(), HOLE[1].rank().ordinal(),
@@ -145,6 +145,11 @@ public class Flop
 
 
     //--------------------------------------------------------------------
+    public Hole hole()
+    {
+        return HOLE_CARDS;
+    }
+
     public boolean hasWildHole()
     {
         return HOLE[0].isWild() || HOLE[1].isWild();
