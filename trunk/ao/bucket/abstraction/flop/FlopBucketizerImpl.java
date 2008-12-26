@@ -76,46 +76,35 @@ public class FlopBucketizerImpl
         T buckets = with.newInstance(
                       FlopLookup.CANON_FLOP_COUNT, numBuckets);
 
-        char nextBucket = 0, lastBucket = (char)(numBuckets - 1);
-        int  bucketFill = 0;
-        int  perBucket  = FlopLookup.CANON_FLOP_COUNT / numBuckets;
+        char   nextBucket = 0, lastBucket = (char)(numBuckets - 1);
+        int    cummFill   = 0;
+        double perBucket  =
+                ((double) FlopLookup.CANON_FLOP_COUNT) / numBuckets;
         for (IntList meanStrata : byMean())
         {
             if (meanStrata == null) continue;
 
-            boolean lastMeanInBucket = false;
+            double delta = cummFill - perBucket * (nextBucket + 1);
             if (nextBucket != lastBucket)
             {
-                int overflow =
-                        -(perBucket - bucketFill - meanStrata.size());
-
-                if (overflow < 0)
+                if (delta < 0)
                 {
-                    bucketFill += meanStrata.size();
+                    double overflow = delta + meanStrata.size();
+                    if (overflow > meanStrata.size() / 2)
+                    {
+                        nextBucket++;
+                    }
                 }
                 else
                 {
-                    if (overflow > meanStrata.size()/2)
-                    {
-                        bucketFill = meanStrata.size();
-                        nextBucket++;
-                    }
-                    else
-                    {
-                        lastMeanInBucket = true;
-                    }
+                    nextBucket++;
                 }
             }
 
+            cummFill += meanStrata.size();
             for (int i = meanStrata.size() - 1; i >= 0; i--)
             {
-                buckets.add( meanStrata.get(i), nextBucket );
-            }
-
-            if (lastMeanInBucket)
-            {
-                bucketFill = 0;
-                nextBucket++;
+                buckets.add(meanStrata.get(i), nextBucket);
             }
         }
 

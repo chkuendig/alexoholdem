@@ -15,12 +15,12 @@ import java.util.Comparator;
 /**
  *
  */
-public class SimpleHoleBucketizer
+public class HoleBucketizerImpl
         implements HoleBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(SimpleHoleBucketizer.class);
+            Logger.getLogger(HoleBucketizerImpl.class);
 
 
     //--------------------------------------------------------------------
@@ -57,21 +57,38 @@ public class SimpleHoleBucketizer
     public <T extends BucketSet> T
             bucketize(char nBuckets, BucketSet.Builder<T> into)
     {
+        assert nBuckets > 0;
         if (strengths[0] == null) initCanonHoles();
 
         T   buckets = into.newInstance(
                         Hole.CANONICAL_COUNT, nBuckets);
-        int index   = 0;
-        int chunk   = (int) Math.ceil(
-                             ((double) strengths.length) / nBuckets);
-        for (char bucket = 0; bucket < nBuckets; bucket++)
+
+        char   nextBucket = 0, lastBucket = (char)(nBuckets - 1);
+        int    cummFill   = 0;
+        double perBucket  =
+                ((double) Hole.CANONICAL_COUNT) / nBuckets;
+
+        for (Short holeCanon : inOrder)
         {
-            for (int j = 0;
-                     j < chunk && index < strengths.length;
-                     j++)
+            double delta = cummFill - perBucket * (nextBucket + 1);
+            if (nextBucket != lastBucket)
             {
-                buckets.add(inOrder[ index++ ], bucket);
+                if (delta < 0)
+                {
+                    double overflow = delta + 1;
+                    if (overflow > 1.0 / 2)
+                    {
+                        nextBucket++;
+                    }
+                }
+                else
+                {
+                    nextBucket++;
+                }
             }
+
+            cummFill++;
+            buckets.add(holeCanon, nextBucket);
         }
 
         return buckets;
@@ -81,7 +98,7 @@ public class SimpleHoleBucketizer
     //--------------------------------------------------------------------
     public String id()
     {
-        return "simple_odds";
+        return getClass().getSimpleName();
     }
 
     @Override
