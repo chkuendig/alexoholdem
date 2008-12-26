@@ -37,8 +37,8 @@ public interface BucketSet
     public static interface Builder<T extends BucketSet>
     {
         public T newInstance(
-                    long   canonIndexCount,
-                    char   bucketCount);
+                    long canonIndexCount,
+                    char bucketCount);
 
         public T retrieve();
     }

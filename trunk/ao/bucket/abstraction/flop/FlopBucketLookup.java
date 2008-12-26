@@ -24,7 +24,7 @@ public class FlopBucketLookup
     //--------------------------------------------------------------------
 //    private final List<RandomAccessFile> FILES;
     private final FlopBucketizer         BUCKETIZER;
-    private final File                   BUCKET_DIR;
+    private final String                 BUCKET_DIR;
 
 
     //--------------------------------------------------------------------
@@ -41,13 +41,14 @@ public class FlopBucketLookup
             BucketSet onTopOf,
             char      flopBucketCount)
     {
-        BucketSet.Builder builder =
+        BucketSet.Builder<BucketSetImpl> builder =
                 new BucketSetImpl.BuilderImpl(
                         bucketDir( onTopOf.id(), flopBucketCount ) );
         BucketSet cache = builder.retrieve();
         if (cache == null)
         {
-            cache = BUCKETIZER.bucketize( onTopOf, flopBucketCount );
+            cache = BUCKETIZER.bucketize(
+                      onTopOf, flopBucketCount, builder);
             cache.persist();
         }
         return cache;
@@ -71,15 +72,14 @@ public class FlopBucketLookup
 
 
     //--------------------------------------------------------------------
-    private static File bucketFolder(String bucketizerId)
+    private static String bucketFolder(String bucketizerId)
     {
-        File folder = new File(
-                DIR + bucketizerId + "/");
-        if ( folder.mkdirs() )
-        {
-            LOG.info("created " + folder);
-        }
-        return folder;
+        String bucketFolder = DIR + bucketizerId + "/";
+
+        if ( new File(bucketFolder).mkdirs() )
+            LOG.info("created " + bucketFolder);
+
+        return bucketFolder;
     }
 
     private String bucketDir(

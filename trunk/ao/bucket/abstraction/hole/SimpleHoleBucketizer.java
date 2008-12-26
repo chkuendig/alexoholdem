@@ -24,8 +24,6 @@ public class SimpleHoleBucketizer
 
 
     //--------------------------------------------------------------------
-//    private static final Hole   revIndex[]  =
-//            new Hole  [ Hole.CANONICAL_COUNT ];
     private static final Double strengths[] =
             new Double[ Hole.CANONICAL_COUNT ];
     private static final Short  inOrder[]   =
@@ -42,9 +40,6 @@ public class SimpleHoleBucketizer
                         new PreciseHeadsUpOdds().compute(
                                 hole, Community.PREFLOP
                         ).strengthVsRandom();
-//                         new GeneralHistFinder().compute(
-//                                hole, Community.PREFLOP).mean();
-//                revIndex  [ hole.canonIndex() ] = hole;
             }
         });
 
@@ -56,17 +51,6 @@ public class SimpleHoleBucketizer
             }
         });
     }
-
-
-    //--------------------------------------------------------------------
-//    private final BucketSet.Builder<T> BUCKET_SET_BUILDER;
-
-
-    //--------------------------------------------------------------------
-//    public SimpleHoleBucketizer(BucketSet.Builder<T> bucketSetBuilder)
-//    {
-//        BUCKET_SET_BUILDER = bucketSetBuilder;
-//    }
 
 
     //--------------------------------------------------------------------
