@@ -3,7 +3,7 @@ package ao.bucket.abstraction;
 import ao.bucket.abstraction.flop.FlopBucketLookup;
 import ao.bucket.abstraction.flop.FlopBucketizerImpl;
 import ao.bucket.abstraction.hole.HoleBucketLookup;
-import ao.bucket.abstraction.hole.SimpleHoleBucketizer;
+import ao.bucket.abstraction.hole.HoleBucketizerImpl;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Hole;
@@ -26,8 +26,8 @@ public class BucketizerTest
 //        testFlopBucketLookup();
 //        testFlopBucketizer();
 
-//        testHoleLookup();
-        testFlopLookup();
+        testHoleLookup();
+//        testFlopLookup();
     }
 
 
@@ -36,16 +36,24 @@ public class BucketizerTest
     {
         LOG.info("testing hole bucket lookup");
 
+        char  nBuckets = 20;
+        int[] counts   = new int[ nBuckets ];
+
         HoleBucketLookup lookup =
-                new HoleBucketLookup(new SimpleHoleBucketizer());
-        BucketSet buckets = lookup.buckets((char) 13);
+                new HoleBucketLookup(new HoleBucketizerImpl());
+        BucketSet buckets = lookup.buckets( nBuckets );
         for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
         {
             System.out.println(
                     i                  + "\t" +
                     Hole.reify( i )[0] + "\t" +
                     (int) buckets.bucketOf(i));
+            counts[ buckets.bucketOf(i) ]++;
         }
+
+        System.out.println("summary:");
+        for (int i = 0; i < counts.length; i++)
+            System.out.println(i + "\t" + counts[i]);
     }
 
 
@@ -55,10 +63,10 @@ public class BucketizerTest
         LOG.info("testing flop bucket lookup");
 
         HoleBucketLookup holeLookup =
-                new HoleBucketLookup(new SimpleHoleBucketizer());
-        BucketSet holeBuckets = holeLookup.buckets( (char) 13 );
+                new HoleBucketLookup(new HoleBucketizerImpl());
+        BucketSet holeBuckets = holeLookup.buckets( (char) 3 );
 
-        char  numFlopBuckets = 1134;
+        char  numFlopBuckets = 9;
         int[] counts         = new int[ numFlopBuckets ];
 
         FlopBucketLookup lookup =
@@ -70,8 +78,6 @@ public class BucketizerTest
         }
 
         for (int i = 0; i < counts.length; i++)
-        {
             System.out.println(i + "\t" + counts[i]);
-        }
     }
 }
