@@ -11,7 +11,7 @@ public interface HoleBucketizer
 {
     //--------------------------------------------------------------------
     public <T extends BucketSet> T
-            bucketize( char nBuckets, BucketSet.Builder<T> into );
+            bucketize( char nBuckets, BucketSet.Builder<T> with );
 
 
     //--------------------------------------------------------------------

@@ -164,7 +164,8 @@ public class BucketSetImpl implements BucketSet
 
         message.feed( BUCKET_COUNT );
         message.feed( BUCKETS_A    );
-        message.feed( BUCKETS_B    );
+        message.feed( BUCKETS_B == null
+                      ? new char[0] : BUCKETS_B );
 
         return message.hexDigest();
     }
@@ -218,18 +219,22 @@ public class BucketSetImpl implements BucketSet
         }
 
         public BucketSetImpl retrieve() {
+            String folder = storeDir(HOME_FOLDER);
+            LOG.info("attempting to retrieve " + folder);
+
             char bucketCounts[] = PersistentChars.retrieve(
-                                    HOME_FOLDER + ".count");
+                                    folder + "count");
             if (bucketCounts == null) return null;
-            LOG.info("retrieving bucket set from " + HOME_FOLDER);
+            LOG.info("retrieving bucket set from " + folder);
 
             char bucketCount = bucketCounts[ 0 ];
             char bucketsA[]  = PersistentChars.retrieve(
-                                    HOME_FOLDER + ".buckets_a");
+                                    folder + "a");
             char bucketsB[]  = PersistentChars.retrieve(
-                                    HOME_FOLDER + ".buckets_b");
+                                    folder + "b");
 
-            LOG.info("finished reading " + (int)(bucketCount) + " buckets");
+            LOG.info("finished reading " +
+                     (int)(bucketCount) + " buckets");
             BucketSetImpl instance = new BucketSetImpl(
                     bucketsA,
                     bucketsB.length > 0 ? bucketsB : null,
@@ -237,7 +242,7 @@ public class BucketSetImpl implements BucketSet
                     HOME_FOLDER);
             
             String id = new String(PersistentChars.retrieve(
-                                    HOME_FOLDER + ".id"));
+                                    folder + "id"));
             if (! id.equals( instance.id() ))
             {
                 LOG.error("id mismatch");
@@ -251,27 +256,26 @@ public class BucketSetImpl implements BucketSet
     //--------------------------------------------------------------------
     public void persist()
     {
-        String filename = filename(FOLDER);
-        File   toFile   = new File( filename );
-        if (toFile.mkdirs())
-            LOG.info("created directories " + toFile.getPath());
+        String filename = storeDir(FOLDER);
+        if (new File( filename ).mkdirs())
+            LOG.info("created directories " + filename);
 
         LOG.info("persisting bucket set to " + filename);
 
         PersistentChars.persist(
                 new char[]{ BUCKET_COUNT },
-                filename + ".count");
-        PersistentChars.persist( BUCKETS_A, filename + ".a" );
+                filename + "count");
+        PersistentChars.persist( BUCKETS_A, filename + "a" );
 
         char[] bOrEmpyty =
                 (BUCKETS_B != null ? BUCKETS_B : new char[0]);
-        PersistentChars.persist( bOrEmpyty, filename + ".b" );
+        PersistentChars.persist( bOrEmpyty, filename + "b" );
 
-        PersistentChars.persist( id().toCharArray(), filename + ".id" );
+        PersistentChars.persist( id().toCharArray(), filename + "id" );
     }
 
-    private static String filename(String inFolder)
+    private static String storeDir(String inFolder)
     {
-        return inFolder + "/impl";
+        return inFolder + "bucket_impl/";
     }
 }
