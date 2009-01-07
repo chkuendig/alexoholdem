@@ -1,5 +1,7 @@
 package ao.bucket.abstraction.flop;
 
+import ao.bucket.abstraction.alloc.BucketAllocator;
+import ao.bucket.abstraction.alloc.SubBucketAllocator;
 import ao.bucket.abstraction.community.CommunityBucketizer;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.CanonTraverser;
@@ -77,42 +79,20 @@ public class FlopBucketizerImpl
         T buckets = with.newInstance(
                       FlopLookup.CANON_FLOP_COUNT, numBuckets);
 
-        double flopBucketFraction       = 0;
-        double flopBucketsPerHoleBucket =
-                ((double) numBuckets) / onTopOf.bucketCount();
-
-        char   bucketsUsedUp = 0;
-        for (char bucketIndex = 0,
-                      lastBucket  = (char) (onTopOf.bucketCount() - 1);
-                  bucketIndex <= lastBucket;
-                  bucketIndex++)
+        char   bucketOffset = 0;
+        char[] bucketAlloc  = new SubBucketAllocator().allocate(
+                onTopOf.bucketCount(), numBuckets);
+        for (char holeBucket = 0;
+                  holeBucket < onTopOf.bucketCount();
+                  holeBucket++)
         {
-            char numSubBuckets;
-            if (bucketIndex == lastBucket)
-            {
-                numSubBuckets = (char) (numBuckets - bucketsUsedUp);
-            }
-            else
-            {
-                numSubBuckets =
-                        (char) Math.floor(flopBucketsPerHoleBucket);
-                flopBucketFraction +=
-                        flopBucketsPerHoleBucket - numSubBuckets;
-
-                if (flopBucketFraction >= 1)
-                {
-                    numSubBuckets++;
-                    flopBucketFraction--;
-                }
-            }
-
             bucketize(
                     buckets,
-                    byMean(onTopOf.canonsOf(bucketIndex)),
-                    numSubBuckets,
-                    bucketsUsedUp);
+                    byMean(onTopOf.canonsOf( holeBucket )),
+                    bucketAlloc[ holeBucket ],
+                    bucketOffset);
 
-            bucketsUsedUp += numSubBuckets;
+            bucketOffset += bucketAlloc[ holeBucket ];
         }
 
         return buckets;
@@ -126,50 +106,20 @@ public class FlopBucketizerImpl
                       char      numBuckets,
                       char      bucketOffset)
     {
-        char   nextBucket = 0, lastBucket = (char)(numBuckets - 1);
-        int    cummFill   = 0;
-        double perBucket  =
-                ((double) countFlops(meanStrata)) / numBuckets;
+        BucketAllocator alloc = new BucketAllocator(
+                IntList.sizeSum(meanStrata), numBuckets);
+
         for (IntList stratum : meanStrata)
         {
             if (stratum == null) continue;
 
-            double delta = cummFill - perBucket * (nextBucket + 1);
-            if (nextBucket != lastBucket)
-            {
-                if (delta < 0)
-                {
-                    double overflow = delta + stratum.size();
-                    if (overflow > stratum.size() / 2)
-                    {
-                        nextBucket++;
-                    }
-                }
-                else
-                {
-                    nextBucket++;
-                }
-            }
-
-            cummFill += stratum.size();
+            char nextBucket = alloc.nextBucket(stratum.size());
             for (int i = stratum.size() - 1; i >= 0; i--)
             {
                 into.add(stratum.get(i),
                          (char)(bucketOffset + nextBucket));
             }
         }
-    }
-
-    private int countFlops(IntList[] meanStrata)
-    {
-        int sum = 0;
-        for (IntList stratum : meanStrata)
-        {
-            sum += (stratum == null
-                    ? 0
-                    : stratum.size());
-        }
-        return sum;
     }
 
 

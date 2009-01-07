@@ -1,5 +1,6 @@
 package ao.bucket.abstraction.hole;
 
+import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.CanonTraverser;
 import ao.holdem.model.card.Community;
@@ -60,35 +61,14 @@ public class HoleBucketizerImpl
         assert nBuckets > 0;
         if (strengths[0] == null) initCanonHoles();
 
-        T   buckets = into.newInstance(
-                        Hole.CANONICAL_COUNT, nBuckets);
-
-        char   nextBucket = 0, lastBucket = (char)(nBuckets - 1);
-        int    cummFill   = 0;
-        double perBucket  =
-                ((double) Hole.CANONICAL_COUNT) / nBuckets;
-
+        T               buckets = into.newInstance(
+                          Hole.CANONICAL_COUNT, nBuckets);
+        BucketAllocator alloc   = new BucketAllocator(
+                          Hole.CANONICAL_COUNT, nBuckets);
+        
         for (Short holeCanon : inOrder)
         {
-            double delta = cummFill - perBucket * (nextBucket + 1);
-            if (nextBucket != lastBucket)
-            {
-                if (delta < 0)
-                {
-                    double overflow = delta + 1;
-                    if (overflow > 1.0 / 2)
-                    {
-                        nextBucket++;
-                    }
-                }
-                else
-                {
-                    nextBucket++;
-                }
-            }
-
-            cummFill++;
-            buckets.add(holeCanon, nextBucket);
+            buckets.add(holeCanon, alloc.nextBucket(1));
         }
 
         return buckets;
