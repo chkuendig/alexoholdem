@@ -25,9 +25,6 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        testFlopBucketLookup();
-//        testFlopBucketizer();
-
 //        testHoleLookup();
         testFlopLookup();
     }
