@@ -3,6 +3,7 @@ package ao.bucket.abstraction;
 import ao.bucket.abstraction.flop.FlopBucketLookup;
 import ao.bucket.abstraction.flop.FlopBucketizerImpl;
 import ao.bucket.abstraction.hole.HoleBucketLookup;
+import ao.bucket.abstraction.hole.HoleBucketLookupImpl;
 import ao.bucket.abstraction.hole.HoleBucketizerImpl;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.flop.FlopLookup;
@@ -40,7 +41,7 @@ public class BucketizerTest
         int[] counts   = new int[ nBuckets ];
 
         HoleBucketLookup lookup =
-                new HoleBucketLookup(new HoleBucketizerImpl());
+                new HoleBucketLookupImpl(new HoleBucketizerImpl());
         BucketSet buckets = lookup.buckets( nBuckets );
         for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
         {
@@ -63,7 +64,7 @@ public class BucketizerTest
         LOG.info("testing flop bucket lookup");
 
         HoleBucketLookup holeLookup =
-                new HoleBucketLookup(new HoleBucketizerImpl());
+                new HoleBucketLookupImpl(new HoleBucketizerImpl());
         BucketSet holeBuckets = holeLookup.buckets( (char) 3 );
 
         char  numFlopBuckets = 9;
