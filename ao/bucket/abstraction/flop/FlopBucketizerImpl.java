@@ -1,5 +1,6 @@
 package ao.bucket.abstraction.flop;
 
+import ao.bucket.abstraction.community.CommunityBucketizer;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.flop.Flop;
@@ -17,7 +18,7 @@ import org.apache.log4j.Logger;
  * Time: 4:25:59 PM
  */
 public class FlopBucketizerImpl
-        implements FlopBucketizer
+        implements CommunityBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =

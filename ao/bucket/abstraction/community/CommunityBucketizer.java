@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.flop;
+package ao.bucket.abstraction.community;
 
 import ao.bucket.abstraction.set.BucketSet;
 
@@ -7,7 +7,7 @@ import ao.bucket.abstraction.set.BucketSet;
  * Date: Oct 17, 2008
  * Time: 1:47:45 PM
  */
-public interface FlopBucketizer
+public interface CommunityBucketizer
 {
     //--------------------------------------------------------------------
     public <T extends BucketSet> T

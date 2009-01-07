@@ -1,16 +1,19 @@
 package ao.bucket.abstraction.flop;
 
+import ao.bucket.abstraction.community.CommunityBucketLookup;
+import ao.bucket.abstraction.community.CommunityBucketizer;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.abstraction.set.BucketSetImpl;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 
+
 /**
  * Date: Oct 17, 2008
  * Time: 1:39:40 PM
  */
-public class FlopBucketLookup
+public class FlopBucketLookup implements CommunityBucketLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -22,15 +25,13 @@ public class FlopBucketLookup
 
 
     //--------------------------------------------------------------------
-//    private final List<RandomAccessFile> FILES;
-    private final FlopBucketizer         BUCKETIZER;
-    private final String                 BUCKET_DIR;
+    private final CommunityBucketizer BUCKETIZER;
+    private final String              BUCKET_DIR;
 
 
     //--------------------------------------------------------------------
-    public FlopBucketLookup(FlopBucketizer bucketizer)
+    public FlopBucketLookup(CommunityBucketizer bucketizer)
     {
-//        FILES        = new AutovivifiedList<RandomAccessFile>();
         BUCKETIZER   = bucketizer;
         BUCKET_DIR   = bucketFolder(bucketizer.id());
     }
