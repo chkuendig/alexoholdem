@@ -77,21 +77,70 @@ public class FlopBucketizerImpl
         T buckets = with.newInstance(
                       FlopLookup.CANON_FLOP_COUNT, numBuckets);
 
+        double flopBucketFraction       = 0;
+        double flopBucketsPerHoleBucket =
+                ((double) numBuckets) / onTopOf.bucketCount();
+
+        char   bucketsUsedUp = 0;
+        for (char bucketIndex = 0,
+                      lastBucket  = (char) (onTopOf.bucketCount() - 1);
+                  bucketIndex <= lastBucket;
+                  bucketIndex++)
+        {
+            char numSubBuckets;
+            if (bucketIndex == lastBucket)
+            {
+                numSubBuckets = (char) (numBuckets - bucketsUsedUp);
+            }
+            else
+            {
+                numSubBuckets =
+                        (char) Math.floor(flopBucketsPerHoleBucket);
+                flopBucketFraction +=
+                        flopBucketsPerHoleBucket - numSubBuckets;
+
+                if (flopBucketFraction >= 1)
+                {
+                    numSubBuckets++;
+                    flopBucketFraction--;
+                }
+            }
+
+            bucketize(
+                    buckets,
+                    byMean(onTopOf.canonsOf(bucketIndex)),
+                    numSubBuckets,
+                    bucketsUsedUp);
+
+            bucketsUsedUp += numSubBuckets;
+        }
+
+        return buckets;
+    }
+
+
+    //--------------------------------------------------------------------
+    private void
+            bucketize(BucketSet into,
+                      IntList[] meanStrata,
+                      char      numBuckets,
+                      char      bucketOffset)
+    {
         char   nextBucket = 0, lastBucket = (char)(numBuckets - 1);
         int    cummFill   = 0;
         double perBucket  =
-                ((double) FlopLookup.CANON_FLOP_COUNT) / numBuckets;
-        for (IntList meanStrata : byMean())
+                ((double) countFlops(meanStrata)) / numBuckets;
+        for (IntList stratum : meanStrata)
         {
-            if (meanStrata == null) continue;
+            if (stratum == null) continue;
 
             double delta = cummFill - perBucket * (nextBucket + 1);
             if (nextBucket != lastBucket)
             {
                 if (delta < 0)
                 {
-                    double overflow = delta + meanStrata.size();
-                    if (overflow > meanStrata.size() / 2)
+                    double overflow = delta + stratum.size();
+                    if (overflow > stratum.size() / 2)
                     {
                         nextBucket++;
                     }
@@ -102,32 +151,67 @@ public class FlopBucketizerImpl
                 }
             }
 
-            cummFill += meanStrata.size();
-            for (int i = meanStrata.size() - 1; i >= 0; i--)
+            cummFill += stratum.size();
+            for (int i = stratum.size() - 1; i >= 0; i--)
             {
-                buckets.add(meanStrata.get(i), nextBucket);
+                into.add(stratum.get(i),
+                         (char)(bucketOffset + nextBucket));
             }
         }
+    }
 
-        return buckets;
+    private int countFlops(IntList[] meanStrata)
+    {
+        int sum = 0;
+        for (IntList stratum : meanStrata)
+        {
+            sum += (stratum == null
+                    ? 0
+                    : stratum.size());
+        }
+        return sum;
     }
 
 
     //--------------------------------------------------------------------
-    private IntList[] byMean()
+    private IntList[] byMean(long[] forHoles)
     {
-        LOG.debug("sorting flops by mean");
+        LOG.debug("sorting flops by mean for " +
+                   (forHoles == null ? "all" : forHoles.length)
+                  + " canon holes");
 
-        IntList[] byMean = new IntList[ Eval5.VALUE_COUNT ];
-        for (int canon = 0; canon < MEANS.length; canon++)
+        short[] asShort;
+        if (forHoles == null)
         {
-            byMean[ MEANS[canon] ] =
-                    IntList.addTo(byMean[ MEANS[canon] ], canon);
+            asShort = null;
         }
+        else
+        {
+            asShort = new short[ forHoles.length ];
+            for (int i = 0; i < forHoles.length; i++)
+            {
+                asShort[i] = (short) forHoles[ i ];
+            }
+        }
+
+        final IntList[] byMean = new IntList[ Eval5.VALUE_COUNT ];
+        new CanonTraverser().traverseFlops(
+                asShort, new Traverser<Flop>() {
+            public void traverse(Flop flop) {
+                short meanStrength = MEANS[ flop.canonIndex() ];
+                byMean[ meanStrength ] =
+                    IntList.addTo(byMean[ meanStrength ],
+                                  flop.canonIndex());
+            }
+        });
 
         LOG.debug("done sorting by mean");
         return byMean;
     }
+//    private IntList[] byMean()
+//    {
+//        return byMean(null);
+//    }
 
 
     //--------------------------------------------------------------------

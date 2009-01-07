@@ -1,5 +1,6 @@
 package ao.bucket.abstraction;
 
+import ao.bucket.abstraction.community.CommunityBucketLookup;
 import ao.bucket.abstraction.flop.FlopBucketLookup;
 import ao.bucket.abstraction.flop.FlopBucketizerImpl;
 import ao.bucket.abstraction.hole.HoleBucketLookup;
@@ -27,8 +28,8 @@ public class BucketizerTest
 //        testFlopBucketLookup();
 //        testFlopBucketizer();
 
-        testHoleLookup();
-//        testFlopLookup();
+//        testHoleLookup();
+        testFlopLookup();
     }
 
 
@@ -65,12 +66,12 @@ public class BucketizerTest
 
         HoleBucketLookup holeLookup =
                 new HoleBucketLookupImpl(new HoleBucketizerImpl());
-        BucketSet holeBuckets = holeLookup.buckets( (char) 3 );
+        BucketSet holeBuckets = holeLookup.buckets( (char) 13 );
 
-        char  numFlopBuckets = 9;
+        char  numFlopBuckets = 1134;
         int[] counts         = new int[ numFlopBuckets ];
 
-        FlopBucketLookup lookup =
+        CommunityBucketLookup lookup =
                 new FlopBucketLookup(new FlopBucketizerImpl());
         BucketSet buckets = lookup.buckets(holeBuckets, numFlopBuckets);
         for (int i = 0; i < FlopLookup.CANON_FLOP_COUNT; i++)

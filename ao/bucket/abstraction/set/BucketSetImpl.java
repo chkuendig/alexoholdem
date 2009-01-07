@@ -93,7 +93,8 @@ public class BucketSetImpl implements BucketSet
     }
     private long canonCount()
     {
-        return BUCKETS_A.length + BUCKETS_B.length;
+        return BUCKETS_A.length +
+               (BUCKETS_B == null ? 0 : BUCKETS_B.length);
     }
 
 
