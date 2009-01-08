@@ -6,6 +6,8 @@ import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.river.River;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
 
 /**
  * Date: Aug 27, 2008
@@ -89,6 +91,23 @@ public class Turn
     public CanonSuit turnSuit()
     {
         return TURN.suit();
+    }
+
+
+    //--------------------------------------------------------------------
+    public Flop flop()
+    {
+        return FLOP_CARDS;
+    }
+
+    public Hole hole()
+    {
+        return FLOP_CARDS.hole();
+    }
+    
+    public Community community()
+    {
+        return FLOP_CARDS.community().addTurn( TURN_CARD );
     }
 
 

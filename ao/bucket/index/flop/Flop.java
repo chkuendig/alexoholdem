@@ -272,7 +272,7 @@ public class Flop
 //               subIndex();
     }
 
-    public Community toCommunity()
+    public Community community()
     {
         return new Community(FLOP_A, FLOP_B, FLOP_C);
     }

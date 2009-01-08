@@ -1,13 +1,16 @@
 package ao.bucket.abstraction;
 
+import ao.bucket.abstraction.community.CommBucketLookupImpl;
 import ao.bucket.abstraction.community.CommunityBucketLookup;
-import ao.bucket.abstraction.flop.FlopBucketLookup;
-import ao.bucket.abstraction.flop.FlopBucketizerImpl;
+import ao.bucket.abstraction.community.flop.FlopBucketizerImpl;
+import ao.bucket.abstraction.community.turn.TurnBucketizerImpl;
 import ao.bucket.abstraction.hole.HoleBucketLookup;
 import ao.bucket.abstraction.hole.HoleBucketLookupImpl;
 import ao.bucket.abstraction.hole.HoleBucketizerImpl;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.turn.TurnLookup;
+import ao.holdem.model.Round;
 import ao.holdem.model.card.Hole;
 import org.apache.log4j.Logger;
 
@@ -26,7 +29,8 @@ public class BucketizerTest
     public static void main(String[] args)
     {
 //        testHoleLookup();
-        testFlopLookup();
+//        testFlopLookup();
+        testTurnLookup();
     }
 
 
@@ -61,19 +65,56 @@ public class BucketizerTest
     {
         LOG.info("testing flop bucket lookup");
 
+        char  numHoleBuckets = 3;
         HoleBucketLookup holeLookup =
                 new HoleBucketLookupImpl(new HoleBucketizerImpl());
-        BucketSet holeBuckets = holeLookup.buckets( (char) 13 );
+        BucketSet holeBuckets = holeLookup.buckets( numHoleBuckets );
 
-        char  numFlopBuckets = 1134;
+        char  numFlopBuckets = 9;
         int[] counts         = new int[ numFlopBuckets ];
 
         CommunityBucketLookup lookup =
-                new FlopBucketLookup(new FlopBucketizerImpl());
+                new CommBucketLookupImpl(
+                        Round.FLOP, new FlopBucketizerImpl());
         BucketSet buckets = lookup.buckets(holeBuckets, numFlopBuckets);
         for (int i = 0; i < FlopLookup.CANON_FLOP_COUNT; i++)
         {
             counts[ buckets.bucketOf(i) ]++;
+        }
+
+        for (int i = 0; i < counts.length; i++)
+            System.out.println(i + "\t" + counts[i]);
+    }
+
+
+    //--------------------------------------------------------------------
+    public static void testTurnLookup()
+    {
+        LOG.info("testing turn bucket lookup");
+
+        char numHoleBuckets = 3;
+        HoleBucketLookup holeLookup =
+                new HoleBucketLookupImpl(new HoleBucketizerImpl());
+        BucketSet holeBuckets = holeLookup.buckets( numHoleBuckets );
+
+        char numFlopBuckets = 9;
+        CommunityBucketLookup flopLookup =
+                new CommBucketLookupImpl(
+                        Round.FLOP, new FlopBucketizerImpl());
+        BucketSet flopBuckets =
+                flopLookup.buckets(holeBuckets, numFlopBuckets);
+
+        char numTurnBuckets = 27;
+        CommunityBucketLookup turnLookup =
+                new CommBucketLookupImpl(
+                        Round.TURN, new TurnBucketizerImpl());
+        BucketSet turnBuckets =
+                turnLookup.buckets(flopBuckets, numTurnBuckets);
+
+        int[] counts = new int[ numTurnBuckets ];
+        for (int i = 0; i < TurnLookup.CANON_TURN_COUNT; i++)
+        {
+            counts[ turnBuckets.bucketOf(i) ]++;
         }
 
         for (int i = 0; i < counts.length; i++)

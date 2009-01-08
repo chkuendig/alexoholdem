@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.flop;
+package ao.bucket.abstraction.community.flop;
 
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
@@ -7,12 +7,15 @@ import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
+import ao.holdem.model.Round;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.eval.eval5.Eval5;
 import ao.util.data.IntList;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentShorts;
 import org.apache.log4j.Logger;
+
+import java.io.File;
 
 /**
  * User: AOstrovsky
@@ -26,8 +29,10 @@ public class FlopBucketizerImpl
     private static final Logger LOG =
             Logger.getLogger(FlopBucketizerImpl.class);
 
+    private static final String  MEAN_FILE_DIR =
+            "lookup/bucket/" + Round.FLOP.toString() + "/";
     private static final String  MEAN_FILE =
-            "lookup/bucket/flop/means.bin";
+            MEAN_FILE_DIR + "means.bin";
     private static final short[] MEANS =
             computeOrRetrieveCanonFlopMeans();
 
@@ -36,12 +41,16 @@ public class FlopBucketizerImpl
     private static short[] computeOrRetrieveCanonFlopMeans()
     {
         LOG.debug("attempting to retrieve canon flop means");
+        if (new File(MEAN_FILE_DIR).mkdirs())
+            LOG.debug("created " + MEAN_FILE_DIR);
+
         short[] means = PersistentShorts.readBinary(MEAN_FILE);
         if (means == null)
         {
             means = computeCanonFlopMeans();
             PersistentShorts.writeBinary(means, MEAN_FILE);
         }
+        
         LOG.debug("done retrieving/computing canon flop means");
         return means;
     }
@@ -55,8 +64,8 @@ public class FlopBucketizerImpl
             public void traverse(Flop flop) {
                 means[ flop.canonIndex() ] =
                         (short) Math.round(
-                        new GeneralHistFinder().compute(
-                                flop.hole(), flop.toCommunity()).mean());
+                          new GeneralHistFinder().compute(
+                                  flop.hole(), flop.community()).mean());
                 if (count[0]++ % 10000 == 0) System.out.print(".");
             }
         });
@@ -127,26 +136,11 @@ public class FlopBucketizerImpl
     private IntList[] byMean(long[] forHoles)
     {
         LOG.debug("sorting flops by mean for " +
-                   (forHoles == null ? "all" : forHoles.length)
-                  + " canon holes");
-
-        short[] asShort;
-        if (forHoles == null)
-        {
-            asShort = null;
-        }
-        else
-        {
-            asShort = new short[ forHoles.length ];
-            for (int i = 0; i < forHoles.length; i++)
-            {
-                asShort[i] = (short) forHoles[ i ];
-            }
-        }
+                    forHoles.length + " canon holes");
 
         final IntList[] byMean = new IntList[ Eval5.VALUE_COUNT ];
         new CanonTraverser().traverseFlops(
-                asShort, new Traverser<Flop>() {
+                forHoles, new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 short meanStrength = MEANS[ flop.canonIndex() ];
                 byMean[ meanStrength ] =
@@ -158,10 +152,6 @@ public class FlopBucketizerImpl
         LOG.debug("done sorting by mean");
         return byMean;
     }
-//    private IntList[] byMean()
-//    {
-//        return byMean(null);
-//    }
 
 
     //--------------------------------------------------------------------

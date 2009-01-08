@@ -259,7 +259,7 @@ public class BucketSetImpl implements BucketSet
     {
         String filename = storeDir(FOLDER);
         if (new File( filename ).mkdirs())
-            LOG.info("created directories " + filename);
+            LOG.info("created " + filename);
 
         LOG.info("persisting bucket set to " + filename);
 
