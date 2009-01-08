@@ -1,27 +1,25 @@
-package ao.bucket.abstraction.flop;
+package ao.bucket.abstraction.community;
 
-import ao.bucket.abstraction.community.CommunityBucketLookup;
-import ao.bucket.abstraction.community.CommunityBucketizer;
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.abstraction.set.BucketSetImpl;
+import ao.holdem.model.Round;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 
-
 /**
- * Date: Oct 17, 2008
- * Time: 1:39:40 PM
+ * Date: Jan 7, 2009
+ * Time: 4:29:59 PM
  */
-public class FlopBucketLookup implements CommunityBucketLookup
+public class CommBucketLookupImpl implements CommunityBucketLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(FlopBucketLookup.class);
+            Logger.getLogger(CommBucketLookupImpl.class);
 
 
     //--------------------------------------------------------------------
-    private final static String DIR = "lookup/bucket/flop/";
+    private final static String BASE_DIR = "lookup/bucket/";
 
 
     //--------------------------------------------------------------------
@@ -30,10 +28,11 @@ public class FlopBucketLookup implements CommunityBucketLookup
 
 
     //--------------------------------------------------------------------
-    public FlopBucketLookup(CommunityBucketizer bucketizer)
+    public CommBucketLookupImpl(Round forRound,
+                                CommunityBucketizer bucketizer)
     {
         BUCKETIZER   = bucketizer;
-        BUCKET_DIR   = bucketFolder(bucketizer.id());
+        BUCKET_DIR   = bucketFolder(forRound, bucketizer.id());
     }
 
 
@@ -73,9 +72,12 @@ public class FlopBucketLookup implements CommunityBucketLookup
 
 
     //--------------------------------------------------------------------
-    private static String bucketFolder(String bucketizerId)
+    private String bucketFolder(Round forRound,
+                                String bucketizerId)
     {
-        String bucketFolder = DIR + bucketizerId + "/";
+        String bucketFolder =
+                BASE_DIR + forRound.toString() + "/"
+                         + bucketizerId + "/";
 
         if ( new File(bucketFolder).mkdirs() )
             LOG.info("created " + bucketFolder);

@@ -1,11 +1,16 @@
-package ao.bucket.abstraction.turn;
+package ao.bucket.abstraction.community.turn;
 
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
 import ao.bucket.abstraction.community.CommunityBucketizer;
 import ao.bucket.abstraction.set.BucketSet;
+import ao.bucket.index.CanonTraverser;
+import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
+import ao.odds.agglom.impl.GeneralHistFinder;
+import ao.odds.eval.eval5.Eval5;
 import ao.util.data.IntList;
+import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
 /**
@@ -35,15 +40,17 @@ public class TurnBucketizerImpl implements CommunityBucketizer
         char   bucketOffset = 0;
         char[] bucketAlloc  = new SubBucketAllocator().allocate(
                 onTopOf.bucketCount(), numBuckets);
-        for (char bucket = 0; bucket < numBuckets; bucket++)
+        for (char flopBucket = 0;
+                  flopBucket < onTopOf.bucketCount();
+                  flopBucket++)
         {
             bucketize(
                     buckets,
-                    byMean(onTopOf.canonsOf( bucket )),
-                    bucketAlloc[ bucket ],
+                    byMean(onTopOf.canonsOf( flopBucket )),
+                    bucketAlloc[ flopBucket ],
                     bucketOffset);
 
-            bucketOffset += bucketAlloc[ bucket ];
+            bucketOffset += bucketAlloc[ flopBucket ];
         }
 
         return buckets;
@@ -64,11 +71,11 @@ public class TurnBucketizerImpl implements CommunityBucketizer
         {
             if (stratum == null) continue;
 
+            char nextBucket = alloc.nextBucket(stratum.size());
             for (int i = stratum.size() - 1; i >= 0; i--)
             {
                 into.add(stratum.get(i),
-                         (char)(bucketOffset +
-                                  alloc.nextBucket(stratum.size())));
+                         (char)(bucketOffset + nextBucket));
             }
         }
     }
@@ -78,10 +85,27 @@ public class TurnBucketizerImpl implements CommunityBucketizer
     private IntList[] byMean(long[] forFlops)
     {
         LOG.debug("sorting turns by mean for " +
-                   (forFlops == null ? "all" : forFlops.length)
-                  + " canon flops");
+                    forFlops.length + " canon flops");
 
-        return null;
+        final int[]     count  = new int[1];
+        final IntList[] byMean = new IntList[ Eval5.VALUE_COUNT ];
+        new CanonTraverser().traverseTurns(
+                forFlops, new Traverser<Turn>() {
+            public void traverse(Turn turn) {
+                short meanStrength = (short) Math.round(
+                        new GeneralHistFinder().compute(
+                                turn.hole(), turn.community()).mean());
+                byMean[ meanStrength ] =
+                    IntList.addTo(byMean[ meanStrength ],
+                                  turn.canonIndex());
+
+                if (count[0]++ % 100000 == 0) System.out.print(".");
+            }
+        });
+        System.out.println();
+
+        LOG.debug("done sorting by mean");
+        return byMean;
     }
 
 

@@ -2,6 +2,7 @@ package ao.bucket.abstraction.hole;
 
 import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.abstraction.set.BucketSetImpl;
+import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
 public class HoleBucketLookupImpl implements HoleBucketLookup
 {
     //--------------------------------------------------------------------
-    private final static String DIR = "lookup/bucket/hole/";
+    private final static String DIR =
+            "lookup/bucket/" + Round.PREFLOP.toString() + "/";
 
 
     //--------------------------------------------------------------------
