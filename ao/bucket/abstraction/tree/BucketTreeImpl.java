@@ -22,20 +22,20 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public void set(byte  holeBucket,
+    public void add(byte  holeBucket,
                     short canonHole)
     {
 
     }
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     int  canonFlop)
     {
 
     }
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     byte turnBucket,
                     int  canonTurn)
@@ -43,11 +43,11 @@ public class BucketTreeImpl implements BucketTree
 
     }
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     byte turnBucket,
                     byte riverBucket,
-                    int  canonRiver)
+                    long canonRiver)
     {
 
     }
@@ -89,7 +89,7 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public Navigator navigate()
+    public Branch root()
     {
         return null;
     }

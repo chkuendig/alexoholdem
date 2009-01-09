@@ -23,7 +23,7 @@ public class Hole
     private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
     public  static final int CANONICAL_COUNT        = 169;
 
-    private static final Hole[][] REVERSE = new Hole[CANONICAL_COUNT][];
+//    private static final Hole[][] REVERSE = new Hole[CANONICAL_COUNT][];
     private static final Hole[][] VALUES  = new Hole[52][52];
     static
     {
@@ -46,11 +46,11 @@ public class Hole
             }
         }
 
-        for (int i = 0; i < CANONICAL_COUNT; i++)
-        {
-            REVERSE[ i ] = reverse.get( i ).toArray(
-                              new Hole[ reverse.get(i).size() ]);
-        }
+//        for (int i = 0; i < CANONICAL_COUNT; i++)
+//        {
+//            REVERSE[ i ] = reverse.get( i ).toArray(
+//                              new Hole[ reverse.get(i).size() ]);
+//        }
     }
 
 
@@ -60,10 +60,10 @@ public class Hole
         return VALUES[ a.ordinal() ][ b.ordinal() ];
     }
 
-    public static Hole[] reify(int canonicalIndex)
-    {
-        return REVERSE[ canonicalIndex ];
-    }
+//    public static Hole[] reify(int canonicalIndex)
+//    {
+//        return REVERSE[ canonicalIndex ];
+//    }
 
 
     //--------------------------------------------------------------------

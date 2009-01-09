@@ -30,7 +30,7 @@ public class PlayerKids
         kids = new EnumMap<AbstractAction, InfoNode>(
                     AbstractAction.class);
 
-        EnumMap<AbstractAction, State> actions = state.validActions();
+        EnumMap<AbstractAction, State> actions = state.viableActions();
         for (Map.Entry<AbstractAction, State>
                 action : actions.entrySet())
         {

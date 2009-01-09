@@ -1,8 +1,8 @@
 package ao.bucket.abstraction.hole;
 
 import ao.bucket.abstraction.alloc.BucketAllocator;
+import ao.bucket.abstraction.enumeration.CanonTraverser;
 import ao.bucket.abstraction.set.BucketSet;
-import ao.bucket.index.CanonTraverser;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;

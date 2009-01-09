@@ -3,8 +3,8 @@ package ao.bucket.abstraction.community.turn;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
 import ao.bucket.abstraction.community.CommunityBucketizer;
+import ao.bucket.abstraction.enumeration.CanonTraverser;
 import ao.bucket.abstraction.set.BucketSet;
-import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.odds.agglom.impl.GeneralHistFinder;
@@ -38,8 +38,8 @@ public class TurnBucketizerImpl implements CommunityBucketizer
                       TurnLookup.CANON_TURN_COUNT, numBuckets);
 
         char   bucketOffset = 0;
-        char[] bucketAlloc  = new SubBucketAllocator().allocate(
-                onTopOf.bucketCount(), numBuckets);
+        byte[] bucketAlloc  = new SubBucketAllocator().allocate(
+                                    onTopOf.bucketCount(), numBuckets);
         for (char flopBucket = 0;
                   flopBucket < onTopOf.bucketCount();
                   flopBucket++)
@@ -47,7 +47,7 @@ public class TurnBucketizerImpl implements CommunityBucketizer
             bucketize(
                     buckets,
                     byMean(onTopOf.canonsOf( flopBucket )),
-                    bucketAlloc[ flopBucket ],
+                    (char)bucketAlloc[ flopBucket ],
                     bucketOffset);
 
             bucketOffset += bucketAlloc[ flopBucket ];

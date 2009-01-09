@@ -112,13 +112,14 @@ public class State
 
 
     //--------------------------------------------------------------------
-    public EnumMap<AbstractAction, State> validActions()
+    public EnumMap<AbstractAction, State> viableActions()
     {
         EnumMap<AbstractAction, State> validActions =
                 new EnumMap<AbstractAction, State>(
                         AbstractAction.class);
 
-        State quitFold  = advanceIfValid(Action.FOLD);
+        State quitFold  =
+                canCheck() ? null : advanceIfValid(Action.FOLD);
         State checkCall = firstValid(Action.CALL, Action.CHECK);
         State betRaise  = firstValid(Action.RAISE, Action.BET);
 
