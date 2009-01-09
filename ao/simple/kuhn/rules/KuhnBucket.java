@@ -31,7 +31,7 @@ public class KuhnBucket implements Bucket<KuhnBucket>
 
 
     //--------------------------------------------------------------------
-    public Odds against(KuhnBucket otherTerminal)
+    public double against(KuhnBucket otherTerminal)
     {
         assert CARD != null &&
                otherTerminal.CARD != null;
@@ -39,7 +39,7 @@ public class KuhnBucket implements Bucket<KuhnBucket>
         return new Odds(
                 CARD.compareTo(otherTerminal.CARD) > 0 ? 1 : 0,
                 CARD.compareTo(otherTerminal.CARD) > 0 ? 0 : 1,
-                0);
+                0).strengthVsRandom();
     }
 
     public Collection<KuhnBucket> nextBuckets()

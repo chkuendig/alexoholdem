@@ -10,6 +10,7 @@ import ao.holdem.model.act.FallbackAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -30,6 +31,12 @@ public class State
     private final Chips stakes;
     private final State startOfRound;
 
+    /**
+     * This is the first player scheduled to act, not necessarily
+     *   the that did because of a quit or all-in action.
+     */
+    private final int   firstToActVoluntarely;
+
 
     //--------------------------------------------------------------------
     // expects blind actions
@@ -41,12 +48,15 @@ public class State
             seats[i] = initPlayerState(clockwiseDealerLast, i);
         }
 
-        round              = Round.PREFLOP;
-        nextToAct          = 0;
-        remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
-        latestRoundStaker  = -1;
-        stakes             = Chips.ZERO;
-        startOfRound       = this;
+        boolean isHeadsUp     = (clockwiseDealerLast.size() == 2);
+
+        round                 = Round.PREFLOP;
+        nextToAct             = (isHeadsUp ? 1: 0);
+        remainingRoundBets    = BETS_PER_ROUND - 1; // -1 for upcoming BB
+        latestRoundStaker     = -1;
+        stakes                = Chips.ZERO;
+        startOfRound          = this;
+        firstToActVoluntarely = index(nextToAct + 2);
     }
     private Seat initPlayerState(
             List<Avatar> clockwiseDealerLast,
@@ -72,16 +82,18 @@ public class State
                   int   copyRemainingRoundBets,
                   int   copyLatestRoundStaker,
                   Chips copyStakes,
-                  State copyStartOfRound)
+                  State copyStartOfRound,
+                  int   copyFirstToActVoluntarely)
     {
-        round              = copyRound;
-        seats              = copySeats;
-        nextToAct          = copyNextToAct;
-        remainingRoundBets = copyRemainingRoundBets;
-        latestRoundStaker  = copyLatestRoundStaker;
-        stakes             = copyStakes;
-        startOfRound       = (copyStartOfRound == null)
-                              ? this : copyStartOfRound;
+        round                 = copyRound;
+        seats                 = copySeats;
+        nextToAct             = copyNextToAct;
+        remainingRoundBets    = copyRemainingRoundBets;
+        latestRoundStaker     = copyLatestRoundStaker;
+        stakes                = copyStakes;
+        startOfRound          = (copyStartOfRound == null)
+                                 ? this : copyStartOfRound;
+        firstToActVoluntarely = copyFirstToActVoluntarely;
     }
 
 
@@ -96,6 +108,52 @@ public class State
     public State advance(Action act)
     {
         return advance(nextToAct().player(), act);
+    }
+
+
+    //--------------------------------------------------------------------
+    public EnumMap<AbstractAction, State> validActions()
+    {
+        EnumMap<AbstractAction, State> validActions =
+                new EnumMap<AbstractAction, State>(
+                        AbstractAction.class);
+
+        State quitFold  = advanceIfValid(Action.FOLD);
+        State checkCall = firstValid(Action.CALL, Action.CHECK);
+        State betRaise  = firstValid(Action.RAISE, Action.BET);
+
+        if (quitFold != null)
+            validActions.put(AbstractAction.QUIT_FOLD, quitFold);
+
+        if (checkCall != null)
+            validActions.put(AbstractAction.CHECK_CALL, checkCall);
+
+        if (betRaise != null)
+            validActions.put(AbstractAction.BET_RAISE, betRaise);
+
+        return validActions;
+    }
+
+
+    private State firstValid(Action... acts)
+    {
+        for (Action act : acts)
+        {
+            State nextState = advanceIfValid(act);
+            if (nextState != null) return nextState;
+        }
+        return null;
+    }
+    private State advanceIfValid(Action act)
+    {
+        try
+        {
+            return advance(act);
+        }
+        catch (RuleBreach ignored)
+        {
+            return null;
+        }
     }
 
                        
@@ -120,7 +178,8 @@ public class State
                          nextRemainingBets,
                          nextRoundStaker,
                          nextStakes,
-                         roundEnder ? null : startOfRound);
+                         roundEnder ? null : startOfRound,
+                         firstToActVoluntarely);
     }
 
     private Seat[] nextPlayers(Action act)
@@ -213,7 +272,8 @@ public class State
                          remainingRoundBets,
                          nextRoundStaker,
                          betSize,
-                         startOfRound);
+                         startOfRound,
+                         firstToActVoluntarely);
     }
 
 
@@ -251,7 +311,8 @@ public class State
                          nextRemainingBets(roundEnder, false),
                          nextRoundStaker,
                          stakes,
-                         roundEnder ? null : startOfRound);
+                         roundEnder ? null : startOfRound,
+                         firstToActVoluntarely);
     }
 
     /**
@@ -495,6 +556,30 @@ public class State
         return nextToAct;
     }
 
+    public boolean firstToActVoluntarelyIsNext()
+    {
+        assert seats.length == 2 : "only works with heads up";
+        return firstToActVoluntarely == nextToAct;
+    }
+
+    public boolean isStartOfRound()
+    {
+        return startOfRound.equals( this );
+    }
+
+    public HeadsUpStatus headsUpStatus()
+    {
+        if (seats.length != 2) return null;
+
+        if (! atEndOfHand()) return HeadsUpStatus.IN_PROGRESS;
+        if (atShowdown())    return HeadsUpStatus.SHOWDOWN;
+
+        return seats[firstToActVoluntarely].equals(
+                    unfolded().get(0))
+               ? HeadsUpStatus.DEALER_WINS
+               : HeadsUpStatus.BIG_BLIND_WINS;
+    }
+
 
     //--------------------------------------------------------------------
     private void validateNextAction(
@@ -516,14 +601,25 @@ public class State
 
 
     //--------------------------------------------------------------------
-    public String toString()
+    @Override public String toString()
     {
-        return nextToAct() + ", " + round;
+        return "State{" +
+               "\n\t  round              = " + round                +
+               "\n\t, seats              = " + Arrays.asList(seats) +
+               "\n\t, nextToAct          = " + seats[nextToAct]     +
+               "\n\t, remainingRoundBets = " + remainingRoundBets   +
+               "\n\t, stakes             = " + stakes               +
+               "\n\t, pot                = " + pot()                +
+               '}';
     }
+//    @Override public String toString()
+//    {
+//        //return nextToAct() + ", " + round;
+//    }
 
-    public boolean equals(Object o)
+    @Override public boolean equals(Object o)
     {
-        //if (this == o) return true;
+        if (this == o) return true;
         if (o == null ||
             getClass() != o.getClass()) return false;
 
@@ -538,7 +634,7 @@ public class State
 
     }
 
-    public int hashCode()
+    @Override public int hashCode()
     {
         int result;
         result = round.hashCode();

@@ -1,7 +1,6 @@
 package ao.regret.holdem;
 
 import ao.bucket.Bucket;
-import ao.odds.agglom.Odds;
 
 import java.util.Collection;
 
@@ -12,9 +11,9 @@ import java.util.Collection;
  */
 public class HoldemBucket implements Bucket<HoldemBucket>
 {
-    public Odds against(HoldemBucket otherTerminal)
+    public double against(HoldemBucket otherTerminal)
     {
-        return null;
+        return 0;
     }
 
     public Collection<HoldemBucket> nextBuckets()

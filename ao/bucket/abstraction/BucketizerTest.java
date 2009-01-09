@@ -11,7 +11,6 @@ import ao.bucket.abstraction.set.BucketSet;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
-import ao.holdem.model.card.Hole;
 import org.apache.log4j.Logger;
 
 /**
@@ -28,9 +27,9 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        testHoleLookup();
-//        testFlopLookup();
-        testTurnLookup();
+        testHoleLookup();
+        testFlopLookup();
+//        testTurnLookup();
     }
 
 
@@ -42,21 +41,24 @@ public class BucketizerTest
         char  nBuckets = 20;
         int[] counts   = new int[ nBuckets ];
 
-        HoleBucketLookup lookup =
-                new HoleBucketLookupImpl(new HoleBucketizerImpl());
-        BucketSet buckets = lookup.buckets( nBuckets );
-        for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
-        {
-            System.out.println(
-                    i                  + "\t" +
-                    Hole.reify( i )[0] + "\t" +
-                    (int) buckets.bucketOf(i));
-            counts[ buckets.bucketOf(i) ]++;
-        }
-
-        System.out.println("summary:");
-        for (int i = 0; i < counts.length; i++)
-            System.out.println(i + "\t" + counts[i]);
+//        BucketTree buckets = new BucketTreeImpl();
+//
+//
+//        HoleBucketLookup lookup =
+//                new HoleBucketLookupImpl(new HoleBucketizerImpl());
+//        BucketSet buckets = lookup.buckets( nBuckets );
+//        for (int i = 0; i < Hole.CANONICAL_COUNT; i++)
+//        {
+//            System.out.println(
+//                    i                  + "\t" +
+//                    Hole.reify( i )[0] + "\t" +
+//                    (int) buckets.bucketOf(i));
+//            counts[ buckets.bucketOf(i) ]++;
+//        }
+//
+//        System.out.println("summary:");
+//        for (int i = 0; i < counts.length; i++)
+//            System.out.println(i + "\t" + counts[i]);
     }
 
 
