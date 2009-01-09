@@ -1,5 +1,9 @@
 package ao.odds.agglom;
 
+import ao.holdem.persist.GenericBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
+
 /**
  * odds from the point of view of one player.
  */
@@ -99,8 +103,24 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    @Override
-    public String toString()
+    public static final Binding BINDING = new Binding();
+    public static class Binding extends GenericBinding<Odds> {
+        public Odds read(TupleInput tupleInput) {
+            return new Odds(tupleInput.readLong(),
+                            tupleInput.readLong(),
+                            tupleInput.readLong());
+        }
+
+        public void write(Odds o, TupleOutput tupleOutput) {
+            tupleOutput.writeLong( o.WIN   );
+            tupleOutput.writeLong( o.LOSE  );
+            tupleOutput.writeLong( o.SPLIT );
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
     {
 //        return "[win: "    + WIN   +
 //                " (" + Math.round(winPercent()  * 100) + ")" +
@@ -114,8 +134,7 @@ public class Odds
 
 
     //--------------------------------------------------------------------
-    @Override
-    public boolean equals(Object o)
+    @Override public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -127,8 +146,7 @@ public class Odds
 
     }
 
-    @Override
-    public int hashCode()
+    @Override public int hashCode()
     {
         int result = (int) (WIN ^ (WIN >>> 32));
         result = 31 * result + (int) (LOSE ^ (LOSE >>> 32));

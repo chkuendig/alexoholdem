@@ -151,10 +151,6 @@ public class CanonHoleTest
 
 
     //-----------------------------------------------------------------------
-    // testTurns()
-    
-
-    //-----------------------------------------------------------------------
 //    private static void read(
 //            Collection<OddCount>     to,
 //            GenericBinding<OddCount> binding,

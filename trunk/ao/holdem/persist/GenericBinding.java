@@ -15,7 +15,7 @@ public abstract class GenericBinding<T> extends TupleBinding
     {
         return read(tupleInput);
     }
-    public abstract T read(TupleInput tupleInput);
+    public abstract T read(TupleInput input);
 
 
     //--------------------------------------------------------------------
@@ -24,5 +24,5 @@ public abstract class GenericBinding<T> extends TupleBinding
     {
         write((T) o, tupleOutput);
     }
-    public abstract void write(T o, TupleOutput tupleOutput);
+    public abstract void write(T obj, TupleOutput out);
 }
