@@ -70,7 +70,7 @@ public class StateFlow
      * Advanced the hand to the next state.
      *
      * @param act action taken by nextToAct
-     * @return seat state after this action is taken
+     * @return seat state of next-to-act after this action is taken
      */
     public Seat advance(Action act)
     {

@@ -99,15 +99,15 @@ public class AlexoBucket implements Bucket<AlexoBucket>
 
 
     //--------------------------------------------------------------------
-    public Odds against(AlexoBucket otherTerminal)
+    public double against(AlexoBucket otherTerminal)
     {
         int thisValue = AlexoHand.valueOf(HOLE, FLOP, TURN);
         int thatValue = AlexoHand.valueOf(otherTerminal.HOLE,
                                           otherTerminal.FLOP,
                                           otherTerminal.TURN);
         return thisValue < thatValue
-                ? new Odds(0, 1, 0)
-                : new Odds(1, 0, 0);
+                ? new Odds(0, 1, 0).strengthVsRandom()
+                : new Odds(1, 0, 0).strengthVsRandom();
     }
 
     

@@ -29,6 +29,8 @@ public enum AbstractAction
                    : Action.BET;
         }};
 
+    public static final AbstractAction[] VALUES = values();
+
 
     //--------------------------------------------------------------------
     private final FallbackAction FALLACK_ACTION;
@@ -51,24 +53,6 @@ public enum AbstractAction
     public abstract Action toAction(
             Chips toCall,
             boolean betMadeThisRound);
-//    {
-//        switch (this)
-//        {
-//            case FOLD:
-//                return RealAction.FOLD;
-//
-//            case CHECK_CALL:
-//                return toCall.equals( Money.ZERO )
-//                        ? RealAction.CHECK
-//                        : RealAction.CHECK_CALL;
-//
-//            case BET_RAISE:
-//                return betMadeThisRound
-//                        ? RealAction.BET_RAISE
-//                        : RealAction.BET;
-//        }
-//        throw new Error("should never be here");
-//    }
 
 
     //--------------------------------------------------------------------

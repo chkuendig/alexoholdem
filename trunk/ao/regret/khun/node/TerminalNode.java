@@ -29,11 +29,10 @@ public class TerminalNode implements InfoNode
         if (OUTCOME.isShowdown())
         {
             double toWin =
-                    BUCKET.against( vsLastToAct.BUCKET )
-                          .winPercent();
+                    BUCKET.against( vsLastToAct.BUCKET );
 
-            return OUTCOME == KuhnOutcome.SHOWDOWN
-                    ?       toWin
+            return OUTCOME == KuhnOutcome.SHOWDOWN // as opposed to
+                    ?       toWin                  // DOUBLE_SHOWDOWN
                     : 2.0 * toWin;
         }
         else

@@ -68,24 +68,4 @@ public enum FallbackAction
     public abstract Action fallback(
             boolean canCheck,
             boolean canRaise);
-//    {
-//        switch (this)
-//        {
-//            case CHECK_OR_CALL:
-//                return canCheck
-//                        ? RealAction.CHECK
-//                        : RealAction.CHECK_CALL;
-//
-//            case CHECK_OR_FOLD:
-//                return canCheck
-//                        ? RealAction.CHECK
-//                        : RealAction.FOLD;
-//
-//            case RAISE_OR_CALL:
-//                return canRaise
-//                        ? RealAction.BET_RAISE
-//                        : RealAction.CHECK_CALL;
-//        }
-//        throw new Error("can't be here");
-//    }
 }
