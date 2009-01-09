@@ -12,11 +12,11 @@ public class SubBucketAllocator
      * @return how many buckets for this round per
      *          each of the buckets in the previous round
      */
-    public char[] allocate(
+    public byte[] allocate(
             char parentBuckets,
             char numBuckets)
     {
-        char[] alloc = new char[ parentBuckets ];
+        byte[] alloc = new byte[ parentBuckets ];
 
         double allocOverflow   = 0;
         double idealAllocation =
@@ -28,15 +28,15 @@ public class SubBucketAllocator
                   bucketIndex <= lastBucket;
                   bucketIndex++)
         {
-            char numSubBuckets;
+            byte numSubBuckets;
             if (bucketIndex == lastBucket)
             {
-                numSubBuckets = (char) (numBuckets - bucketsUsedUp);
+                numSubBuckets = (byte) (numBuckets - bucketsUsedUp);
             }
             else
             {
                 numSubBuckets =
-                        (char) Math.floor(idealAllocation);
+                        (byte) Math.floor(idealAllocation);
                 allocOverflow +=
                         idealAllocation - numSubBuckets;
 

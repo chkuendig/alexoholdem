@@ -40,7 +40,7 @@ public class ProponentNode implements PlayerNode
                         AbstractAction.class);
         kids   = new PlayerKids(state, bucket, forFirstToAct, true);
 
-        EnumMap<AbstractAction,State> actions = state.validActions();
+        EnumMap<AbstractAction,State> actions = state.viableActions();
         for (AbstractAction action : actions.keySet())
         {
             prob.put(action, new double[]{

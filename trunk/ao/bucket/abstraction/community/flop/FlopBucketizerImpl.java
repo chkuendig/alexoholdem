@@ -3,8 +3,8 @@ package ao.bucket.abstraction.community.flop;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
 import ao.bucket.abstraction.community.CommunityBucketizer;
+import ao.bucket.abstraction.enumeration.CanonTraverser;
 import ao.bucket.abstraction.set.BucketSet;
-import ao.bucket.index.CanonTraverser;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.Round;
@@ -89,7 +89,7 @@ public class FlopBucketizerImpl
                       FlopLookup.CANON_FLOP_COUNT, numBuckets);
 
         char   bucketOffset = 0;
-        char[] bucketAlloc  = new SubBucketAllocator().allocate(
+        byte[] bucketAlloc  = new SubBucketAllocator().allocate(
                 onTopOf.bucketCount(), numBuckets);
         for (char holeBucket = 0;
                   holeBucket < onTopOf.bucketCount();
@@ -98,7 +98,7 @@ public class FlopBucketizerImpl
             bucketize(
                     buckets,
                     byMean(onTopOf.canonsOf( holeBucket )),
-                    bucketAlloc[ holeBucket ],
+                    (char) bucketAlloc[ holeBucket ],
                     bucketOffset);
 
             bucketOffset += bucketAlloc[ holeBucket ];

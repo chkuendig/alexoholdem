@@ -8,6 +8,8 @@ import ao.bucket.abstraction.hole.HoleBucketLookup;
 import ao.bucket.abstraction.hole.HoleBucketLookupImpl;
 import ao.bucket.abstraction.hole.HoleBucketizerImpl;
 import ao.bucket.abstraction.set.BucketSet;
+import ao.bucket.abstraction.tree.BucketTree;
+import ao.bucket.abstraction.tree.BucketTreeImpl;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
@@ -41,9 +43,9 @@ public class BucketizerTest
         char  nBuckets = 20;
         int[] counts   = new int[ nBuckets ];
 
-//        BucketTree buckets = new BucketTreeImpl();
-//
-//
+        BucketTree buckets = new BucketTreeImpl("test");
+
+
 //        HoleBucketLookup lookup =
 //                new HoleBucketLookupImpl(new HoleBucketizerImpl());
 //        BucketSet buckets = lookup.buckets( nBuckets );

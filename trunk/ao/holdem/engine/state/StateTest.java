@@ -20,8 +20,8 @@ public class StateTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        //new StateTest().interactiveHeadsUp();
-        new StateTest().countStates();
+        new StateTest().interactiveHeadsUp();
+//        new StateTest().countStates();
     }
 
 
@@ -37,6 +37,10 @@ public class StateTest
         int[] byDepth = new int[ root.seats().length * 3 * 4 ];
         countStates(root, 0, byDepth);
         System.out.println( Arrays.toString(byDepth) );
+        
+        int sum = 0;
+        for (int count : byDepth) sum += count;
+        System.out.println("total: " + sum);
     }
 
     private void countStates(
@@ -45,7 +49,7 @@ public class StateTest
         byDepth[ depth ]++;
         if (under.atEndOfHand()) return;
 
-        for (State subState : under.validActions().values())
+        for (State subState : under.viableActions().values())
         {
             countStates( subState, depth + 1, byDepth );
         }
@@ -72,7 +76,7 @@ public class StateTest
                     (isDealer ? dealer : dealee) + " to act...");
 
             EnumMap<AbstractAction, State>
-                           acts    = state.validActions();
+                           acts    = state.viableActions();
             AbstractAction nextAct = inputNextAct(acts);
 
             System.out.println("Performing " + nextAct);

@@ -1,6 +1,8 @@
 package ao.bucket.abstraction.tree;
 
-import java.util.Collection;
+import ao.holdem.model.Round;
+
+import java.util.List;
 
 /**
  * Date: Jan 8, 2009
@@ -9,23 +11,23 @@ import java.util.Collection;
 public interface BucketTree
 {
     //--------------------------------------------------------------------
-    public void set(byte  holeBucket,
+    public void add(byte  holeBucket,
                     short canonHole);
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     int  canonFlop);
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     byte turnBucket,
                     int  canonTurn);
 
-    public void set(byte holeBucket,
+    public void add(byte holeBucket,
                     byte flopBucket,
                     byte turnBucket,
                     byte riverBucket,
-                    int  canonRiver);
+                    long canonRiver);
 
 
     //--------------------------------------------------------------------
@@ -49,12 +51,22 @@ public interface BucketTree
 
 
     //--------------------------------------------------------------------
-    public Navigator navigate();
+    public Branch root();
 
 
     //--------------------------------------------------------------------
-    public static interface Navigator
+    public static interface Branch
     {
-        public Collection<Navigator> branches();
+        public void add(byte bucket, long canonIndex);
+        public byte get(long canonIndex);
+
+        public List<Branch> subBranches();
+
+        public Round round();
+
+        public boolean containsHole (short canonHole);
+        public boolean containsFlop (int   canonFlop);
+        public boolean containsTurn (int   canonTurn);
+        public boolean containsRiver(long  canonRiver);
     }
 }
