@@ -20,8 +20,8 @@ public class CanonDetails
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-//        testHoleDetails();
-        testFlopDetails();
+        testHoleDetails();
+//        testFlopDetails();
     }
 
 
@@ -40,6 +40,8 @@ public class CanonDetails
     //--------------------------------------------------------------------
     protected static void testFlopDetails()
     {
+        long sentinalCount  = 0;
+
         long representTotal = 0;
         long representMax   = Long.MIN_VALUE;
         long representMin   = Long.MAX_VALUE;
@@ -65,15 +67,22 @@ public class CanonDetails
                                        details.canonTurnCount());
             turnCountMin    = Math.min(turnCountMin,
                                        details.canonTurnCount());
+
+            if (details.equals( CanonFlopDetail.SENTINAL ))
+            {
+                sentinalCount++;
+            }
         }
 
+        System.out.println("sentinalCount  = " + sentinalCount);
+
         System.out.println("representTotal = " + representTotal);
-        System.out.println("representMax = "   + representMax);
-        System.out.println("representMin = "   + representMin);
+        System.out.println("representMax   = " + representMax);
+        System.out.println("representMin   = " + representMin);
 
         System.out.println("turnCountTotal = " + turnCountTotal);
-        System.out.println("turnCountMax = "   + turnCountMax);
-        System.out.println("turnCountMin = "   + turnCountMin);
+        System.out.println("turnCountMax   = " + turnCountMax);
+        System.out.println("turnCountMin   = " + turnCountMin);
     }
 
 

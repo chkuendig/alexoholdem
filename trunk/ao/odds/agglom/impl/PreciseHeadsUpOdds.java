@@ -1,5 +1,7 @@
 package ao.odds.agglom.impl;
 
+import ao.bucket.index.detail.preflop.CanonHoleLookup;
+import ao.bucket.index.detail.preflop.HoleLookupPersist;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -10,10 +12,7 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
-import ao.util.persist.PersistentLongs;
-import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.util.EnumSet;
 
 
@@ -23,11 +22,6 @@ import java.util.EnumSet;
  */
 public class PreciseHeadsUpOdds implements OddFinder
 {
-    //--------------------------------------------------------------------
-    private static final Logger LOG =
-            Logger.getLogger(PreciseHeadsUpOdds.class);
-
-
     //--------------------------------------------------------------------
     private static final int HOLE_A = 51 - 1,
                              HOLE_B = 51,
@@ -45,95 +39,6 @@ public class PreciseHeadsUpOdds implements OddFinder
 
 
     //--------------------------------------------------------------------
-    private static final String HOLE_DIR = "lookup/odds/";
-    static {
-        if (new File(HOLE_DIR).mkdirs())
-            LOG.info("created " + HOLE_DIR);
-    }
-
-    private static final String HOLE_WINS   =
-            HOLE_DIR + "wins.preflop.cache";
-    private static final String HOLE_LOSES  =
-            HOLE_DIR + "losses.preflop.cache";
-    private static final String HOLE_SPLITS =
-            HOLE_DIR + "splits.preflop.cache";
-    private static final Odds   PREFLOP[] = retrieveOrComputeOdds();
-
-
-    private static Odds[] retrieveOrComputeOdds()
-    {
-        Odds[] cache = retrieveOdds();
-        if (cache == null)
-        {
-            cache = computeOdds();
-            persistOdds( cache );
-        }
-        return cache;
-    }
-
-    private static Odds[] retrieveOdds()
-    {
-        Odds cache[] = new Odds[ Hole.CANONICAL_COUNT ];
-
-        long wins[]   = PersistentLongs.retrieve(HOLE_WINS  );
-        long loses[]  = PersistentLongs.retrieve(HOLE_LOSES );
-        long splits[] = PersistentLongs.retrieve(HOLE_SPLITS);
-
-        if (wins == null || loses == null || splits == null) return null;
-
-        for (int i = 0; i < wins.length; i++)
-        {
-            cache[ i ] = new Odds(wins[i], loses[i], splits[i]);
-        }
-
-        return cache;
-    }
-
-    private static Odds[] computeOdds()
-    {
-        Odds cache[] = new Odds[ Hole.CANONICAL_COUNT ];
-
-//        int tempI = 0;
-        for (Card a : Card.VALUES)
-        {
-            for (Card b : Card.VALUES)
-            {
-                if (a.ordinal() >= b.ordinal()) continue;
-                Hole hole = Hole.valueOf(a, b);
-
-                if (cache[ hole.canonIndex() ] != null) continue;
-//                Odds odds = hardOdds[ tempI++ ];
-
-                Odds odds = new PreciseHeadsUpOdds().compute(
-                                    hole, Community.PREFLOP);
-                cache[ hole.canonIndex() ] = odds;
-                LOG.info("pre-computed Odds for " + hole + "\t" + odds);
-            }
-        }
-
-        return cache;
-    }
-
-    private static void persistOdds(Odds cache[])
-    {
-        long wins[]   = new long[ Hole.CANONICAL_COUNT ];
-        long loses[]  = new long[ Hole.CANONICAL_COUNT ];
-        long splits[] = new long[ Hole.CANONICAL_COUNT ];
-
-        for (int i = 0; i < cache.length; i++)
-        {
-            wins  [ i ] = cache[ i ].winOdds();
-            loses [ i ] = cache[ i ].loseOdds();
-            splits[ i ] = cache[ i ].splitOdds();
-        }
-
-        PersistentLongs.persist(wins,   HOLE_WINS  );
-        PersistentLongs.persist(loses,  HOLE_LOSES );
-        PersistentLongs.persist(splits, HOLE_SPLITS);
-    }
-
-
-    //--------------------------------------------------------------------
     public Odds compute(Hole      hole,
                         Community community,
                         int       activeOpponents)
@@ -146,9 +51,11 @@ public class PreciseHeadsUpOdds implements OddFinder
                         Community community)
     {
         if (community.equals( Community.PREFLOP ) &&
-                PREFLOP != null) // called for pre-calculation
+                HoleLookupPersist.detailsMomoized())
         {
-            return PREFLOP[ hole.canonIndex() ];
+            return CanonHoleLookup.lookup(
+                        (char) hole.canonIndex()
+                   ).headsUpOdds();
         }
 
         Card cards[] = initKnownCardsToEnd(hole, community);

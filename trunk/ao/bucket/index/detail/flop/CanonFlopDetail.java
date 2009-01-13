@@ -1,10 +1,8 @@
 package ao.bucket.index.detail.flop;
 
-import ao.bucket.index.flop.Flop;
 import ao.holdem.model.card.Card;
 import ao.holdem.persist.GenericBinding;
 import ao.odds.agglom.Odds;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -14,6 +12,11 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public class CanonFlopDetail
 {
+    //--------------------------------------------------------------------
+    public static final CanonFlopDetail SENTINAL =
+            CanonFlopDetailBuffer.SENTINAL.toDetail();
+
+
     //--------------------------------------------------------------------
     private final Card FLOP_A;
     private final Card FLOP_B;
@@ -157,37 +160,5 @@ public class CanonFlopDetail
         result = 31 * result + FIRST_CANON_TURN;
         result = 31 * result + (int) CANON_TURN_COUNT;
         return result;
-    }
-
-
-    //--------------------------------------------------------------------
-    public static class Buffer
-    {
-        public Card FLOP_A           = null;
-        public Card FLOP_B           = null;
-        public Card FLOP_C           = null;
-        public byte REPRESENTS       = 0;
-        public Odds HEADS_UP_ODDS    = null;
-        public int  FIRST_CANON_TURN = -1;
-        public char CANON_TURN_COUNT = 0;
-
-        public Buffer(Flop flop)
-        {
-            FLOP_A = flop.community().flopA();
-            FLOP_B = flop.community().flopB();
-            FLOP_C = flop.community().flopC();
-
-            HEADS_UP_ODDS =
-                new PreciseHeadsUpOdds().compute(
-                        flop.hole(), flop.community());
-        }
-
-        public CanonFlopDetail toDetail()
-        {
-            return new CanonFlopDetail(
-                    FLOP_A, FLOP_B, FLOP_C,
-                    REPRESENTS, HEADS_UP_ODDS,
-                    FIRST_CANON_TURN, CANON_TURN_COUNT);
-        }
     }
 }
