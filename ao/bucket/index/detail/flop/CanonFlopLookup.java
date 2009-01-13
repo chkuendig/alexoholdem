@@ -1,7 +1,6 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.abstraction.enumeration.CanonTraverser;
-import ao.bucket.index.detail.flop.CanonFlopDetail.Buffer;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.test.Gapper;
@@ -111,9 +110,12 @@ public class CanonFlopLookup
     private static CanonFlopDetail[] computeDetails()
     {
         LOG.debug("computing details");
-        final CanonFlopDetail.Buffer[] buffers =
-                new CanonFlopDetail.Buffer[
+        final CanonFlopDetailBuffer[] buffers =
+                new CanonFlopDetailBuffer[
                         FlopLookup.CANONICAL_COUNT ];
+
+        for (int i = 0; i < buffers.length; i++)
+            buffers[ i ] = CanonFlopDetailBuffer.SENTINAL;
 
         final Gapper seenHoles = new Gapper();
         final Card[] cards     = Card.values();
@@ -143,53 +145,50 @@ public class CanonFlopLookup
         {
             if (i % 10000 == 0) System.out.print(".");
 //            computeFlopDetails( buffers[i], i );
-            details[ i ] = buffers[i].toDetail();
+            details[ i ] = buffers[ i ].toDetail();
         }
         System.out.println();
         return details;
     }
 
     public static void iterateFlops(
-            final Hole     hole,
-            final Card[]   cards,
-            final Buffer[] buffers)
+            final Hole                    hole,
+            final Card[]                  cards,
+            final CanonFlopDetailBuffer[] buffers)
     {
+        long before = System.currentTimeMillis();
         System.out.println(hole);
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2).combine(
-                new CombinationVisitor3() {
+        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
+                .combine(new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
             {
                 Flop flop = hole.addFlop(
                         cards[flopA], cards[flopB], cards[flopC]);
                 int index = flop.canonIndex();
 
-                Buffer buff = buffers[ index ];
-                if (buff == null)
+                CanonFlopDetailBuffer buff = buffers[ index ];
+                if (buff == CanonFlopDetailBuffer.SENTINAL)
                 {
-                    buff = new Buffer( flop );
+                    buff = new CanonFlopDetailBuffer( flop );
                     buffers[ index ] = buff;
                 }
-                buff.REPRESENTS++;
+                buff.incrementFlopRepresentation();
             }});
+        System.out.println(
+                "took " + (System.currentTimeMillis() - before));
     }
 
 
     //--------------------------------------------------------------------
     private static void computeFlopDetails(
-            final Buffer buff,
+            final CanonFlopDetailBuffer buff,
             final int    canonFlopIndex)
     {
         new CanonTraverser().traverseTurns(
                 new long[]{ canonFlopIndex },
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                if (buff.FIRST_CANON_TURN == -1) {
-                    buff.FIRST_CANON_TURN = turn.canonIndex();
-                }
-                buff.FIRST_CANON_TURN =
-                        Math.min(buff.FIRST_CANON_TURN,
-                                 turn.canonIndex());
-                buff.CANON_TURN_COUNT++;
+                buff.addCanonTurn( turn.canonIndex() );
             }
         });
     }
