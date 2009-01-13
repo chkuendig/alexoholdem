@@ -39,7 +39,7 @@ public class GenericIndexerTest
     {
         seenTurns.clear();
         seenRivers.clear();
-        final Gapper seenHoles  = new Gapper();
+        final Gapper seenHoles = new Gapper();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
 //            private long prevTime = System.currentTimeMillis();

@@ -106,7 +106,7 @@ public class TurnLookup
     private static TurnCase[][] calculateCases()
     {
         final TurnCase caseSets[][] =
-                new TurnCase[ FlopLookup.CANON_FLOP_COUNT ]
+                new TurnCase[ FlopLookup.CANONICAL_COUNT]
                             [ /*  Rank.VALUES.length   */ ];
 
         final Card   cards[]   = Card.values();

@@ -29,7 +29,7 @@ public class CanonFlopTest
     //-----------------------------------------------------------------------
     public synchronized void testFlops()
     {
-        FLOPS_FAST = new long[ FlopLookup.CANON_FLOP_COUNT ];
+        FLOPS_FAST = new long[ FlopLookup.CANONICAL_COUNT];
 
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {

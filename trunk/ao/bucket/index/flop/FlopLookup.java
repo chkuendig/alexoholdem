@@ -20,7 +20,7 @@ public class FlopLookup
 
 
     //--------------------------------------------------------------------
-    public static final int CANON_FLOP_COUNT = 1286792;
+    public static final int CANONICAL_COUNT = 1286792;
 
 
     //--------------------------------------------------------------------

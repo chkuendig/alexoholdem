@@ -58,7 +58,7 @@ public class FlopBucketizerImpl
     {
         LOG.debug("computing canon flop means");
 
-        final short[] means = new short[ FlopLookup.CANON_FLOP_COUNT ];
+        final short[] means = new short[ FlopLookup.CANONICAL_COUNT];
         final int[]   count = new int[1];
         new CanonTraverser().traverseFlops(new Traverser<Flop>() {
             public void traverse(Flop flop) {
@@ -86,7 +86,7 @@ public class FlopBucketizerImpl
                   (int)(numBuckets) + " buckets");
 
         T buckets = with.newInstance(
-                      FlopLookup.CANON_FLOP_COUNT, numBuckets);
+                      FlopLookup.CANONICAL_COUNT, numBuckets);
 
         char   bucketOffset = 0;
         byte[] bucketAlloc  = new SubBucketAllocator().allocate(
