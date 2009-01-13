@@ -150,6 +150,23 @@ public class Flop
         return HOLE_CARDS;
     }
 
+//    public Card flopA()
+//    {
+//        return FLOP_A;
+//    }
+//    public Card flopB()
+//    {
+//        return FLOP_B;
+//    }
+//    public Card flopC()
+//    {
+//        return FLOP_C;
+//    }
+    public Community community()
+    {
+        return new Community(FLOP_A, FLOP_B, FLOP_C);
+    }
+
     public boolean hasWildHole()
     {
         return HOLE[0].isWild() || HOLE[1].isWild();
@@ -270,11 +287,6 @@ public class Flop
 //               ORDER     + "\t" +
 //               FlopLookup.globalOffset(HOLE_CARDS, FLOP_CASE) + "\t" +
 //               subIndex();
-    }
-
-    public Community community()
-    {
-        return new Community(FLOP_A, FLOP_B, FLOP_C);
     }
 
 

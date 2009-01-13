@@ -1,9 +1,11 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.persist.GenericBinding;
 import ao.odds.agglom.Odds;
+import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -18,8 +20,8 @@ public class CanonHoleDetail
     private final Card HOLE_B;
     private final byte REPRESENTS;
     private final Odds HEADS_UP_ODDS;
-    private final int  CANON_FLOPS_FROM;
-    private final char NUM_CANON_FLOPS;
+    private final int  FIRST_CANON_FLOP;
+    private final char CANON_FLOP_COUNT;
 
 
     //--------------------------------------------------------------------
@@ -34,8 +36,8 @@ public class CanonHoleDetail
         HOLE_B           = example.b();
         REPRESENTS       = represents;
         HEADS_UP_ODDS    = headsUpOdds;
-        CANON_FLOPS_FROM = canonFlopsFrom;
-        NUM_CANON_FLOPS  = numCanonFlops;
+        FIRST_CANON_FLOP = canonFlopsFrom;
+        CANON_FLOP_COUNT = numCanonFlops;
     }
 
 
@@ -61,20 +63,20 @@ public class CanonHoleDetail
 
 
     //--------------------------------------------------------------------
-    public int canonFlopsFrom()
+    public int firstCanonFlop()
     {
-        return CANON_FLOPS_FROM;
+        return FIRST_CANON_FLOP;
     }
     
-    public char numCanonFlops()
+    public char canonFlopCount()
     {
-        return NUM_CANON_FLOPS;
+        return CANON_FLOP_COUNT;
     }
 
 
     //--------------------------------------------------------------------
-//    public static final int     SIZE;
     public static final Binding BINDING = new Binding();
+
     public static class Binding extends GenericBinding<CanonHoleDetail> {
         public CanonHoleDetail read(TupleInput in) {
             return new CanonHoleDetail(
@@ -92,22 +94,10 @@ public class CanonHoleDetail
             Card.BINDING.objectToEntry( obj.HOLE_B, out );
             out.writeByte( obj.REPRESENTS );
             Odds.BINDING.write( obj.HEADS_UP_ODDS, out );
-            out.writeInt( obj.CANON_FLOPS_FROM );
-            out.writeChar( obj.NUM_CANON_FLOPS );
+            out.writeInt( obj.FIRST_CANON_FLOP);
+            out.writeChar( obj.CANON_FLOP_COUNT);
         }
     }
-
-//    static {
-//        CanonHoleDetail canonHoleDetail =
-//                new CanonHoleDetail(
-//                    Hole.valueOf(Card.ACE_OF_CLUBS,
-//                                 Card.ACE_OF_DIAMONDS),
-//                    (byte) 0, new Odds(), 0, (byte) 0);
-//
-//        TupleOutput out = new TupleOutput();
-//        BINDING.write(canonHoleDetail, out);
-//        SIZE = out.getBufferLength();
-//    }
 
 
     //--------------------------------------------------------------------
@@ -118,8 +108,8 @@ public class CanonHoleDetail
                ", HOLE_B=" + HOLE_B +
                ", REPRESENTS=" + REPRESENTS +
                ", HEADS_UP_ODDS=" + HEADS_UP_ODDS +
-               ", CANON_FLOPS_FROM=" + CANON_FLOPS_FROM +
-               ", NUM_CANON_FLOPS=" + (int)NUM_CANON_FLOPS +
+               ", FIRST_CANON_FLOP=" + FIRST_CANON_FLOP +
+               ", CANONICAL_COUNT=" + (int) CANON_FLOP_COUNT +
                '}';
     }
 
@@ -132,8 +122,8 @@ public class CanonHoleDetail
 
         CanonHoleDetail that = (CanonHoleDetail) o;
 
-        return CANON_FLOPS_FROM == that.CANON_FLOPS_FROM &&
-               NUM_CANON_FLOPS == that.NUM_CANON_FLOPS &&
+        return FIRST_CANON_FLOP == that.FIRST_CANON_FLOP &&
+               CANON_FLOP_COUNT == that.CANON_FLOP_COUNT &&
                REPRESENTS == that.REPRESENTS &&
                HEADS_UP_ODDS.equals(that.HEADS_UP_ODDS) &&
                HOLE_A == that.HOLE_A &&
@@ -146,8 +136,8 @@ public class CanonHoleDetail
         result = 31 * result + HOLE_B.hashCode();
         result = 31 * result + (int) REPRESENTS;
         result = 31 * result + HEADS_UP_ODDS.hashCode();
-        result = 31 * result + CANON_FLOPS_FROM;
-        result = 31 * result + (int) NUM_CANON_FLOPS;
+        result = 31 * result + FIRST_CANON_FLOP;
+        result = 31 * result + (int) CANON_FLOP_COUNT;
         return result;
     }
 
@@ -158,14 +148,22 @@ public class CanonHoleDetail
         public Hole HOLE              = null;
         public byte REPRESENTS        = 0;
         public Odds HEADS_UP_ODDS     = null;
-        public int  CANON_FLOPS_FROM  = -1;
-        public char NUM_CANON_FLOPS   = 0;
+        public int  FIRST_CANON_FLOP = -1;
+        public char CANON_FLOP_COUNT = 0;
+
+        public Buffer(Hole hole)
+        {
+            HOLE          = hole;
+            HEADS_UP_ODDS =
+                    new PreciseHeadsUpOdds().compute(
+                            hole, Community.PREFLOP);
+        }
 
         public CanonHoleDetail toDetail()
         {
             return new CanonHoleDetail(
                     HOLE, REPRESENTS, HEADS_UP_ODDS,
-                    CANON_FLOPS_FROM, NUM_CANON_FLOPS); 
+                    FIRST_CANON_FLOP, CANON_FLOP_COUNT);
         }
     }
 }

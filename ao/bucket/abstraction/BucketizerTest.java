@@ -81,7 +81,7 @@ public class BucketizerTest
                 new CommBucketLookupImpl(
                         Round.FLOP, new FlopBucketizerImpl());
         BucketSet buckets = lookup.buckets(holeBuckets, numFlopBuckets);
-        for (int i = 0; i < FlopLookup.CANON_FLOP_COUNT; i++)
+        for (int i = 0; i < FlopLookup.CANONICAL_COUNT; i++)
         {
             counts[ buckets.bucketOf(i) ]++;
         }
