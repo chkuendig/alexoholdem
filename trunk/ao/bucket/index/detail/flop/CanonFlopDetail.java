@@ -25,7 +25,7 @@ public class CanonFlopDetail implements CanonDetail
     private final byte REPRESENTS;
     private final Odds HEADS_UP_ODDS;
     private final int  FIRST_CANON_TURN;
-    private final char CANON_TURN_COUNT;
+    private final byte CANON_TURN_COUNT;
 
 
     //--------------------------------------------------------------------
@@ -37,7 +37,7 @@ public class CanonFlopDetail implements CanonDetail
             byte represents,
             Odds headsUpOdds,
             int  firstCanonTurn,
-            char canonTurnCount)
+            byte canonTurnCount)
     {
         CANON_INDEX      = canonIndex;
         FLOP_A           = flopA;
@@ -70,7 +70,7 @@ public class CanonFlopDetail implements CanonDetail
     //--------------------------------------------------------------------
     public long canonIndex()
     {
-        return 0;
+        return CANON_INDEX;
     }
 
 
@@ -87,6 +87,11 @@ public class CanonFlopDetail implements CanonDetail
         return HEADS_UP_ODDS;
     }
 
+    public double strengthVsRandom()
+    {
+        return HEADS_UP_ODDS.strengthVsRandom();
+    }
+
 
     //--------------------------------------------------------------------
     public int firstCanonTurn()
@@ -94,9 +99,19 @@ public class CanonFlopDetail implements CanonDetail
         return FIRST_CANON_TURN;
     }
 
-    public char canonTurnCount()
+    public byte canonTurnCount()
     {
         return CANON_TURN_COUNT;
+    }
+
+
+    //--------------------------------------------------------------------
+    public CanonFlopDetail resetCounters()
+    {
+        return new CanonFlopDetail(
+                CANON_INDEX,
+                FLOP_A, FLOP_B, FLOP_C,
+                (byte) 0, HEADS_UP_ODDS, -1, (byte) 0);
     }
 
 
@@ -114,7 +129,7 @@ public class CanonFlopDetail implements CanonDetail
                     in.readByte(),
                     Odds.BINDING.read(in),
                     in.readInt(),
-                    in.readChar());
+                    in.readByte());
         }
 
         public void write(CanonFlopDetail obj, TupleOutput out) {
@@ -124,7 +139,7 @@ public class CanonFlopDetail implements CanonDetail
             out.writeByte( obj.REPRESENTS );
             Odds.BINDING.write( obj.HEADS_UP_ODDS, out );
             out.writeInt( obj.FIRST_CANON_TURN);
-            out.writeChar( obj.CANON_TURN_COUNT);
+            out.writeByte( obj.CANON_TURN_COUNT);
         }
     }
 

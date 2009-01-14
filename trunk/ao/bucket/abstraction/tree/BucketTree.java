@@ -31,7 +31,7 @@ public interface BucketTree
 
 
     //--------------------------------------------------------------------
-    public byte get(short canonHole);
+    public byte get(char canonHole);
 
     public byte get(byte holeBucket,
                     int  canonFlop);

@@ -3,24 +3,16 @@ package ao.bucket.index.detail.flop;
 import ao.bucket.index.detail.enumeration.CanonTraverser;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.test.Gapper;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.Odds;
 import static ao.util.data.Arr.swap;
-import ao.util.io.Slurpy;
 import ao.util.misc.Traverser;
 import ao.util.stats.FastIntCombiner;
 import ao.util.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.stats.FastIntCombiner.CombinationVisitor3;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Date: Jan 9, 2009
@@ -32,8 +24,24 @@ public class CanonFlopLookup
     private static final Logger LOG  =
             Logger.getLogger(CanonFlopLookup.class);
 
-    private static final String DIR  = "lookup/canon/detail/";
-    private static final File   FILE = new File(DIR, "flop.detail");
+
+    //--------------------------------------------------------------------
+//    static {  fixComputedDetails();  }
+//    private static void fixComputedDetails()
+//    {
+//        LOG.info("fixing computed details");
+//
+////        Odds[] odds = new Odds[ FlopLookup.CANONICAL_COUNT ];
+////        for (CanonFlopDetail detail :
+////                FlopLookupPersist.retrieveDetails())
+////            odds[ (int) detail.canonIndex() ] = detail.headsUpOdds();
+////
+////        FlopLookupPersist.persistDetails(
+////                computeDetails( odds ));
+//
+//        FlopLookupPersist.persistDetails(
+//                FlopLookupPersist.retrieveDetails() );
+//    }
 
 
     //--------------------------------------------------------------------
@@ -46,68 +54,20 @@ public class CanonFlopLookup
     {
         LOG.debug("retrieveOrComputeDetails");
 
-        CanonFlopDetail[] details = retrieveDetails();
+        CanonFlopDetail[] details =
+                FlopLookupPersist.retrieveDetails();
         if (details == null)
         {
-            details = computeDetails();
-            try
-            {
-                persistDetails(details);
-            }
-            catch (IOException err)
-            {
-                LOG.error("while persisting canon hole details", err);
-            }
+            details = computeDetails( null );
+            FlopLookupPersist.persistDetails(details);
         }
         return details;
     }
 
 
     //--------------------------------------------------------------------
-    private static CanonFlopDetail[] retrieveDetails()
-    {
-        byte[] binDetails = Slurpy.slurp(FILE);
-        if (binDetails == null || binDetails.length == 0) return null;
-        LOG.debug("retrieving details");
-
-        TupleInput in      = new TupleInput(binDetails);
-        CanonFlopDetail[] details =
-                new CanonFlopDetail[ FlopLookup.CANONICAL_COUNT ];
-
-        for (int i = 0; i < details.length; i++)
-        {
-            details[ i ] = CanonFlopDetail.BINDING.read( i, in );
-        }
-
-        return details;
-    }
-
-
-    //--------------------------------------------------------------------
-    private static void persistDetails(CanonFlopDetail[] details)
-            throws IOException
-    {
-        LOG.debug("persisting details");
-
-        OutputStream outFile =
-                new FileOutputStream(FILE);
-
-        TupleOutput out = new TupleOutput();
-        for (CanonFlopDetail detail : details)
-        {
-            CanonFlopDetail.BINDING.write(detail, out);
-
-            byte asBinary[] = out.getBufferBytes();
-            outFile.write( asBinary, 0, out.getBufferLength() );
-            out = new TupleOutput(asBinary);
-        }
-
-        outFile.close();
-    }
-
-
-    //--------------------------------------------------------------------
-    private static CanonFlopDetail[] computeDetails()
+    private static CanonFlopDetail[] computeDetails(
+            final Odds[] odds)
     {
         LOG.debug("computing details");
         final CanonFlopDetailBuffer[] buffers =
@@ -117,7 +77,6 @@ public class CanonFlopLookup
         for (int i = 0; i < buffers.length; i++)
             buffers[ i ] = CanonFlopDetailBuffer.SENTINAL;
 
-        final Gapper seenHoles = new Gapper();
         final Card[] cards     = Card.values();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
@@ -125,39 +84,26 @@ public class CanonFlopLookup
                 Hole hole = Hole.valueOf(
                         cards[holeA], cards[holeB]);
 
-                if (seenHoles.get( hole.canonIndex() )) return;
-                seenHoles.set( hole.canonIndex() );
-
                 swap(cards, holeB, 51  );
                 swap(cards, holeA, 51-1);
 
-                iterateFlops(hole, cards, buffers);
+                iterateFlops(hole, cards, buffers, odds);
 
                 swap(cards, holeA, 51-1);
                 swap(cards, holeB, 51  );
             }
         });
 
-        LOG.debug("computing turn info");
-        CanonFlopDetail[] details =
-                new CanonFlopDetail[ FlopLookup.CANONICAL_COUNT ];
-        for (int i = 0; i < buffers.length; i++)
-        {
-            if (i % 10000 == 0) System.out.print(".");
-//            computeFlopDetails( buffers[i], i );
-            details[ i ] = buffers[ i ].toDetail();
-        }
-        System.out.println();
-        return details;
+        return unbufferAndComputeTurnInfo( buffers );
     }
 
     public static void iterateFlops(
             final Hole                    hole,
             final Card[]                  cards,
-            final CanonFlopDetailBuffer[] buffers)
+            final CanonFlopDetailBuffer[] buffers,
+            final Odds[]                  odds)
     {
         long before = System.currentTimeMillis();
-        System.out.println(hole);
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
                 .combine(new CombinationVisitor3() {
             public void visit(int flopA, int flopB, int flopC)
@@ -169,28 +115,56 @@ public class CanonFlopLookup
                 CanonFlopDetailBuffer buff = buffers[ index ];
                 if (buff == CanonFlopDetailBuffer.SENTINAL)
                 {
-                    buff = new CanonFlopDetailBuffer( flop );
+                    buff = new CanonFlopDetailBuffer(
+                                  flop,
+                                  odds == null ? null : odds[ index ] );
                     buffers[ index ] = buff;
                 }
                 buff.incrementFlopRepresentation();
             }});
         System.out.println(
-                "took " + (System.currentTimeMillis() - before));
+                hole + " took " + (System.currentTimeMillis() - before));
     }
 
 
     //--------------------------------------------------------------------
-    private static void computeFlopDetails(
-            final CanonFlopDetailBuffer buff,
-            final int    canonFlopIndex)
+    private static CanonFlopDetail[] unbufferAndComputeTurnInfo(
+            CanonFlopDetailBuffer[] buffers)
     {
+        LOG.debug("computing turn info");
+
+        int    turnOffset = 0;
+        byte[] turnCounts = turnCounts();
+
+        CanonFlopDetail[] details =
+                new CanonFlopDetail[ FlopLookup.CANONICAL_COUNT ];
+        for (int i = 0; i < buffers.length; i++)
+        {
+            if ( i      % 20   == 0) System.out.print(".");
+            if ((i + 1) % 1000 == 0) System.out.println();
+
+            buffers[ i ].setTurnInfo(turnOffset, turnCounts[ i ]);
+            details[ i ] = buffers[ i ].toDetail();
+
+            turnOffset += turnCounts[ i ];
+        }
+        System.out.println();
+        return details;
+    }
+
+    public static byte[] turnCounts()
+    {
+        final byte[] turnCounts =
+                new byte[ FlopLookup.CANONICAL_COUNT ];
+
         new CanonTraverser().traverseTurns(
-                new long[]{ canonFlopIndex },
-                new Traverser<Turn>() {
+                null, new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                buff.addCanonTurn( turn.canonIndex() );
+                turnCounts[ turn.flop().canonIndex() ]++;
             }
         });
+
+        return turnCounts;
     }
 
 

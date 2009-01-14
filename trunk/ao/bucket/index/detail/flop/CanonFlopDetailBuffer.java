@@ -24,7 +24,7 @@ public class CanonFlopDetailBuffer
     private byte represents     = 0;
     private Odds headsUpOdds    = null;
     private int  firstCanonTurn = -1;
-    private char canonTurnCount = 0;
+    private byte canonTurnCount = 0;
 
 
     //--------------------------------------------------------------------
@@ -36,7 +36,7 @@ public class CanonFlopDetailBuffer
         headsUpOdds = new Odds();
     }
 
-    public CanonFlopDetailBuffer(Flop flop)
+    public CanonFlopDetailBuffer(Flop flop, Odds odds)
     {
         canonIndex  = flop.canonIndex();
 
@@ -45,6 +45,7 @@ public class CanonFlopDetailBuffer
         flopC       = flop.community().flopC();
 
         headsUpOdds =
+            odds != null ? odds :
             new PreciseHeadsUpOdds().compute(
                     flop.hole(), flop.community());
     }
@@ -63,6 +64,12 @@ public class CanonFlopDetailBuffer
         }
 
         canonTurnCount++;
+    }
+
+    public void setTurnInfo(int firstTurn, byte turnCount)
+    {
+        firstCanonTurn = firstTurn;
+        canonTurnCount = turnCount;
     }
 
 

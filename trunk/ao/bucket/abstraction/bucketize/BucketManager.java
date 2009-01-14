@@ -20,6 +20,10 @@ public class BucketManager
 
 
     //--------------------------------------------------------------------
+    public BucketManager(Bucketizer bucketizer)
+    {
+        this(bucketizer, bucketizer, bucketizer, bucketizer);
+    }
     public BucketManager(Bucketizer holeBucketizer,
                          Bucketizer flopBucketizer,
                          Bucketizer turnBucketizer,
@@ -39,7 +43,9 @@ public class BucketManager
             char numTurnBuckets,
             char numRiverBuckets)
     {
-        BucketTree tree = new BucketTreeImpl("id");
+        BucketTree tree = new BucketTreeImpl(
+                treeId(numHoleBuckets, numFlopBuckets,
+                       numTurnBuckets, numRiverBuckets));
 
         bucketizeHolesDown(
                 tree.root(),
@@ -50,6 +56,34 @@ public class BucketManager
 
         return tree;
     }
+
+    private String treeId(
+            byte numHoleBuckets,
+            char numFlopBuckets,
+            char numTurnBuckets,
+            char numRiverBuckets)
+    {
+        StringBuilder str = new StringBuilder();
+
+        str.append( HOLE_BUCKETIZER.id() )
+           .append( '.' )
+           .append( (int) numHoleBuckets )
+           .append( '|' )
+           .append( FLOP_BUCKETIZER.id() )
+           .append( '.' )
+           .append( (int) numFlopBuckets )
+           .append( '|' )
+           .append( TURN_BUCKETIZER.id() )
+           .append( '.' )
+           .append( (int) numTurnBuckets )
+           .append( '|' )
+           .append( RIVER_BUCKETIZER.id() )
+           .append( '.' )
+           .append( (int) numRiverBuckets );
+
+        return str.toString();
+    }
+
 
 
     //--------------------------------------------------------------------

@@ -50,8 +50,8 @@ public class BucketizerImpl implements Bucketizer
         Arrays.sort(inOrder, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
                 return Double.compare(
-                        a.headsUpOdds().strengthVsRandom(),
-                        b.headsUpOdds().strengthVsRandom());
+                        a.strengthVsRandom(),
+                        b.strengthVsRandom());
             }
         });
 
@@ -62,7 +62,7 @@ public class BucketizerImpl implements Bucketizer
     //--------------------------------------------------------------------
     public String id()
     {
-        return getClass().getSimpleName();
+        return "odds_equal";
     }
 
     @Override

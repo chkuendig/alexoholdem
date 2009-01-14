@@ -67,6 +67,11 @@ public class CanonHoleDetail implements CanonDetail
         return HEADS_UP_ODDS;
     }
 
+    public double strengthVsRandom()
+    {
+        return HEADS_UP_ODDS.strengthVsRandom();
+    }
+
 
     //--------------------------------------------------------------------
     public int firstCanonFlop()
