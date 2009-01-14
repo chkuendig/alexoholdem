@@ -1,6 +1,7 @@
 package ao.bucket.index.detail.enumeration;
 
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.river.River;
 import ao.bucket.index.test.Gapper;
 import ao.bucket.index.turn.Turn;
@@ -124,8 +125,13 @@ public class CanonTraverser
         seenRivers.clear();
 
         final Gapper includeFlops = new Gapper();
-        for (long canonFlop : canonFlops)
-            includeFlops.set( canonFlop );
+        if (canonFlops != null) {
+            for (long canonFlop : canonFlops)
+                includeFlops.set( canonFlop );
+        } else {
+            for (long i = 0; i < FlopLookup.CANONICAL_COUNT; i++)
+                includeFlops.set( i );
+        }
 
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {

@@ -1,5 +1,7 @@
 package ao.bucket.abstraction.tree;
 
+import java.io.File;
+
 /**
  * Date: Jan 8, 2009
  * Time: 10:51:29 AM
@@ -7,9 +9,12 @@ package ao.bucket.abstraction.tree;
 public class BucketTreeImpl implements BucketTree
 {
     //--------------------------------------------------------------------
+    private static final File DIR = new File("lookup/");
 
 
     //--------------------------------------------------------------------
+    
+
     private byte[] holes;
     private byte[] flops;
 
@@ -56,7 +61,7 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public byte get(short canonHole)
+    public byte get(char canonHole)
     {
         return 0;
     }

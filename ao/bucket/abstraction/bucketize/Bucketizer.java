@@ -10,4 +10,6 @@ public interface Bucketizer
 {
     public void bucketize(Branch branch,
                           byte   numBuckets);
+
+    public String id();
 }
