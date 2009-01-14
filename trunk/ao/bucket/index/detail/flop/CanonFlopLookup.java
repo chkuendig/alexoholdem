@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.flop;
 
-import ao.bucket.abstraction.enumeration.CanonTraverser;
+import ao.bucket.index.detail.enumeration.CanonTraverser;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.test.Gapper;
@@ -76,7 +76,7 @@ public class CanonFlopLookup
 
         for (int i = 0; i < details.length; i++)
         {
-            details[ i ] = CanonFlopDetail.BINDING.read( in );
+            details[ i ] = CanonFlopDetail.BINDING.read( i, in );
         }
 
         return details;
@@ -202,5 +202,17 @@ public class CanonFlopLookup
     public static CanonFlopDetail lookup(int canonFlop)
     {
         return DETAILS[ canonFlop ];
+    }
+
+    public static CanonFlopDetail[] lookup(
+            int canonFlopFrom, int canonFlopCount)
+    {
+        CanonFlopDetail[] details =
+                new CanonFlopDetail[ canonFlopCount ];
+        for (int i = 0; i < canonFlopCount; i++)
+        {
+            details[ i ] = lookup( canonFlopFrom + i );
+        }
+        return details;
     }
 }

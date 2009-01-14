@@ -17,6 +17,7 @@ public class CanonFlopDetailBuffer
 
 
     //--------------------------------------------------------------------
+    private int  canonIndex     = -1;
     private Card flopA          = null;
     private Card flopB          = null;
     private Card flopC          = null;
@@ -37,9 +38,11 @@ public class CanonFlopDetailBuffer
 
     public CanonFlopDetailBuffer(Flop flop)
     {
-        flopA = flop.community().flopA();
-        flopB = flop.community().flopB();
-        flopC = flop.community().flopC();
+        canonIndex  = flop.canonIndex();
+
+        flopA       = flop.community().flopA();
+        flopB       = flop.community().flopB();
+        flopC       = flop.community().flopC();
 
         headsUpOdds =
             new PreciseHeadsUpOdds().compute(
@@ -74,6 +77,7 @@ public class CanonFlopDetailBuffer
     public CanonFlopDetail toDetail()
     {
         return new CanonFlopDetail(
+                canonIndex,
                 flopA, flopB, flopC,
                 represents, headsUpOdds,
                 firstCanonTurn, canonTurnCount);

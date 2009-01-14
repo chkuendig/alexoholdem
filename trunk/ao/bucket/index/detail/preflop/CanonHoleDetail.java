@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -13,7 +14,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * Date: Jan 9, 2009
  * Time: 12:21:17 PM
  */
-public class CanonHoleDetail
+public class CanonHoleDetail implements CanonDetail
 {
     //--------------------------------------------------------------------
     private final Card HOLE_A;
@@ -45,6 +46,11 @@ public class CanonHoleDetail
     public Hole example()
     {
         return Hole.valueOf(HOLE_A, HOLE_B);
+    }
+
+    public long canonIndex()
+    {
+        return example().canonIndex();
     }
 
 

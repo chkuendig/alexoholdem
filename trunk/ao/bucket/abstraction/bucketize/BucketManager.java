@@ -1,6 +1,8 @@
-package ao.bucket.abstraction.tree;
+package ao.bucket.abstraction.bucketize;
 
+import ao.bucket.abstraction.tree.BucketTree;
 import ao.bucket.abstraction.tree.BucketTree.Branch;
+import ao.bucket.abstraction.tree.BucketTreeImpl;
 
 import java.util.List;
 

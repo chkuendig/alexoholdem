@@ -57,6 +57,9 @@ public interface BucketTree
     //--------------------------------------------------------------------
     public static interface Branch
     {
+        public long firstParentCanon();
+        public int  numParentCanon();
+        
         public void add(byte bucket, long canonIndex);
         public byte get(long canonIndex);
 
