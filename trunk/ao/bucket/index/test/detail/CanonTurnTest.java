@@ -37,7 +37,7 @@ public class CanonTurnTest
     private final Gapper seenHoles  = new Gapper();
     private final Gapper seenFlops  = new Gapper();
     private       long   TURNS[]    =
-            new long[ TurnLookup.CANON_TURN_COUNT ];
+            new long[ TurnLookup.CANONICAL_COUNT];
 
 
     //-----------------------------------------------------------------------

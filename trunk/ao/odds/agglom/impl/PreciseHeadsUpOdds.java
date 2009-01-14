@@ -19,6 +19,7 @@ import java.util.EnumSet;
 /**
  * matches with:
  *  http://wizardofodds.com/holdem/2players.html
+ * with constant factor of 4.
  */
 public class PreciseHeadsUpOdds implements OddFinder
 {

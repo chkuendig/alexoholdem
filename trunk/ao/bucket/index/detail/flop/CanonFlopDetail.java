@@ -154,7 +154,7 @@ public class CanonFlopDetail implements CanonDetail
                ", REPRESENTS=" + REPRESENTS +
                ", HEADS_UP_ODDS=" + HEADS_UP_ODDS +
                ", FIRST_CANON_TURN=" + FIRST_CANON_TURN +
-               ", CANON_TURN_COUNT=" + CANON_TURN_COUNT +
+               ", CANONICAL_COUNT=" + CANON_TURN_COUNT +
                '}';
     }
 

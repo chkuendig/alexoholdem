@@ -48,7 +48,7 @@ public class CanonRiverTest
     private final Gapper seenHoles  = new Gapper();
     private final Gapper seenFlops  = new Gapper();
 //    private       int    RIVERS[]    =
-//            new long[ TurnLookup.CANON_TURN_COUNT ];
+//            new long[ TurnLookup.CANONICAL_COUNT ];
 
     private int shortcut = -1;
 
