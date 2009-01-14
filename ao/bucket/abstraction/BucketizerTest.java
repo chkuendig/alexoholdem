@@ -108,7 +108,7 @@ public class BucketizerTest
 //                turnLookup.buckets(flopBuckets, numTurnBuckets);
 //
 //        int[] counts = new int[ numTurnBuckets ];
-//        for (int i = 0; i < TurnLookup.CANON_TURN_COUNT; i++)
+//        for (int i = 0; i < TurnLookup.CANONICAL_COUNT; i++)
 //        {
 //            counts[ turnBuckets.bucketOf(i) ]++;
 //        }

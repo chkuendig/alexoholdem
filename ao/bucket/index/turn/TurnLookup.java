@@ -25,7 +25,7 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
-    public static final int CANON_TURN_COUNT = 55190538;
+    public static final int CANONICAL_COUNT = 55190538;
 
 
     //--------------------------------------------------------------------

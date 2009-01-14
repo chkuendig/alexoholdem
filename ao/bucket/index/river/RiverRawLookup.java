@@ -70,7 +70,7 @@ public class RiverRawLookup
         final Card    cards[]      = Card.values();
         final Gapper  seenTurns    = new Gapper();
         final byte    riverCases[] =
-                new byte[ TurnLookup.CANON_TURN_COUNT ];
+                new byte[ TurnLookup.CANONICAL_COUNT];
 
         final BitSet seenHoles = new BitSet();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
