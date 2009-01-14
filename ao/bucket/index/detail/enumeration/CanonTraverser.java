@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.enumeration;
+package ao.bucket.index.detail.enumeration;
 
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.river.River;

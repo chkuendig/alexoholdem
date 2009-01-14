@@ -5,6 +5,7 @@ import ao.bucket.index.detail.flop.CanonFlopLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.CanonHoleLookup;
 import ao.bucket.index.flop.FlopLookup;
+import ao.holdem.model.Round;
 import ao.holdem.model.card.Hole;
 
 /**
@@ -20,8 +21,8 @@ public class CanonDetails
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        testHoleDetails();
-//        testFlopDetails();
+//        testHoleDetails();
+        testFlopDetails();
     }
 
 
@@ -91,9 +92,57 @@ public class CanonDetails
     {
         return CanonHoleLookup.lookup( canonHole );
     }
+    public static CanonHoleDetail[] lookupHole(
+            char canonHoleFrom,
+            char canonHoleCount)
+    {
+        return CanonHoleLookup.lookup(
+                canonHoleFrom, canonHoleCount);
+    }
 
+
+    //--------------------------------------------------------------------
     public static CanonFlopDetail lookupFlop(int canonFlop)
     {
         return CanonFlopLookup.lookup( canonFlop );
+    }
+
+    public static CanonFlopDetail[] lookupFlop(
+            int canonFlopFrom,
+            int canonFlopCount)
+    {
+        return CanonFlopLookup.lookup(
+                canonFlopFrom, canonFlopCount);
+    }
+
+
+    //--------------------------------------------------------------------
+    public static CanonDetail lookup(
+            Round forRound, long canonIndex)
+    {
+        switch (forRound)
+        {
+            case PREFLOP: return lookupHole( (char) canonIndex );
+            case FLOP:    return lookupFlop( (int)  canonIndex );
+        }
+        return null;
+    }
+
+
+    //--------------------------------------------------------------------
+    public static CanonDetail[] lookup(
+            Round forRound,
+            long  fromCanonIndex,
+            int   canonIndexCount)
+    {
+        switch (forRound)
+        {
+            case PREFLOP: return lookupHole(
+                    (char) fromCanonIndex, (char) canonIndexCount );
+
+            case FLOP:    return lookupFlop(
+                    (int)  fromCanonIndex,        canonIndexCount );
+        }
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.abstraction.enumeration.CanonTraverser;
+import ao.bucket.index.detail.enumeration.CanonTraverser;
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.bucket.index.flop.Flop;
 import ao.holdem.model.card.Card;
@@ -103,5 +103,20 @@ public class CanonHoleLookup
     public static CanonHoleDetail lookup(char canonHole)
     {
         return DETAILS[ canonHole ];
+    }
+
+    public static CanonHoleDetail[] lookup(
+            char fromCanonHole,
+            char canonHoleCount)
+    {
+        CanonHoleDetail[] details =
+                new CanonHoleDetail[ canonHoleCount ];
+        
+        for (char i = 0; i < canonHoleCount; i++)
+        {
+            details[ i ] = lookup( (char)(fromCanonHole + i) );
+        }
+
+        return details;
     }
 }

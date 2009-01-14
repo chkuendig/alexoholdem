@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.flop;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.card.Card;
-import ao.holdem.persist.GenericBinding;
 import ao.odds.agglom.Odds;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -10,7 +10,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * Date: Jan 9, 2009
  * Time: 12:33:06 PM
  */
-public class CanonFlopDetail
+public class CanonFlopDetail implements CanonDetail
 {
     //--------------------------------------------------------------------
     public static final CanonFlopDetail SENTINAL =
@@ -18,6 +18,7 @@ public class CanonFlopDetail
 
 
     //--------------------------------------------------------------------
+    private final int  CANON_INDEX;
     private final Card FLOP_A;
     private final Card FLOP_B;
     private final Card FLOP_C;
@@ -29,6 +30,7 @@ public class CanonFlopDetail
 
     //--------------------------------------------------------------------
     public CanonFlopDetail(
+            int  canonIndex,
             Card flopA,
             Card flopB,
             Card flopC,
@@ -37,6 +39,7 @@ public class CanonFlopDetail
             int  firstCanonTurn,
             char canonTurnCount)
     {
+        CANON_INDEX      = canonIndex;
         FLOP_A           = flopA;
         FLOP_B           = flopB;
         FLOP_C           = flopC;
@@ -61,6 +64,13 @@ public class CanonFlopDetail
     public Card exampleC()
     {
         return FLOP_C;
+    }
+
+
+    //--------------------------------------------------------------------
+    public long canonIndex()
+    {
+        return 0;
     }
 
 
@@ -93,10 +103,11 @@ public class CanonFlopDetail
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
 
-    public static class Binding extends GenericBinding<CanonFlopDetail>
+    public static class Binding
     {
-        public CanonFlopDetail read(TupleInput in) {
+        public CanonFlopDetail read(int canonIndex, TupleInput in) {
             return new CanonFlopDetail(
+                    canonIndex,
                     Card.BINDING.entryToObject( in ),
                     Card.BINDING.entryToObject( in ),
                     Card.BINDING.entryToObject( in ),

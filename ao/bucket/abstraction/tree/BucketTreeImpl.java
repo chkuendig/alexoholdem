@@ -10,6 +10,8 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
+    private byte[] holes;
+    private byte[] flops;
 
 
 

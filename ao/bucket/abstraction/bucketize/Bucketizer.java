@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.tree;
+package ao.bucket.abstraction.bucketize;
 
 import ao.bucket.abstraction.tree.BucketTree.Branch;
 
