@@ -12,7 +12,7 @@ public interface BucketTree
 {
     //--------------------------------------------------------------------
     public void add(byte  holeBucket,
-                    short canonHole);
+                    char canonHole);
 
     public void add(byte holeBucket,
                     byte flopBucket,
@@ -67,9 +67,9 @@ public interface BucketTree
 
         public Round round();
 
-        public boolean containsHole (short canonHole);
-        public boolean containsFlop (int   canonFlop);
-        public boolean containsTurn (int   canonTurn);
-        public boolean containsRiver(long  canonRiver);
+//        public boolean containsHole (short canonHole);
+//        public boolean containsFlop (int   canonFlop);
+//        public boolean containsTurn (int   canonTurn);
+//        public boolean containsRiver(long  canonRiver);
     }
 }

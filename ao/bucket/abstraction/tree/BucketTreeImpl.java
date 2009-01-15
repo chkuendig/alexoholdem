@@ -1,5 +1,10 @@
 package ao.bucket.abstraction.tree;
 
+import ao.bucket.index.flop.FlopLookup;
+import ao.holdem.model.card.Hole;
+import ao.util.io.Dir;
+import ao.util.persist.PersistentBytes;
+
 import java.io.File;
 
 /**
@@ -9,37 +14,50 @@ import java.io.File;
 public class BucketTreeImpl implements BucketTree
 {
     //--------------------------------------------------------------------
-    private static final File DIR = new File("lookup/");
+    private static final File DIR = Dir.get("lookup/bucket/tree/");
+    
 
 
     //--------------------------------------------------------------------
-    
+    private final File persistDir;
 
-    private byte[] holes;
-    private byte[] flops;
+    private final byte[] holes;
+    private final byte[] flops;
 
 
 
     //--------------------------------------------------------------------
     public BucketTreeImpl(String id)
     {
+        persistDir = new File(DIR, id);
 
+        holes = retrieveOrCreate("holes",       Hole.CANONICAL_COUNT);
+        flops = retrieveOrCreate("flops", FlopLookup.CANONICAL_COUNT);
+    }
+
+    private byte[] retrieveOrCreate(String filename, int canonCount)
+    {
+        File   fullName = new File(persistDir, filename);
+        byte[] buckets  = PersistentBytes.retrieve(
+                                fullName.toString() );
+        if (buckets == null)
+            buckets = new byte[ canonCount ];
+        return buckets;
     }
 
 
-
     //--------------------------------------------------------------------
-    public void add(byte  holeBucket,
-                    short canonHole)
+    public void add(byte holeBucket,
+                    char canonHole)
     {
-
+        holes[ canonHole ] = holeBucket;
     }
 
     public void add(byte holeBucket,
                     byte flopBucket,
                     int  canonFlop)
     {
-
+        flops[ canonFlop ] = flopBucket;
     }
 
     public void add(byte holeBucket,
@@ -47,7 +65,7 @@ public class BucketTreeImpl implements BucketTree
                     byte turnBucket,
                     int  canonTurn)
     {
-
+        throw new UnsupportedOperationException();
     }
 
     public void add(byte holeBucket,
@@ -56,7 +74,7 @@ public class BucketTreeImpl implements BucketTree
                     byte riverBucket,
                     long canonRiver)
     {
-
+        throw new UnsupportedOperationException();
     }
 
 

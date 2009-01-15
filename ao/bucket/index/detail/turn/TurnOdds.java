@@ -5,11 +5,13 @@ import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Date: Jan 14, 2009
@@ -18,18 +20,25 @@ import java.io.File;
 public class TurnOdds
 {
     //--------------------------------------------------------------------
+    public static void main(String[] args)
+    {
+        System.out.println( lookup(0) );
+    }
+
+
+    //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(TurnOdds.class);
 
 
     //--------------------------------------------------------------------
-    private static final String DIR = "lookup/canon/detail/turn_odds/";
-    static { //noinspection ResultOfMethodCallIgnored
-        new File(DIR).mkdirs(); }
+    private static final File DIR =
+            Dir.get("lookup/canon/detail/turn_odds/");
 
-    private static final String WIN_FILE   = DIR + "wins.int";
-    private static final String LOSE_FILE  = DIR + "losses.int";
-    private static final String SPLIT_FILE = DIR + "splits.int";
+    private static final File FLAG_FILE  = new File(DIR,   "flag.int");
+    private static final File WIN_FILE   = new File(DIR,   "wins.int");
+    private static final File LOSE_FILE  = new File(DIR, "losses.int");
+    private static final File SPLIT_FILE = new File(DIR, "splits.int");
 
 
     //--------------------------------------------------------------------
@@ -43,22 +52,16 @@ public class TurnOdds
 
 
     //--------------------------------------------------------------------
-    static
+    static //void retrieveOrComputeOdds()
     {
         LOG.debug("initializing TurnOdds");
 
         int[] wins = PersistentInts.retrieve(WIN_FILE);
         if (wins == null)
         {
-            WIN   = new int[ TurnLookup.CANONICAL_COUNT ];
-            LOSE  = new int[ TurnLookup.CANONICAL_COUNT ];
-            SPLIT = new int[ TurnLookup.CANONICAL_COUNT ];
-
-            computeOdds();
-
-            PersistentInts.persist(WIN,   WIN_FILE);
-            PersistentInts.persist(LOSE,  LOSE_FILE);
-            PersistentInts.persist(SPLIT, SPLIT_FILE);
+            WIN   = oddsComponent();
+            LOSE  = oddsComponent();
+            SPLIT = oddsComponent();
         }
         else
         {
@@ -66,6 +69,20 @@ public class TurnOdds
             LOSE  = PersistentInts.retrieve(LOSE_FILE);
             SPLIT = PersistentInts.retrieve(SPLIT_FILE);
         }
+
+        if (! getIsPreComputed())
+        {
+            computeOdds();
+            flush();
+            setIsPreComputed();
+        }
+    }
+
+    private static int[] oddsComponent()
+    {
+        int[] component = new int[ TurnLookup.CANONICAL_COUNT ];
+        Arrays.fill( component, -1 );
+        return component;
     }
 
 
@@ -79,6 +96,8 @@ public class TurnOdds
         new CanonTraverser().traverseTurns(
                 null, new Traverser<Turn>() {
             public void traverse(Turn turn) {
+                if (WIN[ turn.canonIndex() ] != -1) return;
+
                 Odds odds = oddsCalc.compute(
                         turn.hole(), turn.community());
 
@@ -93,11 +112,21 @@ public class TurnOdds
                 detectOverflow(turn.canonIndex(), odds,
                                wins, losses, splits);
 
-                if ( count[0]      % 100  == 0) System.out.print(".");
-                if ((count[0] + 1) % 5000 == 0) System.out.println();
-                count[0]++;
+                checkpoint( count[0]++ );
             }
         });
+    }
+
+    private static void checkpoint(int count)
+    {
+        if ( count % 100 == 0)
+            System.out.print(".");
+
+        if ((count + 1) % 5000 == 0)
+            System.out.println(" " + count);
+
+        if ((count + 1) % 100000 == 0)
+            flush();
     }
 
     private static int asInt(long odds)
@@ -129,8 +158,22 @@ public class TurnOdds
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
+    private static boolean getIsPreComputed()
     {
-        System.out.println( lookup(0) );
+        return PersistentInts.retrieve(FLAG_FILE) != null;
+    }
+
+    private static void setIsPreComputed()
+    {
+        PersistentInts.persist(new int[]{1}, FLAG_FILE);
+    }
+    
+
+    //--------------------------------------------------------------------
+    private static void flush()
+    {
+        PersistentInts.persist(WIN,   WIN_FILE);
+        PersistentInts.persist(LOSE,  LOSE_FILE);
+        PersistentInts.persist(SPLIT, SPLIT_FILE);
     }
 }

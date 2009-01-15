@@ -62,7 +62,7 @@ public class BucketizerImpl implements Bucketizer
     //--------------------------------------------------------------------
     public String id()
     {
-        return "odds_equal";
+        return "odds_homo";
     }
 
     @Override
