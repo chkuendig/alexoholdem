@@ -44,12 +44,12 @@ public class CanonTurnDetail implements CanonDetail
 
 
     //--------------------------------------------------------------------
-    public long canonRiversFrom()
+    public long firstCanonRiver()
     {
         return 0;
     }
 
-    public byte numCanonRivers()
+    public byte canonRiverCount()
     {
         return 0;
     }

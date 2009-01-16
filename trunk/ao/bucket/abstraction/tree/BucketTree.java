@@ -17,47 +17,16 @@ public interface BucketTree
     public void setFlop(int  canonFlop,
                         byte flopBucket);
 
+    public void setTurn(int  canonTurn,
+                        byte turnBucket);
+
 
     //--------------------------------------------------------------------
     public byte getHole(char canonHole);
 
     public byte getFlop(int canonFlop);
 
-
-    //--------------------------------------------------------------------
-//    public void add(byte  holeBucket,
-//                    char canonHole);
-//
-//    public void add(byte holeBucket,
-//                    byte flopBucket,
-//                    int  canonFlop);
-//
-//    public void add(byte holeBucket,
-//                    byte flopBucket,
-//                    byte turnBucket,
-//                    int  canonTurn);
-//
-//    public void add(byte holeBucket,
-//                    byte flopBucket,
-//                    byte turnBucket,
-//                    byte riverBucket,
-//                    long canonRiver);
-//
-//
-//    //--------------------------------------------------------------------
-//    public byte get(char canonHole);
-//
-//    public byte get(byte holeBucket,
-//                    int  canonFlop);
-//
-//    public byte get(byte holeBucket,
-//                    byte flopBucket,
-//                    int  canonTurn);
-//
-//    public byte get(byte holeBucket,
-//                    byte flopBucket,
-//                    byte turnBucket,
-//                    long canonRiver);
+    public byte getTurn(int canonTurn);
 
 
     //--------------------------------------------------------------------
@@ -84,5 +53,7 @@ public interface BucketTree
         public Iterable<Branch> subBranches();
 
         public boolean isBucketized();
+
+        public void flush();
     }
 }

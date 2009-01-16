@@ -21,10 +21,10 @@ public class BucketizerImpl implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public void bucketize(Branch branch, byte nBuckets)
+    public boolean bucketize(Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
-        if (branch.isBucketized()) return;
+        if (branch.isBucketized()) return false;
 
         CanonDetail[][] details = branch.details();
         int detailCount = countDetails(details);
@@ -40,6 +40,7 @@ public class BucketizerImpl implements Bucketizer
             branch.set(canonDetail.canonIndex(),
                        (byte) alloc.nextBucket(1));
         }
+        return true;
     }
 
     private int countDetails(CanonDetail[][] details)

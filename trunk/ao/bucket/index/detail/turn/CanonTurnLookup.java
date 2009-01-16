@@ -14,4 +14,10 @@ public class CanonTurnLookup
     {
         return null;
     }
+
+    public static CanonTurnDetail[] lookup(
+            int fromCanonTurn, int canonTurnCount)
+    {
+        return null;
+    }
 }
