@@ -75,12 +75,14 @@ public interface BucketTree
         public int[] parentCanons();
 //        public byte  parentBucket();
         
-        public CanonDetail[][] subDetails();
+        public CanonDetail[][] details();
 
         public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);
 
-        public char             subBranchCount();
+//        public char             subBranchCount();
         public Iterable<Branch> subBranches();
+
+        public boolean isBucketized();
     }
 }
