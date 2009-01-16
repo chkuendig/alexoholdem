@@ -144,6 +144,12 @@ public class CanonDetails
                 return lookupFlop(holeDetail.firstCanonFlop(),
                                   holeDetail.canonFlopCount());
 
+            case FLOP:
+                return new CanonDetail[0];
+
+            case TURN:
+                return new CanonDetail[0];
+
             default:
                 throw new IllegalArgumentException();
         }

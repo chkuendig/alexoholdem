@@ -24,8 +24,9 @@ public class BucketizerImpl implements Bucketizer
     public void bucketize(Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
+        if (branch.isBucketized()) return;
 
-        CanonDetail[][] details = branch.subDetails();
+        CanonDetail[][] details = branch.details();
         int detailCount = countDetails(details);
 
         LOG.debug("bucketizing " + branch.round() + " branch of " +

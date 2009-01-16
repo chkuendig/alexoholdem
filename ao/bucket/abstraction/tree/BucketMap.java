@@ -91,4 +91,23 @@ public class BucketMap
                    [  turnBucket ]
                    [ riverBucket ];
     }
+
+    
+    //--------------------------------------------------------------------
+    @SuppressWarnings({"ConstantConditions"})
+    public char serialize(
+            byte  holeBucket,
+            byte  flopBucket)
+    {
+        char index = 0;
+        for (int i = 0; i < tree.length; i++)
+        {
+            for (int j = 0; j < tree[ i ].length; j++, index++)
+            {
+                if (i == holeBucket && j == flopBucket)
+                    return index;
+            }
+        }
+        return index;
+    }
 }

@@ -12,6 +12,7 @@ import ao.util.persist.PersistentBytes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,8 +48,10 @@ public class BucketTreeImpl implements BucketTree
     private byte[] retrieveOrCreate(File fullName, int canonCount)
     {
         byte[] buckets  = PersistentBytes.retrieve( fullName );
-        if (buckets == null)
+        if (buckets == null) {
             buckets = new byte[ canonCount ];
+            Arrays.fill(buckets, (byte) -1);
+        }
         return buckets;
     }
 
@@ -195,7 +198,7 @@ public class BucketTreeImpl implements BucketTree
 
 
         //----------------------------------------------------------------
-        public CanonDetail[][] subDetails()
+        public CanonDetail[][] details()
         {
             if (subDetails != null) return subDetails;
             subDetails = CanonDetails.lookupSub(
@@ -213,7 +216,7 @@ public class BucketTreeImpl implements BucketTree
             AutovivifiedList<IntList> subBranchCanons =
                     new AutovivifiedList<IntList>();
 
-            for (CanonDetail[] detailList : subDetails())
+            for (CanonDetail[] detailList : details())
             {
                 for (CanonDetail detail : detailList)
                 {
@@ -238,10 +241,25 @@ public class BucketTreeImpl implements BucketTree
             return subBranches;
         }
 
-        public char subBranchCount()
+
+        //----------------------------------------------------------------
+        public boolean isBucketized()
         {
-            return 0;
+            for (CanonDetail[] details : details())
+            {
+                for (CanonDetail detail : details)
+                {
+                    if (get( detail.canonIndex() ) == -1)
+                        return false;
+                }
+            }
+            return true;
         }
+
+//        public char subBranchCount()
+//        {
+//            return 0;
+//        }
     }
 
 }

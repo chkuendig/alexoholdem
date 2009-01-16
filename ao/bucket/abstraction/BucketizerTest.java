@@ -2,9 +2,11 @@ package ao.bucket.abstraction;
 
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
+import ao.bucket.abstraction.tree.BucketMap;
 import ao.bucket.abstraction.tree.BucketTree;
 import ao.bucket.index.detail.CanonDetails;
-import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.detail.flop.CanonFlopDetail;
+import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.holdem.model.card.Hole;
 import org.apache.log4j.Logger;
 
@@ -73,10 +75,25 @@ public class BucketizerTest
                 numFlopBuckets,
                 (char) 8, (char) 16);
 
-        int[] counts         = new int[ numFlopBuckets ];
-        for (int i = 0; i < FlopLookup.CANONICAL_COUNT; i++)
+        BucketMap map     = new BucketMap( buckets );
+        int[]     counts  = new int[ numFlopBuckets ];
+
+        for (CanonHoleDetail holeDetail :
+                CanonDetails.lookupHole(
+                        (char) 0, (char) Hole.CANONICAL_COUNT))
         {
-            counts[ buckets.getFlop(i) ]++;
+            for (CanonFlopDetail flopDetail :
+                    CanonDetails.lookupFlop(
+                            holeDetail.firstCanonFlop(),
+                            holeDetail.canonFlopCount()))
+            {
+                counts[ map.serialize(
+                            buckets.getHole(
+                                    (char) holeDetail.canonIndex()),
+                            buckets.getFlop(
+                                    (int)  flopDetail.canonIndex()))
+                      ]++;
+            }
         }
 
         for (int i = 0; i < counts.length; i++)
