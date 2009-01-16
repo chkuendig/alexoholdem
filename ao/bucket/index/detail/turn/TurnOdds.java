@@ -145,12 +145,8 @@ public class TurnOdds
                     (System.currentTimeMillis() - milestoneStart[0]));
         }
 
-        if ((count + 1) % 1000000 == 0) {
-            long start = System.currentTimeMillis();
-            flush();
-            System.out.println(
-                    "flushed checkpoint, took " +
-                      (System.currentTimeMillis() - start));
+        if ((count + 1) % 100000 == 0) {
+            flushAsynch();
         }
 
         if (milesoneReached)
@@ -198,6 +194,24 @@ public class TurnOdds
     
 
     //--------------------------------------------------------------------
+    private static volatile boolean isSynching = false;
+    private static synchronized void flushAsynch()
+    {
+        if (isSynching) return;
+
+        isSynching = true;
+        new Thread(new Runnable() {
+            public void run() {
+                long start = System.currentTimeMillis();
+                flush();
+                System.out.println(
+                    "\nflushed checkpoint, took " +
+                      (System.currentTimeMillis() - start));
+
+                isSynching = false;
+            }
+        }).start();
+    }
     private static void flush()
     {
         PersistentInts.persist(WIN,   WIN_FILE);

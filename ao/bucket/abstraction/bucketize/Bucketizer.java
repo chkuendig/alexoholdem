@@ -8,8 +8,8 @@ import ao.bucket.abstraction.tree.BucketTree.Branch;
  */
 public interface Bucketizer
 {
-    public void bucketize(Branch branch,
-                          byte   numBuckets);
+    public boolean bucketize(Branch branch,
+                             byte   numBuckets);
 
     public String id();
 }

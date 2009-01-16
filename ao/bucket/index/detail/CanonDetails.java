@@ -4,6 +4,8 @@ import ao.bucket.index.detail.flop.CanonFlopDetail;
 import ao.bucket.index.detail.flop.CanonFlopLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.CanonHoleLookup;
+import ao.bucket.index.detail.turn.CanonTurnDetail;
+import ao.bucket.index.detail.turn.CanonTurnLookup;
 import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Hole;
@@ -117,9 +119,29 @@ public class CanonDetails
 
 
     //--------------------------------------------------------------------
+    public static CanonTurnDetail lookupTurn(int canonTurn)
+    {
+        return CanonTurnLookup.lookup(canonTurn);
+    }
+    public static CanonTurnDetail[] lookupTurn(
+            int canonTurnFrom,
+            int canonTurnCount)
+    {
+        return CanonTurnLookup.lookup(
+                canonTurnFrom, canonTurnCount);
+    }
+
+
+    //--------------------------------------------------------------------
     public static CanonDetail[][] lookupSub(
             Round prevRound, int[] canonIndexes)
     {
+        if (prevRound == null && canonIndexes.length == 0) {
+            return new CanonDetail[][]{
+                    lookupHole((char) 0,
+                               (char) Hole.CANONICAL_COUNT )};
+        }
+
         CanonDetail[][] subs = new CanonDetail[ canonIndexes.length ][];
         for (int i = 0; i < canonIndexes.length; i++)
         {
@@ -130,12 +152,6 @@ public class CanonDetails
     public static CanonDetail[] lookupSub(
             Round prevRound, int canonIndex)
     {
-        if (prevRound == null)
-        {
-            return lookupHole((char) 0,
-                              (char) Hole.CANONICAL_COUNT );
-        }
-
         switch (prevRound)
         {
             case PREFLOP:
@@ -145,7 +161,10 @@ public class CanonDetails
                                   holeDetail.canonFlopCount());
 
             case FLOP:
-                return new CanonDetail[0];
+                CanonFlopDetail flopDetail =
+                        lookupFlop( (char) canonIndex );
+                return lookupTurn(flopDetail.firstCanonTurn(),
+                                  flopDetail.canonTurnCount());
 
             case TURN:
                 return new CanonDetail[0];
@@ -157,6 +176,32 @@ public class CanonDetails
 
 
     //--------------------------------------------------------------------
+    public static CanonRange lookupRange(
+            Round forRound, long canonIndex)
+    {
+        switch (forRound)
+        {
+            case PREFLOP:
+                CanonHoleDetail holeDetail =
+                        lookupHole( (char) canonIndex );
+                return new CanonRange(holeDetail.firstCanonFlop(),
+                                      holeDetail.canonFlopCount());
+            case FLOP:
+                CanonFlopDetail flopDetail =
+                        lookupFlop( (int) canonIndex );
+                return new CanonRange(flopDetail.firstCanonTurn(),
+                                      flopDetail.canonTurnCount());
+
+            case TURN:
+                CanonTurnDetail turnDetail =
+                        lookupTurn( (int) canonIndex );
+                return new CanonRange(turnDetail.firstCanonRiver(),
+                                      turnDetail.canonRiverCount());
+
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 
 
     //--------------------------------------------------------------------
@@ -167,6 +212,7 @@ public class CanonDetails
         {
             case PREFLOP: return lookupHole( (char) canonIndex );
             case FLOP:    return lookupFlop( (int)  canonIndex );
+            case TURN:    return lookupTurn( (int)  canonIndex );
         }
         return null;
     }

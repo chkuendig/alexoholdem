@@ -53,7 +53,7 @@ public class BucketManager
                 numTurnBuckets,
                 numRiverBuckets);
 
-        tree.flush();
+//        tree.flush();
         return tree;
     }
 
@@ -95,6 +95,7 @@ public class BucketManager
             char   numRiverBuckets)
     {
         HOLE_BUCKETIZER.bucketize(root, numHoleBuckets);
+        root.flush();
 
         bucketizeFlopsDown(
                 root.subBranches(),
@@ -120,6 +121,7 @@ public class BucketManager
         {
             FLOP_BUCKETIZER.bucketize(
                     hole, flopBucketCounts[ holeBucketIndex++ ]);
+            hole.flush();
 
 //            turnBuckets += bucketizeTurnsDown(
 //                                hole.subBranches(),

@@ -2,7 +2,9 @@ package ao.bucket.abstraction.tree;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonDetails;
+import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Hole;
 import ao.util.data.AutovivifiedList;
@@ -11,6 +13,8 @@ import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +32,11 @@ public class BucketTreeImpl implements BucketTree
     //--------------------------------------------------------------------
     private final File holeFile;
     private final File flopFile;
+    private final File turnFile;
 
     private final byte[] holes;
     private final byte[] flops;
+    private final byte[] turns;
 
 
     //--------------------------------------------------------------------
@@ -38,11 +44,13 @@ public class BucketTreeImpl implements BucketTree
     {
         File persistDir = Dir.get(DIR, id);
 
-        holeFile   = new File(persistDir, "holes");
-        flopFile   = new File(persistDir, "flops");
+        holeFile = new File(persistDir, "holes");
+        flopFile = new File(persistDir, "flops");
+        turnFile = new File(persistDir, "turns");
 
         holes = retrieveOrCreate(holeFile,       Hole.CANONICAL_COUNT);
         flops = retrieveOrCreate(flopFile, FlopLookup.CANONICAL_COUNT);
+        turns = retrieveOrCreate(turnFile, TurnLookup.CANONICAL_COUNT);
     }
 
     private byte[] retrieveOrCreate(File fullName, int canonCount)
@@ -69,11 +77,11 @@ public class BucketTreeImpl implements BucketTree
         flops[ canonFlop ] = flopBucket;
     }
 
-//    public void addTurn(byte turnBucket,
-//                        int  canonTurn)
-//    {
-//        throw new UnsupportedOperationException();
-//    }
+    public void setTurn(int  canonTurn,
+                        byte turnBucket)
+    {
+        turns[ canonTurn ] = turnBucket;
+    }
 //
 //    public void addRiver(byte riverBucket,
 //                         long canonRiver)
@@ -89,6 +97,7 @@ public class BucketTreeImpl implements BucketTree
         {
             case PREFLOP: setHole((char) canonIndex, bucket); break;
             case FLOP:    setFlop((int)  canonIndex, bucket); break;
+            case TURN:    setTurn((int)  canonIndex, bucket); break;
         }
     }
 
@@ -104,11 +113,11 @@ public class BucketTreeImpl implements BucketTree
         return flops[ canonFlop ];
     }
 
-//    public byte getTurn(int canonTurn)
-//    {
-//        return 0;
-//    }
-//
+    public byte getTurn(int canonTurn)
+    {
+        return turns[ canonTurn ];
+    }
+
 //    public byte getRiver(long canonRiver)
 //    {
 //        return 0;
@@ -120,6 +129,7 @@ public class BucketTreeImpl implements BucketTree
         {
             case PREFLOP: return getHole( (char) canonIndex );
             case FLOP:    return getFlop( (int)  canonIndex );
+            case TURN:    return getTurn( (int)  canonIndex );
 
             default:
                 throw new IllegalArgumentException();
@@ -132,6 +142,44 @@ public class BucketTreeImpl implements BucketTree
     {
         PersistentBytes.persist(holes, holeFile);
         PersistentBytes.persist(flops, flopFile);
+        PersistentBytes.persist(turns, turnFile);
+    }
+
+    public void flush(Round round, int fromCanon, int canonCount) {
+        try {
+            doFlush(round, fromCanon, canonCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void doFlush(Round round, int fromCanon, int canonCount)
+            throws IOException
+    {
+        File   roundFile;
+        byte[] roundBuckets;
+
+        if (round == Round.PREFLOP) {
+            roundFile    = holeFile;
+            roundBuckets = holes;
+        } else if (round == Round.FLOP) {
+            roundFile    = flopFile;
+            roundBuckets = flops;
+        } else if (round == Round.TURN) {
+            roundFile    = turnFile;
+            roundBuckets = turns;
+        } else /*if (round == Round.RIVER)*/ {
+            throw new UnsupportedOperationException();
+        }
+
+        if (! roundFile.canRead()) {
+            PersistentBytes.persist(roundBuckets, roundFile);
+            return;
+        }
+
+        RandomAccessFile f = new RandomAccessFile(roundFile, "rw");
+        f.seek(fromCanon);
+        f.write(roundBuckets, fromCanon, canonCount);
+        f.close();
     }
 
 
@@ -146,7 +194,7 @@ public class BucketTreeImpl implements BucketTree
     public class BranchImpl implements Branch
     {
         //----------------------------------------------------------------
-        private CanonDetail[][] subDetails;
+//        private CanonDetail[][] subDetails;
         private int[]           parentCanons;
         private Round           round;
 
@@ -155,7 +203,7 @@ public class BucketTreeImpl implements BucketTree
         public BranchImpl()
         {
             round        = Round.PREFLOP;
-            parentCanons = new int[] {-1};
+            parentCanons = new int[] {};
         }
 
         public BranchImpl(Round r, int[] parents)
@@ -200,18 +248,22 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public CanonDetail[][] details()
         {
-            if (subDetails != null) return subDetails;
-            subDetails = CanonDetails.lookupSub(
+            return CanonDetails.lookupSub(
                             round().previous(),
                             parentCanons());
-            return subDetails;
+//            if (subDetails != null) return subDetails;
+//            subDetails = CanonDetails.lookupSub(
+//                            round().previous(),
+//                            parentCanons());
+//            return subDetails;
         }
 
 
         //----------------------------------------------------------------
         public Iterable<Branch> subBranches()
         {
-            if (round == Round.RIVER) return new ArrayList<Branch>();
+            if (round == Round.RIVER ||
+                round == Round.TURN) return new ArrayList<Branch>();
 
             AutovivifiedList<IntList> subBranchCanons =
                     new AutovivifiedList<IntList>();
@@ -245,15 +297,44 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public boolean isBucketized()
         {
-            for (CanonDetail[] details : details())
-            {
-                for (CanonDetail detail : details)
-                {
-                    if (get( detail.canonIndex() ) == -1)
+            if (round == Round.PREFLOP) {
+                for (int i = 0; i < Hole.CANONICAL_COUNT; i++) {
+                    if (get(i) == -1) return false;
+                }
+                return true;
+            }
+
+            for (int parent : parentCanons) {
+                CanonRange range =
+                            CanonDetails.lookupRange(
+                                    round.previous(), parent);
+                for (int i = 0; i < range.canonIndexCount(); i++) {
+                    if (get( range.fromCanonIndex() + i ) == -1)
                         return false;
                 }
             }
             return true;
+        }
+
+
+        //----------------------------------------------------------------
+        public void flush()
+        {
+            if (round == Round.PREFLOP) {
+                BucketTreeImpl.this.flush(
+                        round, 0, Hole.CANONICAL_COUNT);
+            } else if (round == Round.FLOP) {
+                for (int parent : parentCanons) {
+                    CanonRange range =
+                            CanonDetails.lookupRange(
+                                    round.previous(), parent);
+
+                    BucketTreeImpl.this.flush(
+                            round,
+                            (int) range.fromCanonIndex(),
+                            range.canonIndexCount());
+                }
+            }
         }
 
 //        public char subBranchCount()
