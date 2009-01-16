@@ -10,7 +10,7 @@ public interface BucketSet
 
 
     //--------------------------------------------------------------------
-    public long[] canonsOf(char bucket);
+//    public long[] canonsOf(char bucket);
 
 
     //--------------------------------------------------------------------

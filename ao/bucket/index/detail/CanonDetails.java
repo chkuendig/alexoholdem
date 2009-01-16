@@ -117,6 +117,43 @@ public class CanonDetails
 
 
     //--------------------------------------------------------------------
+    public static CanonDetail[][] lookupSub(
+            Round prevRound, int[] canonIndexes)
+    {
+        CanonDetail[][] subs = new CanonDetail[ canonIndexes.length ][];
+        for (int i = 0; i < canonIndexes.length; i++)
+        {
+            subs[ i ] = lookupSub(prevRound, canonIndexes[i]);
+        }
+        return subs;
+    }
+    public static CanonDetail[] lookupSub(
+            Round prevRound, int canonIndex)
+    {
+        if (prevRound == null)
+        {
+            return lookupHole((char) 0,
+                              (char) Hole.CANONICAL_COUNT );
+        }
+
+        switch (prevRound)
+        {
+            case PREFLOP:
+                CanonHoleDetail holeDetail =
+                        lookupHole( (char) canonIndex );
+                return lookupFlop(holeDetail.firstCanonFlop(),
+                                  holeDetail.canonFlopCount());
+
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+
+
+    //--------------------------------------------------------------------
     public static CanonDetail lookup(
             Round forRound, long canonIndex)
     {

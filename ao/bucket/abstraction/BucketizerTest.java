@@ -4,6 +4,7 @@ import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
 import ao.bucket.abstraction.tree.BucketTree;
 import ao.bucket.index.detail.CanonDetails;
+import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Hole;
 import org.apache.log4j.Logger;
 
@@ -21,8 +22,8 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        testHoleLookup();
-//        testFlopLookup();
+//        testHoleLookup();
+        testFlopLookup();
 //        testTurnLookup();
     }
 
@@ -32,22 +33,22 @@ public class BucketizerTest
     {
         LOG.info("testing hole bucket lookup");
 
-        char  nBuckets = 20;
+        byte  nBuckets = 20;
         int[] counts   = new int[ nBuckets ];
 
         BucketManager manager =
                 new BucketManager( new BucketizerImpl() );
 
         BucketTree buckets = manager.bucketize(
-                (byte) 2, (char) 4, (char) 8, (char) 16);
+                nBuckets, (char) 4, (char) 8, (char) 16);
 
         for (char i = 0; i < Hole.CANONICAL_COUNT; i++)
         {
             System.out.println(
                     ((int) i)                              + "\t" +
                     CanonDetails.lookupHole( i ).example() + "\t" +
-                    (int) buckets.get( i ));
-            counts[ buckets.get(i) ]++;
+                    (int) buckets.getHole( i ));
+            counts[ buckets.getHole(i) ]++;
         }
 
         System.out.println("summary:");
@@ -56,33 +57,33 @@ public class BucketizerTest
     }
 
 
-//    //--------------------------------------------------------------------
-//    public static void testFlopLookup()
-//    {
-//        LOG.info("testing flop bucket lookup");
-//
-//        char  numHoleBuckets = 3;
-//        HoleBucketLookup holeLookup =
-//                new HoleBucketLookupImpl(new HoleBucketizerImpl());
-//        BucketSet holeBuckets = holeLookup.buckets( numHoleBuckets );
-//
-//        char  numFlopBuckets = 9;
-//        int[] counts         = new int[ numFlopBuckets ];
-//
-//        CommunityBucketLookup lookup =
-//                new CommBucketLookupImpl(
-//                        Round.FLOP, new FlopBucketizerImpl());
-//        BucketSet buckets = lookup.buckets(holeBuckets, numFlopBuckets);
-//        for (int i = 0; i < FlopLookup.CANONICAL_COUNT; i++)
-//        {
-//            counts[ buckets.bucketOf(i) ]++;
-//        }
-//
-//        for (int i = 0; i < counts.length; i++)
-//            System.out.println(i + "\t" + counts[i]);
-//    }
-//
-//
+    //--------------------------------------------------------------------
+    public static void testFlopLookup()
+    {
+        LOG.info("testing flop bucket lookup");
+
+        byte numHoleBuckets = 13;
+        char numFlopBuckets = 1134;
+
+        BucketManager manager =
+                new BucketManager( new BucketizerImpl() );
+
+        BucketTree buckets = manager.bucketize(
+                numHoleBuckets,
+                numFlopBuckets,
+                (char) 8, (char) 16);
+
+        int[] counts         = new int[ numFlopBuckets ];
+        for (int i = 0; i < FlopLookup.CANONICAL_COUNT; i++)
+        {
+            counts[ buckets.getFlop(i) ]++;
+        }
+
+        for (int i = 0; i < counts.length; i++)
+            System.out.println(i + "\t" + counts[i]);
+    }
+
+
 //    //--------------------------------------------------------------------
 //    public static void testTurnLookup()
 //    {

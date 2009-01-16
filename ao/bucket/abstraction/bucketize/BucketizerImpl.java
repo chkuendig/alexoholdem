@@ -3,7 +3,6 @@ package ao.bucket.abstraction.bucketize;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.tree.BucketTree.Branch;
 import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.CanonDetails;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -25,29 +24,46 @@ public class BucketizerImpl implements Bucketizer
     public void bucketize(Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
+
+        CanonDetail[][] details = branch.subDetails();
+        int detailCount = countDetails(details);
+
         LOG.debug("bucketizing " + branch.round() + " branch of " +
-                  branch.numParentCanon() + " into " + nBuckets);
+                  detailCount + " into " + nBuckets);
 
         BucketAllocator alloc = new BucketAllocator(
-                          branch.numParentCanon(), (char) nBuckets);
-        for (CanonDetail holeCanon : sortCanonDetail(branch))
+                          detailCount, (char) nBuckets);
+        for (CanonDetail canonDetail :
+                sortCanonDetail(details, detailCount))
         {
-            branch.add((byte) alloc.nextBucket(1),
-                       holeCanon.canonIndex());
+            branch.set(canonDetail.canonIndex(),
+                       (byte) alloc.nextBucket(1));
         }
+    }
+
+    private int countDetails(CanonDetail[][] details)
+    {
+        int count = 0;
+        for (CanonDetail[] detailList : details)
+            count += detailList.length;
+        return count;
     }
 
 
     //--------------------------------------------------------------------
-    private CanonDetail[] sortCanonDetail(Branch branch)
+    private CanonDetail[] sortCanonDetail(
+            CanonDetail[][] details,
+            int             detailCount)
     {
-        CanonDetail[] inOrder =
-                CanonDetails.lookup(
-                    branch.round(),
-                    branch.firstParentCanon(),
-                    branch.numParentCanon());
+        int           i    = 0;
+        CanonDetail[] flat = new CanonDetail[ detailCount ];
+        for (CanonDetail[] detailList : details) {
+            for (CanonDetail detail : detailList) {
+                flat[ i++ ] = detail;
+            }
+        }
 
-        Arrays.sort(inOrder, new Comparator<CanonDetail>() {
+        Arrays.sort(flat, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
                 return Double.compare(
                         a.strengthVsRandom(),
@@ -55,7 +71,7 @@ public class BucketizerImpl implements Bucketizer
             }
         });
 
-        return inOrder;
+        return flat;
     }
 
 

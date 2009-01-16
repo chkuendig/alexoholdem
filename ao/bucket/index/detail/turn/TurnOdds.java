@@ -59,6 +59,8 @@ public class TurnOdds
         int[] wins = PersistentInts.retrieve(WIN_FILE);
         if (wins == null)
         {
+            LOG.debug("starting from scratch");
+
             WIN   = oddsComponent();
             LOSE  = oddsComponent();
             SPLIT = oddsComponent();
@@ -72,6 +74,8 @@ public class TurnOdds
 
         if (! getIsPreComputed())
         {
+            LOG.debug("resuming computation");
+
             computeOdds();
             flush();
             setIsPreComputed();
@@ -91,14 +95,22 @@ public class TurnOdds
     {
         LOG.debug("computing odds");
 
-        final int[]              count    = {0};
-        final PreciseHeadsUpOdds oddsCalc = new PreciseHeadsUpOdds();
+        final int[]  skinCount      = {0};
+        final int[]  calcCount      = {0};
+        final long[] milestoneStart = {0};
+
         new CanonTraverser().traverseTurns(
                 null, new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                if (WIN[ turn.canonIndex() ] != -1) return;
+                if (WIN[ turn.canonIndex() ] != -1) {
+                    skinCount[0]++;
+                    return;
+                } else if (skinCount[0] != 0) {
+                    System.out.println("skipped " + skinCount[0]);
+                    skinCount[0] = 0;
+                }
 
-                Odds odds = oddsCalc.compute(
+                Odds odds = PreciseHeadsUpOdds.INSTANCE.compute(
                         turn.hole(), turn.community());
 
                 int wins   = asInt(odds.winOdds());
@@ -112,21 +124,37 @@ public class TurnOdds
                 detectOverflow(turn.canonIndex(), odds,
                                wins, losses, splits);
 
-                checkpoint( count[0]++ );
+                checkpoint( calcCount[0]++, milestoneStart );
             }
         });
     }
 
-    private static void checkpoint(int count)
+    private static void checkpoint(
+            int count, long[] milestoneStart)
     {
-        if ( count % 100 == 0)
+        if (milestoneStart[0] == 0)
+            milestoneStart[0] = System.currentTimeMillis();
+
+        if (count % 100 == 0)
             System.out.print(".");
 
-        if ((count + 1) % 5000 == 0)
-            System.out.println(" " + count);
+        boolean milesoneReached = ((count + 1) % 5000 == 0);
+        if (milesoneReached) {
+            System.out.println(
+                    " " + (count + 1) + ", completed 5000 in " +
+                    (System.currentTimeMillis() - milestoneStart[0]));
+        }
 
-        if ((count + 1) % 100000 == 0)
+        if ((count + 1) % 1000000 == 0) {
+            long start = System.currentTimeMillis();
             flush();
+            System.out.println(
+                    "flushed checkpoint, took " +
+                      (System.currentTimeMillis() - start));
+        }
+
+        if (milesoneReached)
+            milestoneStart[0] = System.currentTimeMillis();
     }
 
     private static int asInt(long odds)
