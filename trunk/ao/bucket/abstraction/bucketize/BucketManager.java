@@ -1,10 +1,9 @@
 package ao.bucket.abstraction.bucketize;
 
+import ao.bucket.abstraction.alloc.SubBucketAllocator;
 import ao.bucket.abstraction.tree.BucketTree;
 import ao.bucket.abstraction.tree.BucketTree.Branch;
 import ao.bucket.abstraction.tree.BucketTreeImpl;
-
-import java.util.List;
 
 /**
  * Date: Jan 8, 2009
@@ -54,6 +53,7 @@ public class BucketManager
                 numTurnBuckets,
                 numRiverBuckets);
 
+        tree.flush();
         return tree;
     }
 
@@ -68,15 +68,15 @@ public class BucketManager
         str.append( HOLE_BUCKETIZER.id() )
            .append( '.' )
            .append( (int) numHoleBuckets )
-           .append( '|' )
+           .append( ';' )
            .append( FLOP_BUCKETIZER.id() )
            .append( '.' )
            .append( (int) numFlopBuckets )
-           .append( '|' )
+           .append( ';' )
            .append( TURN_BUCKETIZER.id() )
            .append( '.' )
            .append( (int) numTurnBuckets )
-           .append( '|' )
+           .append( ';' )
            .append( RIVER_BUCKETIZER.id() )
            .append( '.' )
            .append( (int) numRiverBuckets );
@@ -96,23 +96,23 @@ public class BucketManager
     {
         HOLE_BUCKETIZER.bucketize(root, numHoleBuckets);
 
-//        bucketizeFlopsDown(
-//                root.subBranches(),
-//                new SubBucketAllocator().allocate(
-//                        (char) numHoleBuckets, numFlopBuckets),
-//                new SubBucketAllocator().allocate(
-//                        numFlopBuckets, numTurnBuckets),
-//                new SubBucketAllocator().allocate(
-//                        numTurnBuckets, numRiverBuckets));
+        bucketizeFlopsDown(
+                root.subBranches(),
+                new SubBucketAllocator().allocate(
+                        (char) numHoleBuckets, numFlopBuckets),
+                new SubBucketAllocator().allocate(
+                        numFlopBuckets, numTurnBuckets),
+                new SubBucketAllocator().allocate(
+                        numTurnBuckets, numRiverBuckets));
     }
 
 
     //--------------------------------------------------------------------
     private void bucketizeFlopsDown(
-            List<Branch> holes,
-            byte[]       flopBucketCounts,
-            byte[]       turnBucketCounts,
-            byte[]       riverBucketCounts)
+            Iterable<Branch> holes,
+            byte[]           flopBucketCounts,
+            byte[]           turnBucketCounts,
+            byte[]           riverBucketCounts)
     {
         char turnBuckets     = 0;
         char holeBucketIndex = 0;
@@ -121,21 +121,21 @@ public class BucketManager
             FLOP_BUCKETIZER.bucketize(
                     hole, flopBucketCounts[ holeBucketIndex++ ]);
 
-            turnBuckets += bucketizeTurnsDown(
-                                hole.subBranches(),
-                                turnBuckets,
-                                turnBucketCounts,
-                                riverBucketCounts);
+//            turnBuckets += bucketizeTurnsDown(
+//                                hole.subBranches(),
+//                                turnBuckets,
+//                                turnBucketCounts,
+//                                riverBucketCounts);
         }
     }
 
 
     //--------------------------------------------------------------------
     private char bucketizeTurnsDown(
-            List<Branch> flops,
-            char         turnBucketOffset,
-            byte[]       turnBucketCounts,
-            byte[]       riverBucketCounts)
+            Iterable<Branch> flops,
+            char             turnBucketOffset,
+            byte[]           turnBucketCounts,
+            byte[]           riverBucketCounts)
     {
         char riverBuckets    = 0;
         char flopBucketIndex = 0;
@@ -156,9 +156,9 @@ public class BucketManager
 
     //--------------------------------------------------------------------
     private char bucketizeRivers(
-            List<Branch> turns,
-            char         riverBucketOffset,
-            byte[]       riverBucketCounts)
+            Iterable<Branch> turns,
+            char             riverBucketOffset,
+            byte[]           riverBucketCounts)
     {
         char turnBucketIndex = 0;
         for (Branch turn : turns)

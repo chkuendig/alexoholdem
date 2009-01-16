@@ -53,4 +53,11 @@ public enum Round
                 ? null
                 : values()[ ordinal() + 1 ];
     }
+
+    public Round previous()
+    {
+        return (this == PREFLOP)
+                ? null
+                : values()[ ordinal() - 1 ];
+    }
 }

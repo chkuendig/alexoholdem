@@ -1,8 +1,7 @@
 package ao.bucket.abstraction.tree;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.Round;
-
-import java.util.List;
 
 /**
  * Date: Jan 8, 2009
@@ -10,40 +9,55 @@ import java.util.List;
  */
 public interface BucketTree
 {
+
     //--------------------------------------------------------------------
-    public void add(byte  holeBucket,
-                    char canonHole);
+    public void setHole(char canonHole,
+                        byte holeBucket);
 
-    public void add(byte holeBucket,
-                    byte flopBucket,
-                    int  canonFlop);
-
-    public void add(byte holeBucket,
-                    byte flopBucket,
-                    byte turnBucket,
-                    int  canonTurn);
-
-    public void add(byte holeBucket,
-                    byte flopBucket,
-                    byte turnBucket,
-                    byte riverBucket,
-                    long canonRiver);
+    public void setFlop(int  canonFlop,
+                        byte flopBucket);
 
 
     //--------------------------------------------------------------------
-    public byte get(char canonHole);
+    public byte getHole(char canonHole);
 
-    public byte get(byte holeBucket,
-                    int  canonFlop);
+    public byte getFlop(int canonFlop);
 
-    public byte get(byte holeBucket,
-                    byte flopBucket,
-                    int  canonTurn);
 
-    public byte get(byte holeBucket,
-                    byte flopBucket,
-                    byte turnBucket,
-                    long canonRiver);
+    //--------------------------------------------------------------------
+//    public void add(byte  holeBucket,
+//                    char canonHole);
+//
+//    public void add(byte holeBucket,
+//                    byte flopBucket,
+//                    int  canonFlop);
+//
+//    public void add(byte holeBucket,
+//                    byte flopBucket,
+//                    byte turnBucket,
+//                    int  canonTurn);
+//
+//    public void add(byte holeBucket,
+//                    byte flopBucket,
+//                    byte turnBucket,
+//                    byte riverBucket,
+//                    long canonRiver);
+//
+//
+//    //--------------------------------------------------------------------
+//    public byte get(char canonHole);
+//
+//    public byte get(byte holeBucket,
+//                    int  canonFlop);
+//
+//    public byte get(byte holeBucket,
+//                    byte flopBucket,
+//                    int  canonTurn);
+//
+//    public byte get(byte holeBucket,
+//                    byte flopBucket,
+//                    byte turnBucket,
+//                    long canonRiver);
 
 
     //--------------------------------------------------------------------
@@ -57,19 +71,16 @@ public interface BucketTree
     //--------------------------------------------------------------------
     public static interface Branch
     {
-        public long firstParentCanon();
-        public int  numParentCanon();
+        public Round round();
+        public int[] parentCanons();
+//        public byte  parentBucket();
         
-        public void add(byte bucket, long canonIndex);
+        public CanonDetail[][] subDetails();
+
+        public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);
 
-        public List<Branch> subBranches();
-
-        public Round round();
-
-//        public boolean containsHole (short canonHole);
-//        public boolean containsFlop (int   canonFlop);
-//        public boolean containsTurn (int   canonTurn);
-//        public boolean containsRiver(long  canonRiver);
+        public char             subBranchCount();
+        public Iterable<Branch> subBranches();
     }
 }

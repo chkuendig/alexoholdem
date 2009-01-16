@@ -4,8 +4,6 @@ import ao.bucket.index.test.MathUtil;
 import ao.util.crypt.MD5;
 import ao.util.crypt.SecureHash;
 import ao.util.persist.PersistentChars;
-import bak.pcj.list.LongArrayList;
-import bak.pcj.list.LongList;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -78,24 +76,19 @@ public class BucketSetImpl implements BucketSet
 
 
     //--------------------------------------------------------------------
-    public long[] canonsOf(char bucket)
-    {
-        LongList canons = new LongArrayList();
-        long canonCount = canonCount();
-        for (long canonIndex = 0; canonIndex < canonCount; canonIndex++)
-        {
-            if (bucketOf(canonIndex) == bucket)
-            {
-                canons.add( canonIndex );
-            }
-        }
-        return canons.toArray();
-    }
-    private long canonCount()
-    {
-        return BUCKETS_A.length +
-               (BUCKETS_B == null ? 0 : BUCKETS_B.length);
-    }
+//    public long[] canonsOf(char bucket)
+//    {
+//        LongList canons = new LongArrayList();
+//        long canonCount = canonCount();
+//        for (long canonIndex = 0; canonIndex < canonCount; canonIndex++)
+//        {
+//            if (bucketOf(canonIndex) == bucket)
+//            {
+//                canons.add( canonIndex );
+//            }
+//        }
+//        return canons.toArray();
+//    }
 
 
     //--------------------------------------------------------------------
@@ -147,6 +140,12 @@ public class BucketSetImpl implements BucketSet
     public char bucketCount()
     {
         return BUCKET_COUNT;
+    }
+
+    public long canonCount()
+    {
+        return BUCKETS_A.length +
+               (BUCKETS_B == null ? 0 : BUCKETS_B.length);
     }
 
 

@@ -40,6 +40,10 @@ public class PreciseHeadsUpOdds implements OddFinder
 
 
     //--------------------------------------------------------------------
+    public static PreciseHeadsUpOdds INSTANCE = new PreciseHeadsUpOdds();
+
+
+    //--------------------------------------------------------------------
     public Odds compute(Hole      hole,
                         Community community,
                         int       activeOpponents)

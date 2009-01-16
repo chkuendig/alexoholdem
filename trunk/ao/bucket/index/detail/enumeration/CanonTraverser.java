@@ -205,7 +205,7 @@ public class CanonTraverser
 
     //--------------------------------------------------------------------
     public void traverseRiver(
-            int canonTurn, Traverser<River> riverTraverser)
+            Traverser<River> riverTraverser)
     {
 
     }
