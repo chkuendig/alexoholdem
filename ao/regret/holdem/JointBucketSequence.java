@@ -1,8 +1,12 @@
 package ao.regret.holdem;
 
+import ao.bucket.abstraction.access.BucketAgglom;
+import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.card.chance.DeckCards;
 
 /**
  * User: iscott
@@ -12,31 +16,37 @@ import ao.holdem.model.card.Hole;
 public class JointBucketSequence
 {
     //--------------------------------------------------------------------
+    private final HoldemBucket[] dealerBuckets;
+    private final HoldemBucket[] dealeeBuckets;
 
 
     //--------------------------------------------------------------------
-    private final Hole      HOLE_FIRST;
-    private final Hole      HOLE_LAST;
-    private final Community COMMUNITY;
-
-
-    //--------------------------------------------------------------------
-    public JointBucketSequence(
-            Hole      firstToActHole,
-            Hole      lastToActHole,
-            Community community)
+    public static JointBucketSequence randomInstance(BucketAgglom agglom)
     {
-        HOLE_FIRST = firstToActHole;
-        HOLE_LAST  = lastToActHole;
-        COMMUNITY  = community;
+        ChanceCards cards = new DeckCards();
+        return new JointBucketSequence(agglom,
+                cards.hole(Avatar.local("dealer")),
+                cards.hole(Avatar.local("dealee")),
+                cards.community(Round.RIVER));
+    }
+
+    public JointBucketSequence(
+            BucketAgglom agglom,
+            Hole         dealerHole,
+            Hole         dealeeHole,
+            Community    community)
+    {
+        dealerBuckets = agglom.computeBuckets(dealerHole, community);
+        dealeeBuckets = agglom.computeBuckets(dealeeHole, community);
     }
 
 
     //--------------------------------------------------------------------
     public HoldemBucket bucket(
-            boolean firstToAct,
+            boolean dealer,
             Round   round)
     {
-        return null;
+        return (dealer ? dealerBuckets
+                       : dealeeBuckets)[ round.ordinal() ];
     }
 }

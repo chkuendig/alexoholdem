@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.tree;
+package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonDetails;
@@ -118,10 +118,10 @@ public class BucketTreeImpl implements BucketTree
         return turns[ canonTurn ];
     }
 
-//    public byte getRiver(long canonRiver)
-//    {
-//        return 0;
-//    }
+    public byte getRiver(long canonRiver)
+    {
+        return -1;
+    }
 
     public byte get(Round round, long canonIndex)
     {

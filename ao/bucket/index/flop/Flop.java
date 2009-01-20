@@ -57,6 +57,12 @@ public class Flop
 
 
     //--------------------------------------------------------------------
+    public Flop(Hole      hole,
+                Community community)
+    {
+        this(hole,
+             community.flopA(), community.flopB(), community.flopC());
+    }
     public Flop(Hole hole,
                 Card flopA,
                 Card flopB,

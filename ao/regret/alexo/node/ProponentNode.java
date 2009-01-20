@@ -4,7 +4,6 @@ import ao.regret.InfoNode;
 import ao.regret.alexo.AlexoBucket;
 import ao.simple.alexo.AlexoAction;
 import ao.simple.alexo.state.AlexoState;
-import ao.simple.kuhn.KuhnAction;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
@@ -113,7 +112,7 @@ public class ProponentNode implements PlayerNode
         {
             for (double[] p : prob.values())
             {
-                p[0] = 1.0 / KuhnAction.VALUES.length;
+                p[0] = 1.0 / AlexoAction.VALUES.length;
             }
         }
         else

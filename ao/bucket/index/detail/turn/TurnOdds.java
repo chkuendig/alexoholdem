@@ -146,7 +146,12 @@ public class TurnOdds
         }
 
         if ((count + 1) % 100000 == 0) {
-            flushAsynch();
+            long start = System.currentTimeMillis();
+            flush();
+            System.out.println(
+                "\nflushed checkpoint, took " +
+                  (System.currentTimeMillis() - start));
+//            flushAsynch();
         }
 
         if (milesoneReached)
@@ -194,25 +199,28 @@ public class TurnOdds
     
 
     //--------------------------------------------------------------------
-    private static volatile boolean isSynching = false;
-    private static synchronized void flushAsynch()
-    {
-        if (isSynching) return;
-
-        isSynching = true;
-        new Thread(new Runnable() {
-            public void run() {
-                long start = System.currentTimeMillis();
-                flush();
-                System.out.println(
-                    "\nflushed checkpoint, took " +
-                      (System.currentTimeMillis() - start));
-
-                isSynching = false;
-            }
-        }).start();
-    }
-    private static void flush()
+//    private static volatile boolean isSynching = false;
+//    private static synchronized void flushAsynch()
+//    {
+//        System.out.println("\nattempting flushAsynch");
+//        if (isSynching) return;
+//
+//        System.out.println("\nproceeding with flushAsynch");
+//        isSynching = true;
+//        new Thread(new Runnable() {
+//            public void run() {
+//                System.out.println("\nflushing asynchronously");
+//                long start = System.currentTimeMillis();
+//                flush();
+//                System.out.println(
+//                    "\nflushed checkpoint, took " +
+//                      (System.currentTimeMillis() - start));
+//
+//                isSynching = false;
+//            }
+//        }).start();
+//    }
+    private synchronized static void flush()
     {
         PersistentInts.persist(WIN,   WIN_FILE);
         PersistentInts.persist(LOSE,  LOSE_FILE);

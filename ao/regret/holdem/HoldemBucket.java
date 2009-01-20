@@ -20,4 +20,15 @@ public class HoldemBucket implements Bucket<HoldemBucket>
     {
         return null;
     }
+
+    public HoldemBucket nextBucket(byte index)
+    {
+        return null;
+    }
+
+
+    public char absoluteIndex()
+    {
+        return 0;
+    }
 }

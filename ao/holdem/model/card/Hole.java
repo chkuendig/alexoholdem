@@ -201,11 +201,13 @@ public class Hole
     
 
     //--------------------------------------------------------------------
+    public Flop addFlop(Community community)
+    {
+        return new Flop(this, community);
+    }
     public Flop addFlop(Card flopA, Card flopB, Card flopC)
     {
-        return new Flop(
-                this,
-                flopA, flopB, flopC);
+        return new Flop(this, flopA, flopB, flopC);
     }
 
     public Order order()

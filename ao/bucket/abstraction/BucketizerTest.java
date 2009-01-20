@@ -1,9 +1,9 @@
 package ao.bucket.abstraction;
 
+import ao.bucket.abstraction.access.BucketMap;
+import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.bucket.abstraction.tree.BucketMap;
-import ao.bucket.abstraction.tree.BucketTree;
 import ao.bucket.index.detail.CanonDetails;
 import ao.bucket.index.detail.flop.CanonFlopDetail;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;

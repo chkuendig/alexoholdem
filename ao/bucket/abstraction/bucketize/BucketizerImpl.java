@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.bucketize;
 
+import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.alloc.BucketAllocator;
-import ao.bucket.abstraction.tree.BucketTree.Branch;
 import ao.bucket.index.detail.CanonDetail;
 import org.apache.log4j.Logger;
 

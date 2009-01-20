@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.tree;
+package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.Round;
@@ -28,6 +28,8 @@ public interface BucketTree
 
     public byte getTurn(int canonTurn);
 
+    public byte getRiver(long canonTurn);
+
 
     //--------------------------------------------------------------------
     public void flush();
@@ -51,6 +53,7 @@ public interface BucketTree
 
 //        public char             subBranchCount();
         public Iterable<Branch> subBranches();
+//        public Branch           subBranch(byte bucket);
 
         public boolean isBucketized();
 
