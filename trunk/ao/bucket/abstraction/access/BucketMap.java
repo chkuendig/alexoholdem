@@ -1,6 +1,7 @@
-package ao.bucket.abstraction.tree;
+package ao.bucket.abstraction.access;
 
-import ao.bucket.abstraction.tree.BucketTree.Branch;
+import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.util.data.primitive.CharList;
 
 import java.util.ArrayList;

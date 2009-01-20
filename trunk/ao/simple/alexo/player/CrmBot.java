@@ -1,8 +1,8 @@
 package ao.simple.alexo.player;
 
 import ao.regret.InfoNode;
+import ao.regret.alexo.AlexoInfoTree;
 import ao.regret.alexo.JointBucketSequence;
-import ao.regret.alexo.node.AlexoInfoTree;
 import ao.regret.alexo.node.BucketNode;
 import ao.regret.alexo.node.OpponentNode;
 import ao.regret.alexo.node.ProponentNode;

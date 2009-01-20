@@ -73,6 +73,11 @@ public class PlayerKids
         return kids.get( forAction );
     }
 
+    public int size()
+    {
+        return kids.size();
+    }
+
 
     //--------------------------------------------------------------------
     public Set<Entry<AbstractAction, InfoNode>> entrySet()

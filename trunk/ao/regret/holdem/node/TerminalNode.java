@@ -35,12 +35,12 @@ public class TerminalNode implements InfoNode
 
     //--------------------------------------------------------------------
     public double expectedValue(
-            TerminalNode vsLastToAct)
+            TerminalNode vsDealee)
     {
         int    smallBlinds = STATE.pot().smallBlinds();
         double toWin       =
                   (STATUS == HeadsUpStatus.SHOWDOWN)
-                ? BUCKET.against( vsLastToAct.BUCKET )
+                ?  BUCKET.against( vsDealee.BUCKET )
                 :   (STATUS == HeadsUpStatus.DEALER_WINS)
                   ?  1 : -1;
 

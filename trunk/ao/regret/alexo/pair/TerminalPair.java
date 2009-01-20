@@ -32,7 +32,7 @@ public class TerminalPair implements InfoPair
 
 
     //--------------------------------------------------------------------
-    public double firstToActExpectation()
+    private double firstToActExpectation()
     {
         return FIRST.expectedValue(LAST);
     }

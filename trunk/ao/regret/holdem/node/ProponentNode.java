@@ -4,10 +4,10 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
-import ao.simple.kuhn.KuhnAction;
 import ao.util.rand.Rand;
 import ao.util.text.Txt;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -23,9 +23,9 @@ public class ProponentNode implements PlayerNode
 
     //--------------------------------------------------------------------
     private PlayerKids kids;
-    private Map<AbstractAction, double[]> regret;
-    private Map<AbstractAction, double[]> prob;
-    private int                        visits = 0;
+    private double[]   regret;
+    private double[]   prob;
+    private int        visits = 0;
 
 
     //--------------------------------------------------------------------
@@ -34,19 +34,23 @@ public class ProponentNode implements PlayerNode
             HoldemBucket bucket,
             boolean      forFirstToAct)
     {
-        prob   = new EnumMap<AbstractAction, double[]>(
-                        AbstractAction.class);
-        regret = new EnumMap<AbstractAction, double[]>(
-                        AbstractAction.class);
+        prob   = newActionTracker();
+        regret = newActionTracker();
         kids   = new PlayerKids(state, bucket, forFirstToAct, true);
 
         EnumMap<AbstractAction,State> actions = state.viableActions();
         for (AbstractAction action : actions.keySet())
         {
-            prob.put(action, new double[]{
-                                1.0 / actions.size()});
-            regret.put(action, new double[]{0});
+            prob[   action.ordinal() ] = 1.0 / actions.size();
+//            regret[ action.ordinal() ] = 0;
         }
+    }
+
+    private double[] newActionTracker()
+    {
+        double[] tracker = new double[ AbstractAction.VALUES.length ];
+        Arrays.fill(tracker, Double.NaN);
+        return tracker;
     }
 
 
@@ -56,12 +60,14 @@ public class ProponentNode implements PlayerNode
         AbstractAction bestAction       = null;
         double         bestActionWeight = Long.MIN_VALUE;
 
-        for (Map.Entry<AbstractAction, double[]> p : prob.entrySet())
+        for (AbstractAction act : AbstractAction.VALUES)
         {
-            double weight = Rand.nextDouble(p.getValue()[0]);
+            if (Double.isNaN( prob[act.ordinal()] )) continue;
+
+            double weight = Rand.nextDouble( prob[act.ordinal()] );
             if (bestActionWeight < weight)
             {
-                bestAction       = p.getKey();
+                bestAction       = act;
                 bestActionWeight = weight;
             }
         }
@@ -83,7 +89,7 @@ public class ProponentNode implements PlayerNode
 
     public double probabilityOf(AbstractAction action)
     {
-        return prob.get( action )[ 0 ];
+        return prob[ action.ordinal() ];
     }
 
     public boolean isInformed()
@@ -93,12 +99,15 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-    public void add(Map<AbstractAction, Double> counterfactualRegret)
+    public void add(double[] counterfactualRegret)
     {
-        for (Map.Entry<AbstractAction, Double> r :
-                counterfactualRegret.entrySet())
+        for (AbstractAction act : AbstractAction.VALUES)
         {
-            regret.get( r.getKey() )[0] += r.getValue();
+            double cRegret = counterfactualRegret[ act.ordinal() ];
+            if (! Double.isNaN(cRegret))
+            {
+                regret[ act.ordinal() ] += cRegret;
+            }
         }
 
         visits++;
@@ -113,19 +122,24 @@ public class ProponentNode implements PlayerNode
 
         if (cumRegret <= 0)
         {
-            for (double[] p : prob.values())
+            // todo: is this branch only ever invoked on the first udate?
+            for (AbstractAction act : AbstractAction.VALUES)
             {
-                p[0] = 1.0 / KuhnAction.VALUES.length;
+                if (Double.isNaN( prob[act.ordinal()] )) continue;
+
+                prob[ act.ordinal() ] = 1.0 / kids.size();
             }
         }
         else
         {
-            for (Map.Entry<AbstractAction, double[]>
-                    p : prob.entrySet())
+//            for (Map.Entry<AbstractAction, double[]>
+//                    p : prob.entrySet())
+            for (AbstractAction act : AbstractAction.VALUES)
             {
-                double cRegret = regret.get( p.getKey() )[0];
+                if (Double.isNaN( regret[act.ordinal()] )) continue;
+                double cRegret = regret[ act.ordinal() ];
 
-                p.getValue()[0] =
+                prob[ act.ordinal() ] =
                         (cRegret < 0)
                         ? 0
                         : cRegret / cumRegret;
@@ -136,11 +150,12 @@ public class ProponentNode implements PlayerNode
     private double positiveCumulativeCounterfactualRegret()
     {
         double positiveCumulation = 0;
-        for (double[] pointRegret : regret.values())
+        for (double pointRegret : regret)
         {
-            if (pointRegret[0] > 0)
+            if (Double.isNaN(pointRegret)) continue;
+            if (pointRegret > 0)
             {
-                positiveCumulation += pointRegret[0];
+                positiveCumulation += pointRegret;
             }
         }
         return positiveCumulation;
@@ -162,15 +177,15 @@ public class ProponentNode implements PlayerNode
             str.append( Txt.nTimes("\t", depth) )
                .append( action.getKey() )
                .append( " :: " )
-               .append( prob.get(action.getKey())[0] )
+               .append( prob  [ action.getKey().ordinal() ] )
                .append( " :: " )
-               .append( regret.get(action.getKey())[0] / visits )
+               .append( regret[ action.getKey().ordinal() ] / visits )
                .append( " :: " )
                .append( visits )
                .append( "\n" )
                .append( action.getValue().toString(depth + 1) )
                .append( "\n" );
         }
-        return str.substring(0, str.length()-1);
+        return str.substring(0, str.length() - 1);
     }
 }

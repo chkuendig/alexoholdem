@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.bucketize;
 
-import ao.bucket.abstraction.tree.BucketTree.Branch;
+import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 
 /**
  * Date: Jan 9, 2009

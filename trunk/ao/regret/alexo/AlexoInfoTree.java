@@ -1,7 +1,5 @@
-package ao.regret.alexo.node;
+package ao.regret.alexo;
 
-import ao.regret.alexo.AlexoSequencer;
-import ao.regret.alexo.JointBucketSequence;
 import ao.regret.alexo.pair.BucketPair;
 import ao.simple.alexo.state.AlexoState;
 

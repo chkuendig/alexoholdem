@@ -1,9 +1,9 @@
 package ao.bucket.abstraction.bucketize;
 
+import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.abstraction.access.tree.BucketTree.Branch;
+import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
-import ao.bucket.abstraction.tree.BucketTree;
-import ao.bucket.abstraction.tree.BucketTree.Branch;
-import ao.bucket.abstraction.tree.BucketTreeImpl;
 
 /**
  * Date: Jan 8, 2009
