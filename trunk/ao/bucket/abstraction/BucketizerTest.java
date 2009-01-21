@@ -4,10 +4,10 @@ import ao.bucket.abstraction.access.BucketMap;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.bucket.index.detail.CanonDetails;
+import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.detail.flop.CanonFlopDetail;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
-import ao.holdem.model.card.Hole;
+import ao.bucket.index.hole.HoleLookup;
 import org.apache.log4j.Logger;
 
 /**
@@ -44,11 +44,11 @@ public class BucketizerTest
         BucketTree buckets = manager.bucketize(
                 nBuckets, (char) 4, (char) 8, (char) 16);
 
-        for (char i = 0; i < Hole.CANONICAL_COUNT; i++)
+        for (char i = 0; i < HoleLookup.CANONICAL_COUNT; i++)
         {
             System.out.println(
                     ((int) i)                              + "\t" +
-                    CanonDetails.lookupHole( i ).example() + "\t" +
+                    DetailLookup.lookupHole( i ).example() + "\t" +
                     (int) buckets.getHole( i ));
             counts[ buckets.getHole(i) ]++;
         }
@@ -79,11 +79,11 @@ public class BucketizerTest
         int[]     counts  = new int[ numFlopBuckets ];
 
         for (CanonHoleDetail holeDetail :
-                CanonDetails.lookupHole(
-                        (char) 0, (char) Hole.CANONICAL_COUNT))
+                DetailLookup.lookupHole(
+                        (char) 0, (char) HoleLookup.CANONICAL_COUNT))
         {
             for (CanonFlopDetail flopDetail :
-                    CanonDetails.lookupFlop(
+                    DetailLookup.lookupFlop(
                             holeDetail.firstCanonFlop(),
                             holeDetail.canonFlopCount()))
             {

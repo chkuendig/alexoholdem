@@ -2,6 +2,7 @@ package ao.bucket.abstraction.access;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Community;
@@ -38,9 +39,10 @@ public class BucketAgglom
             Hole      hole,
             Community community)
     {
-        byte  holeBucket  = bucketTree.getHole((char) hole.canonIndex());
+        CanonHole canonHole  = hole.asCanon();
+        byte      holeBucket = bucketTree.getHole(canonHole.canonIndex());
 
-        Flop  flop        = hole.addFlop(community);
+        Flop  flop        = canonHole.addFlop(community);
         byte  flopBucket  = bucketTree.getFlop( flop.canonIndex() );
 
         Turn  turn        = flop.addTurn(community.turn());

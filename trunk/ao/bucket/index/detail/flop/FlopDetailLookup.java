@@ -1,16 +1,12 @@
 package ao.bucket.index.detail.flop;
 
-import ao.bucket.index.detail.enumeration.CanonTraverser;
+import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
 import ao.odds.agglom.Odds;
-import static ao.util.data.Arr.swap;
-import ao.util.math.stats.FastIntCombiner;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
@@ -18,11 +14,13 @@ import org.apache.log4j.Logger;
  * Date: Jan 9, 2009
  * Time: 12:34:30 PM
  */
-public class CanonFlopLookup
+public class FlopDetailLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(CanonFlopLookup.class);
+            Logger.getLogger(FlopDetailLookup.class);
+
+    private FlopDetailLookup() {}
 
 
     //--------------------------------------------------------------------
@@ -33,14 +31,14 @@ public class CanonFlopLookup
 //
 ////        Odds[] odds = new Odds[ FlopLookup.CANONICAL_COUNT ];
 ////        for (CanonFlopDetail detail :
-////                FlopLookupPersist.retrieveDetails())
+////                FlopDetailPersist.retrieveDetails())
 ////            odds[ (int) detail.canonIndex() ] = detail.headsUpOdds();
 ////
-////        FlopLookupPersist.persistDetails(
+////        FlopDetailPersist.persistDetails(
 ////                computeDetails( odds ));
 //
-//        FlopLookupPersist.persistDetails(
-//                FlopLookupPersist.retrieveDetails() );
+//        FlopDetailPersist.persistDetails(
+//                FlopDetailPersist.retrieveDetails() );
 //    }
 
 
@@ -55,11 +53,11 @@ public class CanonFlopLookup
         LOG.debug("retrieveOrComputeDetails");
 
         CanonFlopDetail[] details =
-                FlopLookupPersist.retrieveDetails();
+                FlopDetailPersist.retrieveDetails();
         if (details == null)
         {
             details = computeDetails( null );
-            FlopLookupPersist.persistDetails(details);
+            FlopDetailPersist.persistDetails(details);
         }
         return details;
     }
@@ -70,66 +68,38 @@ public class CanonFlopLookup
             final Odds[] odds)
     {
         LOG.debug("computing details");
-        final CanonFlopDetailBuffer[] buffers =
-                new CanonFlopDetailBuffer[
+        final FlopDetailBuffer[] buffers =
+                new FlopDetailBuffer[
                         FlopLookup.CANONICAL_COUNT ];
 
         for (int i = 0; i < buffers.length; i++)
-            buffers[ i ] = CanonFlopDetailBuffer.SENTINAL;
+            buffers[ i ] = FlopDetailBuffer.SENTINAL;
 
-        final Card[] cards     = Card.values();
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
-                new CombinationVisitor2() {
-            public void visit(int holeA, int holeB) {
-                Hole hole = Hole.valueOf(
-                        cards[holeA], cards[holeB]);
-
-                swap(cards, holeB, 51  );
-                swap(cards, holeA, 51-1);
-
-                iterateFlops(hole, cards, buffers, odds);
-
-                swap(cards, holeA, 51-1);
-                swap(cards, holeB, 51  );
-            }
-        });
-
-        return unbufferAndComputeTurnInfo( buffers );
-    }
-
-    public static void iterateFlops(
-            final Hole                    hole,
-            final Card[]                  cards,
-            final CanonFlopDetailBuffer[] buffers,
-            final Odds[]                  odds)
-    {
-        long before = System.currentTimeMillis();
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
-                .combine(new CombinationVisitor3() {
-            public void visit(int flopA, int flopB, int flopC)
-            {
-                Flop flop = hole.addFlop(
-                        cards[flopA], cards[flopB], cards[flopC]);
+        CardEnum.traverseFlops(
+                new PermisiveFilter<CanonHole>(),
+                new PermisiveFilter<Flop>(),
+                new Traverser<Flop>() {
+            public void traverse(Flop flop) {
                 int index = flop.canonIndex();
 
-                CanonFlopDetailBuffer buff = buffers[ index ];
-                if (buff == CanonFlopDetailBuffer.SENTINAL)
+                FlopDetailBuffer buff = buffers[ index ];
+                if (buff == FlopDetailBuffer.SENTINAL)
                 {
-                    buff = new CanonFlopDetailBuffer(
+                    buff = new FlopDetailBuffer(
                                   flop,
                                   odds == null ? null : odds[ index ] );
                     buffers[ index ] = buff;
                 }
                 buff.incrementFlopRepresentation();
             }});
-        System.out.println(
-                hole + " took " + (System.currentTimeMillis() - before));
+
+        return unbufferAndComputeTurnInfo( buffers );
     }
 
 
     //--------------------------------------------------------------------
     private static CanonFlopDetail[] unbufferAndComputeTurnInfo(
-            CanonFlopDetailBuffer[] buffers)
+            FlopDetailBuffer[] buffers)
     {
         LOG.debug("computing turn info");
 
@@ -157,19 +127,14 @@ public class CanonFlopLookup
         final byte[] turnCounts =
                 new byte[ FlopLookup.CANONICAL_COUNT ];
 
-        new CanonTraverser().traverseTurns(
-                null, new Traverser<Turn>() {
+        CardEnum.traverseUniqueTurns(
+                new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 turnCounts[ turn.flop().canonIndex() ]++;
-            }
-        });
+            }});
 
         return turnCounts;
     }
-
-
-    //--------------------------------------------------------------------
-    private CanonFlopLookup() {}
 
 
     //--------------------------------------------------------------------

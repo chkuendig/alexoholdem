@@ -9,11 +9,11 @@ import ao.odds.agglom.impl.PreciseHeadsUpOdds;
  * Date: Jan 13, 2009
  * Time: 11:48:01 AM
  */
-public class CanonFlopDetailBuffer
+public class FlopDetailBuffer
 {
     //--------------------------------------------------------------------
-    public static final CanonFlopDetailBuffer
-            SENTINAL = new CanonFlopDetailBuffer();
+    public static final FlopDetailBuffer
+            SENTINAL = new FlopDetailBuffer();
 
 
     //--------------------------------------------------------------------
@@ -28,7 +28,7 @@ public class CanonFlopDetailBuffer
 
 
     //--------------------------------------------------------------------
-    private CanonFlopDetailBuffer()
+    private FlopDetailBuffer()
     {
         flopA = Card.TWO_OF_CLUBS;
         flopB = Card.TWO_OF_CLUBS;
@@ -36,7 +36,7 @@ public class CanonFlopDetailBuffer
         headsUpOdds = new Odds();
     }
 
-    public CanonFlopDetailBuffer(Flop flop, Odds odds)
+    public FlopDetailBuffer(Flop flop, Odds odds)
     {
         canonIndex  = flop.canonIndex();
 
@@ -47,7 +47,7 @@ public class CanonFlopDetailBuffer
         headsUpOdds =
             odds != null ? odds :
             new PreciseHeadsUpOdds().compute(
-                    flop.hole(), flop.community());
+                    flop.hole().reify(), flop.community());
     }
 
 

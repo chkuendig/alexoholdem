@@ -1,10 +1,15 @@
 package ao.bucket.index.flop;
 
+import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
 import static ao.bucket.index.flop.FlopUtil.distinct;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;
-import ao.holdem.model.card.*;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Rank;
+import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
 
@@ -12,7 +17,7 @@ import java.util.Arrays;
  * Date: Jun 18, 2008
  * Time: 2:57:55 PM
  */
-public class Flop
+public class Flop implements CanonIndexed
 {
     //--------------------------------------------------------------------
     private static final CanonCard FLOPS[][][][];
@@ -50,23 +55,23 @@ public class Flop
     private final FlopCase  FLOP_CASE;
     private       int       canonIndex = -1;
 
-    private final Hole      HOLE_CARDS;
+    private final CanonHole HOLE_CARDS;
     private final Card      FLOP_A;
     private final Card      FLOP_B;
     private final Card      FLOP_C;
 
 
     //--------------------------------------------------------------------
-    public Flop(Hole      hole,
+    public Flop(CanonHole hole,
                 Community community)
     {
         this(hole,
              community.flopA(), community.flopB(), community.flopC());
     }
-    public Flop(Hole hole,
-                Card flopA,
-                Card flopB,
-                Card flopC)
+    public Flop(CanonHole hole,
+                Card      flopA,
+                Card      flopB,
+                Card      flopC)
     {
         HOLE_CARDS = hole;
         FLOP_A     = flopA;
@@ -104,6 +109,10 @@ public class Flop
             canonIndex = computeCanonIndex();
         }
         return canonIndex;
+    }
+    public long packedCanonIndex()
+    {
+        return canonIndex();
     }
 
     private int computeCanonIndex()
@@ -151,7 +160,7 @@ public class Flop
 
 
     //--------------------------------------------------------------------
-    public Hole hole()
+    public CanonHole hole()
     {
         return HOLE_CARDS;
     }

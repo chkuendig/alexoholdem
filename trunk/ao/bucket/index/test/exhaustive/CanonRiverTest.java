@@ -1,11 +1,12 @@
-package ao.bucket.index.test.detail;
+package ao.bucket.index.test.exhaustive;
 
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.river.River;
 import ao.bucket.index.test.Gapper;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
 import ao.util.data.AutovivifiedList;
@@ -26,7 +27,7 @@ public class CanonRiverTest
 {
     //--------------------------------------------------------------------
     private static final int    PER_FILE   = 1 << 30;
-    private static final String DIR        = "lookup/enum/";
+    private static final String DIR        = "lookup/canon/test/";
     private static final String RIVER_FILE = DIR + "river.bin";
     private static final int    STEP       = Short.SIZE / 8;
 
@@ -60,7 +61,7 @@ public class CanonRiverTest
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                Hole hole = Hole.valueOf(
+                CanonHole hole = HoleLookup.lookup(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
 //                System.out.println(hole);
 
@@ -92,7 +93,7 @@ public class CanonRiverTest
     }
 
     private int iterateFlops(
-            final Hole hole)
+            final CanonHole hole)
     {
         final int flops[] = {0};
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)

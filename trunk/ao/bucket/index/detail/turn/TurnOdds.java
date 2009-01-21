@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.turn;
 
-import ao.bucket.index.detail.enumeration.CanonTraverser;
+import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.odds.agglom.Odds;
@@ -131,8 +131,8 @@ public class TurnOdds
         final int[]  calcCount      = {0};
         final long[] milestoneStart = {0};
 
-        new CanonTraverser().traverseTurns(
-                null, new Traverser<Turn>() {
+        CardEnum.traverseUniqueTurns(
+                new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 if (WIN[ turn.canonIndex() ] != SENTINAL) {
                     skinCount[0]++;
@@ -143,7 +143,7 @@ public class TurnOdds
                 }
 
                 Odds odds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        turn.hole(), turn.community());
+                        turn.hole().reify(), turn.community());
 
                 char wins   = (char) odds.winOdds();
                 char losses = (char) odds.loseOdds();
@@ -154,8 +154,7 @@ public class TurnOdds
                 SPLIT[ turn.canonIndex() ] = splits;
 
                 checkpoint( calcCount[0]++, milestoneStart );
-            }
-        });
+            }});
     }
 
     private static void checkpoint(
