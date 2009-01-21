@@ -1,11 +1,12 @@
-package ao.bucket.index.test.detail;
+package ao.bucket.index.test.exhaustive;
 
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddHist;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import static ao.util.data.Arr.swap;
@@ -35,7 +36,7 @@ public class CanonFlopTest
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                Hole hole = Hole.valueOf(
+                CanonHole hole = HoleLookup.lookup(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
                 System.out.println(hole);
 
@@ -54,7 +55,7 @@ public class CanonFlopTest
     }
 
     private void iterateFlops(
-            final Hole hole)
+            final CanonHole hole)
     {
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
                 .combine(new CombinationVisitor3() {
@@ -68,7 +69,7 @@ public class CanonFlopTest
 
                 OddHist odds     =
                         new GeneralHistFinder().compute(
-                                hole,
+                                hole.reify(),
                                 new Community(
                                         CARDS[flopA],
                                         CARDS[flopB],

@@ -2,6 +2,7 @@ package ao.bucket.index.river;
 
 import ao.bucket.index.turn.TurnLookup;
 import ao.util.math.Calc;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Sep 16, 2008
@@ -10,6 +11,9 @@ import ao.util.math.Calc;
 public class RiverLookup
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(RiverLookup.class);
+
     private static final int  SHRINK    = 3;
     private static final int  CHUNK     = (1 << (SHRINK));
     private static final int  OFFSETS[] = computeOffsets();
@@ -42,7 +46,8 @@ public class RiverLookup
     //--------------------------------------------------------------------
     private static int[] computeOffsets()
     {
-        System.out.println("RiverSparceLookup.computeOffsets");
+        LOG.info("computeOffsets");
+
         int offset    = 0;
         int offsets[] =
                 new int[ TurnLookup.CANONICAL_COUNT / CHUNK + 1 ];
@@ -66,7 +71,6 @@ public class RiverLookup
             offset += caseSet.size();
         }
 
-        System.out.println("\nRiverSparceLookup.computeOffsets end");
         return offsets;
     }
 }

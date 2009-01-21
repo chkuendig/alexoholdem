@@ -1,12 +1,12 @@
 package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.CanonDetails;
 import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
-import ao.holdem.model.card.Hole;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
@@ -48,7 +48,7 @@ public class BucketTreeImpl implements BucketTree
         flopFile = new File(persistDir, "flops");
         turnFile = new File(persistDir, "turns");
 
-        holes = retrieveOrCreate(holeFile,       Hole.CANONICAL_COUNT);
+        holes = retrieveOrCreate(holeFile, HoleLookup.CANONICAL_COUNT);
         flops = retrieveOrCreate(flopFile, FlopLookup.CANONICAL_COUNT);
         turns = retrieveOrCreate(turnFile, TurnLookup.CANONICAL_COUNT);
     }
@@ -248,11 +248,11 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public CanonDetail[][] details()
         {
-            return CanonDetails.lookupSub(
+            return DetailLookup.lookupSub(
                             round().previous(),
                             parentCanons());
 //            if (subDetails != null) return subDetails;
-//            subDetails = CanonDetails.lookupSub(
+//            subDetails = DetailLookup.lookupSub(
 //                            round().previous(),
 //                            parentCanons());
 //            return subDetails;
@@ -298,7 +298,7 @@ public class BucketTreeImpl implements BucketTree
         public boolean isBucketized()
         {
             if (round == Round.PREFLOP) {
-                for (int i = 0; i < Hole.CANONICAL_COUNT; i++) {
+                for (int i = 0; i < HoleLookup.CANONICAL_COUNT; i++) {
                     if (get(i) == -1) return false;
                 }
                 return true;
@@ -306,7 +306,7 @@ public class BucketTreeImpl implements BucketTree
 
             for (int parent : parentCanons) {
                 CanonRange range =
-                            CanonDetails.lookupRange(
+                            DetailLookup.lookupRange(
                                     round.previous(), parent);
                 for (int i = 0; i < range.canonIndexCount(); i++) {
                     if (get( range.fromCanonIndex() + i ) == -1)
@@ -320,21 +320,29 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public void flush()
         {
-            if (round == Round.PREFLOP) {
-                BucketTreeImpl.this.flush(
-                        round, 0, Hole.CANONICAL_COUNT);
-            } else if (round == Round.FLOP) {
-                for (int parent : parentCanons) {
-                    CanonRange range =
-                            CanonDetails.lookupRange(
-                                    round.previous(), parent);
-
+            switch (round)
+            {
+                case PREFLOP:
                     BucketTreeImpl.this.flush(
-                            round,
-                            (int) range.fromCanonIndex(),
-                            range.canonIndexCount());
-                }
+                            round, 0, HoleLookup.CANONICAL_COUNT);
+                    return;
+
+                case FLOP:
+                case TURN:
+                    for (int parent : parentCanons) {
+                        CanonRange range =
+                                DetailLookup.lookupRange(
+                                        round.previous(), parent);
+
+                        BucketTreeImpl.this.flush(
+                                round,
+                                (int) range.fromCanonIndex(),
+                                range.canonIndexCount());
+                    }
+                    return;
             }
+
+            // round == Round.FLOP
         }
 
 //        public char subBranchCount()

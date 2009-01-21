@@ -1,7 +1,8 @@
 package ao.bucket.index.flop;
 
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
 import ao.util.math.stats.Combiner;
 import ao.util.persist.PersistentInts;
@@ -38,8 +39,8 @@ public class FlopLookup
 
         LOG.info("indexing retrieved offsets");
         int offsets[][] =
-                new int[ Hole.CANONICAL_COUNT   ]
-                       [ FlopCase.VALUES.length ];
+                new int[ HoleLookup.CANONICAL_COUNT ]
+                       [   FlopCase.VALUES.length   ];
 
         for (int i = 0; i < flat.length; i++)
         {
@@ -84,13 +85,13 @@ public class FlopLookup
     private static int[][] calculateOffsets()
     {
         LOG.info("calculating offsets");
-        int offsets[][] = new int[ Hole.CANONICAL_COUNT ][];
+        int offsets[][] = new int[ HoleLookup.CANONICAL_COUNT ][];
 
         int  offset  = 0;
         Card cards[] = Card.values();
         for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
         {
-            Hole hole = Hole.valueOf(
+            CanonHole hole = HoleLookup.lookup(
                             holeCards[0], holeCards[1]);
 
             int subOffsets[] = offsets[ hole.canonIndex() ];
@@ -136,7 +137,7 @@ public class FlopLookup
 
 
     //--------------------------------------------------------------------
-    public static int globalOffset(Hole hole, FlopCase flopCase)
+    public static int globalOffset(CanonHole hole, FlopCase flopCase)
     {
         return OFFSETS[ hole.canonIndex()  ]
                       [ flopCase.ordinal() ];

@@ -15,14 +15,16 @@ import java.io.OutputStream;
  * Date: Jan 14, 2009
  * Time: 11:09:28 AM
  */
-public class FlopLookupPersist
+public class FlopDetailPersist
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(FlopLookupPersist.class);
+            Logger.getLogger(FlopDetailPersist.class);
 
     private static final String DIR  = "lookup/canon/detail/";
     private static final File FILE = new File(DIR, "flop.detail");
+
+    private FlopDetailPersist() {}
 
 
     //--------------------------------------------------------------------

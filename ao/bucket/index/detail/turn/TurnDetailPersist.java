@@ -1,6 +1,6 @@
-package ao.bucket.index.detail.preflop;
+package ao.bucket.index.detail.turn;
 
-import ao.holdem.model.card.Hole;
+import ao.bucket.index.turn.TurnLookup;
 import ao.util.io.Slurpy;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -12,48 +12,35 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Date: Jan 13, 2009
- * Time: 12:44:19 PM
+ * Date: Jan 21, 2009
+ * Time: 11:36:21 AM
  */
-public class HoleLookupPersist
+public class TurnDetailPersist
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(HoleLookupPersist.class);
+            Logger.getLogger(TurnDetailPersist.class);
+
+    private static final String DIR  = "lookup/canon/detail/";
+    private static final File FILE = new File(DIR, "turn.detail");
+
+    private TurnDetailPersist() {}
 
 
     //--------------------------------------------------------------------
-    private HoleLookupPersist() {}
-
-
-    //--------------------------------------------------------------------
-    private static final String  DIR  = "lookup/canon/detail/";
-    private static final File    FILE = new File(DIR, "preflop.detail");
-
-    private static final boolean isMomoized = FILE.exists();
-
-
-    //--------------------------------------------------------------------
-    public static boolean detailsMomoized()
-    {
-        return isMomoized;
-    }
-
-
-    //--------------------------------------------------------------------
-    public static CanonHoleDetail[] retrieveDetails()
+    public static CanonTurnDetail[] retrieveDetails()
     {
         byte[] binDetails = Slurpy.slurp(FILE);
         if (binDetails == null || binDetails.length == 0) return null;
         LOG.debug("retrieving details");
 
-        TupleInput in      = new TupleInput(binDetails);
-        CanonHoleDetail[] details =
-                new CanonHoleDetail[ Hole.CANONICAL_COUNT ];
+        TupleInput        in      = new TupleInput(binDetails);
+        CanonTurnDetail[] details =
+                new CanonTurnDetail[ TurnLookup.CANONICAL_COUNT ];
 
         for (int i = 0; i < details.length; i++)
         {
-            details[ i ] = CanonHoleDetail.BINDING.read( in );
+            details[ i ] = CanonTurnDetail.BINDING.read( i, in );
         }
 
         return details;
@@ -61,7 +48,7 @@ public class HoleLookupPersist
 
 
     //--------------------------------------------------------------------
-    public static void persistDetails(CanonHoleDetail[] details)
+    public static void persistDetails(CanonTurnDetail[] details)
     {
         try
         {
@@ -69,12 +56,13 @@ public class HoleLookupPersist
         }
         catch (IOException err)
         {
-            LOG.error("while persisting canon hole details");
+            LOG.error("while persisting canon details");
             err.printStackTrace();
         }
     }
 
-    private static void doPersistDetails(CanonHoleDetail[] details)
+
+    private static void doPersistDetails(CanonTurnDetail[] details)
             throws IOException
     {
         LOG.debug("persisting details");
@@ -83,9 +71,9 @@ public class HoleLookupPersist
                 new FileOutputStream(FILE);
 
         TupleOutput out = new TupleOutput();
-        for (CanonHoleDetail detail : details)
+        for (CanonTurnDetail detail : details)
         {
-            CanonHoleDetail.BINDING.write(detail, out);
+            CanonTurnDetail.BINDING.write(detail, out);
 
             byte asBinary[] = out.getBufferBytes();
             outFile.write( asBinary, 0, out.getBufferLength() );

@@ -1,6 +1,7 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -50,7 +51,7 @@ public class CanonHoleDetail implements CanonDetail
 
     public long canonIndex()
     {
-        return example().canonIndex();
+        return HoleLookup.lookup(HOLE_A, HOLE_B).canonIndex();
     }
 
 

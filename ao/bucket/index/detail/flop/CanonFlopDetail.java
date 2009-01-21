@@ -14,7 +14,7 @@ public class CanonFlopDetail implements CanonDetail
 {
     //--------------------------------------------------------------------
     public static final CanonFlopDetail SENTINAL =
-            CanonFlopDetailBuffer.SENTINAL.toDetail();
+            FlopDetailBuffer.SENTINAL.toDetail();
 
 
     //--------------------------------------------------------------------

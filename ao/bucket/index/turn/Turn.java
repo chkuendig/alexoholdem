@@ -1,13 +1,14 @@
 package ao.bucket.index.turn;
 
+import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 
 /**
  * Date: Aug 27, 2008
@@ -15,7 +16,7 @@ import ao.holdem.model.card.Hole;
  *
  * suit isomorphic hand at turn
  */
-public class Turn
+public class Turn implements CanonIndexed
 {
     //--------------------------------------------------------------------
     private final CanonCard HOLE[],
@@ -79,6 +80,11 @@ public class Turn
         }
         return canonIndex;
     }
+    public long packedCanonIndex()
+    {
+        return canonIndex();
+    }
+
     private int computeCanonIndex(int flopIndex)
     {
         return TurnLookup.canonIndex(flopIndex, TURN);
@@ -100,7 +106,7 @@ public class Turn
         return FLOP_CARDS;
     }
 
-    public Hole hole()
+    public CanonHole hole()
     {
         return FLOP_CARDS.hole();
     }

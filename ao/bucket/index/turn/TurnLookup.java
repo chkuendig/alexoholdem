@@ -4,8 +4,9 @@ import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
 import static ao.util.data.Arr.swap;
@@ -13,6 +14,7 @@ import ao.util.math.stats.FastIntCombiner;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 import ao.util.persist.PersistentBytes;
+import org.apache.log4j.Logger;
 
 import java.util.BitSet;
 import java.util.EnumSet;
@@ -25,13 +27,15 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
-    public static final int CANONICAL_COUNT = 55190538;
+    public  static final int    CANONICAL_COUNT = 55190538;
+    private static final Logger LOG             =
+            Logger.getLogger(TurnLookup.class);
 
 
     //--------------------------------------------------------------------
-    private static final String       RAW_CASE_FILE =
-                                        "lookup/canon/turn.cases.cache";
-    private static final int          CODED_OFFSET[][];
+    private static final String RAW_CASE_FILE =
+                                    "lookup/canon/turn.cases.cache";
+    private static final int    CODED_OFFSET[][];
 
     static
     {
@@ -49,7 +53,8 @@ public class TurnLookup
     //--------------------------------------------------------------------
     private static TurnCase[][] retrieveOrCalculateCaseSets()
     {
-        System.out.println("TurnLookup.retrieveOrCalculateCaseSets");
+        LOG.info("retrieveOrCalculateCaseSets");
+
         TurnCase[][] caseSets = retrieveCaseSets();
         if (caseSets == null)
         {
@@ -109,13 +114,19 @@ public class TurnLookup
                 new TurnCase[ FlopLookup.CANONICAL_COUNT]
                             [ /*  Rank.VALUES.length   */ ];
 
+//        CardEnum.traverseTurns(
+//                new UniqueFilter<CanonHole>(),
+//                new UniqueFilter<Flop>(),
+//
+//        );
+
         final Card   cards[]   = Card.values();
         final BitSet seenHoles = new BitSet();
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                Hole hole = Hole.valueOf(
+                CanonHole hole = HoleLookup.lookup(
                         cards[holeA], cards[holeB]);
 
                 if (seenHoles.get( hole.canonIndex() )) return;
@@ -136,9 +147,9 @@ public class TurnLookup
     }
 
     private static void iterateFlops(
-            final Hole     hole,
-            final Card     cards[],
-            final TurnCase caseSets[][])
+            final CanonHole hole,
+            final Card      cards[],
+            final TurnCase  caseSets[][])
     {
         final BitSet seenFlops = new BitSet();
 
@@ -249,18 +260,4 @@ public class TurnLookup
         return TurnUtil.decodeTurnOffset(codedOffset) +
                TurnUtil.decodeTurnSet(codedOffset).index( turn.suit() );
     }
-
-//    public static TurnCase caseSet(
-//            int flopIndex, Card turnCard)
-//    {
-//        return CASE_SETS[ flopIndex                 ]
-//                        [ turnCard.rank().ordinal() ];
-//    }
-//
-//    public static int globalOffset(
-//            int flopIndex, Card turnCard)
-//    {
-//        return GLOBAL_OFFSET[ flopIndex                 ]
-//                            [ turnCard.rank().ordinal() ];
-//    }
 }

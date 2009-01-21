@@ -1,5 +1,6 @@
 package ao.bucket.index.river;
 
+import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.turn.Turn;
@@ -9,7 +10,7 @@ import ao.holdem.model.card.Card;
  * Date: Sep 1, 2008
  * Time: 8:36:13 PM
  */
-public class River
+public class River implements CanonIndexed
 {
     //--------------------------------------------------------------------
     private final CanonCard RIVER;
@@ -78,6 +79,11 @@ public class River
         return RIVER;
     }
 
+    public Turn turn()
+    {
+        return TURN_CARDS;
+    }
+
     public long canonIndex()
     {
         long globalOffset =
@@ -89,6 +95,10 @@ public class River
         return globalOffset +
                caseOffset +
                (RIVER.rank().ordinal() - RANK_OFFSET);
+    }
+    public long packedCanonIndex()
+    {
+        return canonIndex();
     }
 
 

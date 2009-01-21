@@ -1,9 +1,10 @@
-package ao.bucket.index.test.detail;
+package ao.bucket.index.test.exhaustive;
 
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddHist;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.GeneralHistFinder;
@@ -70,13 +71,13 @@ public class CanonHoleTest
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                Hole hole = Hole.valueOf(
+                CanonHole hole = HoleLookup.lookup(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
                 if (seenHoles.get(hole.canonIndex())) return;
                 seenHoles.set( hole.canonIndex() );
                 
                 Odds     odds     = new PreciseHeadsUpOdds().compute(
-                                            hole, Community.PREFLOP, 1);
+                                      hole.reify(), Community.PREFLOP, 1);
                 SeenCount<Odds> oddCount = HOLES.get( hole.canonIndex() );
                 if (oddCount == null)
                 {
@@ -109,14 +110,14 @@ public class CanonHoleTest
                 new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                Hole hole = Hole.valueOf(
+                CanonHole hole = HoleLookup.lookup(
                         Card.VALUES[holeA], Card.VALUES[holeB]);
 //                if (seenHoles.get(hole.canonIndex())) return;
                 seenHoles.set( hole.canonIndex() );
                 System.out.println(hole);
 
                 OddHist odds = new GeneralHistFinder().compute(
-                                        hole, Community.PREFLOP);
+                                     hole.reify(), Community.PREFLOP);
                 SeenCount<OddHist> existing =
                         HOLES_FAST.get( hole.canonIndex() );
                 if (existing == null)

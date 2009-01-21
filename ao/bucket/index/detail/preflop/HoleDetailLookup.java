@@ -1,10 +1,14 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.index.detail.enumeration.CanonTraverser;
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
+import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
+import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
 import ao.bucket.index.flop.Flop;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
+import ao.util.misc.Filter;
+import ao.util.misc.Filters;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
@@ -12,11 +16,11 @@ import org.apache.log4j.Logger;
  * Date: Jan 9, 2009
  * Time: 12:30:51 PM
  */
-public class CanonHoleLookup
+public class HoleDetailLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(CanonHoleLookup.class);
+            Logger.getLogger(HoleDetailLookup.class);
 
 
     //--------------------------------------------------------------------
@@ -29,11 +33,11 @@ public class CanonHoleLookup
     {
         LOG.debug("retrieveOrComputeDetails");
 
-        CanonHoleDetail[] details = HoleLookupPersist.retrieveDetails();
+        CanonHoleDetail[] details = HoleDetailPersist.retrieveDetails();
         if (details == null)
         {
             details = computeDetails();
-            HoleLookupPersist.persistDetails(details);
+            HoleDetailPersist.persistDetails(details);
         }
         return details;
     }
@@ -44,27 +48,23 @@ public class CanonHoleLookup
     {
         LOG.debug("computing details");
         final CanonHoleDetail.Buffer[] buffers =
-                new CanonHoleDetail.Buffer[ Hole.CANONICAL_COUNT ];
+                new CanonHoleDetail.Buffer[ HoleLookup.CANONICAL_COUNT ];
 
-        for (Card holeA : Card.VALUES)
-        {
-            for (Card holeB : Card.VALUES)
-            {
-                if (holeA.ordinal() >= holeB.ordinal()) continue;
-                Hole hole = Hole.valueOf(holeA, holeB);
-
-                Buffer buff = buffers[ hole.canonIndex() ];
+        CardEnum.traverseHoles(
+                new PermisiveFilter<CanonHole>(),
+                new Traverser<CanonHole>() {
+            public void traverse(CanonHole canonHole) {
+                Buffer buff = buffers[ canonHole.canonIndex() ];
                 if (buff == null)
                 {
-                    buff = new Buffer( hole );
-                    buffers[ hole.canonIndex() ] = buff;
+                    buff = new Buffer( canonHole.reify() );
+                    buffers[ canonHole.canonIndex() ] = buff;
                 }
                 buff.REPRESENTS++;
-            }
-        }
+            }});
 
         CanonHoleDetail[] details =
-                new CanonHoleDetail[ Hole.CANONICAL_COUNT ];
+                new CanonHoleDetail[ HoleLookup.CANONICAL_COUNT ];
         for (int i = 0; i < buffers.length; i++)
         {
             System.out.print(".");
@@ -79,24 +79,31 @@ public class CanonHoleLookup
     private static void computeFlopDetails(
             final CanonHoleDetail.Buffer buff)
     {
-        new CanonTraverser().traverseFlops(
-                new long[]{ buff.HOLE.canonIndex() },
-                new Traverser<Flop>() {
-            public void traverse(Flop flop) {
-                if (buff.FIRST_CANON_FLOP == -1) {
-                    buff.FIRST_CANON_FLOP = flop.canonIndex();
+        final int filterIndex = buff.HOLE.asCanon().canonIndex();
+        CardEnum.traverseFlops(Filters.and(
+            new Filter<CanonHole>() {
+                public boolean accept(CanonHole canonHole) {
+                    return canonHole.canonIndex() == filterIndex;
                 }
-                buff.FIRST_CANON_FLOP =
-                        Math.min(buff.FIRST_CANON_FLOP,
-                                 flop.canonIndex());
-                buff.CANON_FLOP_COUNT++;
+            }, new UniqueFilter<CanonHole>()),
+            new UniqueFilter<Flop>(),
+            new Traverser<Flop>() {
+                public void traverse(Flop flop) {
+                    if (buff.FIRST_CANON_FLOP == -1) {
+                        buff.FIRST_CANON_FLOP = flop.canonIndex();
+                    }
+                    buff.FIRST_CANON_FLOP =
+                            Math.min(buff.FIRST_CANON_FLOP,
+                                     flop.canonIndex());
+                    buff.CANON_FLOP_COUNT++;
+                }
             }
-        });
+        );
     }
 
 
     //--------------------------------------------------------------------
-    private CanonHoleLookup() {}
+    private HoleDetailLookup() {}
 
 
     //--------------------------------------------------------------------

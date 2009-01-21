@@ -1,18 +1,16 @@
 package ao.bucket.index.river;
 
+import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
+import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.test.Gapper;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
-import static ao.util.data.Arr.swap;
-import ao.util.math.stats.FastIntCombiner;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
+import ao.util.misc.Traverser;
 import ao.util.persist.PersistentBytes;
+import org.apache.log4j.Logger;
 
-import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -23,6 +21,9 @@ import java.util.Set;
 public class RiverRawLookup
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(RiverRawLookup.class);
+
     private static final String DIR = "lookup/canon/";
     private static final String F_RAW_CASES =
                                     DIR + "river.cases.raw.cache";
@@ -47,16 +48,10 @@ public class RiverRawLookup
 
 
     //--------------------------------------------------------------------
-    public static RiverCaseSet caseSet(int canonTurn)
-    {
-        return RiverCaseSet.VALUES[ CASES[canonTurn] ];
-    }
-
-
-    //--------------------------------------------------------------------
     private static byte[] rawCases()
     {
-        System.out.println("RiverLookup.rawCases");
+        LOG.info("rawCases");
+
         byte[] rawCases = PersistentBytes.retrieve(F_RAW_CASES);
         if (rawCases == null)
         {
@@ -67,140 +62,42 @@ public class RiverRawLookup
     }
     private static byte[] computeRawCases()
     {
-        final Card    cards[]      = Card.values();
-        final Gapper  seenTurns    = new Gapper();
-        final byte    riverCases[] =
+        final int[]          prevTurn   = {-1};
+        final Set<RiverCase> caseBuffer =
+                EnumSet.noneOf( RiverCase.class );
+        final byte[]         riverCases =
                 new byte[ TurnLookup.CANONICAL_COUNT];
 
-        final BitSet seenHoles = new BitSet();
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
-                new CombinationVisitor2() {
-            private long prevTime = System.currentTimeMillis();
-            public void visit(int holeA, int holeB)
-            {
-                Hole hole = Hole.valueOf(
-                        cards[holeA], cards[holeB]);
-//                if (hole.suited()) return;
+        CardEnum.traverseRivers(
+                new UniqueFilter<CanonHole>(),
+                new UniqueFilter<Flop>(),
+                new UniqueFilter<Turn>(),
+                new PermisiveFilter<River>(),
+                new Traverser<River>() {
+            public void traverse(River river) {
+                if (prevTurn[0] != river.turn().canonIndex())
+                {
+                    if (prevTurn[0] != -1) {
+                        riverCases[ prevTurn[0] ] = (byte) RiverCaseSet
+                                .valueOf( caseBuffer ).ordinal();
+                    }
 
-                if (seenHoles.get( hole.canonIndex() )) return;
-                seenHoles.set( hole.canonIndex() );
+                    caseBuffer.clear();
+                    prevTurn[0] = river.turn().canonIndex();
+                }
+                caseBuffer.add( river.riverCase() );
+            }});
 
-                swap(cards, holeB, 51  );
-                swap(cards, holeA, 51-1);
-
-                iterateFlops(hole, cards, seenTurns, riverCases);
-                System.out.println(System.currentTimeMillis() - prevTime);
-                prevTime = System.currentTimeMillis();
-
-                swap(cards, holeA, 51-1);
-                swap(cards, holeB, 51  );
-            }
-        });
+        riverCases[ prevTurn[0] ] =
+                (byte) RiverCaseSet.valueOf( caseBuffer ).ordinal();
 
         return riverCases;
     }
 
-    private static void iterateFlops(
-            final Hole    hole,
-            final Card    cards[],
-            final Gapper  seenTurns,
-            final byte    riverCases[])
+    
+    //--------------------------------------------------------------------
+    public static RiverCaseSet caseSet(int canonTurn)
     {
-        final BitSet seenFlops = new BitSet();
-
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
-                .combine(new CombinationVisitor3() {
-            public void visit(int flopA, int flopB, int flopC)
-            {
-                Flop flop = hole.addFlop(
-                        cards[flopA], cards[flopB], cards[flopC]);
-
-                int flopIndex = flop.canonIndex();
-                if (seenFlops.get( flopIndex )) return;
-                seenFlops.set( flopIndex );
-
-                swap(cards, flopC, 51-2);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopA, 51-4);
-
-                iterateTurns(
-                        flop, cards, seenTurns, riverCases);
-
-                swap(cards, flopA, 51-4);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopC, 51-2);
-            }});
-
-        System.out.println(hole);
-    }
-
-    private static void iterateTurns(
-            Flop   flop,
-            Card   cards[],
-            Gapper seenTurns,
-            byte   riverCases[])
-    {
-        for (int turnCardIndex = 0;
-                 turnCardIndex < 51 - 4;
-                 turnCardIndex++)
-        {
-            Card turnCard = cards[ turnCardIndex ];
-            Turn turn     = flop.addTurn(turnCard);
-
-            int turnIndex = turn.canonIndex();
-            if (seenTurns.get( turnIndex )) continue;
-            seenTurns.set( turnIndex );
-
-            swap(cards, turnCardIndex, 51-5);
-            riverCases[ turnIndex ] = (byte)
-                    iterateRivers(turn, cards).ordinal();
-            swap(cards, turnCardIndex, 51-5);
-        }
-    }
-
-    private static RiverCaseSet iterateRivers(
-            Turn turn, Card cards[])
-    {
-        Set<RiverCase> caseBuffer = EnumSet.noneOf( RiverCase.class );
-//        EnumMap<RiverCase, int[]> caseBuffer =
-//                new EnumMap<RiverCase, int[]>( RiverCase.class );
-        for (int riverCardIndex = 0;
-                 riverCardIndex < 51 - 5;
-                 riverCardIndex++)
-        {
-            Card       riverCard = cards[ riverCardIndex ];
-            River river     = turn.addRiver(riverCard);
-            RiverCase  riverCase = river.riverCase();
-
-//            if (riverCase != RiverCase.T0) continue;
-//            System.out.println(
-//                    turn + "\t" +
-//                    riverCard + "\t" + riverCase);
-
-            caseBuffer.add( riverCase );
-//            int count[] = caseBuffer.get( riverCase );
-//            if (count == null)
-//            {
-//                count = new int[]{ 1 };
-//                caseBuffer.put( riverCase, count );
-//            }
-//            else
-//            {
-//                count[0]++;
-//            }
-        }
-
-//        for (Map.Entry<RiverCase, int[]> e : caseBuffer.entrySet())
-//        {
-//            if (e.getKey().size() != e.getValue()[0])
-//            {
-//                System.out.println(
-//                        "MISMATCH: " + turn + "\t" +
-//                        e.getKey() + "\t" + e.getValue()[0]);
-//            }
-//        }
-//
-        return RiverCaseSet.valueOf( caseBuffer );
-//        return RiverCaseSet.valueOf(caseBuffer.keySet());
+        return RiverCaseSet.VALUES[ CASES[canonTurn] ];
     }
 }
