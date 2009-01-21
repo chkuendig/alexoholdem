@@ -1,6 +1,6 @@
 package ao.bucket.index.flop;
 
-import static ao.util.stats.Combo.colex;
+import static ao.util.math.stats.Combo.colex;
 
 /**
  * Date: Aug 21, 2008

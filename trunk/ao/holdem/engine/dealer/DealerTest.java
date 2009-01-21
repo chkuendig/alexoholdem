@@ -7,8 +7,8 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.replay.StackedReplay;
-import ao.util.stats.Combo;
-import ao.util.stats.Permuter;
+import ao.util.math.stats.Combo;
+import ao.util.math.stats.Permuter;
 
 import java.util.Arrays;
 import java.util.Collection;

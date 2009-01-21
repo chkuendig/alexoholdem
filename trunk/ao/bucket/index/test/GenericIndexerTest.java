@@ -6,9 +6,9 @@ import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
-import ao.util.stats.FastIntCombiner;
-import ao.util.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.stats.FastIntCombiner.CombinationVisitor3;
+import ao.util.math.stats.FastIntCombiner;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 
 /**
  * Date: Aug 21, 2008

@@ -8,10 +8,10 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.Odds;
 import static ao.util.data.Arr.swap;
+import ao.util.math.stats.FastIntCombiner;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 import ao.util.misc.Traverser;
-import ao.util.stats.FastIntCombiner;
-import ao.util.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.stats.FastIntCombiner.CombinationVisitor3;
 import org.apache.log4j.Logger;
 
 /**

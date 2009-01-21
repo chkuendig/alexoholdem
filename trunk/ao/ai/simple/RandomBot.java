@@ -8,7 +8,7 @@ import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 
 import java.util.Map;
 

@@ -4,7 +4,7 @@ import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.KuhnCard;
 import ao.simple.kuhn.KuhnPlayer;
 import ao.simple.kuhn.state.KuhnState;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 
 /**
  *

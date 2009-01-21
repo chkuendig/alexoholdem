@@ -5,7 +5,7 @@ import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnRules;
 import ao.simple.kuhn.state.StateFlow;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 import ao.util.text.Txt;
 
 import java.util.EnumMap;

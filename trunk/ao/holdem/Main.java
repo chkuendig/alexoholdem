@@ -12,9 +12,9 @@ import ao.odds.eval.HandRank;
 import ao.odds.eval.eval7.Eval7FastLookup;
 import ao.odds.eval.eval7.Eval7Faster;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.util.rand.Rand;
-import ao.util.stats.Combiner;
-import ao.util.text.Arr;
+import ao.util.data.Arr;
+import ao.util.math.rand.Rand;
+import ao.util.math.stats.Combiner;
 
 import java.io.IOException;
 import java.io.PrintStream;

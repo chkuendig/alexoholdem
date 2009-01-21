@@ -5,7 +5,7 @@ import ao.holdem.model.Round;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.replay.Replay;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 
 import java.util.ArrayList;
 import java.util.Arrays;

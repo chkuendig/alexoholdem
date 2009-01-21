@@ -3,7 +3,7 @@ package ao.bucket.index.flop;
 import ao.bucket.index.card.CanonSuit;
 import static ao.bucket.index.flop.FlopUtil.offset;
 import static ao.bucket.index.flop.FlopUtil.sortColex;
-import static ao.util.stats.Combo.colex;
+import static ao.util.math.stats.Combo.colex;
 
 /**
  * Date: Aug 14, 2008

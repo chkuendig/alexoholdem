@@ -2,7 +2,6 @@ package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.card.Card;
-import ao.odds.agglom.Odds;
 
 /**
  * Date: Jan 9, 2009
@@ -10,6 +9,33 @@ import ao.odds.agglom.Odds;
  */
 public class CanonTurnDetail implements CanonDetail
 {
+    //--------------------------------------------------------------------
+    private final int   CANON_INDEX;
+    private final Card  EXAMPLE;
+    private final byte  REPRESENTS;
+    private final float STRENGTH;
+    private final int   FIRST_CANON_RIVER;
+    private final byte  CANON_RIVER_COUNT;
+
+
+    //--------------------------------------------------------------------
+    public CanonTurnDetail(
+            int   canonIndex,
+            Card  example,
+            byte  represents,
+            float strength,
+            int   firstCanonRiver,
+            byte  canonRiverCount)
+    {
+        CANON_INDEX       = canonIndex;
+        EXAMPLE           = example;
+        REPRESENTS        = represents;
+        STRENGTH          = strength;
+        FIRST_CANON_RIVER = firstCanonRiver;
+        CANON_RIVER_COUNT = canonRiverCount;
+    }
+
+
     //--------------------------------------------------------------------
     public long canonIndex()
     {
@@ -32,11 +58,6 @@ public class CanonTurnDetail implements CanonDetail
 
 
     //--------------------------------------------------------------------
-    public Odds headsUpOdds()
-    {
-        return null;
-    }
-
     public double strengthVsRandom()
     {
         return 0;

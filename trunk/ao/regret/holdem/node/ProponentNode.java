@@ -4,7 +4,7 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 import ao.util.text.Txt;
 
 import java.util.Arrays;

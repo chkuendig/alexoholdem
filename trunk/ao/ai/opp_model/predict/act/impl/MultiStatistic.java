@@ -1,8 +1,8 @@
 package ao.ai.opp_model.predict.act.impl;
 
-import ao.ai.supervised.decision.input.raw.example.Context;
-import ao.ai.supervised.decision.input.raw.example.ContextImpl;
 import ao.ai.opp_model.predict.act.Statistic;
+import ao.supervised.decision.input.raw.example.Context;
+import ao.supervised.decision.input.raw.example.ContextImpl;
 
 /**
  *
