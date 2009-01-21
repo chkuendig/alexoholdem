@@ -1,6 +1,6 @@
 package ao.bucket.index.test;
 
-import ao.bucket.index.river.RiverUtil;
+import ao.util.math.Calc;
 
 import java.util.BitSet;
 
@@ -73,7 +73,7 @@ public class Gapper
 
     public long length()
     {
-        return RiverUtil.unsigned(
+        return Calc.unsigned(
                 indexes .length() +
                 indexesB.length());
     }

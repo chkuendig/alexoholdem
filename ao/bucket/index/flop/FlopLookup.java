@@ -3,8 +3,8 @@ package ao.bucket.index.flop;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import static ao.util.data.Arr.swap;
+import ao.util.math.stats.Combiner;
 import ao.util.persist.PersistentInts;
-import ao.util.stats.Combiner;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;

@@ -9,9 +9,9 @@ import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddHist;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import static ao.util.data.Arr.swap;
-import ao.util.stats.FastIntCombiner;
-import ao.util.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.stats.FastIntCombiner.CombinationVisitor3;
+import ao.util.math.stats.FastIntCombiner;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 
 /**
  * Date: Sep 30, 2008

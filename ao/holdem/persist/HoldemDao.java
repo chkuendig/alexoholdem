@@ -2,7 +2,7 @@ package ao.holdem.persist;
 
 import ao.holdem.model.Avatar;
 import ao.holdem.model.replay.Replay;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.TransactionWorker;

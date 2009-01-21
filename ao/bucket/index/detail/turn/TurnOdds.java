@@ -7,6 +7,7 @@ import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dir;
 import ao.util.misc.Traverser;
+import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
@@ -22,7 +23,37 @@ public class TurnOdds
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        System.out.println( lookup(0) );
+        long minWins = Integer.MAX_VALUE;
+        long maxWins = Integer.MIN_VALUE;
+
+        long minLose = Integer.MAX_VALUE;
+        long maxLose = Integer.MIN_VALUE;
+
+        long minTies = Integer.MAX_VALUE;
+        long maxTies = Integer.MIN_VALUE;
+
+        for (int i = 0; i < TurnLookup.CANONICAL_COUNT; i++)
+        {
+            Odds odds = lookup(i);
+
+            minWins = Math.min(minWins, odds.winOdds());
+            maxWins = Math.max(maxWins, odds.winOdds());
+
+            minLose = Math.min(minLose, odds.loseOdds());
+            maxLose = Math.max(maxLose, odds.loseOdds());
+
+            minTies = Math.min(minTies, odds.splitOdds());
+            maxTies = Math.max(maxTies, odds.splitOdds());
+        }
+
+        System.out.println("minWins = " + minWins);
+        System.out.println("maxWins = " + maxWins);
+
+        System.out.println("minLose = " + minLose);
+        System.out.println("maxLose = " + maxLose);
+
+        System.out.println("minTies = " + minTies);
+        System.out.println("maxTies = " + maxTies);
     }
 
 
@@ -30,15 +61,16 @@ public class TurnOdds
     private static final Logger LOG =
             Logger.getLogger(TurnOdds.class);
 
+    private static final char SENTINAL = Character.MAX_VALUE;
 
     //--------------------------------------------------------------------
     private static final File DIR =
             Dir.get("lookup/canon/detail/turn_odds/");
 
     private static final File FLAG_FILE  = new File(DIR,   "flag.int");
-    private static final File WIN_FILE   = new File(DIR,   "wins.int");
-    private static final File LOSE_FILE  = new File(DIR, "losses.int");
-    private static final File SPLIT_FILE = new File(DIR, "splits.int");
+    private static final File WIN_FILE   = new File(DIR,   "wins.char");
+    private static final File LOSE_FILE  = new File(DIR, "losses.char");
+    private static final File SPLIT_FILE = new File(DIR, "splits.char");
 
 
     //--------------------------------------------------------------------
@@ -46,17 +78,17 @@ public class TurnOdds
 
 
     //--------------------------------------------------------------------
-    private static final int[] WIN;
-    private static final int[] LOSE;
-    private static final int[] SPLIT;
+    private static final char[] WIN;
+    private static final char[] LOSE;
+    private static final char[] SPLIT;
 
 
     //--------------------------------------------------------------------
-    static //void retrieveOrComputeOdds()
+    static
     {
         LOG.debug("initializing TurnOdds");
 
-        int[] wins = PersistentInts.retrieve(WIN_FILE);
+        char[] wins = PersistentChars.retrieve(WIN_FILE);
         if (wins == null)
         {
             LOG.debug("starting from scratch");
@@ -68,8 +100,8 @@ public class TurnOdds
         else
         {
             WIN   = wins;
-            LOSE  = PersistentInts.retrieve(LOSE_FILE);
-            SPLIT = PersistentInts.retrieve(SPLIT_FILE);
+            LOSE  = PersistentChars.retrieve(LOSE_FILE);
+            SPLIT = PersistentChars.retrieve(SPLIT_FILE);
         }
 
         if (! getIsPreComputed())
@@ -82,10 +114,10 @@ public class TurnOdds
         }
     }
 
-    private static int[] oddsComponent()
+    private static char[] oddsComponent()
     {
-        int[] component = new int[ TurnLookup.CANONICAL_COUNT ];
-        Arrays.fill( component, -1 );
+        char[] component = new char[ TurnLookup.CANONICAL_COUNT ];
+        Arrays.fill( component, SENTINAL );
         return component;
     }
 
@@ -102,7 +134,7 @@ public class TurnOdds
         new CanonTraverser().traverseTurns(
                 null, new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                if (WIN[ turn.canonIndex() ] != -1) {
+                if (WIN[ turn.canonIndex() ] != SENTINAL) {
                     skinCount[0]++;
                     return;
                 } else if (skinCount[0] != 0) {
@@ -113,16 +145,13 @@ public class TurnOdds
                 Odds odds = PreciseHeadsUpOdds.INSTANCE.compute(
                         turn.hole(), turn.community());
 
-                int wins   = asInt(odds.winOdds());
-                int losses = asInt(odds.loseOdds());
-                int splits = asInt(odds.splitOdds());
+                char wins   = (char) odds.winOdds();
+                char losses = (char) odds.loseOdds();
+                char splits = (char) odds.splitOdds();
 
                 WIN  [ turn.canonIndex() ] = wins;
                 LOSE [ turn.canonIndex() ] = losses;
                 SPLIT[ turn.canonIndex() ] = splits;
-
-                detectOverflow(turn.canonIndex(), odds,
-                               wins, losses, splits);
 
                 checkpoint( calcCount[0]++, milestoneStart );
             }
@@ -145,35 +174,10 @@ public class TurnOdds
                     (System.currentTimeMillis() - milestoneStart[0]));
         }
 
-        if ((count + 1) % 100000 == 0) {
-            long start = System.currentTimeMillis();
-            flush();
-            System.out.println(
-                "\nflushed checkpoint, took " +
-                  (System.currentTimeMillis() - start));
-//            flushAsynch();
-        }
+        if ((count + 1) % 100000 == 0) flush();
 
         if (milesoneReached)
             milestoneStart[0] = System.currentTimeMillis();
-    }
-
-    private static int asInt(long odds)
-    {
-        return (int) Math.min(odds, Integer.MAX_VALUE);
-    }
-
-    private static void detectOverflow(
-            int canonIndex, Odds odds,
-            int wins, int losses, int splits)
-    {
-        if (wins   != odds.winOdds()  ||
-            losses != odds.loseOdds() ||
-            splits != odds.splitOdds()) {
-
-            LOG.error("odds overflow for turn" +
-                        canonIndex);
-        }
     }
 
 
@@ -199,31 +203,15 @@ public class TurnOdds
     
 
     //--------------------------------------------------------------------
-//    private static volatile boolean isSynching = false;
-//    private static synchronized void flushAsynch()
-//    {
-//        System.out.println("\nattempting flushAsynch");
-//        if (isSynching) return;
-//
-//        System.out.println("\nproceeding with flushAsynch");
-//        isSynching = true;
-//        new Thread(new Runnable() {
-//            public void run() {
-//                System.out.println("\nflushing asynchronously");
-//                long start = System.currentTimeMillis();
-//                flush();
-//                System.out.println(
-//                    "\nflushed checkpoint, took " +
-//                      (System.currentTimeMillis() - start));
-//
-//                isSynching = false;
-//            }
-//        }).start();
-//    }
     private synchronized static void flush()
     {
-        PersistentInts.persist(WIN,   WIN_FILE);
-        PersistentInts.persist(LOSE,  LOSE_FILE);
-        PersistentInts.persist(SPLIT, SPLIT_FILE);
+        long start = System.currentTimeMillis();
+
+        PersistentChars.persist(WIN,   WIN_FILE);
+        PersistentChars.persist(LOSE,  LOSE_FILE);
+        PersistentChars.persist(SPLIT, SPLIT_FILE);
+
+        System.out.println("\nflushed checkpoint, took " +
+                            (System.currentTimeMillis() - start));
     }
 }

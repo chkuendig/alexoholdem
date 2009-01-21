@@ -3,8 +3,8 @@ package ao.odds.eval.eval7;
 
 import ao.holdem.model.card.Card;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.util.stats.Combiner;
-import ao.util.stats.Combo;
+import ao.util.math.stats.Combiner;
+import ao.util.math.stats.Combo;
 
 import java.io.*;
 import java.util.Arrays;

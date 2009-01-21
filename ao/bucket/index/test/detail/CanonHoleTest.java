@@ -9,8 +9,8 @@ import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.AutovivifiedList;
-import ao.util.stats.FastIntCombiner;
-import ao.util.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.math.stats.FastIntCombiner;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
 
 import java.util.List;
 

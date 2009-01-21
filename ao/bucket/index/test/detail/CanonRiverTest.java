@@ -9,9 +9,9 @@ import ao.holdem.model.card.Hole;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
 import ao.util.data.AutovivifiedList;
-import ao.util.stats.FastIntCombiner;
-import ao.util.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.stats.FastIntCombiner.CombinationVisitor3;
+import ao.util.math.stats.FastIntCombiner;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
+import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,8 +1,8 @@
 package ao.ai.opp_model.mix;
 
-import ao.ai.supervised.decision.classification.RealHistogram;
 import ao.holdem.model.act.AbstractAction;
-import ao.util.rand.Rand;
+import ao.supervised.decision.classification.RealHistogram;
+import ao.util.math.rand.Rand;
 
 /**
  * Randomized Mixed Action.

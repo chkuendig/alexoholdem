@@ -1,6 +1,7 @@
 package ao.bucket.index.river;
 
 import ao.bucket.index.turn.TurnLookup;
+import ao.util.math.Calc;
 
 /**
  * Date: Sep 16, 2008
@@ -25,7 +26,7 @@ public class RiverLookup
     public static long offset(int canonTurn)
     {
         int  index = canonTurn / CHUNK;
-        long base  = RiverUtil.unsigned(OFFSETS[ index ]);
+        long base  = Calc.unsigned(OFFSETS[ index ]);
 
         int  addend = 0;
         int  delta  = canonTurn % CHUNK;

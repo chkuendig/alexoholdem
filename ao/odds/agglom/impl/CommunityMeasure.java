@@ -4,7 +4,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.util.stats.FastCombiner;
+import ao.util.math.stats.FastCombiner;
 
 /**
  * Estimates how "hot" the community cards are,

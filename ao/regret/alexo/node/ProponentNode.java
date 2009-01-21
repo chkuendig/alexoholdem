@@ -4,7 +4,7 @@ import ao.regret.InfoNode;
 import ao.regret.alexo.AlexoBucket;
 import ao.simple.alexo.AlexoAction;
 import ao.simple.alexo.state.AlexoState;
-import ao.util.rand.Rand;
+import ao.util.math.rand.Rand;
 import ao.util.text.Txt;
 
 import java.util.EnumMap;
