@@ -2,8 +2,8 @@ package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
-import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
+import ao.bucket.index.enumeration.PermisiveFilter;
+import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.hole.HoleLookup;
@@ -11,6 +11,8 @@ import ao.util.misc.Filter;
 import ao.util.misc.Filters;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
+
+import java.util.Arrays;
 
 /**
  * Date: Jan 9, 2009
@@ -116,14 +118,8 @@ public class HoleDetailLookup
             char fromCanonHole,
             char canonHoleCount)
     {
-        CanonHoleDetail[] details =
-                new CanonHoleDetail[ canonHoleCount ];
-        
-        for (char i = 0; i < canonHoleCount; i++)
-        {
-            details[ i ] = lookup( (char)(fromCanonHole + i) );
-        }
-
-        return details;
+        return Arrays.copyOfRange(DETAILS,
+                                  fromCanonHole,
+                                  fromCanonHole + canonHoleCount);
     }
 }

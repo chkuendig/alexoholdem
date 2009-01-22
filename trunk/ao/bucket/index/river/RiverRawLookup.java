@@ -1,8 +1,8 @@
 package ao.bucket.index.river;
 
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
-import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
+import ao.bucket.index.enumeration.PermisiveFilter;
+import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;

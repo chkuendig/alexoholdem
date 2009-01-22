@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
+import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.CanonHole;
@@ -9,6 +9,8 @@ import ao.bucket.index.turn.Turn;
 import ao.odds.agglom.Odds;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
+
+import java.util.Arrays;
 
 /**
  * Date: Jan 9, 2009
@@ -146,12 +148,8 @@ public class FlopDetailLookup
     public static CanonFlopDetail[] lookup(
             int canonFlopFrom, int canonFlopCount)
     {
-        CanonFlopDetail[] details =
-                new CanonFlopDetail[ canonFlopCount ];
-        for (int i = 0; i < canonFlopCount; i++)
-        {
-            details[ i ] = lookup( canonFlopFrom + i );
-        }
-        return details;
+        return Arrays.copyOfRange(DETAILS,
+                                  canonFlopFrom,
+                                  canonFlopFrom + canonFlopCount);
     }
 }
