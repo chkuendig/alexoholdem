@@ -1,6 +1,7 @@
 package ao.bucket.index.detail;
 
 import ao.bucket.index.detail.flop.CanonFlopDetail;
+import ao.bucket.index.detail.turn.CanonTurnDetail;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.HoleLookup;
 
@@ -18,7 +19,8 @@ public class TestCanonDetails
     public static void main(String[] args)
     {
 //        testHoleDetails();
-        testFlopDetails();
+//        testFlopDetails();
+        testTurnDetails();
     }
 
 
@@ -32,6 +34,7 @@ public class TestCanonDetails
             System.out.println( DetailLookup.lookupHole(canonHole) );
         }
     }
+
 
     //--------------------------------------------------------------------
     public static void testFlopDetails()
@@ -72,6 +75,47 @@ public class TestCanonDetails
         }
 
         System.out.println("sentinalCount  = " + sentinalCount);
+
+        System.out.println("representTotal = " + representTotal);
+        System.out.println("representMax   = " + representMax);
+        System.out.println("representMin   = " + representMin);
+
+        System.out.println("turnCountTotal = " + turnCountTotal);
+        System.out.println("turnCountMax   = " + turnCountMax);
+        System.out.println("turnCountMin   = " + turnCountMin);
+    }
+
+
+    //--------------------------------------------------------------------
+    public static void testTurnDetails()
+    {
+        long representTotal = 0;
+        long representMax   = Long.MIN_VALUE;
+        long representMin   = Long.MAX_VALUE;
+
+        long turnCountTotal = 0;
+        long turnCountMax   = Long.MIN_VALUE;
+        long turnCountMin   = Long.MAX_VALUE;
+
+        for (int canonTurn = 0;
+                 canonTurn < FlopLookup.CANONICAL_COUNT;
+                 canonTurn++)
+        {
+            CanonTurnDetail details =
+                    DetailLookup.lookupTurn( canonTurn );
+
+            representTotal += details.represents();
+            representMax    = Math.max(representMax,
+                                       details.represents());
+            representMin    = Math.min(representMin,
+                                       details.represents());
+
+            turnCountTotal += details.canonRiverCount();
+            turnCountMax    = Math.max(turnCountMax,
+                                       details.canonRiverCount());
+            turnCountMin    = Math.min(turnCountMin,
+                                       details.canonRiverCount());
+        }
 
         System.out.println("representTotal = " + representTotal);
         System.out.println("representMax   = " + representMax);

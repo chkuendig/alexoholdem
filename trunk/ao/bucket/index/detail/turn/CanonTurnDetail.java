@@ -3,8 +3,6 @@ package ao.bucket.index.detail.turn;
 import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.card.Card;
 import ao.util.math.Calc;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * Date: Jan 9, 2009
@@ -79,28 +77,28 @@ public class CanonTurnDetail implements CanonDetail
     }
 
 
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding
-    {
-        public CanonTurnDetail read(int canonIndex, TupleInput in) {
-            return new CanonTurnDetail(
-                    canonIndex,
-                    Card.BINDING.entryToObject( in ),
-                    in.readByte(),
-                    in.readFloat(),
-                    in.readInt(),
-                    in.readByte());
-        }
-
-        public void write(CanonTurnDetail obj, TupleOutput out) {
-            Card.BINDING.objectToEntry( obj.EXAMPLE, out );
-            out.writeByte ( obj.REPRESENTS       );
-            out.writeFloat( obj.STRENGTH         );
-            out.writeInt  ( obj.FIRST_CANON_RIVER);
-            out.writeByte ( obj.CANON_RIVER_COUNT);
-        }
-    }
+//    //--------------------------------------------------------------------
+//    public static final Binding BINDING = new Binding();
+//    public static class Binding
+//    {
+//        public CanonTurnDetail read(int canonIndex, TupleInput in) {
+//            return new CanonTurnDetail(
+//                    canonIndex,
+//                    Card.BINDING.entryToObject( in ),
+//                    in.readByte(),
+//                    in.readFloat(),
+//                    in.readInt(),
+//                    in.readByte());
+//        }
+//
+//        public void write(CanonTurnDetail obj, TupleOutput out) {
+//            Card.BINDING.objectToEntry( obj.EXAMPLE, out );
+//            out.writeByte ( obj.REPRESENTS       );
+//            out.writeFloat( obj.STRENGTH         );
+//            out.writeInt  ( obj.FIRST_CANON_RIVER);
+//            out.writeByte ( obj.CANON_RIVER_COUNT);
+//        }
+//    }
 
 
     //--------------------------------------------------------------------

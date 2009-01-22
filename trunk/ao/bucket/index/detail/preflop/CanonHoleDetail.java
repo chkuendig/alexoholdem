@@ -88,7 +88,6 @@ public class CanonHoleDetail implements CanonDetail
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
-
     public static class Binding extends GenericBinding<CanonHoleDetail> {
         public CanonHoleDetail read(TupleInput in) {
             return new CanonHoleDetail(

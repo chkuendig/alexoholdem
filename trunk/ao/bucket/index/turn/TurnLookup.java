@@ -163,7 +163,8 @@ public class TurnLookup
     //--------------------------------------------------------------------
     private static int[][] encodeOffsets(TurnCase caseSets[][])
     {
-        System.out.println("TurnLookup.encodeOffsets");
+        LOG.info("encodeOffsets");
+
         int offset           = 0;
         int codedOffsets[][] = new int[ caseSets.length   ]
                                       [ Rank.VALUES.length ];
@@ -184,7 +185,7 @@ public class TurnLookup
                 }
             }
         }
-        System.out.println("TurnLookup.encodeOffsets end " + offset);
+
         return codedOffsets;
     }
 
