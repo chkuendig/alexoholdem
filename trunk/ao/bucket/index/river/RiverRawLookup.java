@@ -69,7 +69,7 @@ public class RiverRawLookup
                 new byte[ TurnLookup.CANONICAL_COUNT];
 
         CardEnum.traverseRivers(
-                new UniqueFilter<CanonHole>(),
+                new UniqueFilter<CanonHole>("%1$s"),
                 new UniqueFilter<Flop>(),
                 new UniqueFilter<Turn>(),
                 new PermisiveFilter<River>(),

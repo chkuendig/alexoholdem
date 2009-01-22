@@ -170,12 +170,22 @@ public class CardEnum
     public static class UniqueFilter<T extends CanonIndexed>
             implements Filter<T>
     {
+        private final String FORMAT;
         private final Gapper GAPPER = new Gapper();
+
+        public UniqueFilter() {  this(null);  }
+        public UniqueFilter(String format) {
+            FORMAT = format;
+        }
 
         public boolean accept(T indexed)
         {
             long index = indexed.packedCanonIndex();
             if (GAPPER.get( index )) return false;
+
+            if (FORMAT != null) {
+                System.out.println(String.format(FORMAT, indexed));
+            }
 
             GAPPER.set( index );
             return true;

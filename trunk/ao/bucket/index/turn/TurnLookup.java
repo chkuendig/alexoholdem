@@ -2,22 +2,20 @@ package ao.bucket.index.turn;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
+import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.CardEnum.PermisiveFilter;
+import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
-import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
-import ao.holdem.model.card.Suit;
-import static ao.util.data.Arr.swap;
-import ao.util.math.stats.FastIntCombiner;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
-import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
+import ao.util.misc.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
-import java.util.BitSet;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -111,114 +109,54 @@ public class TurnLookup
     private static TurnCase[][] calculateCases()
     {
         final TurnCase caseSets[][] =
-                new TurnCase[ FlopLookup.CANONICAL_COUNT]
-                            [ /*  Rank.VALUES.length   */ ];
+                new TurnCase[ FlopLookup.CANONICAL_COUNT ]
+                            [   /*Rank.VALUES.length*/   ];
 
-//        CardEnum.traverseTurns(
-//                new UniqueFilter<CanonHole>(),
-//                new UniqueFilter<Flop>(),
-//
-//        );
+        final int[]                prevFlop  = {-1};
+        final List<Set<CanonSuit>> turnCases =
+                new ArrayList<Set<CanonSuit>>( Rank.VALUES.length ){{
+                    //noinspection ForLoopReplaceableByForEach
+                    for (int i = 0; i < Rank.VALUES.length; i++) {
+                        add( EnumSet.noneOf( CanonSuit.class ) );
+                    }
+                }};
 
-        final Card   cards[]   = Card.values();
-        final BitSet seenHoles = new BitSet();
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length).combine(
-                new CombinationVisitor2() {
-            public void visit(int holeA, int holeB)
-            {
-                CanonHole hole = HoleLookup.lookup(
-                        cards[holeA], cards[holeB]);
+        CardEnum.traverseTurns(
+                new UniqueFilter<CanonHole>("%1$s"),
+                new UniqueFilter<Flop>(),
+                new PermisiveFilter<Turn>(),
+                new Traverser<Turn>() {
+            public void traverse(Turn t) {
+                if (prevFlop[0] != t.flop().canonIndex())
+                {
+                    if (prevFlop[0] != -1) {
+                        caseSets[ prevFlop[0] ] = drainBuffers(turnCases);
+                    }
 
-                if (seenHoles.get( hole.canonIndex() )) return;
-                seenHoles.set( hole.canonIndex() );
-                System.out.println("calculating\t" + hole);
-
-                swap(cards, holeB, 51  );
-                swap(cards, holeA, 51-1);
-
-                iterateFlops(hole, cards, caseSets);
-
-                swap(cards, holeA, 51-1);
-                swap(cards, holeB, 51  );
-            }
-        });
+                    for (Set<CanonSuit> buff : turnCases) buff.clear();
+                    prevFlop[0] = t.flop().canonIndex();
+                }
+                turnCases.get(t.turnCard().rank().ordinal())
+                         .add(t.turnSuit());
+            }});
+        caseSets[ prevFlop[0] ] = drainBuffers(turnCases);
 
         return caseSets;
     }
 
-    private static void iterateFlops(
-            final CanonHole hole,
-            final Card      cards[],
-            final TurnCase  caseSets[][])
+    private static TurnCase[] drainBuffers(
+            List<Set<CanonSuit>> turnCases)
     {
-        final BitSet seenFlops = new BitSet();
-
-        new FastIntCombiner(Card.INDEXES, Card.INDEXES.length - 2)
-                .combine(new CombinationVisitor3() {
-            public void visit(int flopA, int flopB, int flopC)
-            {
-                Flop flop = hole.addFlop(
-                        cards[flopA], cards[flopB], cards[flopC]);
-                int flopIndex = flop.canonIndex();
-                if (seenFlops.get( flopIndex )) return;
-                seenFlops.set( flopIndex );
-
-//                Card flopCards[] =
-//                        {cards[flopA], cards[flopB], cards[flopC]};
-
-                swap(cards, flopC, 51-2);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopA, 51-4);
-
-                caseSets[ flopIndex ] =
-                        iterateTurns(flop, cards);
-
-                swap(cards, flopA, 51-4);
-                swap(cards, flopB, 51-3);
-                swap(cards, flopC, 51-2);
-            }});
-    }
-
-    private static TurnCase[] iterateTurns(
-            Flop flop,
-            Card cards[])
-    {
-        TurnCase turnCases[] =
+        TurnCase asArray[] =
                 new TurnCase[ Rank.VALUES.length ];
-
-        for (Rank rank : Rank.VALUES)
+        for (int rank = 0; rank < turnCases.size(); rank++)
         {
-            Set<CanonSuit> buffer =
-                    EnumSet.noneOf( CanonSuit.class );
-
-            suits:
-            for (Suit suit : Suit.VALUES)
-            {
-                Card turnCard = Card.valueOf(rank, suit);
-                for (int i = 47; i < 52; i++)
-                {
-                    if (cards[ i ] == turnCard)
-                    {
-                        continue suits;
-                    }
-                }
-
-                Turn turn = flop.addTurn(turnCard);
-                buffer.add( turn.turnSuit() );
-
-//                System.out.println(
-//                        cards[49] + "," + cards[48 ]+ "," + cards[47] +
-//                        "|" + turnCard + "\t" +
-//                        turn.turnCase());
-            }
-
-            if (! buffer.isEmpty())
-            {
-                turnCases[ rank.ordinal() ] =
-                    TurnCase.valueOf(buffer);
+            Set<CanonSuit> buff = turnCases.get(rank);
+            if (!buff.isEmpty()) {
+                asArray[rank] = TurnCase.valueOf(buff);
             }
         }
-        return turnCases;
+        return asArray;
     }
 
 

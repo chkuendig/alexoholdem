@@ -104,4 +104,25 @@ public class CanonHole implements CanonIndexed
                ? new CanonCard[] {refinedA, refinedB}
                : new CanonCard[] {refinedB, refinedA};
     }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return HOLE.toString();
+    }
+
+    @Override public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CanonHole canonHole = (CanonHole) o;
+        return CANON_INDEX == canonHole.CANON_INDEX;
+    }
+
+    @Override public int hashCode()
+    {
+        return (int) CANON_INDEX;
+    }
 }
