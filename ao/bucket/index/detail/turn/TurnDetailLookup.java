@@ -7,10 +7,11 @@ import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
+import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
+import java.io.File;
 
 /**
  * Date: Jan 9, 2009
@@ -19,87 +20,75 @@ import java.util.Arrays;
 public class TurnDetailLookup
 {
     //--------------------------------------------------------------------
-    private static final Logger LOG  =
+    private static final Logger LOG =
             Logger.getLogger(TurnDetailLookup.class);
+
+    private static final File   DIR = Dir.get("lookup/canon/detail/");
 
     private TurnDetailLookup() {}
 
 
     //--------------------------------------------------------------------
-    private static final CanonTurnDetail[] DETAILS =
+    private static final TurnDetailFlyweight DETAILS =
             retrieveOrComputeDetails();
 
 
     //--------------------------------------------------------------------
-    private static CanonTurnDetail[] retrieveOrComputeDetails()
+    private static TurnDetailFlyweight retrieveOrComputeDetails()
     {
         LOG.debug("retrieveOrComputeDetails");
 
-        CanonTurnDetail[] details =
-                TurnDetailPersist.retrieveDetails();
+        TurnDetailFlyweight details =
+                TurnDetailFlyweight.retrieve( DIR );
         if (details == null)
         {
             details = computeDetails();
-            TurnDetailPersist.persistDetails(details);
+            TurnDetailFlyweight.persist(details, DIR);
         }
         return details;
     }
 
 
     //--------------------------------------------------------------------
-    private static CanonTurnDetail[] computeDetails()
+    private static TurnDetailFlyweight computeDetails()
     {
         LOG.debug("computing details");
 
-        final TurnDetailBuffer[] buffers =
-                new TurnDetailBuffer[
-                        TurnLookup.CANONICAL_COUNT ];
-        Arrays.fill(buffers, TurnDetailBuffer.SENTINAL);
-
+        final TurnDetailFlyweight fw = new TurnDetailFlyweight();
         CardEnum.traverseTurns(
                 new PermisiveFilter<CanonHole>("%1$s"),
                 new PermisiveFilter<Flop>(),
                 new PermisiveFilter<Turn>(),
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                int              index = turn.canonIndex();
-                TurnDetailBuffer buff  = buffers[ index ];
-                if (buff == TurnDetailBuffer.SENTINAL)
-                {
-                    buff = new TurnDetailBuffer(
-                                  turn, TurnOdds.lookup(index));
-                    buffers[ index ] = buff;
+                int index = turn.canonIndex();
+                if (! fw.isInitiated( index )) {
+                    fw.init(turn, TurnOdds.lookup(index));
                 }
-                buff.incrementTurnRepresentation();
+                fw.incrementRepresentation(index);
             }});
-
-        return unbufferAndComputeRiverInfo( buffers );
+        unbufferAndComputeRiverInfo( fw );
+        return fw;
     }
 
 
     //--------------------------------------------------------------------
-    private static CanonTurnDetail[] unbufferAndComputeRiverInfo(
-            TurnDetailBuffer[] buffers)
+    private static void unbufferAndComputeRiverInfo(
+            TurnDetailFlyweight fw)
     {
         LOG.debug("computing river info");
 
         long   riverOffset = 0;
         byte[] riverCounts = riverCounts();
 
-        CanonTurnDetail[] details =
-                new CanonTurnDetail[ TurnLookup.CANONICAL_COUNT ];
-        for (int i = 0; i < buffers.length; i++)
+        for (int i = 0; i < TurnLookup.CANONICAL_COUNT; i++)
         {
             if ( i      %  1000 == 0) System.out.print(".");
             if ((i + 1) % 50000 == 0) System.out.println();
 
-            buffers[ i ].setRiverInfo(riverOffset, riverCounts[ i ]);
-            details[ i ] = buffers[ i ].toDetail();
-
+            fw.setRiverInfo(i, riverOffset, riverCounts[ i ]);
             riverOffset += riverCounts[ i ];
         }
-        System.out.println();
-        return details;
     }
 
     public static byte[] riverCounts()
@@ -119,14 +108,17 @@ public class TurnDetailLookup
     //--------------------------------------------------------------------
     public static CanonTurnDetail lookup(int canonTurn)
     {
-        return DETAILS[canonTurn];
+        return DETAILS.get(canonTurn);
     }
 
     public static CanonTurnDetail[] lookup(
             int fromCanonTurn, int canonTurnCount)
     {
-        return Arrays.copyOfRange(DETAILS,
-                                  fromCanonTurn,
-                                  fromCanonTurn + canonTurnCount);
+        CanonTurnDetail[] details =
+                new CanonTurnDetail[ canonTurnCount ];
+        for (int i = 0; i < canonTurnCount; i++) {
+            details[ fromCanonTurn + i ] = lookup(i);
+        }
+        return details;
     }
 }
