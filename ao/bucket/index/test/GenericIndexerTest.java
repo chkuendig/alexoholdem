@@ -2,7 +2,6 @@ package ao.bucket.index.test;
 
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.enumeration.CardEnum.UniqueFilter;
-import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.util.misc.Traverser;
 
@@ -23,13 +22,7 @@ public class GenericIndexerTest
     @SuppressWarnings("unchecked")
     public static void test()
     {
-        final UniqueFilter  holeFilter = new UniqueFilter<CanonHole>(){
-            public boolean accept(CanonHole hole) {
-                boolean accept = super.accept(hole);
-                if (accept) System.out.println(hole.reify());
-                return accept;
-            }
-        };
+        final UniqueFilter  holeFilter = new UniqueFilter("%1$s");
         final UniqueFilter  flopFilter = new UniqueFilter();
         final UniqueFilter  turnFilter = new UniqueFilter();
         final UniqueFilter riverFilter = new UniqueFilter();
