@@ -1,9 +1,11 @@
 package ao.bucket.index.detail.turn;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
+import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentFloats;
 import ao.util.persist.PersistentInts;
@@ -94,13 +96,7 @@ public class TurnDetailFlyweight
     //--------------------------------------------------------------------
     public CanonTurnDetail get(int canonIndex)
     {
-        return new CanonTurnDetail(
-                                     canonIndex,
-                Card.VALUES[EXAMPLE[ canonIndex ]],
-                REPRESENT          [ canonIndex ],
-                STRENGTH           [ canonIndex ],
-                FIRST_RIVER        [ canonIndex ],
-                RIVER_COUNT        [ canonIndex ]);
+        return new CanonTurnDetail(canonIndex);
     }
 
     public boolean isInitiated(int canonIndex)
@@ -131,4 +127,63 @@ public class TurnDetailFlyweight
     {
         REPRESENT[ canonIndex ]++;
     }
+
+
+    //--------------------------------------------------------------------
+    public class CanonTurnDetail implements CanonDetail
+    {
+        //----------------------------------------------------------------
+        private final int CANON_INDEX;
+
+
+        //----------------------------------------------------------------
+        public CanonTurnDetail(int canonIndex)
+        {
+            CANON_INDEX = canonIndex;
+        }
+
+
+        //----------------------------------------------------------------
+        public long canonIndex()
+        {
+            return CANON_INDEX;
+        }
+        public Card example()
+        {
+            return Card.VALUES[EXAMPLE[ CANON_INDEX ]];
+        }
+        public byte represents()
+        {
+            return REPRESENT[ CANON_INDEX ];
+        }
+        public double strengthVsRandom()
+        {
+            return STRENGTH[ CANON_INDEX ];
+        }
+        public long firstCanonRiver()
+        {
+            return Calc.unsigned( FIRST_RIVER[CANON_INDEX] );
+        }
+        public byte canonRiverCount()
+        {
+            return RIVER_COUNT[ CANON_INDEX ];
+        }
+
+
+        //----------------------------------------------------------------
+        @Override public String toString()
+        {
+            return String.valueOf(CANON_INDEX);
+        }
+        @Override public boolean equals(Object o)
+        {
+            return !(o == null || getClass() != o.getClass()) &&
+                   CANON_INDEX == ((CanonTurnDetail) o).CANON_INDEX;
+        }
+        @Override public int hashCode()
+        {
+            return CANON_INDEX;
+        }
+    }
+
 }

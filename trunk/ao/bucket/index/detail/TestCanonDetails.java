@@ -1,9 +1,10 @@
 package ao.bucket.index.detail;
 
 import ao.bucket.index.detail.flop.CanonFlopDetail;
-import ao.bucket.index.detail.turn.CanonTurnDetail;
+import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.HoleLookup;
+import ao.bucket.index.turn.TurnLookup;
 
 /**
  * Date: Jan 21, 2009
@@ -98,7 +99,7 @@ public class TestCanonDetails
         long turnCountMin   = Long.MAX_VALUE;
 
         for (int canonTurn = 0;
-                 canonTurn < FlopLookup.CANONICAL_COUNT;
+                 canonTurn < TurnLookup.CANONICAL_COUNT;
                  canonTurn++)
         {
             CanonTurnDetail details =

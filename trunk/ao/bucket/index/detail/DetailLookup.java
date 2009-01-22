@@ -4,7 +4,7 @@ import ao.bucket.index.detail.flop.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetailLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetailLookup;
-import ao.bucket.index.detail.turn.CanonTurnDetail;
+import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetailLookup;
 import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.Round;

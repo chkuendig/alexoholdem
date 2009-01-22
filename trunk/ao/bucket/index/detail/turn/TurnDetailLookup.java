@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.turn;
 
+import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.flop.Flop;
@@ -23,7 +24,8 @@ public class TurnDetailLookup
     private static final Logger LOG =
             Logger.getLogger(TurnDetailLookup.class);
 
-    private static final File   DIR = Dir.get("lookup/canon/detail/");
+    private static final File   DIR =
+            Dir.get("lookup/canon/detail/turn/");
 
     private TurnDetailLookup() {}
 
@@ -67,13 +69,13 @@ public class TurnDetailLookup
                 }
                 fw.incrementRepresentation(index);
             }});
-        unbufferAndComputeRiverInfo( fw );
+        computeRiverInfo( fw );
         return fw;
     }
 
 
     //--------------------------------------------------------------------
-    private static void unbufferAndComputeRiverInfo(
+    private static void computeRiverInfo(
             TurnDetailFlyweight fw)
     {
         LOG.debug("computing river info");
