@@ -1,11 +1,9 @@
 package ao.bucket.index.enumeration;
 
-import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.river.River;
-import ao.bucket.index.test.Gapper;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import static ao.util.data.Arr.swap;
@@ -129,6 +127,15 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
+    public static void traverseUniqueRivers(
+            Traverser<River> riverTraverser)
+    {
+        traverseRivers(new UniqueFilter<CanonHole>(),
+                       new UniqueFilter<Flop>(),
+                       new UniqueFilter<Turn>(),
+                       new UniqueFilter<River>(),
+                       riverTraverser);
+    }
     public static void traverseRivers(
             final Filter<CanonHole> holeFilter,
             final Filter<Flop>      flopFilter,
@@ -153,47 +160,5 @@ public class CardEnum
                 }
             }
         });
-    }
-
-
-    //--------------------------------------------------------------------
-    public static class PermisiveFilter<T extends CanonIndexed>
-            implements Filter<T>
-    {
-        public boolean accept(T canonIndexed)
-        {
-            return true;
-        }
-    }
-
-
-    public static class UniqueFilter<T extends CanonIndexed>
-            implements Filter<T>
-    {
-        private final String FORMAT;
-        private final Gapper GAPPER = new Gapper();
-
-        public UniqueFilter() {  this(null);  }
-        public UniqueFilter(String format) {
-            FORMAT = format;
-        }
-
-        public boolean accept(T indexed)
-        {
-            long index = indexed.packedCanonIndex();
-            if (GAPPER.get( index )) return false;
-
-            if (FORMAT != null) {
-                System.out.println(String.format(FORMAT, indexed));
-            }
-
-            GAPPER.set( index );
-            return true;
-        }
-
-        public Gapper gapper()
-        {
-            return GAPPER;
-        }
     }
 }
