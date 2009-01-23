@@ -49,7 +49,7 @@ public class HoleDetailPersist
 
         TupleInput in      = new TupleInput(binDetails);
         CanonHoleDetail[] details =
-                new CanonHoleDetail[ HoleLookup.CANONICAL_COUNT ];
+                new CanonHoleDetail[HoleLookup.CANONS];
 
         for (int i = 0; i < details.length; i++)
         {

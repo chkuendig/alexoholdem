@@ -1,16 +1,15 @@
 package ao.bucket.index.detail.flop;
 
+import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;
-import ao.odds.agglom.Odds;
+import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
+import java.io.File;
 
 /**
  * Date: Jan 9, 2009
@@ -22,112 +21,71 @@ public class FlopDetailLookup
     private static final Logger LOG  =
             Logger.getLogger(FlopDetailLookup.class);
 
+    private static final File DIR =
+            Dir.get("lookup/canon/detail/flop/");
+
     private FlopDetailLookup() {}
 
 
     //--------------------------------------------------------------------
-//    static {  fixComputedDetails();  }
-//    private static void fixComputedDetails()
-//    {
-//        LOG.info("fixing computed details");
-//
-////        Odds[] odds = new Odds[ FlopLookup.CANONICAL_COUNT ];
-////        for (CanonFlopDetail detail :
-////                FlopDetailPersist.retrieveDetails())
-////            odds[ (int) detail.canonIndex() ] = detail.headsUpOdds();
-////
-////        FlopDetailPersist.persistDetails(
-////                computeDetails( odds ));
-//
-//        FlopDetailPersist.persistDetails(
-//                FlopDetailPersist.retrieveDetails() );
-//    }
-
-
-    //--------------------------------------------------------------------
-    private static final CanonFlopDetail[] DETAILS =
+    private static final FlopDetailFlyweight DETAILS =
             retrieveOrComputeDetails();
 
 
     //--------------------------------------------------------------------
-    private static CanonFlopDetail[] retrieveOrComputeDetails()
+    private static FlopDetailFlyweight retrieveOrComputeDetails()
     {
         LOG.debug("retrieveOrComputeDetails");
 
-        CanonFlopDetail[] details =
-                FlopDetailPersist.retrieveDetails();
+        FlopDetailFlyweight details =
+                FlopDetailFlyweight.retrieve(DIR);
         if (details == null)
         {
-            details = computeDetails( null );
-            FlopDetailPersist.persistDetails(details);
+            details = computeDetails();
+            FlopDetailFlyweight.persist(details, DIR);
         }
         return details;
     }
 
 
     //--------------------------------------------------------------------
-    private static CanonFlopDetail[] computeDetails(
-            final Odds[] odds)
+    private static FlopDetailFlyweight computeDetails()
     {
         LOG.debug("computing details");
-        final FlopDetailBuffer[] buffers =
-                new FlopDetailBuffer[
-                        FlopLookup.CANONICAL_COUNT ];
 
-        for (int i = 0; i < buffers.length; i++)
-            buffers[ i ] = FlopDetailBuffer.SENTINAL;
-
-        CardEnum.traverseFlops(
-                new PermisiveFilter<CanonHole>(),
-                new PermisiveFilter<Flop>(),
+        final FlopDetailFlyweight fw = new FlopDetailFlyweight();
+        CardEnum.traverseUniqueFlops(
                 new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 int index = flop.canonIndex();
-
-                FlopDetailBuffer buff = buffers[ index ];
-                if (buff == FlopDetailBuffer.SENTINAL)
-                {
-                    buff = new FlopDetailBuffer(
-                                  flop,
-                                  odds == null ? null : odds[ index ] );
-                    buffers[ index ] = buff;
-                }
-                buff.incrementFlopRepresentation();
+                fw.init(flop, FlopOdds.lookup(index));
             }});
 
-        return unbufferAndComputeTurnInfo( buffers );
+        computeTurnInfo( fw );
+        return fw;
     }
 
 
     //--------------------------------------------------------------------
-    private static CanonFlopDetail[] unbufferAndComputeTurnInfo(
-            FlopDetailBuffer[] buffers)
+    private static void computeTurnInfo(
+            FlopDetailFlyweight fw)
     {
         LOG.debug("computing turn info");
 
         int    turnOffset = 0;
         byte[] turnCounts = turnCounts();
 
-        CanonFlopDetail[] details =
-                new CanonFlopDetail[ FlopLookup.CANONICAL_COUNT ];
-        for (int i = 0; i < buffers.length; i++)
+        for (int i = 0; i < FlopLookup.CANONS; i++)
         {
-            if ( i      % 20   == 0) System.out.print(".");
-            if ((i + 1) % 1000 == 0) System.out.println();
-
-            buffers[ i ].setTurnInfo(turnOffset, turnCounts[ i ]);
-            details[ i ] = buffers[ i ].toDetail();
-
+            fw.setTurnInfo(i, turnOffset, turnCounts[ i ]);
             turnOffset += turnCounts[ i ];
         }
-        System.out.println();
-        return details;
     }
 
     public static byte[] turnCounts()
     {
         final byte[] turnCounts =
-                new byte[ FlopLookup.CANONICAL_COUNT ];
+                new byte[ FlopLookup.CANONS];
 
         CardEnum.traverseUniqueTurns(
                 new Traverser<Turn>() {
@@ -142,14 +100,17 @@ public class FlopDetailLookup
     //--------------------------------------------------------------------
     public static CanonFlopDetail lookup(int canonFlop)
     {
-        return DETAILS[ canonFlop ];
+        return DETAILS.get( canonFlop );
     }
 
     public static CanonFlopDetail[] lookup(
             int canonFlopFrom, int canonFlopCount)
     {
-        return Arrays.copyOfRange(DETAILS,
-                                  canonFlopFrom,
-                                  canonFlopFrom + canonFlopCount);
+        CanonFlopDetail[] details =
+                new CanonFlopDetail[ canonFlopCount ];
+        for (int i = 0; i < canonFlopCount; i++) {
+            details[ i ] = lookup(canonFlopFrom + i);
+        }
+        return details;
     }
 }

@@ -50,10 +50,10 @@ public class RiverLookup
 
         int offset    = 0;
         int offsets[] =
-                new int[ TurnLookup.CANONICAL_COUNT / CHUNK + 1 ];
+                new int[ TurnLookup.CANONS / CHUNK + 1 ];
 
         int prevIndex = -1;
-        for (int i = 0; i < TurnLookup.CANONICAL_COUNT; i++)
+        for (int i = 0; i < TurnLookup.CANONS; i++)
         {
             if (i % 1000000 == 1)
             {

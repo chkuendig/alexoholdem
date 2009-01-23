@@ -6,7 +6,7 @@ package ao.bucket.index.detail;
  */
 public interface CanonDetail
 {
-    public byte   represents();
+//    public byte   represents();
 
     public double strengthVsRandom();
 

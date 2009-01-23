@@ -48,9 +48,9 @@ public class BucketTreeImpl implements BucketTree
         flopFile = new File(persistDir, "flops");
         turnFile = new File(persistDir, "turns");
 
-        holes = retrieveOrCreate(holeFile, HoleLookup.CANONICAL_COUNT);
-        flops = retrieveOrCreate(flopFile, FlopLookup.CANONICAL_COUNT);
-        turns = retrieveOrCreate(turnFile, TurnLookup.CANONICAL_COUNT);
+        holes = retrieveOrCreate(holeFile, HoleLookup.CANONS);
+        flops = retrieveOrCreate(flopFile, FlopLookup.CANONS);
+        turns = retrieveOrCreate(turnFile, TurnLookup.CANONS);
     }
 
     private byte[] retrieveOrCreate(File fullName, int canonCount)
@@ -191,7 +191,7 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public class BranchImpl implements Branch
+    private class BranchImpl implements Branch
     {
         //----------------------------------------------------------------
 //        private CanonDetail[][] subDetails;
@@ -297,7 +297,7 @@ public class BucketTreeImpl implements BucketTree
         public boolean isBucketized()
         {
             if (round == Round.PREFLOP) {
-                for (int i = 0; i < HoleLookup.CANONICAL_COUNT; i++) {
+                for (int i = 0; i < HoleLookup.CANONS; i++) {
                     if (get(i) == -1) return false;
                 }
                 return true;
@@ -323,7 +323,7 @@ public class BucketTreeImpl implements BucketTree
             {
                 case PREFLOP:
                     BucketTreeImpl.this.flush(
-                            round, 0, HoleLookup.CANONICAL_COUNT);
+                            round, 0, HoleLookup.CANONS);
                     return;
 
                 case FLOP:
@@ -340,14 +340,6 @@ public class BucketTreeImpl implements BucketTree
                     }
                     return;
             }
-
-            // round == Round.FLOP
         }
-
-//        public char subBranchCount()
-//        {
-//            return 0;
-//        }
     }
-
 }

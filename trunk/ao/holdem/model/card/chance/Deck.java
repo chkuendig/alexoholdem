@@ -3,6 +3,7 @@ package ao.holdem.model.card.chance;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.util.data.Arr;
 import ao.util.math.rand.Rand;
 
 /**
@@ -23,7 +24,7 @@ public class Deck
         // Shuffle cards
         for (int i = cards.length; i > 1; i--)
         {
-            swap(cards, i-1, Rand.nextInt(i));
+            Arr.swap(cards, i-1, Rand.nextInt(i));
         }
     }
 
@@ -69,21 +70,15 @@ public class Deck
         nextIndex = 0;
     }
 
+    public int cardsDealt()
+    {
+        return nextIndex;
+    }
+
 
     //--------------------------------------------------------------------
     public Deck prototype()
     {
         return new Deck(cards, nextIndex);
-    }
-
-
-    //--------------------------------------------------------------------
-    private static void swap(Card[] arr, int i, int j)
-    {
-        Card tmp;
-
-        tmp    = arr[i];
-        arr[i] = arr[j];
-        arr[j] = tmp;
     }
 }

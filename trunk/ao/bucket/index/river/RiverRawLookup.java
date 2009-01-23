@@ -66,7 +66,7 @@ public class RiverRawLookup
         final Set<RiverCase> caseBuffer =
                 EnumSet.noneOf( RiverCase.class );
         final byte[]         riverCases =
-                new byte[ TurnLookup.CANONICAL_COUNT];
+                new byte[ TurnLookup.CANONS];
 
         CardEnum.traverseRivers(
                 new UniqueFilter<CanonHole>("%1$s"),

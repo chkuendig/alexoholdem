@@ -2,9 +2,6 @@ package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.enumeration.PermisiveFilter;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
@@ -42,6 +39,9 @@ public class TurnDetailLookup
 
         TurnDetailFlyweight details =
                 TurnDetailFlyweight.retrieve( DIR );
+//        computeRiverInfo( details );
+//        TurnDetailFlyweight.persist(details, DIR);
+
         if (details == null)
         {
             details = computeDetails();
@@ -57,17 +57,14 @@ public class TurnDetailLookup
         LOG.debug("computing details");
 
         final TurnDetailFlyweight fw = new TurnDetailFlyweight();
-        CardEnum.traverseTurns(
-                new PermisiveFilter<CanonHole>("%1$s"),
-                new PermisiveFilter<Flop>(),
-                new PermisiveFilter<Turn>(),
+        CardEnum.traverseUniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 int index = turn.canonIndex();
-                if (! fw.isInitiated( index )) {
+//                if (! fw.isInitiated( index )) {
                     fw.init(turn, TurnOdds.lookup(index));
-                }
-                fw.incrementRepresentation(index);
+//                }
+//                fw.incrementRepresentation(index);
             }});
         computeRiverInfo( fw );
         return fw;
@@ -83,11 +80,8 @@ public class TurnDetailLookup
         long   riverOffset = 0;
         byte[] riverCounts = riverCounts();
 
-        for (int i = 0; i < TurnLookup.CANONICAL_COUNT; i++)
+        for (int i = 0; i < TurnLookup.CANONS; i++)
         {
-            if ( i      %  1000 == 0) System.out.print(".");
-            if ((i + 1) % 50000 == 0) System.out.println();
-
             fw.setRiverInfo(i, riverOffset, riverCounts[ i ]);
             riverOffset += riverCounts[ i ];
         }
@@ -96,7 +90,7 @@ public class TurnDetailLookup
     public static byte[] riverCounts()
     {
         final byte[] riverCounts =
-                new byte[ TurnLookup.CANONICAL_COUNT ];
+                new byte[ TurnLookup.CANONS];
 
         CardEnum.traverseUniqueRivers(new Traverser<River>() {
             public void traverse(River river) {

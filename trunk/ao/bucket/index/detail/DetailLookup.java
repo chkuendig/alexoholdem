@@ -1,9 +1,11 @@
 package ao.bucket.index.detail;
 
-import ao.bucket.index.detail.flop.CanonFlopDetail;
+import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetailLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetailLookup;
+import ao.bucket.index.detail.river.CanonRiverDetail;
+import ao.bucket.index.detail.river.RiverDetailLookup;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetailLookup;
 import ao.bucket.index.hole.HoleLookup;
@@ -63,13 +65,23 @@ public class DetailLookup
 
 
     //--------------------------------------------------------------------
+    public static CanonRiverDetail[] lookupRiver(
+            long canonTurnFrom,
+            int  canonTurnCount)
+    {
+        return RiverDetailLookup.lookup(
+                canonTurnFrom, canonTurnCount);
+    }
+
+
+    //--------------------------------------------------------------------
     public static CanonDetail[][] lookupSub(
             Round prevRound, int[] prevCanonIndexes)
     {
         if (prevRound == null /*&& prevCanonIndexes.length == 0*/) {
             return new CanonDetail[][]{
                     lookupHole((char) 0,
-                               (char) HoleLookup.CANONICAL_COUNT )};
+                               (char) HoleLookup.CANONS)};
         }
 
         CanonDetail[][] subs =

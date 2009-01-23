@@ -50,7 +50,7 @@ public class HoleDetailLookup
     {
         LOG.debug("computing details");
         final CanonHoleDetail.Buffer[] buffers =
-                new CanonHoleDetail.Buffer[ HoleLookup.CANONICAL_COUNT ];
+                new CanonHoleDetail.Buffer[HoleLookup.CANONS];
 
         CardEnum.traverseHoles(
                 new PermisiveFilter<CanonHole>(),
@@ -66,7 +66,7 @@ public class HoleDetailLookup
             }});
 
         CanonHoleDetail[] details =
-                new CanonHoleDetail[ HoleLookup.CANONICAL_COUNT ];
+                new CanonHoleDetail[HoleLookup.CANONS];
         for (int i = 0; i < buffers.length; i++)
         {
             System.out.print(".");

@@ -1,4 +1,4 @@
-package ao;
+package ao.misc;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;

@@ -5,7 +5,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
 import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.detail.flop.CanonFlopDetail;
+import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.hole.HoleLookup;
@@ -26,10 +26,10 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        test((byte) (5),
-             (char) (5 * 10),
-             (char) (5 * 10 * 3),
-             (char) (5 * 10 * 3 * 3));
+        test((byte) (3),
+             (char) (3 * 3),
+             (char) (3 * 3 * 3),
+             (char) (3 * 3 * 3 * 3));
     }
 
 
@@ -56,7 +56,7 @@ public class BucketizerTest
 
         for (CanonHoleDetail holeDetail :
                 DetailLookup.lookupHole(
-                        (char) 0, (char) HoleLookup.CANONICAL_COUNT))
+                        (char) 0, (char) HoleLookup.CANONS))
         {
             char holeIndex = (char) holeDetail.canonIndex();
             holeCounts[ buckets.getHole(holeIndex) ]++;
