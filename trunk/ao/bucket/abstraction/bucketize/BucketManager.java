@@ -123,11 +123,11 @@ public class BucketManager
                     hole, flopBucketCounts[ holeBucketIndex++ ]);
             hole.flush();
 
-//            turnBuckets += bucketizeTurnsDown(
-//                                hole.subBranches(),
-//                                turnBuckets,
-//                                turnBucketCounts,
-//                                riverBucketCounts);
+            turnBuckets += bucketizeTurnsDown(
+                                hole.subBranches(),
+                                turnBuckets,
+                                turnBucketCounts,
+                                riverBucketCounts);
         }
     }
 
@@ -147,10 +147,10 @@ public class BucketManager
                     flop, turnBucketCounts[
                             turnBucketOffset + (flopBucketIndex++) ]);
 
-            riverBuckets += bucketizeRivers(
-                                flop.subBranches(),
-                                riverBuckets,
-                                riverBucketCounts);
+//            riverBuckets += bucketizeRivers(
+//                                flop.subBranches(),
+//                                riverBuckets,
+//                                riverBucketCounts);
         }
         return flopBucketIndex;
     }

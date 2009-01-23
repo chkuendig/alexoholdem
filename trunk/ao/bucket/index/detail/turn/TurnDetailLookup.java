@@ -119,7 +119,7 @@ public class TurnDetailLookup
         CanonTurnDetail[] details =
                 new CanonTurnDetail[ canonTurnCount ];
         for (int i = 0; i < canonTurnCount; i++) {
-            details[ fromCanonTurn + i ] = lookup(i);
+            details[ i ] = lookup(fromCanonTurn + i);
         }
         return details;
     }
