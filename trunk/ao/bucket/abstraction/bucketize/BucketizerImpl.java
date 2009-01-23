@@ -57,6 +57,8 @@ public class BucketizerImpl implements Bucketizer
             CanonDetail[][] details,
             int             detailCount)
     {
+        LOG.debug("sorting canon details, flattening...");
+
         int           i    = 0;
         CanonDetail[] flat = new CanonDetail[ detailCount ];
         for (CanonDetail[] detailList : details) {
@@ -64,6 +66,7 @@ public class BucketizerImpl implements Bucketizer
                 flat[ i++ ] = detail;
             }
         }
+        LOG.debug(flat.length + " total details, sorting...");
 
         Arrays.sort(flat, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
@@ -72,6 +75,7 @@ public class BucketizerImpl implements Bucketizer
                         b.strengthVsRandom());
             }
         });
+        LOG.debug("done sorting!");
 
         return flat;
     }
