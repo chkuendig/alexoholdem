@@ -98,6 +98,30 @@ public class BucketMap
     @SuppressWarnings({"ConstantConditions"})
     public char serialize(
             byte  holeBucket,
+            byte  flopBucket,
+            byte  turnBucket)
+    {
+        char index = 0;
+        for (int i = 0; i < tree.length; i++)
+        {
+            for (int j = 0; j < tree[ i ].length; j++)
+            {
+                for (int k = 0; k < tree[ i ][ j ].length; k++, index++)
+                {
+                    if (i == holeBucket &&
+                        j == flopBucket &&
+                        k == turnBucket) return index;
+                }
+            }
+        }
+        return index;
+    }
+
+
+    //--------------------------------------------------------------------
+    @SuppressWarnings({"ConstantConditions"})
+    public char serialize(
+            byte  holeBucket,
             byte  flopBucket)
     {
         char index = 0;
