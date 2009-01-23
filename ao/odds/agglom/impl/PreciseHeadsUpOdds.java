@@ -5,9 +5,7 @@ import ao.bucket.index.detail.preflop.HoleDetailPersist;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import static ao.holdem.model.card.Rank.*;
-import static ao.holdem.model.card.Suit.CLUBS;
-import static ao.holdem.model.card.Suit.SPADES;
+import ao.holdem.model.card.chance.Deck;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
@@ -64,14 +62,14 @@ public class PreciseHeadsUpOdds implements OddFinder
         }
 
         Card cards[] = initKnownCardsToEnd(hole, community);
-        return rollOutCommunity(
+        return rollOutCommunityAndOpponent(
                 cards,
                 community.knownCount());
     }
 
 
     //--------------------------------------------------------------------
-    private static Odds rollOutCommunity(
+    private static Odds rollOutCommunityAndOpponent(
             Card cards[],
             int  knownCount)
     {
@@ -81,7 +79,7 @@ public class PreciseHeadsUpOdds implements OddFinder
                ? rollOutTurnRiver(cards)
                : knownCount == 4
                ? rollOutRiver(cards)
-               : null;
+               : rollOutOpp(cards);
     }
 
 
@@ -245,6 +243,23 @@ public class PreciseHeadsUpOdds implements OddFinder
         return odds;
     }
 
+    private static Odds rollOutOpp(Card cards[])
+    {
+        int   shortcut =
+            Eval7Faster.shortcutFor(
+                    cards[ FLOP_A ],
+                    cards[ FLOP_B ],
+                    cards[ FLOP_C ],
+                    cards[ TURN   ],
+                    cards[ RIVER  ]);
+
+        short thisVal  =
+            Eval7Faster.fastValueOf(
+                    shortcut,
+                    cards[ HOLE_A ], cards[ HOLE_B ]);
+
+        return rollOutOpp(cards, shortcut, thisVal);
+    }
 
     //--------------------------------------------------------------------
     public static Card[] initKnownCardsToEnd(
@@ -304,24 +319,47 @@ public class PreciseHeadsUpOdds implements OddFinder
     {
         OddFinder oddFinder = new PreciseHeadsUpOdds();
 
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Odds oddsA =
-                oddFinder.compute(
-                    Hole.valueOf(Card.valueOf(ACE,   CLUBS),
-                                 Card.valueOf(THREE, CLUBS)),
-                    new Community(),
-                    1);
+        long      time      = 0;
+        int       warmup    = 20000;
+        int       trials    = 100000;
 
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        Odds oddsB =
-                oddFinder.compute(
-                    Hole.valueOf(Card.valueOf(TWO,   SPADES),
-                                 Card.valueOf(THREE, SPADES)),
-                    new Community(),
-                    1);
+        Deck d = new Deck();
+        for (int i = (warmup + trials); i > 0; i--)
+        {
+            if (d.cardsDealt() > 40) d = new Deck();
 
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println( oddsA );
-        System.out.println( oddsB );
+            long before = System.currentTimeMillis();
+            oddFinder.compute(
+                    d.nextHole(),
+                    new Community(
+                            d.nextCard(), d.nextCard(), d.nextCard(),
+                            d.nextCard(), d.nextCard()), 1);
+
+            if (i > warmup) {
+                time += (System.currentTimeMillis() - before);
+            }
+        }
+
+        System.out.println(time + " " + ((double) time / trials));
+
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Odds oddsA =
+//                oddFinder.compute(
+//                    Hole.valueOf(Card.valueOf(ACE,   CLUBS),
+//                                 Card.valueOf(THREE, CLUBS)),
+//                    new Community(),
+//                    1);
+//
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Odds oddsB =
+//                oddFinder.compute(
+//                    Hole.valueOf(Card.valueOf(TWO,   SPADES),
+//                                 Card.valueOf(THREE, SPADES)),
+//                    new Community(),
+//                    1);
+//
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        System.out.println( oddsA );
+//        System.out.println( oddsB );
     }
 }

@@ -56,6 +56,12 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
+    public static void traverseUniqueFlops(Traverser<Flop> flopTraverser)
+    {
+        traverseFlops(new UniqueFilter<CanonHole>(),
+                      new UniqueFilter<Flop>(),
+                      flopTraverser);
+    }
     public static void traverseFlops(
             final Filter<CanonHole> holeFilter,
             final Filter<Flop>      flopFilter,

@@ -16,13 +16,13 @@ public class HoleLookup
     //--------------------------------------------------------------------
     private static final int PAIR_COUNT             = 13;
     private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
-    public  static final int CANONICAL_COUNT        = 169;
+    public  static final int CANONS                 = 169;
 
     private HoleLookup() {}
 
 
     //--------------------------------------------------------------------
-    private static final CanonHole[][] CANONS = computeCanons();
+    private static final CanonHole[][] CACHE = computeCanons();
 
 
     //--------------------------------------------------------------------
@@ -99,6 +99,6 @@ public class HoleLookup
     }
     public static CanonHole lookup(Card a, Card b)
     {
-        return CANONS[ a.ordinal() ][ b.ordinal() ];
+        return CACHE[ a.ordinal() ][ b.ordinal() ];
     }
 }

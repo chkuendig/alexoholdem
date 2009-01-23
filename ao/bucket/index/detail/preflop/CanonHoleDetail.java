@@ -120,7 +120,7 @@ public class CanonHoleDetail implements CanonDetail
                ", REPRESENTS=" + REPRESENTS +
                ", HEADS_UP_ODDS=" + HEADS_UP_ODDS +
                ", FIRST_CANON_FLOP=" + FIRST_CANON_FLOP +
-               ", CANONICAL_COUNT=" + (int) CANON_FLOP_COUNT +
+               ", CANONS=" + (int) CANON_FLOP_COUNT +
                '}';
     }
 

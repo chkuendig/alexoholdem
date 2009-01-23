@@ -21,7 +21,7 @@ public class FlopLookup
 
 
     //--------------------------------------------------------------------
-    public static final int CANONICAL_COUNT = 1286792;
+    public static final int CANONS = 1286792;
 
 
     //--------------------------------------------------------------------
@@ -39,7 +39,7 @@ public class FlopLookup
 
         LOG.info("indexing retrieved offsets");
         int offsets[][] =
-                new int[ HoleLookup.CANONICAL_COUNT ]
+                new int[HoleLookup.CANONS]
                        [   FlopCase.VALUES.length   ];
 
         for (int i = 0; i < flat.length; i++)
@@ -85,7 +85,7 @@ public class FlopLookup
     private static int[][] calculateOffsets()
     {
         LOG.info("calculating offsets");
-        int offsets[][] = new int[ HoleLookup.CANONICAL_COUNT ][];
+        int offsets[][] = new int[HoleLookup.CANONS][];
 
         int  offset  = 0;
         Card cards[] = Card.values();
