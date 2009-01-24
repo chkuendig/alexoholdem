@@ -26,10 +26,15 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        test((byte) (3),
-             (char) (3 * 3),
-             (char) (3 * 3 * 3),
-             (char) (3 * 3 * 3 * 3));
+//        test((byte) (3),
+//             (char) (3 * 3),
+//             (char) (3 * 3 * 3),
+//             (char) (3 * 3 * 3 * 3));
+
+        test((byte) (13),
+             (char) (1134),
+             (char) (7429),
+             (char) (49278));
     }
 
 
