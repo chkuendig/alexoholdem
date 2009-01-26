@@ -46,14 +46,17 @@ public class BucketManager
                 treeId(numHoleBuckets, numFlopBuckets,
                        numTurnBuckets, numRiverBuckets));
 
-        bucketizeHolesDown(
-                tree.root(),
-                numHoleBuckets,
-                numFlopBuckets,
-                numTurnBuckets,
-                numRiverBuckets);
+        if (! tree.isFlushed())
+        {
+            bucketizeHolesDown(
+                    tree.root(),
+                    numHoleBuckets,
+                    numFlopBuckets,
+                    numTurnBuckets,
+                    numRiverBuckets);
+            tree.flush();
+        }
 
-//        tree.flush();
         return tree;
     }
 
@@ -95,7 +98,7 @@ public class BucketManager
             char   numRiverBuckets)
     {
         if (HOLE_BUCKETIZER.bucketize(root, numHoleBuckets)) {
-            root.flush();
+//            root.flush();
         }
 
         bucketizeFlopsDown(
@@ -122,7 +125,7 @@ public class BucketManager
         {
             if (FLOP_BUCKETIZER.bucketize(
                         hole, flopBucketCounts[ holeBucketIndex++ ])) {
-                hole.flush();
+//                hole.flush();
             }
 
             turnBuckets += bucketizeTurnsDown(
@@ -148,7 +151,7 @@ public class BucketManager
             if (TURN_BUCKETIZER.bucketize(
                     flop, turnBucketCounts[
                             turnBucketOffset + (flopBucketIndex++) ])) {
-                flop.flush();
+//                flop.flush();
             }
 
 //            riverBuckets += bucketizeRivers(
@@ -172,7 +175,7 @@ public class BucketManager
             if (RIVER_BUCKETIZER.bucketize(
                     turn, riverBucketCounts[
                             riverBucketOffset + (turnBucketIndex++) ])) {
-                turn.flush();
+//                turn.flush();
             }
         }
         return turnBucketIndex;

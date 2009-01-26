@@ -1,9 +1,11 @@
 package ao.bucket.abstraction.access;
 
-import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.util.data.primitive.CharList;
+import ao.util.io.Dir;
+import ao.util.persist.PersistentInts;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +17,12 @@ import java.util.List;
 public class BucketMap
 {
     //--------------------------------------------------------------------
+    private static final String F_NUM_FLOPS  =  "nFlops.int";
+    private static final String F_NUM_TURNS  =  "nTurns.int";
+    private static final String F_NUM_RIVERS = "nRivers.int";
+
+
+    //--------------------------------------------------------------------
     private final char[][]     flopTree;
     private final char[][][]   turnTree;
 
@@ -23,15 +31,18 @@ public class BucketMap
 
 
     //--------------------------------------------------------------------
-    public BucketMap(BucketTree bucketTree)
+    public BucketMap(Branch root, File dir)
     {
-        tree = decodeHoleDown( bucketTree.root() );
+        File store = Dir.get(dir, "map");
+        tree = retrieveOrCompute( root, store );
 
         flopTree = new char[ tree.length ][];
         turnTree = new char[ tree.length ][][];
         initFlopTurn();
     }
 
+    
+    //--------------------------------------------------------------------
     private void initFlopTurn()
     {
         char flop = 0, turn = 0;
@@ -51,6 +62,43 @@ public class BucketMap
                 }
             }
         }
+    }
+
+
+    //--------------------------------------------------------------------
+    private char[][][][] retrieveOrCompute(Branch root, File dir)
+    {
+        char[][][][] map = retrieve(dir);
+        if (map == null) {
+            map = decodeHoleDown(root);
+            persist(map, dir);
+        }
+        return map;
+    }
+
+    private static char[][][][] retrieve(File fromDir)
+    {
+        int[] flopCounts = PersistentInts.retrieve(
+                new File(fromDir, F_NUM_FLOPS));
+        if (flopCounts == null) return null;
+
+        int[] turnCounts = PersistentInts.retrieve(
+                new File(fromDir, F_NUM_TURNS));
+        int[] riverCounts = PersistentInts.retrieve(
+                new File(fromDir, F_NUM_RIVERS));
+
+        char         river = 0;
+        char[][][][] map   = new char[flopCounts.length][][][];
+        for (int h = 0; h < flopCounts.length; h++)
+        {
+            map[h] = new char[ flopCounts[h] ][][];
+        }
+        return map;
+    }
+
+    private static void persist(char[][][][] map, File toDir)
+    {
+
     }
 
 
