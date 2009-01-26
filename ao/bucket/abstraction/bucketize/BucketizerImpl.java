@@ -24,7 +24,7 @@ public class BucketizerImpl implements Bucketizer
     public boolean bucketize(Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
-        if (branch.isBucketized()) return false;
+//        if (branch.isBucketized()) return false;
 
         CanonDetail[] details = branch.details();
 

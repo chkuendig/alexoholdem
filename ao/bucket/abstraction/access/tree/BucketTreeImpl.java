@@ -1,9 +1,9 @@
 package ao.bucket.abstraction.access.tree;
 
+import ao.bucket.abstraction.access.BucketMap;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.HoleLookup;
@@ -12,6 +12,7 @@ import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
+import ao.util.persist.PersistentBytes;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,16 +33,19 @@ public class BucketTreeImpl implements BucketTree
     private final BucketList flops;
     private final BucketList turns;
     private final BucketList rivers;
+    private final File       flushFlag;
+    private final File       persistDir;
 
 
     //--------------------------------------------------------------------
     public BucketTreeImpl(String id)
     {
-        File persistDir = Dir.get(DIR, id);
+        persistDir = Dir.get(DIR, id);
+        flushFlag  = new File(persistDir, "flushed");
 
-        File holeFile = new File(persistDir, "holes");
-        File flopFile = new File(persistDir, "flops");
-        File turnFile = new File(persistDir, "turns");
+        File holeFile  = new File(persistDir, "holes");
+        File flopFile  = new File(persistDir, "flops");
+        File turnFile  = new File(persistDir, "turns");
 
         holes = new BucketListImpl(holeFile, HoleLookup.CANONS);
         flops = new BucketListImpl(flopFile, FlopLookup.CANONS);
@@ -122,19 +126,19 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public boolean isEmpty(Round round, long canonIndex)
-    {
-        switch (round)
-        {
-            case PREFLOP: return  holes.isEmpty( canonIndex );
-            case FLOP:    return  flops.isEmpty( canonIndex );
-            case TURN:    return  turns.isEmpty( canonIndex );
-            case RIVER:   return rivers.isEmpty( canonIndex );
-
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
+//    public boolean isEmpty(Round round, long canonIndex)
+//    {
+//        switch (round)
+//        {
+//            case PREFLOP: return  holes.isEmpty( canonIndex );
+//            case FLOP:    return  flops.isEmpty( canonIndex );
+//            case TURN:    return  turns.isEmpty( canonIndex );
+//            case RIVER:   return rivers.isEmpty( canonIndex );
+//
+//            default:
+//                throw new UnsupportedOperationException();
+//        }
+//    }
 
 
     //--------------------------------------------------------------------
@@ -144,16 +148,30 @@ public class BucketTreeImpl implements BucketTree
         flops.flush();
         turns.flush();
         rivers.flush();
+
+        PersistentBytes.persist(new byte[]{1}, flushFlag);
     }
 
-    public void flush(Round round, int fromCanon, char canonCount) {
-        switch (round)
-        {
-            case PREFLOP:  holes.flush(fromCanon, canonCount); break;
-            case FLOP:     flops.flush(fromCanon, canonCount); break;
-            case TURN:     turns.flush(fromCanon, canonCount); break;
-            case RIVER:   rivers.flush(fromCanon, canonCount); break;
-        }
+    public boolean isFlushed()
+    {
+        return flushFlag.canRead();
+    }
+
+//    public void flush(Round round, int fromCanon, char canonCount) {
+//        switch (round)
+//        {
+//            case PREFLOP:  holes.flush(fromCanon, canonCount); break;
+//            case FLOP:     flops.flush(fromCanon, canonCount); break;
+//            case TURN:     turns.flush(fromCanon, canonCount); break;
+//            case RIVER:   rivers.flush(fromCanon, canonCount); break;
+//        }
+//    }
+
+
+    //--------------------------------------------------------------------
+    public BucketMap map()
+    {
+        return new BucketMap(root(), persistDir);
     }
 
 
@@ -218,9 +236,9 @@ public class BucketTreeImpl implements BucketTree
             return BucketTreeImpl.this.get(round, canonIndex);
         }
 
-        private boolean isEmpty(long canonIndex) {
-            return BucketTreeImpl.this.isEmpty(round, canonIndex);
-        }
+//        private boolean isEmpty(long canonIndex) {
+//            return BucketTreeImpl.this.isEmpty(round, canonIndex);
+//        }
 
 
         //----------------------------------------------------------------
@@ -269,48 +287,48 @@ public class BucketTreeImpl implements BucketTree
 
 
         //----------------------------------------------------------------
-        public boolean isBucketized()
-        {
-            if (round == Round.PREFLOP) {
-                for (int i = 0; i < HoleLookup.CANONS; i++) {
-                    if (isEmpty(i)) return false;
-                }
-                return true;
-            }
+//        public boolean isBucketized()
+//        {
+//            if (round == Round.PREFLOP) {
+//                for (int i = 0; i < HoleLookup.CANONS; i++) {
+//                    if (isEmpty(i)) return false;
+//                }
+//                return true;
+//            }
+//
+//            for (int parent : parentCanons) {
+//                CanonRange range =
+//                            DetailLookup.lookupRange(
+//                                    round.previous(), parent);
+//                for (int i = 0; i < range.canonIndexCount(); i++) {
+//                    if (isEmpty( range.fromCanonIndex() + i ))
+//                        return false;
+//                }
+//            }
+//            return true;
+//        }
 
-            for (int parent : parentCanons) {
-                CanonRange range =
-                            DetailLookup.lookupRange(
-                                    round.previous(), parent);
-                for (int i = 0; i < range.canonIndexCount(); i++) {
-                    if (isEmpty( range.fromCanonIndex() + i ))
-                        return false;
-                }
-            }
-            return true;
-        }
 
-
-        //----------------------------------------------------------------
-        public void flush()
-        {
-            if (round == Round.PREFLOP) {
-                BucketTreeImpl.this.flush(
-                        round, 0, (char) HoleLookup.CANONS);
-                return;
-            }
-
-            for (int parent : parentCanons) {
-                CanonRange range =
-                        DetailLookup.lookupRange(
-                                round.previous(), parent);
-
-                BucketTreeImpl.this.flush(
-                        round,
-                        (int) range.fromCanonIndex(),
-                        range.canonIndexCount());
-            }
-        }
+//        //----------------------------------------------------------------
+//        public void flush()
+//        {
+//            if (round == Round.PREFLOP) {
+//                BucketTreeImpl.this.flush(
+//                        round, 0, (char) HoleLookup.CANONS);
+//                return;
+//            }
+//
+//            for (int parent : parentCanons) {
+//                CanonRange range =
+//                        DetailLookup.lookupRange(
+//                                round.previous(), parent);
+//
+//                BucketTreeImpl.this.flush(
+//                        round,
+//                        (int) range.fromCanonIndex(),
+//                        range.canonIndexCount());
+//            }
+//        }
     }
 }
 
