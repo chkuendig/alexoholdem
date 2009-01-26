@@ -46,7 +46,7 @@ public interface BucketTree
         public int[] parentCanons();
 //        public byte  parentBucket();
         
-        public CanonDetail[][] details();
+        public CanonDetail[] details();
 
         public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);

@@ -31,10 +31,10 @@ public class BucketizerTest
 //             (char) (3 * 3 * 3),
 //             (char) (3 * 3 * 3 * 3));
 
-        test((byte) (13),
-             (char) (1134),
-             (char) (7429),
-             (char) (49278));
+        test((byte) (20),
+             (char) (800),
+             (char) (4800),
+             (char) (28800));
     }
 
 
@@ -53,7 +53,7 @@ public class BucketizerTest
                                 nFlopBuckets,
                                 nTurnBuckets,
                                 nRiverBuckets);
-        BucketMap  map    = new BucketMap( buckets );
+        BucketMap  map     = new BucketMap( buckets );
 
         int[] holeCounts = new int[ nHoleBuckets ];
         int[] flopCounts = new int[ nFlopBuckets ];

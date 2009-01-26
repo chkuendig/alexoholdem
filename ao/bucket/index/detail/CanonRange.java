@@ -8,11 +8,11 @@ public class CanonRange
 {
     //--------------------------------------------------------------------
     private final long fromCanonIndex;
-    private final int  canonIndexCount;
+    private final char canonIndexCount;
 
 
     //--------------------------------------------------------------------
-    public CanonRange(long from, int count)
+    public CanonRange(long from, char count)
     {
         fromCanonIndex  = from;
         canonIndexCount = count;
@@ -23,7 +23,7 @@ public class CanonRange
     public long fromCanonIndex() {
         return fromCanonIndex;
     }
-    public int  canonIndexCount() {
+    public char canonIndexCount() {
         return canonIndexCount;
     }
 }

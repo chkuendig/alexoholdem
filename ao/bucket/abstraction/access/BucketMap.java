@@ -15,6 +15,9 @@ import java.util.List;
 public class BucketMap
 {
     //--------------------------------------------------------------------
+    private final char[][]     flopTree;
+    private final char[][][]   turnTree;
+
     private final char[][][][] tree;
     private       char         nextRiverBucket;
 
@@ -23,6 +26,31 @@ public class BucketMap
     public BucketMap(BucketTree bucketTree)
     {
         tree = decodeHoleDown( bucketTree.root() );
+
+        flopTree = new char[ tree.length ][];
+        turnTree = new char[ tree.length ][][];
+        initFlopTurn();
+    }
+
+    private void initFlopTurn()
+    {
+        char flop = 0, turn = 0;
+        for (int i = 0; i < tree.length; i++)
+        {
+            flopTree[i] = new char[ tree[ i ].length ];
+            turnTree[i] = new char[ tree[ i ].length ][];
+
+            for (int j = 0; j < tree[ i ].length; j++, flop++)
+            {
+                flopTree[i][j] = flop;
+                turnTree[i][j] = new char[ tree[ i ][ j ].length ];
+
+                for (int k = 0; k < tree[ i ][ j ].length; k++, turn++)
+                {
+                    turnTree[i][j][k] = turn;
+                }
+            }
+        }
     }
 
 
@@ -101,20 +129,21 @@ public class BucketMap
             byte  flopBucket,
             byte  turnBucket)
     {
-        char index = 0;
-        for (int i = 0; i < tree.length; i++)
-        {
-            for (int j = 0; j < tree[ i ].length; j++)
-            {
-                for (int k = 0; k < tree[ i ][ j ].length; k++, index++)
-                {
-                    if (i == holeBucket &&
-                        j == flopBucket &&
-                        k == turnBucket) return index;
-                }
-            }
-        }
-        return index;
+        return turnTree[ holeBucket ][ flopBucket ][ turnBucket ];
+//        char index = 0;
+//        for (int i = 0; i < tree.length; i++)
+//        {
+//            for (int j = 0; j < tree[ i ].length; j++)
+//            {
+//                for (int k = 0; k < tree[ i ][ j ].length; k++, index++)
+//                {
+//                    if (i == holeBucket &&
+//                        j == flopBucket &&
+//                        k == turnBucket) return index;
+//                }
+//            }
+//        }
+//        return index;
     }
 
 
@@ -124,15 +153,16 @@ public class BucketMap
             byte  holeBucket,
             byte  flopBucket)
     {
-        char index = 0;
-        for (int i = 0; i < tree.length; i++)
-        {
-            for (int j = 0; j < tree[ i ].length; j++, index++)
-            {
-                if (i == holeBucket && j == flopBucket)
-                    return index;
-            }
-        }
-        return index;
+        return flopTree[ holeBucket ][ flopBucket ];
+//        char index = 0;
+//        for (int i = 0; i < tree.length; i++)
+//        {
+//            for (int j = 0; j < tree[ i ].length; j++, index++)
+//            {
+//                if (i == holeBucket && j == flopBucket)
+//                    return index;
+//            }
+//        }
+//        return index;
     }
 }

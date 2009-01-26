@@ -40,12 +40,6 @@ public class TestCanonDetails
     //--------------------------------------------------------------------
     public static void testFlopDetails()
     {
-//        long sentinalCount  = 0;
-
-//        long representTotal = 0;
-//        long representMax   = Long.MIN_VALUE;
-//        long representMin   = Long.MAX_VALUE;
-
         long turnCountTotal = 0;
         long turnCountMax   = Long.MIN_VALUE;
         long turnCountMin   = Long.MAX_VALUE;
@@ -56,30 +50,12 @@ public class TestCanonDetails
         {
             CanonFlopDetail details =
                     DetailLookup.lookupFlop( canonFlop );
-
-//            representTotal += details.represents();
-//            representMax    = Math.max(representMax,
-//                                       details.represents());
-//            representMin    = Math.min(representMin,
-//                                       details.represents());
-
             turnCountTotal += details.canonTurnCount();
-            turnCountMax    = Math.max(turnCountMax,
+            turnCountMax = Math.max(turnCountMax,
                                        details.canonTurnCount());
-            turnCountMin    = Math.min(turnCountMin,
+            turnCountMin = Math.min(turnCountMin,
                                        details.canonTurnCount());
-
-//            if (details.equals( CanonFlopDetail.SENTINAL ))
-//            {
-//                sentinalCount++;
-//            }
         }
-
-//        System.out.println("sentinalCount  = " + sentinalCount);
-
-//        System.out.println("representTotal = " + representTotal);
-//        System.out.println("representMax   = " + representMax);
-//        System.out.println("representMin   = " + representMin);
 
         System.out.println("turnCountTotal = " + turnCountTotal);
         System.out.println("turnCountMax   = " + turnCountMax);
@@ -90,13 +66,9 @@ public class TestCanonDetails
     //--------------------------------------------------------------------
     public static void testTurnDetails()
     {
-//        long representTotal = 0;
-//        long representMax   = Long.MIN_VALUE;
-//        long representMin   = Long.MAX_VALUE;
-
-        long turnCountTotal = 0;
-        long turnCountMax   = Long.MIN_VALUE;
-        long turnCountMin   = Long.MAX_VALUE;
+        long riverCountTotal = 0;
+        long riverCountMax   = Long.MIN_VALUE;
+        long riverCountMin   = Long.MAX_VALUE;
 
         for (int canonTurn = 0;
                  canonTurn < TurnLookup.CANONS;
@@ -104,26 +76,15 @@ public class TestCanonDetails
         {
             CanonTurnDetail details =
                     DetailLookup.lookupTurn( canonTurn );
-
-//            representTotal += details.represents();
-//            representMax    = Math.max(representMax,
-//                                       details.represents());
-//            representMin    = Math.min(representMin,
-//                                       details.represents());
-
-            turnCountTotal += details.canonRiverCount();
-            turnCountMax    = Math.max(turnCountMax,
+            riverCountTotal += details.canonRiverCount();
+            riverCountMax = Math.max(riverCountMax,
                                        details.canonRiverCount());
-            turnCountMin    = Math.min(turnCountMin,
+            riverCountMin = Math.min(riverCountMin,
                                        details.canonRiverCount());
         }
 
-//        System.out.println("representTotal = " + representTotal);
-//        System.out.println("representMax   = " + representMax);
-//        System.out.println("representMin   = " + representMin);
-
-        System.out.println("turnCountTotal = " + turnCountTotal);
-        System.out.println("turnCountMax   = " + turnCountMax);
-        System.out.println("turnCountMin   = " + turnCountMin);
+        System.out.println("riverCountTotal = " + riverCountTotal);
+        System.out.println("riverCountMax   = " + riverCountMax);
+        System.out.println("riverCountMin   = " + riverCountMin);
     }
 }

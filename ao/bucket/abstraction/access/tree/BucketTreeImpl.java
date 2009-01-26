@@ -1,5 +1,7 @@
 package ao.bucket.abstraction.access.tree;
 
+import ao.bucket.abstraction.access.tree.list.BucketListImpl;
+import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.DetailLookup;
@@ -10,13 +12,9 @@ import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
-import ao.util.persist.PersistentBytes;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,13 +28,10 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    private final File holeFile;
-    private final File flopFile;
-    private final File turnFile;
-
-    private final byte[] holes;
-    private final byte[] flops;
-    private final byte[] turns;
+    private final BucketList holes;
+    private final BucketList flops;
+    private final BucketList turns;
+    private final BucketList rivers;
 
 
     //--------------------------------------------------------------------
@@ -44,50 +39,37 @@ public class BucketTreeImpl implements BucketTree
     {
         File persistDir = Dir.get(DIR, id);
 
-        holeFile = new File(persistDir, "holes");
-        flopFile = new File(persistDir, "flops");
-        turnFile = new File(persistDir, "turns");
+        File holeFile = new File(persistDir, "holes");
+        File flopFile = new File(persistDir, "flops");
+        File turnFile = new File(persistDir, "turns");
 
-        holes = retrieveOrCreate(holeFile, HoleLookup.CANONS);
-        flops = retrieveOrCreate(flopFile, FlopLookup.CANONS);
-        turns = retrieveOrCreate(turnFile, TurnLookup.CANONS);
-    }
-
-    private byte[] retrieveOrCreate(File fullName, int canonCount)
-    {
-        byte[] buckets  = PersistentBytes.retrieve( fullName );
-        if (buckets == null) {
-            buckets = new byte[ canonCount ];
-            Arrays.fill(buckets, (byte) -1);
-        }
-        return buckets;
+        holes = new BucketListImpl(holeFile, HoleLookup.CANONS);
+        flops = new BucketListImpl(flopFile, FlopLookup.CANONS);
+        turns = new HalfBucketList(turnFile, TurnLookup.CANONS);
+        rivers = null;
     }
 
 
     //--------------------------------------------------------------------
-    public void setHole(char canonHole,
-                        byte holeBucket)
+    public void setHole(char canonHole, byte holeBucket)
     {
-        holes[ canonHole ] = holeBucket;
+        holes.set( canonHole, holeBucket );
     }
 
-    public void setFlop(int  canonFlop,
-                        byte flopBucket)
+    public void setFlop(int  canonFlop, byte flopBucket)
     {
-        flops[ canonFlop ] = flopBucket;
+        flops.set( canonFlop, flopBucket );
     }
 
-    public void setTurn(int  canonTurn,
-                        byte turnBucket)
+    public void setTurn(int  canonTurn, byte turnBucket)
     {
-        turns[ canonTurn ] = turnBucket;
+        turns.set( canonTurn, turnBucket );
     }
-//
-//    public void addRiver(byte riverBucket,
-//                         long canonRiver)
-//    {
-//        throw new UnsupportedOperationException();
-//    }
+
+    public void setRiver(long canonRiver, byte riverBucket)
+    {
+        throw new UnsupportedOperationException();
+    }
 
     public void set(Round round,
                     long  canonIndex,
@@ -95,9 +77,10 @@ public class BucketTreeImpl implements BucketTree
     {
         switch (round)
         {
-            case PREFLOP: setHole((char) canonIndex, bucket); break;
-            case FLOP:    setFlop((int)  canonIndex, bucket); break;
-            case TURN:    setTurn((int)  canonIndex, bucket); break;
+            case PREFLOP:  setHole((char) canonIndex, bucket); break;
+            case FLOP:     setFlop((int)  canonIndex, bucket); break;
+            case TURN:     setTurn((int)  canonIndex, bucket); break;
+            case RIVER:   setRiver(       canonIndex, bucket); break;
         }
     }
 
@@ -105,31 +88,32 @@ public class BucketTreeImpl implements BucketTree
     //--------------------------------------------------------------------
     public byte getHole(char canonHole)
     {
-        return holes[ canonHole ];
+        return holes.get( canonHole );
     }
 
     public byte getFlop(int canonFlop)
     {
-        return flops[ canonFlop ];
+        return flops.get( canonFlop );
     }
 
     public byte getTurn(int canonTurn)
     {
-        return turns[ canonTurn ];
+        return turns.get( canonTurn );
     }
 
     public byte getRiver(long canonRiver)
     {
-        return -1;
+        return rivers.get( canonRiver );
     }
 
     public byte get(Round round, long canonIndex)
     {
         switch (round)
         {
-            case PREFLOP: return getHole( (char) canonIndex );
-            case FLOP:    return getFlop( (int)  canonIndex );
-            case TURN:    return getTurn( (int)  canonIndex );
+            case PREFLOP: return  getHole( (char) canonIndex );
+            case FLOP:    return  getFlop( (int)  canonIndex );
+            case TURN:    return  getTurn( (int)  canonIndex );
+            case RIVER:   return getRiver(        canonIndex );
 
             default:
                 throw new IllegalArgumentException();
@@ -138,48 +122,38 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
+    public boolean isEmpty(Round round, long canonIndex)
+    {
+        switch (round)
+        {
+            case PREFLOP: return  holes.isEmpty( canonIndex );
+            case FLOP:    return  flops.isEmpty( canonIndex );
+            case TURN:    return  turns.isEmpty( canonIndex );
+            case RIVER:   return rivers.isEmpty( canonIndex );
+
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+
+    //--------------------------------------------------------------------
     public void flush()
     {
-        PersistentBytes.persist(holes, holeFile);
-        PersistentBytes.persist(flops, flopFile);
-        PersistentBytes.persist(turns, turnFile);
+        holes.flush();
+        flops.flush();
+        turns.flush();
+        rivers.flush();
     }
 
-    public void flush(Round round, int fromCanon, int canonCount) {
-        try {
-            doFlush(round, fromCanon, canonCount);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void flush(Round round, int fromCanon, char canonCount) {
+        switch (round)
+        {
+            case PREFLOP:  holes.flush(fromCanon, canonCount); break;
+            case FLOP:     flops.flush(fromCanon, canonCount); break;
+            case TURN:     turns.flush(fromCanon, canonCount); break;
+            case RIVER:   rivers.flush(fromCanon, canonCount); break;
         }
-    }
-    private void doFlush(Round round, int fromCanon, int canonCount)
-            throws IOException
-    {
-        File   roundFile;
-        byte[] roundBuckets;
-
-        if (round == Round.PREFLOP) {
-            roundFile    = holeFile;
-            roundBuckets = holes;
-        } else if (round == Round.FLOP) {
-            roundFile    = flopFile;
-            roundBuckets = flops;
-        } else if (round == Round.TURN) {
-            roundFile    = turnFile;
-            roundBuckets = turns;
-        } else /*if (round == Round.RIVER)*/ {
-            throw new UnsupportedOperationException();
-        }
-
-        if (! roundFile.canRead()) {
-            PersistentBytes.persist(roundBuckets, roundFile);
-            return;
-        }
-
-        RandomAccessFile f = new RandomAccessFile(roundFile, "rw");
-        f.seek(fromCanon);
-        f.write(roundBuckets, fromCanon, canonCount);
-        f.close();
     }
 
 
@@ -244,9 +218,13 @@ public class BucketTreeImpl implements BucketTree
             return BucketTreeImpl.this.get(round, canonIndex);
         }
 
+        private boolean isEmpty(long canonIndex) {
+            return BucketTreeImpl.this.isEmpty(round, canonIndex);
+        }
+
 
         //----------------------------------------------------------------
-        public CanonDetail[][] details()
+        public CanonDetail[] details()
         {
             return DetailLookup.lookupSub(
                             round().previous(),
@@ -267,19 +245,16 @@ public class BucketTreeImpl implements BucketTree
             AutovivifiedList<IntList> subBranchCanons =
                     new AutovivifiedList<IntList>();
 
-            for (CanonDetail[] detailList : details())
+            for (CanonDetail detail : details())
             {
-                for (CanonDetail detail : detailList)
-                {
-                    byte bucket = get( detail.canonIndex() );
+                byte bucket = get( detail.canonIndex() );
 
-                    IntList bucketCanons = subBranchCanons.get(bucket);
-                    if (bucketCanons == null) {
-                        bucketCanons = new IntList();
-                        subBranchCanons.set(bucket, bucketCanons);
-                    }
-                    bucketCanons.add( (int) detail.canonIndex() );
+                IntList bucketCanons = subBranchCanons.get(bucket);
+                if (bucketCanons == null) {
+                    bucketCanons = new IntList();
+                    subBranchCanons.set(bucket, bucketCanons);
                 }
+                bucketCanons.add( (int) detail.canonIndex() );
             }
 
             List<Branch> subBranches = new ArrayList<Branch>();
@@ -298,7 +273,7 @@ public class BucketTreeImpl implements BucketTree
         {
             if (round == Round.PREFLOP) {
                 for (int i = 0; i < HoleLookup.CANONS; i++) {
-                    if (get(i) == -1) return false;
+                    if (isEmpty(i)) return false;
                 }
                 return true;
             }
@@ -308,7 +283,7 @@ public class BucketTreeImpl implements BucketTree
                             DetailLookup.lookupRange(
                                     round.previous(), parent);
                 for (int i = 0; i < range.canonIndexCount(); i++) {
-                    if (get( range.fromCanonIndex() + i ) == -1)
+                    if (isEmpty( range.fromCanonIndex() + i ))
                         return false;
                 }
             }
@@ -319,27 +294,23 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public void flush()
         {
-            switch (round)
-            {
-                case PREFLOP:
-                    BucketTreeImpl.this.flush(
-                            round, 0, HoleLookup.CANONS);
-                    return;
+            if (round == Round.PREFLOP) {
+                BucketTreeImpl.this.flush(
+                        round, 0, (char) HoleLookup.CANONS);
+                return;
+            }
 
-                case FLOP:
-                case TURN:
-                    for (int parent : parentCanons) {
-                        CanonRange range =
-                                DetailLookup.lookupRange(
-                                        round.previous(), parent);
+            for (int parent : parentCanons) {
+                CanonRange range =
+                        DetailLookup.lookupRange(
+                                round.previous(), parent);
 
-                        BucketTreeImpl.this.flush(
-                                round,
-                                (int) range.fromCanonIndex(),
-                                range.canonIndexCount());
-                    }
-                    return;
+                BucketTreeImpl.this.flush(
+                        round,
+                        (int) range.fromCanonIndex(),
+                        range.canonIndexCount());
             }
         }
     }
 }
+

@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.turn;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.river.River;
@@ -108,13 +109,22 @@ public class TurnDetailLookup
     }
 
     public static CanonTurnDetail[] lookup(
-            int fromCanonTurn, int canonTurnCount)
+            int canonTurnFrom, int canonTurnCount)
     {
         CanonTurnDetail[] details =
                 new CanonTurnDetail[ canonTurnCount ];
         for (int i = 0; i < canonTurnCount; i++) {
-            details[ i ] = lookup(fromCanonTurn + i);
+            details[ i ] = lookup(canonTurnFrom + i);
         }
         return details;
+    }
+
+    public static void lookup(
+                int canonTurnFrom, int canonTurnCount,
+                CanonDetail[] into, int startingAt)
+    {
+        for (int i = 0; i < canonTurnCount; i++) {
+            into[ startingAt + i ] = lookup(canonTurnFrom + i);
+        }
     }
 }
