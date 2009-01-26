@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.flop;
 
+import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.flop.Flop;
@@ -112,5 +113,14 @@ public class FlopDetailLookup
             details[ i ] = lookup(canonFlopFrom + i);
         }
         return details;
+    }
+
+    public static void lookup(
+            int canonFlopFrom, int canonFlopCount,
+            CanonDetail[] into, int startingAt)
+    {
+        for (int i = 0; i < canonFlopCount; i++) {
+            into[ startingAt + i ] = lookup(canonFlopFrom + i);
+        }
     }
 }

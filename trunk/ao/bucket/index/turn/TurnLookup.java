@@ -25,8 +25,8 @@ import java.util.Set;
 public class TurnLookup
 {
     //--------------------------------------------------------------------
-    public  static final int CANONS = 55190538;
-    private static final Logger LOG             =
+    public  static final int    CANONS = 55190538;
+    private static final Logger LOG    =
             Logger.getLogger(TurnLookup.class);
 
 
@@ -109,8 +109,8 @@ public class TurnLookup
     private static TurnCase[][] calculateCases()
     {
         final TurnCase caseSets[][] =
-                new TurnCase[ FlopLookup.CANONS]
-                            [   /*Rank.VALUES.length*/   ];
+                new TurnCase[ FlopLookup.CANONS      ]
+                            [ /*Rank.VALUES.length*/ ];
 
         final int[]                prevFlop  = {-1};
         final List<Set<CanonSuit>> turnCases =

@@ -1,6 +1,5 @@
 package ao.bucket.index.detail.flop;
 
-import ao.bucket.index.detail.turn.TurnOdds;
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
@@ -60,7 +59,7 @@ public class FlopOdds
     //--------------------------------------------------------------------
     private FlopOdds() {}
     private static final Logger LOG =
-            Logger.getLogger(TurnOdds.class);
+            Logger.getLogger(FlopOdds.class);
 
     private static final int SENTINAL = -1;
 

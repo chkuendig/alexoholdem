@@ -26,58 +26,27 @@ public class BucketizerImpl implements Bucketizer
         assert nBuckets > 0;
         if (branch.isBucketized()) return false;
 
-        CanonDetail[][] details = branch.details();
-        int detailCount = countDetails(details);
+        CanonDetail[] details = branch.details();
 
         LOG.debug("bucketizing " + branch.round() + " branch of " +
-                  detailCount + " into " + nBuckets);
+                  details.length + " into " + nBuckets);
 
-        BucketAllocator alloc = new BucketAllocator(
-                          detailCount, (char) nBuckets);
-        for (CanonDetail canonDetail :
-                sortCanonDetail(details, detailCount))
-        {
-            branch.set(canonDetail.canonIndex(),
-                       (byte) alloc.nextBucket(1));
-        }
-        return true;
-    }
-
-    private int countDetails(CanonDetail[][] details)
-    {
-        int count = 0;
-        for (CanonDetail[] detailList : details)
-            count += detailList.length;
-        return count;
-    }
-
-
-    //--------------------------------------------------------------------
-    private CanonDetail[] sortCanonDetail(
-            CanonDetail[][] details,
-            int             detailCount)
-    {
-//        LOG.debug("sorting canon details, flattening...");
-
-        int           i    = 0;
-        CanonDetail[] flat = new CanonDetail[ detailCount ];
-        for (CanonDetail[] detailList : details) {
-            for (CanonDetail detail : detailList) {
-                flat[ i++ ] = detail;
-            }
-        }
-//        LOG.debug(flat.length + " total details, sorting...");
-
-        Arrays.sort(flat, new Comparator<CanonDetail>() {
+        Arrays.sort(details, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
                 return Double.compare(
                         a.strengthVsRandom(),
                         b.strengthVsRandom());
             }
         });
-//        LOG.debug("done sorting!");
 
-        return flat;
+        BucketAllocator alloc = new BucketAllocator(
+                          details.length, (char) nBuckets);
+        for (CanonDetail detail : details)
+        {
+            branch.set(detail.canonIndex(),
+                       (byte) alloc.nextBucket(1));
+        }
+        return true;
     }
 
 

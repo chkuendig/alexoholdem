@@ -6,6 +6,7 @@ import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
+import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentFloats;
 import ao.util.persist.PersistentInts;
@@ -19,6 +20,8 @@ import java.io.File;
 public class FlopDetailFlyweight
 {
     //--------------------------------------------------------------------
+    private static final String F_HOLE        = "hole.byte";
+
     private static final String F_EXAMPLE_A   = "ex1.byte";
     private static final String F_EXAMPLE_B   = "ex2.byte";
     private static final String F_EXAMPLE_C   = "ex3.byte";
@@ -32,6 +35,7 @@ public class FlopDetailFlyweight
     //--------------------------------------------------------------------
     public static void persist(FlopDetailFlyweight fw, File toDir)
     {
+        File fHole       = new File(toDir, F_HOLE);
         File fExampleA   = new File(toDir, F_EXAMPLE_A);
         File fExampleB   = new File(toDir, F_EXAMPLE_B);
         File fExampleC   = new File(toDir, F_EXAMPLE_C);
@@ -40,6 +44,7 @@ public class FlopDetailFlyweight
         File fFirstTurn = new File(toDir, F_FIRST_RIVER);
         File fTurnCount = new File(toDir, F_TURN_COUNT);
 
+        PersistentBytes.persist(fw.HOLE       , fHole);
         PersistentBytes.persist(fw.EXAMPLE_A  , fExampleA);
         PersistentBytes.persist(fw.EXAMPLE_B  , fExampleB);
         PersistentBytes.persist(fw.EXAMPLE_C  , fExampleC);
@@ -51,6 +56,7 @@ public class FlopDetailFlyweight
 
     public static FlopDetailFlyweight retrieve(File fromDir)
     {
+        File fHole       = new File(fromDir, F_HOLE);
         File fExampleA   = new File(fromDir, F_EXAMPLE_A);
         File fExampleB   = new File(fromDir, F_EXAMPLE_B);
         File fExampleC   = new File(fromDir, F_EXAMPLE_C);
@@ -62,6 +68,7 @@ public class FlopDetailFlyweight
         if (! fTurnCount.canRead()) return null;
 
         return new FlopDetailFlyweight(
+                PersistentBytes .retrieve(fHole),
                 PersistentBytes .retrieve(fExampleA),
                 PersistentBytes .retrieve(fExampleB),
                 PersistentBytes .retrieve(fExampleC),
@@ -73,6 +80,7 @@ public class FlopDetailFlyweight
 
 
     //--------------------------------------------------------------------
+    private final byte[]  HOLE;
     private final byte[]  EXAMPLE_A;
     private final byte[]  EXAMPLE_B;
     private final byte[]  EXAMPLE_C;
@@ -85,6 +93,7 @@ public class FlopDetailFlyweight
     //--------------------------------------------------------------------
     public FlopDetailFlyweight()
     {
+        HOLE        = new byte [ FlopLookup.CANONS ];
         EXAMPLE_A   = new byte [ FlopLookup.CANONS ];
         EXAMPLE_B   = new byte [ FlopLookup.CANONS ];
         EXAMPLE_C   = new byte [ FlopLookup.CANONS ];
@@ -94,6 +103,7 @@ public class FlopDetailFlyweight
         TURN_COUNT = new byte [ FlopLookup.CANONS ];
     }
     private FlopDetailFlyweight(
+            byte[]  hole,
             byte[]  exampleA,
             byte[]  exampleB,
             byte[]  exampleC,
@@ -102,6 +112,7 @@ public class FlopDetailFlyweight
             int[]   firstRiver,
             byte[]  riverCount)
     {
+        HOLE        = hole;
         EXAMPLE_A   = exampleA;
         EXAMPLE_B   = exampleB;
         EXAMPLE_C   = exampleC;
@@ -130,6 +141,7 @@ public class FlopDetailFlyweight
         int       canon = flop.canonIndex();
         Community comm  = flop.community();
 
+        HOLE     [ canon ] = (byte) flop.hole().canonIndex();
         EXAMPLE_A[ canon ] = (byte) comm.flopA().ordinal();
         EXAMPLE_B[ canon ] = (byte) comm.flopB().ordinal();
         EXAMPLE_C[ canon ] = (byte) comm.flopC().ordinal();
@@ -169,6 +181,10 @@ public class FlopDetailFlyweight
         public long canonIndex()
         {
             return CANON_INDEX;
+        }
+        public char holeIndex()
+        {
+            return (char) Calc.unsigned( HOLE[CANON_INDEX] );
         }
         public Card exampleA()
         {
