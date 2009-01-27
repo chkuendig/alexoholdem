@@ -28,7 +28,7 @@ public class FlopDetailFlyweight
 
 //    private static final String F_REPRESENTS  = "rep.byte";
     private static final String F_STRENGTH    = "str.float";
-    private static final String F_FIRST_RIVER = "rfst.int";
+    private static final String F_FIRST_TURN  = "rfst.int";
     private static final String F_TURN_COUNT  = "rcnt.byte";
 
 
@@ -41,7 +41,7 @@ public class FlopDetailFlyweight
         File fExampleC   = new File(toDir, F_EXAMPLE_C);
 //        File fRepresent  = new File(toDir, F_REPRESENTS);
         File fStrength  = new File(toDir, F_STRENGTH);
-        File fFirstTurn = new File(toDir, F_FIRST_RIVER);
+        File fFirstTurn = new File(toDir, F_FIRST_TURN);
         File fTurnCount = new File(toDir, F_TURN_COUNT);
 
         PersistentBytes.persist(fw.HOLE       , fHole);
@@ -62,7 +62,7 @@ public class FlopDetailFlyweight
         File fExampleC   = new File(fromDir, F_EXAMPLE_C);
 //        File fRepresent  = new File(fromDir, F_REPRESENTS);
         File fStrength  = new File(fromDir, F_STRENGTH);
-        File fFirstTurn = new File(fromDir, F_FIRST_RIVER);
+        File fFirstTurn = new File(fromDir, F_FIRST_TURN);
         File fTurnCount = new File(fromDir, F_TURN_COUNT);
 
         if (! fTurnCount.canRead()) return null;

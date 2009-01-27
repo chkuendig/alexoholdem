@@ -147,7 +147,7 @@ public class BucketTreeImpl implements BucketTree
         holes.flush();
         flops.flush();
         turns.flush();
-        rivers.flush();
+//        rivers.flush();
 
         PersistentBytes.persist(new byte[]{1}, flushFlag);
     }

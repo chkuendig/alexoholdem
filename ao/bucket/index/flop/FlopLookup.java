@@ -39,8 +39,8 @@ public class FlopLookup
 
         LOG.info("indexing retrieved offsets");
         int offsets[][] =
-                new int[HoleLookup.CANONS]
-                       [   FlopCase.VALUES.length   ];
+                new int[ HoleLookup.CANONS      ]
+                       [ FlopCase.VALUES.length ];
 
         for (int i = 0; i < flat.length; i++)
         {
