@@ -79,7 +79,7 @@ public class TestCanonDetails
             CanonTurnDetail details =
                     DetailLookup.lookupTurn( canonTurn );
 
-            totalStrength += details.strengthVsRandom();
+            totalStrength += details.strength();
 //            riverCountTotal += details.canonRiverCount();
 //            riverCountMax = Math.max(riverCountMax,
 //                                       details.canonRiverCount());

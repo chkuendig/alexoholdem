@@ -68,7 +68,7 @@ public class CanonHoleDetail implements CanonDetail
         return HEADS_UP_ODDS;
     }
 
-    public double strengthVsRandom()
+    public double strength()
     {
         return HEADS_UP_ODDS.strengthVsRandom();
     }
@@ -88,6 +88,7 @@ public class CanonHoleDetail implements CanonDetail
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
+
     public static class Binding extends GenericBinding<CanonHoleDetail> {
         public CanonHoleDetail read(TupleInput in) {
             return new CanonHoleDetail(

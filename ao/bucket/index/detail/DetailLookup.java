@@ -10,10 +10,10 @@ import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetailLookup;
 import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.Round;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Date: Jan 9, 2009
@@ -85,33 +85,9 @@ public class DetailLookup
 
 
     //--------------------------------------------------------------------
-    public static CanonRiverDetail[] lookupRiver(
-            CanonHoleDetail hole,
-            CanonFlopDetail flop,
-            CanonTurnDetail turn)
+    public static Collection<CanonRiverDetail> lookupRiver(int canonTurn)
     {
-        CanonDetail[] details = new CanonDetail[ 46 ];
-        lookupRiver(hole.example(),
-                    flop.exampleA(), flop.exampleB(), flop.exampleC(),
-                    turn.example(),
-                    details, 0);
-
-        int length = 0;
-        for (CanonDetail detail : details) {
-            if (detail == null) break;
-            length++;
-        }
-        return (CanonRiverDetail[])
-                Arrays.copyOfRange(details, 0, length);
-    }
-
-    public static void lookupRiver(
-            Hole hole, Card flopA, Card flopB, Card flopC, Card turn,
-            CanonDetail[] into, int startingAt)
-    {
-        RiverDetailLookup.lookup(
-                hole, flopA, flopB, flopC, turn,
-                into, startingAt);
+        return RiverDetailLookup.lookup( canonTurn );
     }
 
 
@@ -127,14 +103,19 @@ public class DetailLookup
         } else if (prevRound.ordinal() < Round.TURN.ordinal()) {
             return lookupPreTurnSub(prevRound, prevCanonIndexes);
         } else {
-            return (CanonDetail[]) lookupTurnSub(prevCanonIndexes);
+            return lookupTurnSub(prevCanonIndexes);
         }
     }
 
     //--------------------------------------------------------------------
     private static CanonRiverDetail[] lookupTurnSub(int[] turnCanons)
     {
-        return new CanonRiverDetail[0];
+        List<CanonRiverDetail> details =
+                new ArrayList<CanonRiverDetail>();
+        for (int canonTurn : turnCanons) {
+            details.addAll( lookupRiver(canonTurn) );
+        }
+        return details.toArray(new CanonRiverDetail[details.size()]);
     }
 
     //--------------------------------------------------------------------

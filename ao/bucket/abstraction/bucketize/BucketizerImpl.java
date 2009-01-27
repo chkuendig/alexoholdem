@@ -34,8 +34,8 @@ public class BucketizerImpl implements Bucketizer
         Arrays.sort(details, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
                 return Double.compare(
-                        a.strengthVsRandom(),
-                        b.strengthVsRandom());
+                        a.strength(),
+                        b.strength());
             }
         });
 

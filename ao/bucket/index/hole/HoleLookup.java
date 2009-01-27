@@ -22,11 +22,12 @@ public class HoleLookup
 
 
     //--------------------------------------------------------------------
-    private static final CanonHole[][] CACHE = computeCanons();
+    private static final CanonHole[]   BY_CANON = new CanonHole[ CANONS ];
+    private static final CanonHole[][] CACHE    = computeCanons(BY_CANON);
 
 
     //--------------------------------------------------------------------
-    private static CanonHole[][] computeCanons()
+    private static CanonHole[][] computeCanons(CanonHole[] byCanon)
     {
         CanonHole[][] canons = new CanonHole[52][52];
 
@@ -36,8 +37,13 @@ public class HoleLookup
             {
                 if (a == b) continue;
 
-                canons[ a.ordinal() ][ b.ordinal() ] =
-                        computeCanonHole(a, b);
+                CanonHole canonHole = computeCanonHole(a, b);
+                canons[ a.ordinal() ][ b.ordinal() ] = canonHole;
+
+                if (byCanon[ canonHole.canonIndex() ] == null)
+                {
+                    byCanon[ canonHole.canonIndex() ] = canonHole;
+                }
             }
         }
 
@@ -100,5 +106,10 @@ public class HoleLookup
     public static CanonHole lookup(Card a, Card b)
     {
         return CACHE[ a.ordinal() ][ b.ordinal() ];
+    }
+
+    public static CanonHole lookup(int canonIndex)
+    {
+        return BY_CANON[ canonIndex ];
     }
 }

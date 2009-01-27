@@ -8,7 +8,7 @@ public interface CanonDetail
 {
 //    public byte   represents();
 
-    public double strengthVsRandom();
+    public double strength();
 
     public long   canonIndex();
 }

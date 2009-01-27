@@ -1,30 +1,35 @@
 package ao.bucket.index.detail.river;
 
-import ao.holdem.model.card.Card;
+import ao.bucket.index.detail.CanonDetail;
 
 /**
  * Date: Jan 9, 2009
  * Time: 12:40:56 PM
  */
-public class CanonRiverDetail
+public class CanonRiverDetail implements CanonDetail
 {
     //--------------------------------------------------------------------
-    public Card example()
+    private final double STRENGTH;
+    private final long   INDEX;
+
+
+    //--------------------------------------------------------------------
+    public CanonRiverDetail(double strength,
+                            long   index)
     {
-        return null;
+        STRENGTH = strength;
+        INDEX    = index;
     }
 
 
     //--------------------------------------------------------------------
-    public byte represents()
+    public double strength()
     {
-        return 0;
+        return STRENGTH;
     }
 
-
-    //--------------------------------------------------------------------
-    public short value()
+    public long canonIndex()
     {
-        return 0;
+        return INDEX;
     }
 }

@@ -1,8 +1,11 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
@@ -129,6 +132,14 @@ public class FlopDetailFlyweight
         return new CanonFlopDetail(canonIndex);
     }
 
+    public CanonRange getTurnRange(int canonIndex)
+    {
+        return new CanonRange(
+                FIRST_TURN[ canonIndex ],
+                (char) TURN_COUNT[ canonIndex ]);
+    }
+
+
 //    public boolean isInitiated(int canonIndex)
 //    {
 //        return REPRESENT[ canonIndex ] == 0;
@@ -182,9 +193,10 @@ public class FlopDetailFlyweight
         {
             return CANON_INDEX;
         }
-        public char holeIndex()
+        public CanonHole hole()
         {
-            return (char) Calc.unsigned( HOLE[CANON_INDEX] );
+            return HoleLookup.lookup(
+                    Calc.unsigned( HOLE[CANON_INDEX] ));
         }
         public Card exampleA()
         {
@@ -202,7 +214,7 @@ public class FlopDetailFlyweight
 //        {
 //            return REPRESENT[ CANON_INDEX ];
 //        }
-        public double strengthVsRandom()
+        public double strength()
         {
             return STRENGTH[ CANON_INDEX ];
         }
