@@ -200,11 +200,11 @@ public class DetailLookup
                 return new CanonRange(flopDetail.firstCanonTurn(),
                                       (char) flopDetail.canonTurnCount());
 
-            case TURN:
-                CanonTurnDetail turnDetail =
-                        lookupTurn( (int) canonIndex );
-                return new CanonRange(turnDetail.firstCanonRiver(),
-                                      (char) turnDetail.canonRiverCount());
+//            case TURN:
+//                CanonTurnDetail turnDetail =
+//                        lookupTurn( (int) canonIndex );
+//                return new CanonRange(turnDetail.firstCanonRiver(),
+//                                      (char) turnDetail.canonRiverCount());
 
             default:
                 throw new IllegalArgumentException();

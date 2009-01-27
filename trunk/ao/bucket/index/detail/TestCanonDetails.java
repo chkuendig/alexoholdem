@@ -66,9 +66,11 @@ public class TestCanonDetails
     //--------------------------------------------------------------------
     public static void testTurnDetails()
     {
-        long riverCountTotal = 0;
-        long riverCountMax   = Long.MIN_VALUE;
-        long riverCountMin   = Long.MAX_VALUE;
+//        long riverCountTotal = 0;
+//        long riverCountMax   = Long.MIN_VALUE;
+//        long riverCountMin   = Long.MAX_VALUE;
+
+        double totalStrength = 0;
 
         for (int canonTurn = 0;
                  canonTurn < TurnLookup.CANONS;
@@ -76,15 +78,19 @@ public class TestCanonDetails
         {
             CanonTurnDetail details =
                     DetailLookup.lookupTurn( canonTurn );
-            riverCountTotal += details.canonRiverCount();
-            riverCountMax = Math.max(riverCountMax,
-                                       details.canonRiverCount());
-            riverCountMin = Math.min(riverCountMin,
-                                       details.canonRiverCount());
+
+            totalStrength += details.strengthVsRandom();
+//            riverCountTotal += details.canonRiverCount();
+//            riverCountMax = Math.max(riverCountMax,
+//                                       details.canonRiverCount());
+//            riverCountMin = Math.min(riverCountMin,
+//                                       details.canonRiverCount());
         }
 
-        System.out.println("riverCountTotal = " + riverCountTotal);
-        System.out.println("riverCountMax   = " + riverCountMax);
-        System.out.println("riverCountMin   = " + riverCountMin);
+        System.out.println("totalStrength/n = " + (totalStrength / TurnLookup.CANONS));
+
+//        System.out.println("riverCountTotal = " + riverCountTotal);
+//        System.out.println("riverCountMax   = " + riverCountMax);
+//        System.out.println("riverCountMin   = " + riverCountMin);
     }
 }

@@ -53,7 +53,7 @@ public class BucketizerTest
                                 nFlopBuckets,
                                 nTurnBuckets,
                                 nRiverBuckets);
-        BucketMap  map     = new BucketMap( buckets );
+        BucketMap  map     = buckets.map();
 
         int[] holeCounts = new int[ nHoleBuckets ];
         int[] flopCounts = new int[ nFlopBuckets ];

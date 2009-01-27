@@ -123,4 +123,11 @@ public class FlopDetailLookup
             into[ startingAt + i ] = lookup(canonFlopFrom + i);
         }
     }
+
+
+    //--------------------------------------------------------------------
+    public static int lookupContaining(int turnCanon)
+    {
+        return -1;
+    }
 }

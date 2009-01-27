@@ -3,9 +3,7 @@ package ao.bucket.index.detail.turn;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.CardEnum;
-import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
-import ao.bucket.index.turn.TurnLookup;
 import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
@@ -67,39 +65,39 @@ public class TurnDetailLookup
 //                }
 //                fw.incrementRepresentation(index);
             }});
-        computeRiverInfo( fw );
+//        computeRiverInfo( fw );
         return fw;
     }
 
 
-    //--------------------------------------------------------------------
-    private static void computeRiverInfo(
-            TurnDetailFlyweight fw)
-    {
-        LOG.debug("computing river info");
-
-        long   riverOffset = 0;
-        byte[] riverCounts = riverCounts();
-
-        for (int i = 0; i < TurnLookup.CANONS; i++)
-        {
-            fw.setRiverInfo(i, riverOffset, riverCounts[ i ]);
-            riverOffset += riverCounts[ i ];
-        }
-    }
-
-    public static byte[] riverCounts()
-    {
-        final byte[] riverCounts =
-                new byte[ TurnLookup.CANONS];
-
-        CardEnum.traverseUniqueRivers(new Traverser<River>() {
-            public void traverse(River river) {
-                riverCounts[ river.turn().canonIndex() ]++;
-            }});
-
-        return riverCounts;
-    }
+//    //--------------------------------------------------------------------
+//    private static void computeRiverInfo(
+//            TurnDetailFlyweight fw)
+//    {
+//        LOG.debug("computing river info");
+//
+//        long   riverOffset = 0;
+//        byte[] riverCounts = riverCounts();
+//
+//        for (int i = 0; i < TurnLookup.CANONS; i++)
+//        {
+//            fw.setRiverInfo(i, riverOffset, riverCounts[ i ]);
+//            riverOffset += riverCounts[ i ];
+//        }
+//    }
+//
+//    public static byte[] riverCounts()
+//    {
+//        final byte[] riverCounts =
+//                new byte[ TurnLookup.CANONS];
+//
+//        CardEnum.traverseUniqueRivers(new Traverser<River>() {
+//            public void traverse(River river) {
+//                riverCounts[ river.turn().canonIndex() ]++;
+//            }});
+//
+//        return riverCounts;
+//    }
 
 
     //--------------------------------------------------------------------
