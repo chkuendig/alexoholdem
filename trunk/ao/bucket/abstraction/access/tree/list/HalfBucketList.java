@@ -28,10 +28,10 @@ public class HalfBucketList implements BucketList
 
         for (int i = 0; i < size; i++)
         {
-            if (bl.isEmpty(i)) {
+//            if (bl.isEmpty(i)) {
                 bl.set(i, (byte) (i % 15));
-                bl.flush(i, (char) 1);
-            }
+//                bl.flush(i, (char) 1);
+//            }
 
             if (bl.get(i) != (i % 15)) {
                 System.out.println("ERORR at " + i);

@@ -170,7 +170,7 @@ public class TurnDetailFlyweight
 //        {
 //            return REPRESENT[ CANON_INDEX ];
 //        }
-        public double strengthVsRandom()
+        public double strength()
         {
             return strengthToDouble(STRENGTH[ CANON_INDEX ]);
         }

@@ -119,19 +119,19 @@ public enum HandStrength
 //                            hole, community,
 //                            showdown.numActivePlayers()-1);
 //        // actual hand strength
-//        double act = actual.strengthVsRandom();
+//        double act = actual.strength();
 //
 //        BlindOddFinder.BlindOdds expected =
 //                expectedOdds.compute(
 //                        community, showdown.numActivePlayers());
 //
 //        // random expected average hand strength
-//        double avg = expected.sum().strengthVsRandom();
+//        double avg = expected.sum().strength();
 ////        double min = Math.min(act,
-////                              expected.min().strengthVsRandom(
+////                              expected.min().strength(
 ////                                      showdown.numActivePlayers()));
 ////        double max = Math.max(act,
-////                              expected.max().strengthVsRandom(
+////                              expected.max().strength(
 ////                                      showdown.numActivePlayers()));
 //
 //        // by how much the actual hand is stronger than

@@ -154,10 +154,10 @@ public class BucketManager
 //                flop.flush();
             }
 
-//            riverBuckets += bucketizeRivers(
-//                                flop.subBranches(),
-//                                riverBuckets,
-//                                riverBucketCounts);
+            riverBuckets += bucketizeRivers(
+                                flop.subBranches(),
+                                riverBuckets,
+                                riverBucketCounts);
         }
         return flopBucketIndex;
     }

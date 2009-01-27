@@ -26,4 +26,17 @@ public class CanonRange
     public char canonIndexCount() {
         return canonIndexCount;
     }
+
+    public long upToAndIncluding()
+    {
+        return fromCanonIndex + canonIndexCount - 1;
+    }
+
+
+    //--------------------------------------------------------------------
+    public boolean contains(long canonIndex)
+    {
+        return fromCanonIndex <= canonIndex &&
+                                 canonIndex <= upToAndIncluding();
+    }
 }

@@ -19,6 +19,8 @@ public class River implements CanonIndexed
     private final Turn      TURN_CARDS;
     private final int       RANK_OFFSET;
 
+    private       long      canonIndex = -1;
+
 
     //--------------------------------------------------------------------
     public River(
@@ -85,6 +87,13 @@ public class River implements CanonIndexed
     }
 
     public long canonIndex()
+    {
+        if (canonIndex == -1) {
+            canonIndex = calcCanonIndex();
+        }
+        return canonIndex;
+    }
+    private long calcCanonIndex()
     {
         long globalOffset =
                 RiverLookup.offset(TURN_CARDS.canonIndex());

@@ -1,6 +1,7 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.enumeration.CardEnum;
 import ao.bucket.index.flop.Flop;
@@ -126,8 +127,32 @@ public class FlopDetailLookup
 
 
     //--------------------------------------------------------------------
-    public static int lookupContaining(int turnCanon)
+    //   http://en.wikipedia.org/wiki/Binary_search
+    //                  #Single_comparison_per_iteration
+    public static CanonFlopDetail lookupContaining(int turnCanon)
     {
-        return -1;
+        int lo = 0;
+        int hi = FlopLookup.CANONS - 1;
+
+        while (lo <= hi)
+        {
+            int        mid       = lo + (hi - lo) / 2;
+            CanonRange turnRange = DETAILS.getTurnRange( mid );
+
+            if (turnRange.fromCanonIndex() > turnCanon)
+            {
+                hi = mid - 1;
+            }
+            else if (turnRange.upToAndIncluding() < turnCanon)
+            {
+                lo = mid + 1;
+            }
+            else
+            {
+                return lookup(mid);
+            }
+        }
+
+        return null;
     }
 }

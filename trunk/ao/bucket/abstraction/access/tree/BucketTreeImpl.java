@@ -2,6 +2,7 @@ package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.abstraction.access.BucketMap;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
+import ao.bucket.abstraction.access.tree.list.DummyBucketList;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
@@ -47,10 +48,10 @@ public class BucketTreeImpl implements BucketTree
         File flopFile  = new File(persistDir, "flops");
         File turnFile  = new File(persistDir, "turns");
 
-        holes = new BucketListImpl(holeFile, HoleLookup.CANONS);
-        flops = new BucketListImpl(flopFile, FlopLookup.CANONS);
-        turns = new HalfBucketList(turnFile, TurnLookup.CANONS);
-        rivers = null;
+        holes  = new BucketListImpl(holeFile, HoleLookup.CANONS);
+        flops  = new BucketListImpl(flopFile, FlopLookup.CANONS);
+        turns  = new HalfBucketList(turnFile, TurnLookup.CANONS);
+        rivers = new DummyBucketList();
     }
 
 
@@ -72,7 +73,7 @@ public class BucketTreeImpl implements BucketTree
 
     public void setRiver(long canonRiver, byte riverBucket)
     {
-        throw new UnsupportedOperationException();
+        rivers.set(canonRiver, riverBucket);
     }
 
     public void set(Round round,
@@ -147,7 +148,7 @@ public class BucketTreeImpl implements BucketTree
         holes.flush();
         flops.flush();
         turns.flush();
-//        rivers.flush();
+        rivers.flush();
 
         PersistentBytes.persist(new byte[]{1}, flushFlag);
     }
@@ -258,7 +259,7 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public Iterable<Branch> subBranches()
         {
-            if (round == Round.RIVER) return new ArrayList<Branch>();
+//            if (round == Round.RIVER) return new ArrayList<Branch>();
 
             AutovivifiedList<IntList> subBranchCanons =
                     new AutovivifiedList<IntList>();

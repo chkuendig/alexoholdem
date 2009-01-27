@@ -10,7 +10,7 @@ public interface BucketList
     public void set(long index, byte bucket);
     public byte get(long index);
 
-    public boolean isEmpty(long index);
+//    public boolean isEmpty(long index);
 
 
     //--------------------------------------------------------------------
