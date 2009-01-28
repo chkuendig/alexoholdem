@@ -1,11 +1,11 @@
 package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.example.ExampleLookup;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
-import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentChars;
 
 import java.io.File;
@@ -17,7 +17,7 @@ import java.io.File;
 public class TurnDetailFlyweight
 {
     //--------------------------------------------------------------------
-    private static final String F_EXAMPLE     = "ex.byte";
+//    private static final String F_EXAMPLE     = "ex.byte";
 //    private static final String F_REPRESENTS  = "rep.byte";
     private static final String F_STRENGTH    = "str.char";
 //    private static final String F_FIRST_RIVER = "rfst.int";
@@ -27,13 +27,13 @@ public class TurnDetailFlyweight
     //--------------------------------------------------------------------
     public static void persist(TurnDetailFlyweight fw, File toDir)
     {
-        File fExample    = new File(toDir, F_EXAMPLE);
+//        File fExample    = new File(toDir, F_EXAMPLE);
 //        File fRepresent  = new File(toDir, F_REPRESENTS);
         File fStrength   = new File(toDir, F_STRENGTH);
 //        File fFirstRiver = new File(toDir, F_FIRST_RIVER);
 //        File fRiverCount = new File(toDir, F_RIVER_COUNT);
 
-        PersistentBytes .persist(fw.EXAMPLE    , fExample);
+//        PersistentBytes .persist(fw.EXAMPLE    , fExample);
 //        PersistentBytes .persist(fw.REPRESENT  , fRepresent);
         PersistentChars.persist(fw.STRENGTH   , fStrength);
 //        PersistentInts .persist(fw.FIRST_RIVER, fFirstRiver);
@@ -42,7 +42,7 @@ public class TurnDetailFlyweight
 
     public static TurnDetailFlyweight retrieve(File fromDir)
     {
-        File fExample    = new File(fromDir, F_EXAMPLE);
+//        File fExample    = new File(fromDir, F_EXAMPLE);
 //        File fRepresent  = new File(fromDir, F_REPRESENTS);
         File fStrength   = new File(fromDir, F_STRENGTH);
 //        File fFirstRiver = new File(fromDir, F_FIRST_RIVER);
@@ -51,7 +51,7 @@ public class TurnDetailFlyweight
         if (! fStrength.canRead()) return null;
 
         return new TurnDetailFlyweight(
-                PersistentBytes .retrieve(fExample),
+//                PersistentBytes .retrieve(fExample),
 //                PersistentBytes .retrieve(fRepresent),
                 PersistentChars.retrieve(fStrength)//,
 //                PersistentInts .retrieve(fFirstRiver),
@@ -61,7 +61,7 @@ public class TurnDetailFlyweight
 
 
     //--------------------------------------------------------------------
-    private final byte[]  EXAMPLE;
+//    private final byte[]  EXAMPLE;
 //    private final byte[]  REPRESENT;
     private final char[] STRENGTH;
 //    private final int[]  FIRST_RIVER;
@@ -71,21 +71,21 @@ public class TurnDetailFlyweight
     //--------------------------------------------------------------------
     public TurnDetailFlyweight()
     {
-        EXAMPLE     = new byte [ TurnLookup.CANONS];
+//        EXAMPLE     = new byte [ TurnLookup.CANONS];
 //        REPRESENT   = new byte [ TurnLookup.CANONS];
         STRENGTH    = new char[ TurnLookup.CANONS ];
 //        FIRST_RIVER = new int [ TurnLookup.CANONS ];
 //        RIVER_COUNT = new byte[ TurnLookup.CANONS ];
     }
     private TurnDetailFlyweight(
-            byte[]  example,
+//            byte[]  example,
 //            byte[]  represent,
             char[] strength//,
 //            int[]   firstRiver,
 //            byte[]  riverCount
             )
     {
-        EXAMPLE     = example;
+//        EXAMPLE     = example;
 //        REPRESENT   = represent;
         STRENGTH    = strength;
 //        FIRST_RIVER = firstRiver;
@@ -110,7 +110,7 @@ public class TurnDetailFlyweight
     {
         int canonIndex = turn.canonIndex();
 
-        EXAMPLE [ canonIndex ] = (byte) turn.community().turn().ordinal();
+//        EXAMPLE [ canonIndex ] = (byte) turn.community().turn().ordinal();
 
         STRENGTH[ canonIndex ] =
                 strengthFromDouble(odds.strengthVsRandom());
@@ -164,7 +164,8 @@ public class TurnDetailFlyweight
         }
         public Card example()
         {
-            return Card.VALUES[EXAMPLE[ CANON_INDEX ]];
+            return ExampleLookup.turn( CANON_INDEX );
+//            return Card.VALUES[EXAMPLE[ CANON_INDEX ]];
         }
 //        public byte represents()
 //        {

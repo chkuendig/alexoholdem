@@ -30,6 +30,12 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
+    public static void traverseUniqueHoles(
+            Traverser<CanonHole> holeTraverser)
+    {
+        traverseHoles(new UniqueFilter<CanonHole>(),
+                      holeTraverser);
+    }
     public static void traverseHoles(
             final Filter<CanonHole>    holeFilter,
             final Traverser<CanonHole> holeTraverser)

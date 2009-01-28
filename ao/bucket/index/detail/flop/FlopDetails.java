@@ -17,16 +17,16 @@ import java.io.File;
  * Date: Jan 9, 2009
  * Time: 12:34:30 PM
  */
-public class FlopDetailLookup
+public class FlopDetails
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(FlopDetailLookup.class);
+            Logger.getLogger(FlopDetails.class);
 
     private static final File DIR =
             Dir.get("lookup/canon/detail/flop/");
 
-    private FlopDetailLookup() {}
+    private FlopDetails() {}
 
 
     //--------------------------------------------------------------------
@@ -129,7 +129,7 @@ public class FlopDetailLookup
     //--------------------------------------------------------------------
     //   http://en.wikipedia.org/wiki/Binary_search
     //                  #Single_comparison_per_iteration
-    public static CanonFlopDetail lookupContaining(int turnCanon)
+    public static CanonFlopDetail containing(int turnCanon)
     {
         int lo = 0;
         int hi = FlopLookup.CANONS - 1;

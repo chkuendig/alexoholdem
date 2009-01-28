@@ -1,13 +1,9 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.hole.HoleLookup;
-import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
+import ao.bucket.index.detail.example.ExampleLookup;
 import ao.holdem.model.card.Hole;
 import ao.holdem.persist.GenericBinding;
-import ao.odds.agglom.Odds;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -18,26 +14,26 @@ import com.sleepycat.bind.tuple.TupleOutput;
 public class CanonHoleDetail implements CanonDetail
 {
     //--------------------------------------------------------------------
-    private final Card HOLE_A;
-    private final Card HOLE_B;
+//    private final Card HOLE_A;
+//    private final Card HOLE_B;
+    private final char CANON_INDEX;
     private final byte REPRESENTS;
-    private final Odds HEADS_UP_ODDS;
+//    private final Odds HEADS_UP_ODDS;
     private final int  FIRST_CANON_FLOP;
     private final char CANON_FLOP_COUNT;
 
 
     //--------------------------------------------------------------------
     public CanonHoleDetail(
-            Hole example,
+            char canonIndex,
             byte represents,
-            Odds headsUpOdds,
+//            Odds headsUpOdds,
             int  canonFlopsFrom,
             char numCanonFlops)
     {
-        HOLE_A           = example.a();
-        HOLE_B           = example.b();
+        CANON_INDEX      = canonIndex;
         REPRESENTS       = represents;
-        HEADS_UP_ODDS    = headsUpOdds;
+//        HEADS_UP_ODDS    = headsUpOdds;
         FIRST_CANON_FLOP = canonFlopsFrom;
         CANON_FLOP_COUNT = numCanonFlops;
     }
@@ -46,12 +42,12 @@ public class CanonHoleDetail implements CanonDetail
     //--------------------------------------------------------------------
     public Hole example()
     {
-        return Hole.valueOf(HOLE_A, HOLE_B);
+        return ExampleLookup.hole( CANON_INDEX );
     }
 
     public long canonIndex()
     {
-        return HoleLookup.lookup(HOLE_A, HOLE_B).canonIndex();
+        return CANON_INDEX;
     }
 
 
@@ -63,14 +59,14 @@ public class CanonHoleDetail implements CanonDetail
 
 
     //--------------------------------------------------------------------
-    public Odds headsUpOdds()
-    {
-        return HEADS_UP_ODDS;
-    }
+//    public Odds headsUpOdds()
+//    {
+//        return HoleOdds;
+//    }
 
     public double strength()
     {
-        return HEADS_UP_ODDS.strengthVsRandom();
+        return HoleOdds.lookup(CANON_INDEX).strengthVsRandom();
     }
 
 
@@ -92,20 +88,19 @@ public class CanonHoleDetail implements CanonDetail
     public static class Binding extends GenericBinding<CanonHoleDetail> {
         public CanonHoleDetail read(TupleInput in) {
             return new CanonHoleDetail(
-                    Hole.valueOf(
-                            Card.BINDING.entryToObject( in ),
-                            Card.BINDING.entryToObject( in )),
+                    in.readChar(),
                     in.readByte(),
-                    Odds.BINDING.read(in),
+//                    Odds.BINDING.read(in),
                     in.readInt(),
                     in.readChar());
         }
 
         public void write(CanonHoleDetail obj, TupleOutput out) {
-            Card.BINDING.objectToEntry( obj.HOLE_A, out );
-            Card.BINDING.objectToEntry( obj.HOLE_B, out );
+//            Card.BINDING.objectToEntry( obj.HOLE_A, out );
+//            Card.BINDING.objectToEntry( obj.HOLE_B, out );
+            out.writeChar( obj.CANON_INDEX );
             out.writeByte( obj.REPRESENTS );
-            Odds.BINDING.write( obj.HEADS_UP_ODDS, out );
+//            Odds.BINDING.write( obj.HEADS_UP_ODDS, out );
             out.writeInt( obj.FIRST_CANON_FLOP);
             out.writeChar( obj.CANON_FLOP_COUNT);
         }
@@ -116,10 +111,9 @@ public class CanonHoleDetail implements CanonDetail
     @Override public String toString()
     {
         return "CanonHoleDetail{" +
-               "HOLE_A=" + HOLE_A +
-               ", HOLE_B=" + HOLE_B +
+               "INDEX=" + (int)CANON_INDEX +
                ", REPRESENTS=" + REPRESENTS +
-               ", HEADS_UP_ODDS=" + HEADS_UP_ODDS +
+//               ", HEADS_UP_ODDS=" + HEADS_UP_ODDS +
                ", FIRST_CANON_FLOP=" + FIRST_CANON_FLOP +
                ", CANONS=" + (int) CANON_FLOP_COUNT +
                '}';
@@ -133,24 +127,12 @@ public class CanonHoleDetail implements CanonDetail
         if (o == null || getClass() != o.getClass()) return false;
 
         CanonHoleDetail that = (CanonHoleDetail) o;
-
-        return FIRST_CANON_FLOP == that.FIRST_CANON_FLOP &&
-               CANON_FLOP_COUNT == that.CANON_FLOP_COUNT &&
-               REPRESENTS == that.REPRESENTS &&
-               HEADS_UP_ODDS.equals(that.HEADS_UP_ODDS) &&
-               HOLE_A == that.HOLE_A &&
-               HOLE_B == that.HOLE_B;
+        return CANON_INDEX == that.CANON_INDEX;
     }
 
     @Override public int hashCode()
     {
-        int result = HOLE_A.hashCode();
-        result = 31 * result + HOLE_B.hashCode();
-        result = 31 * result + (int) REPRESENTS;
-        result = 31 * result + HEADS_UP_ODDS.hashCode();
-        result = 31 * result + FIRST_CANON_FLOP;
-        result = 31 * result + (int) CANON_FLOP_COUNT;
-        return result;
+        return CANON_INDEX;
     }
 
 
@@ -159,22 +141,24 @@ public class CanonHoleDetail implements CanonDetail
     {
         public Hole HOLE              = null;
         public byte REPRESENTS        = 0;
-        public Odds HEADS_UP_ODDS     = null;
+//        public Odds HEADS_UP_ODDS     = null;
         public int  FIRST_CANON_FLOP = -1;
         public char CANON_FLOP_COUNT = 0;
 
         public Buffer(Hole hole)
         {
             HOLE          = hole;
-            HEADS_UP_ODDS =
-                    new PreciseHeadsUpOdds().compute(
-                            hole, Community.PREFLOP);
+//            HEADS_UP_ODDS =
+//                    new PreciseHeadsUpOdds().compute(
+//                            hole, Community.PREFLOP);
         }
 
         public CanonHoleDetail toDetail()
         {
             return new CanonHoleDetail(
-                    HOLE, REPRESENTS, HEADS_UP_ODDS,
+                    HOLE.asCanon().canonIndex(),
+                    REPRESENTS,
+//                    HEADS_UP_ODDS,
                     FIRST_CANON_FLOP, CANON_FLOP_COUNT);
         }
     }

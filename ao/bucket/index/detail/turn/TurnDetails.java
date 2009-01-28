@@ -14,16 +14,16 @@ import java.io.File;
  * Date: Jan 9, 2009
  * Time: 12:39:28 PM
  */
-public class TurnDetailLookup
+public class TurnDetails
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(TurnDetailLookup.class);
+            Logger.getLogger(TurnDetails.class);
 
     private static final File   DIR =
             Dir.get("lookup/canon/detail/turn/");
 
-    private TurnDetailLookup() {}
+    private TurnDetails() {}
 
 
     //--------------------------------------------------------------------

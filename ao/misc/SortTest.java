@@ -2,7 +2,7 @@ package ao.misc;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
-import ao.bucket.index.detail.preflop.HoleDetailLookup;
+import ao.bucket.index.detail.preflop.HoleDetails;
 import ao.bucket.index.hole.HoleLookup;
 
 /**
@@ -13,7 +13,7 @@ public class SortTest {
     public static void main(String[] args) {
 
         CanonHoleDetail[] proto =
-                HoleDetailLookup.lookup(
+                HoleDetails.lookup(
                         (char) 0,
                         (char) HoleLookup.CANONS);
 

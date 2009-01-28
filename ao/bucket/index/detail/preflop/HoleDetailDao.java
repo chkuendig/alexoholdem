@@ -15,15 +15,15 @@ import java.io.OutputStream;
  * Date: Jan 13, 2009
  * Time: 12:44:19 PM
  */
-public class HoleDetailPersist
+public class HoleDetailDao
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(HoleDetailPersist.class);
+            Logger.getLogger(HoleDetailDao.class);
 
 
     //--------------------------------------------------------------------
-    private HoleDetailPersist() {}
+    private HoleDetailDao() {}
 
 
     //--------------------------------------------------------------------

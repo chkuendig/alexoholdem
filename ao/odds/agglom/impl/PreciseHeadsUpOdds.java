@@ -1,7 +1,7 @@
 package ao.odds.agglom.impl;
 
-import ao.bucket.index.detail.preflop.HoleDetailLookup;
-import ao.bucket.index.detail.preflop.HoleDetailPersist;
+import ao.bucket.index.detail.preflop.HoleOdds;
+import ao.bucket.index.detail.preflop.HoleOddsDao;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -54,11 +54,10 @@ public class PreciseHeadsUpOdds implements OddFinder
                         Community community)
     {
         if (community.equals( Community.PREFLOP ) &&
-                HoleDetailPersist.detailsMomoized())
+                HoleOddsDao.isMemoized())
         {
-            return HoleDetailLookup.lookup(
-                        hole.asCanon().canonIndex()
-                   ).headsUpOdds();
+            return HoleOdds.lookup(
+                        hole.asCanon().canonIndex());
         }
 
         Card cards[] = initKnownCardsToEnd(hole, community);
