@@ -18,6 +18,8 @@ public class RiverLookup
     private static final int  CHUNK     = (1 << (SHRINK));
     private static final int  OFFSETS[] = computeOffsets();
 
+    public  static final long CANONS    = 2428287420L;
+
 
     //--------------------------------------------------------------------
     public static void main(String[] args)
