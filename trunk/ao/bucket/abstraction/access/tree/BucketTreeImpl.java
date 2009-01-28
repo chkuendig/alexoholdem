@@ -2,12 +2,13 @@ package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.abstraction.access.BucketMap;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
-import ao.bucket.abstraction.access.tree.list.DummyBucketList;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
+import ao.bucket.abstraction.access.tree.list.ThirdBucketList;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.HoleLookup;
+import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
@@ -26,7 +27,7 @@ import java.util.List;
 public class BucketTreeImpl implements BucketTree
 {
     //--------------------------------------------------------------------
-    private static final File DIR = Dir.get("lookup/bucket/tree/");
+    private static final File DIR = Dir.get("lookup/bucket/");
 
 
     //--------------------------------------------------------------------
@@ -47,11 +48,12 @@ public class BucketTreeImpl implements BucketTree
         File holeFile  = new File(persistDir, "holes");
         File flopFile  = new File(persistDir, "flops");
         File turnFile  = new File(persistDir, "turns");
+        File riverDir  =  Dir.get(persistDir, "rivers");
 
-        holes  = new BucketListImpl(holeFile, HoleLookup.CANONS);
-        flops  = new BucketListImpl(flopFile, FlopLookup.CANONS);
-        turns  = new HalfBucketList(turnFile, TurnLookup.CANONS);
-        rivers = new DummyBucketList();
+        holes  = new BucketListImpl (holeFile, HoleLookup.CANONS);
+        flops  = new BucketListImpl (flopFile, FlopLookup.CANONS);
+        turns  = new HalfBucketList (turnFile, TurnLookup.CANONS);
+        rivers = new ThirdBucketList(riverDir, RiverLookup.CANONS);
     }
 
 

@@ -15,5 +15,5 @@ public interface BucketList
 
     //--------------------------------------------------------------------
     public void flush();
-    public void flush(long fromCanon, char canonCount);
+//    public void flush(long fromCanon, char canonCount);
 }

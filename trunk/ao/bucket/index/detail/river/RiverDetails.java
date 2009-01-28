@@ -35,13 +35,13 @@ public class RiverDetails
         {
             River river = turnSeq.addRiver( r );
 
-            try {
+//            try {
                 river.canonIndex();
-            } catch (Throwable t) {
-                display(hole, flop, turn, r);
-                t.printStackTrace();
-                System.exit(1);
-            }
+//            } catch (Throwable t) {
+//                display(hole, flop, turn, r);
+//                t.printStackTrace();
+//                System.exit(1);
+//            }
 
             if (! details.containsKey( river.canonIndex() ))
             {
