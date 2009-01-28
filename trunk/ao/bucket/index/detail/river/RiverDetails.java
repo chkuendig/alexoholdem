@@ -1,9 +1,9 @@
 package ao.bucket.index.detail.river;
 
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
-import ao.bucket.index.detail.flop.FlopDetailLookup;
+import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
-import ao.bucket.index.detail.turn.TurnDetailLookup;
+import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
@@ -16,14 +16,14 @@ import java.util.*;
  * Date: Jan 9, 2009
  * Time: 12:44:39 PM
  */
-public class RiverDetailLookup
+public class RiverDetails
 {
     //--------------------------------------------------------------------
     public static Collection<CanonRiverDetail> lookup(int canonTurn)
     {
-        CanonTurnDetail turn = TurnDetailLookup.lookup( canonTurn );
+        CanonTurnDetail turn = TurnDetails.lookup( canonTurn );
         CanonFlopDetail flop =
-                FlopDetailLookup.lookupContaining( canonTurn );
+                FlopDetails.containing( canonTurn );
         CanonHole       hole = flop.hole();
 
         Turn turnSeq  = turn(hole, flop, turn);
@@ -64,7 +64,7 @@ public class RiverDetailLookup
     {
         System.out.println(Arrays.toString(new Card[]{
                 hole.a(), hole.b(),
-                flop.exampleA(), flop.exampleB(), flop.exampleC(),
+                flop.a(), flop.b(), flop.c(),
                 turn.example(), river
         }));
     }
@@ -73,7 +73,7 @@ public class RiverDetailLookup
             CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn)
     {
         return hole.addFlop(
-                        flop.exampleA(), flop.exampleB(), flop.exampleC()
+                        flop.a(), flop.b(), flop.c()
                 ).addTurn(turn.example());
     }
 
@@ -82,7 +82,7 @@ public class RiverDetailLookup
     {
         return EnumSet.complementOf(EnumSet.of(
                 hole.a(), hole.b(),
-                flop.exampleA(), flop.exampleB(), flop.exampleC(),
+                flop.a(), flop.b(), flop.c(),
                 turn.example()));
     }
 
@@ -91,7 +91,7 @@ public class RiverDetailLookup
     {
         return Eval7Faster.shortcutFor(
                     hole.a(), hole.b(),
-                    flop.exampleA(), flop.exampleB(), flop.exampleC(),
+                    flop.a(), flop.b(), flop.c(),
                     turn.example());
     }
 }

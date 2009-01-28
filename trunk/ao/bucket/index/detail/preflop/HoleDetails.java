@@ -18,11 +18,11 @@ import java.util.Arrays;
  * Date: Jan 9, 2009
  * Time: 12:30:51 PM
  */
-public class HoleDetailLookup
+public class HoleDetails
 {
     //--------------------------------------------------------------------
     private static final Logger LOG  =
-            Logger.getLogger(HoleDetailLookup.class);
+            Logger.getLogger(HoleDetails.class);
 
 
     //--------------------------------------------------------------------
@@ -35,11 +35,11 @@ public class HoleDetailLookup
     {
         LOG.debug("retrieveOrComputeDetails");
 
-        CanonHoleDetail[] details = HoleDetailPersist.retrieveDetails();
+        CanonHoleDetail[] details = HoleDetailDao.retrieveDetails();
         if (details == null)
         {
             details = computeDetails();
-            HoleDetailPersist.persistDetails(details);
+            HoleDetailDao.persistDetails(details);
         }
         return details;
     }
@@ -59,6 +59,7 @@ public class HoleDetailLookup
                 Buffer buff = buffers[ canonHole.canonIndex() ];
                 if (buff == null)
                 {
+                    System.out.println( canonHole.reify() );
                     buff = new Buffer( canonHole.reify() );
                     buffers[ canonHole.canonIndex() ] = buff;
                 }
@@ -105,7 +106,7 @@ public class HoleDetailLookup
 
 
     //--------------------------------------------------------------------
-    private HoleDetailLookup() {}
+    private HoleDetails() {}
 
 
     //--------------------------------------------------------------------

@@ -1,13 +1,13 @@
 package ao.bucket.index.detail;
 
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
-import ao.bucket.index.detail.flop.FlopDetailLookup;
+import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
-import ao.bucket.index.detail.preflop.HoleDetailLookup;
+import ao.bucket.index.detail.preflop.HoleDetails;
 import ao.bucket.index.detail.river.CanonRiverDetail;
-import ao.bucket.index.detail.river.RiverDetailLookup;
+import ao.bucket.index.detail.river.RiverDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
-import ao.bucket.index.detail.turn.TurnDetailLookup;
+import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.Round;
 
@@ -28,13 +28,13 @@ public class DetailLookup
     //--------------------------------------------------------------------
     public static CanonHoleDetail lookupHole(char canonHole)
     {
-        return HoleDetailLookup.lookup( canonHole );
+        return HoleDetails.lookup( canonHole );
     }
     public static CanonHoleDetail[] lookupHole(
             char canonHoleFrom,
             char canonHoleCount)
     {
-        return HoleDetailLookup.lookup(
+        return HoleDetails.lookup(
                 canonHoleFrom, canonHoleCount);
     }
 
@@ -42,14 +42,14 @@ public class DetailLookup
     //--------------------------------------------------------------------
     public static CanonFlopDetail lookupFlop(int canonFlop)
     {
-        return FlopDetailLookup.lookup( canonFlop );
+        return FlopDetails.lookup( canonFlop );
     }
 
     public static CanonFlopDetail[] lookupFlop(
             int canonFlopFrom,
             int canonFlopCount)
     {
-        return FlopDetailLookup.lookup(
+        return FlopDetails.lookup(
                 canonFlopFrom, canonFlopCount);
     }
 
@@ -57,7 +57,7 @@ public class DetailLookup
             int canonFlopFrom, int canonFlopCount,
             CanonDetail[] into, int startingAt)
     {
-        FlopDetailLookup.lookup(
+        FlopDetails.lookup(
                 canonFlopFrom, canonFlopCount,
                 into, startingAt);
     }
@@ -66,19 +66,19 @@ public class DetailLookup
     //--------------------------------------------------------------------
     public static CanonTurnDetail lookupTurn(int canonTurn)
     {
-        return TurnDetailLookup.lookup(canonTurn);
+        return TurnDetails.lookup(canonTurn);
     }
     public static CanonTurnDetail[] lookupTurn(
             int canonTurnFrom, int canonTurnCount)
     {
-        return TurnDetailLookup.lookup(
+        return TurnDetails.lookup(
                 canonTurnFrom, canonTurnCount);
     }
     private static void lookupTurn(
             int canonTurnFrom, int canonTurnCount,
             CanonDetail[] into, int startingAt)
     {
-        TurnDetailLookup.lookup(
+        TurnDetails.lookup(
                 canonTurnFrom, canonTurnCount,
                 into, startingAt);
     }
@@ -87,7 +87,7 @@ public class DetailLookup
     //--------------------------------------------------------------------
     public static Collection<CanonRiverDetail> lookupRiver(int canonTurn)
     {
-        return RiverDetailLookup.lookup( canonTurn );
+        return RiverDetails.lookup( canonTurn );
     }
 
 
