@@ -261,7 +261,7 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public Iterable<Branch> subBranches()
         {
-//            if (round == Round.RIVER) return new ArrayList<Branch>();
+            if (round == Round.RIVER) return new ArrayList<Branch>();
 
             AutovivifiedList<IntList> subBranchCanons =
                     new AutovivifiedList<IntList>();
