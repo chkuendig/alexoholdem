@@ -2,6 +2,7 @@ package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.BucketList;
 import ao.util.data.LongBitSet;
+import ao.util.io.Dir;
 
 import java.io.File;
 
@@ -11,6 +12,27 @@ import java.io.File;
  */
 public class ThirdBucketList implements BucketList
 {
+    //--------------------------------------------------------------------
+    public static void main(String[] args)
+    {
+        int        size = 1000*1000;
+        BucketList bl   = new ThirdBucketList(
+                new File(Dir.get("test"), "tb.test3.byte"), size);
+
+        for (int i = 0; i < size; i++)
+        {
+//            if (bl.isEmpty(i)) {
+                bl.set(i, (byte) (i % 8));
+//                bl.flush(i, (char) 1);
+//            }
+
+            if (bl.get(i) != (i % 8)) {
+                System.out.println("ERORR at " + i);
+            }
+        }
+    }
+
+
     //--------------------------------------------------------------------
     private static final String A_FILE = "a";
     private static final String B_FILE = "b";
@@ -49,9 +71,9 @@ public class ThirdBucketList implements BucketList
     {
         assert 0 <= bucket && bucket <= 7;
 
-        boolean a = ((bucket & A_BIT) == 0);
-        boolean b = ((bucket & B_BIT) == 0);
-        boolean c = ((bucket & C_BIT) == 0);
+        boolean a = ((bucket & A_BIT) != 0);
+        boolean b = ((bucket & B_BIT) != 0);
+        boolean c = ((bucket & C_BIT) != 0);
 
         A.set(index, a);
         B.set(index, b);
@@ -63,8 +85,8 @@ public class ThirdBucketList implements BucketList
     public byte get(long index)
     {
         boolean a = A.get(index);
-        boolean b = A.get(index);
-        boolean c = A.get(index);
+        boolean b = B.get(index);
+        boolean c = C.get(index);
 
         int bucket = 0;
         if (a) bucket |= A_BIT;
