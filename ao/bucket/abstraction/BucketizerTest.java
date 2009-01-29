@@ -1,14 +1,9 @@
 package ao.bucket.abstraction;
 
-import ao.bucket.abstraction.access.BucketMap;
+import ao.bucket.abstraction.access.BucketFlyweight;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
-import ao.bucket.index.detail.preflop.CanonHoleDetail;
-import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
-import ao.bucket.index.hole.HoleLookup;
 
 import java.util.Arrays;
 
@@ -26,8 +21,8 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        double  holeBranch = 3,
-                flopBranch = 3,
+        double  holeBranch = 7,
+                flopBranch = 30,
                 turnBranch = 3,
                riverBranch = 3;
 
@@ -66,50 +61,52 @@ public class BucketizerTest
         BucketManager manager =
                 new BucketManager( new BucketizerImpl() );
 
-        BucketTree buckets = manager.bucketize(
+        BucketTree buckets  = manager.bucketize(
                                 nHoleBuckets,
                                 nFlopBuckets,
                                 nTurnBuckets,
                                 nRiverBuckets);
-        BucketMap  map     = buckets.map();
+        BucketFlyweight map = buckets.map();
 
-        int[] holeCounts = new int[ nHoleBuckets ];
-        int[] flopCounts = new int[ nFlopBuckets ];
-        int[] turnCounts = new int[ nTurnBuckets ];
+//        int[] holeCounts = new int[ nHoleBuckets ];
+//        int[] flopCounts = new int[ nFlopBuckets ];
+//        int[] turnCounts = new int[ nTurnBuckets ];
+//
+//        for (CanonHoleDetail holeDetail :
+//                DetailLookup.lookupHole(
+//                        (char) 0, (char) HoleLookup.CANONS))
+//        {
+//            char holeIndex = (char) holeDetail.canonIndex();
+//            holeCounts[ buckets.getHole(holeIndex) ]++;
+//
+//            for (CanonFlopDetail flopDetail :
+//                    DetailLookup.lookupFlop(
+//                            holeDetail.firstCanonFlop(),
+//                            holeDetail.canonFlopCount()))
+//            {
+//                int flopIndex = (int) flopDetail.canonIndex();
+//                flopCounts[ map.serialize(
+//                                buckets.getHole(holeIndex),
+//                                buckets.getFlop(flopIndex)) ]++;
+//
+//                for (CanonTurnDetail turnDetail :
+//                        DetailLookup.lookupTurn(
+//                                flopDetail.firstCanonTurn(),
+//                                flopDetail.canonTurnCount()))
+//                {
+//                    int turnIndex = (int) turnDetail.canonIndex();
+//                    turnCounts[ map.serialize(
+//                                    buckets.getHole(holeIndex),
+//                                    buckets.getFlop(flopIndex),
+//                                    buckets.getTurn(turnIndex)) ]++;
+//                }
+//            }
+//        }
 
-        for (CanonHoleDetail holeDetail :
-                DetailLookup.lookupHole(
-                        (char) 0, (char) HoleLookup.CANONS))
-        {
-            char holeIndex = (char) holeDetail.canonIndex();
-            holeCounts[ buckets.getHole(holeIndex) ]++;
+        System.out.println(map.root());
 
-            for (CanonFlopDetail flopDetail :
-                    DetailLookup.lookupFlop(
-                            holeDetail.firstCanonFlop(),
-                            holeDetail.canonFlopCount()))
-            {
-                int flopIndex = (int) flopDetail.canonIndex();
-                flopCounts[ map.serialize(
-                                buckets.getHole(holeIndex),
-                                buckets.getFlop(flopIndex)) ]++;
-
-                for (CanonTurnDetail turnDetail :
-                        DetailLookup.lookupTurn(
-                                flopDetail.firstCanonTurn(),
-                                flopDetail.canonTurnCount()))
-                {
-                    int turnIndex = (int) turnDetail.canonIndex();
-                    turnCounts[ map.serialize(
-                                    buckets.getHole(holeIndex),
-                                    buckets.getFlop(flopIndex),
-                                    buckets.getTurn(turnIndex)) ]++;
-                }
-            }
-        }
-
-        System.out.println(Arrays.toString(holeCounts));
-        System.out.println(Arrays.toString(flopCounts));
-        System.out.println(Arrays.toString(turnCounts));
+//        System.out.println(Arrays.toString(holeCounts));
+//        System.out.println(Arrays.toString(flopCounts));
+//        System.out.println(Arrays.toString(turnCounts));
     }
 }

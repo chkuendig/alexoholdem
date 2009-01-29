@@ -8,7 +8,7 @@ import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.odds.agglom.OddHist;
+import ao.odds.agglom.StrengthHist;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import static ao.util.data.Arr.swap;
 import ao.util.math.stats.FastIntCombiner;
@@ -108,7 +108,7 @@ public class CanonTurnTest
                 Turn turn      = flop.addTurn( turnCard );
                 int  canonTurn = turn.canonIndex();
 
-                OddHist odds     =
+                StrengthHist odds     =
                         new GeneralHistFinder().compute(
                                 hole.reify(),
                                 new Community(

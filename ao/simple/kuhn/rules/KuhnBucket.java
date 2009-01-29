@@ -42,9 +42,9 @@ public class KuhnBucket implements Bucket<KuhnBucket>
                 0).strengthVsRandom();
     }
 
-    public Collection<KuhnBucket> nextBuckets()
+    public KuhnBucket[] nextBuckets()
     {
-        return KIDS;
+        return KIDS.toArray(new KuhnBucket[ KIDS.size() ]);
     }
 
 

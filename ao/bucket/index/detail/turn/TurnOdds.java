@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.turn;
 
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
 import ao.odds.agglom.Odds;
@@ -131,7 +131,7 @@ public class TurnOdds
         final int[]  calcCount      = {0};
         final long[] milestoneStart = {0};
 
-        CardEnum.traverseUniqueTurns(
+        HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 if (WIN[ turn.canonIndex() ] != SENTINAL) {

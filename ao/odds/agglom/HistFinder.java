@@ -10,10 +10,10 @@ import ao.holdem.model.card.sequence.CardSequence;
  */
 public interface HistFinder
 {
-    public OddHist compute(Hole      hole,
+    public StrengthHist compute(Hole      hole,
                            Community community,
                            int       activeOpponents);
 
-    public OddHist compute(CardSequence cards,
+    public StrengthHist compute(CardSequence cards,
                            int          activeOpponents);
 }

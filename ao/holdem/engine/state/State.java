@@ -31,11 +31,11 @@ public class State
     private final Chips stakes;
     private final State startOfRound;
 
-    /**
-     * This is the first player scheduled to act, not necessarily
-     *   the that did because of a quit or all-in action.
-     */
-    private final int   firstToActVoluntarely;
+//    /**
+//     * This is the first player scheduled to act, not necessarily
+//     *   the that did because of a quit or all-in action.
+//     */
+//    private final int   firstToActVoluntarely;
 
 
     //--------------------------------------------------------------------
@@ -51,12 +51,12 @@ public class State
         boolean isHeadsUp     = (clockwiseDealerLast.size() == 2);
 
         round                 = Round.PREFLOP;
-        nextToAct             = (isHeadsUp ? 1: 0);
+        nextToAct             = (isHeadsUp ? 1 : 0);
         remainingRoundBets    = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker     = -1;
         stakes                = Chips.ZERO;
         startOfRound          = this;
-        firstToActVoluntarely = index(nextToAct + 2);
+//        firstToActVoluntarely = index(nextToAct + 2);
     }
     private Seat initPlayerState(
             List<Avatar> clockwiseDealerLast,
@@ -82,8 +82,8 @@ public class State
                   int   copyRemainingRoundBets,
                   int   copyLatestRoundStaker,
                   Chips copyStakes,
-                  State copyStartOfRound,
-                  int   copyFirstToActVoluntarely)
+                  State copyStartOfRound)//,
+//                  int   copyFirstToActVoluntarely)
     {
         round                 = copyRound;
         seats                 = copySeats;
@@ -93,7 +93,7 @@ public class State
         stakes                = copyStakes;
         startOfRound          = (copyStartOfRound == null)
                                  ? this : copyStartOfRound;
-        firstToActVoluntarely = copyFirstToActVoluntarely;
+//        firstToActVoluntarely = copyFirstToActVoluntarely;
     }
 
 
@@ -179,8 +179,8 @@ public class State
                          nextRemainingBets,
                          nextRoundStaker,
                          nextStakes,
-                         roundEnder ? null : startOfRound,
-                         firstToActVoluntarely);
+                         roundEnder ? null : startOfRound);//,
+//                         firstToActVoluntarely);
     }
 
     private Seat[] nextPlayers(Action act)
@@ -273,8 +273,8 @@ public class State
                          remainingRoundBets,
                          nextRoundStaker,
                          betSize,
-                         startOfRound,
-                         firstToActVoluntarely);
+                         startOfRound);//,
+//                         firstToActVoluntarely);
     }
 
 
@@ -312,8 +312,8 @@ public class State
                          nextRemainingBets(roundEnder, false),
                          nextRoundStaker,
                          stakes,
-                         roundEnder ? null : startOfRound,
-                         firstToActVoluntarely);
+                         roundEnder ? null : startOfRound);//,
+//                         firstToActVoluntarely);
     }
 
     /**
@@ -557,10 +557,14 @@ public class State
         return nextToAct;
     }
 
-    public boolean firstToActVoluntarelyIsNext()
+//    public boolean firstToActVoluntarelyIsNext()
+//    {
+//        assert seats.length == 2 : "only works with heads up";
+//        return firstToActVoluntarely == nextToAct;
+//    }
+    public boolean dealerIsNext()
     {
-        assert seats.length == 2 : "only works with heads up";
-        return firstToActVoluntarely == nextToAct;
+        return nextToAct == (seats.length - 1);
     }
 
     public boolean isStartOfRound()
@@ -575,10 +579,9 @@ public class State
         if (! atEndOfHand()) return HeadsUpStatus.IN_PROGRESS;
         if (atShowdown())    return HeadsUpStatus.SHOWDOWN;
 
-        return seats[firstToActVoluntarely].equals(
-                    unfolded().get(0))
+        return seats[1].equals( unfolded().get(0) )
                ? HeadsUpStatus.DEALER_WINS
-               : HeadsUpStatus.BIG_BLIND_WINS;
+               : HeadsUpStatus.DEALEE_WINS;
     }
 
 

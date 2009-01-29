@@ -3,7 +3,7 @@ package ao.bucket.index.detail.flop;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.turn.Turn;
@@ -56,7 +56,7 @@ public class FlopDetails
         LOG.debug("computing details");
 
         final FlopDetailFlyweight fw = new FlopDetailFlyweight();
-        CardEnum.traverseUniqueFlops(
+        HandEnum.uniqueFlops(
                 new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 int index = flop.canonIndex();
@@ -89,7 +89,7 @@ public class FlopDetails
         final byte[] turnCounts =
                 new byte[ FlopLookup.CANONS];
 
-        CardEnum.traverseUniqueTurns(
+        HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 turnCounts[ turn.flop().canonIndex() ]++;

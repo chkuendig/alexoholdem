@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Community;
@@ -92,7 +92,7 @@ public class HoleOdds
         final int[]  calcCount      = {0};
         final long[] milestoneStart = {0};
 
-        CardEnum.traverseUniqueHoles(
+        HandEnum.uniqueHoles(
                 new Traverser<CanonHole>() {
             public void traverse(CanonHole hole) {
                 if (HoleOddsDao.isSet( hole.canonIndex() )) {

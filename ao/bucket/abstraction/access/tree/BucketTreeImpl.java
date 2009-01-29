@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.access.tree;
 
-import ao.bucket.abstraction.access.BucketMap;
+import ao.bucket.abstraction.access.BucketFlyweight;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.abstraction.access.tree.list.ThirdBucketList;
@@ -172,14 +172,14 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public BucketMap map()
+    public BucketFlyweight map()
     {
-        return new BucketMap(root(), persistDir);
+        return new BucketFlyweight(this, persistDir);
     }
 
 
     //--------------------------------------------------------------------
-    public Branch root()
+    public Branch holes()
     {
         return new BranchImpl();
     }
@@ -255,6 +255,16 @@ public class BucketTreeImpl implements BucketTree
 //                            round().previous(),
 //                            parentCanons());
 //            return subDetails;
+        }
+
+        public byte bucketCount()
+        {
+            int max = 0;
+            for (CanonDetail detail : details()) {
+                byte bucket = get(detail.canonIndex());
+                max = Math.max(max, bucket);
+            }
+            return (byte)(max + 1);
         }
 
 

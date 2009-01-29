@@ -6,7 +6,6 @@ import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnRules;
 import ao.util.text.Txt;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,9 +21,9 @@ public class BucketNode implements InfoNode
 
     //--------------------------------------------------------------------
     public BucketNode(
-            Collection<KuhnBucket> buckets,
-            KuhnRules              rules,
-            boolean                isDealer)
+            KuhnBucket[] buckets,
+            KuhnRules    rules,
+            boolean      isDealer)
     {
         kids = new LinkedHashMap<KuhnBucket, PlayerNode>();
 

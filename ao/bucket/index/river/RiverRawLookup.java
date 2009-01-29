@@ -1,6 +1,6 @@
 package ao.bucket.index.river;
 
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
@@ -68,7 +68,7 @@ public class RiverRawLookup
         final byte[]         riverCases =
                 new byte[ TurnLookup.CANONS];
 
-        CardEnum.traverseRivers(
+        HandEnum.rivers(
                 new UniqueFilter<CanonHole>("%1$s"),
                 new UniqueFilter<Flop>(),
                 new UniqueFilter<Turn>(),

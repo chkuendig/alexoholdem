@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.access.tree;
 
-import ao.bucket.abstraction.access.BucketMap;
+import ao.bucket.abstraction.access.BucketFlyweight;
 import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.Round;
 
@@ -38,9 +38,9 @@ public interface BucketTree
 
 
     //--------------------------------------------------------------------
-    public Branch root();
+    public Branch holes();
 
-    public BucketMap map();
+    public BucketFlyweight map();
 
 
     //--------------------------------------------------------------------
@@ -48,19 +48,13 @@ public interface BucketTree
     {
         public Round round();
         public int[] parentCanons();
-//        public byte  parentBucket();
         
         public CanonDetail[] details();
 
         public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);
 
-//        public char             subBranchCount();
+        public byte             bucketCount();
         public Iterable<Branch> subBranches();
-//        public Branch           subBranch(byte bucket);
-
-//        public boolean isBucketized();
-
-//        public void flush();
     }
 }

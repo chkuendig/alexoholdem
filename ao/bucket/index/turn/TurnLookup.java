@@ -2,7 +2,7 @@ package ao.bucket.index.turn;
 
 import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.CanonSuit;
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
@@ -121,7 +121,7 @@ public class TurnLookup
                     }
                 }};
 
-        CardEnum.traverseTurns(
+        HandEnum.turns(
                 new UniqueFilter<CanonHole>("%1$s"),
                 new UniqueFilter<Flop>(),
                 new PermisiveFilter<Turn>(),

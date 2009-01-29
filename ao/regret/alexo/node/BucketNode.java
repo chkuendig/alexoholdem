@@ -6,7 +6,6 @@ import ao.regret.alexo.JointBucketSequence;
 import ao.simple.alexo.state.AlexoState;
 import ao.util.text.Txt;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,9 +22,9 @@ public class BucketNode implements InfoNode
 
     //--------------------------------------------------------------------
     public BucketNode(
-            Collection<AlexoBucket> buckets,
-            AlexoState              atState,
-            boolean                 forFirstToAct)
+            AlexoBucket[] buckets,
+            AlexoState    atState,
+            boolean       forFirstToAct)
     {
         kids       = new LinkedHashMap<AlexoBucket, PlayerNode>();
         state      = atState;

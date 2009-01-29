@@ -19,10 +19,10 @@ import ao.util.misc.Traverser;
  *
  * NOTE: not nestable and not threadsafe
  */
-public class CardEnum
+public class HandEnum
 {
     //--------------------------------------------------------------------
-    private CardEnum() {}
+    private HandEnum() {}
 
 
     //--------------------------------------------------------------------
@@ -30,13 +30,13 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
-    public static void traverseUniqueHoles(
+    public static void uniqueHoles(
             Traverser<CanonHole> holeTraverser)
     {
-        traverseHoles(new UniqueFilter<CanonHole>(),
+        holes(new UniqueFilter<CanonHole>(),
                       holeTraverser);
     }
-    public static void traverseHoles(
+    public static void holes(
             final Filter<CanonHole>    holeFilter,
             final Traverser<CanonHole> holeTraverser)
     {
@@ -62,18 +62,18 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
-    public static void traverseUniqueFlops(Traverser<Flop> flopTraverser)
+    public static void uniqueFlops(Traverser<Flop> flopTraverser)
     {
-        traverseFlops(new UniqueFilter<CanonHole>(),
+        flops(new UniqueFilter<CanonHole>(),
                       new UniqueFilter<Flop>(),
                       flopTraverser);
     }
-    public static void traverseFlops(
+    public static void flops(
             final Filter<CanonHole> holeFilter,
             final Filter<Flop>      flopFilter,
             final Traverser<Flop>   flopTraverser)
     {
-        traverseHoles(holeFilter, new Traverser<CanonHole>() {
+        holes(holeFilter, new Traverser<CanonHole>() {
             public void traverse(final CanonHole canonHole) {
                 new FastIntCombiner(
                         Card.INDEXES, Card.INDEXES.length - 2).combine(
@@ -101,21 +101,21 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
-    public static void traverseUniqueTurns(
+    public static void uniqueTurns(
             Traverser<Turn> turnTraverser)
     {
-        traverseTurns(new UniqueFilter<CanonHole>(),
+        turns(new UniqueFilter<CanonHole>(),
                       new UniqueFilter<Flop>(),
                       new UniqueFilter<Turn>(),
                       turnTraverser);
     }
-    public static void traverseTurns(
+    public static void turns(
             final Filter<CanonHole> holeFilter,
             final Filter<Flop>      flopFilter,
             final Filter<Turn>      turnFilter,
             final Traverser<Turn>   turnTraverser)
     {
-        traverseFlops(holeFilter, flopFilter, new Traverser<Flop>() {
+        flops(holeFilter, flopFilter, new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 for (int turnCardIndex = 0;
                          turnCardIndex <= 51 - 5;
@@ -139,23 +139,23 @@ public class CardEnum
 
 
     //--------------------------------------------------------------------
-    public static void traverseUniqueRivers(
+    public static void uniqueRivers(
             Traverser<River> riverTraverser)
     {
-        traverseRivers(new UniqueFilter<CanonHole>(),
+        rivers(new UniqueFilter<CanonHole>(),
                        new UniqueFilter<Flop>(),
                        new UniqueFilter<Turn>(),
                        new UniqueFilter<River>(),
                        riverTraverser);
     }
-    public static void traverseRivers(
+    public static void rivers(
             final Filter<CanonHole> holeFilter,
             final Filter<Flop>      flopFilter,
             final Filter<Turn>      turnFilter,
             final Filter<River>     riverFilter,
             final Traverser<River>  riverTraverser)
     {
-        traverseTurns(holeFilter, flopFilter, turnFilter,
+        turns(holeFilter, flopFilter, turnFilter,
                       new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 for (int riverCardIndex = 0;
