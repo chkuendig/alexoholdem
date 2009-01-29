@@ -3,7 +3,7 @@ package ao.bucket.index.detail.example;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.HoleDetails;
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
@@ -46,7 +46,7 @@ public class ExampleLookup
 
     private static void testHoleFlopConcistency()
     {
-        CardEnum.traverseTurns(
+        HandEnum.turns(
                 new PermisiveFilter<CanonHole>("%1$s"),
                 new PermisiveFilter<Flop>(),
                 new UniqueFilter<Turn>(),
@@ -75,7 +75,7 @@ public class ExampleLookup
 
     private static void testHoleConcistency()
     {
-        CardEnum.traverseFlops(
+        HandEnum.flops(
                 new PermisiveFilter<CanonHole>("%1$s"),
                 new PermisiveFilter<Flop>(),
                 new Traverser<Flop>() {
@@ -168,7 +168,7 @@ public class ExampleLookup
     //--------------------------------------------------------------------
     private static void computeExamples()
     {
-        CardEnum.traverseUniqueTurns(new Traverser<Turn>() {
+        HandEnum.uniqueTurns(new Traverser<Turn>() {
             public void traverse(Turn turn) {
 
                 Flop      flop = turn.flop();

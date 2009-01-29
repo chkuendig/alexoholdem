@@ -2,7 +2,7 @@ package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.turn.Turn;
 import ao.util.io.Dir;
 import ao.util.misc.Traverser;
@@ -56,7 +56,7 @@ public class TurnDetails
         LOG.debug("computing details");
 
         final TurnDetailFlyweight fw = new TurnDetailFlyweight();
-        CardEnum.traverseUniqueTurns(
+        HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 int index = turn.canonIndex();
@@ -91,7 +91,7 @@ public class TurnDetails
 //        final byte[] riverCounts =
 //                new byte[ TurnLookup.CANONS];
 //
-//        CardEnum.traverseUniqueRivers(new Traverser<River>() {
+//        HandEnum.uniqueRivers(new Traverser<River>() {
 //            public void traverse(River river) {
 //                riverCounts[ river.turn().canonIndex() ]++;
 //            }});

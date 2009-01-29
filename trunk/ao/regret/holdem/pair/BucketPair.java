@@ -18,18 +18,18 @@ public class BucketPair implements InfoPair
 
 
     //--------------------------------------------------------------------
-    public BucketPair(State state,
+    public BucketPair(State        state,
                       HoldemBucket root)
     {
         this(state, root, root);
     }
 
     public BucketPair(State        state,
-                      HoldemBucket firstBucket,
-                      HoldemBucket lastBucket)
+                      HoldemBucket dealerBucket,
+                      HoldemBucket dealeeBucket)
     {
-        this(new BucketNode(firstBucket.nextBuckets(), state, true),
-             new BucketNode(lastBucket .nextBuckets(), state, false));
+        this(new BucketNode(dealerBucket.nextBuckets(), state, true),
+             new BucketNode(dealeeBucket.nextBuckets(), state, false));
     }
 
     public BucketPair(BucketNode firstBucket,

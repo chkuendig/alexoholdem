@@ -6,7 +6,6 @@ import ao.simple.alexo.card.AlexoCard;
 import ao.simple.alexo.card.AlexoCardSequence;
 import ao.simple.alexo.card.AlexoHand;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -84,9 +83,9 @@ public class AlexoBucket implements Bucket<AlexoBucket>
 
 
     //--------------------------------------------------------------------
-    public Collection<AlexoBucket> nextBuckets()
+    public AlexoBucket[] nextBuckets()
     {
-        return KIDS;
+        return KIDS.toArray(new AlexoBucket[ KIDS.size() ]);
     }
 
 

@@ -5,8 +5,8 @@ import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.test.Gapper;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.odds.agglom.OddHist;
 import ao.odds.agglom.Odds;
+import ao.odds.agglom.StrengthHist;
 import ao.odds.agglom.impl.GeneralHistFinder;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.AutovivifiedList;
@@ -46,8 +46,8 @@ public class CanonHoleTest
     //-----------------------------------------------------------------------
     private final List<SeenCount<Odds>>    HOLES      =
             new AutovivifiedList<SeenCount<Odds>>();
-    private final List<SeenCount<OddHist>> HOLES_FAST =
-            new AutovivifiedList<SeenCount<OddHist>>();
+    private final List<SeenCount<StrengthHist>> HOLES_FAST =
+            new AutovivifiedList<SeenCount<StrengthHist>>();
 
     private final Gapper seenHoles  = new Gapper();
 
@@ -116,15 +116,15 @@ public class CanonHoleTest
                 seenHoles.set( hole.canonIndex() );
                 System.out.println(hole);
 
-                OddHist odds = new GeneralHistFinder().compute(
+                StrengthHist odds = new GeneralHistFinder().compute(
                                      hole.reify(), Community.PREFLOP);
-                SeenCount<OddHist> existing =
+                SeenCount<StrengthHist> existing =
                         HOLES_FAST.get( hole.canonIndex() );
                 if (existing == null)
                 {
                     HOLES_FAST.set(
                             hole.canonIndex(),
-                            new SeenCount<OddHist>(odds, 1));
+                            new SeenCount<StrengthHist>(odds, 1));
                 }
                 else if (! existing.payloadEquals( odds ))
                 {
@@ -139,7 +139,7 @@ public class CanonHoleTest
 
 //        write(HOLES, OddCount.BINDING, HOLE_FILE);
         int maxCount = 0;
-        for (SeenCount<OddHist> oh : HOLES_FAST)
+        for (SeenCount<StrengthHist> oh : HOLES_FAST)
         {
             int count = oh.payload().maxCount();
             if (count > maxCount)

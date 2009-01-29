@@ -49,7 +49,7 @@ public class BucketManager
         if (! tree.isFlushed())
         {
             bucketizeHolesDown(
-                    tree.root(),
+                    tree.holes(),
                     numHoleBuckets,
                     numFlopBuckets,
                     numTurnBuckets,
@@ -91,18 +91,18 @@ public class BucketManager
 
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
-            Branch root,
+            Branch holes,
             byte   numHoleBuckets,
             char   numFlopBuckets,
             char   numTurnBuckets,
             char   numRiverBuckets)
     {
-        if (HOLE_BUCKETIZER.bucketize(root, numHoleBuckets)) {
-//            root.flush();
+        if (HOLE_BUCKETIZER.bucketize(holes, numHoleBuckets)) {
+//            holes.flush();
         }
 
         bucketizeFlopsDown(
-                root.subBranches(),
+                holes.subBranches(),
                 new SubBucketAllocator().allocate(
                         (char) numHoleBuckets, numFlopBuckets),
                 new SubBucketAllocator().allocate(
@@ -114,22 +114,22 @@ public class BucketManager
 
     //--------------------------------------------------------------------
     private void bucketizeFlopsDown(
-            Iterable<Branch> holes,
+            Iterable<Branch> flops,
             byte[]           flopBucketCounts,
             byte[]           turnBucketCounts,
             byte[]           riverBucketCounts)
     {
         char turnBuckets     = 0;
         char holeBucketIndex = 0;
-        for (Branch hole : holes)
+        for (Branch flop : flops)
         {
             if (FLOP_BUCKETIZER.bucketize(
-                        hole, flopBucketCounts[ holeBucketIndex++ ])) {
-//                hole.flush();
+                    flop, flopBucketCounts[ holeBucketIndex++ ])) {
+//                flop.flush();
             }
 
             turnBuckets += bucketizeTurnsDown(
-                                hole.subBranches(),
+                                flop.subBranches(),
                                 turnBuckets,
                                 turnBucketCounts,
                                 riverBucketCounts);
@@ -139,23 +139,23 @@ public class BucketManager
 
     //--------------------------------------------------------------------
     private char bucketizeTurnsDown(
-            Iterable<Branch> flops,
+            Iterable<Branch> turns,
             char             turnBucketOffset,
             byte[]           turnBucketCounts,
             byte[]           riverBucketCounts)
     {
         char riverBuckets    = 0;
         char flopBucketIndex = 0;
-        for (Branch flop : flops)
+        for (Branch turn : turns)
         {
             if (TURN_BUCKETIZER.bucketize(
-                    flop, turnBucketCounts[
+                    turn, turnBucketCounts[
                             turnBucketOffset + (flopBucketIndex++) ])) {
-//                flop.flush();
+//                turn.flush();
             }
 
             riverBuckets += bucketizeRivers(
-                                flop.subBranches(),
+                                turn.subBranches(),
                                 riverBuckets,
                                 riverBucketCounts);
         }
@@ -165,17 +165,17 @@ public class BucketManager
 
     //--------------------------------------------------------------------
     private char bucketizeRivers(
-            Iterable<Branch> turns,
+            Iterable<Branch> rivers,
             char             riverBucketOffset,
             byte[]           riverBucketCounts)
     {
         char turnBucketIndex = 0;
-        for (Branch turn : turns)
+        for (Branch river : rivers)
         {
             if (RIVER_BUCKETIZER.bucketize(
-                    turn, riverBucketCounts[
+                    river, riverBucketCounts[
                             riverBucketOffset + (turnBucketIndex++) ])) {
-//                turn.flush();
+//                river.flush();
             }
         }
         return turnBucketIndex;

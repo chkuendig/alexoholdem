@@ -6,10 +6,6 @@ import ao.regret.holdem.HoldemBucket;
 import ao.regret.holdem.JointBucketSequence;
 import ao.util.text.Txt;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Date: Jan 8, 2009
  * Time: 3:26:46 PM
@@ -17,30 +13,30 @@ import java.util.Map;
 public class BucketNode implements InfoNode
 {
     //--------------------------------------------------------------------
-    private Map<HoldemBucket, PlayerNode> kids;
-    private boolean                       firstToAct;
-    private State                         state;
+    private PlayerNode[] kids;
+    private boolean      dealer;
+    private State        state;
 
 
     //--------------------------------------------------------------------
     public BucketNode(
-            Collection<HoldemBucket> buckets,
-            State                    atState,
-            boolean                  forFirstToAct)
+            HoldemBucket[] buckets,
+            State          atState,
+            boolean        forDealer)
     {
-        kids       = new LinkedHashMap<HoldemBucket, PlayerNode>();
-        state      = atState;
-        firstToAct = forFirstToAct;
+        kids   = new PlayerNode[ buckets.length ];
+        state  = atState;
+        dealer = forDealer;
 
         for (HoldemBucket bucket : buckets)
         {
             PlayerNode kid =
-                    (forFirstToAct ==
-                        state.firstToActVoluntarelyIsNext())
-                     ? new ProponentNode(state, bucket, forFirstToAct)
-                     : new  OpponentNode(state, bucket, forFirstToAct);
+                    (forDealer ==
+                        state.dealerIsNext())
+                     ? new ProponentNode(state, bucket, forDealer)
+                     : new  OpponentNode(state, bucket, forDealer);
 
-            kids.put(bucket, kid);
+            kids[ bucket.index() ] = kid;
         }
     }
 
@@ -48,17 +44,17 @@ public class BucketNode implements InfoNode
     //--------------------------------------------------------------------
     public boolean forFirstToAct()
     {
-        return firstToAct;
+        return dealer;
     }
 
     public PlayerNode accordingTo(JointBucketSequence jbs)
     {
         return accordingTo(
-                jbs.bucket(firstToAct, state.round()));
+                jbs.bucket(dealer, state.round()));
     }
-    public PlayerNode accordingTo(HoldemBucket bucket)
+    public PlayerNode accordingTo(byte bucket)
     {
-        return kids.get( bucket );
+        return kids[ bucket ];
     }
 
 
@@ -71,13 +67,14 @@ public class BucketNode implements InfoNode
     public String toString(int depth)
     {
         StringBuilder str = new StringBuilder();
-        for (Map.Entry<HoldemBucket, PlayerNode> kid : kids.entrySet())
+        for (int i = 0; i < kids.length; i++)
         {
-            str.append( Txt.nTimes("\t", depth) )
-               .append( kid.getKey() )
-               .append( "\n" )
-               .append( kid.getValue().toString(depth + 1) )
-               .append( "\n" );
+            PlayerNode kid = kids[i];
+            str.append(Txt.nTimes("\t", depth))
+                    .append(i)
+                    .append("\n")
+                    .append(kid.toString(depth + 1))
+                    .append("\n");
         }
         return str.toString();
     }

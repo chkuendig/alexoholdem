@@ -42,11 +42,11 @@ public class JointBucketSequence
 
 
     //--------------------------------------------------------------------
-    public HoldemBucket bucket(
+    public byte bucket(
             boolean dealer,
             Round   round)
     {
         return (dealer ? dealerBuckets
-                       : dealeeBuckets)[ round.ordinal() ];
+                       : dealeeBuckets)[ round.ordinal() ].index();
     }
 }

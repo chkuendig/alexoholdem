@@ -68,7 +68,7 @@ public class StateTest
 
         while (state.headsUpStatus() == HeadsUpStatus.IN_PROGRESS)
         {
-            boolean isDealer = (state.firstToActVoluntarelyIsNext());
+            boolean isDealer = (state.dealerIsNext());
 
             System.out.println( state );
 

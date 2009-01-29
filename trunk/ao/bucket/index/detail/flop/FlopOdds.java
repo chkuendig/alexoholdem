@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.flop;
 
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
 import ao.odds.agglom.Odds;
@@ -146,7 +146,7 @@ public class FlopOdds
         final int[]  calcCount      = {0};
         final long[] milestoneStart = {0};
 
-        CardEnum.traverseUniqueFlops(
+        HandEnum.uniqueFlops(
                 new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 if (WIN[ flop.canonIndex() ] != SENTINAL) {

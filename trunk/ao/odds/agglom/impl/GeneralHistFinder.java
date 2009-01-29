@@ -5,7 +5,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.HistFinder;
-import ao.odds.agglom.OddHist;
+import ao.odds.agglom.StrengthHist;
 import ao.odds.eval.eval7.Eval7Faster;
 
 import java.util.EnumSet;
@@ -30,7 +30,7 @@ public class GeneralHistFinder implements HistFinder
 
 
     //--------------------------------------------------------------------
-    public OddHist compute(Hole      hole,
+    public StrengthHist compute(Hole      hole,
                            Community community,
                            int       activeOpponents)
     {
@@ -38,18 +38,18 @@ public class GeneralHistFinder implements HistFinder
         return compute(hole, community);
     }
 
-    public OddHist compute(CardSequence cards, int activeOpponents)
+    public StrengthHist compute(CardSequence cards, int activeOpponents)
     {
         return compute(cards.hole(), cards.community(), activeOpponents);
     }
 
-    public OddHist compute(CardSequence cards)
+    public StrengthHist compute(CardSequence cards)
     {
         return compute(cards.hole(), cards.community());
     }
 
 
-    public OddHist compute(Hole      hole,
+    public StrengthHist compute(Hole      hole,
                            Community community)
     {
 
@@ -61,7 +61,7 @@ public class GeneralHistFinder implements HistFinder
 
 
     //--------------------------------------------------------------------
-    private static OddHist rollOutCommunity(
+    private static StrengthHist rollOutCommunity(
             Card cards[],
             int  knownCount)
     {
@@ -76,12 +76,12 @@ public class GeneralHistFinder implements HistFinder
 
 
     //--------------------------------------------------------------------
-    private static OddHist rollOutFlopTurnRiver(Card cards[])
+    private static StrengthHist rollOutFlopTurnRiver(Card cards[])
     {
         int holeShortcut = Eval7Faster.shortcutFor(
                                 cards[ HOLE_A ], cards[ HOLE_B ]);
 
-        OddHist odds = new OddHist();
+        StrengthHist odds = new StrengthHist();
         for (int flopIndexC = 4; flopIndexC <= FLOP_C; flopIndexC++)
         {
             int flopShortcutC = Eval7Faster.nextShortcut(
@@ -124,13 +124,13 @@ public class GeneralHistFinder implements HistFinder
 
 
     //--------------------------------------------------------------------
-    private static OddHist rollOutTurnRiver(Card cards[])
+    private static StrengthHist rollOutTurnRiver(Card cards[])
     {
         int flopShortcut = Eval7Faster.shortcutFor(
                 cards[ HOLE_A ], cards[ HOLE_B ],
                 cards[ FLOP_A ], cards[ FLOP_B ], cards[ FLOP_C ]);
 
-        OddHist odds = new OddHist();
+        StrengthHist odds = new StrengthHist();
         for (int turnIndex =  1;
                  turnIndex <= TURN;
                  turnIndex++)
@@ -153,7 +153,7 @@ public class GeneralHistFinder implements HistFinder
 
 
     //--------------------------------------------------------------------
-    private static OddHist rollOutRiver(
+    private static StrengthHist rollOutRiver(
             Card  cards[])
     {
         int turnShorcut = Eval7Faster.shortcutFor(
@@ -161,7 +161,7 @@ public class GeneralHistFinder implements HistFinder
                 cards[ FLOP_A ], cards[ FLOP_B ], cards[ FLOP_C ],
                 cards[ TURN ]);
 
-        OddHist odds = new OddHist();
+        StrengthHist odds = new StrengthHist();
         for (int riverIndex = 0;
                  riverIndex <= RIVER;
                  riverIndex++)

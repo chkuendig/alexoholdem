@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
@@ -52,7 +52,7 @@ public class HoleDetails
         final CanonHoleDetail.Buffer[] buffers =
                 new CanonHoleDetail.Buffer[HoleLookup.CANONS];
 
-        CardEnum.traverseHoles(
+        HandEnum.holes(
                 new PermisiveFilter<CanonHole>(),
                 new Traverser<CanonHole>() {
             public void traverse(CanonHole canonHole) {
@@ -83,7 +83,7 @@ public class HoleDetails
             final CanonHoleDetail.Buffer buff)
     {
         final int filterIndex = buff.HOLE.asCanon().canonIndex();
-        CardEnum.traverseFlops(Filters.and(
+        HandEnum.flops(Filters.and(
             new Filter<CanonHole>() {
                 public boolean accept(CanonHole canonHole) {
                     return canonHole.canonIndex() == filterIndex;

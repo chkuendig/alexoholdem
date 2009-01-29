@@ -1,6 +1,6 @@
 package ao.bucket.index.test;
 
-import ao.bucket.index.enumeration.CardEnum;
+import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.river.River;
 import ao.util.misc.Traverser;
@@ -27,7 +27,7 @@ public class GenericIndexerTest
         final UniqueFilter  turnFilter = new UniqueFilter();
         final UniqueFilter riverFilter = new UniqueFilter();
 
-        CardEnum.traverseRivers(
+        HandEnum.rivers(
                 holeFilter, flopFilter, turnFilter, riverFilter,
                 new Traverser<River>() {
                     public void traverse(River river) {}

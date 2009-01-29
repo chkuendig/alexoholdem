@@ -16,7 +16,7 @@ import java.util.Arrays;
  *
  * Histogram of possible strengths of hands.
  */
-public class OddHist implements Comparable<OddHist>
+public class StrengthHist implements Comparable<StrengthHist>
 {
     //--------------------------------------------------------------------
     private final int    HIST[];
@@ -24,15 +24,15 @@ public class OddHist implements Comparable<OddHist>
 
 
     //--------------------------------------------------------------------
-    public OddHist()
+    public StrengthHist()
     {
         this( new int[Eval5.VALUE_COUNT] );
     }
-    private OddHist(int hist[])
+    private StrengthHist(int hist[])
     {
         HIST = hist;
     }
-    
+
 
     //--------------------------------------------------------------------
     public void count(short value)
@@ -118,50 +118,52 @@ public class OddHist implements Comparable<OddHist>
 
 
     //--------------------------------------------------------------------
-    public int compareTo(OddHist o)
+    public double nonLossProb(StrengthHist that)
+    {
+        return -1;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int compareTo(StrengthHist o)
     {
         return Double.compare(mean(), o.mean());
     }
 
 
     //--------------------------------------------------------------------
-    @Override
-    public boolean equals(Object o)
+    @Override public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OddHist oddHist = (OddHist) o;
-        return Arrays.equals(HIST, oddHist.HIST);
+        StrengthHist strengthHist = (StrengthHist) o;
+        return Arrays.equals(HIST, strengthHist.HIST);
     }
 
-    @Override
-    public int hashCode()
+    @Override public int hashCode()
     {
         return Arrays.hashCode(HIST);
     }
 
 
     //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding extends GenericBinding<OddHist>
+    public static final int     BINDING_SIZE = Eval5.VALUE_COUNT * 4;
+    public static final Binding BINDING      = new Binding();
+    public static class Binding extends GenericBinding<StrengthHist>
     {
-        public OddHist read(TupleInput input)
+        public StrengthHist read(TupleInput input)
         {
-            int hist[] = new int[Eval5.VALUE_COUNT];
-
-            for (int i = 0; i < hist.length; i++)
-            {
+            int hist[] = new int[ Eval5.VALUE_COUNT ];
+            for (int i = 0; i < hist.length; i++) {
                 hist[i] = input.readInt();
             }
-
-            return new OddHist(hist);
+            return new StrengthHist(hist);
         }
 
-        public void write(OddHist o, TupleOutput to)
+        public void write(StrengthHist o, TupleOutput to)
         {
-            for (int i = 0; i < o.HIST.length; i++)
-            {
+            for (int i = 0; i < o.HIST.length; i++) {
                 to.writeInt( o.HIST[i] );
             }
         }
@@ -171,7 +173,7 @@ public class OddHist implements Comparable<OddHist>
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        OddHist h = new OddHist();
+        StrengthHist h = new StrengthHist();
         System.out.println(h.secureHashCode());
 
         h.count((short) 0);

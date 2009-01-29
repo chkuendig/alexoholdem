@@ -9,5 +9,5 @@ public enum HeadsUpStatus
     IN_PROGRESS,
     SHOWDOWN,
     DEALER_WINS,
-    BIG_BLIND_WINS
+    DEALEE_WINS
 }

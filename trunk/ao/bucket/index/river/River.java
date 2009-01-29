@@ -5,6 +5,9 @@ import ao.bucket.index.card.CanonCard;
 import ao.bucket.index.card.Order;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.odds.eval.eval7.Eval7Faster;
 
 /**
  * Date: Sep 1, 2008
@@ -75,12 +78,10 @@ public class River implements CanonIndexed
     {
         return CASE;
     }
-
     public CanonCard riverCard()
     {
         return RIVER;
     }
-
     public Turn turn()
     {
         return TURN_CARDS;
@@ -110,10 +111,19 @@ public class River implements CanonIndexed
         return canonIndex();
     }
 
+    public short eval()
+    {
+        Hole      h = TURN_CARDS.hole().reify();
+        Community c = TURN_CARDS.community();
+        return Eval7Faster.valueOf(
+                h.a(), h.b(),
+                c.flopA(),c.flopB(), c.flopC(),
+                c.turn(), RIVER_CARD);
+    }
+
 
     //--------------------------------------------------------------------
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "River{" +
                 "RIVER_CARD=" + RIVER_CARD +
                 ", TURN_CARDS=" + TURN_CARDS +
