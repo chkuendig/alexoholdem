@@ -44,10 +44,10 @@ public class BucketOdds
             File dir, BucketTree bucketTree, char[][][][] holes)
             throws IOException
     {
-        char[][][] flops  =  holes[ holes.length - 1 ];
-        char[][]   turns  =  flops[ flops.length - 1 ];
-        char[]     rivers =  turns[ turns.length - 1 ];
-        char riverBuckets = rivers[ rivers.length - 1 ];
+        char[][][] flops  =  holes[  holes.length - 1 ];
+        char[][]   turns  =  flops[  flops.length - 1 ];
+        char[]     rivers =  turns[  turns.length - 1 ];
+        int  riverBuckets = rivers[ rivers.length - 1 ] + 1;
 
         File           file = new File(dir, STR_FILE);
         StrengthHist[] hist = new StrengthHist[ riverBuckets ];
@@ -63,7 +63,7 @@ public class BucketOdds
     private static boolean retrieveStrengths(
             File file, StrengthHist[] hist) throws IOException
     {
-        if (file.canRead()) return false;
+        if (! file.canRead()) return false;
         LOG.debug("retrieving strengths");
 
         InputStream in = new BufferedInputStream(
