@@ -1,11 +1,9 @@
-package ao.odds.agglom.impl;
+package ao.odds.agglom.hist;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.agglom.HistFinder;
-import ao.odds.agglom.StrengthHist;
 import ao.odds.eval.eval7.Eval7Faster;
 
 import java.util.EnumSet;

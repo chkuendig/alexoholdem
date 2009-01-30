@@ -1,23 +1,23 @@
-package ao.odds.agglom;
+package ao.bucket.abstraction.access.odds;
 
 import ao.holdem.persist.GenericBinding;
+import ao.odds.agglom.hist.RiverStrengths;
+import ao.odds.agglom.hist.StrengthHist;
 import ao.odds.eval.eval5.Eval5;
 import ao.util.data.Arr;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
- * Date: Sep 29, 2008
- * Time: 5:26:34 PM
+ * Date: Jan 30, 2009
+ * Time: 2:21:11 PM
  *
- * Histogram of possible strengths of hands.
+ * Histogram of 7 card hand strengths at river.
+ *
  */
-public class StrengthHist implements Comparable<StrengthHist>
+public class RiverHist
 {
     //--------------------------------------------------------------------
     private final int    HIST[];
@@ -25,30 +25,39 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
-    public StrengthHist()
+    public RiverHist()
     {
-        this( new int[Eval5.VALUE_COUNT] );
+        this( new int[RiverStrengths.COUNT] );
     }
-    private StrengthHist(int hist[])
+    private RiverHist(int hist[])
     {
         HIST = hist;
     }
 
+    public RiverHist(StrengthHist hist)
+    {
+        this();
+
+        for (short i = 0, r = 0; i < Eval5.VALUE_COUNT; i++)
+        {
+            short riverI = RiverStrengths.lookup(i);
+            if (riverI != -1)
+            {
+                HIST[ riverI ] = hist.get(i);
+            }
+        }
+    }
+
 
     //--------------------------------------------------------------------
-    public void count(short value)
+    public void count(short eval5Value)
     {
-        HIST[ value ]++;
+        HIST[ RiverStrengths.lookup(eval5Value) ]++;
         mean = Double.NaN;
     }
 
 
     //--------------------------------------------------------------------
-    public int get(short value)
-    {
-        return HIST[ value ];
-    }
-
     public int maxCount()
     {
         int maxCount = 0;
@@ -71,41 +80,12 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
-    public long secureHashCode()
-    {
-        try
-        {
-            return computeSecureHashCode();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            throw new Error( e );
-        }
-    }
-    private long computeSecureHashCode()
-            throws NoSuchAlgorithmException
-    {
-        MessageDigest m = MessageDigest.getInstance("MD5");
-
-        for (int count : HIST)
-        {
-            m.update((byte) (count >>> 24));
-            m.update((byte) (count >>> 16));
-            m.update((byte) (count >>>  8));
-            m.update((byte)  count        );
-        }
-
-        return new BigInteger(1, m.digest()).longValue();
-    }
-
-
-    //--------------------------------------------------------------------
     public double mean()
     {
-//        if (Double.isNaN(mean))
-//        {
+        if (Double.isNaN(mean))
+        {
             mean = calculateMean();
-//        }
+        }
         return mean;
     }
     private double calculateMean()
@@ -121,7 +101,8 @@ public class StrengthHist implements Comparable<StrengthHist>
             count += histCount;
         }
 
-        return (double) sum / count;
+        return ((double) sum / count) /
+                    (RiverStrengths.COUNT + 1);
     }
 
 
@@ -150,7 +131,7 @@ public class StrengthHist implements Comparable<StrengthHist>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StrengthHist strengthHist = (StrengthHist) o;
+        RiverHist strengthHist = (RiverHist) o;
         return Arrays.equals(HIST, strengthHist.HIST);
     }
 
@@ -161,20 +142,20 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
-    public static final int     BINDING_SIZE = Eval5.VALUE_COUNT * 4;
+    public static final int     BINDING_SIZE = RiverStrengths.COUNT * 4;
     public static final Binding BINDING      = new Binding();
-    public static class Binding extends GenericBinding<StrengthHist>
+    public static class Binding extends GenericBinding<RiverHist>
     {
-        public StrengthHist read(TupleInput input)
+        public RiverHist read(TupleInput input)
         {
-            int hist[] = new int[ Eval5.VALUE_COUNT ];
+            int hist[] = new int[ RiverStrengths.COUNT ];
             for (int i = 0; i < hist.length; i++) {
                 hist[i] = input.readInt();
             }
-            return new StrengthHist(hist);
+            return new RiverHist(hist);
         }
 
-        public void write(StrengthHist o, TupleOutput to)
+        public void write(RiverHist o, TupleOutput to)
         {
             for (int i = 0; i < o.HIST.length; i++) {
                 to.writeInt( o.HIST[i] );
