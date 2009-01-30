@@ -129,22 +129,6 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-//    public boolean isEmpty(Round round, long canonIndex)
-//    {
-//        switch (round)
-//        {
-//            case PREFLOP: return  holes.isEmpty( canonIndex );
-//            case FLOP:    return  flops.isEmpty( canonIndex );
-//            case TURN:    return  turns.isEmpty( canonIndex );
-//            case RIVER:   return rivers.isEmpty( canonIndex );
-//
-//            default:
-//                throw new UnsupportedOperationException();
-//        }
-//    }
-
-
-    //--------------------------------------------------------------------
     public void flush()
     {
         holes.flush();
@@ -159,16 +143,6 @@ public class BucketTreeImpl implements BucketTree
     {
         return flushFlag.canRead();
     }
-
-//    public void flush(Round round, int fromCanon, char canonCount) {
-//        switch (round)
-//        {
-//            case PREFLOP:  holes.flush(fromCanon, canonCount); break;
-//            case FLOP:     flops.flush(fromCanon, canonCount); break;
-//            case TURN:     turns.flush(fromCanon, canonCount); break;
-//            case RIVER:   rivers.flush(fromCanon, canonCount); break;
-//        }
-//    }
 
 
     //--------------------------------------------------------------------
@@ -189,7 +163,7 @@ public class BucketTreeImpl implements BucketTree
     private class BranchImpl implements Branch
     {
         //----------------------------------------------------------------
-//        private CanonDetail[][] subDetails;
+//        private CanonDetail[] subDetails;
         private int[]           parentCanons;
         private Round           round;
 
@@ -238,10 +212,6 @@ public class BucketTreeImpl implements BucketTree
         {
             return BucketTreeImpl.this.get(round, canonIndex);
         }
-
-//        private boolean isEmpty(long canonIndex) {
-//            return BucketTreeImpl.this.isEmpty(round, canonIndex);
-//        }
 
 
         //----------------------------------------------------------------
@@ -297,51 +267,6 @@ public class BucketTreeImpl implements BucketTree
             }
             return subBranches;
         }
-
-
-        //----------------------------------------------------------------
-//        public boolean isBucketized()
-//        {
-//            if (round == Round.PREFLOP) {
-//                for (int i = 0; i < HoleLookup.CANONS; i++) {
-//                    if (isEmpty(i)) return false;
-//                }
-//                return true;
-//            }
-//
-//            for (int parent : parentCanons) {
-//                CanonRange range =
-//                            DetailLookup.lookupRange(
-//                                    round.previous(), parent);
-//                for (int i = 0; i < range.canonIndexCount(); i++) {
-//                    if (isEmpty( range.fromCanonIndex() + i ))
-//                        return false;
-//                }
-//            }
-//            return true;
-//        }
-
-
-//        //----------------------------------------------------------------
-//        public void flush()
-//        {
-//            if (round == Round.PREFLOP) {
-//                BucketTreeImpl.this.flush(
-//                        round, 0, (char) HoleLookup.CANONS);
-//                return;
-//            }
-//
-//            for (int parent : parentCanons) {
-//                CanonRange range =
-//                        DetailLookup.lookupRange(
-//                                round.previous(), parent);
-//
-//                BucketTreeImpl.this.flush(
-//                        round,
-//                        (int) range.fromCanonIndex(),
-//                        range.canonIndexCount());
-//            }
-//        }
     }
 }
 

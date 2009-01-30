@@ -5,6 +5,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -19,10 +20,10 @@ public class BucketizerTest
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        double  holeBranch = 7,
-                flopBranch = 30,
+        double  holeBranch = 6,
+                flopBranch = 24,
                 turnBranch = 3,
                riverBranch = 3;
 
@@ -56,7 +57,7 @@ public class BucketizerTest
             byte nHoleBuckets,
             char nFlopBuckets,
             char nTurnBuckets,
-            char nRiverBuckets)
+            char nRiverBuckets) throws IOException
     {
         BucketManager manager =
                 new BucketManager( new BucketizerImpl() );
@@ -103,6 +104,15 @@ public class BucketizerTest
 //            }
 //        }
 
+//        FileWriter out = new FileWriter("test/str.txt");
+//        for (char i = 0; i < nRiverBuckets; i++)
+//        {
+//            out.append(map.odds().strength(i).toString())
+//               .append("\n");
+//        }
+//        out.close();
+
+//        System.out.println(map.odds().strength((char) 1295).mean());
         System.out.println(map.root());
 
 //        System.out.println(Arrays.toString(holeCounts));
