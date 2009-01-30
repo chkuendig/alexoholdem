@@ -2,6 +2,7 @@ package ao.odds.agglom;
 
 import ao.holdem.persist.GenericBinding;
 import ao.odds.eval.eval5.Eval5;
+import ao.util.data.Arr;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -61,6 +62,13 @@ public class StrengthHist implements Comparable<StrengthHist>
         return maxCount;
     }
 
+    public long totalCount()
+    {
+        long total = 0;
+        for (int count : HIST) total += count;
+        return total;
+    }
+
 
     //--------------------------------------------------------------------
     public long secureHashCode()
@@ -94,26 +102,26 @@ public class StrengthHist implements Comparable<StrengthHist>
     //--------------------------------------------------------------------
     public double mean()
     {
-        if (Double.isNaN(mean))
-        {
+//        if (Double.isNaN(mean))
+//        {
             mean = calculateMean();
-        }
+//        }
         return mean;
     }
     private double calculateMean()
     {
-        double total = 0;
-        int    count = 0;
+        long sum   = 0;
+        long count = 0;
 
         for (int i = 0; i < HIST.length; i++)
         {
-            int hist = HIST[i];
+            long histCount = HIST[i];
 
-            total += hist * i;
-            count += hist;
+            sum   += histCount * (i + 1);
+            count += histCount;
         }
 
-        return total / count;
+        return (double) sum / count;
     }
 
 
@@ -132,6 +140,11 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return Arr.join(HIST, "\t");
+    }
+
     @Override public boolean equals(Object o)
     {
         if (this == o) return true;

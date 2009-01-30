@@ -238,6 +238,13 @@ public class BucketFlyweight
 
 
     //--------------------------------------------------------------------
+    public BucketOdds odds()
+    {
+        return odds;
+    }
+
+
+    //--------------------------------------------------------------------
     public HoldemBucket root()
     {
         return new RootBucket();

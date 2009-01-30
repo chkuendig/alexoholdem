@@ -167,6 +167,11 @@ public class BucketOdds
     public String status(char index)
     {
         StrengthHist h = HIST[index];
-        return h.mean() + " with " + h.maxCount();
+        return h.mean() + " with " + h.totalCount();
+    }
+
+    public StrengthHist strength(char index)
+    {
+        return HIST[ index ];
     }
 }
