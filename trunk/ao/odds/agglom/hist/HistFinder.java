@@ -1,4 +1,4 @@
-package ao.odds.agglom;
+package ao.odds.agglom.hist;
 
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

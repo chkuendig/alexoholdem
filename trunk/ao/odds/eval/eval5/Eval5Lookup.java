@@ -10,7 +10,7 @@ import ao.util.persist.PersistentShorts;
 public class Eval5Lookup
 {
     //--------------------------------------------------------------------
-    private static final String DIR        = "lookup/eval5/";
+    private static final String DIR        = "lookup/eval/eval5/";
     private static final String F_UNIQUE5  = DIR + "unique5.txt";
     private static final String F_FLUSHES  = DIR + "flushes.txt";
     private static final String F_HASH_ADJ = DIR + "hash_adjust.txt";

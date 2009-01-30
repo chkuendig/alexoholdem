@@ -1,4 +1,4 @@
-package ao.bucket.abstraction.access;
+package ao.bucket.abstraction.access.odds;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.enumeration.HandEnum;
@@ -7,7 +7,7 @@ import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
-import ao.odds.agglom.StrengthHist;
+import ao.odds.agglom.hist.StrengthHist;
 import ao.util.misc.Traverser;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

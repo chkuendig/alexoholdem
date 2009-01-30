@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class Eval7Faster
 {
     //--------------------------------------------------------------------
-    private static final String DIR    = "lookup/eval7_faster/";
+    private static final String DIR    = "lookup/eval/eval7_faster/";
     private static final String F_RANK = DIR + "ranks.cache";
     private static final String F_KEY  = DIR + "keys.cache";
 

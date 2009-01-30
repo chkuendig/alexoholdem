@@ -10,7 +10,7 @@ import ao.util.persist.PersistentShorts;
 public class Eval7FastLookup
 {
     //--------------------------------------------------------------------
-    private static final String DIR         = "lookup/eval7_fast/";
+    private static final String DIR         = "lookup/eval/eval7_fast/";
     private static final String F_TABLE7    = DIR + "table7.txt";
     private static final String F_BIT_COUNT = DIR + "bitcount.txt";
     public  static final String F_CACHE     = DIR + "eval7.cache";
