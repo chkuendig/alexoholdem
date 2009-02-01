@@ -1,32 +1,45 @@
 package ao.regret.holdem.node;
 
 import ao.holdem.engine.state.HeadsUpStatus;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
 import ao.util.text.Txt;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 8, 2009
  * Time: 5:56:11 PM
- *
- * todo: must this be from POV of dealder?
  */
 public class TerminalNode implements InfoNode
 {
     //--------------------------------------------------------------------
-    private final HoldemBucket  BUCKET;
-    private final State         STATE;
-    private final HeadsUpStatus STATUS;
+    private static final Logger LOG =
+            Logger.getLogger(TerminalNode.class);
+
+    private static int count = 0;
 
 
     //--------------------------------------------------------------------
-    public TerminalNode(HoldemBucket bucket,
-                        State        state)
+    private final HoldemBucket  BUCKET;
+    private final int           POT;
+    private final HeadsUpStatus STATUS;
+    private final boolean       DEALER_ACTED_LAST;
+
+
+    //--------------------------------------------------------------------
+    public TerminalNode(HoldemBucket   bucket,
+                        boolean        dealerActedLast,
+                        StateTree.Node state)
     {
-        BUCKET = bucket;
-        STATE  = state;
-        STATUS = STATE.headsUpStatus();
+//        LOG.debug(state.round());
+        if ( count      %     1000  == 0) System.out.print(".");
+        if ((count + 1) % (50*1000) == 0) System.out.println();
+
+        BUCKET            = bucket;
+        POT               = state.state().pot().smallBlinds();
+        STATUS            = state.state().headsUpStatus();
+        DEALER_ACTED_LAST = dealerActedLast;
 
         assert STATUS != null &&
                STATUS != HeadsUpStatus.IN_PROGRESS;
@@ -34,17 +47,15 @@ public class TerminalNode implements InfoNode
 
 
     //--------------------------------------------------------------------
-    public double expectedValue(
-            TerminalNode vsDealee)
+    public double expectedValue(TerminalNode vs)
     {
-        int    smallBlinds = STATE.pot().smallBlinds();
-        double toWin       =
+        double toWin =
                   (STATUS == HeadsUpStatus.SHOWDOWN)
-                ?  BUCKET.against( vsDealee.BUCKET )
-                :   (STATUS == HeadsUpStatus.DEALER_WINS)
+                ?  BUCKET.against( vs.BUCKET )
+                :   (STATUS == HeadsUpStatus.DEALER_WINS &&
+                       !DEALER_ACTED_LAST)
                   ?  1 : -1;
-
-        return smallBlinds * toWin;
+        return POT * toWin;
     }
 
 
@@ -57,6 +68,6 @@ public class TerminalNode implements InfoNode
     public String toString(int depth)
     {
         return Txt.nTimes("\t", depth) +
-               STATE.headsUpStatus();
+               STATUS;
     }
 }

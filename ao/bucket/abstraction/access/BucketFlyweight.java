@@ -304,6 +304,9 @@ public class BucketFlyweight
         public HoldemBucket nextBucket(byte index) {
             throw new UnsupportedOperationException();
         }
+        public byte subBucketCount() {
+            return 0;
+        }
 
         @Override public String toString() {
             return index() + "\t[" + odds.status(absoluteIndex) + "]";
@@ -331,6 +334,9 @@ public class BucketFlyweight
                 buckets[ i ] = nextBucket(i);
             }
             return buckets;
+        }
+        public byte subBucketCount() {
+            return nBuckets;
         }
         public double against(HoldemBucket otherTerminal) {
             throw new UnsupportedOperationException();

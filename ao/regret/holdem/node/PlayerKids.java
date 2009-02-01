@@ -1,10 +1,12 @@
 package ao.regret.holdem.node;
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
+import org.apache.log4j.Logger;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,35 +19,43 @@ import java.util.Set;
 public class PlayerKids
 {
     //--------------------------------------------------------------------
-    private Map<AbstractAction, InfoNode> kids;
+    private static final Logger LOG =
+            Logger.getLogger(PlayerKids.class);
+
+
+    //--------------------------------------------------------------------
+    private EnumMap<AbstractAction, InfoNode> kids;
 
 
     //--------------------------------------------------------------------
     public PlayerKids(
-            State        state,
-            HoldemBucket bucket,
-            boolean      forFirstToAct,
-            boolean      asProponent)
+            StateTree.Node state,
+            HoldemBucket   bucket,
+            boolean        forFirstToAct,
+            boolean        asProponent)
     {
         kids = new EnumMap<AbstractAction, InfoNode>(
                     AbstractAction.class);
 
-        EnumMap<AbstractAction, State> actions = state.viableActions();
-        for (Map.Entry<AbstractAction, State>
+        Map<AbstractAction, StateTree.Node> actions = state.acts();
+        for (Map.Entry<AbstractAction, StateTree.Node>
                 action : actions.entrySet())
         {
-            State nextState = action.getValue();
+//            LOG.debug("exploring " + action.getKey());
+            StateTree.Node nextState = action.getValue();
 
-            if (nextState.atEndOfHand())
+            if (nextState.state().atEndOfHand())
             {
                 kids.put(action.getKey(),
                          new TerminalNode(
-                                 bucket, nextState));
+                                 bucket,
+                                 state.state().dealerIsNext(),
+                                 nextState));
             }
-            else if (nextState.isStartOfRound())
+            else if (nextState.state().isStartOfRound())
             {
                 kids.put(action.getKey(),
-                         new BucketNode(bucket.nextBuckets(),
+                         new BucketNode(bucket,
                                         nextState,
                                         forFirstToAct));
             }
@@ -83,5 +93,9 @@ public class PlayerKids
     public Set<Entry<AbstractAction, InfoNode>> entrySet()
     {
         return kids.entrySet();
+    }
+    public Collection<AbstractAction> acts()
+    {
+        return kids.keySet();
     }
 }

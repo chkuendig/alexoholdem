@@ -1,10 +1,11 @@
 package ao.regret.holdem.node;
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
 import ao.util.text.Txt;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 
@@ -15,14 +16,21 @@ import java.util.Map;
 public class OpponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(OpponentNode.class);
+
+
+    //--------------------------------------------------------------------
     private PlayerKids kids;
 
 
     //--------------------------------------------------------------------
-    public OpponentNode(State        state,
-                        HoldemBucket bucket,
-                        boolean      forFirstToAct)
+    public OpponentNode(StateTree.Node state,
+                        HoldemBucket   bucket,
+                        boolean        forFirstToAct)
     {
+//        LOG.debug(state.round());
+
         kids = new PlayerKids(state, bucket, forFirstToAct, false);
     }
 

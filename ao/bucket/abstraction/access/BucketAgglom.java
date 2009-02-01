@@ -30,14 +30,14 @@ public class BucketAgglom
     //--------------------------------------------------------------------
     public HoldemBucket root()
     {
-        return null;
+        return bucketTree.map().root();
     }
 
 
     //--------------------------------------------------------------------
-    public HoldemBucket[] computeBuckets(
-            Hole      hole,
-            Community community)
+    public byte[] computeBuckets(
+                            Hole      hole,
+                            Community community)
     {
         CanonHole canonHole  = hole.asCanon();
         byte      holeBucket = bucketTree.getHole(canonHole.canonIndex());
@@ -51,13 +51,15 @@ public class BucketAgglom
         River river       = turn.addRiver(community.river());
         byte  riverBucket = bucketTree.getRiver( river.canonIndex() );
 
+        return new byte[]{
+                holeBucket, flopBucket, turnBucket, riverBucket};
 
-        HoldemBucket hBucket =  root().nextBucket(  holeBucket );
-        HoldemBucket fBucket = hBucket.nextBucket(  flopBucket );
-        HoldemBucket tBucket = fBucket.nextBucket(  turnBucket );
-        HoldemBucket rBucket = tBucket.nextBucket( riverBucket );
+//        HoldemBucket hBucket =  root().nextBucket(  holeBucket );
+//        HoldemBucket fBucket = hBucket.nextBucket(  flopBucket );
+//        HoldemBucket tBucket = fBucket.nextBucket(  turnBucket );
+//        HoldemBucket rBucket = tBucket.nextBucket( riverBucket );
         
-        return new HoldemBucket[] {
-                hBucket, fBucket, tBucket, rBucket};
+//        return new HoldemBucket[] {
+//                hBucket, fBucket, tBucket, rBucket};
     }
 }

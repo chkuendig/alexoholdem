@@ -10,5 +10,6 @@ import ao.bucket.Bucket;
 public interface HoldemBucket extends Bucket<HoldemBucket>
 {
     public HoldemBucket nextBucket(byte index);
+    public byte subBucketCount();
     public byte index();
 }

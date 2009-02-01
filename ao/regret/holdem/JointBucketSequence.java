@@ -16,8 +16,8 @@ import ao.holdem.model.card.chance.DeckCards;
 public class JointBucketSequence
 {
     //--------------------------------------------------------------------
-    private final HoldemBucket[] dealerBuckets;
-    private final HoldemBucket[] dealeeBuckets;
+    private final byte[] dealerBuckets;
+    private final byte[] dealeeBuckets;
 
 
     //--------------------------------------------------------------------
@@ -47,6 +47,6 @@ public class JointBucketSequence
             Round   round)
     {
         return (dealer ? dealerBuckets
-                       : dealeeBuckets)[ round.ordinal() ].index();
+                       : dealeeBuckets)[ round.ordinal() ];
     }
 }
