@@ -28,15 +28,88 @@ public class BucketOddsTranslator
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
+//        translateStrengthToRiver(IN_FILE, OUT_FILE);
+        translateRiverToSlim(IN_FILE, OUT_FILE);
+    }
+
+
+    //--------------------------------------------------------------------
+    public static void translateStrengthToRiver(
+            String inFile,
+            String outFile) throws IOException
+    {
         StrengthHist[] hist = new StrengthHist[ 1296 ];
-        retrieveStrengths(new File(IN_FILE), hist);
+        retrieveStrengths(new File(inFile), hist);
 
         RiverHist[] hist2 = new RiverHist[ hist.length ];
         for (int i = 0; i < hist2.length; i++) {
             hist2[ i ] = new RiverHist( hist[i] );
         }
-        persistStrengths(new File(OUT_FILE), hist2);
+        persistStrengths(new File(outFile), hist2);
     }
+
+
+    //--------------------------------------------------------------------
+    public static void translateRiverToSlim(
+            String inFile,
+            String outFile) throws IOException
+    {
+        RiverHist[] hist = new RiverHist[ 1296 ];
+        retrieveStrengths(new File(inFile), hist);
+
+        SlimRiverHist[] hist2 = new SlimRiverHist[ hist.length ];
+        for (int i = 0; i < hist2.length; i++) {
+            hist2[ i ] = hist[i].slim();
+        }
+        persistSlims(new File(outFile), hist2);
+    }
+
+
+    //--------------------------------------------------------------------
+    private static void persistSlims(
+            File file, SlimRiverHist[] strengths) throws IOException
+    {
+        LOG.debug("persisting slims");
+
+        OutputStream outFile = new FileOutputStream(file);
+        TupleOutput out = new TupleOutput();
+        for (SlimRiverHist str : strengths)
+        {
+            SlimRiverHist.BINDING.write(str, out);
+
+            byte asBinary[] = out.getBufferBytes();
+            outFile.write( asBinary, 0, out.getBufferLength() );
+            out = new TupleOutput(asBinary);
+        }
+
+        outFile.close();
+    }
+
+
+    //--------------------------------------------------------------------
+    private static boolean retrieveStrengths(
+            File file, RiverHist[] hist) throws IOException
+    {
+        if (! file.canRead()) return false;
+        LOG.debug("retrieving strengths");
+
+        InputStream in = new BufferedInputStream(
+                                new FileInputStream(file));
+        byte[] binStrengths = new byte[ RiverHist.BINDING_SIZE ];
+
+        for (int i = 0; i < hist.length; i++) {
+            if (in.read(binStrengths) != RiverHist.BINDING_SIZE) {
+                throw new IOException("did not read full amount");
+            }
+
+            TupleInput tin = new TupleInput(binStrengths);
+            hist[ i ] = RiverHist.BINDING.read( tin );
+        }
+        in.close();
+        return true;
+    }
+
+
 
 
     //--------------------------------------------------------------------

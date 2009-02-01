@@ -7,7 +7,6 @@ import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
-import ao.odds.agglom.hist.StrengthHist;
 import ao.util.misc.Traverser;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -49,71 +48,88 @@ public class BucketOdds
         char[]     rivers =  turns[  turns.length - 1 ];
         int  riverBuckets = rivers[ rivers.length - 1 ] + 1;
 
-        File           file = new File(dir, STR_FILE);
-        StrengthHist[] hist = new StrengthHist[ riverBuckets ];
-        if (! retrieveStrengths(file, hist)) {
-            computeStrengths(hist, bucketTree, holes);
-            persistStrengths(file, hist);
+        File            file = new File(dir, STR_FILE);
+        SlimRiverHist[] hist = retrieveStrengths(file, riverBuckets);
+        if (hist == null ) {
+            RiverHist[] riverHist =
+                    computeStrengths(riverBuckets, bucketTree, holes);
+            hist = persistStrengths(file, riverHist);
         }
         return new BucketOdds(hist);
     }
 
 
     //--------------------------------------------------------------------
-    private static boolean retrieveStrengths(
-            File file, StrengthHist[] hist) throws IOException
+    private static SlimRiverHist[] retrieveStrengths(
+            File file, int riverBuckets) throws IOException
     {
-        if (! file.canRead()) return false;
+        if (! file.canRead()) return null;
         LOG.debug("retrieving strengths");
 
+        SlimRiverHist[] hist = new SlimRiverHist[ riverBuckets ];
         InputStream in = new BufferedInputStream(
                                 new FileInputStream(file));
-        byte[] binStrengths = new byte[ StrengthHist.BINDING_SIZE ];
+        byte[] binStrengths =
+                new byte[ SlimRiverHist.BINDING_MAX_SIZE ];
+        //noinspection ResultOfMethodCallIgnored
+        in.read(binStrengths, 0, binStrengths.length);
 
-        for (int i = 0; i < hist.length; i++) {
-            if (in.read(binStrengths) != StrengthHist.BINDING_SIZE) {
-                throw new IOException("did not read full amount");
-            }
-
+        for (int i = 0, offset; i < hist.length; i++) {
             TupleInput tin = new TupleInput(binStrengths);
-            hist[ i ] = StrengthHist.BINDING.read( tin );
+            hist[ i ]      = SlimRiverHist.BINDING.read( tin );
+            offset         = hist[ i ].bindingSize();
+
+            System.arraycopy(
+                    binStrengths,
+                    offset,
+                    binStrengths,
+                    0,
+                    binStrengths.length - offset);
+            //noinspection ResultOfMethodCallIgnored
+            in.read(binStrengths, binStrengths.length - offset, offset);
         }
         in.close();
-        return true;
+        return hist;
     }
 
 
     //--------------------------------------------------------------------
-    private static void persistStrengths(
-            File file, StrengthHist[] strengths) throws IOException
+    private static SlimRiverHist[] persistStrengths(
+            File file, RiverHist[] strengths) throws IOException
     {
         LOG.debug("persisting strengths");
 
-        OutputStream outFile = new FileOutputStream(file);
+        OutputStream outFile = new BufferedOutputStream(
+                                 new FileOutputStream(file));
+        SlimRiverHist[] hist = new SlimRiverHist[ strengths.length ];
 
         TupleOutput out = new TupleOutput();
-        for (StrengthHist str : strengths)
+        for (int i = 0; i < strengths.length; i++)
         {
-            StrengthHist.BINDING.write(str, out);
+            RiverHist str = strengths[i];
+            hist[ i ]     = str.slim();
+            SlimRiverHist.BINDING.write(hist[i], out);
 
             byte asBinary[] = out.getBufferBytes();
-            outFile.write( asBinary, 0, out.getBufferLength() );
+            outFile.write(asBinary, 0, out.getBufferLength());
             out = new TupleOutput(asBinary);
         }
-
+        
         outFile.close();
+        return hist;
     }
 
 
     //--------------------------------------------------------------------
-    private static void computeStrengths(
-            final StrengthHist[] hist,
-            final BucketTree     tree,
-            final char[][][][]   holes)
+    private static RiverHist[] computeStrengths(
+            final int          riverBuckets,
+            final BucketTree   tree,
+            final char[][][][] holes)
     {
         LOG.debug("computing strengths");
+        final RiverHist[]  hist = new RiverHist[ riverBuckets ];
         for (int i = 0; i < hist.length; i++) {
-            hist[ i ] = new StrengthHist();
+            hist[ i ] = new RiverHist();
         }
 
         final long[] count = {0};
@@ -138,6 +154,7 @@ public class BucketOdds
                 checkpoint(count[0]++);
             }});
         System.out.println(" DONE!");
+        return hist;
     }
 
     private static void checkpoint(long count) {
@@ -150,9 +167,14 @@ public class BucketOdds
     
 
     //--------------------------------------------------------------------
-    private final StrengthHist[] HIST;
+    private final SlimRiverHist[] HIST;
 
-    private BucketOdds(StrengthHist[] hist)
+//    private BucketOdds(SlimRiverHist[] hist)
+//    {
+//        HIST = hist;
+//    }
+
+    private BucketOdds(SlimRiverHist[] hist)
     {
         HIST = hist;
     }
@@ -166,11 +188,11 @@ public class BucketOdds
 
     public String status(char index)
     {
-        StrengthHist h = HIST[index];
+        SlimRiverHist h = HIST[index];
         return h.mean() + " with " + h.totalCount();
     }
 
-    public StrengthHist strength(char index)
+    public SlimRiverHist strength(char index)
     {
         return HIST[ index ];
     }

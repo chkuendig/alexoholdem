@@ -108,13 +108,6 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
-    public double nonLossProb(StrengthHist that)
-    {
-        return -1;
-    }
-
-
-    //--------------------------------------------------------------------
     public int compareTo(StrengthHist o)
     {
         return Double.compare(mean(), o.mean());

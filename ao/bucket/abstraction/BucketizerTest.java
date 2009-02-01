@@ -69,40 +69,6 @@ public class BucketizerTest
                                 nRiverBuckets);
         BucketFlyweight map = buckets.map();
 
-//        int[] holeCounts = new int[ nHoleBuckets ];
-//        int[] flopCounts = new int[ nFlopBuckets ];
-//        int[] turnCounts = new int[ nTurnBuckets ];
-//
-//        for (CanonHoleDetail holeDetail :
-//                DetailLookup.lookupHole(
-//                        (char) 0, (char) HoleLookup.CANONS))
-//        {
-//            char holeIndex = (char) holeDetail.canonIndex();
-//            holeCounts[ buckets.getHole(holeIndex) ]++;
-//
-//            for (CanonFlopDetail flopDetail :
-//                    DetailLookup.lookupFlop(
-//                            holeDetail.firstCanonFlop(),
-//                            holeDetail.canonFlopCount()))
-//            {
-//                int flopIndex = (int) flopDetail.canonIndex();
-//                flopCounts[ map.serialize(
-//                                buckets.getHole(holeIndex),
-//                                buckets.getFlop(flopIndex)) ]++;
-//
-//                for (CanonTurnDetail turnDetail :
-//                        DetailLookup.lookupTurn(
-//                                flopDetail.firstCanonTurn(),
-//                                flopDetail.canonTurnCount()))
-//                {
-//                    int turnIndex = (int) turnDetail.canonIndex();
-//                    turnCounts[ map.serialize(
-//                                    buckets.getHole(holeIndex),
-//                                    buckets.getFlop(flopIndex),
-//                                    buckets.getTurn(turnIndex)) ]++;
-//                }
-//            }
-//        }
 
 //        FileWriter out = new FileWriter("test/str.txt");
 //        for (char i = 0; i < nRiverBuckets; i++)
@@ -112,11 +78,13 @@ public class BucketizerTest
 //        }
 //        out.close();
 
-//        System.out.println(map.odds().strength((char) 1295).mean());
-        System.out.println(map.root());
+//        for (char i = 0; i < nRiverBuckets; i++)
+//        {
+//            System.out.println(
+//                    map.odds().strength(i).length());
+//        }
 
-//        System.out.println(Arrays.toString(holeCounts));
-//        System.out.println(Arrays.toString(flopCounts));
-//        System.out.println(Arrays.toString(turnCounts));
+
+        System.out.println(map.root());
     }
 }
