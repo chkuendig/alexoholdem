@@ -1,14 +1,14 @@
 package ao.regret.holdem.node;
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
 import ao.util.math.rand.Rand;
 import ao.util.text.Txt;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -18,6 +18,9 @@ import java.util.Map;
 public class ProponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(ProponentNode.class);
+
     private static final int SPARSE_LIMIT = 5;
 
 
@@ -30,18 +33,19 @@ public class ProponentNode implements PlayerNode
 
     //--------------------------------------------------------------------
     public ProponentNode(
-            State        state,
-            HoldemBucket bucket,
-            boolean      forFirstToAct)
+            StateTree.Node state,
+            HoldemBucket   bucket,
+            boolean        forFirstToAct)
     {
+//        LOG.debug(state.round());
+
         prob   = newActionTracker();
         regret = newActionTracker();
         kids   = new PlayerKids(state, bucket, forFirstToAct, true);
 
-        EnumMap<AbstractAction,State> actions = state.viableActions();
-        for (AbstractAction action : actions.keySet())
+        for (AbstractAction action : kids.acts())
         {
-            prob[   action.ordinal() ] = 1.0 / actions.size();
+            prob[   action.ordinal() ] = 1.0 / kids.size();
 //            regret[ action.ordinal() ] = 0;
         }
     }

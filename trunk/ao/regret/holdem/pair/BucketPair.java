@@ -1,6 +1,6 @@
 package ao.regret.holdem.pair;
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
 import ao.regret.holdem.HoldemBucket;
 import ao.regret.holdem.JointBucketSequence;
 import ao.regret.holdem.node.BucketNode;
@@ -18,18 +18,18 @@ public class BucketPair implements InfoPair
 
 
     //--------------------------------------------------------------------
-    public BucketPair(State        state,
-                      HoldemBucket root)
+    public BucketPair(StateTree.Node state,
+                      HoldemBucket   root)
     {
         this(state, root, root);
     }
 
-    public BucketPair(State        state,
-                      HoldemBucket dealerBucket,
-                      HoldemBucket dealeeBucket)
+    public BucketPair(StateTree.Node state,
+                      HoldemBucket   dealerBucket,
+                      HoldemBucket   dealeeBucket)
     {
-        this(new BucketNode(dealerBucket.nextBuckets(), state, true),
-             new BucketNode(dealeeBucket.nextBuckets(), state, false));
+        this(new BucketNode(dealerBucket, state, true),
+             new BucketNode(dealeeBucket, state, false));
     }
 
     public BucketPair(BucketNode firstBucket,

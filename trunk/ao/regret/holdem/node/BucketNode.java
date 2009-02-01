@@ -1,10 +1,12 @@
 package ao.regret.holdem.node;
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateTree;
+import ao.holdem.model.Round;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
 import ao.regret.holdem.JointBucketSequence;
 import ao.util.text.Txt;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 8, 2009
@@ -13,26 +15,35 @@ import ao.util.text.Txt;
 public class BucketNode implements InfoNode
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketNode.class);
+
+
+    //--------------------------------------------------------------------
     private PlayerNode[] kids;
     private boolean      dealer;
-    private State        state;
+    private Round        round;
 
 
     //--------------------------------------------------------------------
     public BucketNode(
-            HoldemBucket[] buckets,
-            State          atState,
+            HoldemBucket   parentBucket,
+            StateTree.Node state,
             boolean        forDealer)
     {
-        kids   = new PlayerNode[ buckets.length ];
-        state  = atState;
+//        LOG.debug(parentBucket.subBucketCount() +
+//                  " at " + state.state().round());
+
+        kids   = new PlayerNode[ parentBucket.subBucketCount() ];
+        round  = state.state().round();
         dealer = forDealer;
 
-        for (HoldemBucket bucket : buckets)
+        for (byte b = 0; b < parentBucket.subBucketCount(); b++)
         {
+            HoldemBucket bucket = parentBucket.nextBucket(b);
             PlayerNode kid =
                     (forDealer ==
-                        state.dealerIsNext())
+                        state.state().dealerIsNext())
                      ? new ProponentNode(state, bucket, forDealer)
                      : new  OpponentNode(state, bucket, forDealer);
 
@@ -50,7 +61,7 @@ public class BucketNode implements InfoNode
     public PlayerNode accordingTo(JointBucketSequence jbs)
     {
         return accordingTo(
-                jbs.bucket(dealer, state.round()));
+                jbs.bucket(dealer, round));
     }
     public PlayerNode accordingTo(byte bucket)
     {

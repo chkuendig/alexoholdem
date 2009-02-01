@@ -5,7 +5,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.util.io.Console;
 
 import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Date: Jan 8, 2009
@@ -20,8 +20,8 @@ public class StateTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        new StateTest().interactiveHeadsUp();
-//        new StateTest().countStates();
+//        new StateTest().interactiveHeadsUp();
+        new StateTest().countStates();
     }
 
 
@@ -75,7 +75,7 @@ public class StateTest
             System.out.println(
                     (isDealer ? dealer : dealee) + " to act...");
 
-            EnumMap<AbstractAction, State>
+            Map<AbstractAction, State>
                            acts    = state.viableActions();
             AbstractAction nextAct = inputNextAct(acts);
 
@@ -88,7 +88,7 @@ public class StateTest
     }
 
     private AbstractAction inputNextAct(
-            EnumMap<AbstractAction, State> acts)
+            Map<AbstractAction, State> acts)
     {
         AbstractAction nextAct = null;
         do

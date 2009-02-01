@@ -8,10 +8,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Holdem hand state.
@@ -112,7 +109,7 @@ public class State
 
 
     //--------------------------------------------------------------------
-    public EnumMap<AbstractAction, State> viableActions()
+    public Map<AbstractAction, State> viableActions()
     {
         EnumMap<AbstractAction, State> validActions =
                 new EnumMap<AbstractAction, State>(
