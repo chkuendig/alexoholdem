@@ -38,7 +38,7 @@ public class RiverHist
     {
         this();
 
-        for (short i = 0, r = 0; i < Eval5.VALUE_COUNT; i++)
+        for (short i = 0; i < Eval5.VALUE_COUNT; i++)
         {
             short riverI = RiverStrengths.lookup(i);
             if (riverI != -1)
@@ -50,10 +50,17 @@ public class RiverHist
 
 
     //--------------------------------------------------------------------
-    public void count(short eval5Value)
+    public void count(short eval5Strength)
     {
-        HIST[ RiverStrengths.lookup(eval5Value) ]++;
+        HIST[ RiverStrengths.lookup(eval5Strength) ]++;
         mean = Double.NaN;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int get(short riverStrength)
+    {
+        return HIST[ riverStrength ];
     }
 
 
@@ -107,16 +114,9 @@ public class RiverHist
 
 
     //--------------------------------------------------------------------
-    public double nonLossProb(StrengthHist that)
+    public SlimRiverHist slim()
     {
-        return -1;
-    }
-
-
-    //--------------------------------------------------------------------
-    public int compareTo(StrengthHist o)
-    {
-        return Double.compare(mean(), o.mean());
+        return new SlimRiverHist(HIST);
     }
 
 
@@ -161,22 +161,5 @@ public class RiverHist
                 to.writeInt( o.HIST[i] );
             }
         }
-    }
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        StrengthHist h = new StrengthHist();
-        System.out.println(h.secureHashCode());
-
-        h.count((short) 0);
-        System.out.println(h.secureHashCode());
-
-        h.count((short) 1);
-        System.out.println(h.secureHashCode());
-
-        h.count((short) 2);
-        System.out.println(h.secureHashCode());
     }
 }
