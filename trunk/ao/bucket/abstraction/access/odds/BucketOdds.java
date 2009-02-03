@@ -25,7 +25,7 @@ public class BucketOdds
             Logger.getLogger(BucketOdds.class);
 
     private static final String STR_FILE = "eval";
-    private static final int    BUFFER   = 20 * 1000;
+    private static final int    BUFFER   = 10 * 1000;
 
 
     //--------------------------------------------------------------------
@@ -52,7 +52,7 @@ public class BucketOdds
         File            file = new File(dir, STR_FILE);
         SlimRiverHist[] hist = retrieveStrengths(file, riverBuckets);
         int             off  = offset(hist);
-        if (off != hist.length) {
+        if (hist == null || off != hist.length) {
             hist = computeAndPersistStrengths(off,
                     riverBuckets, bucketTree, holes, file);
         }
