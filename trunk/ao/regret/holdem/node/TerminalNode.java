@@ -33,8 +33,9 @@ public class TerminalNode implements InfoNode
                         StateTree.Node state)
     {
 //        LOG.debug(state.round());
-        if ( count      %     1000  == 0) System.out.print(".");
-        if ((count + 1) % (50*1000) == 0) System.out.println();
+        if ( count      %     10000  == 0) System.out.print(".");
+        if ((count + 1) % (50*10000) == 0) System.out.println();
+        count++;
 
         BUCKET            = bucket;
         POT               = state.state().pot().smallBlinds();

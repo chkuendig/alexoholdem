@@ -25,6 +25,7 @@ public class BucketOdds
             Logger.getLogger(BucketOdds.class);
 
     private static final String STR_FILE = "eval";
+    private static final int    BUFFER   = 20 * 1000;
 
 
     //--------------------------------------------------------------------
@@ -50,10 +51,10 @@ public class BucketOdds
 
         File            file = new File(dir, STR_FILE);
         SlimRiverHist[] hist = retrieveStrengths(file, riverBuckets);
-        if (hist == null ) {
-            RiverHist[] riverHist =
-                    computeStrengths(riverBuckets, bucketTree, holes);
-            hist = persistStrengths(file, riverHist);
+        int             off  = offset(hist);
+        if (off != hist.length) {
+            hist = computeAndPersistStrengths(off,
+                    riverBuckets, bucketTree, holes, file);
         }
         return new BucketOdds(hist);
     }
@@ -92,23 +93,31 @@ public class BucketOdds
         return hist;
     }
 
+    private static int offset(SlimRiverHist[] hist)
+    {
+        if (hist == null) return 0;
+        for (int i = 0; i < hist.length; i++){
+            if (hist[i] == null) return i;
+        }
+        return hist.length;
+    }
+
+
 
     //--------------------------------------------------------------------
-    private static SlimRiverHist[] persistStrengths(
-            File file, RiverHist[] strengths) throws IOException
+    private static void persistStrengths(
+            File file, SlimRiverHist[] bucketHist) throws IOException
     {
         LOG.debug("persisting strengths");
 
         OutputStream outFile = new BufferedOutputStream(
                                  new FileOutputStream(file));
-        SlimRiverHist[] hist = new SlimRiverHist[ strengths.length ];
 
         TupleOutput out = new TupleOutput();
-        for (int i = 0; i < strengths.length; i++)
+        for (SlimRiverHist hist : bucketHist)
         {
-            RiverHist str = strengths[i];
-            hist[ i ]     = str.slim();
-            SlimRiverHist.BINDING.write(hist[i], out);
+            if (hist == null) break;
+            SlimRiverHist.BINDING.write(hist, out);
 
             byte asBinary[] = out.getBufferBytes();
             outFile.write(asBinary, 0, out.getBufferLength());
@@ -116,20 +125,45 @@ public class BucketOdds
         }
         
         outFile.close();
-        return hist;
     }
 
 
     //--------------------------------------------------------------------
-    private static RiverHist[] computeStrengths(
-            final int          riverBuckets,
-            final BucketTree   tree,
-            final char[][][][] holes)
+    private static SlimRiverHist[] computeAndPersistStrengths(
+            int          initialOffset,
+            int          riverBuckets,
+            BucketTree   tree,
+            char[][][][] holes,
+            File         outFile) throws IOException
     {
         LOG.debug("computing strengths");
-        final RiverHist[]  hist = new RiverHist[ riverBuckets ];
-        for (int i = 0; i < hist.length; i++) {
-            hist[ i ] = new RiverHist();
+        final SlimRiverHist[] hist = new SlimRiverHist[ riverBuckets ];
+
+        for (int offset = initialOffset;
+                 offset < riverBuckets;
+                 offset += BUFFER)
+        {
+            computeStrengths(hist,
+                             offset,
+                             Math.min(BUFFER,
+                                      riverBuckets - offset),
+                             tree, holes);
+            persistStrengths(outFile, hist);
+        }
+
+        System.out.println(" DONE!");
+        return hist;
+    }
+    private static void computeStrengths(
+            final SlimRiverHist[] hist,
+            final int             offset,
+            final int             length,
+            final BucketTree      tree,
+            final char[][][][]    holes)
+    {
+        final RiverHist[]  histBuff = new RiverHist[ length ];
+        for (int i = 0; i < histBuff.length; i++) {
+            histBuff[ i ] = new RiverHist();
         }
 
         final long[] count = {0};
@@ -144,20 +178,31 @@ public class BucketOdds
                 Flop      flop = turn.flop();
                 CanonHole hole = flop.hole();
 
-                char absoluteRiverBcket = holes
+                char absoluteRiverBucket = holes
                         [ tree.getHole (  hole.canonIndex() ) ]
                         [ tree.getFlop (  flop.canonIndex() ) ]
                         [ tree.getTurn (  turn.canonIndex() ) ]
                         [ tree.getRiver( river.canonIndex() ) ];
-                hist[absoluteRiverBcket].count( river.eval() );
+                if (offset <= absoluteRiverBucket &&
+                              absoluteRiverBucket < (offset + length)) {
 
-                checkpoint(count[0]++);
+                    histBuff[absoluteRiverBucket - offset]
+                                .count( river.eval() );
+                    checkpoint(count[0]++);
+                }
             }});
-        System.out.println(" DONE!");
-        return hist;
+
+        for (int i = 0; i < length; i++) {
+            hist[offset + i] = histBuff[i].slim();
+        }
     }
 
     private static void checkpoint(long count) {
+        if (count == 0) {
+            System.out.println("starting calculation cycle");
+            return;
+        }
+
         if ((count       % (1000 * 1000)) == 0)
             System.out.print(".");
 
