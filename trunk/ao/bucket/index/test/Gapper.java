@@ -92,7 +92,7 @@ public class Gapper
         {
             System.out.println(
                 "Compressed " + count + " into " +
-                    length() + " isomorphisms.");
+                    length() + " bytes.");
         }
         else
         {

@@ -143,10 +143,10 @@ public class HandEnum
             Traverser<River> riverTraverser)
     {
         rivers(new UniqueFilter<CanonHole>(),
-                       new UniqueFilter<Flop>(),
-                       new UniqueFilter<Turn>(),
-                       new UniqueFilter<River>(),
-                       riverTraverser);
+               new UniqueFilter<Flop>(),
+               new UniqueFilter<Turn>(),
+               new UniqueFilter<River>(),
+               riverTraverser);
     }
     public static void rivers(
             final Filter<CanonHole> holeFilter,

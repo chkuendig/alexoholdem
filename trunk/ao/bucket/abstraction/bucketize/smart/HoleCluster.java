@@ -4,6 +4,7 @@ import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.hole.HoleLookup;
 import ao.graph.Graph;
+import ao.graph.common.RealEdgeWeight;
 import ao.graph.impl.common.SimpleAbsDomain;
 import ao.graph.impl.fast.BufferedFastGraph;
 import ao.graph.struct.DataAndWeight;
@@ -11,7 +12,11 @@ import ao.graph.struct.Endpoints;
 import ao.graph.struct.NodeDataPair;
 import ao.graph.user.EdgeWeight;
 import ao.graph.user.NodeData;
-import ao.odds.agglom.Odds;
+import ao.util.math.rand.Rand;
+import ao.util.text.Txt;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Date: Feb 3, 2009
@@ -33,26 +38,52 @@ public class HoleCluster
                                 HoleLookup.lookup(i));
         }
 
-        Graph<HoleNodeData, OddsEdgeWeight> relations =
+//        Graph<HoleNodeData, OddsEdgeWeight> relations =
+//                new BufferedFastGraph
+//                        <HoleNodeData, OddsEdgeWeight>(
+//                        new SimpleAbsDomain<OddsEdgeWeight>(64),
+//                        OddsEdgeWeight.NILL);
+        Graph<HoleNodeData, RealEdgeWeight> relations =
                 new BufferedFastGraph
-                        <HoleNodeData, OddsEdgeWeight>(
-                        new SimpleAbsDomain<OddsEdgeWeight>(64),
-                        OddsEdgeWeight.NILL);
+                        <HoleNodeData, RealEdgeWeight>(
+                        new SimpleAbsDomain<RealEdgeWeight>(64),
+                        new RealEdgeWeight(0.0f));
         for (int i = 0; i < holes.length; i++) {
             relations.add( holes[i] );
 
             for (int j = 0; j < i; j++) {
-                relations.join(
-                        holes[i], holes[j],
-                        new OddsEdgeWeight(
-                                HoleOdds.lookup(i),
-                                HoleOdds.lookup(j)));
+                float a = (float) HoleOdds.lookup(i).strengthVsRandom();
+                float b = (float) HoleOdds.lookup(i).strengthVsRandom();
+
+                if (Rand.nextBoolean(5)) {
+                    relations.join(
+                            holes[i], holes[j],
+                            new RealEdgeWeight(Math.abs(a - b)));
+                }
             }
         }
 
         HoleNodeData root = agglomerativeClusterAnalysis(relations);
-        System.out.println(root);
-//        root.
+//        System.out.println(root);
+        List<HoleNodeData> s = new  ArrayList<HoleNodeData>();
+        split(root, s, 20);
+        for (HoleNodeData n : s) {
+            System.out.println( n.leafs() );
+        }
+    }
+
+    private static int split(
+            HoleNodeData       root,
+            List<HoleNodeData> split,
+            int                into) {
+        if (into <= 1 || root.LEAF != null) {
+            split.add(root);
+            return 1;
+        } else {
+            int i = split(root.A, split, ((into + 1)/2));
+            int j = split(root.B, split, (into - i));
+            return i + j;
+        }
     }
 
     //--------------------------------------------------------------------
@@ -100,7 +131,7 @@ public class HoleCluster
     public static class HoleNodeData implements NodeData<HoleNodeData>
     {
         private final CanonHole    LEAF;
-        private final HoleNodeData A, B;
+        public  final HoleNodeData A, B;
 
         public HoleNodeData(CanonHole leaf) {
             LEAF = leaf;
@@ -118,11 +149,29 @@ public class HoleCluster
             return new HoleNodeData(this, holeNodeData);
         }
 
-        @Override public String toString() {
-            return (LEAF != null)
-                   ? LEAF.toString()
-                   : "[" + A + "|" + B +"]";
+        public String toString() {
+            return toString(0);
         }
+        public String toString(int depth) {
+            return Txt.nTimes("\t", depth) +
+                    ((LEAF != null)
+                      ? LEAF.toString()
+                      : leafs() + "\n" +
+                         (A.toString(depth + 1) + "\n" +
+                          B.toString(depth + 1)));
+        }
+
+        private List<CanonHole> leafs() {
+            List<CanonHole> leafs = new ArrayList<CanonHole>();
+            if (LEAF != null) {
+                leafs.add(LEAF);
+            } else {
+                leafs.addAll(A.leafs());
+                leafs.addAll(B.leafs());
+            }
+            return leafs;
+        }
+
 
         @Override public boolean equals(Object o){
             if (this == o) return true;
@@ -143,33 +192,33 @@ public class HoleCluster
         }
     }
 
-    public static class OddsEdgeWeight
-            implements EdgeWeight<OddsEdgeWeight>
-    {
-        public static final OddsEdgeWeight NILL =
-                new OddsEdgeWeight(new Odds(), new Odds());
-
-        private final Odds A, B;
-
-        public OddsEdgeWeight(Odds a, Odds b)
-        {
-            A = a;
-            B = b;
-        }
-
-        public OddsEdgeWeight mergeWith(OddsEdgeWeight oddsEdgeWeight)
-        {
-            return new OddsEdgeWeight(
-                    A.plus(oddsEdgeWeight.A),
-                    B.plus(oddsEdgeWeight.B));
-        }
-
-        public float asFloat()
-        {
-            return (float) Math.sqrt(
-                    Math.pow(A.winPercent()   - B.winPercent(),   2) +
-                    Math.pow(A.losePercent()  - B.losePercent(),  2) +
-                    Math.pow(A.splitPercent() - B.splitPercent(), 2));
-        }
-    }
+//    public static class OddsEdgeWeight
+//            implements EdgeWeight<OddsEdgeWeight>
+//    {
+//        public static final OddsEdgeWeight NILL =
+//                new OddsEdgeWeight(new Odds(), new Odds());
+//
+//        private final Odds A, B;
+//
+//        public OddsEdgeWeight(Odds a, Odds b)
+//        {
+//            A = a;
+//            B = b;
+//        }
+//
+//        public OddsEdgeWeight mergeWith(OddsEdgeWeight oddsEdgeWeight)
+//        {
+//            return new OddsEdgeWeight(
+//                    A.plus(oddsEdgeWeight.A),
+//                    B.plus(oddsEdgeWeight.B));
+//        }
+//
+//        public float asFloat()
+//        {
+//            return (float) Math.sqrt(
+//                    Math.pow(A.winPercent()   - B.winPercent(),   2) +
+//                    Math.pow(A.losePercent()  - B.losePercent(),  2) +
+//                    Math.pow(A.splitPercent() - B.splitPercent(), 2));
+//        }
+//    }
 }
