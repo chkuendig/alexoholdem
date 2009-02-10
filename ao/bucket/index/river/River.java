@@ -124,9 +124,6 @@ public class River implements CanonIndexed
 
     //--------------------------------------------------------------------
     @Override public String toString() {
-        return "River{" +
-                "RIVER_CARD=" + RIVER_CARD +
-                ", TURN_CARDS=" + TURN_CARDS +
-                '}';
+        return TURN_CARDS + "\t" + RIVER_CARD;
     }
 }

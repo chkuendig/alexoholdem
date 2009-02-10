@@ -3,10 +3,17 @@ package ao.bucket.abstraction.access;
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
+import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.flop.Flop;
+import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.river.River;
+import ao.bucket.index.test.Gapper;
+import ao.bucket.index.turn.Turn;
 import ao.regret.holdem.HoldemBucket;
 import ao.util.data.primitive.CharList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
+import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
 import ao.util.text.Txt;
 import org.apache.log4j.Logger;
@@ -44,11 +51,44 @@ public class BucketFlyweight
     {
         File store = Dir.get(dir, "map");
         tree = retrieveOrCompute( bucketTree.holes(), store );
+//        testTrees(bucketTree);
+
+
+//        Branch h = bucketTree.holes();
+//        Branch f = ((List<Branch>)h.subBranches()).get(0);
+//        Branch t = ((List<Branch>)f.subBranches()).get(20);
+//        Branch r = ((List<Branch>)t.subBranches()).get(4);
+//
+//        r.bucketCount();
+
+
+
         odds = BucketOdds.retrieveOrCompute(dir, bucketTree, tree);
 
 //        flopTree = new char[ tree.length ][];
 //        turnTree = new char[ tree.length ][][];
 //        initFlopTurn();
+    }
+
+    private void testTrees(final BucketTree buckets)
+    {
+        LOG.debug("testing tree");
+
+        final Gapper bucketGapper = new Gapper();
+        HandEnum.uniqueRivers(new Traverser<River>() {
+            public void traverse(River river) {
+                Turn      turn = river.turn();
+                Flop      flop = turn.flop();
+                CanonHole hole = flop.hole();
+
+                char absoluteRiverBucket = tree
+                        [ buckets.getHole (  hole.canonIndex() ) ]
+                        [ buckets.getFlop (  flop.canonIndex() ) ]
+                        [ buckets.getTurn (  turn.canonIndex() ) ]
+                        [ buckets.getRiver( river.canonIndex() ) ];
+                bucketGapper.set(absoluteRiverBucket);
+            }});
+        bucketGapper.displayStatus();
     }
 
 
