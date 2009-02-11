@@ -39,4 +39,32 @@ public class CanonRange
         return fromCanonIndex <= canonIndex &&
                                  canonIndex <= upToAndIncluding();
     }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return "CanonRange{" +
+               "fromCanonIndex=" + fromCanonIndex +
+               ", canonIndexCount=" + (int) canonIndexCount +
+               '}';
+    }
+
+    @Override public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CanonRange that = (CanonRange) o;
+        return canonIndexCount == that.canonIndexCount &&
+               fromCanonIndex == that.fromCanonIndex;
+
+    }
+
+    @Override public int hashCode()
+    {
+        int result = (int) (fromCanonIndex ^ (fromCanonIndex >>> 32));
+        result = 31 * result + (int) canonIndexCount;
+        return result;
+    }
 }
