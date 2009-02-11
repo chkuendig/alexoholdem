@@ -2,7 +2,6 @@ package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.TurnLookup;
@@ -89,10 +88,10 @@ public class TurnRivers
 
 
     //--------------------------------------------------------------------
-    public static int arbitraryTurnFor(long canonRiver)
+    public static int turnFor(long canonRiver)
     {
         int lo = 0;
-        int hi = FlopLookup.CANONS - 1;
+        int hi = TurnLookup.CANONS - 1;
 
         while (lo <= hi)
         {
@@ -121,6 +120,18 @@ public class TurnRivers
     public static void main(String[] args)
     {
         System.out.println(
-                TurnRivers.rangeOf(0));
+                rangeOf(TurnLookup.CANONS - 1));
+        System.out.println(
+                turnFor(RiverLookup.CANONS - 1));
+
+//        for (long river = 0; river < RiverLookup.CANONS; river++)
+//        {
+//            if (river % 10000000 == 0) System.out.print(".");
+//
+//            int turn = turnFor(river);
+//            if (turn == -1) {
+//                System.out.println("err for: " + river);
+//            }
+//        }
     }
 }
