@@ -3,10 +3,10 @@ package ao.bucket.index.detail.flop;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.example.ExampleLookup;
+import ao.bucket.index.detail.preflop.CanonHoleDetail;
+import ao.bucket.index.detail.preflop.HoleDetails;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
 import ao.util.math.Calc;
@@ -193,9 +193,11 @@ public class FlopDetailFlyweight
         {
             return CANON_INDEX;
         }
-        public CanonHole hole()
+        public CanonHoleDetail holeDetail()
         {
-            return HoleLookup.lookup(
+//            return HoleLookup.lookup(
+//                    Calc.unsigned( HOLE[CANON_INDEX] ));
+            return HoleDetails.lookup( (char)
                     Calc.unsigned( HOLE[CANON_INDEX] ));
         }
         public Card a()

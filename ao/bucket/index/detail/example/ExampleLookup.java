@@ -2,6 +2,7 @@ package ao.bucket.index.detail.example;
 
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
+import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetails;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
@@ -61,10 +62,10 @@ public class ExampleLookup
                 CanonFlopDetail flopDet =
                         FlopDetails.containing(
                                 turn.canonIndex() );
-                CanonHole       hole = flopDet.hole();
+                CanonHoleDetail hole = flopDet.holeDetail();
 
                 Odds predictedOdds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        hole.reify(),
+                        hole.example(),
                         new Community(flopDet.a(),
                                       flopDet.b(),
                                       flopDet.c()));
@@ -86,8 +87,8 @@ public class ExampleLookup
 
                 Odds predictedOdds = PreciseHeadsUpOdds.INSTANCE.compute(
                         HoleDetails.lookup(
-                                FlopDetails.lookup(
-                                        flop.canonIndex()).hole().canonIndex()
+                                (char) FlopDetails.lookup(
+                                        flop.canonIndex()).holeDetail().canonIndex()
                         ).example(),
                         Community.PREFLOP);
 

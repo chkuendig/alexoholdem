@@ -2,12 +2,14 @@ package ao.bucket.index.detail.river;
 
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
+import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Hole;
 import ao.odds.eval.eval7.Eval7Faster;
 
 import java.util.*;
@@ -24,7 +26,7 @@ public class RiverDetails
         CanonTurnDetail turn = TurnDetails.lookup( canonTurn );
         CanonFlopDetail flop =
                 FlopDetails.containing( canonTurn );
-        CanonHole       hole = flop.hole();
+        CanonHoleDetail hole = flop.holeDetail();
 
         Turn turnSeq  = turn(hole, flop, turn);
         int  shortcut = shortcut(hole, flop, turn);
@@ -62,27 +64,29 @@ public class RiverDetails
     }
 
     private static Turn turn(
-            CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn)
+            CanonHoleDetail hole, CanonFlopDetail flop, CanonTurnDetail turn)
     {
-        return hole.addFlop(
+        return hole.canon().addFlop(
                         flop.a(), flop.b(), flop.c()
                 ).addTurn(turn.example());
     }
 
     private static Iterable<Card> remainder(
-            CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn)
+            CanonHoleDetail hole, CanonFlopDetail flop, CanonTurnDetail turn)
     {
+        Hole concreteHole = hole.example();
         return EnumSet.complementOf(EnumSet.of(
-                hole.a(), hole.b(),
+                concreteHole.a(), concreteHole.b(),
                 flop.a(), flop.b(), flop.c(),
                 turn.example()));
     }
 
     private static int shortcut(
-            CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn)
+            CanonHoleDetail hole, CanonFlopDetail flop, CanonTurnDetail turn)
     {
+        Hole concreteHole = hole.example();
         return Eval7Faster.shortcutFor(
-                    hole.a(), hole.b(),
+                    concreteHole.a(), concreteHole.b(),
                     flop.a(), flop.b(), flop.c(),
                     turn.example());
     }
