@@ -13,8 +13,10 @@ import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
+import ao.odds.agglom.hist.RiverStrengths;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
+import ao.util.misc.Filter;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
@@ -30,17 +32,61 @@ public class RiverEvalLookup
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        final long   start      = System.currentTimeMillis();
-        final long[] totalCount = {0};
-        RiverEvalLookup.traverse(new RiverEvalTraverser() {
-            public void traverse(
-                    long canonIndex, short strength, byte count) {
-                totalCount[0] += count;
+        final long acceptRiver = 6447267;
+        final int  acceptTurn = TurnRivers.turnFor( acceptRiver );
+        CanonFlopDetail flopDetail = FlopDetails.containing(acceptTurn);
+        final int  acceptFlop = (int) flopDetail.canonIndex();
+        final int  acceptHole = (int) flopDetail.holeDetail().canonIndex();
+
+        HandEnum.rivers(
+                new Filter<CanonHole>() {
+                    public boolean accept(CanonHole canonHole) {
+                        return canonHole.canonIndex() == acceptHole;
+                    }
+                },
+                new Filter<Flop>() {
+                    public boolean accept(Flop flop) {
+                        return flop.canonIndex() == acceptFlop;
+                    }
+                },
+                new Filter<Turn>() {
+                    public boolean accept(Turn turn) {
+                        return turn.canonIndex() == acceptTurn;
+                    }
+                },
+                new Filter<River>() {
+                    public boolean accept(River river) {
+                        return river.canonIndex() == acceptRiver;
+                    }
+                },
+                new Traverser<River>() {
+            public void traverse(River river) {
+                System.out.println(
+                        river + "\t" +
+                        RiverStrengths.lookup(
+                                river.eval()));
             }
         });
-        System.out.println("total: " + totalCount[0]);
-        System.out.println("took: "  +
-                           (System.currentTimeMillis() - start));
+
+//        final long   start      = System.currentTimeMillis();
+//        final long[] totalCount = {0};
+//        final long[] seen       = new long[ 128 ];
+//        RiverEvalLookup.traverse(new RiverEvalTraverser() {
+//            public void traverse(
+//                    long canonIndex, short strength, byte count) {
+//                seen[ count ]++;
+//                totalCount[0] += count;
+//
+//                if (count == 26) {
+//                    System.out.println(canonIndex + "\t" + strength);
+//                }
+//            }
+//        });
+//        System.out.println("total: " + totalCount[0]);
+//        System.out.println("took: "  +
+//                           (System.currentTimeMillis() - start));
+//        System.out.println("distribution: "  +
+//                           Arrays.toString(seen));
     }
 
 
@@ -84,11 +130,12 @@ public class RiverEvalLookup
     {
         LOG.debug("computing");
 
-        long remaining = (RiverLookup.CANONS + 1) - repsF.length();
+        long offset    = repsF.length();
+        long remaining = (RiverLookup.CANONS + 1) - offset;
         long chunks    = remaining / chunk + 1;
-        for (int c = 0; c < chunks; c++)
+        for (long c = 0; c < chunks; c++)
         {
-            computeEvalDetails(c * chunk);
+            computeEvalDetails(offset + c * chunk);
         }
     }
 
@@ -97,7 +144,7 @@ public class RiverEvalLookup
         LOG.debug("chunk from " + from);
 
         long toExcluding =
-                Math.min(RiverLookup.CANONS + 1, from + chunk);
+                Math.min(RiverLookup.CANONS, from + chunk);
         int  count       = (int)(toExcluding - from);
         if (count == 0) return;
 
@@ -184,9 +231,12 @@ public class RiverEvalLookup
 
         for (long river = from; river < toExcluding; river++)
         {
-            int turn = TurnRivers.arbitraryTurnFor( river );
+            int turn = TurnRivers.turnFor( river );
 
             CanonFlopDetail flopDetail = FlopDetails.containing(turn);
+//            if (flopDetail == null) {
+//                System.out.println("river: " + river + ", turn: " + turn);
+//            }
             int flop = (int) flopDetail.canonIndex();
             int hole = (int) flopDetail.holeDetail().canonIndex();
 
@@ -201,10 +251,26 @@ public class RiverEvalLookup
     //--------------------------------------------------------------------
     public static void traverse(RiverEvalTraverser traverser)
     {
-        try                   { doTraverse(traverser); }
-        catch (IOException e) { throw new Error( e );  }
+        traverse(0, RiverLookup.CANONS, traverser);
     }
+    public static void traverse(
+            long               offset,
+            long               count,
+            RiverEvalTraverser traverser)
+    {
+        try {
+            doTraverse(offset, count, traverser);
+        } catch (IOException e) {
+            throw new Error( e );
+        }
+    }
+
+    // for possible speed-ups, see:
+    //   http://nadeausoftware.com/articles/
+    //      2008/02/java_tip_how_read_files_quickly
     private static void doTraverse(
+            long               offset,
+            long               count,
             RiverEvalTraverser traverser) throws IOException
     {
         DataInputStream strIn =
@@ -214,10 +280,26 @@ public class RiverEvalLookup
                 new DataInputStream(new BufferedInputStream(
                         new FileInputStream(repsF)));
 
-        for (long river = 0; river < RiverLookup.CANONS; river++)
+        if (offset > 0)
         {
+            long strSkip = offset * (Short.SIZE / 8);
+            if (strSkip != strIn.skip( strSkip )) {
+                throw new Error("unable to skip strengths");
+            }
+
+            if (offset != repIn.skip( offset )) {
+                throw new Error("unable to skip represents");
+            }
+        }
+
+        for (long i = 0; i < count; i++)
+        {
+            long river = offset + i;
             traverser.traverse(
-                    river, strIn.readShort(), repIn.readByte());
+                    river,
+                    RiverStrengths.lookup(
+                            strIn.readShort()),
+                    repIn.readByte());
         }
 
         repIn.close();
