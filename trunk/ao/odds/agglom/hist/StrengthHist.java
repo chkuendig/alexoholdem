@@ -76,11 +76,10 @@ public class StrengthHist implements Comparable<StrengthHist>
         for (int count : HIST) {
             hash.feed(count);
         }
-
         return hash.bigDigest().longValue();
     }
-    
 
+    
     //--------------------------------------------------------------------
     public double mean()
     {

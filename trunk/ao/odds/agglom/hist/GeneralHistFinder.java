@@ -1,5 +1,7 @@
 package ao.odds.agglom.hist;
 
+import ao.bucket.index.flop.Flop;
+import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -26,11 +28,14 @@ public class GeneralHistFinder implements HistFinder
 
                              RIVER  = 51 - 6;
 
+    public static final GeneralHistFinder INSTANCE =
+            new GeneralHistFinder();
+
 
     //--------------------------------------------------------------------
     public StrengthHist compute(Hole      hole,
-                           Community community,
-                           int       activeOpponents)
+                                Community community,
+                                int       activeOpponents)
     {
         assert activeOpponents == 1 : "must be heads up";
         return compute(hole, community);
@@ -48,13 +53,27 @@ public class GeneralHistFinder implements HistFinder
 
 
     public StrengthHist compute(Hole      hole,
-                           Community community)
+                                Community community)
     {
 
         Card cards[] = initKnownCardsToEnd(hole, community);
         return rollOutCommunity(
                 cards,
                 community.knownCount());
+    }
+
+//    public StrengthHist compute(CanonHole hole)
+//    {
+//        return compute(hole.reify(), Community.PREFLOP);
+//    }
+    public StrengthHist compute(Flop flop)
+    {
+        return compute(flop.hole().reify(), flop.community());
+    }
+    public StrengthHist compute(Turn turn)
+    {
+        return compute(turn.hole().reify(),
+                       turn.community());
     }
 
 

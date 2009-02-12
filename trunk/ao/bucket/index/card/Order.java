@@ -41,76 +41,78 @@ public enum Order
 
     C_S_DH(0, 2, 2, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 1, 2, with); }},
+    C_D_HS(0, 1, 2, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 2, 3, with); }},
+    C_H_DS(0, 2, 1, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 3, with); }},
+    D_C_HS(1, 0, 2, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 2, 3, with); }},
+    H_C_DS(1, 2, 0, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 3, with); }},
+    S_C_DH(1, 2, 2, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 2, with); }},
+    D_S_CH(2, 0, 2, 1) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 2, with); }},
+    D_H_CS(2, 0, 1, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 3, with); }},
+    H_D_CS(2, 1, 0, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 3, with); }},
+    S_D_CH(2, 1, 2, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 2, with); }},
+    S_H_CD(2, 2, 1, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 1, with); }},
+    H_S_CD(2, 2, 0, 1) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 1, with); }},
+
     C_DS_H(0, 1, 2, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 2, 1, 3, with); }},
     C_HS_D(0, 2, 1, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 1, 2, 3, with); }},
     C_DH_S(0, 1, 1, 2) { public Order refine(Order with) {
         return Order.refinePair(this, 3, 1, 2, with); }},
-    C_D_HS(0, 1, 2, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 2, 3, with); }},
-    C_H_DS(0, 2, 1, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 3, with); }},
-    CD_S_H(0, 0, 2, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 3, 2, 0, 1, with); }},
-    D_C_HS(1, 0, 2, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 2, 3, with); }},
-    CD_H_S(0, 0, 1, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 2, 3, 0, 1, with); }},
-    CH_S_D(0, 2, 0, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 3, 1, 0, 2, with); }},
-    CH_D_S(0, 1, 0, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 3, 0, 2, with); }},
-    H_C_DS(1, 2, 0, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 3, with); }},
-    S_C_DH(1, 2, 2, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 2, with); }},
-    CS_D_H(0, 1, 2, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 2, 0, 3, with); }},
-    CS_H_D(0, 2, 1, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 2, 1, 0, 3, with); }},
     D_CH_S(1, 0, 1, 2) { public Order refine(Order with) {
         return Order.refinePair(this, 3, 0, 2, with); }},
     D_HS_C(2, 0, 1, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 0, 2, 3, with); }},
     D_CS_H(1, 0, 2, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 2, 0, 3, with); }},
-    D_S_CH(2, 0, 2, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 2, with); }},
-    D_H_CS(2, 0, 1, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 3, with); }},
-    DH_C_S(1, 0, 0, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 3, 1, 2, with); }},
-    DH_S_C(2, 0, 0, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 3, 0, 1, 2, with); }},
-    H_D_CS(2, 1, 0, 2) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 3, with); }},
-    DS_C_H(1, 0, 2, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 2, 1, 3, with); }},
-    S_D_CH(2, 1, 2, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 2, with); }},
-    DS_H_C(2, 0, 1, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 2, 0, 1, 3, with); }},
     H_CD_S(1, 1, 0, 2) { public Order refine(Order with) {
         return Order.refinePair(this, 3, 0, 1, with); }},
     H_CS_D(1, 2, 0, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 3, with); }},
+        return Order.refinePair(this, 1, 0, 3, with); }},
     H_DS_C(2, 1, 0, 1) { public Order refine(Order with) {
         return Order.refinePair(this, 0, 1, 3, with); }},
-    HS_C_D(1, 2, 0, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 1, 2, 3, with); }},
-    HS_D_C(2, 1, 0, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 1, 0, 2, 3, with); }},
-    S_H_CD(2, 2, 1, 0) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 1, with); }},
     S_CD_H(1, 1, 2, 0) { public Order refine(Order with) {
         return Order.refinePair(this, 2, 0, 1, with); }},
     S_CH_D(1, 2, 1, 0) { public Order refine(Order with) {
         return Order.refinePair(this, 1, 0, 2, with); }},
     S_DH_C(2, 1, 1, 0) { public Order refine(Order with) {
         return Order.refinePair(this, 0, 1, 2, with); }},
-    H_S_CD(2, 2, 0, 1) { public Order refine(Order with) {
-        return Order.refinePair(this, 0, 1, with); }},
+
+    CD_S_H(0, 0, 2, 1) { public Order refine(Order with) {
+        return Order.refinePair(this, 3, 2, 0, 1, with); }},
+    CD_H_S(0, 0, 1, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 2, 3, 0, 1, with); }},
+    CH_S_D(0, 2, 0, 1) { public Order refine(Order with) {
+        return Order.refinePair(this, 3, 1, 0, 2, with); }},
+    CH_D_S(0, 1, 0, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 3, 0, 2, with); }},
+    CS_D_H(0, 1, 2, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 2, 0, 3, with); }},
+    CS_H_D(0, 2, 1, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 2, 1, 0, 3, with); }},
+    DH_C_S(1, 0, 0, 2) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 3, 1, 2, with); }},
+    DH_S_C(2, 0, 0, 1) { public Order refine(Order with) {
+        return Order.refinePair(this, 3, 0, 1, 2, with); }},
+    DS_C_H(1, 0, 2, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 2, 1, 3, with); }},
+    DS_H_C(2, 0, 1, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 2, 0, 1, 3, with); }},
+    HS_C_D(1, 2, 0, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 0, 1, 2, 3, with); }},
+    HS_D_C(2, 1, 0, 0) { public Order refine(Order with) {
+        return Order.refinePair(this, 1, 0, 2, 3, with); }},
 
     HS_CD(1, 1, 0, 0) { public Order refine(Order with) {
         return Order.refineTwoPair(this, 2, 3, 0, 1, with); }},
