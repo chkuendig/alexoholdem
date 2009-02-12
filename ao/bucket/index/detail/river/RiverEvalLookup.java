@@ -13,15 +13,14 @@ import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.Turn;
 import ao.bucket.index.turn.TurnLookup;
-import ao.odds.agglom.hist.RiverStrengths;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
-import ao.util.misc.Filter;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.util.Arrays;
 
 /**
  * Date: Feb 10, 2009
@@ -32,61 +31,25 @@ public class RiverEvalLookup
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        final long acceptRiver = 6447267;
-        final int  acceptTurn = TurnRivers.turnFor( acceptRiver );
-        CanonFlopDetail flopDetail = FlopDetails.containing(acceptTurn);
-        final int  acceptFlop = (int) flopDetail.canonIndex();
-        final int  acceptHole = (int) flopDetail.holeDetail().canonIndex();
+        final long   start      = System.currentTimeMillis();
+        final long[] totalCount = {0};
+        final long[] seen       = new long[ 128 ];
+        RiverEvalLookup.traverse(new RiverEvalTraverser() {
+            public void traverse(
+                    long canonIndex, short strength, byte count) {
+                seen[ count ]++;
+                totalCount[0] += count;
 
-        HandEnum.rivers(
-                new Filter<CanonHole>() {
-                    public boolean accept(CanonHole canonHole) {
-                        return canonHole.canonIndex() == acceptHole;
-                    }
-                },
-                new Filter<Flop>() {
-                    public boolean accept(Flop flop) {
-                        return flop.canonIndex() == acceptFlop;
-                    }
-                },
-                new Filter<Turn>() {
-                    public boolean accept(Turn turn) {
-                        return turn.canonIndex() == acceptTurn;
-                    }
-                },
-                new Filter<River>() {
-                    public boolean accept(River river) {
-                        return river.canonIndex() == acceptRiver;
-                    }
-                },
-                new Traverser<River>() {
-            public void traverse(River river) {
-                System.out.println(
-                        river + "\t" +
-                        RiverStrengths.lookup(
-                                river.eval()));
+                if (count == 26) {
+                    System.out.println(canonIndex + "\t" + strength);
+                }
             }
         });
-
-//        final long   start      = System.currentTimeMillis();
-//        final long[] totalCount = {0};
-//        final long[] seen       = new long[ 128 ];
-//        RiverEvalLookup.traverse(new RiverEvalTraverser() {
-//            public void traverse(
-//                    long canonIndex, short strength, byte count) {
-//                seen[ count ]++;
-//                totalCount[0] += count;
-//
-//                if (count == 26) {
-//                    System.out.println(canonIndex + "\t" + strength);
-//                }
-//            }
-//        });
-//        System.out.println("total: " + totalCount[0]);
-//        System.out.println("took: "  +
-//                           (System.currentTimeMillis() - start));
-//        System.out.println("distribution: "  +
-//                           Arrays.toString(seen));
+        System.out.println("total: " + totalCount[0]);
+        System.out.println("took: "  +
+                           (System.currentTimeMillis() - start));
+        System.out.println("distribution: "  +
+                           Arrays.toString(seen));
     }
 
 
@@ -214,6 +177,10 @@ public class RiverEvalLookup
                 if (represents[ index ] == 0) {
                     strengths[ index ] = river.eval();
                 }
+                else if (strengths[ index ] != river.eval())
+                {
+                    LOG.error("inconcistent " + river);
+                }
                 represents[ index ]++;
             }});
     }
@@ -297,8 +264,7 @@ public class RiverEvalLookup
             long river = offset + i;
             traverser.traverse(
                     river,
-                    RiverStrengths.lookup(
-                            strIn.readShort()),
+                    strIn.readShort(),
                     repIn.readByte());
         }
 

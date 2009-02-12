@@ -1,14 +1,21 @@
 package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
+import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.flop.Flop;
+import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.turn.Turn;
 import ao.util.io.Dir;
+import ao.util.misc.Filter;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Date: Jan 9, 2009
@@ -124,5 +131,39 @@ public class TurnDetails
         for (int i = 0; i < canonTurnCount; i++) {
             into[ startingAt + i ] = lookup(canonTurnFrom + i);
         }
+    }
+
+
+    //--------------------------------------------------------------------
+    public static List<Turn> examplesOf(int canonTurn)
+    {
+        final int  acceptTurn = canonTurn;
+        CanonFlopDetail flopDetail = FlopDetails.containing(acceptTurn);
+        final int  acceptFlop = (int) flopDetail.canonIndex();
+        final int  acceptHole = (int) flopDetail.holeDetail().canonIndex();
+
+        final List<Turn> examples = new ArrayList<Turn>();
+        HandEnum.turns(
+                new Filter<CanonHole>() {
+                    public boolean accept(CanonHole canonHole) {
+                        return canonHole.canonIndex() == acceptHole;
+                    }
+                },
+                new Filter<Flop>() {
+                    public boolean accept(Flop flop) {
+                        return flop.canonIndex() == acceptFlop;
+                    }
+                },
+                new Filter<Turn>() {
+                    public boolean accept(Turn turn) {
+                        return turn.canonIndex() == acceptTurn;
+                    }
+                },
+                new Traverser<Turn>() {
+            public void traverse(Turn turn) {
+                examples.add( turn );
+            }
+        });
+        return examples;
     }
 }

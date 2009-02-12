@@ -7,6 +7,7 @@ import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.hist.RiverStrengths;
 import ao.odds.eval.eval7.Eval7Faster;
 
 /**
@@ -115,10 +116,11 @@ public class River implements CanonIndexed
     {
         Hole      h = TURN_CARDS.hole().reify();
         Community c = TURN_CARDS.community();
-        return Eval7Faster.valueOf(
+        short     v = Eval7Faster.valueOf(
                 h.a(), h.b(),
                 c.flopA(),c.flopB(), c.flopC(),
                 c.turn(), RIVER_CARD);
+        return RiverStrengths.lookup( v );
     }
 
 

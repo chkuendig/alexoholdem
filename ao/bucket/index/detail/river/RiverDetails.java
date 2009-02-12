@@ -5,12 +5,17 @@ import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
+import ao.bucket.index.detail.turn.TurnRivers;
+import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
 import ao.bucket.index.river.River;
 import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.odds.eval.eval7.Eval7Faster;
+import ao.util.misc.Filter;
+import ao.util.misc.Traverser;
 
 import java.util.*;
 
@@ -89,5 +94,45 @@ public class RiverDetails
                     concreteHole.a(), concreteHole.b(),
                     flop.a(), flop.b(), flop.c(),
                     turn.example());
+    }
+
+
+    //--------------------------------------------------------------------
+    public static List<River> examplesOf(long canonRiver)
+    {
+        final long acceptRiver = canonRiver;
+        final int  acceptTurn = TurnRivers.turnFor( acceptRiver );
+        CanonFlopDetail flopDetail = FlopDetails.containing(acceptTurn);
+        final int  acceptFlop = (int) flopDetail.canonIndex();
+        final int  acceptHole = (int) flopDetail.holeDetail().canonIndex();
+
+        final List<River> examples = new ArrayList<River>();
+        HandEnum.rivers(
+                new Filter<CanonHole>() {
+                    public boolean accept(CanonHole canonHole) {
+                        return canonHole.canonIndex() == acceptHole;
+                    }
+                },
+                new Filter<Flop>() {
+                    public boolean accept(Flop flop) {
+                        return flop.canonIndex() == acceptFlop;
+                    }
+                },
+                new Filter<Turn>() {
+                    public boolean accept(Turn turn) {
+                        return turn.canonIndex() == acceptTurn;
+                    }
+                },
+                new Filter<River>() {
+                    public boolean accept(River river) {
+                        return river.canonIndex() == acceptRiver;
+                    }
+                },
+                new Traverser<River>() {
+            public void traverse(River river) {
+                examples.add( river );
+            }
+        });
+        return examples;
     }
 }
