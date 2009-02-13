@@ -54,7 +54,7 @@ public interface BucketTree
         public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);
 
-        public byte             bucketCount();
+        public byte             riverBucketCount();
         public Iterable<Branch> subBranches();
     }
 }

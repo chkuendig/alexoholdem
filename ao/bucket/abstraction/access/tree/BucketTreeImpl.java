@@ -227,14 +227,11 @@ public class BucketTreeImpl implements BucketTree
 //            return subDetails;
         }
 
-        public byte bucketCount()
+        public byte riverBucketCount()
         {
-            int max = 0;
-            for (CanonDetail detail : details()) {
-                byte bucket = get(detail.canonIndex());
-                max = Math.max(max, bucket);
-            }
-            return (byte)(max + 1);
+            return DetailLookup.riverBucketCount(
+                     BucketTreeImpl.this,
+                     parentCanons());
         }
 
 

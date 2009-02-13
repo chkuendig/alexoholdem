@@ -23,35 +23,21 @@ import java.io.File;
 public class FlopDetailFlyweight
 {
     //--------------------------------------------------------------------
-    private static final String F_HOLE        = "hole.byte";
-
-//    private static final String F_EXAMPLE_A   = "ex1.byte";
-//    private static final String F_EXAMPLE_B   = "ex2.byte";
-//    private static final String F_EXAMPLE_C   = "ex3.byte";
-
-//    private static final String F_REPRESENTS  = "rep.byte";
-    private static final String F_STRENGTH    = "str.float";
-    private static final String F_FIRST_TURN  = "rfst.int";
-    private static final String F_TURN_COUNT  = "rcnt.byte";
+    private static final String F_HOLE       = "hole.byte";
+    private static final String F_STRENGTH   = "str.float";
+    private static final String F_FIRST_TURN = "rfst.int";
+    private static final String F_TURN_COUNT = "rcnt.byte";
 
 
     //--------------------------------------------------------------------
     public static void persist(FlopDetailFlyweight fw, File toDir)
     {
         File fHole       = new File(toDir, F_HOLE);
-//        File fExampleA   = new File(toDir, F_EXAMPLE_A);
-//        File fExampleB   = new File(toDir, F_EXAMPLE_B);
-//        File fExampleC   = new File(toDir, F_EXAMPLE_C);
-//        File fRepresent  = new File(toDir, F_REPRESENTS);
         File fStrength  = new File(toDir, F_STRENGTH);
         File fFirstTurn = new File(toDir, F_FIRST_TURN);
         File fTurnCount = new File(toDir, F_TURN_COUNT);
 
         PersistentBytes.persist(fw.HOLE       , fHole);
-//        PersistentBytes.persist(fw.EXAMPLE_A  , fExampleA);
-//        PersistentBytes.persist(fw.EXAMPLE_B  , fExampleB);
-//        PersistentBytes.persist(fw.EXAMPLE_C  , fExampleC);
-//        PersistentBytes .persist(fw.REPRESENT  , fRepresent);
         PersistentFloats.persist(fw.STRENGTH   , fStrength);
         PersistentInts  .persist(fw.FIRST_TURN, fFirstTurn);
         PersistentBytes .persist(fw.TURN_COUNT, fTurnCount);
@@ -60,10 +46,6 @@ public class FlopDetailFlyweight
     public static FlopDetailFlyweight retrieve(File fromDir)
     {
         File fHole       = new File(fromDir, F_HOLE);
-//        File fExampleA   = new File(fromDir, F_EXAMPLE_A);
-//        File fExampleB   = new File(fromDir, F_EXAMPLE_B);
-//        File fExampleC   = new File(fromDir, F_EXAMPLE_C);
-//        File fRepresent  = new File(fromDir, F_REPRESENTS);
         File fStrength  = new File(fromDir, F_STRENGTH);
         File fFirstTurn = new File(fromDir, F_FIRST_TURN);
         File fTurnCount = new File(fromDir, F_TURN_COUNT);
@@ -72,10 +54,6 @@ public class FlopDetailFlyweight
 
         return new FlopDetailFlyweight(
                 PersistentBytes .retrieve(fHole),
-//                PersistentBytes .retrieve(fExampleA),
-//                PersistentBytes .retrieve(fExampleB),
-//                PersistentBytes .retrieve(fExampleC),
-//                PersistentBytes .retrieve(fRepresent),
                 PersistentFloats.retrieve(fStrength),
                 PersistentInts  .retrieve(fFirstTurn),
                 PersistentBytes .retrieve(fTurnCount));
@@ -84,42 +62,26 @@ public class FlopDetailFlyweight
 
     //--------------------------------------------------------------------
     private final byte[]  HOLE;
-//    private final byte[]  EXAMPLE_A;
-//    private final byte[]  EXAMPLE_B;
-//    private final byte[]  EXAMPLE_C;
-//    private final byte[]  REPRESENT;
     private final float[] STRENGTH;
-    private final int[] FIRST_TURN;
-    private final byte[] TURN_COUNT;
+    private final int  [] FIRST_TURN;
+    private final byte [] TURN_COUNT;
 
 
     //--------------------------------------------------------------------
     public FlopDetailFlyweight()
     {
-        HOLE        = new byte [ FlopLookup.CANONS ];
-//        EXAMPLE_A   = new byte [ FlopLookup.CANONS ];
-//        EXAMPLE_B   = new byte [ FlopLookup.CANONS ];
-//        EXAMPLE_C   = new byte [ FlopLookup.CANONS ];
-//        REPRESENT   = new byte [ FlopLookup.CANONS ];
-        STRENGTH    = new float[ FlopLookup.CANONS ];
+        HOLE       = new byte [ FlopLookup.CANONS ];
+        STRENGTH   = new float[ FlopLookup.CANONS ];
         FIRST_TURN = new int  [ FlopLookup.CANONS ];
         TURN_COUNT = new byte [ FlopLookup.CANONS ];
     }
     private FlopDetailFlyweight(
             byte[]  hole,
-//            byte[]  exampleA,
-//            byte[]  exampleB,
-//            byte[]  exampleC,
-//            byte[]  represent,
             float[] strength,
             int[]   firstRiver,
             byte[]  riverCount)
     {
         HOLE        = hole;
-//        EXAMPLE_A   = exampleA;
-//        EXAMPLE_B   = exampleB;
-//        EXAMPLE_C   = exampleC;
-//        REPRESENT   = represent;
         STRENGTH    = strength;
         FIRST_TURN = firstRiver;
         TURN_COUNT = riverCount;
@@ -140,23 +102,12 @@ public class FlopDetailFlyweight
     }
 
 
-//    public boolean isInitiated(int canonIndex)
-//    {
-//        return REPRESENT[ canonIndex ] == 0;
-//    }
-
-
     //--------------------------------------------------------------------
     public void init(Flop flop, Odds odds)
     {
-        int       canon = flop.canonIndex();
-//        Community comm  = flop.community();
-
-        HOLE     [ canon ] = (byte) flop.hole().canonIndex();
-//        EXAMPLE_A[ canon ] = (byte) comm.flopA().ordinal();
-//        EXAMPLE_B[ canon ] = (byte) comm.flopB().ordinal();
-//        EXAMPLE_C[ canon ] = (byte) comm.flopC().ordinal();
-        STRENGTH [ canon ] = (float) odds.strengthVsRandom();
+        int       canon   =         flop.canonIndex();
+        HOLE    [ canon ] = (byte)  flop.hole().canonIndex();
+        STRENGTH[ canon ] = (float) odds.strengthVsRandom();
     }
 
     public void setTurnInfo(
@@ -167,11 +118,6 @@ public class FlopDetailFlyweight
         FIRST_TURN[ canonIndex ] = firstTurn;
         TURN_COUNT[ canonIndex ] = turnCount;
     }
-
-//    public void incrementRepresentation(int canonIndex)
-//    {
-//        REPRESENT[ canonIndex ]++;
-//    }
 
 
     //--------------------------------------------------------------------
@@ -195,30 +141,21 @@ public class FlopDetailFlyweight
         }
         public CanonHoleDetail holeDetail()
         {
-//            return HoleLookup.lookup(
-//                    Calc.unsigned( HOLE[CANON_INDEX] ));
             return HoleDetails.lookup( (char)
                     Calc.unsigned( HOLE[CANON_INDEX] ));
         }
         public Card a()
         {
             return ExampleLookup.flopA( CANON_INDEX );
-//            return Card.VALUES[EXAMPLE_A[ CANON_INDEX ]];
         }
         public Card b()
         {
             return ExampleLookup.flopB( CANON_INDEX );
-//            return Card.VALUES[EXAMPLE_B[ CANON_INDEX ]];
         }
         public Card c()
         {
             return ExampleLookup.flopC( CANON_INDEX );
-//            return Card.VALUES[EXAMPLE_C[ CANON_INDEX ]];
         }
-//        public byte represents()
-//        {
-//            return REPRESENT[ CANON_INDEX ];
-//        }
         public double strength()
         {
             return STRENGTH[ CANON_INDEX ];

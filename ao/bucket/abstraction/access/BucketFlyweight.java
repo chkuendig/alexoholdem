@@ -38,9 +38,6 @@ public class BucketFlyweight
 
 
     //--------------------------------------------------------------------
-//    private final char[][]     flopTree;
-//    private final char[][][]   turnTree;
-
     private final BucketOdds   odds;
     private final char[][][][] tree;
     private       char         nextRiverBucket;
@@ -51,23 +48,7 @@ public class BucketFlyweight
     {
         File store = Dir.get(dir, "map");
         tree = retrieveOrCompute( bucketTree.holes(), store );
-//        testTrees(bucketTree);
-
-
-//        Branch h = bucketTree.holes();
-//        Branch f = ((List<Branch>)h.subBranches()).get(0);
-//        Branch t = ((List<Branch>)f.subBranches()).get(20);
-//        Branch r = ((List<Branch>)t.subBranches()).get(4);
-//
-//        r.bucketCount();
-
-
-
         odds = BucketOdds.retrieveOrCompute(dir, bucketTree, tree);
-
-//        flopTree = new char[ tree.length ][];
-//        turnTree = new char[ tree.length ][][];
-//        initFlopTurn();
     }
 
     private void testTrees(final BucketTree buckets)
@@ -90,29 +71,6 @@ public class BucketFlyweight
             }});
         bucketGapper.displayStatus();
     }
-
-
-//    //--------------------------------------------------------------------
-//    private void initFlopTurn()
-//    {
-//        char flop = 0, turn = 0;
-//        for (int h = 0; h < tree.length; h++)
-//        {
-//            flopTree[h] = new char[ tree[ h ].length ];
-//            turnTree[h] = new char[ tree[ h ].length ][];
-//
-//            for (int f = 0; f < tree[ h ].length; f++, flop++)
-//            {
-//                flopTree[h][f] = flop;
-//                turnTree[h][f] = new char[ tree[ h ][ f ].length ];
-//
-//                for (int t = 0; t < tree[ h ][ f ].length; t++, turn++)
-//                {
-//                    turnTree[h][f][t] = turn;
-//                }
-//            }
-//        }
-//    }
 
 
     //--------------------------------------------------------------------
@@ -242,7 +200,7 @@ public class BucketFlyweight
     private char[] decodeRivers(Branch river)
     {
         CharList riverBuckets = new CharList();
-        for (byte i = river.bucketCount(); i > 0; i--) {
+        for (byte i = river.riverBucketCount(); i > 0; i--) {
             riverBuckets.add( nextRiverBucket++ );
         }
         return riverBuckets.toArray();
@@ -261,21 +219,6 @@ public class BucketFlyweight
                    [  turnBucket ]
                    [ riverBucket ];
     }
-
-//    public char serialize(
-//            byte  holeBucket,
-//            byte  flopBucket,
-//            byte  turnBucket)
-//    {
-//        return turnTree[ holeBucket ][ flopBucket ][ turnBucket ];
-//    }
-//
-//    public char serialize(
-//            byte  holeBucket,
-//            byte  flopBucket)
-//    {
-//        return flopTree[ holeBucket ][ flopBucket ];
-//    }
 
 
     //--------------------------------------------------------------------
