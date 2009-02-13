@@ -16,7 +16,7 @@ public class RiverStrengths
 {
     //--------------------------------------------------------------------
     private static short[] MAP   = computeMap();
-    public  static int     COUNT = MAP[ MAP.length - 1 ] + 1;
+    public  static short   COUNT = 4824; // MAP[ MAP.length - 1 ] + 1;
 
     private RiverStrengths() {}
 

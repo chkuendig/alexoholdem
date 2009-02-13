@@ -3,6 +3,7 @@ package ao.bucket.abstraction.access.odds;
 import ao.holdem.persist.GenericBinding;
 import ao.odds.agglom.hist.RiverStrengths;
 import ao.util.data.primitive.IntList;
+import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -15,19 +16,31 @@ public class SlimRiverHist
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        RiverHist rhA = new RiverHist();
-        RiverHist rhB = new RiverHist();
+        for (int i = 0; i < 100000; i++) {
+            RiverHist rhA = randomHist();
+            RiverHist rhB = randomHist();
 
-        rhA.count((short) 0, (byte) 1);
-        rhA.count((short) 1, (byte) 1);
+            SlimRiverHist srhA = rhA.slim();
+            SlimRiverHist srhB = rhB.slim();
 
-        rhB.count((short) 1, (byte) 1);
-        rhB.count((short) 2, (byte) 1);
+            double     prob =  rhA.nonLossProb(  rhB );
+            double slimProb = srhA.nonLossProb( srhB );
+            if (prob != slimProb) {
+                System.out.println(
+                        prob + "\t" + slimProb + "\t" +
+                        Math.abs(prob - slimProb));
+            }
+        }
+    }
 
-        SlimRiverHist srhA = rhA.slim();
-        SlimRiverHist srhB = rhB.slim();
-        System.out.println("a vs b: " +
-                           srhA.nonLossProb(srhB));
+    private static RiverHist randomHist()
+    {
+        RiverHist hist = new RiverHist();
+        for (int i = 1 + Rand.nextInt(1000); i > 0; i--) {
+            hist.count((short)
+                    Rand.nextInt( RiverStrengths.COUNT ));
+        }
+        return hist;
     }
 
 
@@ -126,54 +139,42 @@ public class SlimRiverHist
 
         double winProb     = 0;
         double tieProb     = 0;
-        double cumProbThat = 0;
+        double thatCumProb = 0;
 
+        int thatIndex    = 0;
         int thisStrength = 0;
         int thatStrength = 0;
-        int thatPos      = 0;
-        for (int countOrSkip : HIST)
-        {
-            if (countOrSkip < 0)
-            {
-                thisStrength -= countOrSkip;
+        for (int skipOrCount : HIST) {
+            if (skipOrCount < 0) {
+                thisStrength -= skipOrCount;
+                continue;
             }
-            else
-            {
-                while (thatStrength <= thisStrength &&
-                       thatPos < that.HIST.length)
-                {
-                    if (that.HIST[thatPos] < 0)
-                    {
-                        thatStrength -= that.HIST[thatPos];
-                    }
-                    else
-                    {
-                        if ((thatStrength + 1) > thisStrength) break;
 
-                        double thatPointProb =
-                                (double) that.HIST[thatPos] / thatSum;
-                        cumProbThat += thatPointProb;
-                        if ((thatPos + 1) == that.HIST.length) break;
-                        thatStrength++;
-                    }
-                    thatPos++;
+            double thisPointProb = (double) skipOrCount / thisSum;
+            double thatPointProb = 0;
+            for (; thatIndex < that.HIST.length; thatIndex++) {
+                int thatSkipOrCount = that.HIST[ thatIndex ];
+                if (thatSkipOrCount < 0) {
+                    thatStrength -= thatSkipOrCount;
+                    continue;
                 }
 
-                double thisPointProb =
-                        (double) countOrSkip / thisSum;
-                if (thisStrength == thatStrength) {
-                    double thatPointProb =
-                            (double) that.HIST[thatPos] / thatSum;
-//                    if (thatPos != that.HIST.length) {
-//                        cumProbThat += thatPointProb;
-//                    }
-                    tieProb += thisPointProb * thatPointProb;
+                thatPointProb =
+                        (double) that.HIST[thatIndex] / thatSum;
+                if (thisStrength <= thatStrength) break;
+
+                thatCumProb += thatPointProb;
+                if (thatIndex != (that.HIST.length - 1)) {
+                    thatStrength++;
                 }
-
-                winProb += thisPointProb * cumProbThat;
-
-                thisStrength++;
             }
+
+            winProb += thisPointProb * thatCumProb;
+            if (thisStrength == thatStrength) {
+                tieProb += thisPointProb * thatPointProb;
+            }
+            
+            thisStrength++;
         }
 
         return winProb + tieProb / 2;
