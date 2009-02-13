@@ -50,7 +50,11 @@ public class RiverHist
 
 
     //--------------------------------------------------------------------
-    public void count(short riverStrength, byte count)
+    public void count(short riverStrength)
+    {
+        count(riverStrength, 1);
+    }
+    public void count(short riverStrength, int count)
     {
 //        HIST[ RiverStrengths.lookup(eval5Strength) ]++;
         HIST[ riverStrength ] += count;
@@ -113,6 +117,29 @@ public class RiverHist
                     (RiverStrengths.COUNT + 1);
     }
 
+    //--------------------------------------------------------------------
+    public double nonLossProb(RiverHist that)
+    {
+        long thisSum =      totalCount();
+        long thatSum = that.totalCount();
+
+        double tieProb = 0;
+        double winProb = 0;
+
+        double thatCumProb = 0;
+        for (int i = 0; i < HIST.length; i++)
+        {
+            double thisPointProb = (double)      HIST[i] / thisSum;
+            double thatPointProb = (double) that.HIST[i] / thatSum;
+
+            winProb += thisPointProb * thatCumProb;
+
+            tieProb     += thisPointProb * thatPointProb;
+            thatCumProb += thatPointProb;
+        }
+
+        return winProb + tieProb / 2;
+    }
 
     //--------------------------------------------------------------------
     public SlimRiverHist slim()
