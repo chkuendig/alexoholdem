@@ -1,17 +1,19 @@
 package ao.bucket.abstraction.access.odds;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
+import ao.bucket.index.detail.flop.FlopDetails;
+import ao.bucket.index.detail.river.RiverEvalLookup;
+import ao.bucket.index.detail.river.RiverEvalLookup.Visitor;
+import ao.bucket.index.detail.turn.TurnRivers;
 import ao.bucket.index.enumeration.BitFilter;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.Turn;
-import ao.bucket.index.turn.TurnLookup;
 import ao.util.data.LongBitSet;
 import ao.util.misc.Filters;
 import ao.util.misc.Traverser;
@@ -186,45 +188,38 @@ public class BucketOdds
             histBuff[ i ] = new RiverHist();
         }
 
-        LongBitSet allowHoles  = new LongBitSet(HoleLookup.CANONS);
-        LongBitSet allowFlops  = new LongBitSet(FlopLookup.CANONS);
-        LongBitSet allowTurns  = new LongBitSet(TurnLookup.CANONS);
-        LongBitSet allowRivers = new LongBitSet(RiverLookup.CANONS);
-        computeAllowedStrengths(
-                offset, length, tree, holes,
-                allowHoles, allowFlops, allowTurns, allowRivers);
+        final LongBitSet allowRivers =
+                computeAllowedRivers(
+                        offset, length, tree, holes);
 
         LOG.debug("computing strengths for allowed");
-        final long[] count = {0};
-        HandEnum.rivers(
-                new BitFilter<CanonHole>(allowHoles),
-                new BitFilter<Flop>     (allowFlops),
-                new BitFilter<Turn>     (allowTurns),
-                new BitFilter<River>    (allowRivers),
-                new Traverser<River>() {
-            public void traverse(River river) {
-                char absoluteRiverBucket = bucketOf(tree, holes, river);
-                histBuff[absoluteRiverBucket - offset].count( river.eval() );
-                checkpoint(count[0]++);
-            }});
+        final long[] progress = {0};
+        RiverEvalLookup.traverse(allowRivers,
+             new Visitor() {public void traverse(
+                     long river, short strength, byte count) {
+
+                 char absoluteRiverBucket = bucketOf(tree, holes, river);
+                 histBuff[absoluteRiverBucket - offset]
+                         .count( strength, count );
+                 checkpoint(progress[0]++);
+             }
+         });
 
         for (int i = 0; i < length; i++) {
             hist[offset + i] = histBuff[i].slim();
         }
     }
 
-    private static void computeAllowedStrengths(
+    private static LongBitSet computeAllowedRivers(
             final int          offset,
             final int          length,
             final BucketTree   tree,
-            final char[][][][] holes,
-            final LongBitSet   allowHoles,
-            final LongBitSet   allowFlops,
-            final LongBitSet   allowTurns,
-            final LongBitSet   allowRivers)
+            final char[][][][] holes)
     {
-        final long[] count = {0};
         LOG.debug("computing allowed");
+
+        final long[]     count       = {0};
+        final LongBitSet allowRivers = new LongBitSet(RiverLookup.CANONS);
         HandEnum.rivers(
                 new UniqueFilter<CanonHole>(),
                 new UniqueFilter<Flop>(),
@@ -232,51 +227,63 @@ public class BucketOdds
                 Filters.not(new BitFilter<River>(allowRivers)),
                 new Traverser<River>() {
             public void traverse(River river) {
-                Turn      turn = river.turn();
-                Flop      flop = turn.flop();
-                CanonHole hole = flop.hole();
-
                 char absoluteRiverBucket = bucketOf(tree, holes, river);
                 if (offset <= absoluteRiverBucket &&
                               absoluteRiverBucket < (offset + length)) {
 
-                    allowHoles .set(hole.canonIndex());
-                    allowFlops .set(flop.canonIndex());
-                    allowTurns .set(turn.canonIndex());
                     allowRivers.set(river.canonIndex());
-
                     checkpoint(count[0]++);
                 }
             }});
+        return allowRivers;
     }
 
     private static char bucketOf(
-            BucketTree tree, char[][][][] holes, River river)
+            BucketTree tree, char[][][][] holes,
+            long river)
+    {
+        int  turn = TurnRivers.turnFor( river );
+        CanonFlopDetail flopDetail = FlopDetails.containing(turn);
+        int  flop = (int)  flopDetail.canonIndex();
+        char hole = (char) flopDetail.holeDetail().canonIndex();
+        return bucketOf(tree, holes,
+                        hole, flop, turn, river);
+    }
+    private static char bucketOf(
+            BucketTree tree, char[][][][] holes,
+            River river)
     {
         Turn      turn = river.turn();
         Flop      flop = turn.flop();
         CanonHole hole = flop.hole();
-
+        return bucketOf(
+                tree, holes,
+                 hole.canonIndex(),
+                 flop.canonIndex(),
+                 turn.canonIndex(),
+                river.canonIndex());
+    }
+    private static char bucketOf(
+            BucketTree tree, char[][][][] holes,
+            char hole, int flop, int turn, long river)
+    {
         try
         {
-            return holes[ tree.getHole (  hole.canonIndex() ) ]
-                        [ tree.getFlop (  flop.canonIndex() ) ]
-                        [ tree.getTurn (  turn.canonIndex() ) ]
-                        [ tree.getRiver( river.canonIndex() ) ];
+            return holes[ tree.getHole ( hole  ) ]
+                        [ tree.getFlop ( flop  ) ]
+                        [ tree.getTurn ( turn  ) ]
+                        [ tree.getRiver( river ) ];
         }
         catch (Throwable t)
         {
             LOG.error("broken bucket structure: " + river);
             LOG.error(Arrays.asList(
-                     (int) hole.canonIndex(),
-                           flop.canonIndex(),
-                           turn.canonIndex(),
-                          river.canonIndex()));
+                     (int) hole, flop, turn, river));
             LOG.error(Arrays.asList(
-                     tree.getHole (  hole.canonIndex() ),
-                     tree.getFlop (  flop.canonIndex() ),
-                     tree.getTurn (  turn.canonIndex() ),
-                     tree.getRiver( river.canonIndex() )));
+                     tree.getHole ( hole ),
+                     tree.getFlop ( flop ),
+                     tree.getTurn ( turn ),
+                     tree.getRiver( river )));
             LOG.error(Arrays.deepToString(holes));
 
             throw new Error(t);
@@ -291,10 +298,10 @@ public class BucketOdds
             return;
         }
 
-        if ((count       % (     1000 * 1000)) == 0)
+        if ((count       % (     100 * 1000)) == 0)
             System.out.print(".");
 
-        if (((count + 1) % (     1000 * 1000 * 50)) == 0)
+        if (((count + 1) % (50 * 100 * 1000 ) == 0))
             System.out.println();
 
 //        if (((count + 1) % (10 * 1000 * 1000 * 50)) == 0)

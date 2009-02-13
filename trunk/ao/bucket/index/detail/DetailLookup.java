@@ -1,5 +1,6 @@
 package ao.bucket.index.detail;
 
+import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -8,6 +9,7 @@ import ao.bucket.index.detail.river.CanonRiverDetail;
 import ao.bucket.index.detail.river.RiverDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
+import ao.bucket.index.detail.turn.TurnRivers;
 import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.Round;
 
@@ -92,6 +94,27 @@ public class DetailLookup
 
 
     //--------------------------------------------------------------------
+    public static byte riverBucketCount(
+            BucketTree bucketTree,
+            int[]      turnCanonIndexes)
+    {
+        byte maxBucket = -1;
+        for (int turnIndex : turnCanonIndexes)
+        {
+            CanonRange rivers = TurnRivers.rangeOf( turnIndex );
+            for (long r  = rivers.upToAndIncluding();
+                      r >= rivers.fromCanonIndex();
+                      r--)
+            {
+                maxBucket = (byte) Math.max(
+                        maxBucket, bucketTree.getRiver(r));
+            }
+        }
+        return (byte)(maxBucket + 1);
+    }
+
+
+    //--------------------------------------------------------------------
     public static CanonDetail[] lookupSub(
             Round prevRound, int[] prevCanonIndexes)
     {
@@ -148,13 +171,13 @@ public class DetailLookup
         {
             case FLOP:
                 lookupFlop((int) range.fromCanonIndex(),
-                           range.canonIndexCount(),
+                           (int) range.canonIndexCount(),
                            into, startingAt);
                 return;
 
             case TURN:
                 lookupTurn((int) range.fromCanonIndex(),
-                           range.canonIndexCount(),
+                           (int) range.canonIndexCount(),
                            into, startingAt);
                 return;
 

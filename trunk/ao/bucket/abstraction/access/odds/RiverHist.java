@@ -50,10 +50,10 @@ public class RiverHist
 
 
     //--------------------------------------------------------------------
-    public void count(short riverStrength)
+    public void count(short riverStrength, byte count)
     {
 //        HIST[ RiverStrengths.lookup(eval5Strength) ]++;
-        HIST[ riverStrength ]++;
+        HIST[ riverStrength ] += count;
         mean = Double.NaN;
     }
 

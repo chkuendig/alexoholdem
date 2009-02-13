@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.river;
 
+import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
@@ -20,7 +21,9 @@ import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Date: Feb 10, 2009
@@ -34,15 +37,11 @@ public class RiverEvalLookup
         final long   start      = System.currentTimeMillis();
         final long[] totalCount = {0};
         final long[] seen       = new long[ 128 ];
-        RiverEvalLookup.traverse(new RiverEvalTraverser() {
+        RiverEvalLookup.traverse(new Visitor() {
             public void traverse(
                     long canonIndex, short strength, byte count) {
                 seen[ count ]++;
                 totalCount[0] += count;
-
-                if (count == 26) {
-                    System.out.println(canonIndex + "\t" + strength);
-                }
             }
         });
         System.out.println("total: " + totalCount[0]);
@@ -216,14 +215,32 @@ public class RiverEvalLookup
 
 
     //--------------------------------------------------------------------
-    public static void traverse(RiverEvalTraverser traverser)
+    public static void traverse(
+            final LongBitSet allowRivers,
+            final Visitor    traverser)
+    {
+        for (CanonRange r : partitionAllowed(allowRivers))
+        {
+            traverse(r.fromCanonIndex(),
+                     r.canonIndexCount(),
+                     new Visitor() {
+                 public void traverse(
+                         long canonIndex, short strength, byte count) {
+                     if (allowRivers.get(canonIndex)) {
+                         traverser.traverse(canonIndex, strength, count);
+                     }
+                 }});
+        }
+    }
+
+    public static void traverse(Visitor traverser)
     {
         traverse(0, RiverLookup.CANONS, traverser);
     }
     public static void traverse(
             long               offset,
             long               count,
-            RiverEvalTraverser traverser)
+            Visitor traverser)
     {
         try {
             doTraverse(offset, count, traverser);
@@ -238,7 +255,7 @@ public class RiverEvalLookup
     private static void doTraverse(
             long               offset,
             long               count,
-            RiverEvalTraverser traverser) throws IOException
+            Visitor traverser) throws IOException
     {
         DataInputStream strIn =
                 new DataInputStream(new BufferedInputStream(
@@ -274,7 +291,40 @@ public class RiverEvalLookup
 
 
     //--------------------------------------------------------------------
-    public static interface RiverEvalTraverser
+    private static CanonRange[] partitionAllowed(LongBitSet allowRivers)
+    {
+        List<CanonRange> partitions = new ArrayList<CanonRange>();
+
+        long startOfGap = -1;
+        long lastSet    = -1;
+        for (long i = allowRivers.nextSetBit(0);
+                  i >= 0;
+                  i = allowRivers.nextSetBit(i + 1)) {
+            if (startOfGap != -1) {
+                long disptance = i - lastSet - 1;
+                if (disptance > 8192) {
+                    partitions.add(new CanonRange(
+                            startOfGap,
+                            (lastSet - startOfGap + 1)));
+                    startOfGap = i;
+                }
+            } else {
+                startOfGap = i;
+            }
+            lastSet = i;
+        }
+        if (startOfGap != -1) {
+            partitions.add(new CanonRange(
+                    startOfGap,
+                    (lastSet - startOfGap + 1)));
+        }
+
+        return partitions.toArray(new CanonRange[partitions.size()]);
+    }
+
+
+    //--------------------------------------------------------------------
+    public static interface Visitor
     {
         public void traverse(
                 long  canonIndex,

@@ -54,12 +54,16 @@ public class TurnRivers
         final int[] offsets = new int[ TurnLookup.CANONS ];
         Arrays.fill(offsets, (int)(RiverLookup.CANONS + 1));
 
+        final long[] count = {0};
         HandEnum.uniqueRivers(new Traverser<River>() {
             public void traverse(River river) {
                 int turn = river.turn().canonIndex();
                 offsets[ turn ] = (int) Math.min(
                         Calc.unsigned(offsets[ turn ]),
                         river.canonIndex());
+
+                if (count[0]              == 0) System.out.println();
+                if (count[0]++ % 40000000 == 0) System.out.print(".");
             }
         });
 
