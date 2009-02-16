@@ -20,8 +20,8 @@ public class TestCanonDetails
     public static void main(String[] args)
     {
 //        testHoleDetails();
-        testFlopDetails();
-//        testTurnDetails();
+//        testFlopDetails();
+        testTurnDetails();
     }
 
 

@@ -32,11 +32,29 @@ import java.util.List;
 public class RiverEvalLookup
 {
     //--------------------------------------------------------------------
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
+//        final DataOutputStream strRepOut =
+//                new DataOutputStream(new BufferedOutputStream(
+//                        new FileOutputStream(strRepF, true)));
+//
+//        RiverEvalLookup.traverse(new Visitor() {
+//            public void traverse(
+//                    long canonIndex, short strength, byte count) {
+//                try {
+//                    char strRep = encode(strength, count);
+//                    strRepOut.writeChar(strRep);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        strRepOut.close();
+
         final long   start      = System.currentTimeMillis();
         final long[] totalCount = {0};
-        final long[] seen       = new long[ 128 ];
+        final long[] seen       = new long[ 25 ];
         RiverEvalLookup.traverse(new Visitor() {
             public void traverse(
                     long canonIndex, short strength, byte count) {
@@ -60,11 +78,13 @@ public class RiverEvalLookup
 
     private static final File dir   =
             Dir.get("lookup/canon/detail/river");
-    private static final File strengthF = new File(dir, "str.short");
-    private static final File repsF     = new File(dir, "rep.byte");
+    private static final File strRepF   = new File(dir, "str_rep.char");
+//    private static final File strengthF = new File(dir, "str.short");
+//    private static final File repsF     = new File(dir, "rep.byte");
     private static final File flagF     = new File(dir, "flag.byte");
 
     private static final int  chunk     = 10 * 1000 * 1000;
+
 
 
     //--------------------------------------------------------------------
@@ -92,7 +112,7 @@ public class RiverEvalLookup
     {
         LOG.debug("computing");
 
-        long offset    = repsF.length();
+        long offset    = strRepF.length() / 2;
         long remaining = (RiverLookup.CANONS + 1) - offset;
         long chunks    = remaining / chunk + 1;
         for (long c = 0; c < chunks; c++)
@@ -138,20 +158,30 @@ public class RiverEvalLookup
     {
         LOG.debug("appending");
 
-        DataOutputStream strOut =
+        DataOutputStream strRepOut =
                 new DataOutputStream(new BufferedOutputStream(
-                        new FileOutputStream(strengthF, true)));
-        DataOutputStream repOut =
-                new DataOutputStream(new BufferedOutputStream(
-                        new FileOutputStream(repsF, true)));
-
+                        new FileOutputStream(strRepF, true)));
         for (int i = 0; i < strengths.length; i++) {
-            strOut.writeShort( strengths [i] );
-            repOut.writeByte ( represents[i] );
+            strRepOut.writeChar(
+                    encode(strengths [i],
+                           represents[i]));
         }
+        strRepOut.close();
 
-        repOut.close();
-        strOut.close();
+//        DataOutputStream strOut =
+//                new DataOutputStream(new BufferedOutputStream(
+//                        new FileOutputStream(strengthF, true)));
+//        DataOutputStream repOut =
+//                new DataOutputStream(new BufferedOutputStream(
+//                        new FileOutputStream(repsF, true)));
+//
+//        for (int i = 0; i < strengths.length; i++) {
+//            strOut.writeShort( strengths [i] );
+//            repOut.writeByte ( represents[i] );
+//        }
+//
+//        repOut.close();
+//        strOut.close();
     }
 
     private static void computeEvalDetailsForAllowed(
@@ -176,8 +206,7 @@ public class RiverEvalLookup
                 if (represents[ index ] == 0) {
                     strengths[ index ] = river.eval();
                 }
-                else if (strengths[ index ] != river.eval())
-                {
+                else if (strengths[ index ] != river.eval()) {
                     LOG.error("inconcistent " + river);
                 }
                 represents[ index ]++;
@@ -257,36 +286,50 @@ public class RiverEvalLookup
             long               count,
             Visitor traverser) throws IOException
     {
-        DataInputStream strIn =
+        DataInputStream strRepIn =
                 new DataInputStream(new BufferedInputStream(
-                        new FileInputStream(strengthF)));
-        DataInputStream repIn =
-                new DataInputStream(new BufferedInputStream(
-                        new FileInputStream(repsF)));
+                        new FileInputStream(strRepF)));
+
+//        DataInputStream strIn =
+//                new DataInputStream(new BufferedInputStream(
+//                        new FileInputStream(strengthF)));
+//        DataInputStream repIn =
+//                new DataInputStream(new BufferedInputStream(
+//                        new FileInputStream(repsF)));
 
         if (offset > 0)
         {
             long strSkip = offset * (Short.SIZE / 8);
-            if (strSkip != strIn.skip( strSkip )) {
-                throw new Error("unable to skip strengths");
+            if (strSkip != strRepIn.skip( strSkip )) {
+                throw new Error("unable to skip");
             }
-
-            if (offset != repIn.skip( offset )) {
-                throw new Error("unable to skip represents");
-            }
+//            if (strSkip != strIn.skip( strSkip )) {
+//                throw new Error("unable to skip strengths");
+//            }
+//
+//            if (offset != repIn.skip( offset )) {
+//                throw new Error("unable to skip represents");
+//            }
         }
 
         for (long i = 0; i < count; i++)
         {
             long river = offset + i;
+            char strRep = strRepIn.readChar();
             traverser.traverse(
                     river,
-                    strIn.readShort(),
-                    repIn.readByte());
+                    decoreStrength(strRep),
+                    decodeRep(strRep));
+
+//            traverser.traverse(
+//                    river,
+//                    strIn.readShort(),
+//                    repIn.readByte());
         }
 
-        repIn.close();
-        strIn.close();
+        strRepIn.close();
+//        repIn.close();
+//        strIn.close();
     }
 
 
@@ -320,6 +363,24 @@ public class RiverEvalLookup
         }
 
         return partitions.toArray(new CanonRange[partitions.size()]);
+    }
+
+
+    //--------------------------------------------------------------------
+    private static char encode(short strength, byte count) {
+        int countIndex =
+                  (count ==  4) ? 0
+                : (count == 12) ? 1 : 2;
+        return (char)(strength << 2 | countIndex);
+    }
+
+    public static byte decodeRep(char strRep) {
+        int repIndex = strRep & 3;
+        return (byte)(  repIndex == 0 ? 4
+                      : repIndex == 1 ? 12 : 24);
+    }
+    public static short decoreStrength(char strRep) {
+        return (short)(strRep >>> 3);
     }
 
 

@@ -11,10 +11,19 @@ import java.util.BitSet;
 public class Gapper
 {
     //--------------------------------------------------------------------
-    private BitSet indexes  = new BitSet();
-    private BitSet indexesB = new BitSet();
-    private long   count    = 0;
+    private final BitSet indexes;
+    private final BitSet indexesB;
+    private       long   count    = 0;
 
+
+    //--------------------------------------------------------------------
+    public Gapper() {  this(0);  }
+
+    public Gapper(long size) {
+        indexes  = new BitSet((int)
+                    Math.min(size, Integer.MAX_VALUE));
+        indexesB = new BitSet();
+    }
 
     //--------------------------------------------------------------------
     // takes an unsigned int
