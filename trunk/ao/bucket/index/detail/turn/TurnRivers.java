@@ -43,6 +43,8 @@ public class TurnRivers
             offsets = computeFirstRivers();
             LOG.debug("persisting");
             PersistentInts.persist(offsets, store);
+        } else {
+            LOG.debug("retrieved");
         }
         return offsets;
     }

@@ -18,6 +18,8 @@ import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+
 /**
  * Date: Aug 21, 2008
  * Time: 7:05:20 PM
@@ -41,7 +43,11 @@ public class CanonIndexTest
         testHoleConsistency();
         testFlopConsistency();
         testTurnConsistency();
-        RiverEvalLookup.main(null);
+        try {
+            RiverEvalLookup.main(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void testTurnConsistency()

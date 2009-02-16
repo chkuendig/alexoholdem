@@ -10,10 +10,13 @@ import ao.bucket.index.enumeration.BitFilter;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.UniqueFilter;
 import ao.bucket.index.flop.Flop;
+import ao.bucket.index.flop.FlopLookup;
 import ao.bucket.index.hole.CanonHole;
+import ao.bucket.index.hole.HoleLookup;
 import ao.bucket.index.river.River;
 import ao.bucket.index.river.RiverLookup;
 import ao.bucket.index.turn.Turn;
+import ao.bucket.index.turn.TurnLookup;
 import ao.util.data.LongBitSet;
 import ao.util.misc.Filters;
 import ao.util.misc.Traverser;
@@ -195,15 +198,26 @@ public class BucketOdds
         LOG.debug("computing strengths for allowed");
         final long[] progress = {0};
         RiverEvalLookup.traverse(allowRivers,
-             new Visitor() {public void traverse(
-                     long river, short strength, byte count) {
+                new Visitor() {public void traverse(
+                        long river, short strength, byte count) {
 
-                 char absoluteRiverBucket = bucketOf(tree, holes, river);
-                 histBuff[absoluteRiverBucket - offset]
-                         .count( strength, count );
-                 checkpoint(progress[0]++);
-             }
-         });
+            char absoluteRiverBucket = bucketOf(tree, holes, river);
+            histBuff[absoluteRiverBucket - offset]
+                     .count( strength, count );
+            checkpoint(progress[0]++);
+        }});
+//        RiverEvalLookup.traverse(new Visitor() {public void traverse(
+//                     long river, short strength, byte count) {
+//            char absoluteRiverBucket = bucketOf(tree, holes, river);
+//
+//            if (offset <= absoluteRiverBucket &&
+//                          absoluteRiverBucket < (offset + length)) {
+//
+//                histBuff[absoluteRiverBucket - offset]
+//                         .count( strength, count );
+//                checkpoint(progress[0]++);
+//            }
+//        }});
 
         for (int i = 0; i < length; i++) {
             hist[offset + i] = histBuff[i].slim();
@@ -220,10 +234,20 @@ public class BucketOdds
 
         final long[]     count       = {0};
         final LongBitSet allowRivers = new LongBitSet(RiverLookup.CANONS);
+        
+//        for (long r = 0; r < RiverLookup.CANONS; r++) {
+//            char absoluteRiverBucket = bucketOf(tree, holes, r);
+//            if (offset <= absoluteRiverBucket &&
+//                          absoluteRiverBucket < (offset + length)) {
+//
+//                allowRivers.set(r);
+//                checkpoint(count[0]++);
+//            }
+//        }
         HandEnum.rivers(
-                new UniqueFilter<CanonHole>(),
-                new UniqueFilter<Flop>(),
-                new UniqueFilter<Turn>(),
+                new UniqueFilter<CanonHole>(HoleLookup.CANONS),
+                new UniqueFilter<Flop>(FlopLookup.CANONS),
+                new UniqueFilter<Turn>(TurnLookup.CANONS),
                 Filters.not(new BitFilter<River>(allowRivers)),
                 new Traverser<River>() {
             public void traverse(River river) {
@@ -291,18 +315,24 @@ public class BucketOdds
     }
 
 
+    private static long prevCheck = 0;
     private static void checkpoint(long count)
     {
         if (count == 0) {
             LOG.debug("starting calculation cycle");
+            System.out.print(".");
+            prevCheck = System.currentTimeMillis();
             return;
         }
 
         if ((count       % (     100 * 1000)) == 0)
             System.out.print(".");
 
-        if (((count + 1) % (50 * 100 * 1000 ) == 0))
-            System.out.println();
+        if (((count + 1) % (50 * 100 * 1000 ) == 0)) {
+            System.out.println(" " + (count + 1) + " in " +
+                (System.currentTimeMillis() - prevCheck));
+            prevCheck = System.currentTimeMillis();
+        }
 
 //        if (((count + 1) % (10 * 1000 * 1000 * 50)) == 0)
 //            persistStrengths(hist, outFile);

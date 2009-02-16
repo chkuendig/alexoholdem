@@ -13,14 +13,22 @@ public class UniqueFilter<T extends CanonIndexed>
 {
     //--------------------------------------------------------------------
     private final String FORMAT;
-    private final Gapper GAPPER = new Gapper();
+    private final Gapper GAPPER;
 
 
     //--------------------------------------------------------------------
-    public UniqueFilter() {  this(null);  }
+    public UniqueFilter() {  this(0, null);  }
     public UniqueFilter(String format) {
-        FORMAT = format;
+        this(0, format);
     }
+    public UniqueFilter(int size) {
+        this(size, null);
+    }
+    public UniqueFilter(int size, String format) {
+        FORMAT = format;
+        GAPPER = new Gapper(size);
+    }
+
 
 
     //--------------------------------------------------------------------
