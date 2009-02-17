@@ -34,7 +34,7 @@ public class Gapper
 
         if (index > Integer.MAX_VALUE)
         {
-            indexesB.set( MathUtil.signedPart(index) );
+            indexesB.set( Calc.signedPart(index) );
         }
         else
         {
@@ -49,7 +49,7 @@ public class Gapper
 
         if (index > Integer.MAX_VALUE)
         {
-            return indexesB.get( MathUtil.signedPart(index) );
+            return indexesB.get( Calc.signedPart(index) );
         }
         else
         {

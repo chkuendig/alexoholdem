@@ -288,7 +288,8 @@ public class RiverEvalLookup
     {
         DataInputStream strRepIn =
                 new DataInputStream(new BufferedInputStream(
-                        new FileInputStream(strRepF)));
+                        new FileInputStream(strRepF),
+                        1024 * 1024));
 
 //        DataInputStream strIn =
 //                new DataInputStream(new BufferedInputStream(
