@@ -22,11 +22,15 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        double  holeBranch = 6,
-                flopBranch = 24,
-                turnBranch = 3,
-               riverBranch = 3;
-//
+//        double  holeBranch = 6,
+//                flopBranch = 24,
+//                turnBranch = 3,
+//               riverBranch = 3;
+        double  holeBranch = 20,
+                flopBranch = 56.72,
+                turnBranch = 6.55,
+               riverBranch = 6.63;
+
         if (args.length > 1)
         {
              holeBranch = Double.parseDouble(args[0]);

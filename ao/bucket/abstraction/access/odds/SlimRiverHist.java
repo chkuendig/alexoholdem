@@ -188,7 +188,7 @@ public class SlimRiverHist
     }
 
     public static final int     BINDING_MAX_SIZE =
-                                            RiverStrengths.COUNT * 4 + 4;
+                                           (1 + RiverStrengths.COUNT) * 4;
     public static final Binding BINDING          = new Binding();
     public static class Binding extends GenericBinding<SlimRiverHist>
     {
