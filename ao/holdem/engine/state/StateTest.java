@@ -34,24 +34,31 @@ public class StateTest
         State root = State.autoBlindInstance(Arrays.asList(
                         dealee, dealer));
 
-        int[] byDepth = new int[ root.seats().length * 3 * 4 ];
-        countStates(root, 0, byDepth);
-        System.out.println( Arrays.toString(byDepth) );
-        
-        int sum = 0;
-        for (int count : byDepth) sum += count;
-        System.out.println("total: " + sum);
+        int[][] byRoundDepth = new int[4][ root.seats().length * 3 * 4 ];
+        countStates(root, 0, byRoundDepth);
+
+        for (int[] byDepth : byRoundDepth) {
+
+            int sum = 0;
+            for (int count : byDepth) sum += count;
+
+            System.out.println(
+                    Arrays.toString(byDepth) + " = " + sum);
+        }
     }
 
     private void countStates(
-            State under, int depth, int[] byDepth)
+            State under, int depth, int[][] byRoundDepth)
     {
-        byDepth[ depth ]++;
-        if (under.atEndOfHand()) return;
+        if (under.atEndOfHand()) {
+            //byRoundDepth[ 4 ][ depth ]++;
+            return;
+        }
+        byRoundDepth[under.round().ordinal()][ depth ]++;
 
         for (State subState : under.viableActions().values())
         {
-            countStates( subState, depth + 1, byDepth );
+            countStates( subState, depth + 1, byRoundDepth );
         }
     }
 

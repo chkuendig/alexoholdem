@@ -1,13 +1,5 @@
 package ao.regret.holdem;
 
-import ao.bucket.abstraction.access.BucketAgglom;
-import ao.holdem.model.Avatar;
-import ao.holdem.model.Round;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.chance.ChanceCards;
-import ao.holdem.model.card.chance.DeckCards;
-
 /**
  * User: iscott
  * Date: Jan 6, 2009
@@ -15,38 +7,38 @@ import ao.holdem.model.card.chance.DeckCards;
  */
 public class JointBucketSequence
 {
-    //--------------------------------------------------------------------
-    private final byte[] dealerBuckets;
-    private final byte[] dealeeBuckets;
-
-
-    //--------------------------------------------------------------------
-    public static JointBucketSequence randomInstance(BucketAgglom agglom)
-    {
-        ChanceCards cards = new DeckCards();
-        return new JointBucketSequence(agglom,
-                cards.hole(Avatar.local("dealer")),
-                cards.hole(Avatar.local("dealee")),
-                cards.community(Round.RIVER));
-    }
-
-    public JointBucketSequence(
-            BucketAgglom agglom,
-            Hole         dealerHole,
-            Hole         dealeeHole,
-            Community    community)
-    {
-        dealerBuckets = agglom.computeBuckets(dealerHole, community);
-        dealeeBuckets = agglom.computeBuckets(dealeeHole, community);
-    }
-
-
-    //--------------------------------------------------------------------
-    public byte bucket(
-            boolean dealer,
-            Round   round)
-    {
-        return (dealer ? dealerBuckets
-                       : dealeeBuckets)[ round.ordinal() ];
-    }
+//    //--------------------------------------------------------------------
+//    private final byte[] dealerBuckets;
+//    private final byte[] dealeeBuckets;
+//
+//
+//    //--------------------------------------------------------------------
+//    public static JointBucketSequence randomInstance(BucketAgglom agglom)
+//    {
+//        ChanceCards cards = new DeckCards();
+//        return new JointBucketSequence(agglom,
+//                cards.hole(Avatar.local("dealer")),
+//                cards.hole(Avatar.local("dealee")),
+//                cards.community(Round.RIVER));
+//    }
+//
+//    public JointBucketSequence(
+//            BucketAgglom agglom,
+//            Hole         dealerHole,
+//            Hole         dealeeHole,
+//            Community    community)
+//    {
+//        dealerBuckets = agglom.computeBuckets(dealerHole, community);
+//        dealeeBuckets = agglom.computeBuckets(dealeeHole, community);
+//    }
+//
+//
+//    //--------------------------------------------------------------------
+//    public byte bucket(
+//            boolean dealer,
+//            Round   round)
+//    {
+//        return (dealer ? dealerBuckets
+//                       : dealeeBuckets)[ round.ordinal() ];
+//    }
 }

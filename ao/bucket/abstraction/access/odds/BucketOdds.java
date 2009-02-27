@@ -1,6 +1,7 @@
 package ao.bucket.abstraction.access.odds;
 
-import ao.bucket.abstraction.access.AbsoluteBuckets;
+import ao.bucket.abstraction.access.AbsBucketStore;
+import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.river.RiverEvalLookup.Visitor;
@@ -28,31 +29,26 @@ public class BucketOdds
 
 
     //--------------------------------------------------------------------
-    public static BucketOdds retrieveOrCompute(
-            File dir, BucketTree bucketTree, char[][][][] holes)
+    public static BucketOdds retrieve(
+            File dir, BucketDecoder decoder)
     {
-        try {
-            return doRetrieveOrCompute(dir, bucketTree, holes);
-        } catch (IOException e) {
-            LOG.error("unable to retrieveOrCompute");
-            e.printStackTrace();
-            return null;
-        }
+        SlimRiverHist[] hist = retrieveStrengths(
+                                   dir, decoder.riverBucketCount());
+        int             off  = offset(hist);
+
+        return (hist == null || off != hist.length)
+               ? null : new BucketOdds(hist);
     }
-    private static BucketOdds doRetrieveOrCompute(
-            File dir, BucketTree bucketTree, char[][][][] holes)
-            throws IOException
+    public static BucketOdds retrieveOrCompute(
+            File dir, BucketTree bucketTree, BucketDecoder decoder)
     {
-        char[][][] flops  =  holes[  holes.length - 1 ];
-        char[][]   turns  =  flops[  flops.length - 1 ];
-        char[]     rivers =  turns[  turns.length - 1 ];
-        int  riverBuckets = rivers[ rivers.length - 1 ] + 1;
+        int riverBuckets = decoder.riverBucketCount();
 
         SlimRiverHist[] hist = retrieveStrengths(dir, riverBuckets);
         int             off  = offset(hist);
         if (hist == null || off != hist.length) {
             hist = computeAndPersistStrengths(off,
-                    riverBuckets, bucketTree, holes, dir);
+                    riverBuckets, bucketTree, decoder, dir);
         }
         return new BucketOdds(hist);
     }
@@ -60,6 +56,14 @@ public class BucketOdds
 
     //--------------------------------------------------------------------
     private static SlimRiverHist[] retrieveStrengths(
+            File dir, int riverBuckets) {
+        try {
+            return doRetrieveStrengths(dir, riverBuckets);
+        } catch (IOException e) {
+            throw new Error( e );
+        }
+    }
+    private static SlimRiverHist[] doRetrieveStrengths(
             File dir, int riverBuckets) throws IOException
     {
         File file = new File(dir, STR_FILE);
@@ -145,22 +149,22 @@ public class BucketOdds
 
     //--------------------------------------------------------------------
     private static SlimRiverHist[] computeAndPersistStrengths(
-            int          initialOffset,
-            int          riverBuckets,
-            BucketTree   tree,
-            char[][][][] holes,
-            File         dir)
+            int           initialOffset,
+            int           riverBuckets,
+            BucketTree    tree,
+            BucketDecoder decoder,
+            File          dir)
     {
         LOG.debug("computing strengths");
         File            outFile = new File(dir, STR_FILE);
         SlimRiverHist[] hist    = new SlimRiverHist[ riverBuckets ];
 
         if (riverBuckets <= BUFFER) {
-            computeAllStrengths(hist, tree, holes);
+            computeAllStrengths(hist, tree, decoder);
             persistStrengths(hist, outFile);
         } else {
-            AbsoluteBuckets absBuckets =
-                    new AbsoluteBuckets(dir, tree, holes);
+            AbsBucketStore absBuckets =
+                    new AbsBucketStore(dir, tree, decoder);
             for (int offset = initialOffset;
                      offset < riverBuckets;
                      offset += BUFFER)
@@ -181,7 +185,7 @@ public class BucketOdds
             final SlimRiverHist[] hist,
             final int             offset,
             final int             length,
-            final AbsoluteBuckets absBuckets)
+            final AbsBucketStore absBuckets)
     {
         final RiverHist[]  histBuff = new RiverHist[ length ];
         for (int i = 0; i < histBuff.length; i++) {
@@ -229,7 +233,7 @@ public class BucketOdds
     private static void computeAllStrengths(
             final SlimRiverHist[] hist,
             final BucketTree      tree,
-            final char[][][][]    holes)
+            final BucketDecoder   decoder)
     {
         final RiverHist[]  histBuff = new RiverHist[ hist.length ];
         for (int i = 0; i < histBuff.length; i++) {
@@ -241,7 +245,7 @@ public class BucketOdds
         RiverEvalLookup.traverse(new Visitor() {public void traverse(
                      long river, short strength, byte count) {
             char absoluteRiverBucket =
-                    AbsoluteBuckets.bucketOf(tree, holes, river);
+                    AbsBucketStore.bucketOf(tree, decoder, river);
             histBuff[absoluteRiverBucket]
                      .count( strength, count );
             progress.checkpoint();
