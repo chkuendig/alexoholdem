@@ -18,49 +18,50 @@ import java.util.Iterator;
  * Date: Feb 16, 2009
  * Time: 11:39:52 AM
  */
-public class AbsoluteBuckets implements Iterable<Character>
+public class AbsBucketStore implements Iterable<Character>
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(AbsoluteBuckets.class);
+            Logger.getLogger(AbsBucketStore.class);
     
     private static final String fName = "abs_bucket.char";
 
 
     //--------------------------------------------------------------------
-    private final File ioFile;
+    private final File          ioFile;
+    //private final BucketDecoder decoder;
 
 
     //--------------------------------------------------------------------
-    public AbsoluteBuckets(
-            File         dir,
-            BucketTree   bucketTree,
-            char[][][][] holes)
+    public AbsBucketStore(
+            File          dir,
+            BucketTree    bucketTree,
+            BucketDecoder decoder)
     {
         ioFile = new File(dir, fName);
 
         if (! (ioFile.canRead() &&
                ioFile.length() == (RiverLookup.CANONS * 2)))
         {
-            computeAndPersist(bucketTree, holes);
+            computeAndPersist(bucketTree, decoder);
         }
     }
 
 
     //--------------------------------------------------------------------
     private void computeAndPersist(
-            BucketTree   tree,
-            char[][][][] holes)
+            BucketTree    tree,
+            BucketDecoder decoder)
     {
         try {
-            doComputeAndPersist(tree, holes);
+            doComputeAndPersist(tree, decoder);
         } catch (IOException e) {
             throw new Error( e );
         }
     }
     private void doComputeAndPersist(
-            BucketTree   tree,
-            char[][][][] holes) throws IOException
+            BucketTree    tree,
+            BucketDecoder decoder) throws IOException
     {
         LOG.debug("computeAndPersist");
 
@@ -69,7 +70,7 @@ public class AbsoluteBuckets implements Iterable<Character>
                         new FileOutputStream(ioFile)));
 
         for (long r = 0; r < RiverLookup.CANONS; r++) {
-            char absoluteRiverBucket = bucketOf(tree, holes, r);
+            char absoluteRiverBucket = bucketOf(tree, decoder, r);
             out.writeChar( absoluteRiverBucket );
         }
         
@@ -120,28 +121,28 @@ public class AbsoluteBuckets implements Iterable<Character>
 
     //--------------------------------------------------------------------
     public static char bucketOf(
-            BucketTree   tree,
-            char[][][][] holes,
-            long         river)
+            BucketTree    tree,
+            BucketDecoder decoder,
+            long          river)
     {
         int  turn = TurnRivers.turnFor( river );
         CanonFlopDetail flopDetail = FlopDetails.containing(turn);
         int  flop = (int)  flopDetail.canonIndex();
         char hole = (char) flopDetail.holeDetail().canonIndex();
-        return bucketOf(tree, holes,
+        return bucketOf(tree, decoder,
                         hole, flop, turn, river);
     }
 
      public static char bucketOf(
-            BucketTree   tree,
-            char[][][][] holes,
-            River        river)
+            BucketTree    tree,
+            BucketDecoder decoder,
+            River         river)
     {
         Turn turn = river.turn();
         Flop flop = turn.flop();
         CanonHole hole = flop.hole();
         return bucketOf(
-                tree, holes,
+                tree, decoder,
                  hole.canonIndex(),
                  flop.canonIndex(),
                  turn.canonIndex(),
@@ -149,12 +150,13 @@ public class AbsoluteBuckets implements Iterable<Character>
     }
 
     public static char bucketOf(
-            BucketTree tree, char[][][][] holes,
+            BucketTree tree, BucketDecoder decoder,
             char hole, int flop, int turn, long river)
     {
-        return holes[ tree.getHole ( hole  ) ]
-                    [ tree.getFlop ( flop  ) ]
-                    [ tree.getTurn ( turn  ) ]
-                    [ tree.getRiver( river ) ];
+        return decoder.decode(
+                tree.getHole ( hole  ),
+                tree.getFlop ( flop  ),
+                tree.getTurn ( turn  ),
+                tree.getRiver( river ));
     }
 }

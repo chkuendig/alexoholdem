@@ -1,7 +1,7 @@
 package ao.regret.holdem.node;
 
 import ao.holdem.engine.state.HeadsUpStatus;
-import ao.holdem.engine.state.StateTree;
+import ao.holdem.engine.state.tree.StateTree;
 import ao.regret.InfoNode;
 import ao.regret.holdem.HoldemBucket;
 import ao.util.text.Txt;

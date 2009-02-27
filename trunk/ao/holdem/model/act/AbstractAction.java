@@ -4,7 +4,10 @@ import ao.holdem.model.Chips;
 
 
 /**
- * 
+ * Note that the actions are in a specific order: fold, call, raise.
+ * The reason for this is that sometimes raising is not available,
+ *  so if available actions are accessed by array index, no extra
+ *  work is required.
  */
 public enum AbstractAction
 {

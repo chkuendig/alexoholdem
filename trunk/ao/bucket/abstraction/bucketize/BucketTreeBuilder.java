@@ -5,46 +5,34 @@ import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
 
+import java.io.File;
+
 /**
  * Date: Jan 8, 2009
  * Time: 11:01:12 AM
  */
-public class BucketManager
+public class BucketTreeBuilder
 {
     //--------------------------------------------------------------------
-    private final Bucketizer HOLE_BUCKETIZER;
-    private final Bucketizer FLOP_BUCKETIZER;
-    private final Bucketizer TURN_BUCKETIZER;
-    private final Bucketizer RIVER_BUCKETIZER;
+    private final Bucketizer BUCKETIZER;
 
 
     //--------------------------------------------------------------------
-    public BucketManager(Bucketizer bucketizer)
+    public BucketTreeBuilder(Bucketizer bucketizer)
     {
-        this(bucketizer, bucketizer, bucketizer, bucketizer);
-    }
-    public BucketManager(Bucketizer holeBucketizer,
-                         Bucketizer flopBucketizer,
-                         Bucketizer turnBucketizer,
-                         Bucketizer riverBucketizer)
-    {
-        HOLE_BUCKETIZER  = holeBucketizer;
-        FLOP_BUCKETIZER  = flopBucketizer;
-        TURN_BUCKETIZER  = turnBucketizer;
-        RIVER_BUCKETIZER = riverBucketizer;
+        BUCKETIZER = bucketizer;
     }
 
 
     //--------------------------------------------------------------------
     public BucketTree bucketize(
+            File dir,
             byte numHoleBuckets,
             char numFlopBuckets,
             char numTurnBuckets,
             char numRiverBuckets)
     {
-        BucketTree tree = new BucketTreeImpl(
-                treeId(numHoleBuckets, numFlopBuckets,
-                       numTurnBuckets, numRiverBuckets));
+        BucketTree tree = new BucketTreeImpl( dir );
 
         if (! tree.isFlushed())
         {
@@ -60,32 +48,6 @@ public class BucketManager
         return tree;
     }
 
-    private String treeId(
-            byte numHoleBuckets,
-            char numFlopBuckets,
-            char numTurnBuckets,
-            char numRiverBuckets)
-    {
-        StringBuilder str = new StringBuilder();
-
-        str.append( HOLE_BUCKETIZER.id() )
-           .append( '.' )
-           .append( (int) numHoleBuckets )
-           .append( ';' )
-           .append( FLOP_BUCKETIZER.id() )
-           .append( '.' )
-           .append( (int) numFlopBuckets )
-           .append( ';' )
-           .append( TURN_BUCKETIZER.id() )
-           .append( '.' )
-           .append( (int) numTurnBuckets )
-           .append( ';' )
-           .append( RIVER_BUCKETIZER.id() )
-           .append( '.' )
-           .append( (int) numRiverBuckets );
-
-        return str.toString();
-    }
 
 
 
@@ -97,7 +59,7 @@ public class BucketManager
             char   numTurnBuckets,
             char   numRiverBuckets)
     {
-        if (HOLE_BUCKETIZER.bucketize(holes, numHoleBuckets)) {
+        if (BUCKETIZER.bucketize(holes, numHoleBuckets)) {
 //            holes.flush();
         }
 
@@ -123,7 +85,7 @@ public class BucketManager
         char holeBucketIndex = 0;
         for (Branch flop : flops)
         {
-            if (FLOP_BUCKETIZER.bucketize(
+            if (BUCKETIZER.bucketize(
                     flop, flopBucketCounts[ holeBucketIndex++ ])) {
 //                flop.flush();
             }
@@ -148,7 +110,7 @@ public class BucketManager
         char flopBucketIndex = 0;
         for (Branch turn : turns)
         {
-            if (TURN_BUCKETIZER.bucketize(
+            if (BUCKETIZER.bucketize(
                     turn, turnBucketCounts[
                             turnBucketOffset + (flopBucketIndex++) ])) {
 //                turn.flush();
@@ -172,7 +134,7 @@ public class BucketManager
         char turnBucketIndex = 0;
         for (Branch river : rivers)
         {
-            if (RIVER_BUCKETIZER.bucketize(
+            if (BUCKETIZER.bucketize(
                     river, riverBucketCounts[
                             riverBucketOffset + (turnBucketIndex++) ])) {
 //                river.flush();

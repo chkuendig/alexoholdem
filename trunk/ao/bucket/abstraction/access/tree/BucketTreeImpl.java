@@ -1,6 +1,5 @@
 package ao.bucket.abstraction.access.tree;
 
-import ao.bucket.abstraction.access.BucketFlyweight;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.abstraction.access.tree.list.ThirdBucketList;
@@ -27,28 +26,22 @@ import java.util.List;
 public class BucketTreeImpl implements BucketTree
 {
     //--------------------------------------------------------------------
-    private static final File DIR = Dir.get("lookup/bucket/");
-
-
-    //--------------------------------------------------------------------
     private final BucketList holes;
     private final BucketList flops;
     private final BucketList turns;
     private final BucketList rivers;
     private final File       flushFlag;
-    private final File       persistDir;
 
 
     //--------------------------------------------------------------------
-    public BucketTreeImpl(String id)
+    public BucketTreeImpl(File dir)
     {
-        persistDir = Dir.get(DIR, id);
-        flushFlag  = new File(persistDir, "flushed");
+        flushFlag  = new File(dir, "flushed");
 
-        File holeFile  = new File(persistDir, "holes");
-        File flopFile  = new File(persistDir, "flops");
-        File turnFile  = new File(persistDir, "turns");
-        File riverDir  =  Dir.get(persistDir, "rivers");
+        File holeFile  = new File(dir, "holes");
+        File flopFile  = new File(dir, "flops");
+        File turnFile  = new File(dir, "turns");
+        File riverDir  =  Dir.get(dir, "rivers");
 
         holes  = new BucketListImpl (holeFile, HoleLookup.CANONS);
         flops  = new BucketListImpl (flopFile, FlopLookup.CANONS);
@@ -145,11 +138,11 @@ public class BucketTreeImpl implements BucketTree
     }
 
 
-    //--------------------------------------------------------------------
-    public BucketFlyweight map()
-    {
-        return new BucketFlyweight(this, persistDir);
-    }
+//    //--------------------------------------------------------------------
+//    public BucketDecoder map()
+//    {
+//        return BucketDecoder.retrieveOrCompute(holes(), persistDir);
+//    }
 
 
     //--------------------------------------------------------------------
@@ -227,8 +220,9 @@ public class BucketTreeImpl implements BucketTree
 //            return subDetails;
         }
 
-        public byte riverBucketCount()
+        public byte bucketCount()
         {
+            assert round == Round.RIVER;
             return DetailLookup.riverBucketCount(
                      BucketTreeImpl.this,
                      parentCanons());

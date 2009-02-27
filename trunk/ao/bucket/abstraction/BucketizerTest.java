@@ -1,12 +1,10 @@
 package ao.bucket.abstraction;
 
-import ao.bucket.abstraction.access.BucketFlyweight;
-import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.bucketize.BucketManager;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Date: Oct 14, 2008
@@ -66,15 +64,31 @@ public class BucketizerTest
                 Arrays.asList((int) nHoleBuckets, (int) nFlopBuckets,
                               (int) nTurnBuckets, (int) nRiverBuckets));
 
-        BucketManager manager =
-                new BucketManager( new BucketizerImpl() );
+        CardAbstraction abs =
+                new CardAbstraction(
+                        new BucketizerImpl(),
+                        nHoleBuckets,
+                        nFlopBuckets,
+                        nTurnBuckets,
+                        nRiverBuckets);
 
-        BucketTree buckets = manager.bucketize(
-                                nHoleBuckets,
-                                nFlopBuckets,
-                                nTurnBuckets,
-                                nRiverBuckets);
-        BucketFlyweight map = buckets.map();
+        for (Iterator<char[][]> it = abs.sequence().iterator(1000);
+             it.hasNext();)
+        {
+            char[][] jbs = it.next();
+            System.out.println(Arrays.deepToString(jbs));
+        }
+
+
+//        BucketTreeBuilder manager =
+//                new BucketTreeBuilder( new BucketizerImpl() );
+//
+//        BucketTree buckets = manager.bucketize(
+//                                nHoleBuckets,
+//                                nFlopBuckets,
+//                                nTurnBuckets,
+//                                nRiverBuckets);
+//        BucketDecoder map = buckets.map();
 
 
 //        FileWriter out = new FileWriter("test/str.txt");
@@ -85,11 +99,11 @@ public class BucketizerTest
 //        }
 //        out.close();
 
-        for (char i = 0; i < Math.min(nRiverBuckets, 32); i++)
-        {
-            System.out.println(
-                    map.odds().strength(i).length());
-        }
+//        for (char i = 0; i < Math.min(nRiverBuckets, 32); i++)
+//        {
+//            System.out.println(
+//                    map.odds().strength(i).length());
+//        }
 
 //        System.out.println(map.root());
     }
