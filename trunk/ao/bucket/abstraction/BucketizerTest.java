@@ -20,14 +20,14 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        double  holeBranch = 6,
-//                flopBranch = 24,
-//                turnBranch = 3,
-//               riverBranch = 3;
-        double  holeBranch = 20,
-                flopBranch = 56.72,
-                turnBranch = 6.55,
-               riverBranch = 6.63;
+        double  holeBranch = 6,
+                flopBranch = 24,
+                turnBranch = 3,
+               riverBranch = 3;
+//        double  holeBranch = 20,
+//                flopBranch = 56.72,
+//                turnBranch = 6.55,
+//               riverBranch = 6.63;
 
         if (args.length > 1)
         {
@@ -72,11 +72,12 @@ public class BucketizerTest
                         nTurnBuckets,
                         nRiverBuckets);
 
+//        abs.sequence();
         for (Iterator<char[][]> it = abs.sequence().iterator(1000);
              it.hasNext();)
         {
             char[][] jbs = it.next();
-            System.out.println(Arrays.deepToString(jbs));
+            System.out.println(toString(jbs));
         }
 
 
@@ -106,5 +107,16 @@ public class BucketizerTest
 //        }
 
 //        System.out.println(map.root());
+    }
+
+    private static String toString(char[][] jbs)
+    {
+        int asInt[][] = new int[2][4];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 4; j++) {
+                asInt[i][j] = jbs[i][j];
+            }
+        }
+        return Arrays.deepToString( asInt );
     }
 }

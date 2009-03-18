@@ -11,6 +11,8 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.DeckCards;
+import ao.util.misc.Progress;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.Iterator;
@@ -22,7 +24,10 @@ import java.util.Iterator;
 public class BucketSequencer
 {
     //--------------------------------------------------------------------
-    private static final String FILE_NAME  = "bucket_seq";
+    private static final Logger LOG =
+            Logger.getLogger(BucketSequencer.class);
+
+    private static final String FILE_NAME  = "bucket_seq.byte";
     private static final long   CACHE_SIZE = 1000 * 1000 * 1000;
 
     
@@ -32,7 +37,9 @@ public class BucketSequencer
     {
         File store = new File(dir, FILE_NAME);
         if (! store.canRead() ||
-              store.length() != (CACHE_SIZE * 4)) return null;
+              store.length() != (CACHE_SIZE * 8)) return null;
+
+        LOG.debug("retrieved");
         return new BucketSequencer(store, decoder);
     }
 
@@ -56,12 +63,16 @@ public class BucketSequencer
     private static void computeSequences(
             File store, BucketTree tree) throws IOException
     {
+        LOG.debug("computeSequences");
+        Progress p = new Progress(CACHE_SIZE);
+
         DataOutputStream out = new DataOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(store)));
         for (long i = 0; i < CACHE_SIZE; i++) {
             byte[][] pair = randomBucketSequencePair(tree);
             writeBuckets(out, pair);
+            p.checkpoint();
         }
         out.close();
     }
@@ -71,7 +82,7 @@ public class BucketSequencer
     {
         ChanceCards cards     = new DeckCards();
         Hole        holeA     = cards.hole(Avatar.local("dealer"));
-        Hole        holeB     = cards.hole(Avatar.local("dealer"));
+        Hole        holeB     = cards.hole(Avatar.local("dealee"));
         Community   community = cards.community(Round.RIVER);
 
         return new byte[][]{
@@ -179,8 +190,9 @@ public class BucketSequencer
                         in = open();
                     }
 
+                    char decoded[][] = decode(readBuckets(in));
                     hasNext();
-                    return decode(readBuckets(in));
+                    return decoded;
                 } catch (IOException e) {
                     throw new Error( e );
                 }

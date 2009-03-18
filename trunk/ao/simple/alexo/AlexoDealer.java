@@ -24,8 +24,8 @@ import ao.simple.alexo.state.AlexoState;
  *      bets have been placed. If a bet has been placed, then the player
  *      may fold (thus forfeiting the game along with any money they have
  *      put into the pot), call (adding chips to the pot equal to the
- *      last player’s bet), or raise (calling the current bet and making
- *      an additional bet). In Rhode Island Hold’em, the players are
+ *      last player's bet), or raise (calling the current bet and making
+ *      an additional bet). In Rhode Island Hold'em, the players are
  *      limited to three bets each per betting round. (A raise equals
  *      two bets.) In the ?rst betting round, the bets are equal
  *      to 10 chips.

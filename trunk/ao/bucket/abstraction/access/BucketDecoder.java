@@ -3,6 +3,7 @@ package ao.bucket.abstraction.access;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.util.data.primitive.CharList;
 import ao.util.data.primitive.IntList;
+import ao.util.io.Dir;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
@@ -20,6 +21,7 @@ public class BucketDecoder
     private static final Logger LOG =
             Logger.getLogger(BucketDecoder.class);
 
+    private static final String SUB_DIR      =  "map";
     private static final String F_NUM_FLOPS  =  "nFlops.int";
     private static final String F_NUM_TURNS  =  "nTurns.int";
     private static final String F_NUM_RIVERS = "nRivers.int";
@@ -132,14 +134,16 @@ public class BucketDecoder
 
     private static char[][][][] retrieve(File fromDir)
     {
+        File fromSubDir = Dir.get(fromDir, SUB_DIR);
+
         int[] flopCounts = PersistentInts.retrieve(
-                new File(fromDir, F_NUM_FLOPS));
+                new File(fromSubDir, F_NUM_FLOPS));
         if (flopCounts == null) return null;
 
         int[] turnCounts = PersistentInts.retrieve(
-                new File(fromDir, F_NUM_TURNS));
+                new File(fromSubDir, F_NUM_TURNS));
         int[] riverCounts = PersistentInts.retrieve(
-                new File(fromDir, F_NUM_RIVERS));
+                new File(fromSubDir, F_NUM_RIVERS));
 
         char         flop  = 0;
         char         turn  = 0;
@@ -190,12 +194,13 @@ public class BucketDecoder
             }
         }
 
+        File toSubDir = Dir.get(toDir, SUB_DIR);
         PersistentInts.persist(flops.toArray(),
-                               new File(toDir, F_NUM_FLOPS));
+                               new File(toSubDir, F_NUM_FLOPS));
         PersistentInts.persist(turns.toArray(),
-                               new File(toDir, F_NUM_TURNS));
+                               new File(toSubDir, F_NUM_TURNS));
         PersistentInts.persist(rivers.toArray(),
-                               new File(toDir, F_NUM_RIVERS));
+                               new File(toSubDir, F_NUM_RIVERS));
     }
 
 
