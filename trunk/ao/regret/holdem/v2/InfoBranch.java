@@ -63,6 +63,13 @@ public class InfoBranch
         return new InfoSet(roundBucket, bettingSequence);
     }
 
+    public boolean validate(char roundBucket,
+                            char bettingSequence)
+    {
+        return regretFold.length > roundBucket &&
+               regretFold[roundBucket].length > bettingSequence;
+    }
+
 
     //--------------------------------------------------------------------
     public class InfoSet
@@ -76,7 +83,7 @@ public class InfoBranch
         private InfoSet(char buckets, char sequences)
         {
             bucket = buckets;
-            state = sequences;
+            state  = sequences;
         }
 
 
