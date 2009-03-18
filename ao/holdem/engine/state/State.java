@@ -559,6 +559,12 @@ public class State
 //        assert seats.length == 2 : "only works with heads up";
 //        return firstToActVoluntarely == nextToAct;
 //    }
+
+    /**
+     * @return true if dealer is next to act,
+     *          if the game is over, then returns as if
+     *          
+     */
     public boolean dealerIsNext()
     {
         return nextToAct == (seats.length - 1);

@@ -2,6 +2,8 @@ package ao.regret.holdem.v2;
 
 import ao.holdem.model.act.AbstractAction;
 
+import java.util.Arrays;
+
 /**
  * Date: Feb 19, 2009
  * Time: 4:58:01 PM
@@ -38,6 +40,19 @@ public class InfoBranch
 //        probabilityCall = new char[ nBuckets ][ nBettingSequences ];
 
         visits = new int[ nBuckets ][ nBettingSequences ];
+    }
+
+
+    //--------------------------------------------------------------------
+    public void displaySequence(char seq)
+    {
+        for (char bucket = 0;
+                  bucket < regretFold.length;
+                  bucket++) {
+            InfoSet info = get(bucket, seq);
+            System.out.println(Arrays.toString(
+                    info.probabilities(true)));
+        }
     }
 
 

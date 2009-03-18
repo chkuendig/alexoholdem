@@ -22,6 +22,14 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
+    private static char nextPreflopId = 0;
+
+    @SuppressWarnings({"MismatchedReadAndWriteOfArray"})
+    private static char nextId[][]    =
+            new char[ PathToFlop.VALUES.length ]
+                    [ Round.VALUES.length - 1  ];
+
+
     private static final Node ROOT;
 
     static
@@ -29,7 +37,7 @@ public class StateTree
         LOG.debug("computing heads-up");
         ROOT = new Node(State.autoBlindInstance(Arrays.asList(
             Avatar.local("dealee"), Avatar.local("dealer"))));
-        LOG.debug("done");
+//        LOG.debug(((int) nextPreflopId));
     }
     
 
@@ -41,13 +49,6 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
-    private static char nextPreflopId = 0;
-
-    @SuppressWarnings({"MismatchedReadAndWriteOfArray"})
-    private static char nextId[][]    =
-            new char[ PathToFlop.VALUES.length ]
-                    [ Round.VALUES.length - 1  ];
-
     private static char nextId(PathToFlop path, Round round)
     {
         if (path == null) return nextPreflopId++;

@@ -17,14 +17,14 @@ public class InfoTree
 
 
     //--------------------------------------------------------------------
-    public InfoTree(char nHoleBuckets,
+    public InfoTree(byte nHoleBuckets,
                     char nFlopBuckets,
                     char nTurnBuckets,
                     char nRiverBuckets)
     {
         char nBuckets[] = {nFlopBuckets, nTurnBuckets, nRiverBuckets};
 
-        preflop = new InfoBranch(nHoleBuckets,
+        preflop = new InfoBranch((char) nHoleBuckets,
                                  StateTree.preflopCount());
 
         postflop = new InfoBranch[ PathToFlop.VALUES.length ]
@@ -55,5 +55,12 @@ public class InfoTree
 
         return postflop[  path.ordinal()     ]
                        [ round.ordinal() - 1 ];
+    }
+
+
+    //--------------------------------------------------------------------
+    public void displayFirstAct()
+    {
+        preflop.displaySequence((char) 1);
     }
 }
