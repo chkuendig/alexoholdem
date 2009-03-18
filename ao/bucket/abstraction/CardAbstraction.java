@@ -20,7 +20,7 @@ import java.io.File;
 public class CardAbstraction
 {
     //--------------------------------------------------------------------
-    private final String ID;
+//    private final String ID;
     private final File   DIR;
 
     private final Bucketizer BUCKETIZER;
@@ -43,9 +43,8 @@ public class CardAbstraction
             char       nTurnBuckets,
             char       nRiverBuckets)
     {
-        ID  = id(bucketizer,
-                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
-        DIR = Dir.get("lookup/bucket/" + ID);
+        DIR = Dir.get("lookup/bucket/" + id(bucketizer,
+                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets));
 
         BUCKETIZER = bucketizer;
         N_HOLES    = nHoleBuckets;
@@ -109,6 +108,13 @@ public class CardAbstraction
 
     public BucketSequencer sequence()
     {
-        return null;
+        if (sequence != null) return sequence;
+
+        sequence = BucketSequencer.retrieve(DIR, decoder());
+        if (sequence == null) {
+            sequence = BucketSequencer.retrieveOrCompute(
+                    DIR, tree(), decoder());
+        }
+        return sequence;
     }
 }
