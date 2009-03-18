@@ -73,6 +73,8 @@ public class RegretMinimizer
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0 /*&& info.isInformed()*/) continue;
 
+            double val;
+
             StateTree.Node nextNode = next.getValue();
             State          state    = nextNode.state();
             HeadsUpStatus  status   = state.headsUpStatus();
@@ -84,18 +86,19 @@ public class RegretMinimizer
                                 absDealeeBuckets[3])
                         : (status == HeadsUpStatus.DEALER_WINS)
                         ? 1 : 0;
-                double toWin = dealerNonLossProb *
-                                (dealerProp ? 1 : -1);
-                return state.pot().smallBlinds() * toWin;
-            }
-
-            double val = approximate(
+                double toWin = ( dealerProp
+                               ? dealerNonLossProb
+                               : 1.0 - dealerNonLossProb);
+                val =  state.pot().smallBlinds() * ((toWin - 0.5) * 2);
+            } else {
+                val = approximate(
                             nextNode,
                             absDealerBuckets,
                             absDealeeBuckets,
                             pDealer * (dealerProp ? actProb : 1.0),
                             pDealee * (dealerProp ? 1.0 : actProb));
-                         //* (dealerProp ? 1 : -1);
+                            //* (dealerProp ? 1 : -1);
+            }
 
             expectation[ next.getKey().ordinal() ] = val;
             expectedValue += actProb * val;

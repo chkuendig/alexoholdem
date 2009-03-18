@@ -51,7 +51,8 @@ public class StateTree
     //--------------------------------------------------------------------
     private static char nextId(PathToFlop path, Round round)
     {
-        if (path == null) return nextPreflopId++;
+        if (path  == null) return nextPreflopId++;
+        if (round == null) return Character.MAX_VALUE;
         return nextId[  path.ordinal()     ]
                      [ round.ordinal() - 1 ]++;
     }
@@ -92,8 +93,15 @@ public class StateTree
             if (pathToFlop != null) {
                 PATH = pathToFlop;
             } else {
-                path.add( prevAct );
+                if (prevAct != null) {
+                    path.add( prevAct );
+                }
                 PATH = PathToFlop.matching( path );
+
+//                if (state.round() != Round.PREFLOP &&
+//                        PATH == null) {
+//                    System.out.println("WTF??");
+//                }
             }
 
             ID    = nextId(PATH, state.round());
@@ -107,12 +115,14 @@ public class StateTree
                         (PATH == null)
                         ? new ArrayList<AbstractAction>(path) : null;
 
-                KIDS.put(act.getKey(),
-                         new Node(
-                                 act.getKey(),
-                                 act.getValue(),
-                                 nextPath,
-                                 PATH));
+//                if (! act.getValue().atEndOfHand()) {
+                    KIDS.put(act.getKey(),
+                             new Node(
+                                     act.getKey(),
+                                     act.getValue(),
+                                     nextPath,
+                                     PATH));
+//                }
             }
         }
 
