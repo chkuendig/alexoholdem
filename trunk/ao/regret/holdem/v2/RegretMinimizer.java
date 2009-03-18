@@ -50,21 +50,6 @@ public class RegretMinimizer
             double         pDealer,
             double         pDealee)
     {
-        State         state  = node.state();
-        HeadsUpStatus status = state.headsUpStatus();
-        if (status != HeadsUpStatus.IN_PROGRESS) {
-            double dealerToWin =
-                    (status == HeadsUpStatus.SHOWDOWN)
-                    ? ODDS.nonLossProb(
-                            absDealerBuckets[3],
-                            absDealeeBuckets[3])
-                    : (status == HeadsUpStatus.DEALER_WINS)
-                    ? 1 : -1;
-            double toWin = dealerToWin * (state.dealerIsNext() ? -1 : 1);
-            return state.pot().smallBlinds() * toWin;
-        }
-
-
         boolean  canRaise      = node.state().canRaise();
         boolean  dealerProp    = node.state().dealerIsNext();
         double   expectedValue = 0;
@@ -88,13 +73,29 @@ public class RegretMinimizer
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0 /*&& info.isInformed()*/) continue;
 
+            StateTree.Node nextNode = next.getValue();
+            State          state    = nextNode.state();
+            HeadsUpStatus  status   = state.headsUpStatus();
+            if (status != HeadsUpStatus.IN_PROGRESS) {
+                double dealerNonLossProb =
+                        (status == HeadsUpStatus.SHOWDOWN)
+                        ? ODDS.nonLossProb(
+                                absDealerBuckets[3],
+                                absDealeeBuckets[3])
+                        : (status == HeadsUpStatus.DEALER_WINS)
+                        ? 1 : 0;
+                double toWin = dealerNonLossProb *
+                                (dealerProp ? 1 : -1);
+                return state.pot().smallBlinds() * toWin;
+            }
+
             double val = approximate(
-                            next.getValue(),
+                            nextNode,
                             absDealerBuckets,
                             absDealeeBuckets,
                             pDealer * (dealerProp ? actProb : 1.0),
-                            pDealee * (dealerProp ? 1.0 : actProb))
-                         * (dealerProp ? 1 : -1);
+                            pDealee * (dealerProp ? 1.0 : actProb));
+                         //* (dealerProp ? 1 : -1);
 
             expectation[ next.getKey().ordinal() ] = val;
             expectedValue += actProb * val;

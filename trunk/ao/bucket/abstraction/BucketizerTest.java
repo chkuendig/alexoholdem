@@ -1,6 +1,9 @@
 package ao.bucket.abstraction;
 
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
+import ao.regret.holdem.v2.InfoTree;
+import ao.regret.holdem.v2.RegretMinimizer;
+import ao.util.misc.Progress;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,14 +23,14 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        double  holeBranch = 6,
-                flopBranch = 24,
-                turnBranch = 3,
-               riverBranch = 3;
-//        double  holeBranch = 20,
-//                flopBranch = 56.72,
-//                turnBranch = 6.55,
-//               riverBranch = 6.63;
+//        double  holeBranch = 6,
+//                flopBranch = 24,
+//                turnBranch = 3,
+//               riverBranch = 3;
+        double  holeBranch = 20,
+                flopBranch = 56.72,
+                turnBranch = 6.55,
+               riverBranch = 6.63;
 
         if (args.length > 1)
         {
@@ -72,41 +75,26 @@ public class BucketizerTest
                         nTurnBuckets,
                         nRiverBuckets);
 
-//        abs.sequence();
-        for (Iterator<char[][]> it = abs.sequence().iterator(1000);
+        InfoTree        info   = new InfoTree(
+                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+        RegretMinimizer cfrMin = new RegretMinimizer(
+                                         info, abs.odds());
+
+        long iterations = 1000 * 1000 * 1000;
+        Progress prog = new Progress(iterations);
+        for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
             char[][] jbs = it.next();
-            System.out.println(toString(jbs));
+
+            cfrMin.minimize(
+                    jbs[0], jbs[1]);
+
+            prog.checkpoint();
+//            System.out.println(toString(jbs));
         }
 
-
-//        BucketTreeBuilder manager =
-//                new BucketTreeBuilder( new BucketizerImpl() );
-//
-//        BucketTree buckets = manager.bucketize(
-//                                nHoleBuckets,
-//                                nFlopBuckets,
-//                                nTurnBuckets,
-//                                nRiverBuckets);
-//        BucketDecoder map = buckets.map();
-
-
-//        FileWriter out = new FileWriter("test/str.txt");
-//        for (char i = 0; i < nRiverBuckets; i++)
-//        {
-//            out.append(map.odds().strength(i).toString())
-//               .append("\n");
-//        }
-//        out.close();
-
-//        for (char i = 0; i < Math.min(nRiverBuckets, 32); i++)
-//        {
-//            System.out.println(
-//                    map.odds().strength(i).length());
-//        }
-
-//        System.out.println(map.root());
+        info.displayFirstAct();
     }
 
     private static String toString(char[][] jbs)
