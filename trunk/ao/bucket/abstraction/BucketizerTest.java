@@ -75,18 +75,27 @@ public class BucketizerTest
                         nTurnBuckets,
                         nRiverBuckets);
 
+//        BucketOdds odds = abs.odds();
+//        for (Iterator<char[][]> it = abs.sequence().iterator(1000);
+//             it.hasNext();)
+//        {
+//            char[][] jbs = it.next();
+//            System.out.println(
+//                    odds.nonLossProb(jbs[0][3], jbs[1][3]));
+//        }
+
+
         InfoTree        info   = new InfoTree(
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.odds());
 
-        long iterations = 10 * 1000;
+        long iterations = 100 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
             char[][] jbs = it.next();
-
             cfrMin.minimize(
                     jbs[0], jbs[1]);
 

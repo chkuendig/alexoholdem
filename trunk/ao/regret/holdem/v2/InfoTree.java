@@ -61,6 +61,6 @@ public class InfoTree
     //--------------------------------------------------------------------
     public void displayFirstAct()
     {
-        preflop.displaySequence((char) 1);
+        preflop.displaySequence((char) 0);
     }
 }

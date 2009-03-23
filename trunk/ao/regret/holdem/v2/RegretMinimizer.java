@@ -71,7 +71,11 @@ public class RegretMinimizer
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
-            if (actProb == 0 /*&& info.isInformed()*/) continue;
+            if (actProb == 0 /*&& info.isInformed()*/)
+            {
+                expectation[ next.getKey().ordinal() ] = 0;
+                continue;
+            }
 
             double val;
 
@@ -89,15 +93,14 @@ public class RegretMinimizer
                 double toWin = ( dealerProp
                                ? dealerNonLossProb
                                : 1.0 - dealerNonLossProb);
-                val =  state.pot().smallBlinds() * ((toWin - 0.5) * 2);
+                val = state.pot().smallBlinds() * ((toWin - 0.5) * 2); // make commit based ?
             } else {
-                val = approximate(
+                val = -approximate(
                             nextNode,
                             absDealerBuckets,
                             absDealeeBuckets,
                             pDealer * (dealerProp ? actProb : 1.0),
                             pDealee * (dealerProp ? 1.0 : actProb));
-                            //* (dealerProp ? 1 : -1);
             }
 
             expectation[ next.getKey().ordinal() ] = val;
@@ -108,13 +111,13 @@ public class RegretMinimizer
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
         {
-            // todo: confirm that * pDealee makes sense
             double cRegret =
-                    (expectation[ act.ordinal() ] - expectedValue) * pDealee;
+                    (expectation[ act.ordinal() ] - expectedValue)
+                            * (dealerProp ? pDealee : pDealer);
             counterfactualRegret[ act.ordinal() ] = cRegret;
         }
         info.add(counterfactualRegret, canRaise);
 
-        return (dealerProp ? 1 : -1) * expectedValue;
+        return expectedValue;
     }
 }

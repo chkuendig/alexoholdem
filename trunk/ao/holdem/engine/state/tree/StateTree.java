@@ -22,10 +22,11 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
-    private static char nextPreflopId = 0;
+    private static char nextPreflopId          = 0;
+    private static char nextPostflopTerminalId = 0;
 
     @SuppressWarnings({"MismatchedReadAndWriteOfArray"})
-    private static char nextId[][]    =
+    private static char nextId[][]             =
             new char[ PathToFlop.VALUES.length ]
                     [ Round.VALUES.length - 1  ];
 
@@ -52,7 +53,7 @@ public class StateTree
     private static char nextId(PathToFlop path, Round round)
     {
         if (path  == null) return nextPreflopId++;
-        if (round == null) return Character.MAX_VALUE;
+        if (round == null) return nextPostflopTerminalId++;
         return nextId[  path.ordinal()     ]
                      [ round.ordinal() - 1 ]++;
     }
