@@ -119,16 +119,11 @@ public class InfoBranch
         public void add(double[] counterfactualRegret,
                         boolean  canRaise)
         {
-            for (AbstractAction act : AbstractAction.VALUES)
-            {
-                double cRegret = counterfactualRegret[ act.ordinal() ];
-                if (act == AbstractAction.QUIT_FOLD) {
-                     regretFold[bucket][state] += cRegret;
-                } else if (act == AbstractAction.CHECK_CALL) {
-                     regretCall[bucket][state] += cRegret;
-                } else if (canRaise) {
-                    regretRaise[bucket][state] += cRegret;
-                }
+            regretFold[bucket][state] += counterfactualRegret[0];
+            regretCall[bucket][state] += counterfactualRegret[1];
+
+            if (canRaise) {
+                regretRaise[bucket][state] += counterfactualRegret[2];
             }
 
             visits[bucket][state]++;
