@@ -182,9 +182,9 @@ public class InfoBranch
                 }
             } else {
                 double foldProb = Math.max(0,
-                        regretFold[bucket][state] / cumRegret);
+                        regretFold [bucket][state] / cumRegret);
                 double callProb = Math.max(0,
-                        regretCall[bucket][state] / cumRegret);
+                        regretCall [bucket][state] / cumRegret);
                 double raiseProb = Math.max(0,
                         regretRaise[bucket][state] / cumRegret);
 
