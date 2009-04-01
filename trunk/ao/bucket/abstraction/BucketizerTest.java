@@ -1,8 +1,8 @@
 package ao.bucket.abstraction;
 
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.regret.holdem.v2.InfoTree;
-import ao.regret.holdem.v2.RegretMinimizer;
+import ao.regret.holdem.InfoTree;
+import ao.regret.holdem.RegretMinimizer;
 import ao.util.misc.Progress;
 
 import java.io.IOException;
@@ -67,8 +67,8 @@ public class BucketizerTest
                 Arrays.asList((int) nHoleBuckets, (int) nFlopBuckets,
                               (int) nTurnBuckets, (int) nRiverBuckets));
 
-        CardAbstraction abs =
-                new CardAbstraction(
+        HoldemAbstraction abs =
+                new HoldemAbstraction(
                         new BucketizerImpl(),
                         nHoleBuckets,
                         nFlopBuckets,
@@ -85,25 +85,29 @@ public class BucketizerTest
 //        }
 
 
-        InfoTree        info   = new InfoTree(
-                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+        InfoTree        info   = abs.info();
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.odds());
 
-        long iterations = 100 * 1000;
+        long i          = 0;
+        long iterations = 100 * 1000 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
+            if (i++ % (100 * 1000) == 0) {
+                System.out.println(" " + (i - 1));
+                info.displayFirstAct();
+                abs.flushInfo();
+                System.out.println("flushed");
+            }
+
             char[][] jbs = it.next();
             cfrMin.minimize(
                     jbs[0], jbs[1]);
 
             prog.checkpoint();
-//            System.out.println(toString(jbs));
         }
-
-        info.displayFirstAct();
     }
 
     private static String toString(char[][] jbs)

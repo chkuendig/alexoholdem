@@ -1,4 +1,4 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem;
 
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
@@ -6,7 +6,7 @@ import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.engine.state.tree.StateTree.Node;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.v2.InfoBranch.InfoSet;
+import ao.regret.holdem.InfoBranch.InfoSet;
 
 import java.util.Map;
 
@@ -72,7 +72,7 @@ public class RegretMinimizer
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
-            if (actProb == 0 /*&& info.isInformed()*/) {
+            if (actProb == 0) {
                 expectation[ next.getKey().ordinal() ] =
                         new Expectation();
                 continue;
@@ -121,59 +121,5 @@ public class RegretMinimizer
         info.add(counterfactualRegret, canRaise);
 
         return expectedValue;
-    }
-
-
-    //--------------------------------------------------------------------
-    private static class Expectation
-    {
-        private final double dealer;
-        private final double dealee;
-
-        public Expectation()
-        {
-            this(0, 0);
-        }
-        private Expectation(double dealerExpect, double dealeeExpect)
-        {
-            dealer = dealerExpect;
-            dealee = dealeeExpect;
-        }
-
-        public Expectation(int    stakes,
-                           double dealerNonLossProb)
-        {
-            dealer = stakes * (dealerNonLossProb - 0.5) * 2.0;
-            dealee = -dealer;
-        }
-        
-        public Expectation(int     dealerCommit,
-                           int     dealeeCommit,
-                           boolean dealerWins)
-        {
-            if (dealerWins) {
-                dealer = dealeeCommit;
-                dealee = -dealer;
-            } else {
-                dealee = dealerCommit;
-                dealer = -dealee;
-            }
-        }
-
-        public double value(boolean forDealer)
-        {
-            return forDealer ? dealer : dealee;
-        }
-
-
-        public Expectation temper(double by)
-        {
-            return new Expectation(dealer * by, dealee * by);
-        }
-        public Expectation plus(Expectation addend)
-        {
-            return new Expectation(dealer + addend.dealer,
-                                   dealee + addend.dealee);
-        }
     }
 }
