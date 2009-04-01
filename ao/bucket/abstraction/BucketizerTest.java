@@ -1,13 +1,15 @@
 package ao.bucket.abstraction;
 
+import ao.ai.equilibrium.limit_cfr.CfrBot;
+import ao.ai.simple.DuaneBot;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.regret.holdem.InfoTree;
-import ao.regret.holdem.RegretMinimizer;
-import ao.util.misc.Progress;
+import ao.holdem.engine.Player;
+import ao.holdem.engine.dealer.DealerTest;
+import ao.holdem.model.Avatar;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * Date: Oct 14, 2008
@@ -67,7 +69,7 @@ public class BucketizerTest
                 Arrays.asList((int) nHoleBuckets, (int) nFlopBuckets,
                               (int) nTurnBuckets, (int) nRiverBuckets));
 
-        HoldemAbstraction abs =
+        final HoldemAbstraction abs =
                 new HoldemAbstraction(
                         new BucketizerImpl(),
                         nHoleBuckets,
@@ -85,29 +87,34 @@ public class BucketizerTest
 //        }
 
 
-        InfoTree        info   = abs.info();
-        RegretMinimizer cfrMin = new RegretMinimizer(
-                                         info, abs.odds());
+//        InfoTree        info   = abs.info();
+//        RegretMinimizer cfrMin = new RegretMinimizer(
+//                                         info, abs.odds());
+//
+//        long i          = 0;
+//        long iterations = 100 * 1000 * 1000;
+//        Progress prog = new Progress(iterations);
+//        for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
+//             it.hasNext();)
+//        {
+//            if (i++ % (100 * 1000) == 0) {
+//                System.out.println(" " + (i - 1));
+//                info.displayFirstAct();
+//                abs.flushInfo();
+//                System.out.println("flushed");
+//            }
+//
+//            char[][] jbs = it.next();
+//            cfrMin.minimize(
+//                    jbs[0], jbs[1]);
+//
+//            prog.checkpoint();
+//        }
 
-        long i          = 0;
-        long iterations = 100 * 1000 * 1000;
-        Progress prog = new Progress(iterations);
-        for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
-             it.hasNext();)
-        {
-            if (i++ % (100 * 1000) == 0) {
-                System.out.println(" " + (i - 1));
-                info.displayFirstAct();
-                abs.flushInfo();
-                System.out.println("flushed");
-            }
-
-            char[][] jbs = it.next();
-            cfrMin.minimize(
-                    jbs[0], jbs[1]);
-
-            prog.checkpoint();
-        }
+        new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
+            put(Avatar.local("duane"), new DuaneBot());
+            put(Avatar.local("cfr-1296"), new CfrBot(abs));
+        }});
     }
 
     private static String toString(char[][] jbs)

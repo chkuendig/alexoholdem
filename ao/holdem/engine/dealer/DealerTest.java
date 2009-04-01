@@ -29,7 +29,7 @@ public class DealerTest
 
 
     //--------------------------------------------------------------------
-    public void realDealerTest()
+    public void roundRobin()
     {
         Map<Avatar, Player> brains =
                 new HashMap<Avatar, Player>() {{
@@ -40,6 +40,14 @@ public class DealerTest
                     put(Avatar.local("raise2"), new AlwaysRaiseBot());
 //                    put(Avatar.local("math0"),  new MathBot());
                 }};
+        roundRobin(brains);
+    }
+
+
+    //--------------------------------------------------------------------
+    public void roundRobin(Map<Avatar, Player> brains)
+    {
+
         long roundRobins = Combo.factorial( brains.size() );
         int  decksTrials = (int) Math.ceil(Math.sqrt(
                             (double) TARGET_ROUNDS / roundRobins));
