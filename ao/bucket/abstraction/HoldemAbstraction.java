@@ -6,6 +6,7 @@ import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.regret.holdem.InfoTree;
 import ao.util.io.Dir;
 
 import java.io.File;
@@ -17,11 +18,11 @@ import java.io.File;
  *
  * Note: NOT threadsafe
  */
-public class CardAbstraction
+public class HoldemAbstraction
 {
     //--------------------------------------------------------------------
 //    private final String ID;
-    private final File   DIR;
+    private final File       DIR;
 
     private final Bucketizer BUCKETIZER;
     private final byte       N_HOLES;
@@ -33,10 +34,11 @@ public class CardAbstraction
     private BucketDecoder   decoder;
     private BucketOdds      odds;
     private BucketSequencer sequence;
+    private InfoTree        info;
 
 
     //--------------------------------------------------------------------
-    public CardAbstraction(
+    public HoldemAbstraction(
             Bucketizer bucketizer,
             byte       nHoleBuckets,
             char       nFlopBuckets,
@@ -109,12 +111,23 @@ public class CardAbstraction
     public BucketSequencer sequence()
     {
         if (sequence != null) return sequence;
-
         sequence = BucketSequencer.retrieve(DIR, decoder());
         if (sequence == null) {
             sequence = BucketSequencer.retrieveOrCompute(
                     DIR, tree(), decoder());
         }
         return sequence;
+    }
+
+    public InfoTree info()
+    {
+        if (info != null) return info;
+        info = InfoTree.retrieveOrCreate(
+                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
+        return info;
+    }
+    public void flushInfo()
+    {
+        info().flush( DIR );
     }
 }
