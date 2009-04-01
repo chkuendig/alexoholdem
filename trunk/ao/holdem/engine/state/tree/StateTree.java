@@ -48,6 +48,23 @@ public class StateTree
         return ROOT;
     }
 
+    public static Node fromState(State state)
+    {
+        return fromState(headsUpRoot(), state);
+    }
+    private static Node fromState(Node startingAt, State state)
+    {
+        if (startingAt.state().equals( state )) {
+            return startingAt;
+        }
+
+        for (Node child : startingAt.acts().values()) {
+            Node fromState = fromState(child, state);
+            if (fromState != null) return fromState;
+        }
+        return null;
+    }
+
 
     //--------------------------------------------------------------------
     private static char nextId(PathToFlop path, Round round)

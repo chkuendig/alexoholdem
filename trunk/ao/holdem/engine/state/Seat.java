@@ -131,8 +131,33 @@ public class Seat
 
 
     //--------------------------------------------------------------------
-    public String toString()
+    @Override public String toString()
     {
         return player.toString();
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Seat seat = (Seat) o;
+
+        return isAllIn == seat.isAllIn &&
+                isFolded == seat.isFolded &&
+                !(commitment != null
+                    ? !commitment.equals(seat.commitment)
+                    : seat.commitment != null) &&
+                lastVolanteryActRound == seat.lastVolanteryActRound;
+
+    }
+
+    @Override public int hashCode() {
+        int result = player != null ? player.hashCode() : 0;
+        result = 31 * result + (commitment != null ? commitment.hashCode() : 0);
+        result = 31 * result + (isAllIn ? 1 : 0);
+        result = 31 * result + (isFolded ? 1 : 0);
+        result = 31 * result + (lastVolanteryActRound != null
+                                ? lastVolanteryActRound.hashCode() : 0);
+        return result;
     }
 }

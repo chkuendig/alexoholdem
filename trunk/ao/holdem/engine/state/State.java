@@ -618,11 +618,8 @@ public class State
                "\n\t, stakes             = " + stakes               +
                "\n\t, pot                = " + pot()                +
                '}';
+        //return nextToAct() + ", " + round;
     }
-//    @Override public String toString()
-//    {
-//        //return nextToAct() + ", " + round;
-//    }
 
     @Override public boolean equals(Object o)
     {
