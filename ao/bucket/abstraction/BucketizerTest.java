@@ -1,15 +1,9 @@
 package ao.bucket.abstraction;
 
-import ao.ai.equilibrium.limit_cfr.CfrBot;
-import ao.ai.simple.DuaneBot;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
-import ao.holdem.engine.Player;
-import ao.holdem.engine.dealer.DealerTest;
-import ao.holdem.model.Avatar;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Date: Oct 14, 2008
@@ -25,14 +19,14 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        double  holeBranch = 6,
-                flopBranch = 24,
-                turnBranch = 3,
-               riverBranch = 3;
-//        double  holeBranch = 20,
-//                flopBranch = 56.72,
-//                turnBranch = 6.55,
-//               riverBranch = 6.63;
+//        double  holeBranch = 6,
+//                flopBranch = 24,
+//                turnBranch = 3,
+//               riverBranch = 3;
+        double  holeBranch = 20,
+                flopBranch = 56.72,
+                turnBranch = 6.55,
+               riverBranch = 6.63;
 
         if (args.length > 1)
         {
@@ -111,10 +105,15 @@ public class BucketizerTest
 //            prog.checkpoint();
 //        }
 
-        new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
-            put(Avatar.local("duane"), new DuaneBot());
-            put(Avatar.local("cfr-1296"), new CfrBot(abs));
-        }});
+//        new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
+////            put(Avatar.local("duane"), new DuaneBot());
+////            put(Avatar.local("raise"), new AlwaysRaiseBot());
+////            put(Avatar.local("random"), new RandomBot());
+////            put(Avatar.local("math"), new MathBot());
+//            put(Avatar.local("human"), new ConsoleBot());
+//            put(Avatar.local("cfr-1296"), new CfrBot(abs));
+//
+//        }});
     }
 
     private static String toString(char[][] jbs)

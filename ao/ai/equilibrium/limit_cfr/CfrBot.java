@@ -19,6 +19,7 @@ import ao.holdem.model.card.sequence.CardSequence;
 import ao.regret.holdem.InfoBranch;
 import ao.regret.holdem.InfoTree;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -92,8 +93,16 @@ public class CfrBot extends AbstractPlayer
 
         InfoBranch.InfoSet infoSet = branch.get(
                 roundBucket, gamePath.roundPathId());
-
         AbstractAction act = infoSet.nextProbableAction(state.canRaise());
+
+        System.out.println(
+                cards);
+        System.out.println(
+                Arrays.toString(
+                        infoSet.probabilities(state.canRaise())));
+        System.out.println(
+                act);
+
         return state.reify( act.toFallbackAction() );
     }
 }
