@@ -5,7 +5,7 @@ import ao.util.data.Pack;
 import static ao.util.data.Pack.flatten;
 import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
-import ao.util.persist.PersistentDoubles;
+import ao.util.persist.PersistentFloats;
 import ao.util.persist.PersistentInts;
 
 import java.io.File;
@@ -19,9 +19,9 @@ public class InfoBranch
 {
     //--------------------------------------------------------------------
     private static final String COUNT_FILE = "count.char";
-    private static final String  FOLD_FILE =  "fold.double";
-    private static final String  CALL_FILE =  "call.double";
-    private static final String RAISE_FILE = "raise.double";
+    private static final String  FOLD_FILE =  "fold.float";
+    private static final String  CALL_FILE =  "call.float";
+    private static final String RAISE_FILE = "raise.float";
     private static final String VISIT_FILE = "visit.int";
 
 
@@ -35,11 +35,11 @@ public class InfoBranch
             return new InfoBranch(nBuckets, nBettingSequences);
         }
         return new InfoBranch(
-                Pack.square(PersistentDoubles.retrieve(
+                Pack.square(PersistentFloats.retrieve(
                         new File(dir,  FOLD_FILE)), nBettingSequences),
-                Pack.square(PersistentDoubles.retrieve(
+                Pack.square(PersistentFloats.retrieve(
                         new File(dir,  CALL_FILE)), nBettingSequences),
-                Pack.square(PersistentDoubles.retrieve(
+                Pack.square(PersistentFloats.retrieve(
                         new File(dir, RAISE_FILE)), nBettingSequences),
                 Pack.square(PersistentInts.retrieve(
                         new File(dir, VISIT_FILE)), nBettingSequences)
@@ -53,11 +53,11 @@ public class InfoBranch
                 (char) branch.regretFold[0].length},
                 new File(dir, COUNT_FILE));
 
-        PersistentDoubles.persist(
+        PersistentFloats.persist(
                 flatten(branch.regretFold) , new File(dir, FOLD_FILE));
-        PersistentDoubles.persist(
+        PersistentFloats.persist(
                 flatten(branch.regretCall) , new File(dir, CALL_FILE));
-        PersistentDoubles.persist(
+        PersistentFloats.persist(
                 flatten(branch.regretRaise), new File(dir, RAISE_FILE));
         PersistentInts.persist(
                 flatten(branch.visits), new File(dir, VISIT_FILE));
@@ -65,10 +65,10 @@ public class InfoBranch
 
 
     //--------------------------------------------------------------------
-    private final double[][] regretFold;
-    private final double[][] regretCall;
-    private final double[][] regretRaise;
-    private final    int[][] visits;
+    private final float[][] regretFold;
+    private final float[][] regretCall;
+    private final float[][] regretRaise;
+    private final   int[][] visits;
 
 
 
@@ -77,16 +77,16 @@ public class InfoBranch
             char nBuckets,
             char nBettingSequences)
     {
-        regretFold  = new double[ nBuckets ][ nBettingSequences ];
-        regretCall  = new double[ nBuckets ][ nBettingSequences ];
-        regretRaise = new double[ nBuckets ][ nBettingSequences ];
-        visits      = new    int[ nBuckets ][ nBettingSequences ];
+        regretFold  = new float[ nBuckets ][ nBettingSequences ];
+        regretCall  = new float[ nBuckets ][ nBettingSequences ];
+        regretRaise = new float[ nBuckets ][ nBettingSequences ];
+        visits      = new   int[ nBuckets ][ nBettingSequences ];
     }
 
     private InfoBranch(
-            double copyRegretFold [][],
-            double copyRegretCall [][],
-            double copyRegretRaise[][],
+            float copyRegretFold [][],
+            float copyRegretCall [][],
+            float copyRegretRaise[][],
             int    copyVisits     [][])
     {
         regretFold  = copyRegretFold;
