@@ -8,6 +8,7 @@ import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.regret.holdem.InfoTree;
 import ao.util.io.Dir;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -20,6 +21,11 @@ import java.io.File;
  */
 public class HoldemAbstraction
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(HoldemAbstraction.class);
+
+
     //--------------------------------------------------------------------
 //    private final String ID;
     private final File       DIR;
@@ -128,6 +134,9 @@ public class HoldemAbstraction
     }
     public void flushInfo()
     {
+        long before = System.currentTimeMillis();
         info().flush( DIR );
+        LOG.debug("flushed info, took " +
+                    (System.currentTimeMillis() - before));
     }
 }

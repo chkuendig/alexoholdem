@@ -44,18 +44,17 @@ public class RegretMinimizer
 
 
     //--------------------------------------------------------------------
-    private Expectation approximate(
+    private double approximate(
             StateTree.Node node,
             char           absDealerBuckets[],
             char           absDealeeBuckets[],
             double         pDealer,
             double         pDealee)
     {
-        boolean       canRaise      = node.state().canRaise();
-        boolean       dealerProp    = node.state().dealerIsNext();
-        Expectation   expectedValue = new Expectation();
-        Expectation[] expectation   =
-                new Expectation[ AbstractAction.VALUES.length ];
+        boolean canRaise      = node.state().canRaise();
+        boolean dealerProp    = node.state().dealerIsNext();
+        double  expectedValue = 0;
+        double  expectation[] = {0, 0, 0};
         //Arrays.fill(expectation, Double.NaN);
 
         InfoBranch infoBranch = INFO.info(
@@ -73,28 +72,28 @@ public class RegretMinimizer
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0) {
-                expectation[ next.getKey().ordinal() ] =
-                        new Expectation();
+                expectation[ next.getKey().ordinal() ] = 0;
                 continue;
             }
 
-            Expectation    val;
+            double         val; // from POV of dealer
             StateTree.Node nextNode = next.getValue();
             State          state    = nextNode.state();
             HeadsUpStatus  status   = state.headsUpStatus();
             if (status != HeadsUpStatus.IN_PROGRESS) {
                 if (status == HeadsUpStatus.SHOWDOWN) {
-                    val = new Expectation(state.stakes().smallBets(),
-                                          ODDS.nonLossProb(
-                                                 absDealerBuckets[3],
-                                                 absDealeeBuckets[3]));
+                    val = state.stakes().smallBets() * (
+                            ODDS.nonLossProb(
+                                    absDealerBuckets[3],
+                                    absDealeeBuckets[3]) - 0.5) * 2.0;
                 } else {
-                    int dealeeCommit = state.seats(0).commitment().smallBlinds();
-                    int dealerCommit = state.seats(1).commitment().smallBlinds();
-
-                    val = new Expectation(dealerCommit, dealeeCommit,
-                                          (status == HeadsUpStatus.DEALER_WINS));
+                    if (status == HeadsUpStatus.DEALER_WINS) {
+                        val = state.seats(0).commitment().smallBlinds();
+                    } else {
+                        val = -state.seats(1).commitment().smallBlinds();
+                    }
                 }
+//                if (! dealerProp) val = -val;
             } else {
                 val = approximate(
                             nextNode,
@@ -105,17 +104,20 @@ public class RegretMinimizer
             }
 
             expectation[ next.getKey().ordinal() ] = val;
-            expectedValue = expectedValue.plus(val.temper(actProb));
+            expectedValue += val * actProb;
         }
 
         double[] counterfactualRegret =
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
         {
-            double cRegret =
-                    (expectation[ act.ordinal() ].value(dealerProp) -
-                                    expectedValue.value(dealerProp))
-                            * (dealerProp ? pDealee : pDealer);
+            double cRegret = (expectation[ act.ordinal() ] - expectedValue);
+
+            if (dealerProp) {
+                cRegret *= pDealee;
+            } else {
+                cRegret *= -pDealer;
+            }
             counterfactualRegret[ act.ordinal() ] = cRegret;
         }
         info.add(counterfactualRegret, canRaise);
