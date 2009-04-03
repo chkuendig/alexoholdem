@@ -64,10 +64,16 @@ public class ConsoleBot extends AbstractPlayer
             }
         }
 
-        int act = Console.integer(message.toString());
-        if (! (1 <= act && act <= 3)) return null;
-        if (act == 3 && !state.canRaise()) return null;
-
-        return AbstractAction.VALUES[ act - 1 ];
+        AbstractAction act = null;
+        String         in  = Console.text(message.toString());
+        if (in.equals("1") || in.equalsIgnoreCase("f")) {
+            act = AbstractAction.QUIT_FOLD;
+        } else if (in.equals("2") || in.equalsIgnoreCase("c")) {
+            act = AbstractAction.CHECK_CALL;
+        } else if (in.equals("3") ||
+                   in.equalsIgnoreCase("b") || in.equalsIgnoreCase("r")) {
+            act = AbstractAction.BET_RAISE;
+        }
+        return act;
     }
 }
