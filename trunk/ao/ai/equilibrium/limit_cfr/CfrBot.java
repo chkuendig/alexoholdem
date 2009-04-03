@@ -19,7 +19,6 @@ import ao.holdem.model.card.sequence.CardSequence;
 import ao.regret.holdem.InfoBranch;
 import ao.regret.holdem.InfoTree;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -44,7 +43,7 @@ public class CfrBot extends AbstractPlayer
     //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas)
     {
-        System.out.println(prevCards);
+//        System.out.println(prevCards);
     }
 
 
@@ -99,9 +98,9 @@ public class CfrBot extends AbstractPlayer
                 roundBucket, gamePath.roundPathId());
         AbstractAction act = infoSet.nextProbableAction(state.canRaise());
 
-        System.out.println(
-                Arrays.toString(
-                        infoSet.probabilities(state.canRaise())));
+//        System.out.println(
+//                Arrays.toString(
+//                        infoSet.probabilities(state.canRaise())));
         System.out.println( act );
 
         prevCards = cards;
