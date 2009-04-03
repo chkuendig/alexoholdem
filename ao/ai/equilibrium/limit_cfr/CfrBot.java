@@ -31,6 +31,7 @@ public class CfrBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
     private final HoldemAbstraction ABS;
+    private       CardSequence      prevCards;
 
 
     //--------------------------------------------------------------------
@@ -41,7 +42,10 @@ public class CfrBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, Chips> deltas) {}
+    public void handEnded(Map<Avatar, Chips> deltas)
+    {
+        System.out.println(prevCards);
+    }
 
 
     //--------------------------------------------------------------------
@@ -96,13 +100,11 @@ public class CfrBot extends AbstractPlayer
         AbstractAction act = infoSet.nextProbableAction(state.canRaise());
 
         System.out.println(
-                cards);
-        System.out.println(
                 Arrays.toString(
                         infoSet.probabilities(state.canRaise())));
-        System.out.println(
-                act);
+        System.out.println( act );
 
+        prevCards = cards;
         return state.reify( act.toFallbackAction() );
     }
 }

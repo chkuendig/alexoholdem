@@ -1,5 +1,6 @@
 package ao.holdem.engine.dealer;
 
+import ao.ai.human.ConsoleBot;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.ai.simple.DuaneBot;
 import ao.holdem.engine.Player;
@@ -10,10 +11,7 @@ import ao.holdem.model.replay.StackedReplay;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -21,11 +19,28 @@ import java.util.Map;
 public class DealerTest
 {
     //--------------------------------------------------------------------
-    private static final long TARGET_ROUNDS = 10000;
+    private final long TARGET_ROUNDS;
 
 
     //--------------------------------------------------------------------
-//    @Inject Provider<UctBot>    smarties;
+    public DealerTest()
+    {
+        this(10000);
+    }
+    public DealerTest(long rounds)
+    {
+        TARGET_ROUNDS = rounds;
+    }
+
+
+    //--------------------------------------------------------------------
+    public void vsHuman(final Player brain)
+    {
+        new Dealer(true, new LinkedHashMap<Avatar, Player>(){{
+            put(Avatar.local("bot"  ), brain);
+            put(Avatar.local("human"), new ConsoleBot());
+        }});
+    }
 
 
     //--------------------------------------------------------------------
