@@ -54,10 +54,10 @@ public class BucketizerTest
 
         HoldemAbstraction abs = abstractHolem(new BucketizerImpl(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
-        precompute(abs);
+//        precompute(abs);
 
-//        computeFfr(abs);
-        tournament(abs);
+        computeFfr(abs);
+//        tournament(abs);
 //        probabilities(abs);
     }
 
@@ -80,6 +80,7 @@ public class BucketizerTest
 
     private static void precompute(final HoldemAbstraction abs)
     {
+        System.out.println("Loading......");
         new DealerTest(1).roundRobin(new HashMap<Avatar, Player>(){{
             put(Avatar.local("probe"), new AlwaysCallBot());
             put(Avatar.local("cfr"), new CfrBot(abs));
@@ -88,6 +89,7 @@ public class BucketizerTest
         for (int i = (int)(Math.random() * 10000); i >= 0; i--) {
             Rand.nextBoolean();
         }
+        System.out.println("Done Loading!");
     }
 
 

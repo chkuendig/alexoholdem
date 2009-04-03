@@ -11,6 +11,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.DeckCards;
+import ao.util.math.rand.Rand;
 import ao.util.misc.Progress;
 import org.apache.log4j.Logger;
 
@@ -158,15 +159,21 @@ public class BucketSequencer
         return new Iterator<char[][]>() {
             private long            count = 0;
             private DataInputStream in;
-            private DataInputStream open() {
+            private DataInputStream open(long at) {
+                DataInputStream in;
                 try {
-                    return new DataInputStream(
+                    in = new DataInputStream(
                             new BufferedInputStream(
                                     new FileInputStream(STORE),
                                     1024 * 1024));
-                } catch (FileNotFoundException e) {
+                    long toSkip = ((at % CACHE_SIZE) * 8);
+                    if (in.skip( toSkip ) != toSkip) {
+                        throw new Error("skip failed");
+                    }
+                } catch (IOException e) {
                     throw new Error( e );
                 }
+                return in;
             }
 
             public boolean hasNext() {
@@ -186,8 +193,12 @@ public class BucketSequencer
             public char[][] next() {
                 try {
                     if ((count++ % CACHE_SIZE) == 0) {
-                        if (in != null) in.close();
-                        in = open();
+                        if (in != null) {
+                            in.close();
+                            in = open(0);
+                        } else {
+                            in = open(Math.abs(Rand.nextLong()) % CACHE_SIZE);
+                        }
                     }
 
                     char decoded[][] = decode(readBuckets(in));
