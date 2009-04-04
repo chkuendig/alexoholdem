@@ -1,8 +1,8 @@
 package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot;
-import ao.ai.human.ConsoleBot;
 import ao.ai.simple.AlwaysCallBot;
+import ao.ai.simple.AlwaysRaiseBot;
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
@@ -54,7 +54,6 @@ public class BucketizerTest
 
         HoldemAbstraction abs = abstractHolem(new BucketizerImpl(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
-//        precompute(abs);
 
         computeFfr(abs);
 //        tournament(abs);
@@ -97,12 +96,13 @@ public class BucketizerTest
     public static void tournament(
             final HoldemAbstraction abs) throws IOException
     {
+        precompute(abs);
         new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
 //            put(Avatar.local("duane"), new DuaneBot());
-//            put(Avatar.local("raise"), new AlwaysRaiseBot());
+            put(Avatar.local("raise"), new AlwaysRaiseBot());
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
-            put(Avatar.local("human"), new ConsoleBot());
+//            put(Avatar.local("human"), new ConsoleBot());
             put(Avatar.local("cfr"), new CfrBot(abs));
         }});
     }

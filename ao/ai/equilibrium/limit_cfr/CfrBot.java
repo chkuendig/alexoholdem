@@ -101,7 +101,7 @@ public class CfrBot extends AbstractPlayer
 //        System.out.println(
 //                Arrays.toString(
 //                        infoSet.probabilities(state.canRaise())));
-        System.out.println( act );
+//        System.out.println( act );
 
         prevCards = cards;
         return state.reify( act.toFallbackAction() );
