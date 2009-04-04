@@ -72,12 +72,10 @@ public class RegretMinimizer
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0) {
-                actProb = 0.001;
+//                actProb = 0.01;
+                expectation[ next.getKey().ordinal() ] = 0;
+                continue;
             }
-//            if (actProb == 0) {
-//                expectation[ next.getKey().ordinal() ] = 0;
-//                continue;
-//            }
 
             double         val; // from POV of dealer
             StateTree.Node nextNode = next.getValue();

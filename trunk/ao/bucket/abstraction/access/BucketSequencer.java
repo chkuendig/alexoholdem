@@ -157,6 +157,7 @@ public class BucketSequencer
     //--------------------------------------------------------------------
     public Iterator<char[][]> iterator(final long sequences) {
         return new Iterator<char[][]>() {
+            private long            location;
             private long            count = 0;
             private DataInputStream in;
             private DataInputStream open(long at) {
@@ -170,6 +171,7 @@ public class BucketSequencer
                     if (in.skip( toSkip ) != toSkip) {
                         throw new Error("skip failed");
                     }
+                    location = at;
                 } catch (IOException e) {
                     throw new Error( e );
                 }
@@ -192,7 +194,7 @@ public class BucketSequencer
 
             public char[][] next() {
                 try {
-                    if ((count++ % CACHE_SIZE) == 0) {
+                    if ((location++ % CACHE_SIZE) == 0) {
                         if (in != null) {
                             in.close();
                             in = open(0);
@@ -200,6 +202,7 @@ public class BucketSequencer
                             in = open(Math.abs(Rand.nextLong()) % CACHE_SIZE);
                         }
                     }
+                    count++;
 
                     char decoded[][] = decode(readBuckets(in));
                     hasNext();
