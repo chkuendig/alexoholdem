@@ -125,6 +125,24 @@ public class InfoBranch
 
 
     //--------------------------------------------------------------------
+    public static AbstractAction nextProbableAction(
+                double probabilities[]) {
+        double toFold = probabilities[0];
+        double toCall = probabilities[1];
+
+        double rand = Rand.nextDouble();
+        if (toFold >= rand) {
+            return AbstractAction.QUIT_FOLD;
+        } else {
+            rand -= toFold;
+            return (toCall >= rand)
+                   ? AbstractAction.CHECK_CALL
+                   : AbstractAction.BET_RAISE;
+        }
+    }
+
+
+    //--------------------------------------------------------------------
     public class InfoSet
     {
         //----------------------------------------------------------------
@@ -143,24 +161,11 @@ public class InfoBranch
         //----------------------------------------------------------------
         public AbstractAction nextProbableAction(boolean canRaise)
         {
-            double prob[] = probabilities(canRaise);
-
-            double toFold = prob[0];
-            double toCall = prob[1];
-
-            double rand = Rand.nextDouble();
-            if (toFold >= rand) {
-                return AbstractAction.QUIT_FOLD;
-            } else {
-                rand -= toFold;
-                return (toCall >= rand)
-                       ? AbstractAction.CHECK_CALL
-                       : AbstractAction.BET_RAISE;
-            }
+            return InfoBranch.nextProbableAction(probabilities(canRaise));
         }
 
 
-        //--------------------------------------------------------------------
+        //----------------------------------------------------------------
         public void add(double[] counterfactualRegret,
                         boolean  canRaise)
         {
@@ -174,8 +179,26 @@ public class InfoBranch
             visits[bucket][state]++;
         }
 
+        public void add(AbstractAction act,
+                        double         counterfactualRegret)
+        {
+            switch (act) {
+                case QUIT_FOLD:
+                    regretFold[bucket][state] += counterfactualRegret;
+                    break;
 
-        //--------------------------------------------------------------------
+                case CHECK_CALL:
+                    regretCall[bucket][state] += counterfactualRegret;
+                    break;
+
+                case BET_RAISE:
+                    regretRaise[bucket][state] += counterfactualRegret;
+                    break;
+            }
+        }
+
+
+        //----------------------------------------------------------------
         private double positiveCounterfactualRegret()
         {
             return Math.max(regretFold [bucket][state], 0) +
@@ -187,29 +210,63 @@ public class InfoBranch
         //----------------------------------------------------------------
         public double[] probabilities(boolean canRaise)
         {
-            double prob[]    = new double[ canRaise ? 3 : 2 ];
+            return probabilities(canRaise, false, false);
+        }
+        public double[] probabilities(
+                boolean canRaise, boolean canCheck, boolean fudge)
+        {
+            //double prob[]    = new double[ canRaise ? 3 : 2 ];
             double cumRegret = positiveCounterfactualRegret();
 
             if (cumRegret <= 0) {
-                for (int i = 0; i < prob.length; i++) {
-                    prob[ i ] = 1.0 / prob.length;
+                if (canRaise) {
+                    if (canCheck) {
+                        return new double[]{0, 0.5, 0.5};
+                    } else {
+                        return new double[]{1.0/3, 1.0/3, 1.0/3};
+                    }
+                } else {
+                    if (canCheck) {
+                        return new double[]{0, 1.0};
+                    } else {
+                        return new double[]{0.5, 0.5};
+                    }
                 }
             } else {
-                double foldProb = Math.max(0,
-                        regretFold [bucket][state] / cumRegret);
-                double callProb = Math.max(0,
-                        regretCall [bucket][state] / cumRegret);
-                double raiseProb = Math.max(0,
-                        regretRaise[bucket][state] / cumRegret);
+
+                double foldProb, callProb, raiseProb;
+
+                if (fudge) {
+                    foldProb = Math.max(0.001,
+                            regretFold [bucket][state] / cumRegret);
+                    callProb = Math.max(0.001,
+                            regretCall [bucket][state] / cumRegret);
+                    raiseProb = Math.max(0.001,
+                            regretRaise[bucket][state] / cumRegret);
+
+                    if (!canRaise) {
+                        raiseProb = 0;
+                    }
+                } else {
+                    foldProb = Math.max(0,
+                            regretFold [bucket][state] / cumRegret);
+                    callProb = Math.max(0,
+                            regretCall [bucket][state] / cumRegret);
+                    raiseProb = Math.max(0,
+                            regretRaise[bucket][state] / cumRegret);
+                }
+                if (canCheck) {
+                    foldProb = 0;
+                }
 
                 double sum = foldProb + callProb + raiseProb;
-                prob[0] = foldProb / sum;
-                prob[1] = callProb / sum;
                 if (canRaise) {
-                    prob[2] = raiseProb / sum;
+                    return new double[]{foldProb / sum,
+                            callProb / sum, raiseProb / sum};
+                } else {
+                    return new double[]{foldProb / sum, callProb / sum};
                 }
             }
-            return prob;
         }
 
 

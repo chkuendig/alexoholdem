@@ -382,7 +382,7 @@ public class State
     {
         return easyAction.fallback(canCheck(), canRaise());
     }
-    private boolean canCheck()
+    public boolean canCheck()
     {
         return stakes.equals( nextToAct().commitment() );
     }
