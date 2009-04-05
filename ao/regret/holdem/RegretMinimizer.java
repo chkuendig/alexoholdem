@@ -1,8 +1,8 @@
 package ao.regret.holdem;
 
 import ao.bucket.abstraction.access.odds.BucketOdds;
+import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
-import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.engine.state.tree.StateTree.Node;
 import ao.holdem.model.act.AbstractAction;
@@ -18,8 +18,8 @@ import java.util.Map;
 public class RegretMinimizer
 {
     //--------------------------------------------------------------------
-    private final BucketOdds ODDS;
-    private final InfoTree   INFO;
+    private final IBucketOdds ODDS;
+    private final InfoTree    INFO;
 
 
     //--------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class RegretMinimizer
             InfoTree info, BucketOdds odds)
     {
         INFO = info;
-        ODDS = odds;
+        ODDS = odds.cache();
     }
 
 
@@ -51,8 +51,8 @@ public class RegretMinimizer
             double         pDealer,
             double         pDealee)
     {
-        boolean canRaise      = node.state().canRaise();
-        boolean dealerProp    = node.state().dealerIsNext();
+        boolean canRaise      = node.canRaise();
+        boolean dealerProp    = node.dealerIsNext();
         double  expectedValue = 0;
         double  expectation[] = {0, 0, 0};
         //Arrays.fill(expectation, Double.NaN);
@@ -66,7 +66,9 @@ public class RegretMinimizer
                 : absDealeeBuckets)[ node.round().ordinal() ];
         InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
 
-        double probabilities[] = info.probabilities(canRaise);
+//        double probabilities[] = info.probabilities(canRaise);
+        double probabilities[] = info.probabilities(
+                canRaise, node.canCheck(), true);
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
@@ -79,22 +81,20 @@ public class RegretMinimizer
 
             double         val; // from POV of dealer
             StateTree.Node nextNode = next.getValue();
-            State          state    = nextNode.state();
-            HeadsUpStatus  status   = state.headsUpStatus();
+            HeadsUpStatus  status   = nextNode.status();
             if (status != HeadsUpStatus.IN_PROGRESS) {
                 if (status == HeadsUpStatus.SHOWDOWN) {
-                    val = state.stakes().smallBets() * (
+                    val = nextNode.stakes() * (
                             ODDS.nonLossProb(
                                     absDealerBuckets[3],
                                     absDealeeBuckets[3]) - 0.5) * 2.0;
                 } else {
                     if (status == HeadsUpStatus.DEALER_WINS) {
-                        val = state.seats(0).commitment().smallBlinds();
+                        val =  nextNode.dealeeCommit();
                     } else {
-                        val = -state.seats(1).commitment().smallBlinds();
+                        val = -nextNode.dealerCommit();
                     }
                 }
-//                if (! dealerProp) val = -val;
             } else {
                 val = approximate(
                             nextNode,

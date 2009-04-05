@@ -1,5 +1,6 @@
 package ao.holdem.engine.state.tree;
 
+import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
@@ -92,9 +93,18 @@ public class StateTree
     public static class Node
     {
         //----------------------------------------------------------------
-        private final char                          ID;
-        private final PathToFlop                    PATH;
-        private final State                         STATE;
+        private final char          ID;
+        private final boolean       CAN_RAISE;
+        private final boolean       CAN_CHECK;
+        private final boolean       DEALER_NEXT;
+        private final PathToFlop    PATH;
+        private final Round         ROUND;
+        private final int           STAKES;
+        private final int           DEALER_COMMIT;
+        private final int           DEALEE_COMMIT;
+        private final HeadsUpStatus STATUS;
+        private final State         STATE;
+
         private final EnumMap<AbstractAction, Node> KIDS;
 
 
@@ -115,16 +125,20 @@ public class StateTree
                     path.add( prevAct );
                 }
                 PATH = PathToFlop.matching( path );
-
-//                if (state.round() != Round.PREFLOP &&
-//                        PATH == null) {
-//                    System.out.println("WTF??");
-//                }
             }
 
-            ID    = nextId(PATH, state.round());
-            STATE = state;
-            KIDS  = new EnumMap<AbstractAction, Node>(
+            ID            = nextId(PATH, state.round());
+            CAN_RAISE     = state.canRaise();
+            CAN_CHECK     = state.canCheck();
+            STATUS        = state.headsUpStatus();
+            ROUND         = state.round();
+            STAKES        = state.stakes().smallBlinds();
+            DEALER_COMMIT = state.seats(1).commitment().smallBlinds();
+            DEALEE_COMMIT = state.seats(0).commitment().smallBlinds();
+            DEALER_NEXT   = state.dealerIsNext();
+            STATE         = state;
+
+            KIDS   = new EnumMap<AbstractAction, Node>(
                           AbstractAction.class);
             for (Map.Entry<AbstractAction, State> act :
                     state.viableActions().entrySet())
@@ -146,16 +160,45 @@ public class StateTree
 
 
         //----------------------------------------------------------------
+        public HeadsUpStatus status()
+        {
+            return STATUS;
+        }
         public State state()
         {
             return STATE;
         }
 
-        public Round round()
+        public boolean canRaise()
         {
-            return STATE.round();
+            return CAN_RAISE;
+        }
+        public boolean canCheck()
+        {
+            return CAN_CHECK;
+        }
+        public boolean dealerIsNext()
+        {
+            return DEALER_NEXT;
         }
 
+        public int stakes()
+        {
+            return STAKES;
+        }
+        public int dealerCommit()
+        {
+            return DEALER_COMMIT;
+        }
+        public int dealeeCommit()
+        {
+            return DEALEE_COMMIT;
+        }
+
+        public Round round()
+        {
+            return ROUND;
+        }
         public PathToFlop pathToFlop()
         {
             return PATH;

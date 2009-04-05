@@ -18,7 +18,7 @@ import java.util.Iterator;
  * Date: Jan 29, 2009
  * Time: 12:17:17 PM
  */
-public class BucketOdds
+public class BucketOdds implements IBucketOdds
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -286,5 +286,12 @@ public class BucketOdds
     public SlimRiverHist strength(char index)
     {
         return HIST[ index ];
+    }
+
+
+    //--------------------------------------------------------------------
+    public IBucketOdds cache()
+    {
+        return new BucketOddsCache(this, (char) HIST.length);
     }
 }
