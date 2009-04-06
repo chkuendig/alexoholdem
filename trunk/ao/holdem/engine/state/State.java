@@ -611,12 +611,14 @@ public class State
     @Override public String toString()
     {
         return "State{" +
-               "\n\t  round              = " + round                +
+               "      round              = " + round                +
 //               "\n\t, seats              = " + Arrays.asList(seats) +
 //               "\n\t, nextToAct          = " + seats[nextToAct]     +
-               "\n\t, remainingRoundBets = " + remainingRoundBets   +
+//               "\n\t, remainingRoundBets = " + remainingRoundBets   +
+
                "\n\t, stakes             = " + stakes               +
                "\n\t, pot                = " + pot()                +
+               "\n\t, to call            = " + toCall()             +
                '}';
         //return nextToAct() + ", " + round;
     }

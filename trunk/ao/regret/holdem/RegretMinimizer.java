@@ -1,6 +1,5 @@
 package ao.regret.holdem;
 
-import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
@@ -24,10 +23,10 @@ public class RegretMinimizer
 
     //--------------------------------------------------------------------
     public RegretMinimizer(
-            InfoTree info, BucketOdds odds)
+            InfoTree info, IBucketOdds odds)
     {
         INFO = info;
-        ODDS = odds.cache();
+        ODDS = odds;
     }
 
 
@@ -35,11 +34,17 @@ public class RegretMinimizer
     public void minimize(char absDealerBuckets[],
                          char absDealeeBuckets[])
     {
+        minimize(absDealerBuckets, absDealeeBuckets, false);
+    }
+    public void minimize(char    absDealerBuckets[],
+                         char    absDealeeBuckets[],
+                         boolean fudge)
+    {
         approximate(
                 StateTree.headsUpRoot(),
                 absDealerBuckets,
                 absDealeeBuckets,
-                1.0, 1.0);
+                1.0, 1.0, fudge);
     }
 
 
@@ -49,7 +54,8 @@ public class RegretMinimizer
             char           absDealerBuckets[],
             char           absDealeeBuckets[],
             double         pDealer,
-            double         pDealee)
+            double         pDealee,
+            boolean        fudge)
     {
         boolean canRaise      = node.canRaise();
         boolean dealerProp    = node.dealerIsNext();
@@ -68,13 +74,12 @@ public class RegretMinimizer
 
 //        double probabilities[] = info.probabilities(canRaise);
         double probabilities[] = info.probabilities(
-                canRaise, node.canCheck(), true);
+                canRaise, node.canCheck(), fudge);
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0) {
-//                actProb = 0.01;
                 expectation[ next.getKey().ordinal() ] = 0;
                 continue;
             }
@@ -101,7 +106,8 @@ public class RegretMinimizer
                             absDealerBuckets,
                             absDealeeBuckets,
                             pDealer * (dealerProp ? actProb : 1.0),
-                            pDealee * (dealerProp ? 1.0 : actProb));
+                            pDealee * (dealerProp ? 1.0 : actProb),
+                            fudge);
             }
 
             expectation[ next.getKey().ordinal() ] = val;

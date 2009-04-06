@@ -25,7 +25,7 @@ public class DealerTest
     //--------------------------------------------------------------------
     public DealerTest()
     {
-        this(10000);
+        this(100 * 1000);
     }
     public DealerTest(long rounds)
     {
@@ -85,9 +85,12 @@ public class DealerTest
         for (Map.Entry<Avatar, Chips> delta
                 : cumDeltas.entrySet())
         {
-            System.out.println(delta.getKey() + "\t" +
-                               brains.get(delta.getKey()) + "\t" +
-                               delta.getValue());
+            System.out.println(
+                    delta.getKey() + "\t" +
+                    brains.get(delta.getKey()) + "\t" +
+                    delta.getValue() + "\t" +
+                    (((double) delta.getValue().smallBets())
+                            / TARGET_ROUNDS));
         }
     }
 
@@ -123,7 +126,7 @@ public class DealerTest
                                         .plus(delta.getValue()));
                     }
                 }
-                System.out.println(replay.deltas());
+//                System.out.println(replay.deltas());
 
                 deck.reset();
             }

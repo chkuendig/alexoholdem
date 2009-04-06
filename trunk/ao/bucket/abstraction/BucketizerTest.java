@@ -32,14 +32,18 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        byte nHoleBuckets  = 6;
-        char nFlopBuckets  = 144;
-        char nTurnBuckets  = 432;
-        char nRiverBuckets = 1296;
+//        byte nHoleBuckets  = 6;
+//        char nFlopBuckets  = 144;
+//        char nTurnBuckets  = 432;
+//        char nRiverBuckets = 1296;
 //        byte nHoleBuckets  = 13;
 //        char nFlopBuckets  = 567;
 //        char nTurnBuckets  = 1854;
 //        char nRiverBuckets = 5786;
+        byte nHoleBuckets  = 10;
+        char nFlopBuckets  = 360;
+        char nTurnBuckets  = 1440;
+        char nRiverBuckets = 5760;
 
         if (args.length > 1)
         {
@@ -108,19 +112,21 @@ public class BucketizerTest
     }
 
 
+    //--------------------------------------------------------------------
     public static void computeFfr(
             HoldemAbstraction abs) throws IOException
     {
         InfoTree info   = abs.info();
         RegretMinimizer cfrMin = new RegretMinimizer(
-                                         info, abs.odds());
-        long i          = 0;
-        long iterations = 1000 * 1000 * 1000;
+                                         info, abs.oddsCache());
+//        double fudge      = 0.01;
+        long   i          = 0;
+        long   iterations = 195 * 1000 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
-            if (i++ % (1000 * 1000) == 0) {
+            if (i++ % (500 * 1000) == 0) {
                 System.out.println(" " + (i - 1));
                 info.displayFirstAct();
                 abs.flushInfo();
@@ -129,11 +135,16 @@ public class BucketizerTest
             char[][] jbs = it.next();
             cfrMin.minimize(
                     jbs[0], jbs[1]);
+//            cfrMin.minimize(
+//                    jbs[0], jbs[1],
+//                    Rand.nextBoolean(fudge));
 
             prog.checkpoint();
         }
     }
 
+    
+    //--------------------------------------------------------------------
     public static void probabilities(
             HoldemAbstraction abs) throws IOException
     {
