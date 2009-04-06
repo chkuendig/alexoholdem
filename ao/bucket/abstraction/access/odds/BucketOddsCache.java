@@ -1,5 +1,7 @@
 package ao.bucket.abstraction.access.odds;
 
+import org.apache.log4j.Logger;
+
 /**
  * User: alex
  * Date: 5-Apr-2009
@@ -8,12 +10,18 @@ package ao.bucket.abstraction.access.odds;
 public class BucketOddsCache implements IBucketOdds
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketOddsCache.class);
+
+
+    //--------------------------------------------------------------------
     private float CACHE[][];
 
 
     //--------------------------------------------------------------------
     public BucketOddsCache(IBucketOdds odds, char nBuckets)
     {
+        LOG.debug("building cache for " + (int) nBuckets + "...");
         CACHE = new float[ nBuckets ][];
         for (char i = 0; i < nBuckets; i++) {
             CACHE[i] = new float[ i + 1 ];
@@ -21,6 +29,7 @@ public class BucketOddsCache implements IBucketOdds
                 CACHE[i][j] = (float) odds.nonLossProb(i, j);
             }
         }
+        LOG.debug("done.");
     }
 
 

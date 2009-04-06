@@ -3,6 +3,7 @@ package ao.bucket.abstraction;
 import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.access.odds.BucketOdds;
+import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
@@ -113,6 +114,18 @@ public class HoldemAbstraction
         }
         return odds;
     }
+    public IBucketOdds oddsCache()
+    {
+        BucketOdds bucketOdds;
+        if (odds != null) {
+            bucketOdds = odds;
+        } else {
+            bucketOdds = BucketOdds.retrieve(DIR, decoder());
+        }
+        if (bucketOdds == null) return null;
+        return bucketOdds.cache();
+    }
+
 
     public BucketSequencer sequence()
     {

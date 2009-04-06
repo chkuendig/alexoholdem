@@ -237,9 +237,9 @@ public class InfoBranch
                 double foldProb, callProb, raiseProb;
 
                 if (fudge) {
-                    foldProb = Math.max(0.001,
+                    foldProb  = Math.max(0.001,
                             regretFold [bucket][state] / cumRegret);
-                    callProb = Math.max(0.001,
+                    callProb  = Math.max(0.001,
                             regretCall [bucket][state] / cumRegret);
                     raiseProb = Math.max(0.001,
                             regretRaise[bucket][state] / cumRegret);

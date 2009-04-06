@@ -1,8 +1,12 @@
 package ao.bucket.abstraction.bucketize;
 
+import ao.ai.simple.starting_hands.PokerRoom;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.hole.HoleLookup;
+import ao.holdem.model.Round;
+import ao.holdem.model.card.Hole;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -26,6 +30,11 @@ public class BucketizerImpl implements Bucketizer
         assert nBuckets > 0;
 //        if (branch.isBucketized()) return false;
 
+        if (branch.round() == Round.PREFLOP && nBuckets == 10) {
+            return bucketizeTenHoles(branch);
+        }
+
+
         CanonDetail[] details = branch.details();
 
         LOG.debug("bucketizing " + branch.round() + " branch of " +
@@ -45,6 +54,24 @@ public class BucketizerImpl implements Bucketizer
         {
             branch.set(detail.canonIndex(),
                        (byte) alloc.nextBucket(1));
+        }
+        return true;
+    }
+
+
+    //--------------------------------------------------------------------
+    private boolean bucketizeTenHoles(Branch branch) {
+        CanonDetail[] details = branch.details();
+
+        LOG.debug("bucketizing " + branch.round() + " branch of " +
+                  details.length + " into " + 10 + " using PokerRoom");
+
+        for (CanonDetail detail : details)
+        {
+            Hole hole = HoleLookup.lookup((int)
+                    detail.canonIndex()).reify();
+            branch.set(detail.canonIndex(),
+                       (byte)(PokerRoom.groupOf( hole ) - 1));
         }
         return true;
     }
