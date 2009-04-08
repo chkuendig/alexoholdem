@@ -13,6 +13,7 @@ import ao.regret.holdem.InfoTree;
 import ao.regret.holdem.RegretMinimizer;
 import ao.util.math.rand.Rand;
 import ao.util.misc.Progress;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,26 +25,26 @@ import java.util.Iterator;
  */
 public class BucketizerTest
 {
-//    //--------------------------------------------------------------------
-//    private static final Logger LOG =
-//            Logger.getLogger(BucketizerTest.class);
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketizerTest.class);
 
 
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        byte nHoleBuckets  = 6;
-//        char nFlopBuckets  = 144;
-//        char nTurnBuckets  = 432;
-//        char nRiverBuckets = 1296;
+        byte nHoleBuckets  = 6;
+        char nFlopBuckets  = 144;
+        char nTurnBuckets  = 432;
+        char nRiverBuckets = 1296;
 //        byte nHoleBuckets  = 13;
 //        char nFlopBuckets  = 567;
 //        char nTurnBuckets  = 1854;
 //        char nRiverBuckets = 5786;
-        byte nHoleBuckets  = 10;
-        char nFlopBuckets  = 360;
-        char nTurnBuckets  = 1440;
-        char nRiverBuckets = 5760;
+//        byte nHoleBuckets  = 10;
+//        char nFlopBuckets  = 360;
+//        char nTurnBuckets  = 1440;
+//        char nRiverBuckets = 5760;
 
         if (args.length > 1)
         {
@@ -101,6 +102,8 @@ public class BucketizerTest
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
+
+        long before = System.currentTimeMillis();
         new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
 //            put(Avatar.local("duane"), new DuaneBot());
             put(Avatar.local("raise"), new AlwaysRaiseBot());
@@ -109,6 +112,8 @@ public class BucketizerTest
 //            put(Avatar.local("human"), new ConsoleBot());
             put(Avatar.local("cfr"), new CfrBot(abs));
         }});
+        LOG.debug("tournament took " +
+                  ((System.currentTimeMillis() - before) / 1000));
     }
 
 
@@ -119,25 +124,29 @@ public class BucketizerTest
         InfoTree info   = abs.info();
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.oddsCache());
-//        double fudge      = 0.01;
+
+        double fudge      = 0;
         long   i          = 0;
-        long   iterations = 195 * 1000 * 1000;
+        long   iterations = 100 * 1000 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
-            if (i++ % (500 * 1000) == 0) {
+            if (i++ % (250 * 1000) == 0) {
                 System.out.println(" " + (i - 1));
                 info.displayFirstAct();
-                abs.flushInfo();
+
+                if (i != 1) {
+                    abs.flushInfo();
+                }
             }
 
             char[][] jbs = it.next();
-            cfrMin.minimize(
-                    jbs[0], jbs[1]);
 //            cfrMin.minimize(
-//                    jbs[0], jbs[1],
-//                    Rand.nextBoolean(fudge));
+//                    jbs[0], jbs[1]);
+            cfrMin.minimize(
+                    jbs[0], jbs[1],
+                    Rand.nextBoolean(fudge));
 
             prog.checkpoint();
         }

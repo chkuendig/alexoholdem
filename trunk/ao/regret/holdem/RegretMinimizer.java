@@ -72,16 +72,16 @@ public class RegretMinimizer
                 : absDealeeBuckets)[ node.round().ordinal() ];
         InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
 
-//        double probabilities[] = info.probabilities(canRaise);
-        double probabilities[] = info.probabilities(
-                canRaise, node.canCheck(), fudge);
+        double probabilities[] = info.probabilities(canRaise);
+//        double probabilities[] = info.probabilities(
+//                canRaise, node.canCheck(), fudge);
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
             if (actProb == 0) {
                 expectation[ next.getKey().ordinal() ] = 0;
-                continue;
+//                continue;
             }
 
             double         val; // from POV of dealer
@@ -121,7 +121,7 @@ public class RegretMinimizer
             double cRegret = (expectation[ act.ordinal() ] - expectedValue);
 
             if (dealerProp) {
-                cRegret *= pDealee;
+                cRegret *=  pDealee;
             } else {
                 cRegret *= -pDealer;
             }

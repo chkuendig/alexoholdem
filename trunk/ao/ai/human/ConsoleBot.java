@@ -19,9 +19,15 @@ import java.util.Map;
  */
 public class ConsoleBot extends AbstractPlayer
 {
-    public void handEnded(Map<Avatar, Chips> deltas) {}
+    //--------------------------------------------------------------------
+    public void handEnded(Map<Avatar, Chips> deltas)
+    {
+        System.out.println(
+                deltas);
+    }
 
 
+    //--------------------------------------------------------------------
     public Action act(State        state,
                       CardSequence cards,
                       Analysis     analysis)
@@ -39,6 +45,8 @@ public class ConsoleBot extends AbstractPlayer
         return state.reify( act.toFallbackAction() );
     }
 
+    
+    //--------------------------------------------------------------------
     private AbstractAction ask(State state)
     {
         StringBuilder message = new StringBuilder("[1] Fold");

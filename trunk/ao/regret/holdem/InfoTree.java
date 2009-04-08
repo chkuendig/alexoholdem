@@ -4,6 +4,7 @@ import ao.holdem.engine.state.tree.PathToFlop;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Round;
 import ao.util.io.Dir;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -14,6 +15,11 @@ import java.io.File;
  */
 public class InfoTree
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(InfoTree.class);
+
+
     //--------------------------------------------------------------------
     private static final String  PREFLOP_DIR = "info/preflop";
     private static final String POSTFLOP_DIR = "info/posflop";
@@ -27,6 +33,7 @@ public class InfoTree
             char nTurnBuckets,
             char nRiverBuckets)
     {
+        LOG.debug("loading (or creating)");
         InfoBranch preflop = InfoBranch.retrieveOrCreate(
                                 Dir.get(dir, PREFLOP_DIR),
                                 (char) nHoleBuckets,
@@ -51,6 +58,7 @@ public class InfoTree
             }
         }
 
+//        LOG.debug("done");
         return new InfoTree(preflop, postflop);
     }
 

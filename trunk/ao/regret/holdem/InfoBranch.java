@@ -5,7 +5,7 @@ import ao.util.data.Pack;
 import static ao.util.data.Pack.flatten;
 import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
-import ao.util.persist.PersistentFloats;
+import ao.util.persist.PersistentDoubles;
 import ao.util.persist.PersistentInts;
 
 import java.io.File;
@@ -18,10 +18,15 @@ import java.util.Arrays;
 public class InfoBranch
 {
     //--------------------------------------------------------------------
+//    private static final String COUNT_FILE = "count.char";
+//    private static final String  FOLD_FILE =  "fold.float";
+//    private static final String  CALL_FILE =  "call.float";
+//    private static final String RAISE_FILE = "raise.float";
+//    private static final String VISIT_FILE = "visit.int";
     private static final String COUNT_FILE = "count.char";
-    private static final String  FOLD_FILE =  "fold.float";
-    private static final String  CALL_FILE =  "call.float";
-    private static final String RAISE_FILE = "raise.float";
+    private static final String  FOLD_FILE =  "fold.double";
+    private static final String  CALL_FILE =  "call.double";
+    private static final String RAISE_FILE = "raise.double";
     private static final String VISIT_FILE = "visit.int";
 
 
@@ -35,11 +40,19 @@ public class InfoBranch
             return new InfoBranch(nBuckets, nBettingSequences);
         }
         return new InfoBranch(
-                Pack.square(PersistentFloats.retrieve(
+//                Pack.square(PersistentFloats.retrieve(
+//                        new File(dir,  FOLD_FILE)), nBettingSequences),
+//                Pack.square(PersistentFloats.retrieve(
+//                        new File(dir,  CALL_FILE)), nBettingSequences),
+//                Pack.square(PersistentFloats.retrieve(
+//                        new File(dir, RAISE_FILE)), nBettingSequences),
+//                Pack.square(PersistentInts.retrieve(
+//                        new File(dir, VISIT_FILE)), nBettingSequences)
+                Pack.square(PersistentDoubles.retrieve(
                         new File(dir,  FOLD_FILE)), nBettingSequences),
-                Pack.square(PersistentFloats.retrieve(
+                Pack.square(PersistentDoubles.retrieve(
                         new File(dir,  CALL_FILE)), nBettingSequences),
-                Pack.square(PersistentFloats.retrieve(
+                Pack.square(PersistentDoubles.retrieve(
                         new File(dir, RAISE_FILE)), nBettingSequences),
                 Pack.square(PersistentInts.retrieve(
                         new File(dir, VISIT_FILE)), nBettingSequences)
@@ -53,21 +66,32 @@ public class InfoBranch
                 (char) branch.regretFold[0].length},
                 new File(dir, COUNT_FILE));
 
-        PersistentFloats.persist(
+//        PersistentFloats.persist(
+//                flatten(branch.regretFold) , new File(dir, FOLD_FILE));
+//        PersistentFloats.persist(
+//                flatten(branch.regretCall) , new File(dir, CALL_FILE));
+//        PersistentFloats.persist(
+//                flatten(branch.regretRaise), new File(dir, RAISE_FILE));
+        PersistentDoubles.persist(
                 flatten(branch.regretFold) , new File(dir, FOLD_FILE));
-        PersistentFloats.persist(
+        PersistentDoubles.persist(
                 flatten(branch.regretCall) , new File(dir, CALL_FILE));
-        PersistentFloats.persist(
+        PersistentDoubles.persist(
                 flatten(branch.regretRaise), new File(dir, RAISE_FILE));
+
         PersistentInts.persist(
                 flatten(branch.visits), new File(dir, VISIT_FILE));
     }
 
 
     //--------------------------------------------------------------------
-    private final float[][] regretFold;
-    private final float[][] regretCall;
-    private final float[][] regretRaise;
+//    private final float[][] regretFold;
+//    private final float[][] regretCall;
+//    private final float[][] regretRaise;
+    private final double[][] regretFold;
+    private final double[][] regretCall;
+    private final double[][] regretRaise;
+
     private final   int[][] visits;
 
 
@@ -77,16 +101,23 @@ public class InfoBranch
             char nBuckets,
             char nBettingSequences)
     {
-        regretFold  = new float[ nBuckets ][ nBettingSequences ];
-        regretCall  = new float[ nBuckets ][ nBettingSequences ];
-        regretRaise = new float[ nBuckets ][ nBettingSequences ];
+//        regretFold  = new float[ nBuckets ][ nBettingSequences ];
+//        regretCall  = new float[ nBuckets ][ nBettingSequences ];
+//        regretRaise = new float[ nBuckets ][ nBettingSequences ];
+        regretFold  = new double[ nBuckets ][ nBettingSequences ];
+        regretCall  = new double[ nBuckets ][ nBettingSequences ];
+        regretRaise = new double[ nBuckets ][ nBettingSequences ];
+
         visits      = new   int[ nBuckets ][ nBettingSequences ];
     }
 
     private InfoBranch(
-            float copyRegretFold [][],
-            float copyRegretCall [][],
-            float copyRegretRaise[][],
+//            float copyRegretFold [][],
+//            float copyRegretCall [][],
+//            float copyRegretRaise[][],
+            double copyRegretFold [][],
+            double copyRegretCall [][],
+            double copyRegretRaise[][],
             int    copyVisits     [][])
     {
         regretFold  = copyRegretFold;
@@ -159,9 +190,11 @@ public class InfoBranch
 
 
         //----------------------------------------------------------------
-        public AbstractAction nextProbableAction(boolean canRaise)
+        public AbstractAction nextProbableAction(
+                boolean canRaise, boolean canCheck)
         {
-            return InfoBranch.nextProbableAction(probabilities(canRaise));
+            return InfoBranch.nextProbableAction(
+                    probabilities(canRaise, canCheck, false));
         }
 
 
@@ -248,9 +281,9 @@ public class InfoBranch
                         raiseProb = 0;
                     }
                 } else {
-                    foldProb = Math.max(0,
+                    foldProb  = Math.max(0,
                             regretFold [bucket][state] / cumRegret);
-                    callProb = Math.max(0,
+                    callProb  = Math.max(0,
                             regretCall [bucket][state] / cumRegret);
                     raiseProb = Math.max(0,
                             regretRaise[bucket][state] / cumRegret);
@@ -273,6 +306,13 @@ public class InfoBranch
         //----------------------------------------------------------------
         public int visits() {
             return visits[bucket][state];
+        }
+
+        public double[] cumulativeRegret() {
+            return new double[]{
+                    regretFold [bucket][state],
+                    regretCall [bucket][state],
+                    regretRaise[bucket][state]};
         }
     }
 }
