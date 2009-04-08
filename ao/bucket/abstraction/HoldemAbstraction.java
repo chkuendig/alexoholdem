@@ -121,6 +121,9 @@ public class HoldemAbstraction
             bucketOdds = odds;
         } else {
             bucketOdds = BucketOdds.retrieve(DIR, decoder());
+            if (bucketOdds == null) {
+                bucketOdds = odds();
+            }
         }
         if (bucketOdds == null) return null;
         return bucketOdds.cache();

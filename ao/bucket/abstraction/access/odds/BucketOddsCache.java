@@ -15,21 +15,36 @@ public class BucketOddsCache implements IBucketOdds
 
 
     //--------------------------------------------------------------------
-    private float CACHE[][];
+//    private float CACHE[][];
+    private double CACHE[][];
 
 
     //--------------------------------------------------------------------
     public BucketOddsCache(IBucketOdds odds, char nBuckets)
     {
-        LOG.debug("building cache for " + (int) nBuckets + "...");
-        CACHE = new float[ nBuckets ][];
+        LOG.debug("building cache for " + (int) nBuckets);
+//        CACHE = new float[ nBuckets ][];
+        CACHE = new double[ nBuckets ][];
         for (char i = 0; i < nBuckets; i++) {
-            CACHE[i] = new float[ i + 1 ];
+//            CACHE[i] = new float[ i + 1 ];
+            CACHE[i] = new double[ i + 1 ];
             for (char j = 0; j <= i; j++) {
                 CACHE[i][j] = (float) odds.nonLossProb(i, j);
             }
         }
-        LOG.debug("done.");
+
+//        LOG.debug("testing cache");
+//        for (char i = 0; i < nBuckets; i++) {
+//            for (char j = 0; j < nBuckets; j++) {
+//                double original = odds.nonLossProb(i, j);
+//                double cached   = nonLossProb(i, j);
+//
+//                if (Math.abs(original - cached) > 0.000001) {
+//                    LOG.error(original + " != " + cached + " for " +
+//                             (int) i + " vs " + (int) j);
+//                }
+//            }
+//        }
     }
 
 
@@ -38,7 +53,7 @@ public class BucketOddsCache implements IBucketOdds
         if (index >= vsIndex) {
             return CACHE[ index ][ vsIndex ];
         } else {
-            return CACHE[ vsIndex ][ index ];
+            return 1.0 - CACHE[ vsIndex ][ index ];
         }
     }
 }

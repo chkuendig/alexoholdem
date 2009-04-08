@@ -14,6 +14,7 @@ import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +26,11 @@ import java.util.List;
  */
 public class BucketTreeImpl implements BucketTree
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketTreeImpl.class);
+
+
     //--------------------------------------------------------------------
     private final BucketList holes;
     private final BucketList flops;
@@ -43,6 +49,7 @@ public class BucketTreeImpl implements BucketTree
         File turnFile  = new File(dir, "turns");
         File riverDir  =  Dir.get(dir, "rivers");
 
+        LOG.debug("loading (or creating)");
         holes  = new BucketListImpl (holeFile, HoleLookup.CANONS);
         flops  = new BucketListImpl (flopFile, FlopLookup.CANONS);
         turns  = new HalfBucketList (turnFile, TurnLookup.CANONS);

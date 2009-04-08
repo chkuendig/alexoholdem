@@ -39,7 +39,6 @@ public class StateTree
         LOG.debug("computing heads-up");
         ROOT = new Node(State.autoBlindInstance(Arrays.asList(
             Avatar.local("dealee"), Avatar.local("dealer"))));
-//        LOG.debug(((int) nextPreflopId));
     }
     
 
