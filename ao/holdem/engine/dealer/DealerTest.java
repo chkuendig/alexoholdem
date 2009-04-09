@@ -8,10 +8,14 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.replay.StackedReplay;
+import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -36,10 +40,23 @@ public class DealerTest
     //--------------------------------------------------------------------
     public void vsHuman(final Player brain)
     {
-        new Dealer(true, new LinkedHashMap<Avatar, Player>(){{
-            put(Avatar.local("bot"  ), brain);
-            put(Avatar.local("human"), new ConsoleBot());
+        final Avatar bot = Avatar.local("bot");
+        final Avatar you = Avatar.local("you");
+        Dealer d = new Dealer(true, new HashMap<Avatar, Player>(){{
+            put(bot, brain);
+            put(you, new ConsoleBot());
         }});
+
+        boolean humanDealer = Rand.nextBoolean();
+        for (long i = 0; i < TARGET_ROUNDS; i++) {
+            d.play( humanDealer
+                    ? Arrays.asList(bot, you)
+                    : Arrays.asList(you, bot),
+
+                    new DeckCards());
+
+            humanDealer = !humanDealer;
+        }
     }
 
 

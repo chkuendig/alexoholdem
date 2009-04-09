@@ -10,6 +10,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.util.io.Console;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,10 +21,25 @@ import java.util.Map;
 public class ConsoleBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    private Map<Avatar, Chips> total = new LinkedHashMap<Avatar, Chips>();
+
+
+    //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas)
     {
+        if (total.isEmpty()) {
+            total.putAll( deltas );
+        } else {
+            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+                total.put(
+                        delta.getKey(),
+                        total.get( delta.getKey() )
+                             .plus( delta.getValue() ));
+            }
+        }
+
         System.out.println(
-                deltas);
+                deltas + ", totalling: " + total);
     }
 
 

@@ -33,18 +33,18 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        byte nHoleBuckets  = 6;
-        char nFlopBuckets  = 144;
-        char nTurnBuckets  = 432;
-        char nRiverBuckets = 1296;
+//        byte nHoleBuckets  = 6;
+//        char nFlopBuckets  = 144;
+//        char nTurnBuckets  = 432;
+//        char nRiverBuckets = 1296;
 //        byte nHoleBuckets  = 13;
 //        char nFlopBuckets  = 567;
 //        char nTurnBuckets  = 1854;
 //        char nRiverBuckets = 5786;
-//        byte nHoleBuckets  = 10;
-//        char nFlopBuckets  = 360;
-//        char nTurnBuckets  = 1440;
-//        char nRiverBuckets = 5760;
+        byte nHoleBuckets  = 10;
+        char nFlopBuckets  = 360;
+        char nTurnBuckets  = 1440;
+        char nRiverBuckets = 5760;
 
         if (args.length > 1)
         {
@@ -60,8 +60,8 @@ public class BucketizerTest
         HoldemAbstraction abs = abstractHolem(new BucketizerImpl(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
-        computeFfr(abs);
-//        tournament(abs);
+//        computeFfr(abs);
+        tournament(abs);
 //        probabilities(abs);
     }
 
@@ -116,6 +116,13 @@ public class BucketizerTest
                   ((System.currentTimeMillis() - before) / 1000));
     }
 
+    public static void vsHuman(
+            final HoldemAbstraction abs) throws IOException
+    {
+        precompute(abs);
+        new DealerTest().vsHuman(new CfrBot(abs));
+    }
+
 
     //--------------------------------------------------------------------
     public static void computeFfr(
@@ -125,14 +132,13 @@ public class BucketizerTest
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.oddsCache());
 
-        double fudge      = 0;
         long   i          = 0;
-        long   iterations = 100 * 1000 * 1000;
+        long   iterations = 1000 * 1000 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
-            if (i++ % (250 * 1000) == 0) {
+            if (i++ % (1000 * 1000) == 0) {
                 System.out.println(" " + (i - 1));
                 info.displayFirstAct();
 
@@ -142,14 +148,12 @@ public class BucketizerTest
             }
 
             char[][] jbs = it.next();
-//            cfrMin.minimize(
-//                    jbs[0], jbs[1]);
             cfrMin.minimize(
-                    jbs[0], jbs[1],
-                    Rand.nextBoolean(fudge));
+                    jbs[0], jbs[1]);
 
             prog.checkpoint();
         }
+        abs.flushInfo();
     }
 
     
