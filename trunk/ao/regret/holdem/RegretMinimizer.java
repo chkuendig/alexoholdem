@@ -31,20 +31,14 @@ public class RegretMinimizer
 
 
     //--------------------------------------------------------------------
-    public void minimize(char absDealerBuckets[],
-                         char absDealeeBuckets[])
-    {
-        minimize(absDealerBuckets, absDealeeBuckets, false);
-    }
     public void minimize(char    absDealerBuckets[],
-                         char    absDealeeBuckets[],
-                         boolean fudge)
+                         char    absDealeeBuckets[])
     {
         approximate(
                 StateTree.headsUpRoot(),
                 absDealerBuckets,
                 absDealeeBuckets,
-                1.0, 1.0, fudge);
+                1.0, 1.0);
     }
 
 
@@ -54,14 +48,12 @@ public class RegretMinimizer
             char           absDealerBuckets[],
             char           absDealeeBuckets[],
             double         pDealer,
-            double         pDealee,
-            boolean        fudge)
+            double         pDealee)
     {
         boolean canRaise      = node.canRaise();
         boolean dealerProp    = node.dealerIsNext();
         double  expectedValue = 0;
         double  expectation[] = {0, 0, 0};
-        //Arrays.fill(expectation, Double.NaN);
 
         InfoBranch infoBranch = INFO.info(
                 node.pathToFlop(), node.round());
@@ -79,10 +71,9 @@ public class RegretMinimizer
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
-            if (actProb == 0) {
-                expectation[ next.getKey().ordinal() ] = 0;
+//            if (actProb == 0) {
 //                continue;
-            }
+//            }
 
             double         val; // from POV of dealer
             StateTree.Node nextNode = next.getValue();
@@ -106,8 +97,7 @@ public class RegretMinimizer
                             absDealerBuckets,
                             absDealeeBuckets,
                             pDealer * (dealerProp ? actProb : 1.0),
-                            pDealee * (dealerProp ? 1.0 : actProb),
-                            fudge);
+                            pDealee * (dealerProp ? 1.0 : actProb));
             }
 
             expectation[ next.getKey().ordinal() ] = val;
