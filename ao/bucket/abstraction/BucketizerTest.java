@@ -33,18 +33,18 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        byte nHoleBuckets  = 6;
-//        char nFlopBuckets  = 144;
-//        char nTurnBuckets  = 432;
-//        char nRiverBuckets = 1296;
+        byte nHoleBuckets  = 6;
+        char nFlopBuckets  = 144;
+        char nTurnBuckets  = 432;
+        char nRiverBuckets = 1296;
 //        byte nHoleBuckets  = 13;
 //        char nFlopBuckets  = 567;
 //        char nTurnBuckets  = 1854;
 //        char nRiverBuckets = 5786;
-        byte nHoleBuckets  = 10;
-        char nFlopBuckets  = 360;
-        char nTurnBuckets  = 1440;
-        char nRiverBuckets = 5760;
+//        byte nHoleBuckets  = 10;
+//        char nFlopBuckets  = 360;
+//        char nTurnBuckets  = 1440;
+//        char nRiverBuckets = 5760;
 
         if (args.length > 1)
         {
@@ -60,8 +60,9 @@ public class BucketizerTest
         HoldemAbstraction abs = abstractHolem(new BucketizerImpl(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
-//        computeFfr(abs);
-        tournament(abs);
+        computeFfr(abs);
+//        tournament(abs);
+//        vsHuman(abs);
 //        probabilities(abs);
     }
 
@@ -84,6 +85,7 @@ public class BucketizerTest
 
     private static void precompute(final HoldemAbstraction abs)
     {
+        long before = System.currentTimeMillis();
         System.out.println("Loading......");
         new DealerTest(1).roundRobin(new HashMap<Avatar, Player>(){{
             put(Avatar.local("probe"), new AlwaysCallBot());
@@ -93,7 +95,8 @@ public class BucketizerTest
         for (int i = (int)(Math.random() * 10000); i >= 0; i--) {
             Rand.nextBoolean();
         }
-        System.out.println("Done Loading!");
+        System.out.println("Done Loading!  Took " +
+                (System.currentTimeMillis() - before) / 1000);
     }
 
 
@@ -120,7 +123,7 @@ public class BucketizerTest
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
-        new DealerTest().vsHuman(new CfrBot(abs));
+        new DealerTest().vsHuman(new CfrBot(abs, true));
     }
 
 
@@ -133,7 +136,7 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long   i          = 0;
-        long   iterations = 1000 * 1000 * 1000;
+        long   iterations = 100 * 1000 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
@@ -153,6 +156,9 @@ public class BucketizerTest
 
             prog.checkpoint();
         }
+
+        System.out.println(" " + (i - 1));
+        info.displayFirstAct();
         abs.flushInfo();
     }
 

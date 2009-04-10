@@ -196,7 +196,7 @@ public class InfoBranch
                 boolean canRaise, boolean canCheck)
         {
             return InfoBranch.nextProbableAction(
-                    probabilities(canRaise, canCheck, false));
+                    probabilities(canRaise, canCheck));
         }
 
 
@@ -245,61 +245,53 @@ public class InfoBranch
         //----------------------------------------------------------------
         public double[] probabilities(boolean canRaise)
         {
-            return probabilities(canRaise, false, false);
+            return probabilities(canRaise, false);
         }
         public double[] probabilities(
-                boolean canRaise, boolean canCheck, boolean fudge)
+                boolean canRaise, boolean canCheck)
         {
-            //double prob[]    = new double[ canRaise ? 3 : 2 ];
+            double prob[] = new double[ 3 ];
+            probabilities(prob, canRaise, canCheck);
+            return prob;
+        }
+        public void probabilities(
+                double into[], boolean canRaise, boolean canCheck)
+        {
             double cumRegret = positiveCounterfactualRegret();
 
             if (cumRegret <= 0) {
                 if (canRaise) {
                     if (canCheck) {
-                        return new double[]{0, 0.5, 0.5};
+                        into[0] = 0;
+                        into[1] = into[2] = 0.5;
                     } else {
-                        return new double[]{1.0/3, 1.0/3, 1.0/3};
+                        into[0] = into[1] = into[2] = 1.0/3;
                     }
                 } else {
                     if (canCheck) {
-                        return new double[]{0, 1.0};
+                        into[0] = 0;
+                        into[1] = 1.0;
                     } else {
-                        return new double[]{0.5, 0.5};
+                        into[0] = into[1] = 0.5;
                     }
+                    into[2] = 0;
                 }
             } else {
+                double foldProb  = Math.max(0,
+                        regretFold [bucket][state] / cumRegret);
+                double callProb  = Math.max(0,
+                        regretCall [bucket][state] / cumRegret);
+                double raiseProb = Math.max(0,
+                        regretRaise[bucket][state] / cumRegret);
 
-                double foldProb, callProb, raiseProb;
-
-                if (fudge) {
-                    foldProb  = Math.max(0.001,
-                            regretFold [bucket][state] / cumRegret);
-                    callProb  = Math.max(0.001,
-                            regretCall [bucket][state] / cumRegret);
-                    raiseProb = Math.max(0.001,
-                            regretRaise[bucket][state] / cumRegret);
-
-                    if (!canRaise) {
-                        raiseProb = 0;
-                    }
+                if (canCheck && foldProb != 0) {
+                    into[0] = 0;
+                    into[1] = callProb / (callProb + raiseProb);
+                    into[2] = 1.0 - into[1];
                 } else {
-                    foldProb  = Math.max(0,
-                            regretFold [bucket][state] / cumRegret);
-                    callProb  = Math.max(0,
-                            regretCall [bucket][state] / cumRegret);
-                    raiseProb = Math.max(0,
-                            regretRaise[bucket][state] / cumRegret);
-                }
-                if (canCheck) {
-                    foldProb = 0;
-                }
-
-                double sum = foldProb + callProb + raiseProb;
-                if (canRaise) {
-                    return new double[]{foldProb / sum,
-                            callProb / sum, raiseProb / sum};
-                } else {
-                    return new double[]{foldProb / sum, callProb / sum};
+                    into[0] =  foldProb;
+                    into[1] =  callProb;
+                    into[2] = raiseProb;
                 }
             }
         }

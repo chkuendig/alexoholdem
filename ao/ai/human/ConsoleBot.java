@@ -48,8 +48,8 @@ public class ConsoleBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        System.out.println(
-                state.toString());
+//        System.out.println(
+//                state.toString());
         System.out.println(
                 cards);
 
@@ -73,20 +73,29 @@ public class ConsoleBot extends AbstractPlayer
         }
         else
         {
-            message.append(", [2] Call");
+            message.append(", [2] Call (")
+                     .append(state.toCall().smallBlinds())
+                   .append(")");
         }
 
         if (state.canRaise())
         {
             if (state.remainingBetsInRound() == 4)
             {
-                message.append(", [3] Bet");
+                message.append(", [3] Bet (");
             }
             else
             {
-                message.append(", [3] Raise");
+                message.append(", [3] Raise (");
             }
+            message.append( state.betSize().smallBlinds() )
+                   .append(")");       
         }
+
+        message.append(" || pot = ")
+               .append(state.pot().smallBlinds())
+               .append(", bet cap = ")
+               .append(state.remainingBetsInRound());
 
         AbstractAction act = null;
         String         in  = Console.text(message.toString());
