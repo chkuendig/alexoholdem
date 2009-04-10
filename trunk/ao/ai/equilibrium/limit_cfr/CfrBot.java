@@ -19,6 +19,7 @@ import ao.holdem.model.card.sequence.CardSequence;
 import ao.regret.holdem.InfoBranch;
 import ao.regret.holdem.InfoTree;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -29,7 +30,10 @@ import java.util.Map;
 public class CfrBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    private static final boolean DETAILED = false;
+
     private final HoldemAbstraction ABS;
+    private final boolean           DISPLAY;
     private       CardSequence      prevCards;
     private       boolean           mucked;
 
@@ -37,20 +41,29 @@ public class CfrBot extends AbstractPlayer
     //--------------------------------------------------------------------
     public CfrBot(HoldemAbstraction precomputedAbstraction)
     {
-        ABS = precomputedAbstraction;
+        this(precomputedAbstraction, false);
+    }
+    public CfrBot(HoldemAbstraction precomputedAbstraction,
+                  boolean           display)
+    {
+        ABS     = precomputedAbstraction;
+        DISPLAY = display;
     }
 
 
     //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas)
     {
+        if (! DISPLAY) return;
+
         if (! mucked) {
-            System.out.println(prevCards);
+            System.out.println("bot shows cards: " + prevCards);
         }
     }
 
 
     //--------------------------------------------------------------------
+    @SuppressWarnings({"UnusedAssignment"})
     public Action act(State        state,
                       CardSequence cards,
                       Analysis     analysis)
@@ -107,13 +120,19 @@ public class CfrBot extends AbstractPlayer
         AbstractAction act = infoSet.nextProbableAction(
                                 state.canRaise(), state.canCheck());
 
-//        System.out.println(
-//                Arrays.toString(
-//                        infoSet.probabilities(state.canRaise())) +
-//                " from " + Arrays.toString(infoSet.cumulativeRegret()) +
-//                " with " + infoSet.visits() +
-//                " on "   + (int) relBucket);
-        System.out.println( act );
+        if (DISPLAY) {
+            if (DETAILED) {
+                System.out.println(
+                        Arrays.toString(
+                                infoSet.probabilities(state.canRaise())) +
+                        " from " + Arrays.toString(
+                                    infoSet.cumulativeRegret()) +
+                        " with " + infoSet.visits() +
+                        " on "   + (int) relBucket);
+            }
+
+            System.out.println( "bot acts: " + act );
+        }
 
         prevCards = cards;
         Action realAction = state.reify( act.toFallbackAction() );

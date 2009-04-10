@@ -49,6 +49,14 @@ public class DealerTest
 
         boolean humanDealer = Rand.nextBoolean();
         for (long i = 0; i < TARGET_ROUNDS; i++) {
+            System.out.println(
+                    "\n-----------------------------" +
+                            "  Hand " + (i + 1) + ", " +
+                            (humanDealer
+                             ? "you deal"
+                             : "bot deals") +
+                      "  -----------------------------");
+
             d.play( humanDealer
                     ? Arrays.asList(bot, you)
                     : Arrays.asList(you, bot),
