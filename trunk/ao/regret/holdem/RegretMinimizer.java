@@ -59,21 +59,17 @@ public class RegretMinimizer
             double         pDealer,
             double         pDealee)
     {
-//        if (pDealee == 0 && pDealer == 0) {
+        if (pDealee == 0 && pDealer == 0) {
 ////            int    withZeroes = count(
 ////                    node, absDealerBuckets, absDealeeBuckets, true);
 ////            int withoutZeroes = count(
 ////                    node, absDealerBuckets, absDealeeBuckets, false);
 ////            LOG.debug("saving " + (withZeroes - withoutZeroes) +
 ////                       " over " +  withZeroes);
-//            return approximate(node, absDealerBuckets, absDealeeBuckets);
-//        }
+            return approximate(node, absDealerBuckets, absDealeeBuckets);
+        }
 
-        boolean dealerProp    = node.dealerIsNext();
-        boolean canRaise      = node.canRaise();
-        double  expectedValue = 0;
-        double  expectation[] = {0, 0, 0};
-
+        boolean dealerProp = node.dealerIsNext();
         InfoBranch infoBranch = INFO.info(
                 node.pathToFlop(), node.round());
 
@@ -84,8 +80,32 @@ public class RegretMinimizer
         InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
 
         double probabilities[] =
-                info.probabilities(canRaise, node.canCheck());
+                info.probabilities(node.canRaise(), node.canCheck());
 
+        if (pDealee == 0 || pDealer == 0) {
+            return approximateAndUpdateHalf(
+                    node, absDealerBuckets, absDealeeBuckets,
+                    pDealer, pDealee, probabilities);
+        } else {
+            return approximateAndUpdateFully(
+                    node, absDealerBuckets, absDealeeBuckets,
+                    pDealer, pDealee, info, probabilities);
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    private double approximateAndUpdateFully(
+            StateTree.Node node,
+            char           absDealerBuckets[],
+            char           absDealeeBuckets[],
+            double         pDealer,
+            double         pDealee,
+            InfoSet        info,
+            double         probabilities[])
+    {
+        double expectedValue = 0;
+        double expectation[] = {0, 0, 0};
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
@@ -99,11 +119,11 @@ public class RegretMinimizer
                         nextNode, absDealerBuckets, absDealeeBuckets);
             } else {
                 val = approximateAndUpdate(
-                            nextNode,
-                            absDealerBuckets,
-                            absDealeeBuckets,
-                            pDealer * (dealerProp ? actProb : 1.0),
-                            pDealee * (dealerProp ? 1.0 : actProb));
+                        nextNode,
+                        absDealerBuckets,
+                        absDealeeBuckets,
+                        pDealer * (node.dealerIsNext() ? actProb : 1.0),
+                        pDealee * (node.dealerIsNext() ? 1.0 : actProb));
             }
 
             expectation[ next.getKey().ordinal() ] = val;
@@ -111,9 +131,7 @@ public class RegretMinimizer
         }
 
         double oppReachingFactor =
-                dealerProp ? pDealee : -pDealer;
-        if (oppReachingFactor == 0) return expectedValue;
-
+                node.dealerIsNext() ? pDealee : -pDealer;
         double counterfactualRegret[] =
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
@@ -122,8 +140,43 @@ public class RegretMinimizer
                     (expectation[ act.ordinal() ] - expectedValue)
                       * oppReachingFactor;
         }
-        info.add(counterfactualRegret, canRaise);
+        info.add(counterfactualRegret, node.canRaise());
 
+        return expectedValue;
+    }
+
+
+    //--------------------------------------------------------------------
+    private double approximateAndUpdateHalf(
+            StateTree.Node node,
+            char           absDealerBuckets[],
+            char           absDealeeBuckets[],
+            double         pDealer,
+            double         pDealee,
+            double         probabilities[])
+    {
+        double expectedValue = 0;
+        Map<AbstractAction, Node> acts = node.acts();
+        for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
+        {
+            double actProb = probabilities[ next.getKey().ordinal() ];
+
+            double         val; // from POV of dealer
+            StateTree.Node nextNode = next.getValue();
+            HeadsUpStatus  status   = nextNode.status();
+            if (status != HeadsUpStatus.IN_PROGRESS) {
+                val = evaluate(
+                        nextNode, absDealerBuckets, absDealeeBuckets);
+            } else {
+                val = approximateAndUpdate(
+                        nextNode,
+                        absDealerBuckets,
+                        absDealeeBuckets,
+                        pDealer * (node.dealerIsNext() ? actProb : 1.0),
+                        pDealee * (node.dealerIsNext() ? 1.0 : actProb));
+            }
+            expectedValue += val * actProb;
+        }
         return expectedValue;
     }
 
@@ -152,13 +205,6 @@ public class RegretMinimizer
 
         double probabilities[] =
                 info.probabilities(node.canRaise(), node.canCheck());
-
-//        if (node.round() == Round.FLOP &&
-//                roundBucket == 60 &&
-//                node.pathToFlop() == PathToFlop.R_C &&
-//                node.roundPathId() == 1) {
-//            System.out.println(Arrays.toString(probabilities));
-//        }
 
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
