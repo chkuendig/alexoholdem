@@ -11,6 +11,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.DeckCards;
+import ao.util.math.rand.Rand;
 import ao.util.misc.Progress;
 import org.apache.log4j.Logger;
 
@@ -198,8 +199,7 @@ public class BucketSequencer
                             in.close();
                             in = open(0);
                         } else {
-                            in = open(Math.abs((long)(
-                                    Math.random() * CACHE_SIZE)));
+                            in = open((long)(Rand.nextDouble() * CACHE_SIZE));
                             location++;
                         }
                     }
