@@ -82,7 +82,9 @@ public class RegretMinimizer
         double probabilities[] =
                 info.probabilities(node.canRaise(), node.canCheck());
 
-        if (pDealee == 0 || pDealer == 0) {
+        if (dealerProp && pDealee == 0 ||
+                (! dealerProp) && pDealer == 0) {
+            // ^^ dealerProp must be checked
             return approximateAndUpdateHalf(
                     node, absDealerBuckets, absDealeeBuckets,
                     pDealer, pDealee, probabilities);
