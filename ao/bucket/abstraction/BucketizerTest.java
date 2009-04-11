@@ -138,7 +138,7 @@ public class BucketizerTest
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
-            if (i++ % (100 * 1000) == 0) {
+            if (i++ % (1000 * 1000) == 0) {
                 System.out.println(" " + (i - 1));
                 info.displayFirstAct();
 
