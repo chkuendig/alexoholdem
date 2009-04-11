@@ -6,7 +6,6 @@ import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.engine.state.tree.StateTree.Node;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.holdem.InfoBranch.InfoSet;
-import org.apache.log4j.Logger;
 
 import java.util.Map;
 
@@ -20,10 +19,10 @@ import java.util.Map;
 public class RegretMinimizer
 {
     //--------------------------------------------------------------------
-    private static final Logger LOG =
-            Logger.getLogger(RegretMinimizer.class);
+//    private static final Logger LOG =
+//            Logger.getLogger(RegretMinimizer.class);
 
-    private static final double APPROX_THRESHOLD = 1.0 / (1000 * 1000);
+//    private static final double APPROX_THRESHOLD = 1.0 / (1000 * 1000);
 
 
     //--------------------------------------------------------------------
@@ -41,8 +40,8 @@ public class RegretMinimizer
 
 
     //--------------------------------------------------------------------
-    public void minimize(char    absDealerBuckets[],
-                         char    absDealeeBuckets[])
+    public void minimize(char absDealerBuckets[],
+                         char absDealeeBuckets[])
     {
         approximateAndUpdate(
                 StateTree.headsUpRoot(),
@@ -60,19 +59,17 @@ public class RegretMinimizer
             double         pDealer,
             double         pDealee)
     {
-        boolean   dealerProp = node.dealerIsNext();
-        if (      dealerProp  && pDealee == 0 ||
-                (!dealerProp) && pDealer == 0) {
+//        if (pDealee == 0 && pDealer == 0) {
+////            int    withZeroes = count(
+////                    node, absDealerBuckets, absDealeeBuckets, true);
+////            int withoutZeroes = count(
+////                    node, absDealerBuckets, absDealeeBuckets, false);
+////            LOG.debug("saving " + (withZeroes - withoutZeroes) +
+////                       " over " +  withZeroes);
+//            return approximate(node, absDealerBuckets, absDealeeBuckets);
+//        }
 
-//            int    withZeroes = count(
-//                    node, absDealerBuckets, absDealeeBuckets, true);
-//            int withoutZeroes = count(
-//                    node, absDealerBuckets, absDealeeBuckets, false);
-//            LOG.debug("saving " + (withZeroes - withoutZeroes) +
-//                       " over " +  withZeroes);
-            return approximate(node, absDealerBuckets, absDealeeBuckets);
-        }
-
+        boolean dealerProp    = node.dealerIsNext();
         boolean canRaise      = node.canRaise();
         double  expectedValue = 0;
         double  expectation[] = {0, 0, 0};
@@ -113,18 +110,17 @@ public class RegretMinimizer
             expectedValue += val * actProb;
         }
 
-        double[] counterfactualRegret =
+        double oppReachingFactor =
+                dealerProp ? pDealee : -pDealer;
+        if (oppReachingFactor == 0) return expectedValue;
+
+        double counterfactualRegret[] =
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
         {
-            double cRegret = (expectation[ act.ordinal() ] - expectedValue);
-
-            if (dealerProp) {
-                cRegret *=  pDealee;
-            } else {
-                cRegret *= -pDealer;
-            }
-            counterfactualRegret[ act.ordinal() ] = cRegret;
+            counterfactualRegret[ act.ordinal() ] =
+                    (expectation[ act.ordinal() ] - expectedValue)
+                      * oppReachingFactor;
         }
         info.add(counterfactualRegret, canRaise);
 
@@ -156,6 +152,13 @@ public class RegretMinimizer
 
         double probabilities[] =
                 info.probabilities(node.canRaise(), node.canCheck());
+
+//        if (node.round() == Round.FLOP &&
+//                roundBucket == 60 &&
+//                node.pathToFlop() == PathToFlop.R_C &&
+//                node.roundPathId() == 1) {
+//            System.out.println(Arrays.toString(probabilities));
+//        }
 
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())

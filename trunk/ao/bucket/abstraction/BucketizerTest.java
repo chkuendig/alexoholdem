@@ -11,7 +11,6 @@ import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.model.Avatar;
 import ao.regret.holdem.InfoTree;
 import ao.regret.holdem.RegretMinimizer;
-import ao.util.math.rand.Rand;
 import ao.util.misc.Progress;
 import org.apache.log4j.Logger;
 
@@ -60,6 +59,7 @@ public class BucketizerTest
         HoldemAbstraction abs = abstractHolem(new BucketizerImpl(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
+//        Rand.randomize();
         computeFfr(abs);
 //        tournament(abs);
 //        vsHuman(abs);
@@ -92,9 +92,6 @@ public class BucketizerTest
             put(Avatar.local("cfr"), new CfrBot(abs));
         }});
 
-        for (int i = (int)(Math.random() * 10000); i >= 0; i--) {
-            Rand.nextBoolean();
-        }
         System.out.println("Done Loading!  Took " +
                 (System.currentTimeMillis() - before) / 1000);
     }
@@ -136,12 +133,12 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long   i          = 0;
-        long   iterations = 100 * 1000 * 1000;
+        long   iterations = 100 * 1000;
         Progress prog = new Progress(iterations);
         for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
              it.hasNext();)
         {
-            if (i++ % (1000 * 1000) == 0) {
+            if (i++ % (100 * 1000) == 0) {
                 System.out.println(" " + (i - 1));
                 info.displayFirstAct();
 
@@ -149,10 +146,17 @@ public class BucketizerTest
                     abs.flushInfo();
                 }
             }
+//            if (i++ > 0) {
+//                System.out.println(i - 1);
+//                info.displayFirstAct();
+//            }
 
             char[][] jbs = it.next();
             cfrMin.minimize(
                     jbs[0], jbs[1]);
+
+//            System.out.println(Arrays.deepToString(jbs));
+//            info.displayFirstAct();
 
             prog.checkpoint();
         }

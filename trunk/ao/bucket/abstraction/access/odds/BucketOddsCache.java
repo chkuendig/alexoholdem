@@ -15,22 +15,22 @@ public class BucketOddsCache implements IBucketOdds
 
 
     //--------------------------------------------------------------------
-    private float CACHE[][];
-//    private double CACHE[][];
+//    private float CACHE[][];
+    private double CACHE[][];
 
 
     //--------------------------------------------------------------------
     public BucketOddsCache(IBucketOdds odds, char nBuckets)
     {
         LOG.debug("building cache for " + (int) nBuckets);
-        CACHE = new float[ nBuckets ][];
-//        CACHE = new double[ nBuckets ][];
+//        CACHE = new float[ nBuckets ][];
+        CACHE = new double[ nBuckets ][];
         for (char i = 0; i < nBuckets; i++) {
-            CACHE[i] = new float[ i + 1 ];
-//            CACHE[i] = new double[ i + 1 ];
+//            CACHE[i] = new float[ i + 1 ];
+            CACHE[i] = new double[ i + 1 ];
             for (char j = 0; j <= i; j++) {
-                CACHE[i][j] = (float) odds.nonLossProb(i, j);
-//                CACHE[i][j] = odds.nonLossProb(i, j);
+//                CACHE[i][j] = (float) odds.nonLossProb(i, j);
+                CACHE[i][j] = odds.nonLossProb(i, j);
             }
         }
 
