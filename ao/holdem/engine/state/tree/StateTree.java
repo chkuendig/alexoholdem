@@ -48,18 +48,29 @@ public class StateTree
         return ROOT;
     }
 
+
+    //--------------------------------------------------------------------
     public static Node fromState(State state)
     {
-        return fromState(headsUpRoot(), state);
+        return fromState(state, Integer.MAX_VALUE);
     }
-    private static Node fromState(Node startingAt, State state)
+    public static Node fromState(State state, int plyLeft) {
+        return fromState(headsUpRoot(), state, plyLeft);
+    }
+    public static Node fromState(Node startingAt, State state) {
+        return fromState(startingAt, state, Integer.MAX_VALUE);
+    }
+
+    public static Node fromState(
+            Node startingAt, State state, int plyLeft)
     {
+        if (plyLeft == 0) return null;
         if (startingAt.state().equals( state )) {
             return startingAt;
         }
 
         for (Node child : startingAt.acts().values()) {
-            Node fromState = fromState(child, state);
+            Node fromState = fromState(child, state, plyLeft - 1);
             if (fromState != null) return fromState;
         }
         return null;

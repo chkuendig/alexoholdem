@@ -199,7 +199,8 @@ public class BucketSequencer
                             in.close();
                             in = open(0);
                         } else {
-                            in = open((long)(Rand.nextDouble() * CACHE_SIZE));
+                            in = open((long)(
+                                    Rand.nextDouble() * CACHE_SIZE));
                             location++;
                         }
                     }

@@ -11,6 +11,7 @@ import ao.holdem.model.replay.StackedReplay;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
+import ao.util.misc.Progress;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -98,11 +99,12 @@ public class DealerTest
             decks[deck] = new DeckCards();
         }
 
+        Progress           prog      = new Progress(TARGET_ROUNDS);
         Dealer             dealer    = new Dealer(true, brains);
         Map<Avatar, Chips> cumDeltas = new HashMap<Avatar, Chips>();
         for (int trialSet = 0; trialSet < decksTrials; trialSet++)
         {
-            roundrobinTournament(
+            roundrobinTournament(prog,
                     dealer, brains.keySet(), decks, cumDeltas);
         }
 
@@ -120,6 +122,7 @@ public class DealerTest
     }
 
     private void roundrobinTournament(
+            Progress           prog,
             Dealer             dealer,
             Collection<Avatar> players,
             DeckCards          decks[],
@@ -154,6 +157,7 @@ public class DealerTest
 //                System.out.println(replay.deltas());
 
                 deck.reset();
+                prog.checkpoint();
             }
         }
     }
