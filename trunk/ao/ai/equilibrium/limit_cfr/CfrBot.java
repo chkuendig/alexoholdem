@@ -37,6 +37,19 @@ public class CfrBot extends AbstractPlayer
     private       CardSequence      prevCards;
     private       boolean           mucked;
 
+    private Node      prevNode = StateTree.headsUpRoot();
+    private CanonHole canonHole;
+    private Flop      canonFlop;
+    private Turn      canonTurn;
+    private Round     prevRound;
+
+    private byte relBucket;
+    private char roundBucket;
+
+    private byte holeBucket;
+    private byte flopBucket;
+    private byte turnBucket;
+
 
     //--------------------------------------------------------------------
     public CfrBot(HoldemAbstraction precomputedAbstraction)
@@ -54,11 +67,20 @@ public class CfrBot extends AbstractPlayer
     //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas)
     {
-        if (! DISPLAY) return;
+        prevNode  = StateTree.headsUpRoot();
+        resetRoundCanons();
 
+        if (! DISPLAY) return;
         if (! mucked) {
             System.out.println("bot shows cards: " + prevCards);
         }
+    }
+
+    private void resetRoundCanons() {
+        canonHole = null;
+        canonFlop = null;
+        canonTurn = null;
+        prevRound = null;
     }
 
 
@@ -71,49 +93,18 @@ public class CfrBot extends AbstractPlayer
         assert state.seats().length == 2
                 : "Only works in heads-up mode";
 
-        Node       gamePath = StateTree.fromState(state);
+        Node gamePath = StateTree.fromState(prevNode, state, 4);
+        if (gamePath == null) {
+            gamePath = StateTree.fromState(state);
+            resetRoundCanons();
+        }
+        prevNode = gamePath;
+
         InfoTree   info     = ABS.info();
         InfoBranch branch   =
                 info.info(gamePath.pathToFlop(), gamePath.round());
 
-        byte      relBucket;
-        char      roundBucket;
-        CanonHole canonHole  = cards.hole().asCanon();
-        byte      holeBucket = ABS.tree().getHole(
-                                canonHole.canonIndex());
-
-        if (state.round().equals( Round.PREFLOP )) {
-            roundBucket = (char) holeBucket;
-            relBucket   = holeBucket;
-        } else {
-            Flop flop       = canonHole.addFlop(cards.community());
-            byte flopBucket = ABS.tree().getFlop( flop.canonIndex() );
-
-            if (state.round().equals( Round.FLOP )) {
-                roundBucket = ABS.decoder().decode(
-                        holeBucket, flopBucket);
-                relBucket   = flopBucket;
-            } else {
-                Turn turn       = flop.addTurn(cards.community().turn());
-                byte turnBucket = ABS.tree().getTurn( turn.canonIndex() );
-
-                if (state.round().equals( Round.TURN )) {
-                    roundBucket = ABS.decoder().decode(
-                            holeBucket, flopBucket, turnBucket);
-                    relBucket   = turnBucket;
-                } else {
-                    River river       =
-                            turn.addRiver( cards.community().river() );
-                    byte  riverBucket =
-                            ABS.tree().getRiver( river.canonIndex() );
-
-                    roundBucket = ABS.decoder().decode(
-                            holeBucket, flopBucket, turnBucket,
-                            riverBucket);
-                    relBucket   = riverBucket;
-                }
-            }
-        }
+        findBucket(cards, state.round());
 
         InfoBranch.InfoSet infoSet = branch.get(
                 roundBucket, gamePath.roundPathId());
@@ -128,15 +119,69 @@ public class CfrBot extends AbstractPlayer
                         " from " + Arrays.toString(
                                     infoSet.cumulativeRegret()) +
                         " with " + infoSet.visits() +
-                        " on "   + (int) relBucket);
+                        " on "   + relBucket);
             }
 
             System.out.println( "bot acts: " + act );
         }
 
+        prevRound = state.round();
         prevCards = cards;
         Action realAction = state.reify( act.toFallbackAction() );
         mucked = realAction.is(AbstractAction.QUIT_FOLD);
         return realAction;
+    }
+
+
+    //--------------------------------------------------------------------
+    private void findBucket(
+            CardSequence cards,
+            Round        round)
+    {
+        if (prevRound == round) return;
+
+
+        if (canonHole == null) {
+            canonHole  = cards.hole().asCanon();
+            holeBucket = ABS.tree().getHole(
+                                canonHole.canonIndex());
+        }
+        if (round == Round.PREFLOP) {
+            roundBucket = (char) holeBucket;
+            relBucket   = holeBucket;
+            return;
+        }
+
+
+        if (canonFlop == null) {
+            canonFlop  = canonHole.addFlop(cards.community());
+            flopBucket = ABS.tree().getFlop( canonFlop.canonIndex() );
+        }
+        if (round == Round.FLOP) {
+            roundBucket = ABS.decoder().decode(holeBucket, flopBucket);
+            relBucket   = flopBucket;
+            return;
+        }
+
+
+        if (canonTurn == null) {
+            canonTurn  = canonFlop.addTurn(cards.community().turn());
+            turnBucket = ABS.tree().getTurn( canonTurn.canonIndex() );
+        }
+        if (round == Round.TURN) {
+            roundBucket = ABS.decoder().decode(
+                            holeBucket, flopBucket, turnBucket);
+            relBucket   = turnBucket;
+            return;
+        }
+
+
+        River canonRiver =
+                canonTurn.addRiver( cards.community().river() );
+        byte riverBucket = ABS.tree().getRiver(canonRiver.canonIndex());
+
+        roundBucket = ABS.decoder().decode(
+                        holeBucket, flopBucket, turnBucket, riverBucket);
+        relBucket   = riverBucket;
     }
 }

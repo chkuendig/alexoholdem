@@ -60,8 +60,8 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-        computeFfr(abs);
-//        tournament(abs);
+//        computeFfr(abs);
+        tournament(abs);
 //        vsHuman(abs);
 //        probabilities(abs);
     }
@@ -132,22 +132,28 @@ public class BucketizerTest
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.oddsCache());
 
-        long   i          = 0;
-        long   iterations = 100 * 1000;
+        long itr        = 0;
+        long offset     = (125 + 560) * 1000 * 1000;
+        long iterations = 1000 * 1000 * 1000;
+
+        Iterator<char[][]> it = abs.sequence().iterator(iterations);
+        for (long i = 0; i < offset; i++) {
+            it.next();
+        }
+
         Progress prog = new Progress(iterations);
-        for (Iterator<char[][]> it = abs.sequence().iterator(iterations);
-             it.hasNext();)
+        while (it.hasNext())
         {
-            if (i++ % (1000 * 1000) == 0) {
-                System.out.println(" " + (i - 1));
+            if (itr++ % (10 * 1000 * 1000) == 0) {
+                System.out.println(" " + (itr - 1));
                 info.displayFirstAct();
 
-                if (i != 1) {
+                if (itr != 1) {
                     abs.flushInfo();
                 }
             }
-//            if (i++ > 0) {
-//                System.out.println(i - 1);
+//            if (itr++ > 0) {
+//                System.out.println(itr - 1);
 //                info.displayFirstAct();
 //            }
 
@@ -161,7 +167,7 @@ public class BucketizerTest
             prog.checkpoint();
         }
 
-        System.out.println(" " + (i - 1));
+        System.out.println(" " + (itr - 1));
         info.displayFirstAct();
         abs.flushInfo();
     }
