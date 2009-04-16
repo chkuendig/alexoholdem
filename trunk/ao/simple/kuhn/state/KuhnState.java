@@ -10,13 +10,13 @@ public enum KuhnState
     //--------------------------------------------------------------------
     //or bet, forcing the first player to make a final
     // decision of either bet, for a showdown, or pass, for a fold.
-    AFTER_RAISE(new StateFlow(null, KuhnOutcome.LAST_TO_ACT_WINS),
+    AFTER_RAISE(new StateFlow(null, KuhnOutcome.PLAYER_TWO_WINS),
                 new StateFlow(null, KuhnOutcome.DOUBLE_SHOWDOWN),
                 true),
 
     //If the first player bets the second player may
     // either bet, causing a showdown, or pass, to fold.
-    AFTER_BET(new StateFlow(null, KuhnOutcome.FIRST_TO_ACT_WINS),
+    AFTER_BET(new StateFlow(null, KuhnOutcome.PLAYER_ONE_WINS),
               new StateFlow(null, KuhnOutcome.DOUBLE_SHOWDOWN),
               false),
 
@@ -41,7 +41,7 @@ public enum KuhnState
     //--------------------------------------------------------------------
     private KuhnState(StateFlow onPass,
                       StateFlow onBetRaise,
-                      boolean      firstToAct)
+                      boolean   firstToAct)
     {
         ON_PASS      = onPass;
         ON_BET_RAISE = onBetRaise;

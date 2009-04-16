@@ -17,13 +17,9 @@ import java.util.Map;
 public class ProponentNode implements PlayerNode
 {
     //--------------------------------------------------------------------
-    private static final int SPARSE_LIMIT = 5;
-
-
-    //--------------------------------------------------------------------
-    private Map<KuhnAction, double[]> regret;
+    private Map<KuhnAction, double[]> regret; // mutable doubles
     private Map<KuhnAction, InfoNode> actions;
-    private Map<KuhnAction, double[]> prob;
+    private Map<KuhnAction, double[]> prob;  // mutable doubles
     private int                       visits = 0;
 
 
@@ -93,11 +89,6 @@ public class ProponentNode implements PlayerNode
         return actions.get( forAction );
     }
 
-    public boolean isSparse()
-    {
-        return visits < SPARSE_LIMIT;
-    }
-
 
     //--------------------------------------------------------------------
     public void add(Map<KuhnAction, Double> counterfactualRegret)
@@ -153,9 +144,18 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-    public String toString()
+    public String toString(KuhnAction action)
     {
-        return toString(0);
+        return new StringBuilder()
+                .append( action )
+                .append( " :: " )
+                .append( prob  .get( action )[0] )
+                .append( " :: " )
+                .append( regret.get(action )[0] / visits)
+                .append( " :: " )
+                .append( visits )
+                .toString();
+
     }
 
     public String toString(int depth)
@@ -166,9 +166,9 @@ public class ProponentNode implements PlayerNode
             str.append( Txt.nTimes("\t", depth) )
                .append( action.getKey() )
                .append( " :: " )
-               .append( prob.get(action.getKey())[0] )
+               .append( prob.get( action.getKey())[0] )
                .append( " :: " )
-               .append( regret.get(action.getKey())[0] / visits )
+               .append( regret.get(action.getKey())[0] / visits)
                .append( " :: " )
                .append( visits )
                .append( "\n" )

@@ -30,7 +30,7 @@ public class DealerTest
     //--------------------------------------------------------------------
     public DealerTest()
     {
-        this(100 * 1000);
+        this(10 * 1000 * 1000);
     }
     public DealerTest(long rounds)
     {

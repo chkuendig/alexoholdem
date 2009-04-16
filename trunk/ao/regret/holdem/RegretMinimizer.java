@@ -29,6 +29,8 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoTree    INFO;
 
+    private final double      aggression = 0.01; // .07 in UofA paper
+
 
     //--------------------------------------------------------------------
     public RegretMinimizer(
@@ -138,9 +140,13 @@ public class RegretMinimizer
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
         {
+            double r = (expectation[ act.ordinal() ] - expectedValue)
+                            * oppReachingFactor;
+
+            // aggresion
             counterfactualRegret[ act.ordinal() ] =
-                    (expectation[ act.ordinal() ] - expectedValue)
-                      * oppReachingFactor;
+                    (r > 0 ? (1.0 + aggression) * r : r);
+
         }
         info.add(counterfactualRegret, node.canRaise());
 

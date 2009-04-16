@@ -1,9 +1,10 @@
 package ao.simple.kuhn;
 
-import ao.simple.kuhn.player.AlwaysBet;
 import ao.simple.kuhn.player.CrmBot;
 import ao.simple.kuhn.state.KuhnSeat;
 import ao.simple.kuhn.state.StateFlow;
+import ao.util.math.stats.Combo;
+import ao.util.math.stats.Permuter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,48 +18,50 @@ public class KuhnDealer
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
+        CrmBot bot = new CrmBot(100 * 1000 * 1000);
         KuhnDealer dealer =
                 new KuhnDealer(
-                        new CrmBot(1000)
-//                    ,   new CrmBot(100)
-                    ,   new AlwaysBet()
+                        bot
+                    ,   bot
+//                    ,   new AlwaysBet()
 //                    ,   new AlwaysPass()
 //                    ,   new RandomKuhnPlayer()
-        );
+                );
 
-        boolean  inOrder   = true;
+//        boolean  inOrder   = true;
         int      numHands  = 0;
         int      cumDelta  = 0;
-        KuhnCard hands[][] = generateHands(1000000);
-        for (int round = 0; round < 2*5; round++)
+        KuhnCard hands[][] = generateHands();
+        for (int round = 0; round < 1000 * 1000; round++)
         {
             for (KuhnCard[] hand : hands)
             {
-                cumDelta += (inOrder ? 1 : -1) *
-                                dealer.playHand(
-                                        hand[0], hand[1]);
+//                cumDelta += (inOrder ? 1 : -1) *
+//                                dealer.playHand(
+//                                        hand[0], hand[1]);
+                cumDelta += dealer.playHand(hand[0], hand[1]);
+
                 numHands++;
             }
-            dealer.swapPlayers();
-            inOrder = !inOrder;
+//            dealer.swapPlayers();
+//            inOrder = !inOrder;
         }
 
         System.out.println(
                 (double) cumDelta / numHands);
     }
 
-    private static KuhnCard[][] generateHands(int howMany)
+    private static KuhnCard[][] generateHands()
     {
-        KuhnCard hands[][] = new KuhnCard[ howMany ][2];
-        for (KuhnCard hand[] : hands)
-        {
-            List<KuhnCard> deck =
-                    Arrays.asList( KuhnCard.values() );
-            Collections.shuffle(deck);
+        KuhnCard hands[][] = new KuhnCard[ (int)
+                Combo.factorial(KuhnCard.values().length) ][2];
 
-            hand[0] = deck.get( 0 );
-            hand[1] = deck.get( 1 );
+        int i = 0;
+        for (KuhnCard c[] :
+                new Permuter<KuhnCard>(KuhnCard.values(), 2)) {
+            hands[ i++ ] = c;
         }
+
         return hands;
     }
 
@@ -106,17 +109,17 @@ public class KuhnDealer
 
         switch (flow.outcome())
         {
-            case FIRST_TO_ACT_WINS: return  1;
-            case LAST_TO_ACT_WINS:  return -1;
-            case SHOWDOWN:          return     showdown(a, b);
-            case DOUBLE_SHOWDOWN:   return 2 * showdown(a, b);
+            case PLAYER_ONE_WINS:   return  1;
+            case PLAYER_TWO_WINS:   return -1;
+            case SHOWDOWN:          return      showdown(a, b);
+            case DOUBLE_SHOWDOWN:   return  2 * showdown(a, b);
         }
         throw new Error(flow + " leads to invalid outcome.");
     }
 
     private int showdown(KuhnSeat a, KuhnSeat b)
     {
-        return a.hole().compareTo( b.hole() ) < 0 ? -1 : 1;
+        return a.hole().compareTo( b.hole() ) > 0 ? 1 : -1;
     }
 
 

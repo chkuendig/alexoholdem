@@ -8,8 +8,8 @@ import ao.simple.kuhn.state.KuhnState;
 public interface KuhnPlayer
 {
     public KuhnAction
-            act(KuhnCard  hole,
-                KuhnState state);
+            act(KuhnState state,
+                KuhnCard  hole);
 
 //    public void handEnded();
 }

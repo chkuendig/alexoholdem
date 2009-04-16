@@ -1,7 +1,10 @@
 package ao.regret.khun;
 
 import ao.regret.InfoNode;
-import ao.regret.khun.node.*;
+import ao.regret.khun.node.BucketNode;
+import ao.regret.khun.node.PlayerNode;
+import ao.regret.khun.node.ProponentNode;
+import ao.regret.khun.node.TerminalNode;
 import ao.simple.kuhn.KuhnAction;
 
 import java.util.EnumMap;
@@ -70,7 +73,6 @@ public class Equalibrium
             boolean             first)
     {
         ProponentNode proponent = (ProponentNode) (first ? rA : rB);
-        OpponentNode  opponent  = (OpponentNode)  (first ? rB : rA);
 
         double                  expectedValue = 0;
         Map<KuhnAction, Double> expectation   =
@@ -78,16 +80,10 @@ public class Equalibrium
         for (KuhnAction act : KuhnAction.VALUES)
         {
             double actProb = proponent.probabilityOf(act);
-            if (actProb == 0 && !proponent.isSparse())
-            {
-                expectation.put(act, 0.0);
-                continue;
-            }
-
             double val =
                 approximate(
-                        (first ? proponent : opponent ).child(act),
-                        (first ? opponent  : proponent).child(act),
+                        ((PlayerNode) rA).child(act),
+                        ((PlayerNode) rB).child(act),
                         b,
                         pA * (first ? actProb : 1.0),
                         pB * (first ? 1.0 : actProb))
@@ -102,7 +98,8 @@ public class Equalibrium
         for (KuhnAction act : KuhnAction.VALUES)
         {
             double cRegret =
-                    (expectation.get(act) - expectedValue) * pB;
+                    (expectation.get(act) - expectedValue) *
+                        (first ? pB : pA);
             counterfactualRegret.put(act, cRegret);
         }
         proponent.add( counterfactualRegret );
@@ -111,5 +108,70 @@ public class Equalibrium
         return new double[]{
                 (first ?  1 : -1) * expectedValue,
                 (first ? -1 :  1) * expectedValue };
+    }
+
+
+    //--------------------------------------------------------------------
+    private double[] handlePlayer(
+            InfoNode            rA,
+            InfoNode            rB,
+            JointBucketSequence b,
+            boolean             first)
+    {
+        ProponentNode proponent = (ProponentNode) (first ? rA : rB);
+        double        expectedValue = 0;
+        for (KuhnAction act : KuhnAction.VALUES)
+        {
+            double actProb = proponent.probabilityOf(act);
+            double val =
+                approximate(
+                        ((PlayerNode) rA).child(act),
+                        ((PlayerNode) rB).child(act),
+                        b)
+                [ first ? 0 : 1 ];
+
+            expectedValue += actProb * val;
+        }
+
+        return new double[]{
+                (first ?  1 : -1) * expectedValue,
+                (first ? -1 :  1) * expectedValue };
+    }
+
+
+    private double[] approximate(InfoNode            rA,
+                                 InfoNode            rB,
+                                 JointBucketSequence b)
+    {
+        if (rA instanceof ProponentNode)
+        {
+            return handlePlayer(rA, rB, b, true);
+        }
+        else if (rB instanceof ProponentNode)
+        {
+            return handlePlayer(rA, rB, b, false);
+        }
+        else if (rA instanceof BucketNode)
+        {
+            BucketNode bucketA = (BucketNode) rA;
+            BucketNode bucketB = (BucketNode) rB;
+
+            PlayerNode nextA = bucketA.accordingTo(b);
+            PlayerNode nextB = bucketB.accordingTo(b);
+
+            return approximate(nextA, nextB, b);
+        }
+        else if (rA instanceof TerminalNode)
+        {
+            TerminalNode terminalA = (TerminalNode) rA;
+            TerminalNode terminalB = (TerminalNode) rB;
+
+            double utility = terminalA.expectedValue( terminalB );
+            return new double[]{ utility, -utility };
+        }
+        else
+        {
+            throw new Error();
+        }
     }
 }

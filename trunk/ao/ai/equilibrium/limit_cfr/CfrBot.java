@@ -71,9 +71,9 @@ public class CfrBot extends AbstractPlayer
         resetRoundCanons();
 
         if (! DISPLAY) return;
-        if (! mucked) {
+//        if (! mucked) {
             System.out.println("bot shows cards: " + prevCards);
-        }
+//        }
     }
 
     private void resetRoundCanons() {
