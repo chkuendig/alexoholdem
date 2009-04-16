@@ -29,7 +29,7 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoTree    INFO;
 
-    private final double      aggression = 0.01; // .07 in UofA paper
+    private final double      aggression = 0.00; // .07 in UofA paper
 
 
     //--------------------------------------------------------------------
@@ -61,16 +61,6 @@ public class RegretMinimizer
             double         pDealer,
             double         pDealee)
     {
-        if (pDealee == 0 && pDealer == 0) {
-////            int    withZeroes = count(
-////                    node, absDealerBuckets, absDealeeBuckets, true);
-////            int withoutZeroes = count(
-////                    node, absDealerBuckets, absDealeeBuckets, false);
-////            LOG.debug("saving " + (withZeroes - withoutZeroes) +
-////                       " over " +  withZeroes);
-            return approximate(node, absDealerBuckets, absDealeeBuckets);
-        }
-
         boolean dealerProp = node.dealerIsNext();
         InfoBranch infoBranch = INFO.info(
                 node.pathToFlop(), node.round());
@@ -84,8 +74,11 @@ public class RegretMinimizer
         double probabilities[] =
                 info.probabilities(node.canRaise(), node.canCheck());
 
-        if (dealerProp && pDealee == 0 ||
-                (! dealerProp) && pDealer == 0) {
+        if (pDealee == 0 && pDealer == 0) {
+            return approximate(node, absDealerBuckets, absDealeeBuckets,
+                               probabilities);
+        } else if ( dealerProp && pDealee == 0 ||
+                   !dealerProp && pDealer == 0) {
             // ^^ dealerProp must be checked
             return approximateAndUpdateHalf(
                     node, absDealerBuckets, absDealeeBuckets,
@@ -193,80 +186,69 @@ public class RegretMinimizer
     private double approximate(
             StateTree.Node node,
             char           absDealerBuckets[],
-            char           absDealeeBuckets[])
+            char           absDealeeBuckets[],
+            double         probabilities[])
     {
-        if (node.status() != HeadsUpStatus.IN_PROGRESS) {
-            return evaluate(node, absDealerBuckets, absDealeeBuckets);
-        }
-
-        boolean dealerProp    = node.dealerIsNext();
-        double  expectedValue = 0;
-
-        InfoBranch infoBranch = INFO.info(
-                node.pathToFlop(), node.round());
-
-        char roundBucket =
-                (dealerProp
-                ? absDealerBuckets
-                : absDealeeBuckets)[ node.round().ordinal() ];
-        InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
-
-        double probabilities[] =
-                info.probabilities(node.canRaise(), node.canCheck());
-
+        double expectedValue = 0;
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
             double actProb = probabilities[ next.getKey().ordinal() ];
-            if (actProb != 0) {
-                double val = approximate(
-                                next.getValue(),
-                                absDealerBuckets,
-                                absDealeeBuckets);
-                expectedValue += val * actProb;
-            }
+            if (actProb == 0) continue;
+
+            Node nextNode = next.getValue();
+            expectedValue +=
+                   ((nextNode.status() != HeadsUpStatus.IN_PROGRESS)
+                    ? evaluate(
+                            nextNode, absDealerBuckets, absDealeeBuckets)
+                    : approximateAndUpdate(
+                            nextNode,
+                            absDealerBuckets,
+                            absDealeeBuckets,
+                            0, 0))
+                   * actProb;
         }
 
         return expectedValue;
     }
 
 
-    //--------------------------------------------------------------------
-    private int count(
-            StateTree.Node node,
-            char           absDealerBuckets[],
-            char           absDealeeBuckets[],
-            boolean        includeZeroes)
-    {
-        if (node.status() != HeadsUpStatus.IN_PROGRESS) return 1;
-
-        InfoBranch infoBranch = INFO.info(
-                node.pathToFlop(), node.round());
-
-        char roundBucket =
-                (node.dealerIsNext()
-                ? absDealerBuckets
-                : absDealeeBuckets)[ node.round().ordinal() ];
-        InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
-
-        double probabilities[] =
-                info.probabilities(node.canRaise(), node.canCheck());
-
-        int                       count = 0;
-        Map<AbstractAction, Node> acts  = node.acts();
-        for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
-        {
-            double actProb = probabilities[ next.getKey().ordinal() ];
-            if (includeZeroes || actProb != 0) {
-                count += count(next.getValue(),
-                               absDealerBuckets,
-                               absDealeeBuckets,
-                               includeZeroes);
-            }
-        }
-
-        return count;
-    }
+//    //--------------------------------------------------------------------
+//    private int count(
+//            StateTree.Node node,
+//            char           absDealerBuckets[],
+//            char           absDealeeBuckets[],
+//            boolean        includeZeroes)
+//    {
+//        if (node.status() != HeadsUpStatus.IN_PROGRESS) return 1;
+//
+//        InfoBranch infoBranch = INFO.info(
+//                node.pathToFlop(), node.round());
+//
+//        char roundBucket =
+//                (node.dealerIsNext()
+//                ? absDealerBuckets
+//                : absDealeeBuckets)[ node.round().ordinal() ];
+//        InfoSet info = infoBranch.get(roundBucket, node.roundPathId());
+//
+//        double probabilities[] =
+//                info.probabilities(node.canRaise(), node.canCheck());
+//
+//        int                       count = 0;
+//        Map<AbstractAction, Node> acts  = node.acts();
+//        for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
+//        {
+//            double actProb = probabilities[ next.getKey().ordinal() ];
+//            if (includeZeroes || actProb != 0) {
+//                count += count(next.getValue(),
+//                               absDealerBuckets,
+//                               absDealeeBuckets,
+//                               includeZeroes);
+//            }
+//        }
+//
+//        return count;
+//    }
 
 
     //--------------------------------------------------------------------

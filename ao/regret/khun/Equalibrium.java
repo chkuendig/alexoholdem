@@ -103,7 +103,7 @@ public class Equalibrium
             counterfactualRegret.put(act, cRegret);
         }
         proponent.add( counterfactualRegret );
-        proponent.updateActionPabilities();
+//        proponent.updateActionPabilities();
 
         return new double[]{
                 (first ?  1 : -1) * expectedValue,

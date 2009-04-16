@@ -9,6 +9,9 @@ import ao.simple.kuhn.KuhnPlayer;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnSequencer;
 import ao.simple.kuhn.state.KuhnState;
+import ao.util.math.stats.Combo;
+import ao.util.math.stats.Permuter;
+import ao.util.misc.Progress;
 
 /**
  * Counterfactual Regret Minimizing player
@@ -31,16 +34,20 @@ public class CrmBot implements KuhnPlayer
         firstRoot = tree.initialize(sequencer.root(), false);
         lastRoot  = tree.initialize(sequencer.root(), true);
 
+        System.out.println("Computing Equilibrium");
+        Progress progres = new Progress(iterations);
+
+        KuhnCard hands[][] = generateHands();
         for (int i = 0; i < iterations; i++)
         {
-            JointBucketSequence jbs = new JointBucketSequence();
-//            if (jbs.forPlayer(true).against(
-//                    jbs.forPlayer(false)) > 0) continue;
+            JointBucketSequence jbs =
+                    new JointBucketSequence( hands[i % hands.length] );
 
             equalibrium.approximate(
                     firstRoot, lastRoot,
                     jbs, 1.0, 1.0);
 
+            progres.checkpoint();
 //            System.out.println("cards: " + jbs);
 //            TreeDisplay.display(firstRoot, lastRoot);
 //            System.out.println("first:\n" + firstRoot);
@@ -50,6 +57,22 @@ public class CrmBot implements KuhnPlayer
 //        System.out.println("first:\n" + firstRoot);
 //        System.out.println("last:\n"  + lastRoot);
     }
+
+
+    private static KuhnCard[][] generateHands()
+    {
+        KuhnCard hands[][] = new KuhnCard[ (int)
+                Combo.factorial(KuhnCard.values().length) ][2];
+
+        int i = 0;
+        for (KuhnCard c[] :
+                new Permuter<KuhnCard>(KuhnCard.values(), 2)) {
+            hands[ i++ ] = c;
+        }
+
+        return hands;
+    }
+
 
 
     //--------------------------------------------------------------------

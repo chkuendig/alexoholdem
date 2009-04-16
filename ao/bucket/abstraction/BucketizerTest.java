@@ -61,8 +61,8 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-//        computeFfr(abs);
-        tournament(abs);
+        computeFfr(abs);
+//        tournament(abs);
 //        vsHuman(abs);
 //        probabilities(abs);
     }
@@ -136,8 +136,8 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     = 0;//(125 + 560) * 1000 * 1000;
-        long iterations = 1000 * 1000 * 1000;
+        long offset     =  17 * 1000 * 1000;//(125 + 560) * 1000 * 1000;
+        long iterations = 200 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
@@ -161,7 +161,7 @@ public class BucketizerTest
                 System.out.println(" " + (itr - 1) + " took " +
                         (System.currentTimeMillis() - before) / 1000);
 
-                if (itr != 1) {
+                if (itr != (offset + 1)) {
                     abs.flushInfo();
                 }
                 before = System.currentTimeMillis();

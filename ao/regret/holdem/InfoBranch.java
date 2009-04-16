@@ -29,6 +29,9 @@ public class InfoBranch
     private static final String RAISE_FILE = "raise.double";
     private static final String VISIT_FILE = "visit.int";
 
+//    private final double        raiseMin   = 0.001; // .07 in UofA paper
+//    private final double        raiseBias  = 1.500; // .07 in UofA paper
+
 
     //--------------------------------------------------------------------
     public static InfoBranch retrieveOrCreate(
@@ -204,22 +207,6 @@ public class InfoBranch
         public void add(double  counterfactualRegret[],
                         boolean canRaise)
         {
-//            int t = visits[bucket][state];
-//
-//            regretFold[bucket][state] =
-//                    (t * regretFold[bucket][state] +
-//                            counterfactualRegret[0]) / (t + 1);
-//
-//            regretCall[bucket][state] =
-//                    (t * regretCall[bucket][state] +
-//                            counterfactualRegret[1]) / (t + 1);
-//
-//            if (canRaise) {
-//                regretRaise[bucket][state] =
-//                        (t * regretRaise[bucket][state] +
-//                                counterfactualRegret[2]) / (t + 1);
-//            }
-
             regretFold[bucket][state] += counterfactualRegret[0];
             regretCall[bucket][state] += counterfactualRegret[1];
 
@@ -287,12 +274,19 @@ public class InfoBranch
                         regretCall [bucket][state] / cumRegret);
                 double raiseProb = Math.max(0,
                         regretRaise[bucket][state] / cumRegret);
+//                            * raiseBias;
+//                if (raiseProb == 0) raiseProb = raiseMin;
 
                 if (canCheck && foldProb != 0) {
                     into[0] = 0;
                     into[1] = callProb / (callProb + raiseProb);
                     into[2] = 1.0 - into[1];
                 } else {
+//                    double total = foldProb + callProb + raiseProb;
+//                    into[0] =  foldProb / total;
+//                    into[1] =  callProb / total;
+//                    into[2] = raiseProb / total;
+
                     into[0] =  foldProb;
                     into[1] =  callProb;
                     into[2] = raiseProb;
@@ -367,15 +361,22 @@ public class InfoBranch
                 if (canCheck) {
                     into[0] = 0;
                     into[1] = into[2] = 0.5;
+
+//                    into[2] = 0.5 * raiseBias;
+//                    into[1] = 1.0 - into[2];
                 } else {
-                    into[0] = into[1] = into[2] = 1.0/3;
+                    into[0] = 0.1;
+
+//                    into[1] = into[2] = (1.0 / 3);
+                    into[1] = into[2] = (1.0 - into[0]) / 2;
                 }
             } else {
                 if (canCheck) {
                     into[0] = 0;
                     into[1] = 1.0;
                 } else {
-                    into[0] = into[1] = 0.5;
+                    into[0] = 0.1;
+                    into[1] = 1.0 - into[1];
                 }
                 into[2] = 0;
             }
