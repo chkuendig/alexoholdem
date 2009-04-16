@@ -6,13 +6,10 @@ package ao.simple.kuhn.state;
 public enum KuhnOutcome
 {
     //--------------------------------------------------------------------
-    SHOWDOWN(true),
-
+    SHOWDOWN       (true),
     DOUBLE_SHOWDOWN(true),
-
-    FIRST_TO_ACT_WINS(false),
-
-    LAST_TO_ACT_WINS(false);
+    PLAYER_ONE_WINS(false),
+    PLAYER_TWO_WINS(false);
 
 
     //--------------------------------------------------------------------

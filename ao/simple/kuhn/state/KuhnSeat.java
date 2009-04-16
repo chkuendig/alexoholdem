@@ -26,7 +26,7 @@ public class KuhnSeat
     //--------------------------------------------------------------------
     public KuhnAction act(KuhnState state)
     {
-        return PLAYER.act(HOLE, state);
+        return PLAYER.act(state, HOLE);
     }
 
 

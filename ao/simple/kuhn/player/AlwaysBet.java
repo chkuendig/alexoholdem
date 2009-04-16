@@ -10,10 +10,13 @@ import ao.simple.kuhn.state.KuhnState;
  */
 public class AlwaysBet implements KuhnPlayer
 {
-    public KuhnAction act(KuhnCard hole, KuhnState state)
+    //--------------------------------------------------------------------
+    public void handEnded() {}
+
+
+    //--------------------------------------------------------------------
+    public KuhnAction act(KuhnState state, KuhnCard hole)
     {
         return KuhnAction.BET;
     }
-
-    public void handEnded() {}
 }

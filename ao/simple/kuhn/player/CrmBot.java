@@ -33,13 +33,22 @@ public class CrmBot implements KuhnPlayer
 
         for (int i = 0; i < iterations; i++)
         {
+            JointBucketSequence jbs = new JointBucketSequence();
+//            if (jbs.forPlayer(true).against(
+//                    jbs.forPlayer(false)) > 0) continue;
+
             equalibrium.approximate(
                     firstRoot, lastRoot,
-                    new JointBucketSequence(),
-                    1.0, 1.0);
+                    jbs, 1.0, 1.0);
+
+//            System.out.println("cards: " + jbs);
+//            TreeDisplay.display(firstRoot, lastRoot);
+//            System.out.println("first:\n" + firstRoot);
+//            System.out.println("last:\n"  + lastRoot);
         }
-        System.out.println("first:\n" + firstRoot);
-        System.out.println("last:\n"  + lastRoot);
+        TreeDisplay.display(firstRoot, lastRoot);
+//        System.out.println("first:\n" + firstRoot);
+//        System.out.println("last:\n"  + lastRoot);
     }
 
 
@@ -48,7 +57,7 @@ public class CrmBot implements KuhnPlayer
 
 
     //--------------------------------------------------------------------
-    public KuhnAction act(KuhnCard hole, KuhnState state)
+    public KuhnAction act(KuhnState state, KuhnCard hole)
     {
         BucketNode node =
                 state.firstToAct()

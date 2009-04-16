@@ -24,6 +24,7 @@ public class TerminalNode implements InfoNode
 
 
     //--------------------------------------------------------------------
+    // this is the stack delta, ie. stakes (excludes your commit)
     public double expectedValue(TerminalNode vsLastToAct)
     {
         if (OUTCOME.isShowdown())
@@ -32,12 +33,12 @@ public class TerminalNode implements InfoNode
                     BUCKET.against( vsLastToAct.BUCKET );
 
             return OUTCOME == KuhnOutcome.SHOWDOWN // as opposed to
-                    ?       toWin                  // DOUBLE_SHOWDOWN
-                    : 2.0 * toWin;
+                    ? 2.0 * (toWin - 0.5)          // DOUBLE_SHOWDOWN
+                    : 4.0 * (toWin - 0.5);
         }
         else
         {
-            return OUTCOME == KuhnOutcome.FIRST_TO_ACT_WINS
+            return OUTCOME == KuhnOutcome.PLAYER_ONE_WINS
                     ? 1 : -1;
         }
     }
@@ -46,7 +47,7 @@ public class TerminalNode implements InfoNode
     //--------------------------------------------------------------------
     public String toString()
     {
-        return toString( 0 );
+        return OUTCOME.toString();
     }
 
     public String toString(int depth)

@@ -204,6 +204,22 @@ public class InfoBranch
         public void add(double  counterfactualRegret[],
                         boolean canRaise)
         {
+//            int t = visits[bucket][state];
+//
+//            regretFold[bucket][state] =
+//                    (t * regretFold[bucket][state] +
+//                            counterfactualRegret[0]) / (t + 1);
+//
+//            regretCall[bucket][state] =
+//                    (t * regretCall[bucket][state] +
+//                            counterfactualRegret[1]) / (t + 1);
+//
+//            if (canRaise) {
+//                regretRaise[bucket][state] =
+//                        (t * regretRaise[bucket][state] +
+//                                counterfactualRegret[2]) / (t + 1);
+//            }
+
             regretFold[bucket][state] += counterfactualRegret[0];
             regretCall[bucket][state] += counterfactualRegret[1];
 
@@ -214,23 +230,23 @@ public class InfoBranch
             visits[bucket][state]++;
         }
 
-        public void add(AbstractAction act,
-                        double         counterfactualRegret)
-        {
-            switch (act) {
-                case QUIT_FOLD:
-                    regretFold[bucket][state] += counterfactualRegret;
-                    break;
-
-                case CHECK_CALL:
-                    regretCall[bucket][state] += counterfactualRegret;
-                    break;
-
-                case BET_RAISE:
-                    regretRaise[bucket][state] += counterfactualRegret;
-                    break;
-            }
-        }
+//        public void add(AbstractAction act,
+//                        double         counterfactualRegret)
+//        {
+//            switch (act) {
+//                case QUIT_FOLD:
+//                    regretFold[bucket][state] += counterfactualRegret;
+//                    break;
+//
+//                case CHECK_CALL:
+//                    regretCall[bucket][state] += counterfactualRegret;
+//                    break;
+//
+//                case BET_RAISE:
+//                    regretRaise[bucket][state] += counterfactualRegret;
+//                    break;
+//            }
+//        }
 
 
         //----------------------------------------------------------------
@@ -252,30 +268,18 @@ public class InfoBranch
         {
             double prob[] = new double[ 3 ];
             probabilities(prob, canRaise, canCheck);
+//            probabilitiesAgro(prob, canRaise, canCheck);
             return prob;
         }
-        public void probabilities(
+
+        private void probabilities(
                 double into[], boolean canRaise, boolean canCheck)
         {
+
             double cumRegret = positiveCounterfactualRegret();
 
             if (cumRegret <= 0) {
-                if (canRaise) {
-                    if (canCheck) {
-                        into[0] = 0;
-                        into[1] = into[2] = 0.5;
-                    } else {
-                        into[0] = into[1] = into[2] = 1.0/3;
-                    }
-                } else {
-                    if (canCheck) {
-                        into[0] = 0;
-                        into[1] = 1.0;
-                    } else {
-                        into[0] = into[1] = 0.5;
-                    }
-                    into[2] = 0;
-                }
+                defaultProbabilities(into, canRaise, canCheck);
             } else {
                 double foldProb  = Math.max(0,
                         regretFold [bucket][state] / cumRegret);
@@ -293,6 +297,99 @@ public class InfoBranch
                     into[1] =  callProb;
                     into[2] = raiseProb;
                 }
+            }
+        }
+
+        private void defaultProbabilities(
+                double into[], boolean canRaise, boolean canCheck)
+        {
+//            if (canRaise) {
+//                if (canCheck) {
+//                    into[0] = 0;
+//
+//                    double min = Math.min(
+//                            regretCall [bucket][state],
+//                            regretRaise[bucket][state]);
+//                    if (min == 0) {
+////                        probabilitiesAgro(into, canRaise, canCheck);
+//                        into[1] = into[2] = 0.5;
+//                        return;
+//                    }
+//
+//                    double c = regretCall [bucket][state] - min;
+//                    double r = regretRaise[bucket][state] - min;
+//
+//                    into[1] = c / (c + r);
+//                    into[2] = r / (c + r);
+//                } else {
+//                    double min = Math.min(Math.min(
+//                            regretFold [bucket][state],
+//                            regretCall [bucket][state]),
+//                            regretRaise[bucket][state]);
+//                    if (min == 0) {
+////                        probabilitiesAgro(into, canRaise, canCheck);
+//                        into[0] = into[1] = into[2] = 1.0/3;
+//                        return;
+//                    }
+//
+//                    double f = regretFold [bucket][state] - min;
+//                    double c = regretCall [bucket][state] - min;
+//                    double r = regretRaise[bucket][state] - min;
+//
+//                    into[0] = f / (f + c + r);
+//                    into[1] = c / (f + c + r);
+//                    into[2] = r / (f + c + r);
+//                }
+//            } else {
+//                if (canCheck) {
+//                    into[0] = 0;
+//                    into[1] = 1.0;
+//                } else {
+//                    double min = Math.min(
+//                            regretFold[bucket][state],
+//                            regretCall[bucket][state]);
+//                    if (min == 0) {
+////                        probabilitiesAgro(into, canRaise, canCheck);
+//                        into[0] = into[1] = 0.5;
+//                        return;
+//                    }
+//
+//                    double f = regretFold[bucket][state] - min;
+//                    double c = regretCall[bucket][state] - min;
+//
+//                    into[0] = f / (f + c);
+//                    into[1] = c / (f + c);
+//                }
+//                into[2] = 0;
+//            }
+
+            if (canRaise) {
+                if (canCheck) {
+                    into[0] = 0;
+                    into[1] = into[2] = 0.5;
+                } else {
+                    into[0] = into[1] = into[2] = 1.0/3;
+                }
+            } else {
+                if (canCheck) {
+                    into[0] = 0;
+                    into[1] = 1.0;
+                } else {
+                    into[0] = into[1] = 0.5;
+                }
+                into[2] = 0;
+            }
+        }
+
+        private void probabilitiesAgro(
+                double into[], boolean canRaise, boolean canCheck)
+        {
+            if (canRaise) {
+                into[0] = into[1] = 0;
+                into[2] = 1.0;
+            } else {
+                into[0] = into[2] = 0;
+                into[1] = 1.0;
             }
         }
 

@@ -11,14 +11,17 @@ import ao.util.math.rand.Rand;
  */
 public class RandomKuhnPlayer implements KuhnPlayer
 {
+    //--------------------------------------------------------------------
+    public void handEnded() {}
+
+
+    //--------------------------------------------------------------------
     public KuhnAction act(
-            KuhnCard hole,
-            KuhnState state)
+            KuhnState state,
+            KuhnCard  hole)
     {
         return Rand.nextBoolean()
                 ? KuhnAction.PASS
                 : KuhnAction.BET;
     }
-
-    public void handEnded() {}
 }

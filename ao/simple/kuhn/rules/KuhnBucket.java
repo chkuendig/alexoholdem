@@ -22,7 +22,8 @@ public class KuhnBucket implements Bucket<KuhnBucket>
     {
         this(card, null);
     }
-    public KuhnBucket(KuhnCard card,
+
+    public KuhnBucket(KuhnCard               card,
                       Collection<KuhnBucket> kids)
     {
         CARD = card;

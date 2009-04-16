@@ -11,6 +11,7 @@ import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.model.Avatar;
 import ao.regret.holdem.InfoTree;
 import ao.regret.holdem.RegretMinimizer;
+import ao.util.math.rand.Rand;
 import ao.util.misc.Progress;
 import org.apache.log4j.Logger;
 
@@ -120,6 +121,8 @@ public class BucketizerTest
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
+
+        Rand.randomize();
         new DealerTest().vsHuman(new CfrBot(abs, true));
     }
 
@@ -133,36 +136,39 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     = (125 + 560) * 1000 * 1000;
+        long offset     = 0;//(125 + 560) * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;
 
+        long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
-        for (long i = 0; i < offset; i++) {
-            it.next();
-        }
 
-        Progress prog = new Progress(iterations);
+        if (offset > 0) {
+            System.out.println("Offsetting...");
+            for (; itr < offset; itr++) {
+                it.next();
+            }
+        }
+        
+        Progress prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr++ % (10 * 1000 * 1000) == 0) {
-                System.out.println(" " + (itr - 1));
+            if (itr % (100 * 1000) == 0) {
+                System.out.println();
                 info.displayFirstAct();
+            }
+
+            if (itr++ % (1000 * 1000) == 0) {
+                System.out.println(" " + (itr - 1) + " took " +
+                        (System.currentTimeMillis() - before) / 1000);
 
                 if (itr != 1) {
                     abs.flushInfo();
                 }
+                before = System.currentTimeMillis();
             }
-//            if (itr++ > 0) {
-//                System.out.println(itr - 1);
-//                info.displayFirstAct();
-//            }
-
             char[][] jbs = it.next();
             cfrMin.minimize(
                     jbs[0], jbs[1]);
-
-//            System.out.println(Arrays.deepToString(jbs));
-//            info.displayFirstAct();
 
             prog.checkpoint();
         }

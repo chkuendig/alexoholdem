@@ -38,4 +38,11 @@ public class JointBucketSequence
                 ? first
                 : last;
     }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return first + "|" + last;
+    }
 }
