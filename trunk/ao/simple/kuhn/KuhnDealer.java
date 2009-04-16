@@ -18,7 +18,7 @@ public class KuhnDealer
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
-        CrmBot bot = new CrmBot(100 * 1000 * 1000);
+        CrmBot bot = new CrmBot(6 * 1000 * 1000);
         KuhnDealer dealer =
                 new KuhnDealer(
                         bot
@@ -28,11 +28,14 @@ public class KuhnDealer
 //                    ,   new RandomKuhnPlayer()
                 );
 
-//        boolean  inOrder   = true;
+        int rounds = 1000 * 1000;
+//        System.out.println("Testing with self play");
+//        Progress progres = new Progress(rounds);
+
         int      numHands  = 0;
         int      cumDelta  = 0;
         KuhnCard hands[][] = generateHands();
-        for (int round = 0; round < 1000 * 1000; round++)
+        for (int round = 0; round < rounds; round++)
         {
             for (KuhnCard[] hand : hands)
             {
@@ -43,6 +46,8 @@ public class KuhnDealer
 
                 numHands++;
             }
+
+//            progres.checkpoint();
 //            dealer.swapPlayers();
 //            inOrder = !inOrder;
         }

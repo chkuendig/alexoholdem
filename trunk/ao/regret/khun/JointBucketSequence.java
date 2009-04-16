@@ -30,6 +30,19 @@ public class JointBucketSequence
         last  = new KuhnBucket( deck.get(1) );
     }
 
+    public JointBucketSequence(
+            KuhnCard cards[])
+    {
+        this(cards[0], cards[1]);
+    }
+    public JointBucketSequence(
+            KuhnCard cardOne,
+            KuhnCard cardTwo)
+    {
+        first = new KuhnBucket( cardOne );
+        last  = new KuhnBucket( cardTwo );
+    }
+
 
     //--------------------------------------------------------------------
     public KuhnBucket forPlayer(boolean firstToAct)
