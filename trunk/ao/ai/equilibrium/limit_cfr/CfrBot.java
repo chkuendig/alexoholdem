@@ -117,8 +117,9 @@ public class CfrBot extends AbstractPlayer
                         Arrays.toString(
                                 infoSet.probabilities(state.canRaise())) +
                         " from " + Arrays.toString(
+                                    infoSet.averageStrategy()) +
+                        " with " + Arrays.toString(
                                     infoSet.cumulativeRegret()) +
-                        " with " + infoSet.visits() +
                         " on "   + relBucket);
             }
 

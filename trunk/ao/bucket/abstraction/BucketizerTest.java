@@ -61,8 +61,8 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-        computeCfr(abs);
-//        tournament(abs);
+//        computeCfr(abs);
+        tournament(abs);
 //        vsHuman(abs);
 //        probabilities(abs);
     }
@@ -136,7 +136,7 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     = 1000 * 1000;//(125 + 560) * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
         long iterations = 200 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();

@@ -29,7 +29,7 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoTree    INFO;
 
-    private final double      aggression = 0.00; // .07 in UofA paper
+    private final double      aggression = 0.07; // .07 in UofA paper
 
 
     //--------------------------------------------------------------------

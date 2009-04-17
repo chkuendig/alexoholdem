@@ -26,13 +26,11 @@ public class CrmBot implements KuhnPlayer
     //--------------------------------------------------------------------
     public CrmBot(int iterations)
     {
-        KuhnInfoTree  tree      = new KuhnInfoTree();
-        KuhnSequencer sequencer = new KuhnSequencer();
+        KuhnSequencer sequencer   = new KuhnSequencer();
+        Equalibrium   equalibrium = new Equalibrium();
 
-        Equalibrium equalibrium = new Equalibrium();
-
-        firstRoot = tree.initialize(sequencer.root(), false);
-        lastRoot  = tree.initialize(sequencer.root(), true);
+        firstRoot = KuhnInfoTree.initialize(sequencer.root(), false);
+        lastRoot  = KuhnInfoTree.initialize(sequencer.root(), true);
 
         System.out.println("Computing Equilibrium");
         Progress progres = new Progress(iterations);

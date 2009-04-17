@@ -1,6 +1,7 @@
 package ao.regret.khun.node;
 
 import ao.regret.InfoNode;
+import ao.simple.kuhn.KuhnCard;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.state.KuhnOutcome;
 import ao.util.text.Txt;
@@ -20,6 +21,16 @@ public class TerminalNode implements InfoNode
     {
         BUCKET  = bucket;
         OUTCOME = outcome;
+    }
+
+
+    //--------------------------------------------------------------------
+    public static double vs(
+            KuhnCard a, KuhnCard b, KuhnOutcome out)
+    {
+        return new TerminalNode(new KuhnBucket(a), out)
+                    .expectedValue(
+                            new TerminalNode(new KuhnBucket(b), out));
     }
 
 
