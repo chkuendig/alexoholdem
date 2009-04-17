@@ -1,6 +1,6 @@
 package ao.simple.kuhn;
 
-import ao.simple.kuhn.player.CrmBot;
+import ao.simple.kuhn.player.Crm2Bot;
 import ao.simple.kuhn.state.KuhnSeat;
 import ao.simple.kuhn.state.StateFlow;
 import ao.util.math.stats.Combo;
@@ -18,7 +18,8 @@ public class KuhnDealer
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
-        CrmBot bot = new CrmBot(6 * 1000 * 1000);
+        //CrmBot bot = new CrmBot(6 * 1000 * 1000);
+        Crm2Bot bot = new Crm2Bot(6 * 1000 * 1000);
         KuhnDealer dealer =
                 new KuhnDealer(
                         bot
@@ -102,7 +103,7 @@ public class KuhnDealer
         KuhnSeat a = new KuhnSeat(first, firstCard);
         KuhnSeat b = new KuhnSeat(last,  lastCard);
 
-        StateFlow flow = StateFlow.FIRST_ACTION;
+        StateFlow flow = StateFlow.firstAction();
         do
         {
             KuhnSeat   seat   = flow.firstIsNextToAct()

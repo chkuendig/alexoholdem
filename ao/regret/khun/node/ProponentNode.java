@@ -117,30 +117,26 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-//    public void updateActionPabilities()
-//    {
-//        double cumRegret = positiveCumulativeCounterfactualRegret();
-//
-//        if (cumRegret <= 0)
-//        {
-//            for (double[] p : prob.values())
-//            {
-//                p[0] = 1.0 / KuhnAction.VALUES.length;
-//            }
-//        }
-//        else
-//        {
-//            for (Map.Entry<KuhnAction, double[]> p : prob.entrySet())
-//            {
-//                double cRegret = regret.get( p.getKey() )[0];
-//
-//                p.getValue()[0] =
-//                        (cRegret < 0)
-//                        ? 0
-//                        : cRegret / cumRegret;
-//            }
-//        }
-//    }
+    private double[] probabilities()
+    {
+        double prob[]    = new double[2];
+        double cumRegret = positiveCumulativeCounterfactualRegret();
+
+        if (cumRegret <= 0)
+        {
+            prob[0] = prob[1] = 1.0 / 2;
+        }
+        else
+        {
+            prob[0] = Math.max(0,
+                        regret.get( KuhnAction.PASS )[0] / cumRegret);
+
+            prob[1] = Math.max(0,
+                        regret.get( KuhnAction.BET  )[0] / cumRegret);
+        }
+
+        return prob;
+    }
 
     private double positiveCumulativeCounterfactualRegret()
     {
@@ -193,28 +189,5 @@ public class ProponentNode implements PlayerNode
                .append( "\n" );
         }
         return str.substring(0, str.length()-1);
-    }
-
-
-    //--------------------------------------------------------------------
-    private double[] probabilities()
-    {
-        double prob[]    = new double[2];
-        double cumRegret = positiveCumulativeCounterfactualRegret();
-
-        if (cumRegret <= 0)
-        {
-            prob[0] = prob[1] = 1.0 / 2;
-        }
-        else
-        {
-            prob[0] = Math.max(0,
-                        regret.get( KuhnAction.PASS )[0] / cumRegret);
-
-            prob[1] = Math.max(0,
-                        regret.get( KuhnAction.BET  )[0] / cumRegret);
-        }
-
-        return prob;
     }
 }

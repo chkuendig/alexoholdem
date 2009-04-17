@@ -8,8 +8,13 @@ import ao.simple.kuhn.KuhnAction;
 public class StateFlow
 {
     //--------------------------------------------------------------------
-    public static final StateFlow FIRST_ACTION =
-            new StateFlow(KuhnState.FIRST_ACTION, null);
+//    public static final StateFlow FIRST_ACTION =
+//            new StateFlow(KuhnState.FIRST_ACTION, null);
+
+    // must be method to avoid circular enum reference
+    public static StateFlow firstAction() {
+        return new StateFlow(KuhnState.FIRST_ACTION, null);
+    }
 
 
     //--------------------------------------------------------------------

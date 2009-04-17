@@ -31,6 +31,8 @@ public enum KuhnState
                  new StateFlow(AFTER_BET,  null),
                  true);
 
+    public static final KuhnState VALUES[] = values();
+
 
     //--------------------------------------------------------------------
     private final StateFlow ON_PASS;

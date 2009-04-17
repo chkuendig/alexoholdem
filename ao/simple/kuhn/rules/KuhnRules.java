@@ -18,7 +18,7 @@ public class KuhnRules
     //--------------------------------------------------------------------
     public KuhnRules()
     {
-        this(StateFlow.FIRST_ACTION);
+        this(StateFlow.firstAction());
     }
 
     private KuhnRules(StateFlow state)

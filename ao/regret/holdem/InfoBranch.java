@@ -184,11 +184,11 @@ public class InfoBranch
         double toCall = probabilities[1];
 
         double rand = Rand.nextDouble();
-        if (toFold >= rand) {
+        if (rand <= toFold) {
             return AbstractAction.QUIT_FOLD;
         } else {
             rand -= toFold;
-            return (toCall >= rand)
+            return (rand <= toCall)
                    ? AbstractAction.CHECK_CALL
                    : AbstractAction.BET_RAISE;
         }
@@ -216,8 +216,6 @@ public class InfoBranch
                 boolean canRaise, boolean canCheck)
         {
             return InfoBranch.nextProbableAction(
-
-
                     averageStrategy());
         }
 

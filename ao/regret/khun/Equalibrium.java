@@ -1,11 +1,11 @@
 package ao.regret.khun;
 
 import ao.regret.InfoNode;
-import ao.regret.khun.node.BucketNode;
-import ao.regret.khun.node.PlayerNode;
-import ao.regret.khun.node.ProponentNode;
-import ao.regret.khun.node.TerminalNode;
+import ao.regret.khun.node.*;
 import ao.simple.kuhn.KuhnAction;
+import ao.simple.kuhn.KuhnCard;
+import ao.simple.kuhn.state.KuhnState;
+import ao.simple.kuhn.state.StateFlow;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -15,6 +15,76 @@ import java.util.Map;
  */
 public class Equalibrium
 {
+    //--------------------------------------------------------------------
+    public void minimizeRegret(
+            KuhnInfoTree infoTree,
+            KuhnCard     buckets[])
+    {
+        minimizeRegret(
+                KuhnState.FIRST_ACTION,
+                infoTree,
+                buckets,
+                1.0, 1.0);
+    }
+    private double minimizeRegret(
+            KuhnState    state,
+            KuhnInfoTree infoTree,
+            KuhnCard     buckets[],
+            double       pA,
+            double       pB)
+    {
+        boolean  firstToAct = state.firstToAct();
+        KuhnCard bucket     = buckets[firstToAct ? 0 : 1];
+
+        KuhnInfoTree.InfoSet info =
+                infoTree.infoSet(bucket, state);
+
+        double utilities[]           = {0, 0, 0};
+        double counterfactualUtility = 0;
+
+        double probabilities[] = info.positiveRegretStrategy();
+        for (KuhnAction act : KuhnAction.VALUES) {
+            double actProb = probabilities[ act.ordinal() ];
+
+            double val;
+            StateFlow next = state.advance(act);
+            if (next.endOfHand()) {
+                val = TerminalNode.vs(
+                        buckets[0],buckets[1], next.outcome());
+            } else {
+                val = minimizeRegret(
+                        next.state(),
+                        infoTree,
+                        buckets,
+                        (firstToAct ? pA * actProb : pA),
+                        (firstToAct ? pB : pB * actProb));
+            }
+
+            utilities[ act.ordinal() ] = val;
+            counterfactualUtility += val * actProb;
+        }
+
+        double oppReachingFactor = (firstToAct ? pB : -pA);
+        double immediateCounterfactualRegret[] =
+                new double[ KuhnAction.VALUES.length ];
+        for (KuhnAction act : KuhnAction.VALUES)
+        {
+            double cRegret =
+                    (utilities[ act.ordinal() ] - counterfactualUtility)
+                        * oppReachingFactor;
+
+            immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
+
+        }
+        info.add(immediateCounterfactualRegret,
+                 probabilities,
+                 firstToAct ? pA : pB);
+
+        return counterfactualUtility;
+    }
+
+
+
     //--------------------------------------------------------------------
     /**
      * @param rA an information set tree for player 1.
