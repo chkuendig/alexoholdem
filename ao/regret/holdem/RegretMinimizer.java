@@ -101,8 +101,8 @@ public class RegretMinimizer
             InfoSet        info,
             double         probabilities[])
     {
-        double expectedValue = 0;
-        double expectation[] = {0, 0, 0};
+        double counterfactualUtility = 0;
+        double utilities[]           = {0, 0, 0};
         Map<AbstractAction, Node> acts = node.acts();
         for (Map.Entry<AbstractAction, Node> next : acts.entrySet())
         {
@@ -123,27 +123,29 @@ public class RegretMinimizer
                         pDealee * (node.dealerIsNext() ? 1.0 : actProb));
             }
 
-            expectation[ next.getKey().ordinal() ] = val;
-            expectedValue += val * actProb;
+            utilities[ next.getKey().ordinal() ] = val;
+            counterfactualUtility += val * actProb;
         }
 
         double oppReachingFactor =
                 node.dealerIsNext() ? pDealee : -pDealer;
-        double counterfactualRegret[] =
+        double immediateCounterfactualRegret[] =
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : acts.keySet())
         {
-            double r = (expectation[ act.ordinal() ] - expectedValue)
-                            * oppReachingFactor;
+            double cRegret =
+                    (utilities[ act.ordinal() ] - counterfactualUtility)
+                        * oppReachingFactor;
 
             // aggresion
-            counterfactualRegret[ act.ordinal() ] =
-                    (r > 0 ? (1.0 + aggression) * r : r);
+            immediateCounterfactualRegret[ act.ordinal() ] =
+                    (cRegret > 0 ? (1.0 + aggression) * cRegret : cRegret);
 
         }
-        info.add(counterfactualRegret, node.canRaise());
+        info.add(immediateCounterfactualRegret, node.canRaise(),
+                 probabilities, node.dealerIsNext() ? pDealer : pDealee);
 
-        return expectedValue;
+        return counterfactualUtility;
     }
 
 

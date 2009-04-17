@@ -61,7 +61,7 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-        computeFfr(abs);
+        computeCfr(abs);
 //        tournament(abs);
 //        vsHuman(abs);
 //        probabilities(abs);
@@ -128,7 +128,7 @@ public class BucketizerTest
 
 
     //--------------------------------------------------------------------
-    public static void computeFfr(
+    public static void computeCfr(
             HoldemAbstraction abs) throws IOException
     {
         InfoTree info   = abs.info();
@@ -136,7 +136,7 @@ public class BucketizerTest
                                          info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     =  17 * 1000 * 1000;//(125 + 560) * 1000 * 1000;
+        long offset     = 1000 * 1000;//(125 + 560) * 1000 * 1000;
         long iterations = 200 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();

@@ -93,16 +93,21 @@ public class Equalibrium
             expectedValue += actProb * val;
         }
 
+        double proReachProb = (first ? pA : pB);
+        double oppReachProb = (first ? pB : pA);
+
         Map<KuhnAction, Double> counterfactualRegret  =
                 new EnumMap<KuhnAction, Double>(KuhnAction.class);
         for (KuhnAction act : KuhnAction.VALUES)
         {
             double cRegret =
                     (expectation.get(act) - expectedValue) *
-                        (first ? pB : pA);
+                        oppReachProb;
             counterfactualRegret.put(act, cRegret);
         }
-        proponent.add( counterfactualRegret );
+        proponent.add(
+                counterfactualRegret,
+                proReachProb);
 //        proponent.updateActionPabilities();
 
         return new double[]{
@@ -112,33 +117,6 @@ public class Equalibrium
 
 
     //--------------------------------------------------------------------
-    private double[] handlePlayer(
-            InfoNode            rA,
-            InfoNode            rB,
-            JointBucketSequence b,
-            boolean             first)
-    {
-        ProponentNode proponent = (ProponentNode) (first ? rA : rB);
-        double        expectedValue = 0;
-        for (KuhnAction act : KuhnAction.VALUES)
-        {
-            double actProb = proponent.probabilityOf(act);
-            double val =
-                approximate(
-                        ((PlayerNode) rA).child(act),
-                        ((PlayerNode) rB).child(act),
-                        b)
-                [ first ? 0 : 1 ];
-
-            expectedValue += actProb * val;
-        }
-
-        return new double[]{
-                (first ?  1 : -1) * expectedValue,
-                (first ? -1 :  1) * expectedValue };
-    }
-
-
     private double[] approximate(InfoNode            rA,
                                  InfoNode            rB,
                                  JointBucketSequence b)
@@ -173,5 +151,31 @@ public class Equalibrium
         {
             throw new Error();
         }
+    }
+
+    private double[] handlePlayer(
+            InfoNode            rA,
+            InfoNode            rB,
+            JointBucketSequence b,
+            boolean             first)
+    {
+        ProponentNode proponent = (ProponentNode) (first ? rA : rB);
+        double        expectedValue = 0;
+        for (KuhnAction act : KuhnAction.VALUES)
+        {
+            double actProb = proponent.probabilityOf(act);
+            double val =
+                    approximate(
+                            ((PlayerNode) rA).child(act),
+                            ((PlayerNode) rB).child(act),
+                            b)
+                            [ first ? 0 : 1 ];
+
+            expectedValue += actProb * val;
+        }
+
+        return new double[]{
+                (first ?  1 : -1) * expectedValue,
+                (first ? -1 :  1) * expectedValue };
     }
 }

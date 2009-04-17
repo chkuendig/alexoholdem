@@ -22,12 +22,16 @@ public class ProponentNode implements PlayerNode
 //    private Map<KuhnAction, double[]> prob;  // mutable doubles
     private int                       visits = 0;
 
+    private Map<KuhnAction, double[]> probSum; // mutable doubles
+    private double                    reachSum;
+
 
     //--------------------------------------------------------------------
     public ProponentNode(KuhnRules rules, KuhnBucket bucket)
     {
 //        prob    = new EnumMap<KuhnAction, double[]>(KuhnAction.class);
         regret  = new EnumMap<KuhnAction, double[]>(KuhnAction.class);
+        probSum = new EnumMap<KuhnAction, double[]>(KuhnAction.class);
         actions = new EnumMap<KuhnAction, InfoNode>(KuhnAction.class);
 
         for (Map.Entry<KuhnAction, KuhnRules> transition :
@@ -53,7 +57,8 @@ public class ProponentNode implements PlayerNode
         {
 //            prob.put(act, new double[]{
 //                             1.0 / KuhnAction.VALUES.length});
-            regret.put(act, new double[]{0});
+            regret .put(act, new double[]{0});
+            probSum.put(act, new double[]{0});
         }
     }
 
@@ -61,12 +66,20 @@ public class ProponentNode implements PlayerNode
     //--------------------------------------------------------------------
     public KuhnAction nextAction()
     {
-        double passProb = probabilities()[ 0 ];
+        double passProb = averageStrategy()[ 0 ];
 
         return Rand.nextBoolean( passProb )
                 ? KuhnAction.PASS
                 : KuhnAction.BET;
     }
+
+    public double[] averageStrategy()
+    {
+        return new double[]{
+                probSum.get(KuhnAction.PASS)[0] / reachSum,
+                probSum.get(KuhnAction.BET )[0] / reachSum};
+    }
+
 
 
     //--------------------------------------------------------------------
@@ -82,8 +95,17 @@ public class ProponentNode implements PlayerNode
 
 
     //--------------------------------------------------------------------
-    public void add(Map<KuhnAction, Double> counterfactualRegret)
+    public void add(
+            Map<KuhnAction, Double> counterfactualRegret,
+            double                  proponentReachProb)
     {
+        double prob[] = probabilities();
+        for (KuhnAction act : KuhnAction.VALUES) {
+            probSum.get(act)[0] +=
+                    proponentReachProb * prob[ act.ordinal() ];
+        }
+        reachSum += proponentReachProb;
+
         for (Map.Entry<KuhnAction, Double> r :
                 counterfactualRegret.entrySet())
         {
@@ -140,7 +162,9 @@ public class ProponentNode implements PlayerNode
         return new StringBuilder()
                 .append( action )
                 .append( " :: " )
-                .append( probabilities()[ action.ordinal() ] )
+                .append( averageStrategy()[ action.ordinal() ] )
+                .append( " :: " )
+                .append( probabilities()  [ action.ordinal() ] )
                 .append( " :: " )
                 .append( regret.get(action )[0] / visits)
                 .append( " :: " )
@@ -156,6 +180,8 @@ public class ProponentNode implements PlayerNode
         {
             str.append( Txt.nTimes("\t", depth) )
                .append( action.getKey() )
+               .append( " :: " )
+               .append( averageStrategy()[ action.getKey().ordinal() ] )
                .append( " :: " )
                .append( probabilities()[ action.getKey().ordinal() ] )
                .append( " :: " )
