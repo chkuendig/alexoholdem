@@ -1,13 +1,16 @@
 package ao.regret.holdem.v2;
 
+import ao.holdem.engine.state.tree.StateTree;
+import ao.holdem.model.act.AbstractAction;
 import ao.regret.holdem.InfoBranch;
 import ao.util.data.Pack;
 import static ao.util.data.Pack.flatten;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentDoubles;
-import ao.util.persist.PersistentFloats;
+import ao.util.persist.PersistentInts;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * User: alex
@@ -45,10 +48,9 @@ public class InfoMatrix
     {
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
-        if (counts == null) {
-            return new InfoMatrix(nBuckets, nIntents);
-        }
-        return new InfoMatrix(
+        return (counts == null)
+                ? newInstance(nBuckets, nIntents)
+                : new InfoMatrix(
 //                Pack.square(PersistentFloats.retrieve(
 //                        new File(dir,  CFREGRET_FILE)), nIntents),
 //                Pack.square(PersistentFloats.retrieve(
@@ -58,40 +60,33 @@ public class InfoMatrix
                         new File(dir,  CFREGRET_FILE)), nIntents),
                 Pack.square(PersistentDoubles.retrieve(
                         new File(dir,  STRATEGY_FILE)), nIntents)
-        );
+                );
+    }
+    public static InfoMatrix newInstance(int nBuckets, int nIntents) {
+        return new InfoMatrix(nBuckets, nIntents);
     }
 
-    public static void persist(File dir, InfoBranch branch)
+
+    public static void persist(File dir, InfoMatrix matrix)
     {
-        PersistentChars.persist(new char[]{
-                (char) branch.regretFold.length,
-                (char) branch.regretFold[0].length},
+        PersistentInts.persist(new int[]{
+                matrix.averageStrategy.length,
+                matrix.averageStrategy[0].length},
                 new File(dir, COUNT_FILE));
 
-        PersistentFloats.persist(
-                flatten(branch.regretFold ), new File(dir, FOLD_FILE));
-        PersistentFloats.persist(
-                flatten(branch.regretCall ), new File(dir, CALL_FILE));
-        PersistentFloats.persist(
-                flatten(branch.regretRaise), new File(dir, RAISE_FILE));
 //        PersistentFloats.persist(
-//                flatten(branch.reachSum ),  new File(dir, REACH_FILE));
-        PersistentFloats.persist(
-                flatten(branch.avgFold), new File(dir, R_FOLD_FILE));
-        PersistentFloats.persist(
-                flatten(branch.avgCall), new File(dir, R_CALL_FILE));
-        PersistentFloats.persist(
-                flatten(branch.avgRaise), new File(dir, R_RAISE_FILE));
+//                flatten(matrix.averageStrategy),
+//                new File(dir, STRATEGY_FILE));
+//        PersistentFloats.persist(
+//                flatten(matrix.cumulativeRegret),
+//                new File(dir, CFREGRET_FILE));
 
-
-//        PersistentDoubles.persist(
-//                flatten(branch.regretFold) , new File(dir, FOLD_FILE));
-//        PersistentDoubles.persist(
-//                flatten(branch.regretCall) , new File(dir, CALL_FILE));
-//        PersistentDoubles.persist(
-//                flatten(branch.regretRaise), new File(dir, RAISE_FILE));
-//        PersistentInts.persist(
-//                flatten(branch.visits), new File(dir, REACH_FILE));
+        PersistentDoubles.persist(
+                flatten(matrix.averageStrategy),
+                new File(dir, STRATEGY_FILE));
+        PersistentDoubles.persist(
+                flatten(matrix.cumulativeRegret),
+                new File(dir, CFREGRET_FILE));
     }
 
 
@@ -122,6 +117,16 @@ public class InfoMatrix
     {
         averageStrategy  = copyAverageStrategy;
         cumulativeRegret = copyCumulativeRegret;
+    }
+
+
+
+    //--------------------------------------------------------------------
+    public void displayHeadsUpRoot() {
+        for (int bucket = 0; bucket < averageStrategy.length; bucket++) {
+            System.out.println(
+                    StateTree.headsUpRoot().infoSet(bucket, this));
+        }
     }
 
 
@@ -158,6 +163,11 @@ public class InfoMatrix
 
 
         //----------------------------------------------------------------
+        public AbstractAction nextProbableAction()
+        {
+            return InfoBranch.nextProbableAction( averageStrategy() );
+        }
+
         public double[] averageStrategy() {
             double fAvg = average(fIntent);
             double cAvg = average(cIntent);
@@ -211,7 +221,7 @@ public class InfoMatrix
 
 
         //----------------------------------------------------------------
-        public double[] probabilities() {
+        public double[] strategy() {
             double fRegret = positiveRegret(fIntent);
             double cRegret = positiveRegret(cIntent);
             double rRegret = positiveRegret(rIntent);
@@ -230,8 +240,7 @@ public class InfoMatrix
                    ? 0 : Math.max(cumulativeRegret[bucket][intent], 0);
         }
 
-        private double[] defaultProbabilities()
-        {
+        private double[] defaultProbabilities() {
             if (fIntent != -1) {
                 if (rIntent != -1) {
                     return defaultEqual;
@@ -247,6 +256,12 @@ public class InfoMatrix
                     return defaultCall;
                 }
             }
+        }
+
+
+        //----------------------------------------------------------------
+        @Override public String toString() {
+            return Arrays.toString( averageStrategy() );
         }
     }
 }

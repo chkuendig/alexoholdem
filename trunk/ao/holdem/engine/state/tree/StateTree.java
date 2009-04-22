@@ -5,6 +5,8 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
+import ao.regret.holdem.v2.InfoMatrix;
+import ao.regret.holdem.v2.InfoPart;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -23,6 +25,8 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
+    private static char nextIntent[] = new char[ Round.COUNT ];
+
     private static char nextPreflopId          = 0;
     private static char nextPostflopTerminalId = 0;
 
@@ -78,6 +82,12 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
+    private static char nextIntent(Round prevRound)
+    {
+        return prevRound == null
+               ? (char) -1
+               : nextIntent[ prevRound.ordinal() ]++;
+    }
     private static char nextId(PathToFlop path, Round round)
     {
         if (path  == null) return nextPreflopId++;
@@ -88,6 +98,11 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
+    public static char intentCount(Round intentRound)
+    {
+        return nextIntent[ intentRound.ordinal() ];
+    }
+
     public static char preflopCount()
     {
         return nextPreflopId;
@@ -104,6 +119,7 @@ public class StateTree
     {
         //----------------------------------------------------------------
         private final char          ID;
+        private final char          INTENT;
         private final boolean       CAN_RAISE;
         private final boolean       CAN_CHECK;
         private final boolean       DEALER_NEXT;
@@ -116,18 +132,22 @@ public class StateTree
         private final State         STATE;
 
         private final EnumMap<AbstractAction, Node> KIDS;
+        private final Node                          KID_NODES[];
+        private final int                           F_INTENT;
+        private final int                           C_INTENT;
+        private final int                           R_INTENT;
 
 
         //----------------------------------------------------------------
-        private Node(State state)
-        {
-            this(null, state, new ArrayList<AbstractAction>(), null);
+        private Node(State state) {
+            this(null, state, null,
+                 new ArrayList<AbstractAction>(), null);
         }
         private Node(AbstractAction       prevAct,
                      State                state,
+                     Round                prevRound,
                      List<AbstractAction> path,
-                     PathToFlop           pathToFlop)
-        {
+                     PathToFlop           pathToFlop) {
             if (pathToFlop != null) {
                 PATH = pathToFlop;
             } else {
@@ -137,7 +157,10 @@ public class StateTree
                 PATH = PathToFlop.matching( path );
             }
 
+            //nextIntent
+
             ID            = nextId(PATH, state.round());
+            INTENT        = nextIntent(prevRound);
             CAN_RAISE     = state.canRaise();
             CAN_CHECK     = state.canCheck();
             STATUS        = state.headsUpStatus();
@@ -162,67 +185,92 @@ public class StateTree
                              new Node(
                                      act.getKey(),
                                      act.getValue(),
+                                     ROUND,
                                      nextPath,
                                      PATH));
 //                }
             }
+
+            // intents
+            F_INTENT = intent( AbstractAction.QUIT_FOLD  );
+            C_INTENT = intent( AbstractAction.CHECK_CALL );
+            R_INTENT = intent( AbstractAction.BET_RAISE  );
+
+            KID_NODES = new Node[]{
+                    KIDS.get( AbstractAction.QUIT_FOLD  ),
+                    KIDS.get( AbstractAction.CHECK_CALL ) ,
+                    KIDS.get( AbstractAction.BET_RAISE  )};
+        }
+        private int intent(AbstractAction forAction) {
+            return !KIDS.containsKey( forAction )
+                   ? -1 : KIDS.get( forAction ).intent();
         }
 
 
         //----------------------------------------------------------------
-        public HeadsUpStatus status()
-        {
+        public HeadsUpStatus status() {
             return STATUS;
         }
-        public State state()
-        {
+        public State state() {
             return STATE;
         }
 
-        public boolean canRaise()
-        {
+        public boolean canRaise() {
             return CAN_RAISE;
         }
-        public boolean canCheck()
-        {
+        public boolean canCheck() {
             return CAN_CHECK;
         }
-        public boolean dealerIsNext()
-        {
+        public boolean dealerIsNext() {
             return DEALER_NEXT;
         }
 
-        public int stakes()
-        {
+        public int stakes() {
             return STAKES;
         }
-        public int dealerCommit()
-        {
+        public int dealerCommit() {
             return DEALER_COMMIT;
         }
-        public int dealeeCommit()
-        {
+        public int dealeeCommit() {
             return DEALEE_COMMIT;
         }
 
-        public Round round()
-        {
+        public Round round() {
             return ROUND;
         }
-        public PathToFlop pathToFlop()
-        {
+        public PathToFlop pathToFlop() {
             return PATH;
         }
 
         // sequential for (round, pathToFlop) combination
-        public char roundPathId()
-        {
+        public char roundPathId() {
+            // never happens:
+//            if (PATH != null &&
+//                    ROUND == null) {
+//                // posflop terminal
+//                System.out.println("Oh!");
+//            }
+
             return ID;
         }
+        public char intent() {
+            return INTENT;
+        }
 
-        public Map<AbstractAction, Node> acts()
-        {
+        public Map<AbstractAction, Node> acts() {
             return KIDS;
+        }
+        public Node kid(AbstractAction act) {
+            return KID_NODES[ act.ordinal() ];
+        }
+
+        public InfoMatrix.InfoSet infoSet(
+                int bucket, InfoPart from) {
+            return infoSet(bucket, from.infoMatrix(ROUND));
+        }
+        public InfoMatrix.InfoSet infoSet(
+                int bucket, InfoMatrix from) {
+            return from.infoSet(bucket, F_INTENT, C_INTENT, R_INTENT);
         }
     }
 }

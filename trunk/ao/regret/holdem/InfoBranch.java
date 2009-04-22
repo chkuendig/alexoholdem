@@ -233,22 +233,22 @@ public class InfoBranch
         //----------------------------------------------------------------
         public void add(double  counterfactualRegret[],
                         boolean canRaise,
-                        //double  actionProbabilities[],
+                        double  actionProbabilities[],
                         double  proponentReachProbability)
         {
-            regretFold[bucket][state] += counterfactualRegret[0];
-            regretCall[bucket][state] += counterfactualRegret[1];
-            if (canRaise) {
-                regretRaise[bucket][state] += counterfactualRegret[2];
-            }
-            
-            double actionProbabilities[] = probabilities(canRaise);
+//            double actionProbabilities[] = probabilities(canRaise);
             avgFold [bucket][state] +=
                     proponentReachProbability * actionProbabilities[0];
             avgCall [bucket][state] +=
                     proponentReachProbability * actionProbabilities[1];
             avgRaise[bucket][state] +=
                     proponentReachProbability * actionProbabilities[2];
+
+            regretFold[bucket][state] += counterfactualRegret[0];
+            regretCall[bucket][state] += counterfactualRegret[1];
+            if (canRaise) {
+                regretRaise[bucket][state] += counterfactualRegret[2];
+            }
         }
 
 
