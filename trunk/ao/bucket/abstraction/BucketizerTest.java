@@ -61,8 +61,8 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-//        computeCfr(abs);
-        tournament(abs);
+        computeCfr(abs);
+//        tournament(abs);
 //        vsHuman(abs);
 //        probabilities(abs);
     }
@@ -131,7 +131,7 @@ public class BucketizerTest
     public static void computeCfr(
             HoldemAbstraction abs) throws IOException
     {
-        InfoTree info   = abs.info();
+        InfoTree        info   = abs.info();
         RegretMinimizer cfrMin = new RegretMinimizer(
                                          info, abs.oddsCache());
 
@@ -157,7 +157,7 @@ public class BucketizerTest
                 info.displayFirstAct();
             }
 
-            if (itr++ % (1000 * 1000) == 0) {
+            if (itr++ % (500 * 1000) == 0) {
                 System.out.println(" " + (itr - 1) + " took " +
                         (System.currentTimeMillis() - before) / 1000);
 

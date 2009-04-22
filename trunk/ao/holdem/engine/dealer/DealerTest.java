@@ -106,9 +106,20 @@ public class DealerTest
         {
             roundrobinTournament(prog,
                     dealer, brains.keySet(), decks, cumDeltas);
+
+//            if ((trialSet + 1) % (decksTrials / 10) == 0) {
+//                displayDeltas(cumDeltas, brains);
+//            }
         }
 
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        displayDeltas(cumDeltas, brains);
+    }
+
+    private void displayDeltas(
+            Map<Avatar, Chips> cumDeltas,
+            Map<Avatar, Player> brains)
+    {
         for (Map.Entry<Avatar, Chips> delta
                 : cumDeltas.entrySet())
         {
@@ -120,6 +131,7 @@ public class DealerTest
                             / TARGET_ROUNDS));
         }
     }
+
 
     private void roundrobinTournament(
             Progress           prog,

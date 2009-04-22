@@ -114,16 +114,15 @@ public class CfrBot extends AbstractPlayer
         if (DISPLAY) {
             if (DETAILED) {
                 System.out.println(
-                        Arrays.toString(
-                                infoSet.probabilities(state.canRaise())) +
+                        Arrays.toString( infoSet.averageStrategy() ) +
                         " from " + Arrays.toString(
-                                    infoSet.averageStrategy()) +
+                             infoSet.probabilities(state.canRaise())) +
                         " with " + Arrays.toString(
-                                    infoSet.cumulativeRegret()) +
+                             infoSet.cumulativeRegret()) +
                         " on "   + relBucket);
             }
 
-            System.out.println( "bot acts: " + act );
+            System.out.println("bot acts: " + act);
         }
 
         prevRound = state.round();
