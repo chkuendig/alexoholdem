@@ -52,14 +52,14 @@ public class InfoMatrix
                 ? newInstance(nBuckets, nIntents)
                 : new InfoMatrix(
 //                Pack.square(PersistentFloats.retrieve(
-//                        new File(dir,  CFREGRET_FILE)), nIntents),
-//                Pack.square(PersistentFloats.retrieve(
 //                        new File(dir,  STRATEGY_FILE)), nIntents)
+//                Pack.square(PersistentFloats.retrieve(
+//                        new File(dir,  CFREGRET_FILE)), nIntents),
 
                 Pack.square(PersistentDoubles.retrieve(
-                        new File(dir,  CFREGRET_FILE)), nIntents),
+                        new File(dir,  STRATEGY_FILE)), nIntents),
                 Pack.square(PersistentDoubles.retrieve(
-                        new File(dir,  STRATEGY_FILE)), nIntents)
+                        new File(dir,  CFREGRET_FILE)), nIntents)
                 );
     }
     public static InfoMatrix newInstance(int nBuckets, int nIntents) {
@@ -187,22 +187,19 @@ public class InfoMatrix
 
 
         //----------------------------------------------------------------
-        public void add(double actionProbabilities[],
+        public void add(double strategy[],
                         double proponentReachProbability) {
             if (fIntent != -1)
                 averageStrategy [bucket][fIntent] +=
-                        proponentReachProbability
-                                * actionProbabilities[0];
+                        proponentReachProbability * strategy[0];
 
           //if (cIntent != -1)
                 averageStrategy [bucket][cIntent] +=
-                        proponentReachProbability
-                                * actionProbabilities[1];
+                        proponentReachProbability * strategy[1];
 
             if (rIntent != -1)
                 averageStrategy [bucket][rIntent] +=
-                        proponentReachProbability
-                                * actionProbabilities[2];
+                        proponentReachProbability * strategy[2];
         }
 
         public void add(double counterfactualRegret[]) {

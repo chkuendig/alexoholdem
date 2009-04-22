@@ -53,7 +53,7 @@ public class InfoPart
 
     private static void persist(File dir, InfoPart part)
     {
-        //LOG.debug("persisting...");
+        LOG.debug("persisting...");
         InfoMatrix.persist(Dir.get(dir,  HOLE_DIR), part.hole);
         InfoMatrix.persist(Dir.get(dir,  FLOP_DIR), part.flop);
         InfoMatrix.persist(Dir.get(dir,  TURN_DIR), part.turn);
