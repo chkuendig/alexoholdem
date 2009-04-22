@@ -29,6 +29,7 @@ public enum Round
         }};
 
     public static final Round[] VALUES = values();
+    public static final int     COUNT  = VALUES.length;
 
 
 //    //--------------------------------------------------------------------

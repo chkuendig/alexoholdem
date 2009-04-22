@@ -8,6 +8,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.regret.holdem.InfoTree;
+import ao.regret.holdem.v2.InfoPart;
 import ao.util.io.Dir;
 import org.apache.log4j.Logger;
 
@@ -42,6 +43,7 @@ public class HoldemAbstraction
     private BucketOdds      odds;
     private BucketSequencer sequence;
     private InfoTree        info;
+    private InfoPart        infoPart;
 
 
     //--------------------------------------------------------------------
@@ -139,6 +141,14 @@ public class HoldemAbstraction
                     DIR, tree(), decoder());
         }
         return sequence;
+    }
+
+    public InfoPart infoPart()
+    {
+        if (infoPart != null) return infoPart;
+        infoPart = InfoPart.retrieveOrCreate(
+                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
+        return infoPart;
     }
 
     public InfoTree info()
