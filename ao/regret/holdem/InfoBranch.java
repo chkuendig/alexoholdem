@@ -17,13 +17,14 @@ import java.util.Arrays;
 public class InfoBranch
 {
     //--------------------------------------------------------------------
-    private static final String  COUNT_FILE  = "count.char";
-    private static final String   FOLD_FILE  =  "fold.float";
-    private static final String   CALL_FILE  =  "call.float";
-    private static final String  RAISE_FILE  = "raise.float";
-    private static final String  REACH_FILE  = "reach.float";
-    private static final String R_FOLD_FILE = "rfold.float";
-    private static final String R_CALL_FILE = "rcall.float";
+    private static final String   COUNT_FILE =  "count.char";
+    private static final String    FOLD_FILE =   "fold.float";
+    private static final String    CALL_FILE =   "call.float";
+    private static final String   RAISE_FILE =  "raise.float";
+//    private static final String   REACH_FILE =  "reach.float";
+    private static final String  R_FOLD_FILE =  "rfold.float";
+    private static final String  R_CALL_FILE =  "rcall.float";
+    private static final String R_RAISE_FILE = "rraise.float";
 
 //    private static final String COUNT_FILE = "count.char";
 //    private static final String  FOLD_FILE =  "fold.double";
@@ -50,12 +51,14 @@ public class InfoBranch
                         new File(dir,  CALL_FILE)), nBettingSequences),
                 Pack.square(PersistentFloats.retrieve(
                         new File(dir, RAISE_FILE)), nBettingSequences),
-                Pack.square(PersistentFloats.retrieve(
-                        new File(dir, REACH_FILE)), nBettingSequences),
+//                Pack.square(PersistentFloats.retrieve(
+//                        new File(dir, REACH_FILE)), nBettingSequences),
                 Pack.square(PersistentFloats.retrieve(
                         new File(dir, R_FOLD_FILE)), nBettingSequences),
                 Pack.square(PersistentFloats.retrieve(
-                        new File(dir, R_CALL_FILE)), nBettingSequences)
+                        new File(dir, R_CALL_FILE)), nBettingSequences),
+                Pack.square(PersistentFloats.retrieve(
+                        new File(dir, R_RAISE_FILE)), nBettingSequences)
 
 //                Pack.square(PersistentDoubles.retrieve(
 //                        new File(dir,  FOLD_FILE)), nBettingSequences),
@@ -81,12 +84,15 @@ public class InfoBranch
                 flatten(branch.regretCall ), new File(dir, CALL_FILE));
         PersistentFloats.persist(
                 flatten(branch.regretRaise), new File(dir, RAISE_FILE));
+//        PersistentFloats.persist(
+//                flatten(branch.reachSum ),  new File(dir, REACH_FILE));
         PersistentFloats.persist(
-                flatten(branch.reachSum ),  new File(dir, REACH_FILE));
+                flatten(branch.avgFold), new File(dir, R_FOLD_FILE));
         PersistentFloats.persist(
-                flatten(branch.reachFold), new File(dir, R_FOLD_FILE));
+                flatten(branch.avgCall), new File(dir, R_CALL_FILE));
         PersistentFloats.persist(
-                flatten(branch.reachCall), new File(dir, R_CALL_FILE));
+                flatten(branch.avgRaise), new File(dir, R_RAISE_FILE));
+
 
 //        PersistentDoubles.persist(
 //                flatten(branch.regretFold) , new File(dir, FOLD_FILE));
@@ -103,9 +109,10 @@ public class InfoBranch
     private final float[][] regretFold;
     private final float[][] regretCall;
     private final float[][] regretRaise;
-    private final float[][] reachSum;
-    private final float[][] reachFold;
-    private final float[][] reachCall;
+//    private final float[][] reachSum;
+    private final float[][] avgFold;
+    private final float[][] avgCall;
+    private final float[][] avgRaise;
 
 
 //    private final double[][] regretFold;
@@ -124,9 +131,10 @@ public class InfoBranch
         regretFold  = new float[ nBuckets ][ nBettingSequences ];
         regretCall  = new float[ nBuckets ][ nBettingSequences ];
         regretRaise = new float[ nBuckets ][ nBettingSequences ];
-        reachSum    = new float[ nBuckets ][ nBettingSequences ];
-        reachFold   = new float[ nBuckets ][ nBettingSequences ];
-        reachCall   = new float[ nBuckets ][ nBettingSequences ];
+//        reachSum    = new float[ nBuckets ][ nBettingSequences ];
+        avgFold  = new float[ nBuckets ][ nBettingSequences ];
+        avgCall  = new float[ nBuckets ][ nBettingSequences ];
+        avgRaise = new float[ nBuckets ][ nBettingSequences ];
 
 //        regretFold  = new double[ nBuckets ][ nBettingSequences ];
 //        regretCall  = new double[ nBuckets ][ nBettingSequences ];
@@ -138,9 +146,10 @@ public class InfoBranch
             float copyRegretFold [][],
             float copyRegretCall [][],
             float copyRegretRaise[][],
-            float copyReachSum   [][],
+//            float copyReachSum   [][],
             float copyReachFold  [][],
-            float copyReachCall  [][]
+            float copyReachCall  [][],
+            float copyReachRaise [][]
 //            double copyRegretFold [][],
 //            double copyRegretCall [][],
 //            double copyRegretRaise[][],
@@ -150,9 +159,10 @@ public class InfoBranch
         regretFold  = copyRegretFold;
         regretCall  = copyRegretCall;
         regretRaise = copyRegretRaise;
-        reachSum    = copyReachSum;
-        reachFold   = copyReachFold;
-        reachCall   = copyReachCall;
+//        reachSum    = copyReachSum;
+        avgFold = copyReachFold;
+        avgCall = copyReachCall;
+        avgRaise = copyReachRaise;
     }
 
 
@@ -223,21 +233,22 @@ public class InfoBranch
         //----------------------------------------------------------------
         public void add(double  counterfactualRegret[],
                         boolean canRaise,
-                        double  actionProbabilities[],
+                        //double  actionProbabilities[],
                         double  proponentReachProbability)
         {
             regretFold[bucket][state] += counterfactualRegret[0];
             regretCall[bucket][state] += counterfactualRegret[1];
-
             if (canRaise) {
                 regretRaise[bucket][state] += counterfactualRegret[2];
             }
-
-            reachFold[bucket][state] +=
+            
+            double actionProbabilities[] = probabilities(canRaise);
+            avgFold [bucket][state] +=
                     proponentReachProbability * actionProbabilities[0];
-            reachCall[bucket][state] +=
+            avgCall [bucket][state] +=
                     proponentReachProbability * actionProbabilities[1];
-            reachSum[bucket][state]  += proponentReachProbability;
+            avgRaise[bucket][state] +=
+                    proponentReachProbability * actionProbabilities[2];
         }
 
 
@@ -278,15 +289,20 @@ public class InfoBranch
                 double raiseProb = Math.max(0,
                         regretRaise[bucket][state] / cumRegret);
 
-                if (canCheck && foldProb != 0) {
-                    into[0] = 0;
-                    into[1] = callProb / (callProb + raiseProb);
-                    into[2] = 1.0 - into[1];
-                } else {
-                    into[0] =  foldProb;
-                    into[1] =  callProb;
-                    into[2] = raiseProb;
-                }
+                double sum = foldProb + callProb + raiseProb;
+                into[0] =  foldProb / sum;
+                into[1] =  callProb / sum;
+                into[2] = raiseProb / sum;
+
+//                if (canCheck && foldProb != 0) {
+//                    into[0] = 0;
+//                    into[1] = callProb / (callProb + raiseProb);
+//                    into[2] = 1.0 - into[1];
+//                } else {
+//                    into[0] =  foldProb;
+//                    into[1] =  callProb;
+//                    into[2] = raiseProb;
+//                }
             }
         }
 
@@ -294,19 +310,19 @@ public class InfoBranch
                 double into[], boolean canRaise, boolean canCheck)
         {
             if (canRaise) {
-                if (canCheck) {
-                    into[0] = 0;
-                    into[1] = into[2] = 0.5;
-                } else {
-                    into[0]  =into[1] = into[2] = (1.0 / 3);
-                }
+//                if (canCheck) {
+//                    into[0] = 0;
+//                    into[1] = into[2] = 0.5;
+//                } else {
+                    into[0] = into[1] = into[2] = (1.0 / 3);
+//                }
             } else {
-                if (canCheck) {
-                    into[0] = 0;
-                    into[1] = 1.0;
-                } else {
+//                if (canCheck) {
+//                    into[0] = 0;
+//                    into[1] = 1.0;
+//                } else {
                     into[0] = into[1] = 0.5;
-                }
+//                }
                 into[2] = 0;
             }
         }
@@ -314,18 +330,28 @@ public class InfoBranch
 
         //----------------------------------------------------------------
         public double[] averageStrategy() {
-            double sum = reachSum [bucket][state];
+            double  foldSum = avgFold[bucket][state];
+            double  callSum = avgCall[bucket][state];
+            double raiseSum = avgRaise[bucket][state];
+
+            double sum = foldSum + callSum + raiseSum;
             if (sum == 0) return probabilities(true);
 
-            double avgFold = reachFold[bucket][state];
-            double avgCall = reachCall[bucket][state];
+            return new double[]{
+                    foldSum / sum, callSum / sum, raiseSum / sum};
 
-            double normFold  = avgFold / sum;
-            double normCall  = avgCall / sum;
-            double normRaise = 1.0 - normFold - normCall;
-
-            return new double[] {
-                    normFold, normCall, normRaise};
+//            double sum = reachSum [bucket][state];
+//            if (sum == 0) return probabilities(true);
+//
+//            double avgFold = avgFold[bucket][state];
+//            double avgCall = avgCall[bucket][state];
+//
+//            double normFold  = avgFold / sum;
+//            double normCall  = avgCall / sum;
+//            double normRaise = 1.0 - normFold - normCall;
+//
+//            return new double[] {
+//                    normFold, normCall, normRaise};
         }
 
         public double[] cumulativeRegret() {

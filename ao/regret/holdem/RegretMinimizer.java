@@ -77,12 +77,12 @@ public class RegretMinimizer
         if (pDealee == 0 && pDealer == 0) {
             return approximate(node, absDealerBuckets, absDealeeBuckets,
                                probabilities);
-        } else if ( dealerProp && pDealee == 0 ||
-                   !dealerProp && pDealer == 0) {
-            // ^^ dealerProp must be checked
-            return approximateAndUpdateHalf(
-                    node, absDealerBuckets, absDealeeBuckets,
-                    pDealer, pDealee, probabilities);
+//        } else if ( dealerProp && pDealee == 0 ||
+//                   !dealerProp && pDealer == 0) {
+//            // ^^ dealerProp must be checked
+//            return approximateAndUpdateHalf(
+//                    node, absDealerBuckets, absDealeeBuckets,
+//                    pDealer, pDealee, probabilities);
         } else {
             return approximateAndUpdateFully(
                     node, absDealerBuckets, absDealeeBuckets,
@@ -136,14 +136,14 @@ public class RegretMinimizer
             double cRegret =
                     (utilities[ act.ordinal() ] - counterfactualUtility)
                         * oppReachingFactor;
-
+            
             // aggresion
             immediateCounterfactualRegret[ act.ordinal() ] =
                     (cRegret > 0 ? (1.0 + aggression) * cRegret : cRegret);
 
         }
         info.add(immediateCounterfactualRegret, node.canRaise(),
-                 probabilities, node.dealerIsNext() ? pDealer : pDealee);
+                 /*probabilities,*/ node.dealerIsNext() ? pDealer : pDealee);
 
         return counterfactualUtility;
     }
