@@ -61,8 +61,8 @@ public class BucketizerTest2
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-//        computeCfr(abs);
-        tournament(abs);
+        computeCfr(abs);
+//        tournament(abs);
 //        vsHuman(abs);
     }
 
@@ -102,6 +102,7 @@ public class BucketizerTest2
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
+        abs.infoPart().displayHeadsUpRoot();
 
         long before = System.currentTimeMillis();
         new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
