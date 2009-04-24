@@ -6,7 +6,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.river.RiverEvalLookup.Visitor;
 import ao.bucket.index.river.RiverLookup;
-import ao.util.misc.Progress;
+import ao.util.time.Progress;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import org.apache.log4j.Logger;

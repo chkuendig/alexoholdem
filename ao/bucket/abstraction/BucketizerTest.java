@@ -12,7 +12,7 @@ import ao.holdem.model.Avatar;
 import ao.regret.holdem.InfoTree;
 import ao.regret.holdem.RegretMinimizer;
 import ao.util.math.rand.Rand;
-import ao.util.misc.Progress;
+import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class BucketizerTest
     {
         long before = System.currentTimeMillis();
         System.out.println("Loading......");
-        new DealerTest(1).roundRobin(new HashMap<Avatar, Player>(){{
+        new DealerTest(1).headsUp(new HashMap<Avatar, Player>(){{
             put(Avatar.local("probe"), new AlwaysCallBot());
             put(Avatar.local("cfr"), new CfrBot(abs));
         }});
@@ -105,7 +105,7 @@ public class BucketizerTest
         precompute(abs);
 
         long before = System.currentTimeMillis();
-        new DealerTest().roundRobin(new HashMap<Avatar, Player>(){{
+        new DealerTest().headsUp(new HashMap<Avatar, Player>(){{
 //            put(Avatar.local("duane"), new DuaneBot());
             put(Avatar.local("raise"), new AlwaysRaiseBot());
 //            put(Avatar.local("random"), new RandomBot());

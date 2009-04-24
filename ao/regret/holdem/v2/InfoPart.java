@@ -54,11 +54,15 @@ public class InfoPart
     private static void persist(File dir, InfoPart part)
     {
         LOG.debug("persisting...");
+        long before = System.currentTimeMillis();
+
         InfoMatrix.persist(Dir.get(dir,  HOLE_DIR), part.hole);
         InfoMatrix.persist(Dir.get(dir,  FLOP_DIR), part.flop);
         InfoMatrix.persist(Dir.get(dir,  TURN_DIR), part.turn);
         InfoMatrix.persist(Dir.get(dir, RIVER_DIR), part.river);
-        LOG.debug("done persisting");
+
+        LOG.debug("done persisting, took " +
+                    (System.currentTimeMillis() - before) / 1000);
     }
 
 

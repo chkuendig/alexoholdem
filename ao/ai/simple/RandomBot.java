@@ -19,6 +19,13 @@ import java.util.Map;
 public class RandomBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    private static final double evenProb [] = {1.0/3, 1.0/3, 1.0/3};
+    private static final double callOnly [] = {0, 1.0, 0};
+    private static final double callRaise[] = {0, 0.5, 0.5};
+    private static final double foldCall [] = {0.5, 0.5, 0};
+
+
+    //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas) {}
 
 
@@ -27,7 +34,35 @@ public class RandomBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        return state.reify(
-                Rand.fromArray( FallbackAction.VALUES ));
+        double prob[] = null;
+        if (state.canCheck()) {
+            // no need to fold
+            if (state.canRaise()) {
+                prob = callRaise;
+            }
+            else
+            {
+                prob = callOnly;
+            }
+        } else {
+            // can fold
+            if (state.canRaise()) {
+                prob = evenProb;
+            } else {
+                prob = foldCall;
+            }
+        }
+
+        double rand = Rand.nextDouble();
+        if (rand < prob[0]) {
+            return state.reify(FallbackAction.CHECK_OR_FOLD);
+        } else {
+            rand -= prob[0];
+            if (rand < prob[1]) {
+                return state.reify(FallbackAction.CHECK_OR_CALL);
+            } else {
+                return state.reify(FallbackAction.RAISE_OR_CALL);
+            }
+        }
     }
 }

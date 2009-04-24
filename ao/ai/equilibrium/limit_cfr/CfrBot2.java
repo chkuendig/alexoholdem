@@ -28,7 +28,7 @@ import java.util.Map;
 public class CfrBot2 extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private static final boolean DETAILED = false;
+    private static final boolean DETAILED = true;
 
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
@@ -108,8 +108,9 @@ public class CfrBot2 extends AbstractPlayer
                 System.out.println(
                         Arrays.toString( infoSet.averageStrategy() ) +
                         " from " + Arrays.toString(
-                             infoSet.strategy()) +
-                        " on "   + relBucket);
+                                        infoSet.regret()) +
+                        " on "   + relBucket +
+                                " (" + (int) roundBucket + ")");
             }
 
             System.out.println("bot acts: " + act);

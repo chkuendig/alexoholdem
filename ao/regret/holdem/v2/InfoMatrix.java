@@ -95,7 +95,7 @@ public class InfoMatrix
                                         1.0 / 3, 1.0 / 3, 1.0 / 3};
     private static final double defaultNoRaise[] = {0.5, 0.5, 0  };
     private static final double defaultNoFold [] = {0  , 0.5, 0.5};
-    private static final double defaultCall   [] = {0  , 1.0, 0  };
+//    private static final double defaultCall   [] = {0  , 1.0, 0  };
 
 
     //--------------------------------------------------------------------
@@ -233,8 +233,10 @@ public class InfoMatrix
         }
 
         private double positiveRegret(int intent) {
-            return intent == -1
-                   ? 0 : Math.max(cumulativeRegret[bucket][intent], 0);
+            return Math.max(regret(intent), 0);
+        }
+        private double regret(int intent) {
+            return intent == -1 ? 0 : cumulativeRegret[bucket][intent];
         }
 
         private double[] defaultProbabilities() {
@@ -245,14 +247,21 @@ public class InfoMatrix
                     return defaultNoRaise;
                 }
             } else {
-                if (rIntent != -1) {
+//                if (rIntent != -1) {
                     return defaultNoFold;
-                } else {
-                    // does this ever happen?
-                    System.out.println("InfoMatrix !!! Yes it does!");
-                    return defaultCall;
-                }
+//                } else {
+//                    // never happens
+//                    System.out.println("InfoMatrix !!! Yes it does!");
+//                    return defaultCall;
+//                }
             }
+        }
+
+
+        //----------------------------------------------------------------
+        public double[] regret() {
+            return new double[]{
+                    regret(fIntent), regret(cIntent), regret(rIntent)};
         }
 
 
