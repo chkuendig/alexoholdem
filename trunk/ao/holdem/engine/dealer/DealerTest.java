@@ -1,22 +1,15 @@
 package ao.holdem.engine.dealer;
 
 import ao.ai.human.ConsoleBot;
-import ao.ai.simple.AlwaysRaiseBot;
-import ao.ai.simple.DuaneBot;
 import ao.holdem.engine.Player;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
 import ao.holdem.model.card.chance.DeckCards;
-import ao.holdem.model.replay.StackedReplay;
+import ao.holdem.model.card.chance.SwapCards;
 import ao.util.math.rand.Rand;
-import ao.util.math.stats.Combo;
-import ao.util.math.stats.Permuter;
-import ao.util.misc.Progress;
+import ao.util.time.Progress;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -24,23 +17,27 @@ import java.util.Map;
 public class DealerTest
 {
     //--------------------------------------------------------------------
-    private final long TARGET_ROUNDS;
+    private final long DUPLICATE_ROUNDS;
 
 
     //--------------------------------------------------------------------
     public DealerTest()
     {
-        this(10 * 1000 * 1000);
+        this(5 * 1000 * 1000);
     }
     public DealerTest(long rounds)
     {
-        TARGET_ROUNDS = rounds;
+        DUPLICATE_ROUNDS = rounds;
     }
 
 
     //--------------------------------------------------------------------
-    public void vsHuman(final Player brain)
-    {
+    public void vsHuman(final Player brain) {
+        vsHuman(brain, Rand.nextBoolean(), true);
+    }
+    public void vsHuman(final Player  brain,
+                              boolean humanDealerFirst,
+                              boolean swap) {
         final Avatar bot = Avatar.local("bot");
         final Avatar you = Avatar.local("you");
         Dealer d = new Dealer(true, new HashMap<Avatar, Player>(){{
@@ -48,8 +45,8 @@ public class DealerTest
             put(you, new ConsoleBot());
         }});
 
-        boolean humanDealer = Rand.nextBoolean();
-        for (long i = 0; i < TARGET_ROUNDS; i++) {
+        boolean humanDealer = humanDealerFirst;
+        for (long i = 0; i < DUPLICATE_ROUNDS; i++) {
             System.out.println(
                     "\n-----------------------------" +
                             "  Hand " + (i + 1) + ", " +
@@ -64,61 +61,79 @@ public class DealerTest
 
                     new DeckCards());
 
-            humanDealer = !humanDealer;
+            if (swap) {
+                humanDealer = !humanDealer;
+            }
         }
     }
 
 
     //--------------------------------------------------------------------
-    public void roundRobin()
+    public void headsUp(Map<Avatar, Player> brains)
     {
-        Map<Avatar, Player> brains =
-                new HashMap<Avatar, Player>() {{
-                    put(Avatar.local("duane0"), new DuaneBot());
-                    put(Avatar.local("duane1"), new DuaneBot());
-                    put(Avatar.local("raise0"), new AlwaysRaiseBot());
-                    put(Avatar.local("raise1"), new AlwaysRaiseBot());
-                    put(Avatar.local("raise2"), new AlwaysRaiseBot());
-//                    put(Avatar.local("math0"),  new MathBot());
-                }};
-        roundRobin(brains);
+        headsUp(brains, true);
     }
-
-
-    //--------------------------------------------------------------------
-    public void roundRobin(Map<Avatar, Player> brains)
+    public void headsUp(Map<Avatar, Player> brains, boolean swap)
     {
+        assert brains.size() == 2;
+        assert DUPLICATE_ROUNDS > 10;
 
-        long roundRobins = Combo.factorial( brains.size() );
-        int  decksTrials = (int) Math.ceil(Math.sqrt(
-                            (double) TARGET_ROUNDS / roundRobins));
+        List<Avatar> orderA = new ArrayList<Avatar>(brains.keySet());
+        List<Avatar> orderB = new ArrayList<Avatar>(orderA);
+        Collections.swap(orderB, 0, 1);
 
-        DeckCards decks[] = new DeckCards[decksTrials];
-        for (int deck = 0; deck < decks.length; deck++)
+        Random r = new Random(Rand.nextLong());
+
+        List<Avatar>       order       = orderA;
+        Progress           progress    = new Progress(DUPLICATE_ROUNDS);
+        Dealer             dealer      = new Dealer(true, brains);
+        Map<Avatar, Chips> cumDeltas   = new HashMap<Avatar, Chips>();
+        Chips              dealerDelta = Chips.ZERO;
+        for (int trialSet = 0; trialSet < DUPLICATE_ROUNDS; trialSet++)
         {
-            decks[deck] = new DeckCards();
+            SwapCards cards = new SwapCards(r);
+            Map<Avatar, Chips> deltas =
+                    dealer.play(order, cards).deltas();
+            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+                cumDeltas.put(
+                        delta.getKey(),
+                        Chips.orZero(
+                            cumDeltas.get(delta.getKey()))
+                                .plus(delta.getValue()));
+            }
+            dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
+
+            cards.swap();
+            deltas = dealer.play(order, cards).deltas();
+            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+                cumDeltas.put(
+                        delta.getKey(),
+                        cumDeltas.get(delta.getKey())
+                                .plus(delta.getValue()));
+            }
+            dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
+
+            if (swap) {
+                order = ((order == orderA)
+                        ? orderB : orderA);
+            }
+
+            progress.checkpoint();
+            if (((trialSet + 1) % (DUPLICATE_ROUNDS / 10)) == 0) {
+                displayDeltas(cumDeltas, brains, trialSet + 1);
+            }
         }
 
-        Progress           prog      = new Progress(TARGET_ROUNDS);
-        Dealer             dealer    = new Dealer(true, brains);
-        Map<Avatar, Chips> cumDeltas = new HashMap<Avatar, Chips>();
-        for (int trialSet = 0; trialSet < decksTrials; trialSet++)
-        {
-            roundrobinTournament(prog,
-                    dealer, brains.keySet(), decks, cumDeltas);
-
-//            if ((trialSet + 1) % (decksTrials / 10) == 0) {
-//                displayDeltas(cumDeltas, brains);
-//            }
-        }
-
+        System.out.println("dealer delta: " +
+                ((double) dealerDelta.smallBets())
+                    / (2 * DUPLICATE_ROUNDS));
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        displayDeltas(cumDeltas, brains);
     }
 
     private void displayDeltas(
             Map<Avatar, Chips> cumDeltas,
-            Map<Avatar, Player> brains)
+            Map<Avatar, Player> brains,
+            long                dupeRounds)
     {
         for (Map.Entry<Avatar, Chips> delta
                 : cumDeltas.entrySet())
@@ -128,51 +143,10 @@ public class DealerTest
                     brains.get(delta.getKey()) + "\t" +
                     delta.getValue() + "\t" +
                     (((double) delta.getValue().smallBets())
-                            / TARGET_ROUNDS));
+                            / (2 * dupeRounds)));
         }
     }
 
-
-    private void roundrobinTournament(
-            Progress           prog,
-            Dealer             dealer,
-            Collection<Avatar> players,
-            DeckCards          decks[],
-            Map<Avatar, Chips> cumDeltas)
-    {
-        for (Avatar permutation[] :
-                new Permuter<Avatar>(
-                        players.toArray(new Avatar[players.size()])))
-        {
-            for (DeckCards deck : decks)
-            {
-                StackedReplay replay =
-                        dealer.play(Arrays.asList(permutation),
-                                    deck);
-
-                Map<Avatar, Chips> deltas = replay.deltas();
-                if (cumDeltas.isEmpty())
-                {
-                    cumDeltas.putAll(deltas);
-                }
-                else
-                {
-                    for (Map.Entry<Avatar, Chips> delta :
-                            deltas.entrySet())
-                    {
-                        cumDeltas.put(
-                                delta.getKey(),
-                                cumDeltas.get(delta.getKey())
-                                        .plus(delta.getValue()));
-                    }
-                }
-//                System.out.println(replay.deltas());
-
-                deck.reset();
-                prog.checkpoint();
-            }
-        }
-    }
 
 //    private String formatCumulativeDeltas(
 //            int                dataIndex,

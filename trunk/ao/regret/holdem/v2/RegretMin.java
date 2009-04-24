@@ -16,6 +16,8 @@ public class RegretMin
     private final IBucketOdds ODDS;
     private final InfoPart    INFO;
 
+    private       boolean     updateDealee;
+
 
     //--------------------------------------------------------------------
     public RegretMin(
@@ -27,9 +29,10 @@ public class RegretMin
 
 
     //--------------------------------------------------------------------
-    public void minimize(char absDealerBuckets[],
+    public void exploit(char absDealerBuckets[],
                          char absDealeeBuckets[])
     {
+        updateDealee = false;
         approximateAndUpdate(
                 StateTree.headsUpRoot(),
                 absDealerBuckets,
@@ -37,6 +40,16 @@ public class RegretMin
                 1.0, 1.0);
     }
 
+    public void minimize(char absDealerBuckets[],
+                         char absDealeeBuckets[])
+    {
+        updateDealee = true;
+        approximateAndUpdate(
+                StateTree.headsUpRoot(),
+                absDealerBuckets,
+                absDealeeBuckets,
+                1.0, 1.0);
+    }
 
 
     //--------------------------------------------------------------------
@@ -114,8 +127,10 @@ public class RegretMin
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }
 
-        info.add(strategy, node.dealerIsNext() ? pDealer : pDealee);
-        info.add(immediateCounterfactualRegret);
+        if (updateDealee || node.dealerIsNext()) {
+            info.add(strategy, node.dealerIsNext() ? pDealer : pDealee);
+            info.add(immediateCounterfactualRegret);
+        }
 
         return counterfactualUtility;
     }

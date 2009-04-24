@@ -105,7 +105,9 @@ public class ConsoleBot extends AbstractPlayer
             act = AbstractAction.CHECK_CALL;
         } else if (in.equals("3") ||
                    in.equalsIgnoreCase("b") || in.equalsIgnoreCase("r")) {
-            act = AbstractAction.BET_RAISE;
+            if (state.canRaise()) {
+                act = AbstractAction.BET_RAISE;
+            }
         }
         return act;
     }

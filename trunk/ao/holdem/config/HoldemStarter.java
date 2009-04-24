@@ -19,7 +19,7 @@ public class HoldemStarter
                 Guice.createInjector(
                         new HoldemConfig());
 
-//        injector.getInstance(DealerTest.class).roundRobin();
+//        injector.getInstance(DealerTest.class).headsUp();
 //        injector.getInstance(DecisionTest.class).testDecisionTree();
 //        injector.getInstance(OppModelTest.class).testOpponentModeling();
         injector.getInstance(IrcRunner.class).run(

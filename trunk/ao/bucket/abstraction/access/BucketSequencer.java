@@ -12,7 +12,7 @@ import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.util.math.rand.Rand;
-import ao.util.misc.Progress;
+import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
 import java.io.*;

@@ -46,6 +46,12 @@ public class Chips implements Comparable<Chips>
                    : new Chips( smallBlinds );
     }
 
+    public static Chips orZero(Chips chips)
+    {
+        return chips == null
+               ? ZERO : chips;
+    }
+
 
     //--------------------------------------------------------------------
     private final int smallBlinds;

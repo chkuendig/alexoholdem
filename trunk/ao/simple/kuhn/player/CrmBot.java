@@ -11,7 +11,7 @@ import ao.simple.kuhn.rules.KuhnSequencer;
 import ao.simple.kuhn.state.KuhnState;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
-import ao.util.misc.Progress;
+import ao.util.time.Progress;
 
 /**
  * Counterfactual Regret Minimizing player
