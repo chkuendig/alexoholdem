@@ -9,7 +9,7 @@ import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.model.Avatar;
 import ao.regret.holdem.v2.InfoPart;
-import ao.regret.holdem.v2.RegretMin;
+import ao.regret.holdem.v2.RegretMin2;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import org.apache.log4j.Logger;
@@ -89,7 +89,7 @@ public class BucketizerTest2
     {
         long before = System.currentTimeMillis();
         System.out.println("Loading......");
-        new DealerTest(1).headsUp(new HashMap<Avatar, Player>(){{
+        new DealerTest(10).headsUp(new HashMap<Avatar, Player>(){{
             put(Avatar.local("probe"), new AlwaysCallBot());
             put(Avatar.local("cfr2"), new CfrBot2(abs));
         }});
@@ -117,7 +117,7 @@ public class BucketizerTest2
 //            put(Avatar.local("human"), new ConsoleBot());
             put(Avatar.local("cfr2"), new CfrBot2(abs));
 //            put(Avatar.local(",k 6cfr2b"), new CfrBot2(abs));
-        }}, false);
+        }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
     }
@@ -140,8 +140,8 @@ public class BucketizerTest2
     {
         System.out.println("computeCfr " + (exploit ? "exploit" : ""));
 
-        InfoPart  info   = abs.infoPart();
-        RegretMin cfrMin = new RegretMin(info, abs.oddsCache());
+        InfoPart   info   = abs.infoPart();
+        RegretMin2 cfrMin = new RegretMin2(info, abs.oddsCache());
 
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
@@ -160,12 +160,12 @@ public class BucketizerTest2
         Progress prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr % (100 * 1000) == 0) {
+            if (itr % (10 * 1000) == 0) {
                 System.out.println();
                 info.displayHeadsUpRoot();
             }
 
-            if (itr++ % (500 * 1000) == 0) {
+            if (itr++ % (100 * 1000) == 0) {
                 System.out.println(" " + (itr - 1) + " took " +
                         (System.currentTimeMillis() - before) / 1000);
 
@@ -176,16 +176,16 @@ public class BucketizerTest2
             }
             char[][] jbs = it.next();
 
-            if (exploit) {
-//                if (jbs[0][0] == 5 &&
-//                        jbs[0][1] == 139/*19*/) {
-//                    System.out.println("check");
-//                }
-
-                cfrMin.exploit ( jbs[0], jbs[1] );
-            } else {
+//            if (exploit) {
+////                if (jbs[0][0] == 5 &&
+////                        jbs[0][1] == 139/*19*/) {
+////                    System.out.println("check");
+////                }
+//
+//                cfrMin.exploit ( jbs[0], jbs[1] );
+//            } else {
                 cfrMin.minimize( jbs[0], jbs[1] );
-            }
+//            }
 
             prog.checkpoint();
         }

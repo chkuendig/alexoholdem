@@ -174,6 +174,7 @@ public class StateTree
             KIDS   = new EnumMap<AbstractAction, Node>(
                           AbstractAction.class);
             for (Map.Entry<AbstractAction, State> act :
+//                    state.actions(false).entrySet())
                     state.viableActions().entrySet())
             {
                 List<AbstractAction> nextPath =
@@ -271,6 +272,18 @@ public class StateTree
         public InfoMatrix.InfoSet infoSet(
                 int bucket, InfoMatrix from) {
             return from.infoSet(bucket, F_INTENT, C_INTENT, R_INTENT);
+        }
+
+
+        //----------------------------------------------------------------
+        public int countSub() {
+            if (status() != HeadsUpStatus.IN_PROGRESS) return 1;
+
+            int c = 1;
+            for (Node k : acts().values()) {
+                c += k.countSub();
+            }
+            return c;
         }
     }
 }
