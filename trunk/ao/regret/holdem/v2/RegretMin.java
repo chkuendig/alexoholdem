@@ -69,7 +69,9 @@ public class RegretMin
         InfoMatrix.InfoSet infoSet    = node.infoSet(roundBucket, INFO);
         double             strategy[] = infoSet.strategy();
 
-        if (pDealee == 0 && pDealer == 0) {
+        //if (pDealee == 0 && pDealer == 0) {
+        if ((dealerProp && pDealee == 0) ||
+                ((!dealerProp) && pDealer == 0)) {
             return approximate(
                     node, absDealerBuckets, absDealeeBuckets, strategy);
         } else {
@@ -182,5 +184,41 @@ public class RegretMin
         }
 
         return Double.NaN;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int count(
+            StateTree.Node node,
+            char           absDealerBuckets[],
+            char           absDealeeBuckets[],
+            boolean        includeZeroes)
+    {
+        if (node.status() != HeadsUpStatus.IN_PROGRESS) return 1;
+
+        boolean dealerProp  = node.dealerIsNext();
+        char    roundBucket =
+                    (dealerProp
+                    ? absDealerBuckets
+                    : absDealeeBuckets)[ node.round().ordinal() ];
+
+        InfoMatrix.InfoSet infoSet    = node.infoSet(roundBucket, INFO);
+        double             strategy[] = infoSet.strategy();
+
+        int count = 0;
+        for (AbstractAction act : AbstractAction.VALUES) {
+            StateTree.Node nextNode = node.kid( act );
+            if (nextNode == null) continue;
+
+            double actProb = strategy[ act.ordinal() ];
+            if (includeZeroes || actProb != 0) {
+                count += count(nextNode,
+                               absDealerBuckets,
+                               absDealeeBuckets,
+                               includeZeroes);
+            }
+        }
+
+        return count;
     }
 }

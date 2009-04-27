@@ -27,7 +27,7 @@ public class DealerTest
     }
     public DealerTest(long rounds)
     {
-        DUPLICATE_ROUNDS = rounds;
+        DUPLICATE_ROUNDS = Math.max(rounds + 10 - (rounds % 10), 10);
     }
 
 
@@ -76,7 +76,7 @@ public class DealerTest
     public void headsUp(Map<Avatar, Player> brains, boolean swap)
     {
         assert brains.size() == 2;
-        assert DUPLICATE_ROUNDS > 10;
+        assert DUPLICATE_ROUNDS >= 10;
 
         List<Avatar> orderA = new ArrayList<Avatar>(brains.keySet());
         List<Avatar> orderB = new ArrayList<Avatar>(orderA);

@@ -111,12 +111,16 @@ public class State
     //--------------------------------------------------------------------
     public Map<AbstractAction, State> viableActions()
     {
+        return actions(true);
+    }
+    public Map<AbstractAction, State> actions(boolean nonDominated)
+    {
         EnumMap<AbstractAction, State> validActions =
                 new EnumMap<AbstractAction, State>(
                         AbstractAction.class);
 
-        State quitFold  =
-                canCheck() ? null : advanceIfValid(Action.FOLD);
+        State quitFold  = nonDominated && canCheck()
+                          ? null : advanceIfValid(Action.FOLD);
         State checkCall = firstValid(Action.CALL, Action.CHECK);
         State betRaise  = firstValid(Action.RAISE, Action.BET);
 
@@ -131,7 +135,6 @@ public class State
 
         return validActions;
     }
-
 
     private State firstValid(Action... acts)
     {
