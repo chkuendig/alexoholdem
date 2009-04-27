@@ -2,7 +2,7 @@ package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysCallBot;
-import ao.ai.simple.AlwaysRaiseBot;
+import ao.ai.simple.DuaneBot;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.BucketizerImpl;
 import ao.holdem.engine.Player;
@@ -62,9 +62,9 @@ public class BucketizerTest2
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
 //        Rand.randomize();
-        computeCfr(abs, false);
+//        computeCfr(abs, false);
 //        computeCfr(abs, true);
-//        tournament(abs);
+        tournament(abs);
 //        vsHuman(abs);
     }
 
@@ -110,13 +110,15 @@ public class BucketizerTest2
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
             // dealer last
 
-//            put(Avatar.local("duane"), new DuaneBot());
-            put(Avatar.local("raise"), new AlwaysRaiseBot());
+//            put(Avatar.local("cfr2"), new CfrBot2(abs));
+//            put(Avatar.local("raise"), new AlwaysRaiseBot());
+            put(Avatar.local("duane"), new DuaneBot());
+
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
             put(Avatar.local("cfr2"), new CfrBot2(abs));
-//            put(Avatar.local(",k 6cfr2b"), new CfrBot2(abs));
+//            put(Avatar.local("cfr2b"), new CfrBot2(abs));
         }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
@@ -144,7 +146,7 @@ public class BucketizerTest2
         RegretMin2 cfrMin = new RegretMin2(info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     = 0; //(125 + 560) * 1000 * 1000;
+        long offset     =        1000 * 1000; //(125 + 560) * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
@@ -160,12 +162,12 @@ public class BucketizerTest2
         Progress prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr % (10 * 1000) == 0) {
+            if (itr % (100 * 1000) == 0) {
                 System.out.println();
                 info.displayHeadsUpRoot();
             }
 
-            if (itr++ % (100 * 1000) == 0) {
+            if (itr++ % (500 * 1000) == 0) {
                 System.out.println(" " + (itr - 1) + " took " +
                         (System.currentTimeMillis() - before) / 1000);
 

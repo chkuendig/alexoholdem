@@ -28,7 +28,7 @@ public class RegretMin2
                          char absDealeeBuckets[])
     {
         new RegMin(
-                INFO, ODDS,absDealerBuckets, absDealeeBuckets
+                INFO, ODDS, absDealerBuckets, absDealeeBuckets
         ).iterate();
 
         new AvgStrat(

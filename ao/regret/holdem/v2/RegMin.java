@@ -35,6 +35,27 @@ public class RegMin
 
 
     //--------------------------------------------------------------------
+    public int count(boolean countDealer)
+    {
+        forDealer = countDealer;
+        return count( StateTree.headsUpRoot() );
+    }
+    private int count(StateTree.Node node)
+    {
+        if (node.status() != HeadsUpStatus.IN_PROGRESS) return 0;
+
+        int count = 0;
+        for (StateTree.Node kid : node.acts().values()) {
+            count += count(kid);
+        }
+
+        return count +
+               ((forDealer == node.dealerIsNext())
+                ? 1 : 0);
+    }
+
+
+    //--------------------------------------------------------------------
     public void iterate()
     {
         forDealer = true;
