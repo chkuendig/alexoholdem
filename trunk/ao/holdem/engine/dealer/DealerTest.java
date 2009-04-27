@@ -23,7 +23,7 @@ public class DealerTest
     //--------------------------------------------------------------------
     public DealerTest()
     {
-        this(5 * 1000 * 1000);
+        this(2500 * 1000);
     }
     public DealerTest(long rounds)
     {
@@ -116,22 +116,41 @@ public class DealerTest
             if (swap) {
                 order = ((order == orderA)
                         ? orderB : orderA);
+
+                deltas = dealer.play(order, cards).deltas();
+                for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+                    cumDeltas.put(
+                            delta.getKey(),
+                            Chips.orZero(
+                                cumDeltas.get(delta.getKey()))
+                                    .plus(delta.getValue()));
+                }
+                dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
+
+                cards.swap();
+                deltas = dealer.play(order, cards).deltas();
+                for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+                    cumDeltas.put(
+                            delta.getKey(),
+                            cumDeltas.get(delta.getKey())
+                                    .plus(delta.getValue()));
+                }
+                dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
             }
 
             progress.checkpoint();
             if (((trialSet + 1) % (DUPLICATE_ROUNDS / 10)) == 0) {
-                displayDeltas(cumDeltas, brains, trialSet + 1);
+                displayDeltas(
+                        cumDeltas, dealerDelta, brains, trialSet + 1);
             }
         }
 
-        System.out.println("dealer delta: " +
-                ((double) dealerDelta.smallBets())
-                    / (2 * DUPLICATE_ROUNDS));
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     private void displayDeltas(
-            Map<Avatar, Chips> cumDeltas,
+            Map<Avatar, Chips>  cumDeltas,
+            Chips               dealerDelta,
             Map<Avatar, Player> brains,
             long                dupeRounds)
     {
@@ -145,6 +164,10 @@ public class DealerTest
                     (((double) delta.getValue().smallBets())
                             / (2 * dupeRounds)));
         }
+
+        System.out.println("dealer delta: " +
+                ((double) dealerDelta.smallBets())
+                    / (2 * dupeRounds));
     }
 
 

@@ -38,9 +38,10 @@ public class BucketizerImpl implements Bucketizer
 
         Arrays.sort(details, new Comparator<CanonDetail>() {
             public int compare(CanonDetail a, CanonDetail b) {
+                // hand strength squared (as per UofA bot)
                 return Double.compare(
-                        a.strength(),
-                        b.strength());
+                        Math.pow(a.strength(), 2),
+                        Math.pow(b.strength(), 2));
             }
         });
 

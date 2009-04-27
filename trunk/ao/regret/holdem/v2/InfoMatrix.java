@@ -193,10 +193,6 @@ public class InfoMatrix
                 averageStrategy [bucket][fIntent] +=
                         proponentReachProbability * strategy[0];
 
-            if (cIntent == -1) {
-                System.out.println("wtf?");
-            }
-
           //if (cIntent != -1)
                 averageStrategy [bucket][cIntent] +=
                         proponentReachProbability * strategy[1];
