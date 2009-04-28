@@ -28,7 +28,7 @@ import java.util.Map;
 public class CfrBot2 extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private static final boolean DETAILED = true;
+    private static final boolean DETAILED = false;
 
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
@@ -88,6 +88,11 @@ public class CfrBot2 extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
+        // todo: remove this
+//        if (state.round().ordinal() > Round.RIVER.ordinal()) {
+//            return state.reify(FallbackAction.CHECK_OR_CALL);
+//        }
+
         assert state.seats().length == 2
                 : "Only works in heads-up mode";
 

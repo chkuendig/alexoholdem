@@ -6,6 +6,7 @@ import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
+import ao.holdem.model.Round;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -27,6 +28,10 @@ public class DuaneBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
+        if (state.round() != Round.PREFLOP) {
+            return state.reify(FallbackAction.CHECK_OR_CALL);
+        }
+
         int group = Sklansky.groupOf( cards.hole() );
 
         FallbackAction act =

@@ -1,6 +1,7 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem.v3;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
+import ao.regret.holdem.v2.InfoPart;
 
 /**
  * User: alex
@@ -11,7 +12,7 @@ public class RegretMin2
 {
     //--------------------------------------------------------------------
     private final IBucketOdds ODDS;
-    private final InfoPart    INFO;
+    private final InfoPart INFO;
 
 
     //--------------------------------------------------------------------
