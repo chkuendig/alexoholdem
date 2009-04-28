@@ -1,6 +1,7 @@
 package ao.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
+import ao.bucket.abstraction.BucketizerTest2;
 import ao.bucket.abstraction.HoldemAbstraction;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
@@ -14,8 +15,10 @@ import ao.holdem.model.Chips;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
+import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.regret.holdem.v2.InfoMatrix;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -28,8 +31,13 @@ import java.util.Map;
 public class CfrBot2 extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(BucketizerTest2.class);
+
     private static final boolean DETAILED = false;
 
+
+    //--------------------------------------------------------------------
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
     private       CardSequence      prevCards;
@@ -88,18 +96,17 @@ public class CfrBot2 extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        // todo: remove this
-//        if (state.round().ordinal() == Round.RIVER.ordinal() &&
-//                state.remainingBetsInRound() <= 2) {
-//            return state.reify(FallbackAction.CHECK_OR_CALL);
-//        }
-
         assert state.seats().length == 2
                 : "Only works in heads-up mode";
 
         StateTree.Node gamePath = StateTree.fromState(prevNode, state, 4);
         if (gamePath == null) {
             gamePath = StateTree.fromState(state);
+            if (gamePath == null) {
+                LOG.debug("out of game path");
+                return state.reify(FallbackAction.CHECK_OR_CALL);
+            }
+
             resetRoundCanons();
         }
         prevNode = gamePath;
