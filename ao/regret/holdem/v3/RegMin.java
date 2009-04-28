@@ -3,7 +3,6 @@ package ao.regret.holdem.v3;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
-import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.holdem.v2.InfoMatrix;
 import ao.regret.holdem.v2.InfoPart;
@@ -81,10 +80,10 @@ public class RegMin
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
 
-        if (node.round() == Round.RIVER &&
-                node.state().remainingBetsInRound() == 2) {
-            approximate(node, strategy);
-        }
+//        if (node.round() == Round.RIVER &&
+//                node.state().remainingBetsInRound() == 2) {
+//            approximate(node, strategy);
+//        }
 
         if (oppReach == 0) {
             return approximate  (node, strategy);
@@ -114,11 +113,6 @@ public class RegMin
 //                    node.round() == Round.RIVER &&
 //                    act != AbstractAction.QUIT_FOLD) {
 //                advanceOrPassRegret(nextNode, oppReach);
-//            }
-
-//            if (nextNode.status() == HeadsUpStatus.SHOWDOWN &&
-//                    act == AbstractAction.QUIT_FOLD) {
-//                System.out.println("wtf?");
 //            }
 
             double actProb = strategy[ act.ordinal() ];
