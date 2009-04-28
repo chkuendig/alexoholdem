@@ -184,6 +184,10 @@ public class InfoMatrix
             return intent == -1
                    ? 0 : Math.max(averageStrategy[bucket][intent], 0);
         }
+        public double[] averages() {
+            return new double[] {
+                    average(fIntent), average(cIntent), average(rIntent)};
+        }
 
 
         //----------------------------------------------------------------

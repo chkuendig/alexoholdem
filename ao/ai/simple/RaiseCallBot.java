@@ -28,7 +28,8 @@ public class RaiseCallBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        return (state.round().ordinal() <= Round.RIVER.ordinal())
+        return (state.round().ordinal() < Round.RIVER.ordinal() ||
+                state.remainingBetsInRound() > 3)
                ? state.reify(FallbackAction.RAISE_OR_CALL)
                : state.reify(FallbackAction.CHECK_OR_CALL);
     }

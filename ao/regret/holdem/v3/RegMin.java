@@ -3,6 +3,7 @@ package ao.regret.holdem.v3;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
+import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.holdem.v2.InfoMatrix;
 import ao.regret.holdem.v2.InfoPart;
@@ -80,10 +81,10 @@ public class RegMin
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
 
-        // todo: remove this
-//        if (node.round().ordinal() > Round.FLOP.ordinal()) {
-//            strategy = new double[]{0, 1.0, 0};
-//        }
+        if (node.round() == Round.RIVER &&
+                node.state().remainingBetsInRound() == 2) {
+            approximate(node, strategy);
+        }
 
         if (oppReach == 0) {
             return approximate  (node, strategy);
@@ -109,6 +110,17 @@ public class RegMin
             StateTree.Node nextNode = node.kid(act);
             if (nextNode == null) continue;
 
+//            if (nextNode.status() != HeadsUpStatus.IN_PROGRESS &&
+//                    node.round() == Round.RIVER &&
+//                    act != AbstractAction.QUIT_FOLD) {
+//                advanceOrPassRegret(nextNode, oppReach);
+//            }
+
+//            if (nextNode.status() == HeadsUpStatus.SHOWDOWN &&
+//                    act == AbstractAction.QUIT_FOLD) {
+//                System.out.println("wtf?");
+//            }
+
             double actProb = strategy[ act.ordinal() ];
             double val     = advanceOrPassRegret(nextNode, oppReach);
 
@@ -119,15 +131,13 @@ public class RegMin
         double immediateCounterfactualRegret[] =
                 new double[ AbstractAction.VALUES.length ];
         for (AbstractAction act : AbstractAction.VALUES) {
+            if (node.kid(act) == null) continue;
             double cRegret = oppReach *
                     (utilities[ act.ordinal() ] - counterfactualUtility);
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }
 
-        // todo: remove this if, make it uncoditional
-//        if (node.round().ordinal() <= Round.FLOP.ordinal()) {
-            info.add(immediateCounterfactualRegret);
-//        }
+        info.add(immediateCounterfactualRegret);
         return counterfactualUtility;
     }
 
@@ -144,6 +154,14 @@ public class RegMin
             if (nextNode == null) continue;
 
             double actProb = strategy[ act.ordinal() ];
+            if (actProb == 0) continue;
+
+//            if (nextNode.status() != HeadsUpStatus.IN_PROGRESS &&
+//                    node.round() == Round.RIVER &&
+//                    act != AbstractAction.QUIT_FOLD) {
+//                advanceOrPassRegret(nextNode, oppReach * actProb);
+//            }
+
             double val     = advanceOrPassRegret(
                     nextNode, oppReach * actProb);
 

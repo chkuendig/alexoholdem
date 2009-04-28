@@ -89,7 +89,8 @@ public class CfrBot2 extends AbstractPlayer
                       Analysis     analysis)
     {
         // todo: remove this
-//        if (state.round().ordinal() > Round.RIVER.ordinal()) {
+//        if (state.round().ordinal() == Round.RIVER.ordinal() &&
+//                state.remainingBetsInRound() <= 2) {
 //            return state.reify(FallbackAction.CHECK_OR_CALL);
 //        }
 
