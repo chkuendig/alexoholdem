@@ -1,8 +1,10 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem.v3;
 
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
+import ao.regret.holdem.v2.InfoMatrix;
+import ao.regret.holdem.v2.InfoPart;
 
 /**
  * User: alex
@@ -61,6 +63,11 @@ public class AvgStrat
     {
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
+
+        // todo: remove this
+//        if (node.round().ordinal() > Round.FLOP.ordinal()) {
+//            strategy = new double[]{0, 1.0, 0};
+//        }
 
         for (AbstractAction act : AbstractAction.VALUES) {
             StateTree.Node nextNode = node.kid(act);

@@ -132,9 +132,12 @@ public class InfoPart
 
 
     //--------------------------------------------------------------------
-    public void displayHeadsUpRoot()
+    public void displayHeadsUpRoots()
     {
-        hole.displayHeadsUpRoot();
+        hole .displayHeadsUpRoot();
+//        flop .displayHeadsUpRoot();
+//        turn .displayHeadsUpRoot();
+//        river.displayHeadsUpRoot();
     }
 
 

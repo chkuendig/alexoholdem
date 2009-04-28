@@ -1,9 +1,11 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem.v3;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
+import ao.regret.holdem.v2.InfoMatrix;
+import ao.regret.holdem.v2.InfoPart;
 
 /**
  * User: alex
@@ -14,7 +16,7 @@ public class RegMin
 {
      //--------------------------------------------------------------------
     private final IBucketOdds ODDS;
-    private final InfoPart    INFO;
+    private final InfoPart INFO;
     private final char        DEALER_BUCKETS[];
     private final char        DEALEE_BUCKETS[];
 
@@ -78,6 +80,11 @@ public class RegMin
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
 
+        // todo: remove this
+//        if (node.round().ordinal() > Round.FLOP.ordinal()) {
+//            strategy = new double[]{0, 1.0, 0};
+//        }
+
         if (oppReach == 0) {
             return approximate  (node, strategy);
         } else if (node.dealerIsNext() == forDealer) {
@@ -117,7 +124,10 @@ public class RegMin
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }
 
-        info.add(immediateCounterfactualRegret);
+        // todo: remove this if, make it uncoditional
+//        if (node.round().ordinal() <= Round.FLOP.ordinal()) {
+            info.add(immediateCounterfactualRegret);
+//        }
         return counterfactualUtility;
     }
 
