@@ -64,11 +64,6 @@ public class AvgStrat
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
 
-        // todo: remove this
-//        if (node.round().ordinal() > Round.FLOP.ordinal()) {
-//            strategy = new double[]{0, 1.0, 0};
-//        }
-
         for (AbstractAction act : AbstractAction.VALUES) {
             StateTree.Node nextNode = node.kid(act);
             if (nextNode == null) continue;

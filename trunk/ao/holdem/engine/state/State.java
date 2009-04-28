@@ -357,8 +357,8 @@ public class State
     //--------------------------------------------------------------------
     public boolean atEndOfHand()
     {
-        return atShowdown()    ||
-               nextToAct == -1 ||
+        return atShowdownOrSingleActive()                  ||
+               nextToAct == -1                             ||
                nextToActIsLastActivePlayer() && canCheck() ||
                nextToAct == nextUnfoldedAfter(nextToAct);
     }
@@ -366,7 +366,7 @@ public class State
     {
         return nextToAct == nextActiveAfter(nextToAct);
     }
-    private boolean atShowdown()
+    private boolean atShowdownOrSingleActive()
     {
         return round == null;
     }
@@ -581,10 +581,8 @@ public class State
     public HeadsUpStatus headsUpStatus()
     {
         if (seats.length != 2) return null;
-
         if (! atEndOfHand()) return HeadsUpStatus.IN_PROGRESS;
-        if (atShowdown())    return HeadsUpStatus.SHOWDOWN;
-
+        if (numActivePlayers() == 2) return HeadsUpStatus.SHOWDOWN;
         return seats[1].equals( unfolded().get(0) )
                ? HeadsUpStatus.DEALER_WINS
                : HeadsUpStatus.DEALEE_WINS;

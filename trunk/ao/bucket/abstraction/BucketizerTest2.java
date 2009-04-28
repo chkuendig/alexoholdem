@@ -34,10 +34,14 @@ public class BucketizerTest2
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        byte nHoleBuckets  = 6;
-        char nFlopBuckets  = 144;
-        char nTurnBuckets  = 432;
-        char nRiverBuckets = 1296;
+        byte nHoleBuckets  = 5;
+        char nFlopBuckets  = 25;
+        char nTurnBuckets  = 125;
+        char nRiverBuckets = 625;
+//        byte nHoleBuckets  = 6;
+//        char nFlopBuckets  = 144;
+//        char nTurnBuckets  = 432;
+//        char nRiverBuckets = 1296;
 //        byte nHoleBuckets  = 13;
 //        char nFlopBuckets  = 567;
 //        char nTurnBuckets  = 1854;
@@ -148,7 +152,8 @@ public class BucketizerTest2
         RegretMin2 cfrMin = new RegretMin2(info, abs.oddsCache());
 
         long itr        = 0;
-        long offset     =   80 * 1000 * 1000; //(125 + 560) * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
+//        long offset     =  375 * 100 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
