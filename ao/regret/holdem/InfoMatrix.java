@@ -2,9 +2,11 @@ package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
+import ao.regret.holdem.grid.ArrayGrid;
+import ao.regret.holdem.grid.Grid;
+import ao.regret.holdem.grid.StoredGrid;
 import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
-import ao.util.persist.PersistentDoubles;
 import ao.util.persist.PersistentInts;
 
 import java.io.File;
@@ -42,43 +44,47 @@ public class InfoMatrix
 
     //--------------------------------------------------------------------
     public static InfoMatrix retrieveOrCreate(
-            File dir, int nBuckets, int nIntents)
-    {
+            File dir, int nBuckets, int nIntents) {
+        return retrieveOrCreate(dir, nBuckets, nIntents, false);
+    }
+    public static InfoMatrix retrieveOrCreate(
+            File dir, int nBuckets, int nIntents, boolean stored) {
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
 
         return (counts == null)
                 ? newInstance(nBuckets, nIntents)
                 : new InfoMatrix(
-                        retrieve(dir, STRATEGY_FILE, nBuckets, nIntents),
-                        retrieve(dir, CFREGRET_FILE, nBuckets, nIntents)
-                  );
+                        retrieve(dir, STRATEGY_FILE,
+                                 nBuckets, nIntents, stored),
+                        retrieve(dir, CFREGRET_FILE,
+                                 nBuckets, nIntents, stored));
     }
+
     public static InfoMatrix newInstance(int nBuckets, int nIntents) {
         return new InfoMatrix(nBuckets, nIntents);
     }
-    private static double[][] retrieve(
-            File dir, String file, int nBuckets, int nIntents) {
-        double vals[][] = new double[nBuckets][nIntents];
-        PersistentDoubles.retrieve(
-                new File(dir, file), vals);
-        return vals;
+    private static Grid retrieve(
+            File dir, String file,
+            int nBuckets, int nIntents, boolean stored) {
+        Grid grid = Grid.Impl.newInstance(nBuckets, nIntents, stored);
+        grid.load( new File(dir, file) );
+        return grid ;
     }
 
 
     public static void persist(File dir, InfoMatrix matrix)
     {
         PersistentInts.persist(new int[]{
-                matrix.averageStrategy.length,
-                matrix.averageStrategy[0].length},
+                matrix.averageStrategy.rows(),
+                matrix.averageStrategy.columns()},
                 new File(dir, COUNT_FILE));
 
         persist(matrix.averageStrategy,  dir, STRATEGY_FILE);
         persist(matrix.cumulativeRegret, dir, CFREGRET_FILE);
     }
-    private static void persist(double vals[][], File dir, String file) {
-        PersistentDoubles.persist(
-                vals, new File(dir, file));
+    private static void persist(Grid vals, File dir, String file) {
+        vals.save(new File(dir, file));
     }
 
 
@@ -90,21 +96,21 @@ public class InfoMatrix
 
 
     //--------------------------------------------------------------------
-    private final double averageStrategy [][]; // [bucket][intent]
-    private final double cumulativeRegret[][];
+    private final Grid averageStrategy;
+    private final Grid cumulativeRegret;
 
 
     //--------------------------------------------------------------------
     private InfoMatrix(int nBuckets,
                        int nIntents)
     {
-        this(new double[ nBuckets ][ nIntents ],
-             new double[ nBuckets ][ nIntents ]);
+        this(new ArrayGrid(nBuckets, nIntents),
+             new ArrayGrid(nBuckets, nIntents));
     }
 
     private InfoMatrix(
-            double copyAverageStrategy [][],
-            double copyCumulativeRegret[][])
+            Grid copyAverageStrategy,
+            Grid copyCumulativeRegret)
     {
         averageStrategy  = copyAverageStrategy;
         cumulativeRegret = copyCumulativeRegret;
@@ -114,10 +120,14 @@ public class InfoMatrix
 
     //--------------------------------------------------------------------
     public void displayHeadsUpRoot() {
-        for (int bucket = 0; bucket < averageStrategy.length; bucket++) {
+        for (int bucket = 0; bucket < averageStrategy.rows(); bucket++) {
             System.out.println(
                     StateTree.headsUpRoot().infoSet(bucket, this));
         }
+    }
+
+    public boolean isStored() {
+        return averageStrategy instanceof StoredGrid;
     }
 
 
@@ -191,7 +201,7 @@ public class InfoMatrix
 
         private double average(int intent) {
             return intent == -1
-                   ? 0 : Math.max(averageStrategy[bucket][intent], 0);
+                   ? 0 : Math.max(averageStrategy.get(bucket, intent), 0);
         }
         public double[] averages() {
             return new double[] {
@@ -203,30 +213,30 @@ public class InfoMatrix
         public void add(double strategy[],
                         double proponentReachProbability) {
             if (fIntent != -1)
-                averageStrategy [bucket][fIntent] +=
-                        proponentReachProbability * strategy[0];
+                averageStrategy.add(bucket, fIntent,
+                        proponentReachProbability * strategy[0]);
 
           //if (cIntent != -1)
-                averageStrategy [bucket][cIntent] +=
-                        proponentReachProbability * strategy[1];
+                averageStrategy.add(bucket, cIntent,
+                        proponentReachProbability * strategy[1]);
 
             if (rIntent != -1)
-                averageStrategy [bucket][rIntent] +=
-                        proponentReachProbability * strategy[2];
+                averageStrategy.add(bucket, rIntent,
+                        proponentReachProbability * strategy[2]);
         }
 
         public void add(double counterfactualRegret[]) {
             if (fIntent != -1)
-                cumulativeRegret[bucket][fIntent] +=
-                        counterfactualRegret[0];
+                cumulativeRegret.add(bucket, fIntent,
+                                     counterfactualRegret[0]);
 
           //if (cIntent != -1)
-                cumulativeRegret[bucket][cIntent] +=
-                        counterfactualRegret[1];
+                cumulativeRegret.add(bucket, cIntent,
+                                     counterfactualRegret[1]);
 
             if (rIntent != -1)
-                cumulativeRegret[bucket][rIntent] +=
-                        counterfactualRegret[2];
+                cumulativeRegret.add(bucket, rIntent,
+                                     counterfactualRegret[2]);
         }
 
 
@@ -249,7 +259,8 @@ public class InfoMatrix
             return Math.max(regret(intent), 0);
         }
         private double regret(int intent) {
-            return intent == -1 ? 0 : cumulativeRegret[bucket][intent];
+            return intent == -1
+                   ? 0 : cumulativeRegret.get(bucket, intent);
         }
 
         private double[] defaultProbabilities() {

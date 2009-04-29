@@ -98,11 +98,11 @@ public class BucketizerTest
 
 
     //--------------------------------------------------------------------
-    public static void tournamen0t(
+    public static void tournament(
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
-        abs.infoPart().displayHeadsUpRoots();
+        abs.infoPart(true).displayHeadsUpRoots();
 
         long before = System.currentTimeMillis();
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
@@ -141,12 +141,12 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
-        InfoPart info   = abs.infoPart();
+        InfoPart info   = abs.infoPart(false);
         RegretMinimizer cfrMin = new RegretMinimizer(info, abs.oddsCache());
 
         long itr        = 0;
 //        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =   40 * 1000 * 1000;
+        long offset     =  220 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();

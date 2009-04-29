@@ -69,7 +69,7 @@ public class ConsoleBot extends AbstractPlayer
 
         if (state.toCall().equals( Chips.ZERO ))
         {
-            message.append(", [2] Check");
+            message.append(", [2] Check    ");
         }
         else
         {
@@ -82,7 +82,7 @@ public class ConsoleBot extends AbstractPlayer
         {
             if (state.remainingBetsInRound() == 4)
             {
-                message.append(", [3] Bet (");
+                message.append(", [3] Bet   (");
             }
             else
             {
@@ -91,8 +91,12 @@ public class ConsoleBot extends AbstractPlayer
             message.append( state.betSize().smallBlinds() )
                    .append(")");       
         }
+        else
+        {
+            message.append("              ");
+        }
 
-        message.append(" || pot = ")
+        message.append("\t\t\tpot = ")
                .append(state.pot().smallBlinds())
                .append(", bet cap = ")
                .append(state.remainingBetsInRound());

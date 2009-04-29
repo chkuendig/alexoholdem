@@ -113,9 +113,11 @@ public class CfrBot2 extends AbstractPlayer
 
         findBucket(cards, state.round());
         InfoMatrix.InfoSet infoSet =
-                gamePath.infoSet(roundBucket, ABS.infoPart());
+                gamePath.infoSet(roundBucket, ABS.infoPart(true));
 
         AbstractAction act = infoSet.nextProbableAction();
+        Action realAction = state.reify( act.toFallbackAction() );
+
         if (DISPLAY) {
             if (DETAILED) {
                 System.out.println(
@@ -126,13 +128,12 @@ public class CfrBot2 extends AbstractPlayer
                                 " (" + (int) roundBucket + ")");
             }
 
-            System.out.println("bot acts: " + act);
+            System.out.println("bot acts: " + realAction);
         }
 
         prevRound = state.round();
         prevCards = cards;
-        Action realAction = state.reify( act.toFallbackAction() );
-        mucked = realAction.is(AbstractAction.QUIT_FOLD);
+        mucked    = realAction.is(AbstractAction.QUIT_FOLD);
         return realAction;
     }
 

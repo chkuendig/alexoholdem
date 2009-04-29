@@ -28,26 +28,28 @@ public class InfoPart
 
     //--------------------------------------------------------------------
     public static InfoPart retrieveOrCreate(
-            File dir,
-            byte nHoleBuckets,
-            char nFlopBuckets,
-            char nTurnBuckets,
-            char nRiverBuckets)
+            File    dir,
+            byte    nHoleBuckets,
+            char    nFlopBuckets,
+            char    nTurnBuckets,
+            char    nRiverBuckets,
+            boolean stored)
     {
         LOG.debug("loading (or creating)");
 
         return new InfoPart(
-                get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP),
-                get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP),
-                get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN),
-                get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER),
+                get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP, stored),
+                get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP   , stored),
+                get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN   , stored),
+                get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER  , stored),
                     dir);
     }
     private static InfoMatrix get(
-            File dir, String subDir, int nBuckets, Round intentRound) {
+            File dir, String subDir,
+            int nBuckets, Round intentRound, boolean stored) {
         return InfoMatrix.retrieveOrCreate(
                  Dir.get(dir, subDir),
-                 nBuckets, StateTree.intentCount(intentRound));
+                 nBuckets, StateTree.intentCount(intentRound), stored);
     }
 
     private static void persist(File dir, InfoPart part)
@@ -137,6 +139,11 @@ public class InfoPart
 //        flop .displayHeadsUpRoot();
 //        turn .displayHeadsUpRoot();
 //        river.displayHeadsUpRoot();
+    }
+
+    public boolean isStored()
+    {
+        return hole.isStored();
     }
 
 
