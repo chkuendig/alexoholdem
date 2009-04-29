@@ -1,10 +1,8 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.InfoBranch;
-import ao.util.data.Pack;
-import static ao.util.data.Pack.flatten;
+import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentDoubles;
 import ao.util.persist.PersistentInts;
@@ -48,22 +46,23 @@ public class InfoMatrix
     {
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
+
         return (counts == null)
                 ? newInstance(nBuckets, nIntents)
                 : new InfoMatrix(
-//                Pack.square(PersistentFloats.retrieve(
-//                        new File(dir,  STRATEGY_FILE)), nIntents)
-//                Pack.square(PersistentFloats.retrieve(
-//                        new File(dir,  CFREGRET_FILE)), nIntents),
-
-                Pack.square(PersistentDoubles.retrieve(
-                        new File(dir,  STRATEGY_FILE)), nIntents),
-                Pack.square(PersistentDoubles.retrieve(
-                        new File(dir,  CFREGRET_FILE)), nIntents)
-                );
+                        retrieve(dir, STRATEGY_FILE, nBuckets, nIntents),
+                        retrieve(dir, CFREGRET_FILE, nBuckets, nIntents)
+                  );
     }
     public static InfoMatrix newInstance(int nBuckets, int nIntents) {
         return new InfoMatrix(nBuckets, nIntents);
+    }
+    private static double[][] retrieve(
+            File dir, String file, int nBuckets, int nIntents) {
+        double vals[][] = new double[nBuckets][nIntents];
+        PersistentDoubles.retrieve(
+                new File(dir, file), vals);
+        return vals;
     }
 
 
@@ -74,19 +73,12 @@ public class InfoMatrix
                 matrix.averageStrategy[0].length},
                 new File(dir, COUNT_FILE));
 
-//        PersistentFloats.persist(
-//                flatten(matrix.averageStrategy),
-//                new File(dir, STRATEGY_FILE));
-//        PersistentFloats.persist(
-//                flatten(matrix.cumulativeRegret),
-//                new File(dir, CFREGRET_FILE));
-
+        persist(matrix.averageStrategy,  dir, STRATEGY_FILE);
+        persist(matrix.cumulativeRegret, dir, CFREGRET_FILE);
+    }
+    private static void persist(double vals[][], File dir, String file) {
         PersistentDoubles.persist(
-                flatten(matrix.averageStrategy),
-                new File(dir, STRATEGY_FILE));
-        PersistentDoubles.persist(
-                flatten(matrix.cumulativeRegret),
-                new File(dir, CFREGRET_FILE));
+                vals, new File(dir, file));
     }
 
 
@@ -95,7 +87,6 @@ public class InfoMatrix
                                         1.0 / 3, 1.0 / 3, 1.0 / 3};
     private static final double defaultNoRaise[] = {0.5, 0.5, 0  };
     private static final double defaultNoFold [] = {0  , 0.5, 0.5};
-//    private static final double defaultCall   [] = {0  , 1.0, 0  };
 
 
     //--------------------------------------------------------------------
@@ -165,9 +156,27 @@ public class InfoMatrix
         //----------------------------------------------------------------
         public AbstractAction nextProbableAction()
         {
-            return InfoBranch.nextProbableAction( averageStrategy() );
+            return nextProbableAction( averageStrategy() );
         }
 
+        public AbstractAction nextProbableAction(
+                    double probabilities[]) {
+            double toFold = probabilities[0];
+            double toCall = probabilities[1];
+
+            double rand = Rand.nextDouble();
+            if (rand <= toFold) {
+                return AbstractAction.QUIT_FOLD;
+            } else {
+                rand -= toFold;
+                return (rand <= toCall)
+                       ? AbstractAction.CHECK_CALL
+                       : AbstractAction.BET_RAISE;
+            }
+        }
+
+
+        //--------------------------------------------------------------------
         public double[] averageStrategy() {
             double fAvg = average(fIntent);
             double cAvg = average(cIntent);
@@ -255,8 +264,6 @@ public class InfoMatrix
                     return defaultNoFold;
 //                } else {
 //                    // never happens
-//                    System.out.println("InfoMatrix !!! Yes it does!");
-//                    return defaultCall;
 //                }
             }
         }

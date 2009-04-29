@@ -7,8 +7,7 @@ import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
-import ao.regret.holdem.InfoTree;
-import ao.regret.holdem.v2.InfoPart;
+import ao.regret.holdem.InfoPart;
 import ao.util.io.Dir;
 import org.apache.log4j.Logger;
 
@@ -42,7 +41,6 @@ public class HoldemAbstraction
     private BucketDecoder   decoder;
     private BucketOdds      odds;
     private BucketSequencer sequence;
-    private InfoTree        info;
     private InfoPart        infoPart;
 
 
@@ -149,20 +147,5 @@ public class HoldemAbstraction
         infoPart = InfoPart.retrieveOrCreate(
                 DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
         return infoPart;
-    }
-
-    public InfoTree info()
-    {
-        if (info != null) return info;
-        info = InfoTree.retrieveOrCreate(
-                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
-        return info;
-    }
-    public void flushInfo()
-    {
-        long before = System.currentTimeMillis();
-        info().flush( DIR );
-        LOG.debug("flushed info, took " +
-                    (System.currentTimeMillis() - before));
     }
 }

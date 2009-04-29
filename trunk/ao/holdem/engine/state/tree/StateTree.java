@@ -5,8 +5,8 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.v2.InfoMatrix;
-import ao.regret.holdem.v2.InfoPart;
+import ao.regret.holdem.InfoMatrix;
+import ao.regret.holdem.InfoPart;
 import org.apache.log4j.Logger;
 
 import java.util.*;

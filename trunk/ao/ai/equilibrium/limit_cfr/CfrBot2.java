@@ -1,7 +1,7 @@
 package ao.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
-import ao.bucket.abstraction.BucketizerTest2;
+import ao.bucket.abstraction.BucketizerTest;
 import ao.bucket.abstraction.HoldemAbstraction;
 import ao.bucket.index.flop.Flop;
 import ao.bucket.index.hole.CanonHole;
@@ -17,7 +17,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.regret.holdem.v2.InfoMatrix;
+import ao.regret.holdem.InfoMatrix;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class CfrBot2 extends AbstractPlayer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(BucketizerTest2.class);
+            Logger.getLogger(BucketizerTest.class);
 
     private static final boolean DETAILED = false;
 

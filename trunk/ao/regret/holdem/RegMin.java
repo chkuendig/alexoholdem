@@ -1,11 +1,9 @@
-package ao.regret.holdem.v3;
+package ao.regret.holdem;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.v2.InfoMatrix;
-import ao.regret.holdem.v2.InfoPart;
 
 /**
  * User: alex
@@ -14,9 +12,11 @@ import ao.regret.holdem.v2.InfoPart;
  */
 public class RegMin
 {
-     //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
+    private final double      AGGRESSION = 1.00; // UofA bot uses 7%
+
+    private final InfoPart    INFO;
     private final IBucketOdds ODDS;
-    private final InfoPart INFO;
     private final char        DEALER_BUCKETS[];
     private final char        DEALEE_BUCKETS[];
 
@@ -24,7 +24,7 @@ public class RegMin
 
 
     //--------------------------------------------------------------------
-    public RegMin(InfoPart    info,
+    public RegMin(InfoPart info,
                   IBucketOdds odds,
                   char        absDealerBuckets[],
                   char        absDealeeBuckets[])
@@ -33,27 +33,6 @@ public class RegMin
         ODDS           = odds;
         DEALER_BUCKETS = absDealerBuckets;
         DEALEE_BUCKETS = absDealeeBuckets;
-    }
-
-
-    //--------------------------------------------------------------------
-    public int count(boolean countDealer)
-    {
-        forDealer = countDealer;
-        return count( StateTree.headsUpRoot() );
-    }
-    private int count(StateTree.Node node)
-    {
-        if (node.status() != HeadsUpStatus.IN_PROGRESS) return 0;
-
-        int count = 0;
-        for (StateTree.Node kid : node.acts().values()) {
-            count += count(kid);
-        }
-
-        return count +
-               ((forDealer == node.dealerIsNext())
-                ? 1 : 0);
     }
 
 
@@ -80,11 +59,6 @@ public class RegMin
         InfoMatrix.InfoSet info       = infoSet(node);
         double             strategy[] = info.strategy();
 
-//        if (node.round() == Round.RIVER &&
-//                node.state().remainingBetsInRound() == 2) {
-//            approximate(node, strategy);
-//        }
-
         if (oppReach == 0) {
             return approximate  (node, strategy);
         } else if (node.dealerIsNext() == forDealer) {
@@ -109,12 +83,6 @@ public class RegMin
             StateTree.Node nextNode = node.kid(act);
             if (nextNode == null) continue;
 
-//            if (nextNode.status() != HeadsUpStatus.IN_PROGRESS &&
-//                    node.round() == Round.RIVER &&
-//                    act != AbstractAction.QUIT_FOLD) {
-//                advanceOrPassRegret(nextNode, oppReach);
-//            }
-
             double actProb = strategy[ act.ordinal() ];
             double val     = advanceOrPassRegret(nextNode, oppReach);
 
@@ -128,6 +96,9 @@ public class RegMin
             if (node.kid(act) == null) continue;
             double cRegret = oppReach *
                     (utilities[ act.ordinal() ] - counterfactualUtility);
+
+
+
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }
 
@@ -150,14 +121,12 @@ public class RegMin
             double actProb = strategy[ act.ordinal() ];
             if (actProb == 0) continue;
 
-//            if (nextNode.status() != HeadsUpStatus.IN_PROGRESS &&
-//                    node.round() == Round.RIVER &&
-//                    act != AbstractAction.QUIT_FOLD) {
-//                advanceOrPassRegret(nextNode, oppReach * actProb);
-//            }
-
             double val     = advanceOrPassRegret(
                     nextNode, oppReach * actProb);
+
+            if (val > 0) {
+                val *= AGGRESSION;
+            }
 
             counterfactualUtility += val * actProb;
         }
