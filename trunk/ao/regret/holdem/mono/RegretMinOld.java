@@ -1,4 +1,4 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem.mono;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;

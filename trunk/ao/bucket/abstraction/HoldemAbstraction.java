@@ -141,11 +141,15 @@ public class HoldemAbstraction
         return sequence;
     }
 
-    public InfoPart infoPart()
+    public InfoPart infoPart(boolean stored)
     {
-        if (infoPart != null) return infoPart;
+        if (infoPart != null) {
+            assert infoPart.isStored() == stored;
+            return infoPart;
+        }
+
         infoPart = InfoPart.retrieveOrCreate(
-                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
+                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS, stored);
         return infoPart;
     }
 }
