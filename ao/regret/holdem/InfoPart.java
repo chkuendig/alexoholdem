@@ -1,8 +1,7 @@
-package ao.regret.holdem.v2;
+package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Round;
-import ao.regret.holdem.InfoTree;
 import ao.util.io.Dir;
 import org.apache.log4j.Logger;
 
@@ -17,7 +16,7 @@ public class InfoPart
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(InfoTree.class);
+            Logger.getLogger(InfoPart.class);
 
 
     //--------------------------------------------------------------------

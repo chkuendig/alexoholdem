@@ -33,19 +33,6 @@ public class BucketOddsCache implements IBucketOdds
                 CACHE[i][j] = odds.nonLossProb(i, j);
             }
         }
-
-//        LOG.debug("testing cache");
-//        for (char i = 0; i < nBuckets; i++) {
-//            for (char j = 0; j < nBuckets; j++) {
-//                double original = odds.nonLossProb(i, j);
-//                double cached   = nonLossProb(i, j);
-//
-//                if (Math.abs(original - cached) > 0.000001) {
-//                    LOG.error(original + " != " + cached + " for " +
-//                             (int) i + " vs " + (int) j);
-//                }
-//            }
-//        }
     }
 
 

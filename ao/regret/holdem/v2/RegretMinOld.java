@@ -4,23 +4,25 @@ import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
+import ao.regret.holdem.InfoMatrix;
+import ao.regret.holdem.InfoPart;
 
 /**
  * User: alex
  * Date: 20-Apr-2009
  * Time: 10:10:13 PM
  */
-public class RegretMin
+public class RegretMinOld
 {
     //--------------------------------------------------------------------
     private final IBucketOdds ODDS;
-    private final InfoPart    INFO;
+    private final InfoPart INFO;
 
     private       boolean     updateDealee;
 
 
     //--------------------------------------------------------------------
-    public RegretMin(
+    public RegretMinOld(
             InfoPart info, IBucketOdds odds)
     {
         INFO = info;

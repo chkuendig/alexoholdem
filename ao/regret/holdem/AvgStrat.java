@@ -1,10 +1,8 @@
-package ao.regret.holdem.v3;
+package ao.regret.holdem;
 
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.v2.InfoMatrix;
-import ao.regret.holdem.v2.InfoPart;
 
 /**
  * User: alex
