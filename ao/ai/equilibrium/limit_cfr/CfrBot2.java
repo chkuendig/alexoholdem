@@ -17,6 +17,8 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
+import ao.odds.eval.HandRank;
+import ao.odds.eval.eval7.Eval7Faster;
 import ao.regret.holdem.InfoMatrix;
 import org.apache.log4j.Logger;
 
@@ -34,12 +36,11 @@ public class CfrBot2 extends AbstractPlayer
     private static final Logger LOG =
             Logger.getLogger(BucketizerTest.class);
 
-    private static final boolean DETAILED = false;
-
 
     //--------------------------------------------------------------------
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
+    private final boolean           DETAILED;
     private       CardSequence      prevCards;
     private       boolean           mucked;
 
@@ -60,13 +61,15 @@ public class CfrBot2 extends AbstractPlayer
     //--------------------------------------------------------------------
     public CfrBot2(HoldemAbstraction precomputedAbstraction)
     {
-        this(precomputedAbstraction, false);
+        this(precomputedAbstraction, false, false);
     }
     public CfrBot2(HoldemAbstraction precomputedAbstraction,
-                   boolean           display)
+                   boolean           display,
+                   boolean           detailed)
     {
-        ABS     = precomputedAbstraction;
-        DISPLAY = display;
+        ABS      = precomputedAbstraction;
+        DISPLAY  = display;
+        DETAILED = detailed;
     }
 
 
@@ -78,8 +81,24 @@ public class CfrBot2 extends AbstractPlayer
 
         if (! DISPLAY) return;
 //        if (! mucked) {
-            System.out.println("bot shows cards: " + prevCards);
+            System.out.println(
+                    "bot shows cards: " + prevCards +
+                    "   " + handType(prevCards));
 //        }
+    }
+
+    private String handType(CardSequence cards) {
+        if (! cards.community().hasRiver()) return "";
+
+        short value = Eval7Faster.valueOf(
+                         cards.hole().a(),
+                         cards.hole().b(),
+                         cards.community().flopA(),
+                         cards.community().flopB(),
+                         cards.community().flopC(),
+                         cards.community().turn(),
+                         cards.community().river());
+        return HandRank.fromValue( value ).toString();
     }
 
     private void resetRoundCanons() {

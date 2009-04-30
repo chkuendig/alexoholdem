@@ -41,7 +41,8 @@ public class Avatar implements Serializable
     //--------------------------------------------------------------------
     public String toString()
     {
-        return DOMAIN + "." + NAME;
+        //return DOMAIN + "." + NAME;
+        return NAME;
     }
 
     public boolean equals(Object o)

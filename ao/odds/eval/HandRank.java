@@ -6,15 +6,33 @@ package ao.odds.eval;
 public enum HandRank
 {
     //--------------------------------------------------------------------
-    HIGH_CARD,
-    ONE_PAIR,
-    TWO_PAIR,
-    THREE_OF_A_KIND,
-    STRAIGHT,
-    FLUSH,
-    FULL_HOUSE,
-    FOUR_OF_A_KIND,
-    STRAIGHT_FLUSH;
+    HIGH_CARD      ("high card"),
+    ONE_PAIR       ("pair"),
+    TWO_PAIR       ("two pair"),
+    THREE_OF_A_KIND("trips"),
+    STRAIGHT       ("straight"),
+    FLUSH          ("flush"),
+    FULL_HOUSE     ("full house"),
+    FOUR_OF_A_KIND ("quad"),
+    STRAIGHT_FLUSH ("straight flush");
+
+
+    //--------------------------------------------------------------------
+    private final String name;
+
+
+    //--------------------------------------------------------------------
+    private HandRank(String givenName)
+    {
+        name = givenName;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return name;
+    }
 
 
     //--------------------------------------------------------------------
