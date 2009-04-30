@@ -5,9 +5,10 @@ import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Chips;
-import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
+import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
+import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Console;
 
 import java.util.LinkedHashMap;
@@ -51,67 +52,84 @@ public class ConsoleBot extends AbstractPlayer
 //        System.out.println(
 //                state.toString());
         System.out.println(
-                cards);
+                cards + "   " + winPercentage(cards));
 
-        AbstractAction act;
+        FallbackAction act;
         do {
             act = ask( state );
         } while (act == null);
+        System.out.println();
 
-        return state.reify( act.toFallbackAction() );
+        return state.reify( act );
+    }
+
+    private String winPercentage(CardSequence cards)
+    {
+        double strength =
+                new PreciseHeadsUpOdds().compute(
+                        cards.hole(),
+                        cards.community()
+                ).strengthVsRandom();
+
+        return "" +
+                  ((int) (strength * 100)) +
+               "% to win";
     }
 
     
     //--------------------------------------------------------------------
-    private AbstractAction ask(State state)
+    private FallbackAction ask(State state)
     {
-        StringBuilder message = new StringBuilder("[1] Fold");
+        StringBuilder message = new StringBuilder();
+
+        if (state.canCheck()) {
+            message.append("[1] Check");
+        } else {
+            message.append("[1] Fold ");
+        }
 
         if (state.toCall().equals( Chips.ZERO ))
         {
-            message.append(", [2] Check    ");
+            message.append("     [2] Check ");
         }
         else
         {
-            message.append(", [2] Call (")
-                     .append(state.toCall().smallBlinds())
-                   .append(")");
+            message.append("     [2] Call ")
+                   .append(state.toCall().smallBlinds());
         }
 
         if (state.canRaise())
         {
             if (state.remainingBetsInRound() == 4)
             {
-                message.append(", [3] Bet   (");
+                message.append("     [3] Bet  ");
             }
             else
             {
-                message.append(", [3] Raise (");
-            }
-            message.append( state.betSize().smallBlinds() )
-                   .append(")");       
+                message.append("     [3] Raise");
+            }      
         }
         else
         {
-            message.append("              ");
+            message.append("     [3] Call ");
         }
+        message.append(" ")
+                .append( state.betSize().smallBlinds() );
 
-        message.append("\t\t\tpot = ")
+        message.append("\t\tpot = ")
                .append(state.pot().smallBlinds())
-               .append(", bet cap = ")
-               .append(state.remainingBetsInRound());
+               .append(", stakes = ")
+               .append(state.stakes().smallBlinds());
 
-        AbstractAction act = null;
+        FallbackAction act = null;
         String         in  = Console.text(message.toString());
         if (in.equals("1") || in.equalsIgnoreCase("f")) {
-            act = AbstractAction.QUIT_FOLD;
+            act = FallbackAction.CHECK_OR_FOLD;
         } else if (in.equals("2") || in.equalsIgnoreCase("c")) {
-            act = AbstractAction.CHECK_CALL;
+            act = FallbackAction.CHECK_OR_CALL;
         } else if (in.equals("3") ||
                    in.equalsIgnoreCase("b") || in.equalsIgnoreCase("r")) {
-            if (state.canRaise()) {
-                act = AbstractAction.BET_RAISE;
-            }
+            act = FallbackAction.RAISE_OR_CALL;
         }
         return act;
     }

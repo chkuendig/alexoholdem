@@ -61,9 +61,9 @@ public class BucketizerTest
 //        abs.odds();
 
 //        Rand.randomize();
-        computeCfr(abs);
+//        computeCfr(abs);
 //        tournament(abs);
-//        vsHuman(abs);
+        vsHuman(abs);
     }
 
 
@@ -130,7 +130,7 @@ public class BucketizerTest
         precompute(abs);
 
         Rand.randomize();
-        new DealerTest().vsHuman(new CfrBot2(abs, true),
+        new DealerTest().vsHuman(new CfrBot2(abs, true, false),
                                  false, true);
     }
 
@@ -146,7 +146,7 @@ public class BucketizerTest
 
         long itr        = 0;
 //        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =  220 * 1000 * 1000;
+        long offset     =  260 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
