@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.index.hole.HoleLookup;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.odds.agglom.Odds;
 import ao.util.io.Dir;
 import ao.util.persist.PersistentInts;

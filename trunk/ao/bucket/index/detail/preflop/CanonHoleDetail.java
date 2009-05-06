@@ -1,8 +1,8 @@
 package ao.bucket.index.detail.preflop;
 
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.example.ExampleLookup;
-import ao.bucket.index.hole.CanonHole;
 import ao.holdem.model.card.Hole;
 import ao.holdem.persist.GenericBinding;
 import com.sleepycat.bind.tuple.TupleInput;

@@ -117,4 +117,11 @@ public class Gapper
         }
         return isContinuous;
     }
+
+
+    //--------------------------------------------------------------------
+    @Override public String toString()
+    {
+        return indexes.toString();
+    }
 }

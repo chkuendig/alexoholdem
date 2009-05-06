@@ -2,6 +2,7 @@ package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.Round;
+import ao.util.misc.Traverser;
 
 /**
  * Date: Jan 8, 2009
@@ -49,7 +50,9 @@ public interface BucketTree
         public int[] parentCanons();
         
         public CanonDetail[] details();
+        public void          details(Traverser<CanonDetail> visit);
 
+//        public void reset(byte fromBucket, byte toBucket);
         public void set(long canonIndex, byte bucket);
         public byte get(long canonIndex);
 

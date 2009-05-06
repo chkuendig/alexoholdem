@@ -13,32 +13,42 @@ import ao.holdem.model.act.AbstractAction;
 public class RegMin
 {
     //--------------------------------------------------------------------
-    private final double      AGGRESSION = 1.00; // UofA bot uses 7%
+    private final double      AGGRESSION; // UofA bot uses 7%
 
     private final InfoPart    INFO;
     private final IBucketOdds ODDS;
-    private final char        DEALER_BUCKETS[];
-    private final char        DEALEE_BUCKETS[];
+    private       char        DEALER_BUCKETS[];
+    private       char        DEALEE_BUCKETS[];
 
     private       boolean     forDealer;
+    private       double      showdownStakesFactor;
 
 
     //--------------------------------------------------------------------
-    public RegMin(InfoPart info,
+    public RegMin(InfoPart    info,
                   IBucketOdds odds,
-                  char        absDealerBuckets[],
-                  char        absDealeeBuckets[])
+                  double      aggression)
+                    // 1.0 means neutral, >1 means aggresive
     {
-        INFO           = info;
-        ODDS           = odds;
-        DEALER_BUCKETS = absDealerBuckets;
-        DEALEE_BUCKETS = absDealeeBuckets;
+        INFO       = info;
+        ODDS       = odds;
+        AGGRESSION = aggression;
     }
 
 
     //--------------------------------------------------------------------
-    public void iterate()
+    public void iterate(
+            char absDealerBuckets[],
+            char absDealeeBuckets[])
     {
+        DEALER_BUCKETS = absDealerBuckets;
+        DEALEE_BUCKETS = absDealeeBuckets;
+
+        showdownStakesFactor =
+                (ODDS.nonLossProb(
+                        DEALER_BUCKETS[3],
+                        DEALEE_BUCKETS[3]) - 0.5) * 2.0;
+
         forDealer = true;
         advanceOrPassRegret(StateTree.headsUpRoot(),  1.0);
 
@@ -159,10 +169,7 @@ public class RegMin
     {
         switch (node.status()) {
             case SHOWDOWN:
-                return node.stakes() * (
-                        ODDS.nonLossProb(
-                                DEALER_BUCKETS[3],
-                                DEALEE_BUCKETS[3]) - 0.5) * 2.0;
+                return node.stakes() * showdownStakesFactor;
 
             case DEALER_WINS: return  node.dealeeCommit();
             case DEALEE_WINS: return -node.dealerCommit();

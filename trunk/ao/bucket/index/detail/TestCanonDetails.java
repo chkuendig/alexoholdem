@@ -1,10 +1,10 @@
 package ao.bucket.index.detail;
 
+import ao.bucket.index.canon.flop.FlopLookup;
+import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
-import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.hole.HoleLookup;
-import ao.bucket.index.turn.TurnLookup;
 
 /**
  * Date: Jan 21, 2009

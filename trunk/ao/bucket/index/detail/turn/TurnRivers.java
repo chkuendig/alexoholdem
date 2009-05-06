@@ -1,10 +1,10 @@
 package ao.bucket.index.detail.turn;
 
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.river.River;
-import ao.bucket.index.river.RiverLookup;
-import ao.bucket.index.turn.TurnLookup;
 import ao.util.io.Dir;
 import ao.util.math.Calc;
 import ao.util.misc.Traverser;

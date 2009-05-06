@@ -1,12 +1,12 @@
 package ao.bucket.index.detail.flop;
 
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.example.ExampleLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetails;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
 import ao.util.math.Calc;

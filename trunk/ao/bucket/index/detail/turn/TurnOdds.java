@@ -1,8 +1,8 @@
 package ao.bucket.index.detail.turn;
 
+import ao.bucket.index.canon.turn.Turn;
+import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.turn.Turn;
-import ao.bucket.index.turn.TurnLookup;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dir;
@@ -116,7 +116,7 @@ public class TurnOdds
 
     private static char[] oddsComponent()
     {
-        char[] component = new char[ TurnLookup.CANONS];
+        char[] component = new char[ TurnLookup.CANONS ];
         Arrays.fill( component, SENTINAL );
         return component;
     }
@@ -127,19 +127,19 @@ public class TurnOdds
     {
         LOG.debug("computing odds");
 
-        final int[]  skinCount      = {0};
-        final int[]  calcCount      = {0};
+        final int [] skipCount      = {0};
+        final int [] calcCount      = {0};
         final long[] milestoneStart = {0};
 
         HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 if (WIN[ turn.canonIndex() ] != SENTINAL) {
-                    skinCount[0]++;
+                    skipCount[0]++;
                     return;
-                } else if (skinCount[0] != 0) {
-                    System.out.println("skipped " + skinCount[0]);
-                    skinCount[0] = 0;
+                } else if (skipCount[0] != 0) {
+                    System.out.println("skipped " + skipCount[0]);
+                    skipCount[0] = 0;
                 }
 
                 Odds odds = PreciseHeadsUpOdds.INSTANCE.compute(

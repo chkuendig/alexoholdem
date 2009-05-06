@@ -4,7 +4,7 @@ package ao.bucket.index.detail;
  * Date: Jan 16, 2009
  * Time: 11:20:32 AM
  */
-public class CanonRange
+public class CanonRange implements Comparable<CanonRange>
 {
     //--------------------------------------------------------------------
     private final long fromCanonIndex;
@@ -38,6 +38,18 @@ public class CanonRange
     {
         return fromCanonIndex <= canonIndex &&
                                  canonIndex <= upToAndIncluding();
+    }
+
+    public long distanceTo(CanonRange next)
+    {
+        return next.fromCanonIndex - upToAndIncluding() - 1;
+    }
+
+
+    //--------------------------------------------------------------------
+    public int compareTo(CanonRange o) {
+        return fromCanonIndex < o.fromCanonIndex ? -1 :
+               fromCanonIndex > o.fromCanonIndex ?  1 : 0;
     }
 
 

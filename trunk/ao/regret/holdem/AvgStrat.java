@@ -13,26 +13,27 @@ public class AvgStrat
 {
     //--------------------------------------------------------------------
     private final InfoPart INFO;
-    private final char     DEALER_BUCKETS[];
-    private final char     DEALEE_BUCKETS[];
+    private       char     DEALER_BUCKETS[];
+    private       char     DEALEE_BUCKETS[];
 
     private       boolean  forDealer;
 
 
     //--------------------------------------------------------------------
-    public AvgStrat(InfoPart info,
-                    char     absDealerBuckets[],
-                    char     absDealeeBuckets[])
+    public AvgStrat(InfoPart info)
     {
-        INFO           = info;
-        DEALER_BUCKETS = absDealerBuckets;
-        DEALEE_BUCKETS = absDealeeBuckets;
+        INFO = info;
     }
 
 
     //--------------------------------------------------------------------
-    public void iterate()
+    public void iterate(
+            char absDealerBuckets[],
+            char absDealeeBuckets[])
     {
+        DEALER_BUCKETS = absDealerBuckets;
+        DEALEE_BUCKETS = absDealeeBuckets;
+
         forDealer = true;
         updateOrPassStrategy(StateTree.headsUpRoot(), 1.0);
 

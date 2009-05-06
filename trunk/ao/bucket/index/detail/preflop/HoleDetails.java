@@ -1,12 +1,12 @@
 package ao.bucket.index.detail.preflop;
 
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
 import ao.util.misc.Filter;
 import ao.util.misc.Filters;
 import ao.util.misc.Traverser;

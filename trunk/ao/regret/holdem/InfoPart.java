@@ -20,10 +20,10 @@ public class InfoPart
 
 
     //--------------------------------------------------------------------
-    private static final String  HOLE_DIR = "info/hole";
-    private static final String  FLOP_DIR = "info/flop";
-    private static final String  TURN_DIR = "info/turn";
-    private static final String RIVER_DIR = "info/river";
+    private static final String  HOLE_DIR = "hole";
+    private static final String  FLOP_DIR = "flop";
+    private static final String  TURN_DIR = "turn";
+    private static final String RIVER_DIR = "river";
 
 
     //--------------------------------------------------------------------
