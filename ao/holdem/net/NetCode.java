@@ -1,9 +1,9 @@
 package ao.holdem.net;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.DatagramPacket;
-import java.io.IOException;
 
 /**
  *
@@ -15,15 +15,23 @@ public class NetCode
         DatagramSocket readSocket  = new DatagramSocket(9978);
         DatagramSocket writeSocket = new DatagramSocket(9979);
 
-        for (int i = 0; i < 100000; i++)
+        //for (int i = 0; i < 100000; i++)
+        try
         {
-            System.out.println("recieved: " + recieveString(readSocket));
+            while (true)
+            {
+                System.out.println("recieved: " + recieveString(readSocket));
 
-//            System.out.println("sending response.");
-//            send( writeSocket );
-            
+    //            System.out.println("sending response.");
+    //            send( writeSocket );
+
+            }
         }
-
+        finally
+        {
+            readSocket.close();
+            writeSocket.close();
+        }
 
 ////        System.out.println("recieved: " +
 ////                           new OverTheWireState(recieveString(readSocket)));
@@ -38,8 +46,7 @@ public class NetCode
 //        System.out.println("sending response.");
 //        send( writeSocket );
 
-        readSocket.close();
-        writeSocket.close();
+
     }
 
     private static void send(
@@ -47,7 +54,7 @@ public class NetCode
     {
         byte[] buf = "Hello World".getBytes();
 
-        InetAddress address = InetAddress.getByName("127.0.0.1");
+        InetAddress    address = InetAddress.getByName("127.0.0.1");
         DatagramPacket packet  =
                 new DatagramPacket(buf, buf.length,
                                    address, 4445);

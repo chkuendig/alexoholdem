@@ -3,10 +3,10 @@ package ao.ai.equilibrium.limit_cfr;
 import ao.ai.AbstractPlayer;
 import ao.bucket.abstraction.BucketizerTest;
 import ao.bucket.abstraction.HoldemAbstraction;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.river.River;
-import ao.bucket.index.turn.Turn;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
@@ -18,7 +18,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.eval.HandRank;
-import ao.odds.eval.eval7.Eval7Faster;
+import ao.odds.eval.eval_567.EvalSlow;
 import ao.regret.holdem.InfoMatrix;
 import org.apache.log4j.Logger;
 
@@ -41,6 +41,7 @@ public class CfrBot2 extends AbstractPlayer
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
     private final boolean           DETAILED;
+    private final String            NAME;
     private       CardSequence      prevCards;
     private       boolean           mucked;
 
@@ -61,15 +62,17 @@ public class CfrBot2 extends AbstractPlayer
     //--------------------------------------------------------------------
     public CfrBot2(HoldemAbstraction precomputedAbstraction)
     {
-        this(precomputedAbstraction, false, false);
+        this(null, precomputedAbstraction, false, false);
     }
-    public CfrBot2(HoldemAbstraction precomputedAbstraction,
+    public CfrBot2(String            equalibriumName,
+                   HoldemAbstraction precomputedAbstraction,
                    boolean           display,
                    boolean           detailed)
     {
         ABS      = precomputedAbstraction;
         DISPLAY  = display;
         DETAILED = detailed;
+        NAME     = equalibriumName;
     }
 
 
@@ -87,18 +90,12 @@ public class CfrBot2 extends AbstractPlayer
 //        }
     }
 
-    private String handType(CardSequence cards) {
-        if (! cards.community().hasRiver()) return "";
+    public static String handType(CardSequence cards) {
+        if (! cards.community().hasFlop()) return "";
 
-        short value = Eval7Faster.valueOf(
-                         cards.hole().a(),
-                         cards.hole().b(),
-                         cards.community().flopA(),
-                         cards.community().flopB(),
-                         cards.community().flopC(),
-                         cards.community().turn(),
-                         cards.community().river());
-        return HandRank.fromValue( value ).toString();
+        short value = EvalSlow.valueOf(
+                CardSequence.Util.knowCards(cards));
+        return "(" + HandRank.fromValue( value ) +")";
     }
 
     private void resetRoundCanons() {
@@ -132,7 +129,7 @@ public class CfrBot2 extends AbstractPlayer
 
         findBucket(cards, state.round());
         InfoMatrix.InfoSet infoSet =
-                gamePath.infoSet(roundBucket, ABS.infoPart(true));
+                gamePath.infoSet(roundBucket, ABS.infoPart(NAME, true));
 
         AbstractAction act = infoSet.nextProbableAction();
         Action realAction = state.reify( act.toFallbackAction() );

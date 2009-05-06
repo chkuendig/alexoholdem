@@ -1,10 +1,10 @@
 package ao.bucket.index.enumeration;
 
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
-import ao.bucket.index.river.River;
-import ao.bucket.index.turn.Turn;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.card.Card;
 import static ao.util.data.Arr.swap;
 import ao.util.math.stats.FastIntCombiner;

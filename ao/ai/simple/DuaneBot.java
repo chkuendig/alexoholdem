@@ -35,7 +35,7 @@ public class DuaneBot extends AbstractPlayer
         int group = Sklansky.groupOf( cards.hole() );
 
         FallbackAction act =
-                (group <= 4)
+                (group <= 5)
                  ? FallbackAction.RAISE_OR_CALL
                  : FallbackAction.CHECK_OR_FOLD;
         return state.reify( act );

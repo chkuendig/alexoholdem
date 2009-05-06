@@ -1,6 +1,7 @@
 package ao.ai.human;
 
 import ao.ai.AbstractPlayer;
+import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
@@ -39,8 +40,12 @@ public class ConsoleBot extends AbstractPlayer
             }
         }
 
+        Avatar you  = Avatar.local("you");
+        int    your = deltas.get(you).smallBlinds();
+        int    sum  = total .get(you).smallBlinds();
         System.out.println(
-                deltas + ", totalling: " + total);
+                (your > 0 ? "+" : "") + your +
+                " totalling " + sum);
     }
 
 
@@ -52,7 +57,9 @@ public class ConsoleBot extends AbstractPlayer
 //        System.out.println(
 //                state.toString());
         System.out.println(
-                cards + "   " + winPercentage(cards));
+                cards                + "   " +
+                winPercentage(cards) + " " +
+                CfrBot2.handType(cards));
 
         FallbackAction act;
         do {

@@ -1,7 +1,7 @@
 package ao.odds.agglom.hist;
 
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.turn.Turn;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

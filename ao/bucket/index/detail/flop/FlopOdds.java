@@ -1,8 +1,8 @@
 package ao.bucket.index.detail.flop;
 
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopLookup;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dir;

@@ -4,7 +4,6 @@ package ao.holdem;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.net.OverTheWireState;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.ApproximateOddFinder;
@@ -16,11 +15,7 @@ import ao.util.data.Arr;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.BitSet;
 
@@ -55,69 +50,6 @@ public class Main
 //            runNetCode();
             runPoker();
         }
-    }
-
-
-    //--------------------------------------------------------------------
-    public static void runNetCode()
-    {
-        try
-        {
-            doRunNetCode();
-        }
-        catch (Exception e)
-        {
-            throw new Error( e );
-        }
-    }
-
-    public static void doRunNetCode() throws Exception
-    {
-        DatagramSocket readSocket  = new DatagramSocket(9978);
-        DatagramSocket writeSocket = new DatagramSocket(9979);
-
-        System.out.println("sending response.");
-        send( writeSocket );
-
-//        System.out.println("recieved: " + recieveString(readSocket));
-        System.out.println("recieved: " +
-                           new OverTheWireState(recieveString(readSocket)));
-
-        System.out.println("sending response.");
-        send( writeSocket );
-
-//        System.out.println("recieved: " + recieveString(readSocket));
-        System.out.println("recieved: " +
-                           new OverTheWireState(recieveString(readSocket)));
-
-        System.out.println("sending response.");
-        send( writeSocket );
-
-        readSocket.close();
-        writeSocket.close();
-    }
-
-    private static String recieveString(
-            DatagramSocket from) throws IOException
-    {
-        byte readBuffer[] = new byte[2048];
-        DatagramPacket packet =
-                new DatagramPacket(readBuffer, readBuffer.length);
-        from.receive( packet );
-        return new String( packet.getData() ).trim();
-    }
-
-    private static void send(
-            DatagramSocket to) throws IOException
-    {
-        byte[] buf = "Hello World".getBytes();
-
-//        to.get
-        InetAddress    address = InetAddress.getByName("127.0.0.1");
-        DatagramPacket packet  =
-                new DatagramPacket(buf, buf.length,
-                                   address, 4445);
-        to.send(packet);
     }
 
 
@@ -404,7 +336,6 @@ public class Main
 
         long start = System.currentTimeMillis();
 
-        int count       = 0;
         int frequency[] = new int[ HandRank.values().length ];
         while (permuter.hasMoreElements())
         {

@@ -28,11 +28,11 @@ public class RegretMinimizer
                          char absDealeeBuckets[])
     {
         new RegMin(
-                INFO, ODDS, absDealerBuckets, absDealeeBuckets
-        ).iterate();
+                INFO, ODDS, 1.0
+        ).iterate( absDealerBuckets, absDealeeBuckets );
 
         new AvgStrat(
-                INFO, absDealerBuckets, absDealeeBuckets
-        ).iterate();
+                INFO
+        ).iterate( absDealerBuckets, absDealeeBuckets );
     }
 }

@@ -1,8 +1,8 @@
 package ao.bucket.index.detail.preflop;
 
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;

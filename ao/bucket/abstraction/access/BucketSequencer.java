@@ -1,10 +1,10 @@
 package ao.bucket.abstraction.access;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.river.River;
-import ao.bucket.index.turn.Turn;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;

@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.index.hole.HoleLookup;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.util.io.Slurpy;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

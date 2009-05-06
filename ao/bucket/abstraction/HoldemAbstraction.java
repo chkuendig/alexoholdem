@@ -9,9 +9,10 @@ import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.regret.holdem.InfoPart;
 import ao.util.io.Dir;
-import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: shalom
@@ -23,8 +24,8 @@ import java.io.File;
 public class HoldemAbstraction
 {
     //--------------------------------------------------------------------
-    private static final Logger LOG =
-            Logger.getLogger(HoldemAbstraction.class);
+//    private static final Logger LOG =
+//            Logger.getLogger(HoldemAbstraction.class);
 
 
     //--------------------------------------------------------------------
@@ -37,11 +38,11 @@ public class HoldemAbstraction
     private final char       N_TURNS;
     private final char       N_RIVERS;
 
-    private BucketTree      tree;
-    private BucketDecoder   decoder;
-    private BucketOdds      odds;
-    private BucketSequencer sequence;
-    private InfoPart        infoPart;
+    private BucketTree            tree;
+    private BucketDecoder         decoder;
+    private BucketOdds            odds;
+    private BucketSequencer       sequence;
+    private Map<String, InfoPart> infoParts;
 
 
     //--------------------------------------------------------------------
@@ -60,6 +61,8 @@ public class HoldemAbstraction
         N_FLOPS    = nFlopBuckets;
         N_TURNS    = nTurnBuckets;
         N_RIVERS   = nRiverBuckets;
+
+        infoParts  = new HashMap<String, InfoPart>();
     }
 
 
@@ -143,13 +146,21 @@ public class HoldemAbstraction
 
     public InfoPart infoPart(boolean stored)
     {
+        return infoPart(null, stored);
+    }
+    public InfoPart infoPart(String name, boolean stored)
+    {
+        if (name == null) return infoPart("main", stored);
+
+        InfoPart infoPart = infoParts.get(name);
         if (infoPart != null) {
             assert infoPart.isStored() == stored;
             return infoPart;
         }
 
         infoPart = InfoPart.retrieveOrCreate(
-                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS, stored);
+                     Dir.get(DIR, "info/" + name),
+                     N_HOLES, N_FLOPS, N_TURNS, N_RIVERS, stored);
         return infoPart;
     }
 }

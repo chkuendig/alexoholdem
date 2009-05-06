@@ -70,7 +70,7 @@ public class SlimRiverHist
         int skipped = 0;
         for (short i = 0; i < RiverStrengths.COUNT; i++)
         {
-            int count = riverHist [ i ];
+            int count = riverHist[ i ];
             if (count == 0)
             {
                 skipped++;

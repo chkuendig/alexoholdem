@@ -3,16 +3,17 @@ package ao.bucket.abstraction.access.tree;
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.abstraction.access.tree.list.ThirdBucketList;
+import ao.bucket.index.canon.flop.FlopLookup;
+import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.hole.HoleLookup;
-import ao.bucket.index.river.RiverLookup;
-import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dir;
+import ao.util.misc.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
@@ -213,6 +214,12 @@ public class BucketTreeImpl implements BucketTree
             return BucketTreeImpl.this.get(round, canonIndex);
         }
 
+//        public void reset(byte fromBucket, byte toBucket) {
+//            BucketTreeImpl.this.get();
+//
+//            BucketTreeImpl.this.set(round, canonIndex, bucket);
+//        }
+
 
         //----------------------------------------------------------------
         public CanonDetail[] details()
@@ -220,11 +227,13 @@ public class BucketTreeImpl implements BucketTree
             return DetailLookup.lookupSub(
                             round().previous(),
                             parentCanons());
-//            if (subDetails != null) return subDetails;
-//            subDetails = DetailLookup.lookupSub(
-//                            round().previous(),
-//                            parentCanons());
-//            return subDetails;
+        }
+        public void details(Traverser<CanonDetail> visit)
+        {
+            DetailLookup.lookupSub(
+                    round().previous(),
+                    parentCanons(),
+                    visit);
         }
 
         public byte bucketCount()

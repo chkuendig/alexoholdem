@@ -1,8 +1,8 @@
 package ao.bucket.abstraction.bucketize.smart;
 
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.detail.preflop.HoleOdds;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
 import ao.graph.Graph;
 import ao.graph.common.RealEdgeWeight;
 import ao.graph.impl.common.SimpleAbsDomain;

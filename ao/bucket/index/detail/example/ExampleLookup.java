@@ -1,5 +1,11 @@
 package ao.bucket.index.detail.example;
 
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.flop.FlopLookup;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.turn.Turn;
+import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -7,12 +13,6 @@ import ao.bucket.index.detail.preflop.HoleDetails;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.flop.FlopLookup;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.hole.HoleLookup;
-import ao.bucket.index.turn.Turn;
-import ao.bucket.index.turn.TurnLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -74,7 +74,7 @@ public class ExampleLookup
             }});
     }
 
-    private static void testHoleConcistency()
+    public static void testHoleConcistency()
     {
         HandEnum.flops(
                 new PermisiveFilter<CanonHole>("%1$s"),

@@ -1,5 +1,10 @@
 package ao.bucket.index.detail.river;
 
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
+import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -7,12 +12,9 @@ import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.flop.Flop;
-import ao.bucket.index.hole.CanonHole;
-import ao.bucket.index.river.River;
-import ao.bucket.index.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import ao.odds.agglom.hist.RiverStrengths;
 import ao.odds.eval.eval7.Eval7Faster;
 import ao.util.misc.Filter;
 import ao.util.misc.Traverser;
@@ -25,7 +27,113 @@ import java.util.*;
  */
 public class RiverDetails
 {
+//    //--------------------------------------------------------------------
+//    // slow but precise
+//    public static void lookup(
+//            int canonTurn, Traverser<CanonDetail> visit)
+//    {
+//        CanonTurnDetail turn = TurnDetails.lookup( canonTurn );
+//        CanonFlopDetail flop =
+//                FlopDetails.containing( canonTurn );
+//        CanonHoleDetail hole = flop.holeDetail();
+//        Turn turnSeq  = turn(hole, flop, turn);
+//
+//        int      turnShortcut  = Eval7Faster.shortcutFor(
+//                 flop.a(), flop.b(), flop.c(), turn.example());
+//        int      hTurnShortcut = shortcut(hole, flop, turn);
+//        Set<Card> usedCards    = EnumSet.of(
+//                hole.example().a(), hole.example().b(),
+//                flop.a(), flop.b(), flop.c(), turn.example());
+//
+//        Set<Long> seen = new HashSet<Long>();
+//        for (Card r : Card.VALUES)
+//        {
+//            if (usedCards.contains( r )) continue;
+//
+//            River river = turnSeq.addRiver( r );
+//
+//            Long longIndex = river.canonIndex();
+//            if (seen.contains( longIndex )) continue;
+//
+//            seen.add( longIndex );
+//            usedCards.add( r );
+//
+//            short val = Eval7Faster.fastValueOf(hTurnShortcut, r);
+//            visit.traverse(
+//                    new CanonRiverDetail(
+//                            nonLossProb(val, usedCards,
+//                                        Eval7Faster.nextShortcut(
+//                                                turnShortcut, r)),
+//                            river.canonIndex()));
+//
+//            usedCards.remove( r );
+//        }
+//    }
+//    private static double nonLossProb(
+//            short val, Set<Card> usedCards, int riverShortcut)
+//    {
+//        int win = 0, lose = 0, split = 0;
+//        for (int i = 1; i < Card.VALUES.length; i++) {
+//            Card oppHoleA = Card.VALUES[ i ];
+//            if (usedCards.contains( oppHoleA )) continue;
+//
+//            int shortRiverHoleA =
+//                    Eval7Faster.nextShortcut(riverShortcut, oppHoleA);
+//            for (int j = 0; j < i; j++) {
+//                Card oppHoleB = Card.VALUES[ j ];
+//                if (usedCards.contains( oppHoleB )) continue;
+//
+//                short oppVal = Eval7Faster.fastValueOf(
+//                                shortRiverHoleA, oppHoleB);
+//                if (val > oppVal) {
+//                    win++;
+//                } else if (val < oppVal) {
+//                    lose++;
+//                } else {
+//                    split++;
+//                }
+//            }
+//        }
+//        return (win + (double)split/2)
+//               / (win + lose + split);
+//    }
+
+
     //--------------------------------------------------------------------
+    // fast but imprecise
+    public static void lookup(
+            int canonTurn, Traverser<CanonDetail> visit)
+    {
+        CanonTurnDetail turn = TurnDetails.lookup( canonTurn );
+        CanonFlopDetail flop =
+                FlopDetails.containing( canonTurn );
+        CanonHoleDetail hole = flop.holeDetail();
+
+        Turn turnSeq  = turn(hole, flop, turn);
+        int  shortcut = shortcut(hole, flop, turn);
+
+        Set<Long> seen = new HashSet<Long>();
+        for (Card r : remainder(hole, flop, turn))
+        {
+            River river = turnSeq.addRiver( r );
+
+            Long longIndex = river.canonIndex();
+            if (! seen.contains( longIndex ))
+            {
+                seen.add( longIndex );
+
+                short strength = RiverStrengths.lookup(
+                        Eval7Faster.fastValueOf(shortcut, r));
+                visit.traverse(
+                        new CanonRiverDetail(
+                                strength, river.canonIndex()));
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    // fast but imprecise
     public static Collection<CanonRiverDetail> lookup(int canonTurn)
     {
         CanonTurnDetail turn = TurnDetails.lookup( canonTurn );
@@ -44,11 +152,12 @@ public class RiverDetails
 
             if (! details.containsKey( river.canonIndex() ))
             {
+                short strength = RiverStrengths.lookup(
+                        Eval7Faster.fastValueOf(shortcut, r));
                 details.put(
                         river.canonIndex(),
                         new CanonRiverDetail(
-                                Eval7Faster.fastValueOf(shortcut, r),
-                                river.canonIndex()));
+                                strength, river.canonIndex()));
             }
         }
 
@@ -57,16 +166,16 @@ public class RiverDetails
 
 
     //--------------------------------------------------------------------
-    private static void display(
-            CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn,
-            Card river)
-    {
-        System.out.println(Arrays.toString(new Card[]{
-                hole.a(), hole.b(),
-                flop.a(), flop.b(), flop.c(),
-                turn.example(), river
-        }));
-    }
+//    private static void display(
+//            CanonHole hole, CanonFlopDetail flop, CanonTurnDetail turn,
+//            Card river)
+//    {
+//        System.out.println(Arrays.toString(new Card[]{
+//                hole.a(), hole.b(),
+//                flop.a(), flop.b(), flop.c(),
+//                turn.example(), river
+//        }));
+//    }
 
     private static Turn turn(
             CanonHoleDetail hole, CanonFlopDetail flop, CanonTurnDetail turn)
