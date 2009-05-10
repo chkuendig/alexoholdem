@@ -2,7 +2,7 @@ package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.grid.ArrayGrid;
+import ao.regret.holdem.grid.FloatArrayGrid;
 import ao.regret.holdem.grid.Grid;
 import ao.regret.holdem.grid.StoredGrid;
 import ao.util.math.rand.Rand;
@@ -45,10 +45,11 @@ public class InfoMatrix
     //--------------------------------------------------------------------
     public static InfoMatrix retrieveOrCreate(
             File dir, int nBuckets, int nIntents) {
-        return retrieveOrCreate(dir, nBuckets, nIntents, false);
+        return retrieveOrCreate(dir, nBuckets, nIntents, false, true);
     }
     public static InfoMatrix retrieveOrCreate(
-            File dir, int nBuckets, int nIntents, boolean stored) {
+            File dir, int nBuckets, int nIntents,
+            boolean stored, boolean doublePrecision) {
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
 
@@ -56,9 +57,11 @@ public class InfoMatrix
                 ? newInstance(nBuckets, nIntents)
                 : new InfoMatrix(
                         retrieve(dir, STRATEGY_FILE,
-                                 nBuckets, nIntents, stored),
+                                 nBuckets, nIntents,
+                                 stored, doublePrecision),
                         retrieve(dir, CFREGRET_FILE,
-                                 nBuckets, nIntents, stored));
+                                 nBuckets, nIntents,
+                                 stored, doublePrecision));
     }
 
     public static InfoMatrix newInstance(int nBuckets, int nIntents) {
@@ -66,8 +69,10 @@ public class InfoMatrix
     }
     private static Grid retrieve(
             File dir, String file,
-            int nBuckets, int nIntents, boolean stored) {
-        Grid grid = Grid.Impl.newInstance(nBuckets, nIntents, stored);
+            int nBuckets, int nIntents,
+            boolean stored, boolean doublePrecision) {
+        Grid grid = Grid.Impl.newInstance(
+                nBuckets, nIntents, stored, doublePrecision);
         grid.load( new File(dir, file) );
         return grid ;
     }
@@ -104,8 +109,8 @@ public class InfoMatrix
     private InfoMatrix(int nBuckets,
                        int nIntents)
     {
-        this(new ArrayGrid(nBuckets, nIntents),
-             new ArrayGrid(nBuckets, nIntents));
+        this(new FloatArrayGrid(nBuckets, nIntents),
+             new FloatArrayGrid(nBuckets, nIntents));
     }
 
     private InfoMatrix(

@@ -38,6 +38,7 @@ public class CfrBot2 extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
+    private final boolean           DOUBLE_PRECISION;
     private final HoldemAbstraction ABS;
     private final boolean           DISPLAY;
     private final boolean           DETAILED;
@@ -62,10 +63,11 @@ public class CfrBot2 extends AbstractPlayer
     //--------------------------------------------------------------------
     public CfrBot2(HoldemAbstraction precomputedAbstraction)
     {
-        this(null, precomputedAbstraction, false, false);
+        this(null, precomputedAbstraction, true, false, false);
     }
     public CfrBot2(String            equalibriumName,
                    HoldemAbstraction precomputedAbstraction,
+                   boolean           doublePrecision,
                    boolean           display,
                    boolean           detailed)
     {
@@ -73,6 +75,8 @@ public class CfrBot2 extends AbstractPlayer
         DISPLAY  = display;
         DETAILED = detailed;
         NAME     = equalibriumName;
+
+        DOUBLE_PRECISION = doublePrecision;
     }
 
 
@@ -129,7 +133,8 @@ public class CfrBot2 extends AbstractPlayer
 
         findBucket(cards, state.round());
         InfoMatrix.InfoSet infoSet =
-                gamePath.infoSet(roundBucket, ABS.infoPart(NAME, true));
+                gamePath.infoSet(roundBucket,
+                        ABS.infoPart(NAME, true, DOUBLE_PRECISION));
 
         AbstractAction act = infoSet.nextProbableAction();
         Action realAction = state.reify( act.toFallbackAction() );

@@ -62,9 +62,10 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-//        abs.tree();
-//        abs.odds();
-
+        abs.tree();
+        abs.odds();
+        abs.sequence();
+        
 //        Rand.randomize();
         computeCfr(abs);
 //        tournament(abs);
@@ -107,7 +108,7 @@ public class BucketizerTest
             final HoldemAbstraction abs) throws IOException
     {
         precompute(abs);
-        abs.infoPart(true).displayHeadsUpRoots();
+        abs.infoPart(true, false).displayHeadsUpRoots();
 
         long before = System.currentTimeMillis();
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
@@ -124,7 +125,7 @@ public class BucketizerTest
 //            put(Avatar.local("human"), new ConsoleBot());
             put(Avatar.local("cfr2"), new CfrBot2(abs));
             put(Avatar.local("cfr2 mono"),
-                    new CfrBot2("mono", abs, false, false));
+                    new CfrBot2("mono", abs, false, false, false));
         }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
@@ -138,8 +139,9 @@ public class BucketizerTest
         HoleOdds.lookup(0);
 
         Rand.randomize();
-        new DealerTest().vsHuman(new CfrBot2(name, abs, true, false),
-                                 false, true);
+        new DealerTest().vsHuman(
+                new CfrBot2(name, abs, false, true, false),
+                false, true);
     }
 
 
@@ -149,7 +151,7 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
-        InfoPart        info   = abs.infoPart("thread", false);
+        InfoPart        info   = abs.infoPart("serial", false, false);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
 //        InfoPart        info   = abs.infoPart("mono", false);
@@ -157,8 +159,8 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-//        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =  640 * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
+//        long offset     =  640 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
@@ -175,7 +177,7 @@ public class BucketizerTest
         while (it.hasNext())
         {
             if (itr % (1000 * 1000) == 0) {
-                System.out.println();
+                System.out.println("\t" + itr);
                 info.displayHeadsUpRoots();
             }
 
