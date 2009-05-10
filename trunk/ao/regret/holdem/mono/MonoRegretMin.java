@@ -12,17 +12,18 @@ import ao.regret.holdem.InfoPart;
  * Date: 20-Apr-2009
  * Time: 10:10:13 PM
  */
-public class RegretMinOld
+public class MonoRegretMin
 {
     //--------------------------------------------------------------------
     private final IBucketOdds ODDS;
-    private final InfoPart INFO;
+    private final InfoPart    INFO;
 
     private       boolean     updateDealee;
+    private       double      showdownStakesFactor;
 
 
     //--------------------------------------------------------------------
-    public RegretMinOld(
+    public MonoRegretMin(
             InfoPart info, IBucketOdds odds)
     {
         INFO = info;
@@ -32,7 +33,7 @@ public class RegretMinOld
 
     //--------------------------------------------------------------------
     public void exploit(char absDealerBuckets[],
-                         char absDealeeBuckets[])
+                        char absDealeeBuckets[])
     {
         updateDealee = false;
         approximateAndUpdate(
@@ -45,6 +46,11 @@ public class RegretMinOld
     public void minimize(char absDealerBuckets[],
                          char absDealeeBuckets[])
     {
+        showdownStakesFactor =
+                (ODDS.nonLossProb(
+                        absDealerBuckets[3],
+                        absDealeeBuckets[3]) - 0.5) * 2.0;
+
         updateDealee = true;
         approximateAndUpdate(
                 StateTree.headsUpRoot(),
@@ -105,8 +111,7 @@ public class RegretMinOld
             double actProb = strategy[ act.ordinal() ];
             HeadsUpStatus  status   = nextNode.status();
             if (status != HeadsUpStatus.IN_PROGRESS) {
-                val = evaluate(
-                        nextNode, absDealerBuckets, absDealeeBuckets);
+                val = evaluate(nextNode);
             } else {
                 val = approximateAndUpdate(
                         nextNode,
@@ -122,18 +127,24 @@ public class RegretMinOld
 
         double oppReachingFactor =
                 node.dealerIsNext() ? pDealee : -pDealer;
-        double immediateCounterfactualRegret[] =
+        if (oppReachingFactor != 0) {
+            double immediateCounterfactualRegret[] =
                 new double[ AbstractAction.VALUES.length ];
-        for (AbstractAction act : AbstractAction.VALUES) {
-            double cRegret =
-                    (utilities[ act.ordinal() ] - counterfactualUtility)
-                        * oppReachingFactor;
-            immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
-        }
 
+            for (AbstractAction act : AbstractAction.VALUES) {
+                double cRegret =
+                        (utilities[ act.ordinal() ]
+                                - counterfactualUtility)
+                            * oppReachingFactor;
+                immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
+            }
+
+            if (updateDealee || node.dealerIsNext()) {
+                info.add(immediateCounterfactualRegret);
+            }
+        }
         if (updateDealee || node.dealerIsNext()) {
             info.add(strategy, node.dealerIsNext() ? pDealer : pDealee);
-            info.add(immediateCounterfactualRegret);
         }
 
         return counterfactualUtility;
@@ -156,7 +167,7 @@ public class RegretMinOld
             expectedValue += actProb *
                    ((nextNode.status() != HeadsUpStatus.IN_PROGRESS)
                     ? evaluate(
-                            nextNode, absDealerBuckets, absDealeeBuckets)
+                            nextNode)
                     : approximateAndUpdate(
                             nextNode,
                             absDealerBuckets,
@@ -170,16 +181,11 @@ public class RegretMinOld
     //--------------------------------------------------------------------
     // from POV of dealer
     private double evaluate(
-            StateTree.Node node,
-            char           absDealerBuckets[],
-            char           absDealeeBuckets[])
+            StateTree.Node node)
     {
         switch (node.status()) {
             case SHOWDOWN:
-                return node.stakes() * (
-                        ODDS.nonLossProb(
-                                absDealerBuckets[3],
-                                absDealeeBuckets[3]) - 0.5) * 2.0;
+                return node.stakes() * showdownStakesFactor;
 
             case DEALER_WINS: return  node.dealeeCommit();
             case DEALEE_WINS: return -node.dealerCommit();

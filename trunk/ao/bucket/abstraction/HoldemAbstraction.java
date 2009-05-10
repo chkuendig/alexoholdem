@@ -9,6 +9,7 @@ import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.regret.holdem.InfoPart;
 import ao.util.io.Dir;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -24,8 +25,8 @@ import java.util.Map;
 public class HoldemAbstraction
 {
     //--------------------------------------------------------------------
-//    private static final Logger LOG =
-//            Logger.getLogger(HoldemAbstraction.class);
+    private static final Logger LOG =
+            Logger.getLogger(HoldemAbstraction.class);
 
 
     //--------------------------------------------------------------------
@@ -161,6 +162,8 @@ public class HoldemAbstraction
         infoPart = InfoPart.retrieveOrCreate(
                      Dir.get(DIR, "info/" + name),
                      N_HOLES, N_FLOPS, N_TURNS, N_RIVERS, stored);
+        infoParts.put(name, infoPart);
+
         return infoPart;
     }
 }

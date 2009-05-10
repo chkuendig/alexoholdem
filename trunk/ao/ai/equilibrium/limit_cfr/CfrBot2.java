@@ -137,11 +137,17 @@ public class CfrBot2 extends AbstractPlayer
         if (DISPLAY) {
             if (DETAILED) {
                 System.out.println(
-                        Arrays.toString( infoSet.averageStrategy() ) +
-                        " from " + Arrays.toString(
-                                        infoSet.regret()) +
-                        " on "   + relBucket +
-                                " (" + (int) roundBucket + ")");
+                        Arrays.asList(
+                            (int)(infoSet.averageStrategy()[0] * 100),
+                            (int)(infoSet.averageStrategy()[1] * 100),
+                            (int)(infoSet.averageStrategy()[2] * 100)
+                        ));
+//                System.out.println(
+//                        Arrays.toString( infoSet.averageStrategy() ) +
+//                        " from " + Arrays.toString(
+//                                        infoSet.regret()) +
+//                        " on "   + relBucket +
+//                                " (" + (int) roundBucket + ")");
             }
 
             System.out.println("bot acts: " + realAction);

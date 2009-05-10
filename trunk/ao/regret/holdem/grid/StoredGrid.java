@@ -57,8 +57,10 @@ public class StoredGrid implements Grid
             in = new RandomAccessFile(inFile, "r");
         }
 
-        in.seek( index(row, col) * (Double.SIZE / 8) );
-        return in.readDouble();
+//        in.seek( index(row, col) * (Double.SIZE / 8) );
+//        return in.readDouble();
+        in.seek( index(row, col) * (Float.SIZE / 8) );
+        return in.readFloat();
     }
 
     public void set(int row, int col, double value) {
