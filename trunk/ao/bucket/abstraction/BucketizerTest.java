@@ -3,7 +3,7 @@ package ao.bucket.abstraction;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysCallBot;
 import ao.bucket.abstraction.bucketize.Bucketizer;
-import ao.bucket.abstraction.bucketize.linear.HandStrengthBucketizerT;
+import ao.bucket.abstraction.bucketize.linear.HandStrengthAbs;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
@@ -58,7 +58,7 @@ public class BucketizerTest
                 (int) nHoleBuckets + ", " + (int) nFlopBuckets + ", " +
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
-        HoldemAbstraction abs = abstractHolem(new HandStrengthBucketizerT(),
+        HoldemAbstraction abs = abstractHolem(new HandStrengthAbs(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload

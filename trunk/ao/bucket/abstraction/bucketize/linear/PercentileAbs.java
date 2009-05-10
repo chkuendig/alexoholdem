@@ -18,11 +18,11 @@ import java.util.Comparator;
  * Date: 5-May-2009
  * Time: 8:51:58 PM
  */
-public class PercentileBucketizerT
+public class PercentileAbs
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(HandStrengthBucketizerT.class);
+            Logger.getLogger(HandStrengthAbs.class);
 
 
     //--------------------------------------------------------------------

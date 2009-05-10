@@ -18,11 +18,11 @@ import java.util.BitSet;
  * Date: Jan 9, 2009
  * Time: 10:24:57 AM
  */
-public class HandStrengthBucketizerT implements Bucketizer
+public class HandStrengthAbs implements Bucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(HandStrengthBucketizerT.class);
+            Logger.getLogger(HandStrengthAbs.class);
 
 
     //--------------------------------------------------------------------
