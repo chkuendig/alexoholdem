@@ -57,7 +57,8 @@ public class RiverEvalLookup
             long lookat = (long)(Rand.nextDouble() * RiverLookup.CANONS);
             RiverEvalLookup.traverse(
                 new CanonRange[]{new CanonRange(lookat, 1)},
-//                new CanonRange[]{new CanonRange(100000000, 1)},
+//                new CanonRange[]{new CanonRange(RiverLookup.CANONS - 1, 1)},
+//                new CanonRange[]{TurnDetails.lookup(TurnLookup.CANONS - 1).range()},
                 new VsRandomVisitor() {
                     public void traverse(
                             long canonIndex, double strengthVsRandom) {

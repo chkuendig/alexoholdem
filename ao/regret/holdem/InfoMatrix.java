@@ -289,7 +289,11 @@ public class InfoMatrix
 
         //----------------------------------------------------------------
         @Override public String toString() {
-            return Arrays.toString( averageStrategy() );
+            return Arrays.toString( averageStrategy() ) + "\t" +
+                    (long) Math.ceil(
+                            average(fIntent) +
+                            average(cIntent) +
+                            average(rIntent));
         }
     }
 }

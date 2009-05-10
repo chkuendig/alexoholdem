@@ -1,6 +1,6 @@
 package ao.regret.holdem.grid;
 
-import ao.util.persist.PersistentDoubles;
+import ao.util.persist.PersistentFloats;
 
 import java.io.File;
 
@@ -12,17 +12,22 @@ import java.io.File;
 public class ArrayGrid implements Grid
 {
     //--------------------------------------------------------------------
-    private final double vals[][]; // [bucket][intent]
+//    private final double vals[][]; // [bucket][intent]
+    private final float vals[][]; // [bucket][intent]
 
 
     //--------------------------------------------------------------------
     public ArrayGrid(int nBuckets,
                      int nIntents)
     {
-        this(new double[ nBuckets ][ nIntents ]);
+//        this(new double[ nBuckets ][ nIntents ]);
+        this(new float[ nBuckets ][ nIntents ]);
     }
 
-    private ArrayGrid(double values[][])
+    private ArrayGrid(
+//            double values[][]
+            float values[][]
+            )
     {
         vals = values;
     }
@@ -44,7 +49,8 @@ public class ArrayGrid implements Grid
     }
 
     public void set(int row, int col, double value) {
-        vals[ row ][ col ] = value;
+//        vals[ row ][ col ] = value;
+        vals[ row ][ col ] = (float) value;
     }
 
     public void add(int row, int col, double addend) {
@@ -54,10 +60,12 @@ public class ArrayGrid implements Grid
 
     //--------------------------------------------------------------------
     public void save(File to) {
-        PersistentDoubles.persist(vals, to);
+//        PersistentDoubles.persist(vals, to);
+        PersistentFloats.persist(vals, to);
     }
 
     public void load(File from) {
-        PersistentDoubles.retrieve(from, vals);
+//        PersistentDoubles.retrieve(from, vals);
+        PersistentFloats.retrieve(from, vals);
     }
 }

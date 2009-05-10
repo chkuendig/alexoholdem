@@ -13,6 +13,9 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoPart    INFO;
 
+//    private
+
+
 
     //--------------------------------------------------------------------
     public RegretMinimizer(

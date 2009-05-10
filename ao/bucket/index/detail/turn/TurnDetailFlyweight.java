@@ -179,8 +179,8 @@ public class TurnDetailFlyweight
         }
         public long lastCanonRiver()
         {
-            return (CANON_INDEX == TurnLookup.CANONS)
-                    ? RiverLookup.CANONS
+            return (CANON_INDEX == (TurnLookup.CANONS - 1))
+                    ? RiverLookup.CANONS - 1
                     : Calc.unsigned(
                             FIRST_RIVER[ CANON_INDEX + 1 ]) - 1;
         }
