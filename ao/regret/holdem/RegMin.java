@@ -5,6 +5,8 @@ import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * User: alex
  * Date: 26-Apr-2009
@@ -13,10 +15,12 @@ import ao.holdem.model.act.AbstractAction;
 public class RegMin
 {
     //--------------------------------------------------------------------
-    private final double      AGGRESSION; // UofA bot uses 7%
+    private final ExecutorService EXEC;
 
     private final InfoPart    INFO;
     private final IBucketOdds ODDS;
+    private final double      AGGRESSION; // UofA bot uses 7%
+
     private       char        DEALER_BUCKETS[];
     private       char        DEALEE_BUCKETS[];
 
@@ -25,11 +29,13 @@ public class RegMin
 
 
     //--------------------------------------------------------------------
-    public RegMin(InfoPart    info,
-                  IBucketOdds odds,
-                  double      aggression)
+    public RegMin(InfoPart        info,
+                  IBucketOdds     odds,
+                  double          aggression,
+                  ExecutorService exec)
                     // 1.0 means neutral, >1 means aggresive
     {
+        EXEC       = exec;
         INFO       = info;
         ODDS       = odds;
         AGGRESSION = aggression;
@@ -106,8 +112,6 @@ public class RegMin
             if (node.kid(act) == null) continue;
             double cRegret = oppReach *
                     (utilities[ act.ordinal() ] - counterfactualUtility);
-
-
 
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }

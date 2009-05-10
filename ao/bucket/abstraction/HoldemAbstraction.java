@@ -145,13 +145,16 @@ public class HoldemAbstraction
         return sequence;
     }
 
-    public InfoPart infoPart(boolean stored)
+    public InfoPart infoPart(boolean stored, boolean doublePrecision)
     {
-        return infoPart(null, stored);
+        return infoPart(null, stored, doublePrecision);
     }
-    public InfoPart infoPart(String name, boolean stored)
+    public InfoPart infoPart(
+            String name, boolean stored, boolean doublePrecision)
     {
-        if (name == null) return infoPart("main", stored);
+        if (name == null) {
+            return infoPart("main", stored, doublePrecision);
+        }
 
         InfoPart infoPart = infoParts.get(name);
         if (infoPart != null) {
@@ -160,8 +163,10 @@ public class HoldemAbstraction
         }
 
         infoPart = InfoPart.retrieveOrCreate(
-                     Dir.get(DIR, "info/" + name),
-                     N_HOLES, N_FLOPS, N_TURNS, N_RIVERS, stored);
+                     Dir.get(DIR, "info/" + name +
+                             (doublePrecision ? "_d" : "_f")),
+                     N_HOLES, N_FLOPS, N_TURNS, N_RIVERS,
+                     stored, doublePrecision);
         infoParts.put(name, infoPart);
 
         return infoPart;

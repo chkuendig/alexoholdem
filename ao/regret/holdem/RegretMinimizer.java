@@ -2,6 +2,9 @@ package ao.regret.holdem;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * User: alex
  * Date: 26-Apr-2009
@@ -13,7 +16,8 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoPart    INFO;
 
-//    private
+    private final ExecutorService EXEC =
+            Executors.newFixedThreadPool(8);
 
 
 
@@ -31,11 +35,11 @@ public class RegretMinimizer
                          char absDealeeBuckets[])
     {
         new RegMin(
-                INFO, ODDS, 1.0
+                INFO, ODDS, 1.0, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );
 
         new AvgStrat(
-                INFO
+                INFO, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );
     }
 }

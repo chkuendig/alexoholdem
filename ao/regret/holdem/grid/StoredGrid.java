@@ -12,19 +12,23 @@ import java.io.RandomAccessFile;
 public class StoredGrid implements Grid
 {
     //--------------------------------------------------------------------
-    private final int  rows;
-    private final int  cols;
-    private       File inFile;
+    private final int     rows;
+    private final int     cols;
+    private final boolean doublePrecision;
+    private       File    inFile;
 
     private RandomAccessFile in;
 
 
     //--------------------------------------------------------------------
-    public StoredGrid(int nRows,
-                      int nColumns)
+    public StoredGrid(int     nRows,
+                      int     nColumns,
+                      boolean useDoubles)
     {
         rows = nRows;
         cols = nColumns;
+
+        doublePrecision = useDoubles;
     }
 
 
@@ -57,14 +61,13 @@ public class StoredGrid implements Grid
             in = new RandomAccessFile(inFile, "r");
         }
 
-//        in.seek( index(row, col) * (Double.SIZE / 8) );
-//        return in.readDouble();
-        in.seek( index(row, col) * (Float.SIZE / 8) );
-        return in.readFloat();
-    }
-
-    public void set(int row, int col, double value) {
-        throw new UnsupportedOperationException();
+        if (doublePrecision) {
+            in.seek( index(row, col) * (Double.SIZE / 8) );
+            return in.readDouble();
+        } else {
+            in.seek( index(row, col) * (Float.SIZE / 8) );
+            return in.readFloat();
+        }
     }
 
     public void add(int row, int col, double addend) {

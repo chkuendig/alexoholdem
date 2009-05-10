@@ -4,6 +4,11 @@ import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+
 /**
  * User: alex
  * Date: 26-Apr-2009
@@ -12,17 +17,20 @@ import ao.holdem.model.act.AbstractAction;
 public class AvgStrat
 {
     //--------------------------------------------------------------------
+    private final ExecutorService EXEC;
+
     private final InfoPart INFO;
     private       char     DEALER_BUCKETS[];
     private       char     DEALEE_BUCKETS[];
 
-    private       boolean  forDealer;
-
 
     //--------------------------------------------------------------------
-    public AvgStrat(InfoPart info)
+    public AvgStrat(
+            InfoPart        info,
+            ExecutorService exec)
     {
         INFO = info;
+        EXEC = exec;
     }
 
 
@@ -34,29 +42,57 @@ public class AvgStrat
         DEALER_BUCKETS = absDealerBuckets;
         DEALEE_BUCKETS = absDealeeBuckets;
 
-        forDealer = true;
-        updateOrPassStrategy(StateTree.headsUpRoot(), 1.0);
+        updateOrPassStrategy(
+                true, StateTree.headsUpRoot(), 1.0);
 
-        forDealer = false;
-        updateOrPassStrategy(StateTree.headsUpRoot(), 1.0);
+        updateOrPassStrategy(
+                false, StateTree.headsUpRoot(), 1.0);
+
+//        try {
+//            doIterate();
+//        } catch (InterruptedException e) {
+//            throw new Error( e );
+//        }
+    }
+    private void doIterate() throws InterruptedException
+    {
+        Collection<Callable<Void>> todo =
+                new ArrayList<Callable<Void>>(2);
+
+        todo.add(new Callable<Void>() {
+                    public Void call() throws Exception {
+                        updateOrPassStrategy(
+                                true, StateTree.headsUpRoot(), 1.0);
+                        return null;
+                    }});
+        todo.add(new Callable<Void>() {
+                    public Void call() throws Exception {
+                        updateOrPassStrategy(
+                                false, StateTree.headsUpRoot(), 1.0);
+                        return null;
+                    }});
+
+        EXEC.invokeAll(todo);
     }
 
 
     //--------------------------------------------------------------------
     private void updateOrPassStrategy(
+            boolean        forDealer,
             StateTree.Node node,
             double         propReach)
     {
         if (node.status() != HeadsUpStatus.IN_PROGRESS) return;
 
         if (node.dealerIsNext() == forDealer) {
-            updateStrategy(node, propReach);
+            updateStrategy(forDealer, node, propReach);
         } else {
-            passStrategy(node, propReach);
+            passStrategy(forDealer, node, propReach);
         }
     }
 
     private void updateStrategy(
+            boolean        forDealer,
             StateTree.Node node,
             double         propReach)
     {
@@ -70,13 +106,15 @@ public class AvgStrat
             double actProb = strategy[ act.ordinal() ];
             if (actProb == 0) continue;
 
-            updateOrPassStrategy(nextNode, propReach * actProb);
+            updateOrPassStrategy(
+                    forDealer, nextNode, propReach * actProb);
         }
 
         info.add(strategy, propReach);
     }
 
     private void passStrategy(
+            boolean        forDealer,
             StateTree.Node node,
             double         propReach)
     {
@@ -84,7 +122,7 @@ public class AvgStrat
             StateTree.Node nextNode = node.kid(act);
             if (nextNode == null) continue;
 
-            updateOrPassStrategy(nextNode, propReach);
+            updateOrPassStrategy(forDealer, nextNode, propReach);
         }
     }
 

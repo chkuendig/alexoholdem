@@ -33,23 +33,30 @@ public class InfoPart
             char    nFlopBuckets,
             char    nTurnBuckets,
             char    nRiverBuckets,
-            boolean stored)
+            boolean stored,
+            boolean doublePrecision)
     {
         LOG.debug("loading (or creating)");
 
         return new InfoPart(
-                get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP, stored),
-                get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP   , stored),
-                get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN   , stored),
-                get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER  , stored),
+                get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP,
+                        stored, doublePrecision),
+                get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP   ,
+                        stored, doublePrecision),
+                get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN   ,
+                        stored, doublePrecision),
+                get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER  ,
+                        stored, doublePrecision),
                     dir);
     }
     private static InfoMatrix get(
             File dir, String subDir,
-            int nBuckets, Round intentRound, boolean stored) {
+            int nBuckets, Round intentRound,
+            boolean stored, boolean doublePrecision) {
         return InfoMatrix.retrieveOrCreate(
                  Dir.get(dir, subDir),
-                 nBuckets, StateTree.intentCount(intentRound), stored);
+                 nBuckets, StateTree.intentCount(intentRound),
+                 stored, doublePrecision);
     }
 
     private static void persist(File dir, InfoPart part)

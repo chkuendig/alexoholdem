@@ -18,7 +18,7 @@ public interface Grid
     //--------------------------------------------------------------------
     public double get(int row, int col);
 
-    public void   set(int row, int col, double value);
+//    public void   set(int row, int col, double value);
 
     public void   add(int row, int col, double addend);
 
@@ -33,11 +33,16 @@ public interface Grid
     public static class Impl
     {
         public static Grid newInstance(
-                int rows, int cols, boolean stored)
+                int     rows,
+                int     cols,
+                boolean stored,
+                boolean doublePrecision)
         {
             return stored
-                   ? new StoredGrid(rows, cols)
-                   : new  ArrayGrid(rows, cols);
+                   ? new StoredGrid(rows, cols, doublePrecision)
+                   : doublePrecision
+                     ? new DoubleArrayGrid(rows, cols)
+                     : new FloatArrayGrid (rows, cols);
         }
     }
 }
