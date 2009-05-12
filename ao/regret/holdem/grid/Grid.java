@@ -35,14 +35,24 @@ public interface Grid
         public static Grid newInstance(
                 int     rows,
                 int     cols,
-                boolean stored,
+                boolean readOnly,
                 boolean doublePrecision)
         {
-            return stored
+            return readOnly
                    ? new StoredGrid(rows, cols, doublePrecision)
                    : doublePrecision
                      ? new DoubleArrayGrid(rows, cols)
                      : new FloatArrayGrid (rows, cols);
+        }
+
+        public static Grid newInstance(
+                int     rows,
+                int     cols,
+                boolean doublePrecision)
+        {
+            return doublePrecision
+                   ? new DoubleArrayGrid(rows, cols)
+                   : new FloatArrayGrid (rows, cols);
         }
     }
 }
