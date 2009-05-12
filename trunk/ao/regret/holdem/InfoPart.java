@@ -33,30 +33,30 @@ public class InfoPart
             char    nFlopBuckets,
             char    nTurnBuckets,
             char    nRiverBuckets,
-            boolean stored,
+            boolean readOnly,
             boolean doublePrecision)
     {
         LOG.debug("loading (or creating)");
 
         return new InfoPart(
                 get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP,
-                        stored, doublePrecision),
+                        readOnly, doublePrecision),
                 get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP   ,
-                        stored, doublePrecision),
+                        readOnly, doublePrecision),
                 get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN   ,
-                        stored, doublePrecision),
+                        readOnly, doublePrecision),
                 get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER  ,
-                        stored, doublePrecision),
+                        readOnly, doublePrecision),
                     dir);
     }
     private static InfoMatrix get(
             File dir, String subDir,
             int nBuckets, Round intentRound,
-            boolean stored, boolean doublePrecision) {
+            boolean readOnly, boolean doublePrecision) {
         return InfoMatrix.retrieveOrCreate(
                  Dir.get(dir, subDir),
                  nBuckets, StateTree.intentCount(intentRound),
-                 stored, doublePrecision);
+                 readOnly, doublePrecision);
     }
 
     private static void persist(File dir, InfoPart part)
@@ -83,22 +83,35 @@ public class InfoPart
 
 
     //--------------------------------------------------------------------
-    public InfoPart(byte nHoleBuckets,
-                    char nFlopBuckets,
-                    char nTurnBuckets,
-                    char nRiverBuckets,
-                    File inDir)
-    {
-        dir   = inDir;
-        hole  = InfoMatrix.newInstance(
-                    nHoleBuckets,  StateTree.intentCount(Round.PREFLOP));
-        flop  = InfoMatrix.newInstance(
-                    nFlopBuckets,  StateTree.intentCount(Round.FLOP));
-        turn  = InfoMatrix.newInstance(
-                    nTurnBuckets,  StateTree.intentCount(Round.TURN));
-        river = InfoMatrix.newInstance(
-                    nRiverBuckets, StateTree.intentCount(Round.RIVER));
-    }
+//    public InfoPart(byte    nHoleBuckets,
+//                    char    nFlopBuckets,
+//                    char    nTurnBuckets,
+//                    char    nRiverBuckets,
+//                    File    inDir,
+//                    boolean doublePrecision)
+//    {
+//        dir   = inDir;
+//
+//        hole  = InfoMatrix.newInstance(
+//                    nHoleBuckets,
+//                    StateTree.intentCount(Round.PREFLOP),
+//                    doublePrecision);
+//
+//        flop  = InfoMatrix.newInstance(
+//                    nFlopBuckets,
+//                    StateTree.intentCount(Round.FLOP),
+//                    doublePrecision);
+//
+//        turn  = InfoMatrix.newInstance(
+//                    nTurnBuckets,
+//                    StateTree.intentCount(Round.TURN),
+//                    doublePrecision);
+//
+//        river = InfoMatrix.newInstance(
+//                    nRiverBuckets,
+//                    StateTree.intentCount(Round.RIVER),
+//                    doublePrecision);
+//    }
 
     private InfoPart(InfoMatrix copyHole,
                      InfoMatrix copyFlop,
@@ -148,9 +161,9 @@ public class InfoPart
 //        river.displayHeadsUpRoot();
     }
 
-    public boolean isStored()
+    public boolean isReadOnly()
     {
-        return hole.isStored();
+        return hole.isReadOnly();
     }
 
 

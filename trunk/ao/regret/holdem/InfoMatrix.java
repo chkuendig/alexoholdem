@@ -2,7 +2,6 @@ package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.grid.FloatArrayGrid;
 import ao.regret.holdem.grid.Grid;
 import ao.regret.holdem.grid.StoredGrid;
 import ao.util.math.rand.Rand;
@@ -49,30 +48,31 @@ public class InfoMatrix
     }
     public static InfoMatrix retrieveOrCreate(
             File dir, int nBuckets, int nIntents,
-            boolean stored, boolean doublePrecision) {
+            boolean readOnly, boolean doublePrecision) {
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
 
         return (counts == null)
-                ? newInstance(nBuckets, nIntents)
+                ? newInstance(nBuckets, nIntents, doublePrecision)
                 : new InfoMatrix(
                         retrieve(dir, STRATEGY_FILE,
                                  nBuckets, nIntents,
-                                 stored, doublePrecision),
+                                 readOnly, doublePrecision),
                         retrieve(dir, CFREGRET_FILE,
                                  nBuckets, nIntents,
-                                 stored, doublePrecision));
+                                 readOnly, doublePrecision));
     }
 
-    public static InfoMatrix newInstance(int nBuckets, int nIntents) {
-        return new InfoMatrix(nBuckets, nIntents);
+    public static InfoMatrix newInstance(
+            int nBuckets, int nIntents, boolean doublePrecision) {
+        return new InfoMatrix(nBuckets, nIntents, doublePrecision);
     }
     private static Grid retrieve(
             File dir, String file,
             int nBuckets, int nIntents,
-            boolean stored, boolean doublePrecision) {
+            boolean readOnly, boolean doublePrecision) {
         Grid grid = Grid.Impl.newInstance(
-                nBuckets, nIntents, stored, doublePrecision);
+                nBuckets, nIntents, readOnly, doublePrecision);
         grid.load( new File(dir, file) );
         return grid ;
     }
@@ -106,11 +106,12 @@ public class InfoMatrix
 
 
     //--------------------------------------------------------------------
-    private InfoMatrix(int nBuckets,
-                       int nIntents)
+    private InfoMatrix(int     nBuckets,
+                       int     nIntents,
+                       boolean doublePrecision)
     {
-        this(new FloatArrayGrid(nBuckets, nIntents),
-             new FloatArrayGrid(nBuckets, nIntents));
+        this(Grid.Impl.newInstance(nBuckets, nIntents, doublePrecision),
+             Grid.Impl.newInstance(nBuckets, nIntents, doublePrecision));
     }
 
     private InfoMatrix(
@@ -131,7 +132,7 @@ public class InfoMatrix
         }
     }
 
-    public boolean isStored() {
+    public boolean isReadOnly() {
         return averageStrategy instanceof StoredGrid;
     }
 

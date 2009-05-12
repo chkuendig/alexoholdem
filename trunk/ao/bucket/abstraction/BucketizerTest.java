@@ -34,18 +34,18 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        byte nHoleBuckets  = 5;
-//        char nFlopBuckets  = 25;
-//        char nTurnBuckets  = 125;
-//        char nRiverBuckets = 625;
+        byte nHoleBuckets  = 5;
+        char nFlopBuckets  = 25;
+        char nTurnBuckets  = 125;
+        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 10;
 //        char nFlopBuckets  = 200;
 //        char nTurnBuckets  = 1000;
 //        char nRiverBuckets = 5000;
-        byte nHoleBuckets  = 11;
-        char nFlopBuckets  = 275;
-        char nTurnBuckets  = 1650;
-        char nRiverBuckets = 9900;
+//        byte nHoleBuckets  = 11;
+//        char nFlopBuckets  = 275;
+//        char nTurnBuckets  = 1650;
+//        char nRiverBuckets = 9900;
 
         if (args.length > 1)
         {
@@ -62,10 +62,10 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-        abs.tree();
-        abs.odds();
-        abs.sequence();
-        
+//        abs.tree();
+//        abs.odds();
+//        abs.sequence();
+
 //        Rand.randomize();
         computeCfr(abs);
 //        tournament(abs);
@@ -89,13 +89,13 @@ public class BucketizerTest
                         nRiverBuckets);
     }
 
-    private static void precompute(final HoldemAbstraction abs)
+    private static void precompute(final CfrBot2 bot)
     {
         long before = System.currentTimeMillis();
         System.out.println("Loading......");
         new DealerTest(10).headsUp(new HashMap<Avatar, Player>(){{
             put(Avatar.local("probe"), new AlwaysCallBot());
-            put(Avatar.local("cfr2"), new CfrBot2(abs));
+            put(Avatar.local("cfr2"), bot);
         }});
 
         System.out.println("Done Loading!  Took " +
@@ -107,9 +107,6 @@ public class BucketizerTest
     public static void tournament(
             final HoldemAbstraction abs) throws IOException
     {
-        precompute(abs);
-        abs.infoPart(true, false).displayHeadsUpRoots();
-
         long before = System.currentTimeMillis();
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
             // dealer last
@@ -123,9 +120,10 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("cfr2"), new CfrBot2(abs));
-            put(Avatar.local("cfr2 mono"),
-                    new CfrBot2("mono", abs, false, false, false));
+            put(Avatar.local("cfr2 s"),
+                    new CfrBot2("serial_470", abs, false, false, false));
+            put(Avatar.local("cfr2 d"),
+                    new CfrBot2("serial_470", abs, true, false, false));
         }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
@@ -135,13 +133,12 @@ public class BucketizerTest
             final HoldemAbstraction abs,
             final String            name) throws IOException
     {
-        precompute(abs);
+        CfrBot2 bot = new CfrBot2(name, abs, false, true, false);
+        precompute(bot);
         HoleOdds.lookup(0);
 
         Rand.randomize();
-        new DealerTest().vsHuman(
-                new CfrBot2(name, abs, false, true, false),
-                false, true);
+        new DealerTest().vsHuman(bot, false, true);
     }
 
 
@@ -151,7 +148,7 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
-        InfoPart        info   = abs.infoPart("serial", false, false);
+        InfoPart        info   = abs.infoPart("serial", false, true);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
 //        InfoPart        info   = abs.infoPart("mono", false);
@@ -161,7 +158,8 @@ public class BucketizerTest
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
 //        long offset     =  640 * 1000 * 1000;
-        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
+        long iterations = 470 * 1000 * 1000;//1000 * 1000 * 1000;
+        int  milestone  =  10 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
@@ -181,9 +179,13 @@ public class BucketizerTest
                 info.displayHeadsUpRoots();
             }
 
-            if (itr++ % (10 * 1000 * 1000) == 0) {
-                System.out.println(" " + (itr - 1) + " took " +
-                        (System.currentTimeMillis() - before) / 1000);
+            if (itr++ % (milestone) == 0) {
+                System.out.println(
+                        " " + milestone +
+                        " totalling " + (itr - 1) +
+                        " took " +
+                                (System.currentTimeMillis()
+                                        - before) / 1000);
 
                 if (itr != (offset + 1)) {
                     info.flush();
