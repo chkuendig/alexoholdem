@@ -4,7 +4,15 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrength;
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.river.RiverEvalLookup;
+import ao.bucket.index.detail.turn.TurnDetails;
+import ao.holdem.model.Round;
 import ao.util.math.rand.Rand;
+import ao.util.time.Stopwatch;
+import org.apache.log4j.Logger;
+
+import java.util.Arrays;
 
 /**
  * User: Alex Ostrovsky
@@ -14,6 +22,9 @@ import ao.util.math.rand.Rand;
 public class KMeansBucketizer implements Bucketizer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(KMeansBucketizer.class);
+
     private static final double DELTA_CUTOFF = 0.01;
 
 
@@ -22,14 +33,25 @@ public class KMeansBucketizer implements Bucketizer
             BucketTree.Branch branch,
             byte              numBuckets)
     {
+        Stopwatch       time        = new Stopwatch();
         IndexedStrength strengths[] = strengths(branch);
         double          means    [] = initMeans(strengths, numBuckets);
 
-        byte[] clusters = cluster(means, strengths);
+        int  counts  [] = new int[numBuckets];
+        byte clusters[] = cluster(means, strengths);
         for (int i = 0; i < clusters.length; i++) {
             branch.set(strengths[i].index(),
                        clusters [i]);
+
+            counts[ clusters[i] ]++;
         }
+
+        LOG.debug("bucketized " + branch.round() +
+                  " into " + numBuckets +
+                  "\t(p " + branch.parentCanons().length +
+                  " \tc " + strengths.length   +
+                  ")\t" + Arrays.toString(counts) +
+                  "\ttook " + time);
 
         return true;
     }
@@ -46,7 +68,6 @@ public class KMeansBucketizer implements Bucketizer
         do
         {
             delta = iterateKMeans(means, strengths, clusters);
-            System.out.println("got " + delta);
         }
         while (delta > DELTA_CUTOFF);
 
@@ -153,8 +174,8 @@ public class KMeansBucketizer implements Bucketizer
                 for (int j = 0; j < k; j++) {
                     if (i == means[j]) continue next_point;
 
-                    double dist = details[i].strength() -
-                                    details[means[j]].strength();
+                    double dist = Math.abs(details[i].strength() -
+                                    details[means[j]].strength());
                     if (nearestCluster > dist) {
                         nearestCluster = dist;
                     }
@@ -174,13 +195,55 @@ public class KMeansBucketizer implements Bucketizer
             means[k] = maxChanceIndex;
         }
 
-        //return means;
-        return null;
+        double meanVals[] = new double[ means.length ];
+        for (int i = 0; i < means.length; i++) {
+            meanVals[ i ] = details[ means[i] ].strength();
+        }
+        return meanVals;
     }
 
 
     //--------------------------------------------------------------------
     private IndexedStrength[] strengths(BucketTree.Branch branch)
+    {
+        if (branch.round() == Round.RIVER) {
+            return strengthsRiver(branch);
+        } else {
+            return strengthsPreRiver(branch);
+        }
+    }
+
+    private IndexedStrength[] strengthsRiver(BucketTree.Branch branch)
+    {
+        int        nRivers       = 0;
+        CanonRange toBucketize[] =
+                new CanonRange[ branch.parentCanons().length ];
+        for (int i = 0; i < branch.parentCanons().length; i++) {
+
+            int canonTurn = branch.parentCanons()[i];
+            toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
+            nRivers += toBucketize[ i ].canonIndexCount();
+        }
+        Arrays.sort(toBucketize);
+
+        final int             nextIndex[] = {0};
+        final IndexedStrength rivers   [] =
+                new IndexedStrength[ nRivers ];
+        RiverEvalLookup.traverse(
+                toBucketize,
+                new RiverEvalLookup.VsRandomVisitor() {
+                    public void traverse(
+                            long canonIndex, double strengthVsRandom) {
+
+                        rivers[ nextIndex[0]++ ] = new IndexedStrength(
+                                canonIndex, strengthVsRandom);
+                    }
+                });
+
+        return rivers;
+    }
+
+    private IndexedStrength[] strengthsPreRiver(BucketTree.Branch branch)
     {
         CanonDetail     details  [] = branch.details();
         IndexedStrength strengths[] = new IndexedStrength[details.length];

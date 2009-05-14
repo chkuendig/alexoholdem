@@ -42,6 +42,7 @@ public class BucketizerTest
 //        char nFlopBuckets  = 200;
 //        char nTurnBuckets  = 1000;
 //        char nRiverBuckets = 5000;
+//        byte nHoleBuckets  = 20;
         byte nHoleBuckets  = 11;
         char nFlopBuckets  = 275;
         char nTurnBuckets  = 1650;
@@ -62,13 +63,13 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-//        abs.tree();
+        abs.tree();
 //        abs.odds();
 //        abs.sequence();
 
 //        Rand.randomize();
-        computeCfr(abs);
-//        tournament(abs);
+//        computeCfr(abs);
+        tournament(abs);
 //        vsHuman(abs, null);
     }
 
@@ -175,7 +176,7 @@ public class BucketizerTest
         while (it.hasNext())
         {
             if (itr % (1000 * 1000) == 0) {
-                System.out.println("\t" + itr);
+                System.out.println("\t" + (itr + 1));
                 info.displayHeadsUpRoots();
             }
 
