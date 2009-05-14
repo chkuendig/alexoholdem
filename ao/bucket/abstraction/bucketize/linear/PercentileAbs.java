@@ -89,7 +89,7 @@ public class PercentileAbs
                   ", c " + nRivers   +
                   ")");
 
-        final int             nextCanon[] = {0};
+        final int             nextIndex[] = {0};
         final IndexedStrength rivers   [] =
                 new IndexedStrength[ nRivers ];
         RiverEvalLookup.traverse(
@@ -98,7 +98,7 @@ public class PercentileAbs
                     public void traverse(
                             long canonIndex, double strengthVsRandom) {
 
-                        rivers[ nextCanon[0]++ ] = new IndexedStrength(
+                        rivers[ nextIndex[0]++ ] = new IndexedStrength(
                                 canonIndex, strengthVsRandom);
                     }
                 });

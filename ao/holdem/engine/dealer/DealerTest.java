@@ -23,7 +23,7 @@ public class DealerTest
     //--------------------------------------------------------------------
     public DealerTest()
     {
-        this(500 * 1000);
+        this(100 * 1000 * 1000);
     }
     public DealerTest(long rounds)
     {
@@ -139,7 +139,7 @@ public class DealerTest
             }
 
             progress.checkpoint();
-            if (((trialSet + 1) % (DUPLICATE_ROUNDS / 10)) == 0) {
+            if (((trialSet + 1) % (100 * 1000)) == 0) {
                 displayDeltas(
                         cumDeltas, dealerDelta, brains, trialSet + 1);
             }

@@ -3,11 +3,7 @@ package ao.bucket.abstraction.bucketize;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.detail.preflop.HoleDetails;
-import ao.bucket.index.enumeration.HandEnum;
-import ao.bucket.index.enumeration.PermisiveFilter;
-import ao.util.misc.Traverser;
+import ao.bucket.abstraction.alloc.SubBucketAllocator;
 
 import java.io.File;
 
@@ -67,28 +63,28 @@ public class BucketTreeBuilder
 //            holes.flush();
         }
 
-        HandEnum.holes(new PermisiveFilter<CanonHole>(),
-                new Traverser<CanonHole>() {
-                    public void traverse(CanonHole canonHole) {
-                        System.out.println(
-                                canonHole    + "\t" +
-                                HoleDetails.lookup(
-                                        canonHole.canonIndex()
-                                ).strength() + "\t" +
-                                holes.get(canonHole.canonIndex())
-                        );
-                    }
-                });
+//        HandEnum.holes(new UniqueFilter<CanonHole>(),
+//                new Traverser<CanonHole>() {
+//                    public void traverse(CanonHole canonHole) {
+//                        System.out.println(
+//                                canonHole    + "\t" +
+//                                HoleDetails.lookup(
+//                                        canonHole.canonIndex()
+//                                ).strength() + "\t" +
+//                                holes.get(canonHole.canonIndex())
+//                        );
+//                    }
+//                });
 
 
-//        bucketizeFlopsDown(
-//                holes.subBranches(),
-//                new SubBucketAllocator().allocate(
-//                        (char) numHoleBuckets, numFlopBuckets),
-//                new SubBucketAllocator().allocate(
-//                        numFlopBuckets, numTurnBuckets),
-//                new SubBucketAllocator().allocate(
-//                        numTurnBuckets, numRiverBuckets));
+        bucketizeFlopsDown(
+                holes.subBranches(),
+                new SubBucketAllocator().allocate(
+                        (char) numHoleBuckets, numFlopBuckets),
+                new SubBucketAllocator().allocate(
+                        numFlopBuckets, numTurnBuckets),
+                new SubBucketAllocator().allocate(
+                        numTurnBuckets, numRiverBuckets));
     }
 
 
