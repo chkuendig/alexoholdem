@@ -3,7 +3,11 @@ package ao.bucket.abstraction.bucketize;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.alloc.SubBucketAllocator;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.detail.preflop.HoleDetails;
+import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.enumeration.PermisiveFilter;
+import ao.util.misc.Traverser;
 
 import java.io.File;
 
@@ -53,24 +57,38 @@ public class BucketTreeBuilder
 
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
-            Branch holes,
-            byte   numHoleBuckets,
-            char   numFlopBuckets,
-            char   numTurnBuckets,
-            char   numRiverBuckets)
+            final Branch holes,
+            final byte   numHoleBuckets,
+            final char   numFlopBuckets,
+            final char   numTurnBuckets,
+            final char   numRiverBuckets)
     {
         if (BUCKETIZER.bucketize(holes, numHoleBuckets)) {
 //            holes.flush();
         }
 
-        bucketizeFlopsDown(
-                holes.subBranches(),
-                new SubBucketAllocator().allocate(
-                        (char) numHoleBuckets, numFlopBuckets),
-                new SubBucketAllocator().allocate(
-                        numFlopBuckets, numTurnBuckets),
-                new SubBucketAllocator().allocate(
-                        numTurnBuckets, numRiverBuckets));
+        HandEnum.holes(new PermisiveFilter<CanonHole>(),
+                new Traverser<CanonHole>() {
+                    public void traverse(CanonHole canonHole) {
+                        System.out.println(
+                                canonHole    + "\t" +
+                                HoleDetails.lookup(
+                                        canonHole.canonIndex()
+                                ).strength() + "\t" +
+                                holes.get(canonHole.canonIndex())
+                        );
+                    }
+                });
+
+
+//        bucketizeFlopsDown(
+//                holes.subBranches(),
+//                new SubBucketAllocator().allocate(
+//                        (char) numHoleBuckets, numFlopBuckets),
+//                new SubBucketAllocator().allocate(
+//                        numFlopBuckets, numTurnBuckets),
+//                new SubBucketAllocator().allocate(
+//                        numTurnBuckets, numRiverBuckets));
     }
 
 

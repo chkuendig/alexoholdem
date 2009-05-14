@@ -7,7 +7,6 @@ import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;
-import ao.util.math.Calc;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -111,26 +110,6 @@ public class PercentileAbs
         {
             branch.set(river.index(),
                        (byte) alloc.nextBucket(1));
-        }
-    }
-
-    private static class IndexedStrength
-            implements Comparable<IndexedStrength>
-    {
-        private final int  index;
-        private final char strength;
-
-        public IndexedStrength(long canonIndex, double handStrength) {
-            index    = (int) canonIndex;
-            strength = (char)(Character.MAX_VALUE * handStrength);
-        }
-
-        public long index() {
-            return Calc.unsigned(index);
-        }
-
-        public int compareTo(IndexedStrength o) {
-            return strength - o.strength;
         }
     }
 

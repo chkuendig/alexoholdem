@@ -8,6 +8,8 @@ import ao.bucket.abstraction.access.tree.BucketTree.Branch;
  */
 public interface Bucketizer
 {
+    // true if the bucketizing was changed from what
+    //   it previously was
     public boolean bucketize(Branch branch,
                              byte   numBuckets);
 
