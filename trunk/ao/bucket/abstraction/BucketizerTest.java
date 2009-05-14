@@ -3,7 +3,7 @@ package ao.bucket.abstraction;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysCallBot;
 import ao.bucket.abstraction.bucketize.Bucketizer;
-import ao.bucket.abstraction.bucketize.linear.HandStrengthAbs;
+import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
@@ -34,18 +34,18 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        byte nHoleBuckets  = 5;
-        char nFlopBuckets  = 25;
-        char nTurnBuckets  = 125;
-        char nRiverBuckets = 625;
+//        byte nHoleBuckets  = 5;
+//        char nFlopBuckets  = 25;
+//        char nTurnBuckets  = 125;
+//        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 10;
 //        char nFlopBuckets  = 200;
 //        char nTurnBuckets  = 1000;
 //        char nRiverBuckets = 5000;
-//        byte nHoleBuckets  = 11;
-//        char nFlopBuckets  = 275;
-//        char nTurnBuckets  = 1650;
-//        char nRiverBuckets = 9900;
+        byte nHoleBuckets  = 11;
+        char nFlopBuckets  = 275;
+        char nTurnBuckets  = 1650;
+        char nRiverBuckets = 9900;
 
         if (args.length > 1)
         {
@@ -58,7 +58,7 @@ public class BucketizerTest
                 (int) nHoleBuckets + ", " + (int) nFlopBuckets + ", " +
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
-        HoldemAbstraction abs = abstractHolem(new HandStrengthAbs(),
+        HoldemAbstraction abs = abstractHolem(new KMeansBucketizer(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
