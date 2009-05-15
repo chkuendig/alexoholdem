@@ -64,12 +64,12 @@ public class BucketizerTest
 
         // preload
         abs.tree();
-//        abs.odds();
-//        abs.sequence();
+        abs.odds();
+        abs.sequence();
 
 //        Rand.randomize();
-//        computeCfr(abs);
-        tournament(abs);
+        computeCfr(abs);
+//        tournament(abs);
 //        vsHuman(abs, null);
     }
 
@@ -149,7 +149,7 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
-        InfoPart        info   = abs.infoPart("serial", false, true);
+        InfoPart        info   = abs.infoPart("serial", false, false);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
 //        InfoPart        info   = abs.infoPart("mono", false);
@@ -157,9 +157,9 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-        long offset     = 0; //(125 + 560) * 1000 * 1000;
-//        long offset     =  640 * 1000 * 1000;
-        long iterations = 470 * 1000 * 1000;//1000 * 1000 * 1000;
+//        long offset     = 0; //(125 + 560) * 1000 * 1000;
+        long offset     = 470 * 1000 * 1000;
+        long iterations = 530 * 1000 * 1000;//1000 * 1000 * 1000;
         int  milestone  =  10 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();

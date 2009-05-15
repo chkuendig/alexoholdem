@@ -9,6 +9,7 @@ import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
+import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -69,9 +70,12 @@ public class AbsBucketStore implements Iterable<Character>
                 new BufferedOutputStream(
                         new FileOutputStream(ioFile)));
 
+        Progress p = new Progress(RiverLookup.CANONS);
         for (long r = 0; r < RiverLookup.CANONS; r++) {
             char absoluteRiverBucket = bucketOf(tree, decoder, r);
             out.writeChar( absoluteRiverBucket );
+
+            p.checkpoint();
         }
         
         out.close();
