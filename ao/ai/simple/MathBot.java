@@ -22,6 +22,11 @@ import java.util.Map;
 public class MathBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
+    private CardSequence prevCards = null;
+    private Odds         prevOdds  = null;
+
+
+    //--------------------------------------------------------------------
     public void handEnded(Map<Avatar, Chips> deltas) {}
 
     
@@ -30,13 +35,18 @@ public class MathBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        OddFinder oddFinder = new ApproximateOddFinder();
-        Odds odds = oddFinder.compute(
+        Odds odds;
+        if (cards.equals( prevCards )) {
+            odds = prevOdds;
+        } else {
+            OddFinder oddFinder = new ApproximateOddFinder();
+            odds = oddFinder.compute(
                         cards.hole(),
                         cards.community(),
                         state.numActivePlayers()-1);
+        }
 
-        double toCall = state.remainingBetsInRound() * state.betsToCall();
+        double toCall  = state.remainingBetsInRound() * state.betsToCall();
         double potOdds =
                 (toCall) /
                 (toCall + state.pot().smallBets());
@@ -49,6 +59,9 @@ public class MathBot extends AbstractPlayer
 //                " on " + community +
 //                " vs [" + Math.round(potOdds * 100) + "]");
 //        }
+
+        prevOdds  = odds;
+        prevCards = cards;
 
         return state.reify(
                 (odds.winPercent() > potOdds)

@@ -3,12 +3,7 @@ package ao.bucket.abstraction.bucketize.smart;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
-import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.CanonRange;
-import ao.bucket.index.detail.river.RiverEvalLookup;
-import ao.bucket.index.detail.turn.TurnDetails;
-import ao.holdem.model.Round;
-import ao.util.math.rand.Rand;
+import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
@@ -33,9 +28,10 @@ public class KMeansBucketizer implements Bucketizer
             BucketTree.Branch branch,
             byte              numBuckets)
     {
-        Stopwatch           time        = new Stopwatch();
-        IndexedStrengthList strengths   = strengths(branch);
-        double              means    [] = initMeans(strengths, numBuckets);
+        Stopwatch           time      = new Stopwatch();
+        IndexedStrengthList strengths =
+                IndexedStrengthList.strengths(branch);
+        double              means[]   = initMeans(strengths, numBuckets);
 
         int  counts  [] = new int[numBuckets];
         byte clusters[] = cluster(means, strengths);
@@ -155,9 +151,12 @@ public class KMeansBucketizer implements Bucketizer
     {
         int means[] = new int[ nBuckets ];
 
+        MersenneTwisterFast rand =
+                new MersenneTwisterFast(details.length() * nBuckets);
+
         // Choose one center uniformly at random
         //  from among the data points.
-        means[0] = Rand.nextInt(details.length());
+        means[0] = rand.nextInt(details.length());
 
         for (int k = 1; k < nBuckets; k++)
         {
@@ -183,8 +182,8 @@ public class KMeansBucketizer implements Bucketizer
 
                 // Each point x is chosen with
                 //  probability proportional to D(x)^2.
-                double chance = Rand.nextDouble(
-                                  nearestCluster * nearestCluster);
+                double chance = rand.nextDouble()
+                        * nearestCluster * nearestCluster;
                 if (maxChance < chance) {
                     maxChance      = chance;
                     maxChanceIndex = i;
@@ -200,62 +199,6 @@ public class KMeansBucketizer implements Bucketizer
             meanVals[ i ] = details.strength( means[i] );
         }
         return meanVals;
-    }
-
-
-    //--------------------------------------------------------------------
-    private IndexedStrengthList strengths(BucketTree.Branch branch)
-    {
-        if (branch.round() == Round.RIVER) {
-            return strengthsRiver(branch);
-        } else {
-            return strengthsPreRiver(branch);
-        }
-    }
-
-    private IndexedStrengthList strengthsRiver(BucketTree.Branch branch)
-    {
-        int        nRivers       = 0;
-        CanonRange toBucketize[] =
-                new CanonRange[ branch.parentCanons().length ];
-        for (int i = 0; i < branch.parentCanons().length; i++) {
-
-            int canonTurn = branch.parentCanons()[i];
-            toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
-            nRivers += toBucketize[ i ].canonIndexCount();
-        }
-        Arrays.sort(toBucketize);
-
-        final int                 nextIndex[] = {0};
-        final IndexedStrengthList rivers =
-                new IndexedStrengthList( nRivers );
-        RiverEvalLookup.traverse(
-                toBucketize,
-                new RiverEvalLookup.VsRandomVisitor() {
-                    public void traverse(
-                            long canonIndex, double strengthVsRandom) {
-
-                        rivers.set(nextIndex[0]++,
-                                   canonIndex, strengthVsRandom);
-                    }
-                });
-
-        return rivers;
-    }
-
-    private IndexedStrengthList strengthsPreRiver(BucketTree.Branch branch)
-    {
-        CanonDetail         details[] = branch.details();
-        IndexedStrengthList strengths =
-                new IndexedStrengthList(details.length);
-
-        for (int i = 0; i < details.length; i++) {
-            strengths.set(i,
-                          details[ i ].canonIndex(),
-                          details[ i ].strength());
-        }
-
-        return strengths;
     }
 
 

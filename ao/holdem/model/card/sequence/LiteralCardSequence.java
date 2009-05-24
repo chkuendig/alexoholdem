@@ -72,8 +72,29 @@ public class LiteralCardSequence implements CardSequence
 
 
     //--------------------------------------------------------------------
-    public String toString()
+    @Override public String toString()
     {
         return HOLE + " | " + COMMUNITY;
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LiteralCardSequence that = (LiteralCardSequence) o;
+        return !(COMMUNITY != null
+                ? !COMMUNITY.equals(that.COMMUNITY)
+                : that.COMMUNITY != null) &&
+               !(HOLE != null
+                 ? !HOLE.equals(that.HOLE) : that.HOLE != null);
+    }
+
+    @Override public int hashCode() {
+        int result = HOLE != null ? HOLE.hashCode() : 0;
+        result = 31 * result +
+                (COMMUNITY != null ? COMMUNITY.hashCode() : 0);
+        return result;
     }
 }
