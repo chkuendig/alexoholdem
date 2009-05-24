@@ -1,9 +1,14 @@
-package ao.bucket.abstraction.bucketize;
+package ao.bucket.abstraction.bucketize.build;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.alloc.SubBucketAllocator;
+import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.detail.preflop.HoleDetails;
+import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.enumeration.PermisiveFilter;
+import ao.util.misc.Traverser;
 
 import java.io.File;
 
@@ -11,14 +16,14 @@ import java.io.File;
  * Date: Jan 8, 2009
  * Time: 11:01:12 AM
  */
-public class BucketTreeBuilder
+public class FastBucketTreeBuilder implements BucketTreeBuilder
 {
     //--------------------------------------------------------------------
     private final Bucketizer BUCKETIZER;
 
 
     //--------------------------------------------------------------------
-    public BucketTreeBuilder(Bucketizer bucketizer)
+    public FastBucketTreeBuilder(Bucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
     }
@@ -63,28 +68,28 @@ public class BucketTreeBuilder
 //            holes.flush();
         }
 
-//        HandEnum.holes(new UniqueFilter<CanonHole>(),
-//                new Traverser<CanonHole>() {
-//                    public void traverse(CanonHole canonHole) {
-//                        System.out.println(
-//                                canonHole    + "\t" +
-//                                HoleDetails.lookup(
-//                                        canonHole.canonIndex()
-//                                ).strength() + "\t" +
-//                                holes.get(canonHole.canonIndex())
-//                        );
-//                    }
-//                });
+        HandEnum.holes(new PermisiveFilter<CanonHole>(),
+                new Traverser<CanonHole>() {
+                    public void traverse(CanonHole canonHole) {
+                        System.out.println(
+                                canonHole    + "\t" +
+                                HoleDetails.lookup(
+                                        canonHole.canonIndex()
+                                ).strength() + "\t" +
+                                holes.get(canonHole.canonIndex())
+                        );
+                    }
+                });
 
 
-        bucketizeFlopsDown(
-                holes.subBranches(),
-                new SubBucketAllocator().allocate(
-                        (char) numHoleBuckets, numFlopBuckets),
-                new SubBucketAllocator().allocate(
-                        numFlopBuckets, numTurnBuckets),
-                new SubBucketAllocator().allocate(
-                        numTurnBuckets, numRiverBuckets));
+//        bucketizeFlopsDown(
+//                holes.subBranches(),
+//                new SubBucketAllocator().allocate(
+//                        (char) numHoleBuckets, numFlopBuckets),
+//                new SubBucketAllocator().allocate(
+//                        numFlopBuckets, numTurnBuckets),
+//                new SubBucketAllocator().allocate(
+//                        numTurnBuckets, numRiverBuckets));
     }
 
 

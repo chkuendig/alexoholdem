@@ -4,6 +4,8 @@ import ao.bucket.index.detail.CanonDetail;
 import ao.holdem.model.Round;
 import ao.util.misc.Traverser;
 
+import java.util.List;
+
 /**
  * Date: Jan 8, 2009
  * Time: 10:39:05 AM
@@ -57,6 +59,6 @@ public interface BucketTree
         public byte get(long canonIndex);
 
         public byte bucketCount();
-        public Iterable<Branch> subBranches();
+        public List<Branch> subBranches();
     }
 }

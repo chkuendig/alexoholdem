@@ -5,8 +5,8 @@ import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.bucketize.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.build.FastBucketTreeBuilder;
 import ao.regret.holdem.InfoPart;
 import ao.util.io.Dir;
 import org.apache.log4j.Logger;
@@ -95,7 +95,7 @@ public class HoldemAbstraction
     public BucketTree tree()
     {
         if (tree != null) return tree;
-        return (tree = new BucketTreeBuilder(BUCKETIZER).bucketize(
+        return (tree = new FastBucketTreeBuilder(BUCKETIZER).bucketize(
                             DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS));
     }
 
