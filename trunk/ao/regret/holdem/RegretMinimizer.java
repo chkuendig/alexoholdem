@@ -1,9 +1,7 @@
 package ao.regret.holdem;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import jsr166y.ForkJoinPool;
 
 /**
  * User: alex
@@ -16,8 +14,7 @@ public class RegretMinimizer
     private final IBucketOdds ODDS;
     private final InfoPart    INFO;
 
-    private final ExecutorService EXEC =
-            Executors.newFixedThreadPool(8);
+    private final ForkJoinPool EXEC = new ForkJoinPool();
 
 
 
@@ -38,6 +35,9 @@ public class RegretMinimizer
                 INFO, ODDS, 1.0, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );
 
+
+//        AvgStrat.iterate(
+//                INFO, absDealerBuckets, absDealeeBuckets, EXEC);
         new AvgStrat(
                 INFO, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );

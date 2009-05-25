@@ -36,7 +36,8 @@ public class InfoPart
             boolean readOnly,
             boolean doublePrecision)
     {
-        LOG.debug("loading (or creating)");
+        LOG.debug("loading (or creating) " +
+                  (readOnly ? "read only" : "in-memory") );
 
         return new InfoPart(
                 get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP,

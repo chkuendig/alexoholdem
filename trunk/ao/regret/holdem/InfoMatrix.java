@@ -7,6 +7,7 @@ import ao.regret.holdem.grid.StoredGrid;
 import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentInts;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.Arrays;
@@ -32,6 +33,9 @@ import java.util.Arrays;
 public class InfoMatrix
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(InfoMatrix.class);
+
 //    private static final String    COUNT_FILE = "count.int";
 //    private static final String CFREGRET_FILE = "cfreg.float";
 //    private static final String STRATEGY_FILE = "strat.float";
@@ -52,6 +56,8 @@ public class InfoMatrix
         char counts[] = PersistentChars.retrieve(
                             new File(dir, COUNT_FILE));
 
+        LOG.debug((counts == null ? "creating" : "retrieving") +
+                  " in " + dir);
         return (counts == null)
                 ? newInstance(nBuckets, nIntents, doublePrecision)
                 : new InfoMatrix(

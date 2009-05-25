@@ -12,6 +12,7 @@ import ao.regret.holdem.InfoPart;
 import ao.regret.holdem.RegretMinimizer;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
+import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -63,9 +64,9 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-        abs.tree();
-        abs.odds();
-        abs.sequence();
+//        abs.tree();
+//        abs.odds();
+//        abs.sequence();
 
 //        Rand.randomize();
         computeCfr(abs);
@@ -108,6 +109,8 @@ public class BucketizerTest
     public static void tournament(
             final HoldemAbstraction abs) throws IOException
     {
+        LOG.debug("running tournament");
+
         long before = System.currentTimeMillis();
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
             // dealer last
@@ -121,10 +124,10 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("cfr2 s"),
-                    new CfrBot2("serial_470", abs, false, false, false));
-            put(Avatar.local("cfr2 d"),
-                    new CfrBot2("serial_470", abs, true, false, false));
+            put(Avatar.local("cfr2 full"),
+                    new CfrBot2("serial", abs, false, false, false));
+            put(Avatar.local("cfr2 290"),
+                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
@@ -149,6 +152,7 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
+        Stopwatch       t      = new Stopwatch();
         InfoPart        info   = abs.infoPart("serial", false, false);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
@@ -158,9 +162,10 @@ public class BucketizerTest
 
         long itr        = 0;
 //        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     = 470 * 1000 * 1000;
-        long iterations = 530 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =  10 * 1000 * 1000;
+        long offset     =        290 * 1000 * 1000;
+//        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
+        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
+        int  milestone  =   50 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
@@ -172,11 +177,13 @@ public class BucketizerTest
             }
         }
 
-        Progress prog = new Progress(iterations - offset);
+        Progress  prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr % (1000 * 1000) == 0) {
-                System.out.println("\t" + (itr + 1));
+            if (itr % (5 * 1000 * 1000) == 0) {
+                System.out.println("\t" + itr + " took " + t.timing());
+                t = new Stopwatch();
+
                 info.displayHeadsUpRoots();
             }
 
