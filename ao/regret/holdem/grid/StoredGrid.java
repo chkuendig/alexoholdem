@@ -41,8 +41,8 @@ public class StoredGrid implements Grid
         return cols;
     }
 
-    private int index(int row, int col) {
-        return row * columns() + col;
+    private long index(int row, int col) {
+        return (long) row * columns() + col;
     }
 
 
