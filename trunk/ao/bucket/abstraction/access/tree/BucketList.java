@@ -7,6 +7,10 @@ package ao.bucket.abstraction.access.tree;
 public interface BucketList
 {
     //--------------------------------------------------------------------
+    public byte maxBuckets();
+
+
+    //--------------------------------------------------------------------
     public void set(long index, byte bucket);
     public byte get(long index);
 

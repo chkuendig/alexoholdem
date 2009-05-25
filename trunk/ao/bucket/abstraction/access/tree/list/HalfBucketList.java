@@ -5,9 +5,6 @@ import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 /**
  * Date: Jan 26, 2009
@@ -45,9 +42,9 @@ public class HalfBucketList implements BucketList
     private static final byte HI_MASK     = (byte) 0xf0;
     private static final int  HI_INT_MASK =  0x000000f0;
 
-    private static final byte LO_SENTINAL = LO_MASK;
-    private static final byte HI_SENTINAL = HI_MASK;
-    private static final byte LH_SENTINAL = LO_SENTINAL | HI_SENTINAL;
+//    private static final byte LO_SENTINAL = LO_MASK;
+//    private static final byte HI_SENTINAL = HI_MASK;
+//    private static final byte LH_SENTINAL = LO_SENTINAL | HI_SENTINAL;
 
 
     //--------------------------------------------------------------------
@@ -56,21 +53,27 @@ public class HalfBucketList implements BucketList
 
 
     //--------------------------------------------------------------------
-    public HalfBucketList(File file, int size)
+    public HalfBucketList(File file, long size)
     {
         FILE = file;
         LIST = retrieveOrCreate( size );
     }
 
-    private byte[] retrieveOrCreate(int size)
+    private byte[] retrieveOrCreate(long size)
     {
         byte[] list = PersistentBytes.retrieve(FILE);
         if (list != null) return list;
 
         list = new byte[ halfIndex(size) +
                          (isLow(size) ? 0 : 1) ];
-        Arrays.fill(list, LH_SENTINAL);
+//        Arrays.fill(list, LH_SENTINAL);
         return list;
+    }
+
+
+    //--------------------------------------------------------------------
+    public byte maxBuckets() {
+        return LO_MASK + 1;
     }
 
 
@@ -94,10 +97,10 @@ public class HalfBucketList implements BucketList
                       : (pair & HI_INT_MASK) >>> 4);
     }
 
-    public boolean isEmpty(long index)
-    {
-        return get(index) == LO_SENTINAL;
-    }
+//    public boolean isEmpty(long index)
+//    {
+//        return get(index) == LO_SENTINAL;
+//    }
 
 
     //--------------------------------------------------------------------
@@ -106,34 +109,34 @@ public class HalfBucketList implements BucketList
         PersistentBytes.persist(LIST, FILE);
     }
 
-    public void flush(long fromCanon, char canonCount)
-    {
-        try
-        {
-            doFlush(fromCanon, canonCount);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    private void doFlush(long fromCanon, char canonCount)
-            throws IOException
-    {
-        if (! FILE.canRead()) {
-            flush();
-            return;
-        }
-
-        RandomAccessFile f = new RandomAccessFile(FILE, "rw");
-        f.seek(halfIndex(fromCanon));
-        f.write(LIST,
-                halfIndex(fromCanon),
-                (isLow(fromCanon)
-                 ? halfIndex(canonCount + 1)
-                 : halfIndex(canonCount) + 1));
-        f.close();
-    }
+//    public void flush(long fromCanon, char canonCount)
+//    {
+//        try
+//        {
+//            doFlush(fromCanon, canonCount);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//    private void doFlush(long fromCanon, char canonCount)
+//            throws IOException
+//    {
+//        if (! FILE.canRead()) {
+//            flush();
+//            return;
+//        }
+//
+//        RandomAccessFile f = new RandomAccessFile(FILE, "rw");
+//        f.seek(halfIndex(fromCanon));
+//        f.write(LIST,
+//                halfIndex(fromCanon),
+//                (isLow(fromCanon)
+//                 ? halfIndex(canonCount + 1)
+//                 : halfIndex(canonCount) + 1));
+//        f.close();
+//    }
 
 
     //--------------------------------------------------------------------

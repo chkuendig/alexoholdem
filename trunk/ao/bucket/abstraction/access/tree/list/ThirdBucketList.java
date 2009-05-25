@@ -67,6 +67,12 @@ public class ThirdBucketList implements BucketList
 
 
     //--------------------------------------------------------------------
+    public byte maxBuckets() {
+        return 1 << 3;
+    }
+
+
+    //--------------------------------------------------------------------
     public void set(long index, byte bucket)
     {
         assert 0 <= bucket && bucket <= 7;
@@ -88,7 +94,7 @@ public class ThirdBucketList implements BucketList
         boolean b = B.get(index);
         boolean c = C.get(index);
 
-        int bucket = 0;
+        int    bucket  = 0;
         if (a) bucket |= A_BIT;
         if (b) bucket |= B_BIT;
         if (c) bucket |= C_BIT;
