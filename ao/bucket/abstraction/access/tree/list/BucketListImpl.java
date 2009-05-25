@@ -4,9 +4,6 @@ import ao.bucket.abstraction.access.tree.BucketList;
 import ao.util.persist.PersistentBytes;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 /**
  * Date: Jan 26, 2009
@@ -15,7 +12,7 @@ import java.util.Arrays;
 public class BucketListImpl implements BucketList
 {
     //--------------------------------------------------------------------
-    private static final byte SENTINAL = -1;
+//    private static final byte SENTINAL = -1;
 
 
     //--------------------------------------------------------------------
@@ -36,8 +33,14 @@ public class BucketListImpl implements BucketList
         if (list != null) return list;
 
         list = new byte[ size ];
-        Arrays.fill(list, SENTINAL);
+//        Arrays.fill(list, SENTINAL);
         return list;
+    }
+
+
+    //--------------------------------------------------------------------
+    public byte maxBuckets() {
+        return Byte.MAX_VALUE;
     }
 
 
@@ -52,10 +55,10 @@ public class BucketListImpl implements BucketList
         return LIST[ (int) index ];
     }
 
-    public boolean isEmpty(long index)
-    {
-        return get(index) == SENTINAL;
-    }
+//    public boolean isEmpty(long index)
+//    {
+//        return get(index) == SENTINAL;
+//    }
 
 
     //--------------------------------------------------------------------
@@ -64,28 +67,28 @@ public class BucketListImpl implements BucketList
         PersistentBytes.persist(LIST, FILE);
     }
 
-    public void flush(long fromCanon, char canonCount)
-    {
-        try
-        {
-            doFlush(fromCanon, canonCount);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    private void doFlush(long fromCanon, char canonCount)
-            throws IOException
-    {
-        if (! FILE.canRead()) {
-            flush();
-            return;
-        }
-
-        RandomAccessFile f = new RandomAccessFile(FILE, "rw");
-        f.seek(fromCanon);
-        f.write(LIST, (int) fromCanon, canonCount);
-        f.close();
-    }
+//    public void flush(long fromCanon, char canonCount)
+//    {
+//        try
+//        {
+//            doFlush(fromCanon, canonCount);
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//    private void doFlush(long fromCanon, char canonCount)
+//            throws IOException
+//    {
+//        if (! FILE.canRead()) {
+//            flush();
+//            return;
+//        }
+//
+//        RandomAccessFile f = new RandomAccessFile(FILE, "rw");
+//        f.seek(fromCanon);
+//        f.write(LIST, (int) fromCanon, canonCount);
+//        f.close();
+//    }
 }

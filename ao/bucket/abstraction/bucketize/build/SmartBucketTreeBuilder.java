@@ -17,12 +17,6 @@ import java.util.List;
 public class SmartBucketTreeBuilder implements BucketTreeBuilder
 {
     //--------------------------------------------------------------------
-    private static final double  FLOP_FACTOR = 2;
-    private static final double  TURN_FACTOR = 2;
-    private static final double RIVER_FACTOR = 2;
-
-
-    //--------------------------------------------------------------------
     private final Bucketizer BUCKETIZER;
 
 
@@ -47,46 +41,46 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         {
             bucketizeHolesDown(
                     tree.holes(),
-                    numHoleBuckets,
-                    numFlopBuckets,
-                    numTurnBuckets,
-                    numRiverBuckets);
+                    new char[]{(char)
+                          numHoleBuckets,
+                          numFlopBuckets,
+                          numTurnBuckets,
+                          numRiverBuckets},
+                    tree.maxBuckets());
             tree.flush();
         }
 
         return tree;
     }
 
+
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
-            final BucketTree.Branch root,
-            final byte              numHoleBuckets,
-            final char              numFlopBuckets,
-            final char              numTurnBuckets,
-            final char              numRiverBuckets)
+            BucketTree.Branch root,
+            char              numBuckets[],
+            byte              maxBuckets[])
     {
-        BUCKETIZER.bucketize(root, numHoleBuckets);
+        BUCKETIZER.bucketize(
+                root, (byte) numBuckets[Round.PREFLOP.ordinal()]);
 
         bucketize(root.subBranches(),
                   Round.FLOP,
-                  new char[]{(char)
-                          numHoleBuckets,
-                          numFlopBuckets,
-                          numTurnBuckets,
-                          numRiverBuckets});
+                  numBuckets,
+                  maxBuckets);
     }
 
 
     //--------------------------------------------------------------------
     private void bucketize(
-            final List<BucketTree.Branch> prevBuckets,
-            final Round                   round,
-            final char                    numBuckets[])
+            List<BucketTree.Branch> prevBuckets,
+            Round                   round,
+            char                    numBuckets[],
+            byte                    maxBuckets[])
     {
         byte subBucketCounts[] =
                 allocateBuckets(prevBuckets,
                                 numBuckets[round.ordinal()],
-                                (byte) 16);
+                                maxBuckets[round.ordinal()]);
 
         for (int prevBucketIndex = 0;
                  prevBucketIndex < prevBuckets.size();
@@ -99,11 +93,11 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                     prevBuckets.get(prevBucketIndex),
                     subBucketCounts[prevBucketIndex]);
 
-            if (round == Round.TURN) return;
-            bucketize(
-                    prevBucket.subBranches(),
-                    round.next(),
-                    numBuckets);
+            if (round == Round.RIVER) return;
+            bucketize(prevBucket.subBranches(),
+                      round.next(),
+                      numBuckets,
+                      maxBuckets);
         }
     }
 
@@ -147,6 +141,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             double errors[][],
             char   numBuckets)
     {
+        
         return null;
     }
 }

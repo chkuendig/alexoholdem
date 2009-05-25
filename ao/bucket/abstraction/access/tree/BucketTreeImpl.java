@@ -2,7 +2,6 @@ package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
-import ao.bucket.abstraction.access.tree.list.ThirdBucketList;
 import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
@@ -12,7 +11,6 @@ import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
-import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
@@ -45,16 +43,26 @@ public class BucketTreeImpl implements BucketTree
     {
         flushFlag  = new File(dir, "flushed");
 
-        File holeFile  = new File(dir, "holes");
-        File flopFile  = new File(dir, "flops");
-        File turnFile  = new File(dir, "turns");
-        File riverDir  =  Dir.get(dir, "rivers");
+        File  holeFile = new File(dir, "holes");
+        File  flopFile = new File(dir, "flops");
+        File  turnFile = new File(dir, "turns");
+        File riverFile = new File(dir, "rivers");
+        //File riverDir  =  Dir.get(dir, "rivers");
 
         LOG.debug("loading (or creating)");
-        holes  = new BucketListImpl (holeFile, HoleLookup.CANONS);
-        flops  = new BucketListImpl (flopFile, FlopLookup.CANONS);
-        turns  = new HalfBucketList (turnFile, TurnLookup.CANONS);
-        rivers = new ThirdBucketList(riverDir, RiverLookup.CANONS);
+        holes  = new BucketListImpl( holeFile,  HoleLookup.CANONS);
+        flops  = new BucketListImpl( flopFile,  FlopLookup.CANONS);
+        turns  = new HalfBucketList( turnFile,  TurnLookup.CANONS);
+        rivers = new HalfBucketList(riverFile, RiverLookup.CANONS);
+        //rivers = new ThirdBucketList(riverDir, RiverLookup.CANONS);
+    }
+
+
+    //--------------------------------------------------------------------
+    public byte[] maxBuckets() {
+        return new byte[]{
+                holes.maxBuckets(),  flops.maxBuckets(),
+                turns.maxBuckets(), rivers.maxBuckets()};
     }
 
 

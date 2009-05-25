@@ -12,6 +12,9 @@ import java.util.List;
  */
 public interface BucketTree
 {
+    //--------------------------------------------------------------------
+    public byte[] maxBuckets();
+
 
     //--------------------------------------------------------------------
     public void setHole(char canonHole,

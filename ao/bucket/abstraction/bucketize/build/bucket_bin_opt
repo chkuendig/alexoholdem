@@ -1,0 +1,71 @@
+#
+# Basketball problem
+#
+# This finds the optimal solution for maximizing the team's overall
+# defensive skill
+#
+
+/* sets */
+set SKILLS;
+set POSITIONS;
+set PLAYERS;
+
+/* parameters */
+param skill {i in PLAYERS, j in SKILLS};
+param position {i in PLAYERS, j in POSITIONS};
+param min_in_position {i in POSITIONS};
+param min_skill_average {i in SKILLS};
+
+/* decision variables: yi, i in {1,..,7}. yi = 1 -> player i is on team */
+var y {i in PLAYERS} binary >=0;
+
+/* objective function */
+maximize z: sum{i in PLAYERS} skill[i,"defense"]*y[i];
+
+/* Constraints */
+s.t. pos{j in POSITIONS}: sum{i in PLAYERS}
+      position[i,j]*y[i] >= min_in_position[j];
+s.t. players: sum{i in PLAYERS} y[i] = 5;
+s.t. ctr3: y[3] + y[6] <= 1;
+s.t. ctr4a: y[4] - y[1] >= 0;
+s.t. ctr4b: y[5] - y[1] >= 0;
+s.t. ctr5: y[2] + y[3] = 1;
+s.t. average{j in SKILLS}: sum{i in PLAYERS}
+      skill[i,j]*y[i]/5 >= min_skill_average[j];
+
+data;
+set PLAYERS := 1 2 3 4 5 6 7;
+set POSITIONS := Back Mid Front;
+set SKILLS := assist throw rebound defense;
+
+param min_in_position:=
+Back    3
+Mid     1
+Front   2;
+
+param min_skill_average:=
+assist          2
+throw           2
+rebound         2
+defense         2;
+
+param position: Back    Mid     Front:=
+1               1       0       0
+2               0       1       0
+3               1       1       0
+4               1       0       1
+5               1       0       1
+6               0       1       1
+7               1       0       1;
+
+
+param skill:    assist  throw   rebound defense:=
+1               3       3       1       3
+2               2       1       3       2
+3               2       3       2       2
+4               1       3       3       1
+5               1       3       1       2
+6               3       1       2       3
+7               3       2       2       1;
+
+end;

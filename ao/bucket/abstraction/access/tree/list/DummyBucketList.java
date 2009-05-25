@@ -8,6 +8,10 @@ import ao.bucket.abstraction.access.tree.BucketList;
  */
 public class DummyBucketList implements BucketList
 {
+    public byte maxBuckets() {
+        return 2;
+    }
+
     public void set(long index, byte bucket)
     {
 
