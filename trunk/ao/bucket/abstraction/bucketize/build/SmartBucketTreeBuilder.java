@@ -4,6 +4,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
+import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
@@ -57,13 +58,13 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numTurnBuckets,
                       numRiverBuckets},
                 new byte[]{
-                 (byte) Math.min(maxBucketBranch[0], numHoleBuckets * 2),
-                 (byte) Math.min(maxBucketBranch[1],
-                                 (numFlopBuckets  / numHoleBuckets) * 2),
-                 (byte) Math.min(maxBucketBranch[2],
-                                 (numTurnBuckets  / numFlopBuckets) * 2),
-                 (byte) Math.min(maxBucketBranch[3],
-                                 (numRiverBuckets / numTurnBuckets) * 2),
+                    (byte) Math.min(
+                             maxBucketBranch[0], numHoleBuckets * 2),
+                    (byte) Math.min(
+                             maxBucketBranch[1],
+                             (numFlopBuckets  / numHoleBuckets) * 2),
+                    maxBucketBranch[2],
+                    maxBucketBranch[3]
                 });
         tree.flush();
         return tree;
@@ -132,22 +133,20 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
-            BucketTree.Branch branch = branches.get(branchIndex);
+            BucketTree.Branch   branch   = branches.get(branchIndex);
+            IndexedStrengthList strenths =
+                    IndexedStrengthList.strengths(branch);
 
             for (byte nBucketTrial = 0;
                       nBucketTrial < nTrials;
                       nBucketTrial++) {
-                BUCKETIZER.bucketize(branch, (byte)(nBucketTrial + 1));
+                BUCKETIZER.bucketize(
+                        branch, strenths, (byte)(nBucketTrial + 1));
                 errors[branchIndex][nBucketTrial] =
                         errorMeasure.error(
-                                branch, (byte)(nBucketTrial + 1));
+                                branch,   (byte)(nBucketTrial + 1));
             }
         }
-
-//        LOG.debug("errors:");
-//        for (double err[] : errors) {
-//            LOG.debug(Arrays.toString(err));
-//        }
 
         return Optimizer.optimize(parentPaths, errors, nBuckets);
     }
