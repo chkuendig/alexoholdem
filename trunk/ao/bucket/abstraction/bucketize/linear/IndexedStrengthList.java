@@ -117,6 +117,10 @@ public class IndexedStrengthList
         return Calc.unsigned(index[i]);
     }
 
+    public double strengthNorm(int i)
+    {
+        return (double) strength[ i ] / Character.MAX_VALUE;
+    }
     public char strength(int i)
     {
         return strength[ i ];

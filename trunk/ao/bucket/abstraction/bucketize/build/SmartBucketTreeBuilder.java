@@ -7,8 +7,11 @@ import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
+import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,6 +21,11 @@ import java.util.List;
  */
 public class SmartBucketTreeBuilder implements BucketTreeBuilder
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(SmartBucketTreeBuilder.class);
+
+
     //--------------------------------------------------------------------
     private final Bucketizer BUCKETIZER;
 
@@ -40,6 +48,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         BucketTree tree = new BucketTreeImpl( dir );
         if (tree.isFlushed()) return tree;
 
+        byte maxBucketBranch[] = tree.maxBucketBranch();
         bucketizeHolesDown(
                 tree.holes(),
                 new char[]{(char)
@@ -47,7 +56,15 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numFlopBuckets,
                       numTurnBuckets,
                       numRiverBuckets},
-                tree.maxBuckets());
+                new byte[]{
+                 (byte) Math.min(maxBucketBranch[0], numHoleBuckets * 2),
+                 (byte) Math.min(maxBucketBranch[1],
+                                 (numFlopBuckets  / numHoleBuckets) * 2),
+                 (byte) Math.min(maxBucketBranch[2],
+                                 (numTurnBuckets  / numFlopBuckets) * 2),
+                 (byte) Math.min(maxBucketBranch[3],
+                                 (numRiverBuckets / numTurnBuckets) * 2),
+                });
         tree.flush();
         return tree;
     }
@@ -80,24 +97,24 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                 allocateBuckets(prevBuckets,
                                 numBuckets[round.ordinal()],
                                 maxBuckets[round.ordinal()]);
+        LOG.debug("allocated: " + Arrays.toString(subBucketCounts));
 
         for (int prevBucketIndex = 0;
                  prevBucketIndex < prevBuckets.size();
-                 prevBucketIndex++)
-        {
-            BucketTree.Branch prevBucket =
-                    prevBuckets.get(prevBucketIndex);
-
+                 prevBucketIndex++) {
             BUCKETIZER.bucketize(
                     prevBuckets.get(prevBucketIndex),
                     subBucketCounts[prevBucketIndex]);
-
-            if (round == Round.RIVER) return;
-            bucketize(prevBucket.subBranches(),
-                      round.next(),
-                      numBuckets,
-                      maxBuckets);
         }
+
+        if (round == Round.RIVER) return;
+        List<BucketTree.Branch> subBranches =
+                new ArrayList<BucketTree.Branch>();
+        for (BucketTree.Branch prevBucket : prevBuckets) {
+            subBranches.addAll( prevBucket.subBranches() );
+        }
+        bucketize(subBranches,
+                  round.next(), numBuckets, maxBuckets);
     }
 
 
@@ -109,7 +126,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
     {
         double errors[][]   = new double[ branches.size() ]
                                         [ nTrials         ];
-        int   parentPaths[] = parethReachPaths(branches);
+        int   parentPaths[] = parentReachPaths(branches);
 
         HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
         for (int branchIndex = 0;
@@ -127,10 +144,15 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             }
         }
 
+//        LOG.debug("errors:");
+//        for (double err[] : errors) {
+//            LOG.debug(Arrays.toString(err));
+//        }
+
         return Optimizer.optimize(parentPaths, errors, nBuckets);
     }
 
-    private int[] parethReachPaths(List<BucketTree.Branch> branches)
+    private int[] parentReachPaths(List<BucketTree.Branch> branches)
     {
         int parentPaths[] = new int[ branches.size() ];
 
@@ -147,19 +169,4 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 
         return parentPaths;
     }
-
-
-//    //--------------------------------------------------------------------
-//    // Uses pure integer proramming to optimize the best combination
-//    //  of sub-bucket counts.  I.e. minimizing the sum of errors.
-//    //
-//    // the contents of the output are in the form
-//    //   1 .. n (i.e. one based)
-//    private byte[] optimize(
-//            double errors[][],
-//            char   numBuckets)
-//    {
-//
-//        return null;
-//    }
 }

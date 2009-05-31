@@ -35,14 +35,14 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-        byte nHoleBuckets  = 3;
-        char nFlopBuckets  = 9;
-        char nTurnBuckets  = 27;
-        char nRiverBuckets = 81;
-//        byte nHoleBuckets  = 10;
-//        char nFlopBuckets  = 200;
-//        char nTurnBuckets  = 1000;
-//        char nRiverBuckets = 5000;
+//        byte nHoleBuckets  = 3;
+//        char nFlopBuckets  = 9;
+//        char nTurnBuckets  = 27;
+//        char nRiverBuckets = 81;
+        byte nHoleBuckets  = 5;
+        char nFlopBuckets  = 25;
+        char nTurnBuckets  = 125;
+        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 20;
 //        byte nHoleBuckets  = 11;
 //        char nFlopBuckets  = 275;

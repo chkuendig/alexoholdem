@@ -73,7 +73,7 @@ public class HalfBucketList implements BucketList
 
     //--------------------------------------------------------------------
     public byte maxBuckets() {
-        return LO_MASK + 1;
+        return LO_MASK - 1;
     }
 
 
@@ -82,11 +82,11 @@ public class HalfBucketList implements BucketList
     {
         assert bucket < LO_MASK;
 
-        byte curr = LIST[ halfIndex(index) ];
+        byte current = LIST[ halfIndex(index) ];
         LIST[ halfIndex(index) ] =
                 (byte)(isLow(index)
-                       ? curr & HI_MASK | bucket
-                       : curr & LO_MASK | bucket << 4);
+                       ? current & HI_MASK | bucket
+                       : current & LO_MASK | bucket << 4);
     }
 
     public byte get(long index)
