@@ -43,6 +43,14 @@ public class HandStrengthAbs implements Bucketizer
         return true;
     }
 
+    public boolean bucketize(
+            Branch              branch,
+            IndexedStrengthList details,
+            byte                numBuckets)
+    {
+        return bucketize(branch, numBuckets);
+    }
+
 
     //--------------------------------------------------------------------
     private void bucketizeByList(Branch branch, byte nBuckets)
@@ -275,24 +283,6 @@ public class HandStrengthAbs implements Bucketizer
 //                }
 //            }
 //        });
-//    }
-
-
-//    //--------------------------------------------------------------------
-//    private boolean bucketizeTenHoles(Branch branch) {
-//        CanonDetail[] details = branch.details();
-//
-//        LOG.debug("bucketizing " + branch.round() + " branch of " +
-//                  details.length + " into " + 10 + " using PokerRoom");
-//
-//        for (CanonDetail detail : details)
-//        {
-//            Hole hole = HoleLookup.lookup((int)
-//                    detail.canonIndex()).reify();
-//            branch.set(detail.canonIndex(),
-//                       (byte)(PokerRoom.groupOf( hole ) - 1));
-//        }
-//        return true;
 //    }
 
 

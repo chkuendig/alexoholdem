@@ -2,6 +2,7 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.time.Stopwatch;
@@ -21,6 +22,7 @@ public class KMeansBucketizer implements Bucketizer
             Logger.getLogger(KMeansBucketizer.class);
 
     private static final double DELTA_CUTOFF = 0.01;
+    private static final int    BEST_OF      = 10;
 
 
     //--------------------------------------------------------------------
@@ -28,10 +30,58 @@ public class KMeansBucketizer implements Bucketizer
             BucketTree.Branch branch,
             byte              numBuckets)
     {
-        Stopwatch           time      = new Stopwatch();
         IndexedStrengthList strengths =
                 IndexedStrengthList.strengths(branch);
-        double              means[]   = initMeans(strengths, numBuckets);
+        return bucketize(branch, strengths, numBuckets);
+    }
+    public boolean bucketize(
+            BucketTree.Branch   branch,
+            IndexedStrengthList details,
+            byte                numBuckets)
+    {
+        MersenneTwisterFast rand =
+                new MersenneTwisterFast(
+                        branch.parentCanons().length *
+                        details.length() * numBuckets);
+
+        long seeds[] = new long[ BEST_OF ];
+        for (int i = 0; i < seeds.length; i++) {
+            seeds[ i ] = rand.nextLong();
+        }
+
+        double maxErr      = Double.NEGATIVE_INFINITY;
+        double minErr      = Double.POSITIVE_INFINITY;
+        int    minErrIndex = -1;
+
+        HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
+        for (int i = 0; i < BEST_OF; i++) {
+            rand.setSeed(seeds[i]);
+
+            bucketize(branch, details, numBuckets, rand);
+            double err = errorMeasure.error(branch, numBuckets);
+            if (err < minErr) {
+                minErr      = err;
+                minErrIndex = i;
+            }
+            if (err > maxErr) {
+                maxErr = err;
+            }
+        }
+
+        rand.setSeed(seeds[ minErrIndex ]);
+        bucketize(branch, details, numBuckets, rand);
+        LOG.debug("error range: " + minErr + " .. " + maxErr +
+                    " = " + ((maxErr - minErr) / maxErr) * 100 + "%");
+        return true;
+    }
+    private void bucketize(
+            BucketTree.Branch   branch,
+            IndexedStrengthList strengths,
+            byte                numBuckets,
+            MersenneTwisterFast rand)
+    {
+        Stopwatch time    = new Stopwatch();
+        double    means[] = initMeans(strengths, numBuckets, rand);
 
         int  counts  [] = new int[numBuckets];
         byte clusters[] = cluster(means, strengths);
@@ -48,8 +98,6 @@ public class KMeansBucketizer implements Bucketizer
                   " \tc " + strengths.length()   +
                   ")\t" + Arrays.toString(counts) +
                   "\ttook " + time);
-
-        return true;
     }
 
 
@@ -148,12 +196,11 @@ public class KMeansBucketizer implements Bucketizer
      *   http://en.wikipedia.org/wiki/K-means%2B%2B
      */
     private double[] initMeans(
-            IndexedStrengthList details, byte nBuckets)
+            IndexedStrengthList details,
+            byte                nBuckets,
+            MersenneTwisterFast rand)
     {
         int means[] = new int[ nBuckets ];
-
-        MersenneTwisterFast rand =
-                new MersenneTwisterFast(details.length() * nBuckets);
 
         // Choose one center uniformly at random
         //  from among the data points.

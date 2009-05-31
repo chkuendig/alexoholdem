@@ -1,6 +1,7 @@
 package ao.bucket.abstraction.bucketize;
 
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
+import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 
 /**
  * Date: Jan 9, 2009
@@ -12,6 +13,10 @@ public interface Bucketizer
     //   it previously was
     public boolean bucketize(Branch branch,
                              byte   numBuckets);
+
+    public boolean bucketize(Branch              branch,
+                             IndexedStrengthList details,
+                             byte                numBuckets);
 
     public String id();
 }
