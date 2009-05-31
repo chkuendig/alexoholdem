@@ -2,11 +2,14 @@ package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.flop.FlopLookup;
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.enumeration.PermisiveFilter;
+import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import org.apache.log4j.Logger;
@@ -55,16 +58,25 @@ public class FlopDetails
     {
         LOG.debug("computing details");
 
-        final FlopDetailFlyweight fw = new FlopDetailFlyweight();
-        HandEnum.uniqueFlops(
+        final LongBitSet          initiated =
+                new LongBitSet(FlopLookup.CANONS);
+        final FlopDetailFlyweight flyweight = new FlopDetailFlyweight();
+        HandEnum.flops(
+                new PermisiveFilter<CanonHole>(),
+                new PermisiveFilter<Flop>(),
                 new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 int index = flop.canonIndex();
-                fw.init(flop, FlopOdds.lookup(index));
+                if (initiated.get(index)) {
+                    flyweight.incrementRepresentation(index);
+                } else {
+                    initiated.set(index);
+                    flyweight.initiate(flop, FlopOdds.lookup(index));
+                }
             }});
 
-        computeTurnInfo( fw );
-        return fw;
+        computeTurnInfo( flyweight );
+        return flyweight;
     }
 
 

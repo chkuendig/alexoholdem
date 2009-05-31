@@ -6,16 +6,10 @@ import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetails;
-import ao.bucket.index.detail.river.CanonRiverDetail;
-import ao.bucket.index.detail.river.RiverDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.Round;
-import ao.util.misc.Traverser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Date: Jan 9, 2009
@@ -119,36 +113,56 @@ public class DetailLookup
         } else if (prevRound.ordinal() < Round.TURN.ordinal()) {
             return lookupPreTurnSub(prevRound, prevCanonIndexes);
         } else {
-            return lookupTurnSub(prevCanonIndexes);
+//            return lookupTurnSub(prevCanonIndexes);
+            return null;
         }
     }
 
+    public static CanonDetail[] lookupPreRiver(
+            Round round, int[] canonIndexes)
+    {
+        CanonDetail details[] = new CanonDetail[ canonIndexes.length ];
+        for (int i = 0; i < canonIndexes.length; i++) {
+            details[i] = lookupPreRiver(round, canonIndexes[i]);
+        }
+        return details;
+    }
+    public static CanonDetail lookupPreRiver(Round round, int canonIndex)
+    {
+        switch (round)
+        {
+            case TURN:    return lookupTurn(canonIndex);
+            case FLOP:    return lookupFlop(canonIndex);
+            case PREFLOP: return lookupHole((char) canonIndex);
+        }
+        throw new IllegalArgumentException("can't look-up " + round);
+    }
 
     //--------------------------------------------------------------------
-    private static CanonRiverDetail[] lookupTurnSub(int[] turnCanons)
-    {
-        List<CanonRiverDetail> details =
-                new ArrayList<CanonRiverDetail>();
-        for (int canonTurn : turnCanons) {
-            details.addAll(
-                    RiverDetails.lookup( canonTurn ));
-        }
-        return details.toArray(new CanonRiverDetail[details.size()]);
-    }
-
-    public static void lookupSub(
-            Round prevRound, int[] prevCanonIndexes,
-            Traverser<CanonDetail> visit)
-    {
-        assert prevRound == Round.TURN
-                : "support implemented only for river details";
-
-//        Progress p = new Progress(prevCanonIndexes.length * 50);
-        for (int canonTurn : prevCanonIndexes) {
-            RiverDetails.lookup( canonTurn, visit );
-//            p.checkpoint();
-        }
-    }
+//    private static CanonRiverDetail[] lookupTurnSub(int[] turnCanons)
+//    {
+//        List<CanonRiverDetail> details =
+//                new ArrayList<CanonRiverDetail>();
+//        for (int canonTurn : turnCanons) {
+//            details.addAll(
+//                    RiverDetails.lookup( canonTurn ));
+//        }
+//        return details.toArray(new CanonRiverDetail[details.size()]);
+//    }
+//
+//    public static void lookupSub(
+//            Round prevRound, int[] prevCanonIndexes,
+//            Traverser<CanonDetail> visit)
+//    {
+//        assert prevRound == Round.TURN
+//                : "support implemented only for river details";
+//
+////        Progress p = new Progress(prevCanonIndexes.length * 50);
+//        for (int canonTurn : prevCanonIndexes) {
+//            RiverDetails.lookup( canonTurn, visit );
+////            p.checkpoint();
+//        }
+//    }
 
 
     //--------------------------------------------------------------------

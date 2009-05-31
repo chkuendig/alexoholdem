@@ -15,7 +15,7 @@ public class HandStrengthMeasure
             BucketTree.Branch branch,
             byte              nBuckets)
     {
-        IndexedStrengthList strengths =
+        IndexedStrengthList details =
                 IndexedStrengthList.strengths(branch);
 
         double error = 0;
@@ -23,20 +23,22 @@ public class HandStrengthMeasure
         {
             double sum   = 0;
             int    count = 0;
-            for (int i = 0; i < strengths.length(); i++)
+            for (int i = 0; i < details.length(); i++)
             {
-                if (bucket != branch.get(strengths.index(i))) continue;
+                if (bucket != branch.get(details.index(i))) continue;
 
-                sum += strengths.strength(i);
-                count++;
+                sum   += details.strength(i) *
+                         details.represents(i);
+                count += details.represents(i);
             }
 
             double mean  = sum / count;
-            for (int i = 0; i < strengths.length(); i++)
+            for (int i = 0; i < details.length(); i++)
             {
-                if (bucket != branch.get(strengths.index(i))) continue;
+                if (bucket != branch.get(details.index(i))) continue;
 
-                error += Math.pow(strengths.strength(i) - mean, 2);
+                error += Math.pow(details.strength(i) - mean, 2) *
+                         details.represents(i);
             }
         }
 

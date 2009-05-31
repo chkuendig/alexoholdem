@@ -154,7 +154,7 @@ public class HandStrengthAbs implements Bucketizer
             double     setMax[],
             int        count[])
     {
-        // init range
+        // initiate range
         initBounds(toBucketize, setMin, setMax);
         return setBuckets(
                 branch, nBuckets, toBucketize,
@@ -182,7 +182,9 @@ public class HandStrengthAbs implements Bucketizer
                 toBucketize,
                 new RiverEvalLookup.VsRandomVisitor() {
                     public void traverse(
-                            long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                         double norm = Math.min(
                                 (strengthVsRandom - min)
@@ -209,7 +211,9 @@ public class HandStrengthAbs implements Bucketizer
                 toBucketize,
                 new RiverEvalLookup.VsRandomVisitor() {
                     public void traverse(
-                            long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                         if (setMin[0] > strengthVsRandom) {
                             setMin[0] = strengthVsRandom;

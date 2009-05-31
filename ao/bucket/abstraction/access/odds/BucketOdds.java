@@ -5,7 +5,6 @@ import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.river.RiverEvalLookup;
-import ao.bucket.index.detail.river.RiverEvalLookup.Visitor;
 import ao.util.time.Progress;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -25,7 +24,7 @@ public class BucketOdds implements IBucketOdds
             Logger.getLogger(BucketOdds.class);
 
     private static final String STR_FILE = "eval";
-    private static final int    BUFFER   = 10000;
+    private static final int    BUFFER   = 100000;
 
 
     //--------------------------------------------------------------------
@@ -199,7 +198,7 @@ public class BucketOdds implements IBucketOdds
         LOG.debug("computing strengths for allowed");
         final Progress progress = new Progress(length * 100000);
 //        RiverEvalLookup.traverse(allowRivers,
-//                new Visitor() {public void traverse(
+//                new AbsVisitor() {public void traverse(
 //                        long river, short strength, byte count) {
 //
 //            char absoluteRiverBucket = bucketOf(tree, holes, river);
@@ -209,7 +208,7 @@ public class BucketOdds implements IBucketOdds
 //        }});
 
         final Iterator<Character> absBucketItr = absBuckets.iterator();
-        RiverEvalLookup.traverse(new Visitor() {public void traverse(
+        RiverEvalLookup.traverse(new RiverEvalLookup.AbsVisitor() {public void traverse(
                      long river, short strength, byte count) {
             char absoluteRiverBucket =
                     absBucketItr.next();
@@ -242,7 +241,7 @@ public class BucketOdds implements IBucketOdds
 
         LOG.debug("computing all strengths");
         final Progress progress = new Progress(RiverLookup.CANONS);
-        RiverEvalLookup.traverse(new Visitor() {public void traverse(
+        RiverEvalLookup.traverse(new RiverEvalLookup.AbsVisitor() {public void traverse(
                      long river, short strength, byte count) {
             char absoluteRiverBucket =
                     AbsBucketStore.bucketOf(tree, decoder, river);

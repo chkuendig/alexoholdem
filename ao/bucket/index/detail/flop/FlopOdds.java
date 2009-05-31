@@ -83,7 +83,7 @@ public class FlopOdds
     //--------------------------------------------------------------------
     static
     {
-        LOG.debug("initializing TurnOdds");
+        LOG.debug("initializing");
 
         int[] wins = PersistentInts.retrieve(WIN_FILE);
         if (wins == null)

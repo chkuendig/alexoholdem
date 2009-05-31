@@ -11,7 +11,6 @@ import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedList;
 import ao.util.data.primitive.IntList;
-import ao.util.misc.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
@@ -236,13 +235,13 @@ public class BucketTreeImpl implements BucketTree
                             round().previous(),
                             parentCanons());
         }
-        public void details(Traverser<CanonDetail> visit)
-        {
-            DetailLookup.lookupSub(
-                    round().previous(),
-                    parentCanons(),
-                    visit);
-        }
+//        public void details(Traverser<CanonDetail> visit)
+//        {
+//            DetailLookup.lookupSub(
+//                    round().previous(),
+//                    parentCanons(),
+//                    visit);
+//        }
 
         public byte bucketCount()
         {

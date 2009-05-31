@@ -47,7 +47,7 @@ public class Odds
     //--------------------------------------------------------------------
     public Odds plus(Odds addend)
     {
-//        return (winPercent() < between.winPercent())
+//        return (nonLossPercent() < between.nonLossPercent())
 //                ? this
 //                : between;
             return new Odds(WIN   + addend.WIN,
@@ -61,10 +61,10 @@ public class Odds
     {
         return WIN;
     }
-    public double winPercent()
-    {
-        return ((double) WIN) / (WIN + LOSE + SPLIT);
-    }
+//    public double winPercent()
+//    {
+//        return ((double) WIN) / (WIN + LOSE + SPLIT);
+//    }
 
 
     //--------------------------------------------------------------------
@@ -72,10 +72,10 @@ public class Odds
     {
         return LOSE;
     }
-    public double losePercent()
-    {
-        return ((double) LOSE) / (WIN + LOSE + SPLIT);
-    }
+//    public double losePercent()
+//    {
+//        return ((double) LOSE) / (WIN + LOSE + SPLIT);
+//    }
 
 
     //--------------------------------------------------------------------
@@ -83,10 +83,10 @@ public class Odds
     {
         return SPLIT;
     }
-    public double splitPercent()
-    {
-        return ((double) SPLIT) / (WIN + LOSE + SPLIT);
-    }
+//    public double splitPercent()
+//    {
+//        return ((double) SPLIT) / (WIN + LOSE + SPLIT);
+//    }
 
 
     //--------------------------------------------------------------------
@@ -104,6 +104,7 @@ public class Odds
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
+
     public static class Binding extends GenericBinding<Odds> {
         public Odds read(TupleInput tupleInput) {
             return new Odds(tupleInput.readLong(),
@@ -123,7 +124,7 @@ public class Odds
     @Override public String toString()
     {
 //        return "[win: "    + WIN   +
-//                " (" + Math.round(winPercent()  * 100) + ")" +
+//                " (" + Math.round(nonLossPercent()  * 100) + ")" +
 //               ", lose: "  + LOSE  +
 //                " (" + Math.round(losePercent() * 100) + ")" +
 //               ", split: " + SPLIT +
