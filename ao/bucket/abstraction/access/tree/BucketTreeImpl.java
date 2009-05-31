@@ -58,7 +58,7 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public byte[] maxBuckets() {
+    public byte[] maxBucketBranch() {
         return new byte[]{
                 holes.maxBuckets(),  flops.maxBuckets(),
                 turns.maxBuckets(), rivers.maxBuckets()};

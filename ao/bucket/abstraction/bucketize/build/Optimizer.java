@@ -3,6 +3,8 @@ package ao.bucket.abstraction.bucketize.build;
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 
+import java.util.Arrays;
+
 /**
  * User: Cross Creek Marina
  * Date: 24-May-2009
@@ -17,8 +19,8 @@ public class Optimizer
 //                 {4, 3, 2},
 //                 {5, 4, 3.1}};
 
-        int holes        = 8192;
-        int flopsPerHole = 8;
+        int holes        = 5;
+        int flopsPerHole = 5;
 
         double errors[][] = new double[holes][flopsPerHole * 2];
         for (int i = 0; i < errors.length; i++)
@@ -33,12 +35,16 @@ public class Optimizer
         byte solution[] = optimize(errors, holes * flopsPerHole);
         System.out.println(
                 "took " + (System.currentTimeMillis() - before));
-//        System.out.println(Arrays.toString(solution));
-
+        System.out.println(Arrays.toString(solution));
     }
 
 
     //-------------------------------------------------------------------
+    // Uses pure integer programming to optimize the best combination
+    //  of sub-bucket counts.  I.e. minimizing the sum of errors.
+    //
+    // the contents of the output are in the form
+    //   1 .. n (i.e. one based)
     public static byte[] optimize(
             int    parentBucketReachPaths[],
             byte   subBucketCounts       [][],
@@ -49,7 +55,7 @@ public class Optimizer
         try
         {
             solver = LpSolve.makeLp(0, 0);
-//            solver.setVerbose(LpSolve.IMPORTANT);
+            solver.setVerbose(LpSolve.IMPORTANT);
 
             return doOptimize(solver,
                               parentBucketReachPaths,

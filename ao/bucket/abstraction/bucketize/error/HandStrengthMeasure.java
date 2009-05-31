@@ -19,6 +19,7 @@ public class HandStrengthMeasure
                 IndexedStrengthList.strengths(branch);
 
         double error = 0;
+        int    total = 0;
         for (byte bucket = 0; bucket < nBuckets; bucket++)
         {
             double sum   = 0;
@@ -27,7 +28,7 @@ public class HandStrengthMeasure
             {
                 if (bucket != branch.get(details.index(i))) continue;
 
-                sum   += details.strength(i) *
+                sum   += details.strengthNorm(i) *
                          details.represents(i);
                 count += details.represents(i);
             }
@@ -37,11 +38,12 @@ public class HandStrengthMeasure
             {
                 if (bucket != branch.get(details.index(i))) continue;
 
-                error += Math.pow(details.strength(i) - mean, 2) *
+                error += Math.pow(details.strengthNorm(i) - mean, 2) *
                          details.represents(i);
+                total += details.represents(i);
             }
         }
 
-        return Math.sqrt(error);
+        return Math.sqrt(error / total);
     }
 }

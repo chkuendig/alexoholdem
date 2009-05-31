@@ -91,7 +91,7 @@ public class KMeansBucketizer implements Bucketizer
             byte                clusters[])
     {
         for (int i = 0; i < strengths.length(); i++) {
-            double strength = strengths.strength(i);
+            double strength = strengths.strengthNorm(i);
 
             byte   leastDistIndex = -1;
             double leastDistance  = Double.POSITIVE_INFINITY;
@@ -126,7 +126,7 @@ public class KMeansBucketizer implements Bucketizer
             for (int j = 0; j < clusters.length; j++) {
                 if (clusters[j] != i) continue;
 
-                sum += details.strength(j) *
+                sum += details.strengthNorm(j) *
                        details.represents(j);
                 count += details.represents(j);
             }
@@ -174,8 +174,8 @@ public class KMeansBucketizer implements Bucketizer
                 for (int j = 0; j < k; j++) {
                     if (i == means[j]) continue next_point;
 
-                    double dist = Math.abs(details.strength(i) -
-                                           details.strength(means[j]));
+                    double dist = Math.abs(details.strengthNorm(i) -
+                                           details.strengthNorm(means[j]));
                     if (nearestCluster > dist) {
                         nearestCluster = dist;
                     }
@@ -184,7 +184,8 @@ public class KMeansBucketizer implements Bucketizer
                 // Each point x is chosen with
                 //  probability proportional to D(x)^2.
                 double chance = rand.nextDouble()
-                        * nearestCluster * nearestCluster;
+                        * nearestCluster * nearestCluster
+                        * details.represents(i);
                 if (maxChance < chance) {
                     maxChance      = chance;
                     maxChanceIndex = i;
@@ -197,7 +198,7 @@ public class KMeansBucketizer implements Bucketizer
 
         double meanVals[] = new double[ means.length ];
         for (int i = 0; i < means.length; i++) {
-            meanVals[ i ] = details.strength( means[i] );
+            meanVals[ i ] = details.strengthNorm( means[i] );
         }
         return meanVals;
     }
