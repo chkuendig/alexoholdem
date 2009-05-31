@@ -11,14 +11,17 @@ public class CanonRiverDetail implements CanonDetail
     //--------------------------------------------------------------------
     private final double STRENGTH;
     private final long   INDEX;
+    private final byte   REPRESENTS;
 
 
     //--------------------------------------------------------------------
     public CanonRiverDetail(double strength,
-                            long   index)
+                            long   index,
+                            byte   represents)
     {
-        STRENGTH = strength;
-        INDEX    = index;
+        STRENGTH   = strength;
+        INDEX      = index;
+        REPRESENTS = represents;
     }
 
 
@@ -31,5 +34,10 @@ public class CanonRiverDetail implements CanonDetail
     public long canonIndex()
     {
         return INDEX;
+    }
+
+    public byte represents()
+    {
+        return REPRESENTS;
     }
 }

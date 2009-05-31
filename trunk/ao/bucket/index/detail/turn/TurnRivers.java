@@ -125,10 +125,10 @@ public class TurnRivers
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        System.out.println(
-                rangeOf(TurnLookup.CANONS - 1));
-        System.out.println(
-                turnFor(RiverLookup.CANONS - 1));
+//        System.out.println(
+//                rangeOf(TurnLookup.CANONS - 1));
+//        System.out.println(
+//                turnFor(RiverLookup.CANONS - 1));
 
 //        for (long river = 0; river < RiverLookup.CANONS; river++)
 //        {

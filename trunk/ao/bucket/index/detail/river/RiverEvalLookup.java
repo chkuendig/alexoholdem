@@ -39,7 +39,7 @@ public class RiverEvalLookup
 //        final long   start      = System.currentTimeMillis();
 //        final long[] totalCount = {0};
 //        final long[] seen       = new long[ 25 ];
-//        RiverEvalLookup.traverse(new Visitor() {
+//        RiverEvalLookup.traverse(new AbsVisitor() {
 //            public void traverse(
 //                    long canonIndex, short strength, byte count) {
 //                seen[ count ]++;
@@ -61,7 +61,9 @@ public class RiverEvalLookup
 //                new CanonRange[]{TurnDetails.lookup(TurnLookup.CANONS - 1).range()},
                 new VsRandomVisitor() {
                     public void traverse(
-                            long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                         char strAsChar = (char)(
                                 Character.MAX_VALUE * strengthVsRandom);
@@ -280,7 +282,9 @@ public class RiverEvalLookup
                          - allowRivers[from].fromCanonIndex() + 1,
                  new VsRandomVisitor() {
              public void traverse(
-                     long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                  while (allowRivers[ nextAllowed[0] ]
                           .upToAndIncluding() < canonIndex) {
@@ -290,7 +294,7 @@ public class RiverEvalLookup
                  if (allowRivers[ nextAllowed[0] ]
                          .contains(canonIndex)) {
                      traverser.traverse(
-                             canonIndex, strengthVsRandom);
+                             canonIndex, strengthVsRandom, represents);
                  }
              }});
     }
@@ -320,6 +324,10 @@ public class RiverEvalLookup
                 new DataInputStream(new BufferedInputStream(
                         new FileInputStream(winProbF),
                         1024 * 1024));
+        DataInputStream strRepIn =
+                new DataInputStream(new BufferedInputStream(
+                        new FileInputStream(strRepF),
+                        1024 * 1024));
 
         if (offset > 0) {
             long strSkip = offset * (Character.SIZE / 8);
@@ -329,11 +337,13 @@ public class RiverEvalLookup
         }
 
         for (long i = 0; i < count; i++) {
-            long river  = offset + i;
-            char strRep = winProbIn.readChar();
+            long river   = offset + i;
+            char winProb = winProbIn.readChar();
+            char strRep  = strRepIn.readChar();
             traverser.traverse(
                     river,
-                    decodeWinProb(strRep));
+                    decodeWinProb(winProb),
+                    decodeRep(strRep));
         }
 
         winProbIn.close();
@@ -343,13 +353,13 @@ public class RiverEvalLookup
     //--------------------------------------------------------------------
     public static void traverse(
             final LongBitSet allowRivers,
-            final Visitor    traverser)
+            final AbsVisitor traverser)
     {
         for (CanonRange r : partitionAllowed(allowRivers))
         {
             traverse(r.fromCanonIndex(),
                      r.canonIndexCount(),
-                     new Visitor() {
+                     new AbsVisitor() {
                  public void traverse(
                          long canonIndex, short strength, byte count) {
                      if (allowRivers.get(canonIndex)) {
@@ -359,14 +369,14 @@ public class RiverEvalLookup
         }
     }
 
-    public static void traverse(Visitor traverser)
+    public static void traverse(AbsVisitor traverser)
     {
         traverse(0, RiverLookup.CANONS, traverser);
     }
     public static void traverse(
             long               offset,
             long               count,
-            Visitor traverser)
+            AbsVisitor traverser)
     {
         try {
             doTraverse(offset, count, traverser);
@@ -379,9 +389,9 @@ public class RiverEvalLookup
     //   http://nadeausoftware.com/articles/
     //      2008/02/java_tip_how_read_files_quickly
     private static void doTraverse(
-            long               offset,
-            long               count,
-            Visitor traverser) throws IOException
+            long       offset,
+            long       count,
+            AbsVisitor traverser) throws IOException
     {
         DataInputStream strRepIn =
                 new DataInputStream(new BufferedInputStream(
@@ -469,7 +479,7 @@ public class RiverEvalLookup
 
 
     //--------------------------------------------------------------------
-    public static interface Visitor
+    public static interface AbsVisitor
     {
         public void traverse(
                 long  canonIndex,
@@ -480,6 +490,7 @@ public class RiverEvalLookup
     {
         public void traverse(
                 long   canonIndex,
-                double strengthVsRandom);
+                double strengthVsRandom,
+                byte   represents);
     }
 }

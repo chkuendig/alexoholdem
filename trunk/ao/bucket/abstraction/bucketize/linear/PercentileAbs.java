@@ -96,7 +96,9 @@ public class PercentileAbs
                 toBucketize,
                 new RiverEvalLookup.VsRandomVisitor() {
                     public void traverse(
-                            long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                         rivers[ nextIndex[0]++ ] = new IndexedStrength(
                                 canonIndex, strengthVsRandom);

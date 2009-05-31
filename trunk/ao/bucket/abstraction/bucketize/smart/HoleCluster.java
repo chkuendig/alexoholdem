@@ -216,7 +216,7 @@ public class HoleCluster
 //        public float asFloat()
 //        {
 //            return (float) Math.sqrt(
-//                    Math.pow(A.winPercent()   - B.winPercent(),   2) +
+//                    Math.pow(A.nonLossPercent()   - B.nonLossPercent(),   2) +
 //                    Math.pow(A.losePercent()  - B.losePercent(),  2) +
 //                    Math.pow(A.splitPercent() - B.splitPercent(), 2));
 //        }

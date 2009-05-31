@@ -51,7 +51,7 @@ public class MathBot extends AbstractPlayer
                 (toCall) /
                 (toCall + state.pot().smallBets());
 
-//        if (odds.winPercent() <= potOdds)
+//        if (odds.nonLossPercent() <= potOdds)
 //        {
 //            System.out.println(
 //                "odds: " + odds +
@@ -64,7 +64,7 @@ public class MathBot extends AbstractPlayer
         prevCards = cards;
 
         return state.reify(
-                (odds.winPercent() > potOdds)
+                (odds.strengthVsRandom() > potOdds)
                 ? FallbackAction.RAISE_OR_CALL
                 : FallbackAction.CHECK_OR_CALL);
     }

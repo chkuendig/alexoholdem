@@ -4,6 +4,8 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
+import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
 
 import java.io.File;
@@ -36,20 +38,17 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             char numRiverBuckets)
     {
         BucketTree tree = new BucketTreeImpl( dir );
+        if (tree.isFlushed()) return tree;
 
-        if (! tree.isFlushed())
-        {
-            bucketizeHolesDown(
-                    tree.holes(),
-                    new char[]{(char)
-                          numHoleBuckets,
-                          numFlopBuckets,
-                          numTurnBuckets,
-                          numRiverBuckets},
-                    tree.maxBuckets());
-            tree.flush();
-        }
-
+        bucketizeHolesDown(
+                tree.holes(),
+                new char[]{(char)
+                      numHoleBuckets,
+                      numFlopBuckets,
+                      numTurnBuckets,
+                      numRiverBuckets},
+                tree.maxBuckets());
+        tree.flush();
         return tree;
     }
 
@@ -108,40 +107,59 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             char                    nBuckets,
             byte                    nTrials)
     {
-        double errors[][]  = new double[ branches.size() ]
-                                       [ nTrials         ];
+        double errors[][]   = new double[ branches.size() ]
+                                        [ nTrials         ];
+        int   parentPaths[] = parethReachPaths(branches);
 
         HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
         for (int branchIndex = 0;
                  branchIndex < branches.size();
-                 branchIndex++)
-        {
-            BucketTree.Branch turn = branches.get(branchIndex);
+                 branchIndex++) {
+            BucketTree.Branch branch = branches.get(branchIndex);
 
-            for (byte nBucketTrial = 1;
-                      nBucketTrial <= nTrials;
+            for (byte nBucketTrial = 0;
+                      nBucketTrial < nTrials;
                       nBucketTrial++) {
-                BUCKETIZER.bucketize(turn, nBucketTrial);
-                errors[branchIndex][nBucketTrial - 1] =
-                        errorMeasure.error(turn, nBucketTrial);
+                BUCKETIZER.bucketize(branch, (byte)(nBucketTrial + 1));
+                errors[branchIndex][nBucketTrial] =
+                        errorMeasure.error(
+                                branch, (byte)(nBucketTrial + 1));
             }
         }
 
-        return optimize(errors, nBuckets);
+        return Optimizer.optimize(parentPaths, errors, nBuckets);
     }
 
-
-    //--------------------------------------------------------------------
-    // Uses pure integer proramming to optimize the best combination
-    //  of sub-bucket counts.  I.e. minimizing the sum of errors.
-    //
-    // the contents of the output are in the form
-    //   1 .. n (i.e. one based)
-    private byte[] optimize(
-            double errors[][],
-            char   numBuckets)
+    private int[] parethReachPaths(List<BucketTree.Branch> branches)
     {
-        
-        return null;
+        int parentPaths[] = new int[ branches.size() ];
+
+        for (int i = 0, branchesSize = branches.size(); i < branchesSize; i++)
+        {
+            BucketTree.Branch branch = branches.get(i);
+
+            for (CanonDetail detail : DetailLookup.lookupPreRiver(
+                                        branch.round().previous(),
+                                        branch.parentCanons())) {
+                parentPaths[ i ] += detail.represents();
+            }
+        }
+
+        return parentPaths;
     }
+
+
+//    //--------------------------------------------------------------------
+//    // Uses pure integer proramming to optimize the best combination
+//    //  of sub-bucket counts.  I.e. minimizing the sum of errors.
+//    //
+//    // the contents of the output are in the form
+//    //   1 .. n (i.e. one based)
+//    private byte[] optimize(
+//            double errors[][],
+//            char   numBuckets)
+//    {
+//
+//        return null;
+//    }
 }

@@ -10,6 +10,7 @@ import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.HandEnum;
+import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.util.io.Dir;
 import ao.util.misc.Filter;
 import ao.util.misc.Traverser;
@@ -33,6 +34,33 @@ public class TurnDetails
             Dir.get("lookup/canon/detail/turn/");
 
     private TurnDetails() {}
+
+
+    //--------------------------------------------------------------------
+    public static void main(String[] args)
+    {
+        HandEnum.uniqueTurns(
+                new Traverser<Turn>() {
+            public void traverse(Turn turn) {
+                int index = turn.canonIndex();
+                CanonTurnDetail details = TurnDetails.lookup(index);
+
+                if (details.canonIndex() != index) {
+                    System.out.println("TurnDetailFlyweight index error");
+                }
+                if (((char)(details.strength() * Character.MAX_VALUE)) !=
+                        ((char)(TurnOdds.lookup(index).strengthVsRandom()
+                                  * Character.MAX_VALUE))) {
+                    System.out.println(
+                            "TurnDetailFlyweight strength error: " +
+                            details.strength() + " vs " +
+                            TurnOdds.lookup(index).strengthVsRandom());
+                }
+
+//                System.out.println(
+//                        details.represents());
+            }});
+    }
 
 
     //--------------------------------------------------------------------
@@ -64,18 +92,21 @@ public class TurnDetails
     {
         LOG.debug("computing details");
 
-        final TurnDetailFlyweight fw = new TurnDetailFlyweight();
-        HandEnum.uniqueTurns(
+        final TurnDetailFlyweight flyweight = new TurnDetailFlyweight();
+        HandEnum.turns(
+                new PermisiveFilter<CanonHole>(),
+                new PermisiveFilter<Flop>(),
+                new PermisiveFilter<Turn>(), 
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
                 int index = turn.canonIndex();
-//                if (! fw.isInitiated( index )) {
-                    fw.init(turn, TurnOdds.lookup(index));
-//                }
-//                fw.incrementRepresentation(index);
+                if (! flyweight.isInitiated( index )) {
+                    flyweight.initiate(turn, TurnOdds.lookup(index));
+                }
+                flyweight.incrementRepresentation(index);
             }});
-        computeRiverInfo( fw );
-        return fw;
+        computeRiverInfo( flyweight );
+        return flyweight;
     }
 
 

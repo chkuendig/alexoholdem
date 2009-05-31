@@ -36,8 +36,8 @@ public class IndexedStrengthList
                 new CanonRange[ branch.parentCanons().length ];
         for (int i = 0; i < branch.parentCanons().length; i++) {
 
-            int canonTurn = branch.parentCanons()[i];
-            toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
+            int canonIndex = branch.parentCanons()[i];
+            toBucketize[ i ] = TurnDetails.lookup(canonIndex).range();
             nRivers += toBucketize[ i ].canonIndexCount();
         }
         Arrays.sort(toBucketize);
@@ -49,10 +49,14 @@ public class IndexedStrengthList
                 toBucketize,
                 new RiverEvalLookup.VsRandomVisitor() {
                     public void traverse(
-                            long canonIndex, double strengthVsRandom) {
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
 
                         rivers.set(nextIndex[0]++,
-                                   canonIndex, strengthVsRandom);
+                                   canonIndex,
+                                   strengthVsRandom,
+                                   represents);
                     }
                 });
 
@@ -69,7 +73,8 @@ public class IndexedStrengthList
         for (int i = 0; i < details.length; i++) {
             strengths.set(i,
                           details[ i ].canonIndex(),
-                          details[ i ].strength());
+                          details[ i ].strength(),
+                          details[ i ].represents());
         }
 
         return strengths;
@@ -77,14 +82,16 @@ public class IndexedStrengthList
 
 
     //--------------------------------------------------------------------
-    private final int  index   [];
-    private final char strength[];
+    private final int  index     [];
+    private final char strength  [];
+    private final byte represents[];
 
 
     //--------------------------------------------------------------------
     public IndexedStrengthList(int length) {
-        index    = new int [ length ];
-        strength = new char[ length ];
+        index      = new int [ length ];
+        strength   = new char[ length ];
+        represents = new byte[ length ];
     }
 
 
@@ -95,9 +102,13 @@ public class IndexedStrengthList
 
 
     //--------------------------------------------------------------------
-    public void set(int i, long canonIndex, double handStrength) {
-        index   [i] = (int) canonIndex;
-        strength[i] = (char)(Character.MAX_VALUE * handStrength);
+    public void set(int    i,
+                    long   canonIndex,
+                    double handStrength,
+                    byte   sequenceRepresents) {
+        index     [i] = (int) canonIndex;
+        strength  [i] = (char)(Character.MAX_VALUE * handStrength);
+        represents[i] = sequenceRepresents;
     }
 
 
@@ -109,5 +120,10 @@ public class IndexedStrengthList
     public char strength(int i)
     {
         return strength[ i ];
+    }
+
+    public byte represents(int i)
+    {
+        return represents[ i ];
     }
 }

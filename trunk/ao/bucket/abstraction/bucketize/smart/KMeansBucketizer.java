@@ -114,7 +114,7 @@ public class KMeansBucketizer implements Bucketizer
     //   observations in the cluster.
     private double updateStep(
             double              means[],
-            IndexedStrengthList strengths,
+            IndexedStrengthList details,
             byte                clusters[])
     {
         double maxDelta = 0;
@@ -126,8 +126,9 @@ public class KMeansBucketizer implements Bucketizer
             for (int j = 0; j < clusters.length; j++) {
                 if (clusters[j] != i) continue;
 
-                sum += strengths.strength(j);
-                count++;
+                sum += details.strength(j) *
+                       details.represents(j);
+                count += details.represents(j);
             }
 
             double newMean = sum / count;

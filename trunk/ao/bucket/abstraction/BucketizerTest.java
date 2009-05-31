@@ -35,19 +35,19 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        byte nHoleBuckets  = 5;
-//        char nFlopBuckets  = 25;
-//        char nTurnBuckets  = 125;
-//        char nRiverBuckets = 625;
+        byte nHoleBuckets  = 3;
+        char nFlopBuckets  = 9;
+        char nTurnBuckets  = 27;
+        char nRiverBuckets = 81;
 //        byte nHoleBuckets  = 10;
 //        char nFlopBuckets  = 200;
 //        char nTurnBuckets  = 1000;
 //        char nRiverBuckets = 5000;
 //        byte nHoleBuckets  = 20;
-        byte nHoleBuckets  = 11;
-        char nFlopBuckets  = 275;
-        char nTurnBuckets  = 1650;
-        char nRiverBuckets = 9900;
+//        byte nHoleBuckets  = 11;
+//        char nFlopBuckets  = 275;
+//        char nTurnBuckets  = 1650;
+//        char nRiverBuckets = 9900;
 
         if (args.length > 1)
         {
@@ -64,9 +64,9 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-//        abs.tree();
-//        abs.odds();
-//        abs.sequence();
+        abs.tree();
+        abs.odds();
+        abs.sequence();
 
 //        Rand.randomize();
         computeCfr(abs);
@@ -78,10 +78,10 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     private static HoldemAbstraction abstractHolem(
             Bucketizer bucketizer,
-            byte nHoleBuckets,
-            char nFlopBuckets,
-            char nTurnBuckets,
-            char nRiverBuckets) throws IOException
+            byte       nHoleBuckets,
+            char       nFlopBuckets,
+            char       nTurnBuckets,
+            char       nRiverBuckets) throws IOException
     {
         return new HoldemAbstraction(
                         bucketizer,
@@ -153,7 +153,7 @@ public class BucketizerTest
         System.out.println("computeCfr");
 
         Stopwatch       t      = new Stopwatch();
-        InfoPart        info   = abs.infoPart("serial", false, false);
+        InfoPart        info   = abs.infoPart("serial", false, true);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
 //        InfoPart        info   = abs.infoPart("mono", false);
@@ -161,11 +161,11 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-//        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =        290 * 1000 * 1000;
-//        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
+//        long offset     =        290 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =   50 * 1000 * 1000;
+//        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
+        int  milestone  =   10 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);

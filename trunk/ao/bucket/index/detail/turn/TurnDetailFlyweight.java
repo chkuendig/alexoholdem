@@ -9,6 +9,7 @@ import ao.bucket.index.detail.example.ExampleLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
 import ao.util.math.Calc;
+import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentInts;
 
@@ -22,7 +23,7 @@ public class TurnDetailFlyweight
 {
     //--------------------------------------------------------------------
 //    private static final String F_EXAMPLE     = "ex.byte";
-//    private static final String F_REPRESENTS  = "rep.byte";
+    private static final String F_REPRESENTS  = "rep.byte";
     private static final String F_STRENGTH    = "str.char";
     private static final String F_FIRST_RIVER = "first_river.int";
 //    private static final String F_RIVER_COUNT = "rcnt.byte";
@@ -32,12 +33,12 @@ public class TurnDetailFlyweight
     public static void persist(TurnDetailFlyweight fw, File toDir)
     {
 //        File fExample    = new File(toDir, F_EXAMPLE);
-//        File fRepresent  = new File(toDir, F_REPRESENTS);
+        File fRepresent  = new File(toDir, F_REPRESENTS);
         File fStrength   = new File(toDir, F_STRENGTH);
         File fFirstRiver = new File(toDir, F_FIRST_RIVER);
 
 //        PersistentBytes .persist(fw.EXAMPLE    , fExample);
-//        PersistentBytes .persist(fw.REPRESENT  , fRepresent);
+        PersistentBytes.persist(fw.REPRESENT  , fRepresent);
         PersistentChars.persist(fw.STRENGTH   , fStrength);
         PersistentInts .persist(fw.FIRST_RIVER, fFirstRiver);
     }
@@ -45,7 +46,7 @@ public class TurnDetailFlyweight
     public static TurnDetailFlyweight retrieve(File fromDir)
     {
 //        File fExample    = new File(fromDir, F_EXAMPLE);
-//        File fRepresent  = new File(fromDir, F_REPRESENTS);
+        File fRepresent  = new File(fromDir, F_REPRESENTS);
         File fStrength   = new File(fromDir, F_STRENGTH);
         File fFirstRiver = new File(fromDir, F_FIRST_RIVER);
 
@@ -53,7 +54,7 @@ public class TurnDetailFlyweight
 
         return new TurnDetailFlyweight(
 //                PersistentBytes .retrieve(fExample),
-//                PersistentBytes .retrieve(fRepresent),
+                PersistentBytes .retrieve(fRepresent),
                 PersistentChars.retrieve(fStrength),
                 PersistentInts .retrieve(fFirstRiver)
         );
@@ -62,7 +63,7 @@ public class TurnDetailFlyweight
 
     //--------------------------------------------------------------------
 //    private final byte[]  EXAMPLE;
-//    private final byte[]  REPRESENT;
+    private final byte[]  REPRESENT;
     private final char[] STRENGTH;
     private final int [] FIRST_RIVER;
 
@@ -71,19 +72,19 @@ public class TurnDetailFlyweight
     public TurnDetailFlyweight()
     {
 //        EXAMPLE     = new byte [ TurnLookup.CANONS];
-//        REPRESENT   = new byte [ TurnLookup.CANONS];
+        REPRESENT   = new byte [ TurnLookup.CANONS];
         STRENGTH    = new char[ TurnLookup.CANONS ];
         FIRST_RIVER = new int [ TurnLookup.CANONS ];
     }
     private TurnDetailFlyweight(
 //            byte[]  example,
-//            byte[]  represent,
+            byte[]  represent,
             char[] strength,
             int [] firstRiver
             )
     {
 //        EXAMPLE     = example;
-//        REPRESENT   = represent;
+        REPRESENT   = represent;
         STRENGTH    = strength;
         FIRST_RIVER = firstRiver;
     }
@@ -95,14 +96,15 @@ public class TurnDetailFlyweight
         return new CanonTurnDetail(canonIndex);
     }
 
-//    public boolean isInitiated(int canonIndex)
-//    {
-//        return STRENGTH[ canonIndex ] == 0;
-//    }
+    // false positives are OK
+    public boolean isInitiated(int canonIndex)
+    {
+        return STRENGTH[ canonIndex ] != 0;
+    }
 
 
     //--------------------------------------------------------------------
-    public void init(Turn turn, Odds odds)
+    public void initiate(Turn turn, Odds odds)
     {
         int canonIndex = turn.canonIndex();
 
@@ -114,16 +116,15 @@ public class TurnDetailFlyweight
 
     public void setRiverInfo(
             int  canonIndex,
-            long firstRiver
-        )
+            long firstRiver)
     {
         FIRST_RIVER[ canonIndex ] = (int) firstRiver;
     }
 
-//    public void incrementRepresentation(int canonIndex)
-//    {
-//        REPRESENT[ canonIndex ]++;
-//    }
+    public void incrementRepresentation(int canonIndex)
+    {
+        REPRESENT[ canonIndex ]++;
+    }
 
 
     //--------------------------------------------------------------------
@@ -135,7 +136,6 @@ public class TurnDetailFlyweight
     {
         return (double) strength / Character.MAX_VALUE;
     }
-
 
 
     //--------------------------------------------------------------------
@@ -162,10 +162,10 @@ public class TurnDetailFlyweight
             return ExampleLookup.turn( CANON_INDEX );
 //            return Card.VALUES[EXAMPLE[ CANON_INDEX ]];
         }
-//        public byte represents()
-//        {
-//            return REPRESENT[ CANON_INDEX ];
-//        }
+        public byte represents()
+        {
+            return REPRESENT[ CANON_INDEX ];
+        }
         public double strength()
         {
             return strengthToDouble(STRENGTH [ CANON_INDEX ]);
@@ -212,5 +212,4 @@ public class TurnDetailFlyweight
             return CANON_INDEX;
         }
     }
-
 }
