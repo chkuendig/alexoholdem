@@ -133,18 +133,17 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
-            BucketTree.Branch   branch   = branches.get(branchIndex);
-            IndexedStrengthList strenths =
+            BucketTree.Branch   branch    = branches.get(branchIndex);
+            IndexedStrengthList strengths =
                     IndexedStrengthList.strengths(branch);
 
             for (byte nBucketTrial = 0;
                       nBucketTrial < nTrials;
                       nBucketTrial++) {
                 BUCKETIZER.bucketize(
-                        branch, strenths, (byte)(nBucketTrial + 1));
-                errors[branchIndex][nBucketTrial] =
-                        errorMeasure.error(
-                                branch,   (byte)(nBucketTrial + 1));
+                        branch, strengths, (byte)(nBucketTrial + 1));
+                errors[branchIndex][nBucketTrial] = errorMeasure.error(
+                        branch, strengths, (byte)(nBucketTrial + 1));
             }
         }
 

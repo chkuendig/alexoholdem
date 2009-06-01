@@ -17,7 +17,13 @@ public class HandStrengthMeasure
     {
         IndexedStrengthList details =
                 IndexedStrengthList.strengths(branch);
-
+        return error(branch, details, nBuckets);
+    }
+    public double error(
+            BucketTree.Branch   branch,
+            IndexedStrengthList details,
+            byte                nBuckets)
+    {
         double error = 0;
         int    total = 0;
         for (byte bucket = 0; bucket < nBuckets; bucket++)

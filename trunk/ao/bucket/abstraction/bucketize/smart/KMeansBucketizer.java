@@ -57,8 +57,8 @@ public class KMeansBucketizer implements Bucketizer
         for (int i = 0; i < BEST_OF; i++) {
             rand.setSeed(seeds[i]);
 
-            bucketize(branch, details, numBuckets, rand);
-            double err = errorMeasure.error(branch, numBuckets);
+            bucketize(branch, details, numBuckets, rand, false);
+            double err = errorMeasure.error(branch, details, numBuckets);
             if (err < minErr) {
                 minErr      = err;
                 minErrIndex = i;
@@ -69,16 +69,17 @@ public class KMeansBucketizer implements Bucketizer
         }
 
         rand.setSeed(seeds[ minErrIndex ]);
-        bucketize(branch, details, numBuckets, rand);
-        LOG.debug("error range: " + minErr + " .. " + maxErr +
-                    " = " + ((maxErr - minErr) / maxErr) * 100 + "%");
+        bucketize(branch, details, numBuckets, rand, true);
+//        LOG.debug("error range: " + minErr + " .. " + maxErr +
+//                    " = " + ((maxErr - minErr) / maxErr) * 100 + "%");
         return true;
     }
     private void bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList strengths,
             byte                numBuckets,
-            MersenneTwisterFast rand)
+            MersenneTwisterFast rand,
+            boolean             verbose)
     {
         Stopwatch time    = new Stopwatch();
         double    means[] = initMeans(strengths, numBuckets, rand);
@@ -92,12 +93,13 @@ public class KMeansBucketizer implements Bucketizer
             counts[ clusters[i] ]++;
         }
 
+        if (! verbose) return;
         LOG.debug("bucketized " + branch.round() +
                   " into " + numBuckets +
                   "\t(p " + branch.parentCanons().length +
                   " \tc " + strengths.length()   +
                   ")\t" + Arrays.toString(counts) +
-                  "\ttook " + time);
+                  "\ttook " + time + " per " + BEST_OF + " trials");
     }
 
 
