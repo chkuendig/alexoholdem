@@ -2,6 +2,7 @@ package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysCallBot;
+import ao.ai.simple.AlwaysRaiseBot;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
@@ -39,15 +40,15 @@ public class BucketizerTest
 //        char nFlopBuckets  = 9;
 //        char nTurnBuckets  = 27;
 //        char nRiverBuckets = 81;
-        byte nHoleBuckets  = 5;
-        char nFlopBuckets  = 25;
-        char nTurnBuckets  = 125;
-        char nRiverBuckets = 625;
+//        byte nHoleBuckets  = 5;
+//        char nFlopBuckets  = 25;
+//        char nTurnBuckets  = 125;
+//        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 20;
-//        byte nHoleBuckets  = 11;
-//        char nFlopBuckets  = 275;
-//        char nTurnBuckets  = 1650;
-//        char nRiverBuckets = 9900;
+        byte nHoleBuckets  =    16;
+        char nFlopBuckets  =   640;
+        char nTurnBuckets  =  4480;
+        char nRiverBuckets = 31360;
 
         if (args.length > 1)
         {
@@ -66,12 +67,12 @@ public class BucketizerTest
         // preload
 //        abs.tree();
 //        abs.odds();
-        abs.sequence();
+//        abs.sequence();
 
 //        Rand.randomize();
         computeCfr(abs);
 //        tournament(abs);
-//        vsHuman(abs, null);
+//        vsHuman(abs, "serial");
     }
 
 
@@ -118,16 +119,16 @@ public class BucketizerTest
 //            put(Avatar.local("rc"), new RaiseCallBot());
 
 //            put(Avatar.local("cfr2"), new CfrBot2(abs));
-//            put(Avatar.local("raise"), new AlwaysRaiseBot());
+            put(Avatar.local("raise"), new AlwaysRaiseBot());
 //            put(Avatar.local("duane"), new DuaneBot());
 
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("cfr2 full"),
-                    new CfrBot2("serial", abs, false, false, false));
-            put(Avatar.local("cfr2 290"),
-                    new CfrBot2("serial_290", abs, false, false, false));
+            put(Avatar.local("cfr2 hd"),
+                    new CfrBot2("serial", abs, true, false, false));
+//            put(Avatar.local("cfr2 290"),
+//                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
         LOG.debug("tournament took " +
                   ((System.currentTimeMillis() - before) / 1000));
@@ -137,7 +138,8 @@ public class BucketizerTest
             final HoldemAbstraction abs,
             final String            name) throws IOException
     {
-        CfrBot2 bot = new CfrBot2(name, abs, false, true, false);
+//        CfrBot2 bot = new CfrBot2(name, abs, false, true, false);
+        CfrBot2 bot = new CfrBot2(name, abs, true, true, false);
         precompute(bot);
         HoleOdds.lookup(0);
 
@@ -161,11 +163,11 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-        long offset     = 0; //(125 + 560) * 1000 * 1000;
-//        long offset     =        290 * 1000 * 1000;
+//        long offset     = 0; //(125 + 560) * 1000 * 1000;
+        long offset     =  150 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 //        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =   10 * 1000 * 1000;
+        int  milestone  =   50 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
