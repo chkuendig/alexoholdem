@@ -9,14 +9,14 @@ import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
  */
 public interface Bucketizer
 {
-    // true if the bucketizing was changed from what
-    //   it previously was
-    public boolean bucketize(Branch branch,
-                             byte   numBuckets);
+    // returns the bucketing error, in some metric
+    public double bucketize(Branch branch,
+                            byte   numBuckets);
 
-    public boolean bucketize(Branch              branch,
-                             IndexedStrengthList details,
-                             byte                numBuckets);
+    // returns the error
+    public double bucketize(Branch              branch,
+                            IndexedStrengthList details,
+                            byte                numBuckets);
 
     public String id();
 }

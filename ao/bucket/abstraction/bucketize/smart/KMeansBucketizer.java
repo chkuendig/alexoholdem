@@ -26,7 +26,7 @@ public class KMeansBucketizer implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public boolean bucketize(
+    public double bucketize(
             BucketTree.Branch branch,
             byte              numBuckets)
     {
@@ -34,7 +34,7 @@ public class KMeansBucketizer implements Bucketizer
                 IndexedStrengthList.strengths(branch);
         return bucketize(branch, strengths, numBuckets);
     }
-    public boolean bucketize(
+    public double bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList details,
             byte                numBuckets)
@@ -72,7 +72,7 @@ public class KMeansBucketizer implements Bucketizer
         bucketize(branch, details, numBuckets, rand, true);
 //        LOG.debug("error range: " + minErr + " .. " + maxErr +
 //                    " = " + ((maxErr - minErr) / maxErr) * 100 + "%");
-        return true;
+        return minErr;
     }
     private void bucketize(
             BucketTree.Branch   branch,

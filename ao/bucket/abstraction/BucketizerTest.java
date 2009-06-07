@@ -64,8 +64,8 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-        abs.tree();
-        abs.odds();
+//        abs.tree();
+//        abs.odds();
         abs.sequence();
 
 //        Rand.randomize();

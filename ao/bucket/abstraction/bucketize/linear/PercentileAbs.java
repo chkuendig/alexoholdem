@@ -26,7 +26,7 @@ public class PercentileAbs implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public boolean bucketize(BucketTree.Branch branch, byte nBuckets)
+    public double bucketize(BucketTree.Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
 //        if (branch.isBucketized()) return false;
@@ -40,10 +40,10 @@ public class PercentileAbs implements Bucketizer
             bucketizeByList(branch, nBuckets);
         }
 
-        return true;
+        return -1;
     }
 
-    public boolean bucketize(
+    public double bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList details,
             byte                numBuckets) {

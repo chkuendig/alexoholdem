@@ -100,11 +100,15 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                                 maxBuckets[round.ordinal()]);
         LOG.debug("allocated: " + Arrays.toString(subBucketCounts));
 
+        StrengthListBuffer strengthListBuffer =
+                new StrengthListBuffer(prevBuckets);
+
         for (int prevBucketIndex = 0;
                  prevBucketIndex < prevBuckets.size();
                  prevBucketIndex++) {
             BUCKETIZER.bucketize(
                     prevBuckets.get(prevBucketIndex),
+                    strengthListBuffer.nextBranchStrengths(),
                     subBucketCounts[prevBucketIndex]);
         }
 
@@ -129,14 +133,19 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                                         [ nTrials         ];
         int   parentPaths[] = parentReachPaths(branches);
 
+        StrengthListBuffer strengthListBuffer =
+                new StrengthListBuffer(branches);
+
         HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
             BucketTree.Branch   branch    = branches.get(branchIndex);
             IndexedStrengthList strengths =
-                    IndexedStrengthList.strengths(branch);
+                    strengthListBuffer.nextBranchStrengths();
 
+            LOG.debug("allocating branch " + (branchIndex + 1) + " of " +
+                        branches.size());
             for (byte nBucketTrial = 0;
                       nBucketTrial < nTrials;
                       nBucketTrial++) {
