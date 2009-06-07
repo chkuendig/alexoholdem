@@ -214,7 +214,7 @@ public class RiverEvalLookup
                 if (represents[ index ] == 0) {
                     strengths[ index ] = river.eval();
                     winProbs [ index ] =
-                            encodeWinProb(river.vsRandom(odds));
+                            StrengthCode.encodeWinProb(river.vsRandom(odds));
                 }
 //                else if (strengths[ index ] != river.eval()) {
 //                    LOG.error("inconcistent " + river);
@@ -322,12 +322,10 @@ public class RiverEvalLookup
     {
         DataInputStream winProbIn =
                 new DataInputStream(new BufferedInputStream(
-                        new FileInputStream(winProbF),
-                        1024 * 1024));
+                        new FileInputStream(winProbF)));
         DataInputStream strRepIn =
                 new DataInputStream(new BufferedInputStream(
-                        new FileInputStream(strRepF),
-                        1024 * 1024));
+                        new FileInputStream(strRepF)));
 
         if (offset > 0) {
             long strSkip = offset * (Character.SIZE / 8);
@@ -342,7 +340,7 @@ public class RiverEvalLookup
             char strRep  = strRepIn.readChar();
             traverser.traverse(
                     river,
-                    decodeWinProb(winProb),
+                    StrengthCode.decodeWinProb(winProb),
                     decodeRep(strRep));
         }
 
@@ -468,13 +466,6 @@ public class RiverEvalLookup
     }
     private static short decoreStrength(char strRep) {
         return (short)(strRep >>> 3);
-    }
-
-    private static char encodeWinProb(double prob) {
-        return (char)(Character.MAX_VALUE * prob);
-    }
-    private static double decodeWinProb(char prob) {
-        return (double) prob / Character.MAX_VALUE;
     }
 
 

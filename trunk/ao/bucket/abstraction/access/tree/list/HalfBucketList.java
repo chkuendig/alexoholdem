@@ -73,7 +73,7 @@ public class HalfBucketList implements BucketList
 
     //--------------------------------------------------------------------
     public byte maxBuckets() {
-        return LO_MASK - 1;
+        return LO_MASK;
     }
 
 

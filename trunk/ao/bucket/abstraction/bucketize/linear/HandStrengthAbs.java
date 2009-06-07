@@ -26,7 +26,7 @@ public class HandStrengthAbs implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public boolean bucketize(Branch branch, byte nBuckets)
+    public double bucketize(Branch branch, byte nBuckets)
     {
         assert nBuckets > 0;
 //        if (branch.isBucketized()) return false;
@@ -40,10 +40,10 @@ public class HandStrengthAbs implements Bucketizer
             bucketizeByList(branch, nBuckets);
         }
 
-        return true;
+        return -1;
     }
 
-    public boolean bucketize(
+    public double bucketize(
             Branch              branch,
             IndexedStrengthList details,
             byte                numBuckets)

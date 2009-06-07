@@ -60,9 +60,7 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
             final char   numTurnBuckets,
             final char   numRiverBuckets)
     {
-        if (BUCKETIZER.bucketize(holes, numHoleBuckets)) {
-//            holes.flush();
-        }
+        BUCKETIZER.bucketize(holes, numHoleBuckets);
 
 //        HandEnum.holes(new PermisiveFilter<CanonHole>(),
 //                new Traverser<CanonHole>() {
@@ -100,10 +98,8 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
         char holeBucketIndex = 0;
         for (Branch flop : flops)
         {
-            if (BUCKETIZER.bucketize(
-                    flop, flopBucketCounts[ holeBucketIndex++ ])) {
-//                flop.flush();
-            }
+            BUCKETIZER.bucketize(
+                    flop, flopBucketCounts[ holeBucketIndex++ ]);
 
             turnBuckets += bucketizeTurnsDown(
                                 flop.subBranches(),
@@ -125,11 +121,9 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
         char flopBucketIndex = 0;
         for (Branch turn : turns)
         {
-            if (BUCKETIZER.bucketize(
+            BUCKETIZER.bucketize(
                     turn, turnBucketCounts[
-                            turnBucketOffset + (flopBucketIndex++) ])) {
-//                turn.flush();
-            }
+                            turnBucketOffset + (flopBucketIndex++) ]);
 
             riverBuckets += bucketizeRivers(
                                 turn.subBranches(),
@@ -149,11 +143,9 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
         char turnBucketIndex = 0;
         for (Branch river : rivers)
         {
-            if (BUCKETIZER.bucketize(
+            BUCKETIZER.bucketize(
                     river, riverBucketCounts[
-                            riverBucketOffset + (turnBucketIndex++) ])) {
-//                river.flush();
-            }
+                            riverBucketOffset + (turnBucketIndex++) ]);
         }
         return turnBucketIndex;
     }
