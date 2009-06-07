@@ -301,7 +301,10 @@ public class InfoMatrix
 
         //----------------------------------------------------------------
         @Override public String toString() {
-            return Arrays.toString( averageStrategy() ) + "\t" +
+            return Arrays.toString(new int[]{
+                    (int) (averageStrategy()[0] * 100),
+                    (int) (averageStrategy()[1] * 100),
+                    (int) (averageStrategy()[2] * 100)}) + "\t" +
                     (long) Math.ceil(
                             average(fIntent) +
                             average(cIntent) +

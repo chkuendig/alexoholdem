@@ -58,11 +58,11 @@ public class RiverLookup
         int prevIndex = -1;
         for (int i = 0; i < TurnLookup.CANONS; i++)
         {
-            if (i % 1000000 == 1)
-            {
-                System.out.print(".");
-                System.out.flush();
-            }
+//            if (i % 1000000 == 1)
+//            {
+//                System.out.print(".");
+//                System.out.flush();
+//            }
 
             int index = i / CHUNK;
             if (prevIndex != index)
@@ -74,7 +74,7 @@ public class RiverLookup
             offset += caseSet.size();
         }
 
-        System.out.println();
+//        System.out.println();
         return offsets;
     }
 }
