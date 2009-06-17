@@ -1,7 +1,6 @@
 package ao.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
-import ao.bucket.abstraction.BucketizerTest;
 import ao.bucket.abstraction.HoldemAbstraction;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
@@ -34,7 +33,7 @@ public class CfrBot2 extends AbstractPlayer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(BucketizerTest.class);
+            Logger.getLogger(CfrBot2.class);
 
 
     //--------------------------------------------------------------------

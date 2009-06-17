@@ -6,9 +6,8 @@ import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
-import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.dealer.DealerTest;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -107,12 +106,13 @@ public class BucketizerTest
 //            put(Avatar.local("cfr2"), bot);
 //        }});
 
-        bot.act(new State(Arrays.asList(
-                Avatar.local("a"), Avatar.local("a"))),
+        StateFlow sf = new StateFlow(Arrays.asList(
+                Avatar.local("a"), Avatar.local("a")), true);
+        bot.act(sf.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,
                                      Card.FIVE_OF_SPADES)),
-                new Analysis());
+                sf.analysis());
 
         Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES).asCanon()
                 .addFlop(Card.ACE_OF_HEARTS, Card.FIVE_OF_HEARTS,

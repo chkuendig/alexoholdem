@@ -15,6 +15,7 @@ import ca.ualberta.cs.poker.free.client.ClientPokerDynamics;
 import ca.ualberta.cs.poker.free.client.PokerClient;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -37,6 +38,12 @@ public class AaaiAdapter extends PokerClient
      */
     public static void main(String[] args)
     {
+        System.setProperty("user.dir", args[2]);
+        System.out.println(
+                "Starting in " + System.getProperty("user.dir") +
+                ", got lookup: " + new File("lookup/bucket/kmeans;16.640.4480.31360/holes").canRead());
+
+
         byte nHoleBuckets  =    16;
         char nFlopBuckets  =   640;
         char nTurnBuckets  =  4480;
@@ -56,6 +63,7 @@ public class AaaiAdapter extends PokerClient
                         nRiverBuckets);
 
         CfrBot2 bot = new CfrBot2("serial", abs, true, false, false);
+        precompute(bot);
 
         AaaiAdapter rpc = new AaaiAdapter(bot);
         LOG.info("Attempting to connect to " + args[0] +
@@ -74,6 +82,27 @@ public class AaaiAdapter extends PokerClient
         rpc.run();
     }
 
+    private static void precompute(final CfrBot2 bot)
+    {
+        long before = System.currentTimeMillis();
+
+        StateFlow sf = new StateFlow(Arrays.asList(
+                Avatar.local("a"), Avatar.local("a")), true);
+        bot.act(sf.head(),
+                new LiteralCardSequence(
+                        Hole.valueOf(Card.ACE_OF_CLUBS,
+                                     Card.FIVE_OF_SPADES)),
+                sf.analysis());
+
+        Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES).asCanon()
+                .addFlop(Card.ACE_OF_HEARTS, Card.FIVE_OF_HEARTS,
+                        Card.THREE_OF_DIAMONDS).addTurn(
+                Card.NINE_OF_CLUBS)
+                .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
+
+        System.out.println("Done Loading!  Took " +
+                (System.currentTimeMillis() - before) / 1000);
+    }
 
     //--------------------------------------------------------------------
     /**
@@ -108,7 +137,8 @@ public class AaaiAdapter extends PokerClient
      */
     public void handleStateChange() {
         LOG.debug("state: " + currentGameStateString + "\t" +
-                  Arrays.toString(state.amountWon));
+                  Arrays.toString(state.amountWon) + "\t" +
+                  state.bankroll);
 
         state.setFromMatchStateMessage(currentGameStateString);
         if (state.isOurTurn()){
@@ -121,7 +151,7 @@ public class AaaiAdapter extends PokerClient
     /**
      * Overload to take actions.
      */
-    private void takeAction() {
+    public void takeAction() {
         try{
             doTakeAction();
         } catch (Exception e) {
