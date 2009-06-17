@@ -1,14 +1,20 @@
 package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
-import ao.ai.simple.AlwaysCallBot;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
+import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.dealer.DealerTest;
+import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
+import ao.holdem.model.card.Card;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.regret.holdem.InfoPart;
 import ao.regret.holdem.RegretMinimizer;
 import ao.util.math.rand.Rand;
@@ -17,7 +23,7 @@ import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -70,9 +76,9 @@ public class BucketizerTest
 //        abs.sequence();
 
 //        Rand.randomize();
-        computeCfr(abs);
+//        computeCfr(abs);
 //        tournament(abs);
-//        vsHuman(abs, "serial");
+        vsHuman(abs, "serial");
     }
 
 
@@ -82,7 +88,7 @@ public class BucketizerTest
             byte       nHoleBuckets,
             char       nFlopBuckets,
             char       nTurnBuckets,
-            char       nRiverBuckets) throws IOException
+            char       nRiverBuckets)
     {
         return new HoldemAbstraction(
                         bucketizer,
@@ -95,12 +101,31 @@ public class BucketizerTest
     private static void precompute(final CfrBot2 bot)
     {
         long before = System.currentTimeMillis();
-        System.out.println("Loading......");
-        new DealerTest(10).headsUp(new HashMap<Avatar, Player>(){{
-            put(Avatar.local("probe"), new AlwaysCallBot());
-            put(Avatar.local("cfr2"), bot);
-        }});
+//        System.out.println("Loading......");
+//        new DealerTest(10).headsUp(new HashMap<Avatar, Player>(){{
+//            put(Avatar.local("probe"), new AlwaysCallBot());
+//            put(Avatar.local("cfr2"), bot);
+//        }});
 
+        bot.act(new State(Arrays.asList(
+                Avatar.local("a"), Avatar.local("a"))),
+                new LiteralCardSequence(
+                        Hole.valueOf(Card.ACE_OF_CLUBS,
+                                     Card.FIVE_OF_SPADES)),
+                new Analysis());
+
+        Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES).asCanon()
+                .addFlop(Card.ACE_OF_HEARTS, Card.FIVE_OF_HEARTS,
+                        Card.THREE_OF_DIAMONDS).addTurn(
+                Card.NINE_OF_CLUBS)
+                .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
+
+        new PreciseHeadsUpOdds().compute(
+                Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES),
+                new Community(Card.ACE_OF_HEARTS,
+                              Card.FIVE_OF_HEARTS,
+                              Card.THREE_OF_DIAMONDS));
+        
         System.out.println("Done Loading!  Took " +
                 (System.currentTimeMillis() - before) / 1000);
     }
@@ -163,8 +188,8 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-//        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =  150 * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
+//        long offset     =  750 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 //        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
         int  milestone  =   50 * 1000 * 1000;

@@ -175,7 +175,7 @@ public class CfrBot2 extends AbstractPlayer
 
         if (canonHole == null) {
             canonHole  = cards.hole().asCanon();
-            holeBucket = ABS.tree().getHole(
+            holeBucket = ABS.tree(true).getHole(
                                 canonHole.canonIndex());
         }
         if (round == Round.PREFLOP) {
@@ -187,7 +187,7 @@ public class CfrBot2 extends AbstractPlayer
 
         if (canonFlop == null) {
             canonFlop  = canonHole.addFlop(cards.community());
-            flopBucket = ABS.tree().getFlop( canonFlop.canonIndex() );
+            flopBucket = ABS.tree(true).getFlop( canonFlop.canonIndex() );
         }
         if (round == Round.FLOP) {
             roundBucket = ABS.decoder().decode(holeBucket, flopBucket);
@@ -198,7 +198,7 @@ public class CfrBot2 extends AbstractPlayer
 
         if (canonTurn == null) {
             canonTurn  = canonFlop.addTurn(cards.community().turn());
-            turnBucket = ABS.tree().getTurn( canonTurn.canonIndex() );
+            turnBucket = ABS.tree(true).getTurn( canonTurn.canonIndex() );
         }
         if (round == Round.TURN) {
             roundBucket = ABS.decoder().decode(
@@ -210,7 +210,7 @@ public class CfrBot2 extends AbstractPlayer
 
         River canonRiver =
                 canonTurn.addRiver( cards.community().river() );
-        byte riverBucket = ABS.tree().getRiver(canonRiver.canonIndex());
+        byte riverBucket = ABS.tree(true).getRiver(canonRiver.canonIndex());
 
         roundBucket = ABS.decoder().decode(
                         holeBucket, flopBucket, turnBucket, riverBucket);

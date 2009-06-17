@@ -34,7 +34,7 @@ public class RandomBot extends AbstractPlayer
                       CardSequence cards,
                       Analysis     analysis)
     {
-        double prob[] = null;
+        double prob[];
         if (state.canCheck()) {
             // no need to fold
             if (state.canRaise()) {

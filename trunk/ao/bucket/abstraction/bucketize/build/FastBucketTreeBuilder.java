@@ -33,7 +33,7 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
             char numTurnBuckets,
             char numRiverBuckets)
     {
-        BucketTree tree = new BucketTreeImpl( dir );
+        BucketTree tree = new BucketTreeImpl(dir, false);
 
         if (! tree.isFlushed())
         {

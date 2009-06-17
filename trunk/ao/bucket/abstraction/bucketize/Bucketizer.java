@@ -9,7 +9,7 @@ import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
  */
 public interface Bucketizer
 {
-    // returns the bucketing error, in some metric
+    // returns the bucketing error, in some distance metric
     public double bucketize(Branch branch,
                             byte   numBuckets);
 

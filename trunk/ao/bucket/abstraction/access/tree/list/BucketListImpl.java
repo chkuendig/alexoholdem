@@ -12,10 +12,6 @@ import java.io.File;
 public class BucketListImpl implements BucketList
 {
     //--------------------------------------------------------------------
-//    private static final byte SENTINAL = -1;
-
-
-    //--------------------------------------------------------------------
     private final File   FILE;
     private final byte[] LIST;
 
@@ -33,7 +29,6 @@ public class BucketListImpl implements BucketList
         if (list != null) return list;
 
         list = new byte[ size ];
-//        Arrays.fill(list, SENTINAL);
         return list;
     }
 
@@ -55,40 +50,10 @@ public class BucketListImpl implements BucketList
         return LIST[ (int) index ];
     }
 
-//    public boolean isEmpty(long index)
-//    {
-//        return get(index) == SENTINAL;
-//    }
-
 
     //--------------------------------------------------------------------
     public void flush()
     {
         PersistentBytes.persist(LIST, FILE);
     }
-
-//    public void flush(long fromCanon, char canonCount)
-//    {
-//        try
-//        {
-//            doFlush(fromCanon, canonCount);
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
-//    private void doFlush(long fromCanon, char canonCount)
-//            throws IOException
-//    {
-//        if (! FILE.canRead()) {
-//            flush();
-//            return;
-//        }
-//
-//        RandomAccessFile f = new RandomAccessFile(FILE, "rw");
-//        f.seek(fromCanon);
-//        f.write(LIST, (int) fromCanon, canonCount);
-//        f.close();
-//    }
 }
