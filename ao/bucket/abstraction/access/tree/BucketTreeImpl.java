@@ -2,6 +2,8 @@ package ao.bucket.abstraction.access.tree;
 
 import ao.bucket.abstraction.access.tree.list.BucketListImpl;
 import ao.bucket.abstraction.access.tree.list.HalfBucketList;
+import ao.bucket.abstraction.access.tree.list.StoredBucketList;
+import ao.bucket.abstraction.access.tree.list.StoredHalfBucketList;
 import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
@@ -38,7 +40,7 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public BucketTreeImpl(File dir)
+    public BucketTreeImpl(File dir, boolean storedReadOnly)
     {
         flushFlag  = new File(dir, "flushed");
 
@@ -48,12 +50,22 @@ public class BucketTreeImpl implements BucketTree
         File riverFile = new File(dir, "rivers");
         //File riverDir  =  Dir.get(dir, "rivers");
 
-        LOG.debug("loading (or creating)");
-        holes  = new BucketListImpl( holeFile,  HoleLookup.CANONS);
-        flops  = new BucketListImpl( flopFile,  FlopLookup.CANONS);
-        turns  = new HalfBucketList( turnFile,  TurnLookup.CANONS);
-        rivers = new HalfBucketList(riverFile, RiverLookup.CANONS);
-        //rivers = new ThirdBucketList(riverDir, RiverLookup.CANONS);
+        if (storedReadOnly)
+        {
+            LOG.debug("retrieving stored read-only");
+            holes  = new StoredBucketList    ( holeFile);
+            flops  = new StoredBucketList    ( flopFile);
+            turns  = new StoredHalfBucketList( turnFile);
+            rivers = new StoredHalfBucketList(riverFile);
+        }
+        else
+        {
+            LOG.debug("loading (or creating)");
+            holes  = new BucketListImpl( holeFile,  HoleLookup.CANONS);
+            flops  = new BucketListImpl( flopFile,  FlopLookup.CANONS);
+            turns  = new HalfBucketList( turnFile,  TurnLookup.CANONS);
+            rivers = new HalfBucketList(riverFile, RiverLookup.CANONS);
+        }
     }
 
 

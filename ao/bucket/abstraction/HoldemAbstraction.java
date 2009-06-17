@@ -5,6 +5,7 @@ import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
 import ao.regret.holdem.InfoPart;
@@ -92,13 +93,22 @@ public class HoldemAbstraction
 
 
     //--------------------------------------------------------------------
-    public BucketTree tree()
+    public BucketTree tree(boolean storedReadOnly)
     {
         if (tree != null) return tree;
-//        return (tree = new FastBucketTreeBuilder(BUCKETIZER).bucketize(
-//                            DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS));
-        return (tree = new SmartBucketTreeBuilder(BUCKETIZER).bucketize(
-                            DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS));
+
+        if (storedReadOnly)
+        {
+            tree = new BucketTreeImpl(DIR, true);
+        }
+        else
+        {
+//            tree = new FastBucketTreeBuilder(BUCKETIZER).bucketize(
+//                                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
+            tree = new SmartBucketTreeBuilder(BUCKETIZER).bucketize(
+                                DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
+        }
+        return tree;
     }
 
     public BucketDecoder decoder()
@@ -106,7 +116,7 @@ public class HoldemAbstraction
         if (decoder != null) return decoder;
         decoder = BucketDecoder.retrieveInstance(DIR);
         if (decoder == null) {
-            decoder = BucketDecoder.computeAndStore(tree().holes(), DIR);
+            decoder = BucketDecoder.computeAndStore(tree(false).holes(), DIR);
         }
         return decoder;
     }
@@ -116,7 +126,7 @@ public class HoldemAbstraction
         if (odds != null) return odds;
         odds = BucketOdds.retrieve(DIR, decoder());
         if (odds == null) {
-            odds = BucketOdds.retrieveOrCompute(DIR, tree(), decoder());
+            odds = BucketOdds.retrieveOrCompute(DIR, tree(false), decoder());
         }
         return odds;
     }
@@ -142,7 +152,7 @@ public class HoldemAbstraction
         sequence = BucketSequencer.retrieve(DIR, decoder());
         if (sequence == null) {
             sequence = BucketSequencer.retrieveOrCompute(
-                    DIR, tree(), decoder());
+                    DIR, tree(false), decoder());
         }
         return sequence;
     }
