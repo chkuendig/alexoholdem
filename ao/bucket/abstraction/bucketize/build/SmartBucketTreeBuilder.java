@@ -46,7 +46,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             char numTurnBuckets,
             char numRiverBuckets)
     {
-        BucketTree tree = new BucketTreeImpl( dir );
+        BucketTree tree = new BucketTreeImpl( dir, false );
         if (tree.isFlushed()) return tree;
 
         byte maxBucketBranch[] = tree.maxBucketBranch();
