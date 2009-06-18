@@ -1,5 +1,6 @@
 package ao.odds.eval.eval7;
 
+import ao.Infrastructure;
 import ao.holdem.model.card.Card;
 import ao.odds.eval.HandRank;
 import ao.odds.eval.eval5.Eval5;
@@ -15,7 +16,8 @@ import java.util.Arrays;
 public class Eval7Faster
 {
     //--------------------------------------------------------------------
-    private static final String DIR    = "lookup/eval/eval7_faster/";
+    private static final String DIR    = Infrastructure.path(
+                                         "lookup/eval/eval7_faster/");
     private static final String F_RANK = DIR + "ranks.cache";
     private static final String F_KEY  = DIR + "keys.cache";
 

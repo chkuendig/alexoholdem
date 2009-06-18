@@ -1,5 +1,6 @@
 package ao.odds.agglom.hist;
 
+import ao.Infrastructure;
 import ao.odds.eval.eval5.Eval5;
 import ao.util.persist.PersistentShorts;
 
@@ -24,8 +25,9 @@ public class RiverStrengths
     //--------------------------------------------------------------------
     private static short[] computeMap()
     {
-        short[] unusedRivers = PersistentShorts.asArray(
-                "lookup/eval/river/unused_rivers.txt");
+        short[] unusedRivers =
+                PersistentShorts.asArray(Infrastructure.path(
+                        "lookup/eval/river/unused_rivers.txt"));
 
         short[] map = new short[ Eval5.VALUE_COUNT ];
         for (short i = 0, r = 0; i < map.length; i++)

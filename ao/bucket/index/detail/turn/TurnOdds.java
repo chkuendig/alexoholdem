@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.turn;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.enumeration.HandEnum;
@@ -65,7 +66,8 @@ public class TurnOdds
 
     //--------------------------------------------------------------------
     private static final File DIR =
-            Dir.get("lookup/canon/detail/turn_odds/");
+            Dir.get(Infrastructure.path(
+                    "lookup/canon/detail/turn_odds/"));
 
     private static final File FLAG_FILE  = new File(DIR,   "flag.int");
     private static final File WIN_FILE   = new File(DIR,   "wins.char");

@@ -1,5 +1,6 @@
 package ao.odds.eval.eval5;
 
+import ao.Infrastructure;
 import ao.util.persist.PersistentShorts;
 
 /**
@@ -10,7 +11,8 @@ import ao.util.persist.PersistentShorts;
 public class Eval5Lookup
 {
     //--------------------------------------------------------------------
-    private static final String DIR        = "lookup/eval/eval5/";
+    private static final String DIR        = Infrastructure.path(
+                                             "lookup/eval/eval5/");
     private static final String F_UNIQUE5  = DIR + "unique5.txt";
     private static final String F_FLUSHES  = DIR + "flushes.txt";
     private static final String F_HASH_ADJ = DIR + "hash_adjust.txt";
