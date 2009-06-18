@@ -1,5 +1,6 @@
 package ao.bucket.abstraction;
 
+import ao.Infrastructure;
 import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.access.odds.BucketOdds;
@@ -55,8 +56,9 @@ public class HoldemAbstraction
             char       nTurnBuckets,
             char       nRiverBuckets)
     {
-        DIR = Dir.get("lookup/bucket/" + id(bucketizer,
-                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets));
+        DIR = Dir.get(Infrastructure.path(
+                "lookup/bucket/" + id(bucketizer, nHoleBuckets,
+                      nFlopBuckets, nTurnBuckets, nRiverBuckets)));
 
         BUCKETIZER = bucketizer;
         N_HOLES    = nHoleBuckets;

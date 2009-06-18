@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.turn;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
@@ -27,7 +28,8 @@ public class TurnRivers
             Logger.getLogger(TurnRivers.class);
 
     private static final File store =
-            new File(Dir.get("lookup/canon/detail/turn"),
+            new File(Dir.get(Infrastructure.path(
+                    "lookup/canon/detail/turn")),
                      "first_river.int");
 
     private static final int[] FIRST_RIVER =

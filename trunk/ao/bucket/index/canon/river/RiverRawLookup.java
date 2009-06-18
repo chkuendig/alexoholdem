@@ -1,5 +1,6 @@
 package ao.bucket.index.canon.river;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.turn.Turn;
@@ -24,7 +25,8 @@ public class RiverRawLookup
     private static final Logger LOG =
             Logger.getLogger(RiverRawLookup.class);
 
-    private static final String DIR = "lookup/canon/";
+    private static final String DIR =
+            Infrastructure.path("lookup/canon/");
     private static final String F_RAW_CASES =
                                     DIR + "river.cases.raw.cache";
 

@@ -1,5 +1,6 @@
 package ao.ai;
 
+import ao.Infrastructure;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.RandomBot;
 import ao.bucket.abstraction.HoldemAbstraction;
@@ -15,7 +16,6 @@ import ca.ualberta.cs.poker.free.client.ClientPokerDynamics;
 import ca.ualberta.cs.poker.free.client.PokerClient;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -38,11 +38,9 @@ public class AaaiAdapter extends PokerClient
      */
     public static void main(String[] args)
     {
-        System.setProperty("user.dir", args[2]);
+        Infrastructure.setWorkingDirectory(args[2]);
         System.out.println(
-                "Starting in " + System.getProperty("user.dir") +
-                ", got lookup: " + new File("lookup/bucket/kmeans;16.640.4480.31360/holes").canRead());
-
+                "Starting in " + Infrastructure.workingDirectory());
 
         byte nHoleBuckets  =    16;
         char nFlopBuckets  =   640;
@@ -137,7 +135,6 @@ public class AaaiAdapter extends PokerClient
      */
     public void handleStateChange() {
         LOG.debug("state: " + currentGameStateString + "\t" +
-                  Arrays.toString(state.amountWon) + "\t" +
                   state.bankroll);
 
         state.setFromMatchStateMessage(currentGameStateString);

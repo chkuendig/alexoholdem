@@ -1,5 +1,6 @@
 package ao.bucket.index.canon.turn;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.card.CanonCard;
 import ao.bucket.index.canon.card.CanonSuit;
 import ao.bucket.index.canon.flop.Flop;
@@ -31,8 +32,8 @@ public class TurnLookup
 
 
     //--------------------------------------------------------------------
-    private static final String RAW_CASE_FILE =
-                                    "lookup/canon/turn.cases.cache";
+    private static final String RAW_CASE_FILE = Infrastructure.path(
+                                    "lookup/canon/turn.cases.cache");
     private static final int    CODED_OFFSET[][];
 
     static

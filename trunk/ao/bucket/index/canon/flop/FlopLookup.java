@@ -1,5 +1,6 @@
 package ao.bucket.index.canon.flop;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.holdem.model.card.Card;
@@ -26,7 +27,7 @@ public class FlopLookup
 
     //--------------------------------------------------------------------
     private static final String OFFSET_FILE =
-            "lookup/canon/flop.offsets.cache";
+            Infrastructure.path("lookup/canon/flop.offsets.cache");
     private static final int    OFFSETS[][] =
             retrieveOrCalculateOffsets();
 
