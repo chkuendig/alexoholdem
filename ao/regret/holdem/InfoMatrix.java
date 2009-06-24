@@ -310,5 +310,12 @@ public class InfoMatrix
                             average(cIntent) +
                             average(rIntent));
         }
+
+        public String toShortString()
+        {
+            return (int) (averageStrategy()[0] * 100) + "/" +
+                   (int) (averageStrategy()[1] * 100) + "/" +
+                   (int) (averageStrategy()[2] * 100);
+        }
     }
 }
