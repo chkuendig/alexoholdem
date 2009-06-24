@@ -3,11 +3,13 @@ package ao.ai;
 import ao.Infrastructure;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.RandomBot;
+import ao.bucket.abstraction.BucketizerTest;
 import ao.bucket.abstraction.HoldemAbstraction;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
+import ao.holdem.model.Chips;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.*;
@@ -19,6 +21,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * User: alex
@@ -30,6 +33,11 @@ public class AaaiAdapter extends PokerClient
     //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(AaaiAdapter.class);
+
+
+    //--------------------------------------------------------------------
+    private static final Avatar AWAY = new Avatar("aaai", "enemy");
+    private        final Avatar HOME;
 
 
     //--------------------------------------------------------------------
@@ -60,8 +68,9 @@ public class AaaiAdapter extends PokerClient
                         nTurnBuckets,
                         nRiverBuckets);
 
+//        CfrBot2 bot = new CfrBot2("serial", abs, true, false, false);
         CfrBot2 bot = new CfrBot2("serial", abs, true, false, false);
-        precompute(bot);
+        BucketizerTest.precompute(bot, false);
 
         AaaiAdapter rpc = new AaaiAdapter(bot);
         LOG.info("Attempting to connect to " + args[0] +
@@ -80,27 +89,28 @@ public class AaaiAdapter extends PokerClient
         rpc.run();
     }
 
-    private static void precompute(final CfrBot2 bot)
-    {
-        long before = System.currentTimeMillis();
-
-        StateFlow sf = new StateFlow(Arrays.asList(
-                Avatar.local("a"), Avatar.local("a")), true);
-        bot.act(sf.head(),
-                new LiteralCardSequence(
-                        Hole.valueOf(Card.ACE_OF_CLUBS,
-                                     Card.FIVE_OF_SPADES)),
-                sf.analysis());
-
-        Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES).asCanon()
-                .addFlop(Card.ACE_OF_HEARTS, Card.FIVE_OF_HEARTS,
-                        Card.THREE_OF_DIAMONDS).addTurn(
-                Card.NINE_OF_CLUBS)
-                .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
-
-        System.out.println("Done Loading!  Took " +
-                (System.currentTimeMillis() - before) / 1000);
-    }
+//    private static void precompute(final CfrBot2 bot)
+//    {
+//        long before = System.currentTimeMillis();
+//
+//        StateFlow sf = new StateFlow(Arrays.asList(
+//                Avatar.local("a"), Avatar.local("a")), true);
+//        bot.act(sf.head(),
+//                new LiteralCardSequence(
+//                        Hole.valueOf(Card.ACE_OF_CLUBS,
+//                                     Card.FIVE_OF_SPADES)),
+//                sf.analysis());
+//
+//        Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
+//        Community flop = new Community(Card.ACE_OF_HEARTS,
+//                Card.FIVE_OF_HEARTS, Card.THREE_OF_DIAMONDS);
+//        hole.asCanon().addFlop(flop)
+//                .addTurn(Card.NINE_OF_CLUBS)
+//                .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
+//
+//        System.out.println("Done Loading!  Took " +
+//                (System.currentTimeMillis() - before) / 1000);
+//    }
 
     //--------------------------------------------------------------------
     /**
@@ -108,6 +118,8 @@ public class AaaiAdapter extends PokerClient
      */
     private final ClientPokerDynamics state;
     private final Player              deleget;
+
+    private       double              prevBankroll = 0;
 
 
     //--------------------------------------------------------------------
@@ -120,6 +132,8 @@ public class AaaiAdapter extends PokerClient
     {
         state   = new ClientPokerDynamics();
         deleget = delegateTo;
+
+        HOME    = Avatar.local(deleget.toString());
     }
 
     public AaaiAdapter()
@@ -138,7 +152,21 @@ public class AaaiAdapter extends PokerClient
                   state.bankroll);
 
         state.setFromMatchStateMessage(currentGameStateString);
-        if (state.isOurTurn()){
+        if (state.handOver) {
+            final double bankrollDelta =
+                    state.bankroll - prevBankroll;
+            prevBankroll = state.bankroll;
+
+            LOG.debug("hand ended: " + bankrollDelta);
+            deleget.handEnded(new HashMap<Avatar, Chips>(){{
+                int sbDelta = (int) bankrollDelta;
+                put(HOME, Chips.newInstance( sbDelta));
+                put(AWAY, Chips.newInstance(-sbDelta));
+            }});
+        }
+        else if (state.isOurTurn())
+        {
+//            LOG.debug("acting");
             takeAction();
         }
     }
@@ -164,12 +192,8 @@ public class AaaiAdapter extends PokerClient
 
         StateFlow stateFlow = new StateFlow(
                 amDealer
-                ? Arrays.asList(
-                        new Avatar("aaai", "enemy"),
-                        Avatar.local(deleget.toString()))
-                : Arrays.asList(
-                        Avatar.local(deleget.toString()),
-                        new Avatar("aaai", "enemy")),
+                ? Arrays.asList(AWAY, HOME)
+                : Arrays.asList(HOME, AWAY),
                 true);
 
         for (int i = 0; i < state.bettingSequence.length(); i++)

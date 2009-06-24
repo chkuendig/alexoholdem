@@ -32,7 +32,7 @@ public class RegretMinimizer
                          char absDealeeBuckets[])
     {
         new RegMin(
-                INFO, ODDS, 1.0, EXEC
+                INFO, ODDS, 1.07, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );
 
 

@@ -21,7 +21,9 @@ import ao.odds.eval.eval_567.EvalSlow;
 import ao.regret.holdem.InfoMatrix;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,6 +60,9 @@ public class CfrBot2 extends AbstractPlayer
     private byte flopBucket;
     private byte turnBucket;
 
+    private final List<String> handProbabilities =
+            new ArrayList<String>();
+
 
     //--------------------------------------------------------------------
     public CfrBot2(HoldemAbstraction precomputedAbstraction)
@@ -90,6 +95,11 @@ public class CfrBot2 extends AbstractPlayer
             System.out.println(
                     "bot shows cards: " + prevCards +
                     "   " + handType(prevCards));
+
+            System.out.println(
+                    "thinking: " + handProbabilities);
+            handProbabilities.clear();
+
 //        }
     }
 
@@ -117,6 +127,19 @@ public class CfrBot2 extends AbstractPlayer
     {
         assert state.seats().length == 2
                 : "Only works in heads-up mode";
+
+        if (prevRound != state.round())
+        {
+            if (state.round() == Round.PREFLOP)
+            {
+                handProbabilities.clear();
+            }
+            else
+            {
+                handProbabilities.add(
+                        state.round().toString().substring(0, 1));
+            }
+        }
 
         StateTree.Node gamePath = StateTree.fromState(prevNode, state, 4);
         if (gamePath == null) {
@@ -155,6 +178,7 @@ public class CfrBot2 extends AbstractPlayer
             }
 
             System.out.println("bot acts: " + realAction);
+            handProbabilities.add( infoSet.toShortString() );
         }
 
         prevRound = state.round();

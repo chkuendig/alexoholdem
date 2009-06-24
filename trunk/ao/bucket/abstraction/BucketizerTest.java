@@ -37,6 +37,9 @@ public class BucketizerTest
     private static final Logger LOG =
             Logger.getLogger(BucketizerTest.class);
 
+//    private static final String BOT_NAME = "agro";
+    private static final String BOT_NAME = "serial";
+
 
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
@@ -77,7 +80,7 @@ public class BucketizerTest
 //        Rand.randomize();
 //        computeCfr(abs);
 //        tournament(abs);
-        vsHuman(abs, "serial");
+        vsHuman(abs);
     }
 
 
@@ -97,9 +100,10 @@ public class BucketizerTest
                         nRiverBuckets);
     }
 
-    private static void precompute(final CfrBot2 bot)
+    public static void precompute(
+            final CfrBot2 bot, boolean computeOdds)
     {
-        long before = System.currentTimeMillis();
+        Stopwatch time = new Stopwatch();
 //        System.out.println("Loading......");
 //        new DealerTest(10).headsUp(new HashMap<Avatar, Player>(){{
 //            put(Avatar.local("probe"), new AlwaysCallBot());
@@ -114,20 +118,20 @@ public class BucketizerTest
                                      Card.FIVE_OF_SPADES)),
                 sf.analysis());
 
-        Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES).asCanon()
-                .addFlop(Card.ACE_OF_HEARTS, Card.FIVE_OF_HEARTS,
-                        Card.THREE_OF_DIAMONDS).addTurn(
-                Card.NINE_OF_CLUBS)
+        Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
+        Community flop = new Community(Card.ACE_OF_HEARTS,
+                Card.FIVE_OF_HEARTS, Card.THREE_OF_DIAMONDS);
+        hole.asCanon().addFlop(flop)
+                .addTurn(Card.NINE_OF_CLUBS)
                 .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
 
-        new PreciseHeadsUpOdds().compute(
-                Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES),
-                new Community(Card.ACE_OF_HEARTS,
-                              Card.FIVE_OF_HEARTS,
-                              Card.THREE_OF_DIAMONDS));
+        if (computeOdds)
+        {
+            new PreciseHeadsUpOdds().compute(hole, Community.PREFLOP);
+            new PreciseHeadsUpOdds().compute(hole, flop);
+        }
         
-        System.out.println("Done Loading!  Took " +
-                (System.currentTimeMillis() - before) / 1000);
+        System.out.println("Done Loading!  Took " + time.timing());
     }
 
 
@@ -136,6 +140,10 @@ public class BucketizerTest
             final HoldemAbstraction abs) throws IOException
     {
         LOG.debug("running tournament");
+
+        final CfrBot2 bot = new CfrBot2(
+                BOT_NAME, abs, true, false, false);
+        precompute(bot, false);
 
         long before = System.currentTimeMillis();
         new DealerTest().headsUp(new LinkedHashMap<Avatar, Player>(){{
@@ -150,8 +158,7 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("cfr2 hd"),
-                    new CfrBot2("serial", abs, true, false, false));
+            put(Avatar.local("cfr2 hd"), bot);
 //            put(Avatar.local("cfr2 290"),
 //                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
@@ -160,12 +167,11 @@ public class BucketizerTest
     }
 
     public static void vsHuman(
-            final HoldemAbstraction abs,
-            final String            name) throws IOException
+            final HoldemAbstraction abs) throws IOException
     {
-//        CfrBot2 bot = new CfrBot2(name, abs, false, true, false);
-        CfrBot2 bot = new CfrBot2(name, abs, true, true, false);
-        precompute(bot);
+//        CfrBot2 bot = new CfrBot2(BOT_NAME, abs, false, true, false);
+        CfrBot2 bot = new CfrBot2(BOT_NAME, abs, true, true, false);
+        precompute(bot, true);
         HoleOdds.lookup(0);
 
         Rand.randomize();
@@ -180,7 +186,7 @@ public class BucketizerTest
         System.out.println("computeCfr");
 
         Stopwatch       t      = new Stopwatch();
-        InfoPart        info   = abs.infoPart("serial", false, true);
+        InfoPart        info   = abs.infoPart(BOT_NAME, false, true);
         RegretMinimizer cfrMin =
                 new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
 //        InfoPart        info   = abs.infoPart("mono", false);
@@ -189,7 +195,7 @@ public class BucketizerTest
 
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
-//        long offset     =  750 * 1000 * 1000;
+//        long offset     =  250 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 //        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
         int  milestone  =   50 * 1000 * 1000;

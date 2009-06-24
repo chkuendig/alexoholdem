@@ -4,7 +4,6 @@ import ao.bucket.abstraction.access.tree.BucketList;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.river.StrengthCode;
-import ao.odds.agglom.hist.RiverStrengths;
 
 /**
  * User: alex
@@ -33,7 +32,7 @@ public class RiverBucketizer
     //--------------------------------------------------------------------
     private int[] byStrength(CanonRange riverRanges[])
     {
-        final int byStrength[] = new int[ RiverStrengths.COUNT ];
+        final int byStrength[] = new int[ Character.MAX_VALUE + 1 ];
         RiverEvalLookup.traverse(
                 riverRanges,
                 new RiverEvalLookup.VsRandomVisitor() {
@@ -48,5 +47,4 @@ public class RiverBucketizer
         );
         return byStrength;
     }
-
 }

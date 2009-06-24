@@ -18,7 +18,6 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
-import ao.util.math.rand.Rand;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
@@ -52,35 +51,36 @@ public class RiverEvalLookup
 //        System.out.println("distribution: "  +
 //                           Arrays.toString(seen));
 
-        // varify
-        for (int i = 0; i < 10 * 1000; i++) {
-            long lookat = (long)(Rand.nextDouble() * RiverLookup.CANONS);
-            RiverEvalLookup.traverse(
-                new CanonRange[]{new CanonRange(lookat, 1)},
-//                new CanonRange[]{new CanonRange(RiverLookup.CANONS - 1, 1)},
-//                new CanonRange[]{TurnDetails.lookup(TurnLookup.CANONS - 1).range()},
-                new VsRandomVisitor() {
-                    public void traverse(
-                            long   canonIndex,
-                            double strengthVsRandom,
-                            byte   represents) {
+        final int byStrength[] = new int[ Character.MAX_VALUE + 1];
+        RiverEvalLookup.traverse(
+            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+            new VsRandomVisitor() {
+                public void traverse(
+                        long   canonIndex,
+                        double strengthVsRandom,
+                        byte   represents) {
 
-                        char strAsChar = (char)(
-                                Character.MAX_VALUE * strengthVsRandom);
+                    char strAsChar =
+                            StrengthCode.encodeWinProb(strengthVsRandom);
 
-                        River r = RiverDetails.examplesOf(
-                                                 canonIndex).get(0);
-                        char verify = (char)(Character.MAX_VALUE *
-                                r.vsRandom(new PreciseHeadsUpOdds()));
+                    byStrength[strAsChar] += represents;
 
-                        System.out.println(
-                                canonIndex       + "\t" +
-                                strengthVsRandom + "\t" +
-                                (int) strAsChar  + "\t" +
-                                (int) verify);
-                        assert strAsChar == verify;
-                    }
-                });
+//                    River r = RiverDetails.examplesOf(
+//                                             canonIndex).get(0);
+//                    char verify = (char)(Character.MAX_VALUE *
+//                            r.vsRandom(new PreciseHeadsUpOdds()));
+//
+//                    System.out.println(
+//                            canonIndex       + "\t" +
+//                            strengthVsRandom + "\t" +
+//                            (int) strAsChar  + "\t" +
+//                            (int) verify);
+//                    assert strAsChar == verify;
+                }
+            });
+
+        for (int count : byStrength) {
+            System.out.println(count);
         }
     }
 
