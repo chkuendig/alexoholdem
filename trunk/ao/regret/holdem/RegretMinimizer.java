@@ -28,11 +28,12 @@ public class RegretMinimizer
 
 
     //--------------------------------------------------------------------
-    public void minimize(char absDealerBuckets[],
-                         char absDealeeBuckets[])
+    public void minimize(char   absDealerBuckets[],
+                         char   absDealeeBuckets[],
+                         double aggression)
     {
         new RegMin(
-                INFO, ODDS, 1.07, EXEC
+                INFO, ODDS, aggression, EXEC
         ).iterate( absDealerBuckets, absDealeeBuckets );
 
 
