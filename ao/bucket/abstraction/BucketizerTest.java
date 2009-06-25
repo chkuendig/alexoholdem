@@ -38,7 +38,8 @@ public class BucketizerTest
             Logger.getLogger(BucketizerTest.class);
 
 //    private static final String BOT_NAME = "agro";
-    private static final String BOT_NAME = "serial";
+    private static final String BOT_NAME   = "serial";
+    private static final double AGGRESSION = 1.0;
 
 
     //--------------------------------------------------------------------
@@ -78,9 +79,9 @@ public class BucketizerTest
 //        abs.sequence();
 
 //        Rand.randomize();
-//        computeCfr(abs);
+        computeCfr(abs);
 //        tournament(abs);
-        vsHuman(abs);
+//        vsHuman(abs);
     }
 
 
@@ -235,7 +236,7 @@ public class BucketizerTest
             }
             char[][] jbs = it.next();
 
-            cfrMin.minimize( jbs[0], jbs[1] );
+            cfrMin.minimize( jbs[0], jbs[1], AGGRESSION );
 
             prog.checkpoint();
         }
