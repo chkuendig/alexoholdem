@@ -16,7 +16,7 @@ public class SlimBitTest
 //
 //        LongBitSet big =
 //                LongBitSet.retrieve(new File(
-//                        "lookup/bucket/odds_homo.20;odds_homo.800;" +
+//                        "compact/bucket/odds_homo.20;odds_homo.800;" +
 //                            "odds_homo.4800;odds_homo.28800/rivers/c"));
 //
 //        long tmBig = System.currentTimeMillis();

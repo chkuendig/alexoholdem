@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.river;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
@@ -61,11 +62,11 @@ public class RiverEvalLookup
                         byte   represents) {
 
                     char strAsChar =
-                            StrengthCode.encodeWinProb(strengthVsRandom);
+                            ProbabilityEncoding.encodeWinProb(strengthVsRandom);
 
                     byStrength[strAsChar] += represents;
 
-//                    River r = RiverDetails.examplesOf(
+//                    River r = RiverExamples.examplesOf(
 //                                             canonIndex).get(0);
 //                    char verify = (char)(Character.MAX_VALUE *
 //                            r.vsRandom(new PreciseHeadsUpOdds()));
@@ -91,8 +92,8 @@ public class RiverEvalLookup
     private static final Logger LOG =
             Logger.getLogger(RiverEvalLookup.class);
 
-    private static final File dir   =
-            Dir.get("lookup/canon/detail/river");
+    private static final File dir      = Dir.get(Infrastructure.path(
+            "lookup/canon/detail/river"));
     private static final File strRepF  = new File(dir, "str_rep.char");
     private static final File winProbF = new File(dir, "winProb.char");
     private static final File flagF    = new File(dir, "flag.byte");
@@ -214,7 +215,8 @@ public class RiverEvalLookup
                 if (represents[ index ] == 0) {
                     strengths[ index ] = river.eval();
                     winProbs [ index ] =
-                            StrengthCode.encodeWinProb(river.vsRandom(odds));
+                            ProbabilityEncoding.encodeWinProb(
+                                    river.vsRandom(odds));
                 }
 //                else if (strengths[ index ] != river.eval()) {
 //                    LOG.error("inconcistent " + river);
@@ -340,7 +342,7 @@ public class RiverEvalLookup
             char strRep  = strRepIn.readChar();
             traverser.traverse(
                     river,
-                    StrengthCode.decodeWinProb(winProb),
+                    ProbabilityEncoding.decodeWinProb(winProb),
                     decodeRep(strRep));
         }
 

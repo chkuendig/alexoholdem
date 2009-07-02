@@ -125,7 +125,7 @@ public class FlopOdds
 //    {
 //        for (int i = 0; i < FlopLookup.CANONS; i++)
 //        {
-//            Odds odds = FlopDetails.lookup(i).headsUpOdds();
+//            Odds odds = FlopDetails.compact(i).headsUpOdds();
 //
 //            WIN  [ i ] = (int) odds.winOdds();
 //            LOSE [ i ] = (int) odds.loseOdds();

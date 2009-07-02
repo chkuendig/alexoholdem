@@ -241,7 +241,7 @@ public class HandStrengthAbs implements Bucketizer
 //        LongBitSet retrieve = new LongBitSet(length);
 //        for(int canonTurn : branch.parentCanons()) {
 //            TurnDetailFlyweight.CanonTurnDetail
-//                    turn = TurnDetails.lookup(canonTurn);
+//                    turn = TurnDetails.compact(canonTurn);
 //
 //            long upToIncluding = turn.lastCanonRiver();
 //            for (long i  = turn.firstCanonRiver();

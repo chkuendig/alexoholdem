@@ -26,11 +26,11 @@ public class Eval7Faster
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
-	private static int[]   handRanks   = null; // hand rank lookup
+	private static int[]   handRanks   = null; // hand rank compact
 	private static boolean verbose     = true; // toggles verbose mode
 
 	private static int[]  hand; 			   // cards in a hand
-	private static long[] keys         = null; // key lookup table
+	private static long[] keys         = null; // key compact table
 	private static int    numKeys      = 1;	   // # of defined keys
 	private static long   maxKey       = 0;	   // current max key value
 	private static int    numCards     = 0;	   // # of cards in a hand
@@ -352,7 +352,7 @@ public class Eval7Faster
                 key = makeKey(keys[keyIndex], card);
 
 
-                // insert the new key into the key lookup table
+                // insert the new key into the key compact table
                 if (numCards < 7) insertKey(key);
             }
         }
@@ -388,12 +388,12 @@ public class Eval7Faster
                 }
 
                 int maxHandRankIndex = keyIndex * 53 + card + 53;
-                // populate hand rank lookup table with appropriate value
+                // populate hand rank compact table with appropriate value
                 handRanks[maxHandRankIndex] = handRank;
             }
 
             if (numCards == 6 || numCards == 7) {
-                // insert the hand rank into the hand rank lookup table
+                // insert the hand rank into the hand rank compact table
                 handRanks[keyIndex * 53 + 53] =
                         getHandRank(keys[keyIndex]);
 //                handRanks[keyIndex * 53 + 53] = -1000000000;
