@@ -67,7 +67,7 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
 //                    public void traverse(CanonHole canonHole) {
 //                        System.out.println(
 //                                canonHole    + "\t" +
-//                                HoleDetails.lookup(
+//                                HoleDetails.compact(
 //                                        canonHole.canonIndex()
 //                                ).strength() + "\t" +
 //                                holes.get(canonHole.canonIndex())

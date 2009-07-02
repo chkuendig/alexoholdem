@@ -139,7 +139,7 @@ public class DealerTest
             }
 
             progress.checkpoint();
-            if (((trialSet + 1) % (100 * 1000)) == 0) {
+            if (((trialSet + 1) % (DUPLICATE_ROUNDS / 1000)) == 0) {
                 displayDeltas(
                         cumDeltas, dealerDelta, brains, trialSet + 1);
             }

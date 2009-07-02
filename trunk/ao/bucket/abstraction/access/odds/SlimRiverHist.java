@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.access.odds;
 
 import ao.holdem.persist.GenericBinding;
-import ao.odds.agglom.hist.RiverStrengths;
+import ao.odds.agglom.hist.CompactRiverStrengths;
 import ao.util.data.primitive.IntList;
 import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -38,7 +38,7 @@ public class SlimRiverHist
         RiverHist hist = new RiverHist();
         for (int i = 1 + Rand.nextInt(1000); i > 0; i--) {
             hist.count((short)
-                    Rand.nextInt( RiverStrengths.COUNT ));
+                    Rand.nextInt( CompactRiverStrengths.COUNT ));
         }
         return hist;
     }
@@ -68,7 +68,7 @@ public class SlimRiverHist
     private void slim(IntList slim, int[] riverHist)
     {
         int skipped = 0;
-        for (short i = 0; i < RiverStrengths.COUNT; i++)
+        for (short i = 0; i < CompactRiverStrengths.COUNT; i++)
         {
             int count = riverHist[ i ];
             if (count == 0)
@@ -126,7 +126,7 @@ public class SlimRiverHist
         }
 
        return ((double) sum / count) /
-                    (RiverStrengths.COUNT + 1);
+                    (CompactRiverStrengths.COUNT + 1);
     }
 
 
@@ -188,7 +188,7 @@ public class SlimRiverHist
     }
 
     public static final int     BINDING_MAX_SIZE =
-                                           (1 + RiverStrengths.COUNT) * 4;
+                                           (1 + CompactRiverStrengths.COUNT) * 4;
     public static final Binding BINDING          = new Binding();
     public static class Binding extends GenericBinding<SlimRiverHist>
     {

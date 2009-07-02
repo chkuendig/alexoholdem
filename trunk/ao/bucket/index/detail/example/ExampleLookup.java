@@ -58,7 +58,7 @@ public class ExampleLookup
                         turn.flop().community());
 
 //                CanonTurnDetail turnDet =
-//                        TurnDetails.lookup( turn.canonIndex() );
+//                        TurnDetails.compact( turn.canonIndex() );
                 CanonFlopDetail flopDet =
                         FlopDetails.containing(
                                 turn.canonIndex() );

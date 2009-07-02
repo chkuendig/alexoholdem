@@ -8,7 +8,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddFinder;
-import ao.odds.agglom.hist.RiverStrengths;
+import ao.odds.agglom.hist.CompactRiverStrengths;
 import ao.odds.eval.eval7.Eval7Faster;
 
 /**
@@ -123,7 +123,7 @@ public class River implements CanonIndexed
                 h.a(), h.b(),
                 c.flopA(),c.flopB(), c.flopC(),
                 c.turn(), RIVER_CARD);
-        return RiverStrengths.lookup( v );
+        return CompactRiverStrengths.compact( v );
     }
     public double vsRandom(OddFinder odds)
     {

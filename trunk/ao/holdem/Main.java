@@ -116,7 +116,7 @@ public class Main
 //                              "[" + holes[0].ordinal() + "]" +
 //                              "[" + holes[1].ordinal() + "]\t" + exactOdds);
 //                System.out.println(
-//                        "lookup[" + opps + "]" +
+//                        "compact[" + opps + "]" +
 //                              "[" + holes[1].ordinal() + "]" +
 //                              "[" + holes[0].ordinal() + "] = " + odds + ";");
             }

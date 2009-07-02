@@ -13,13 +13,13 @@ import java.util.Arrays;
  * Not all of the possible 7462 hand strengths appear on the river,
  *  this class captures that fact.
  */
-public class RiverStrengths
+public class CompactRiverStrengths
 {
     //--------------------------------------------------------------------
     private static short[] MAP   = computeMap();
     public  static short   COUNT = 4824; // MAP[ MAP.length - 1 ] + 1;
 
-    private RiverStrengths() {}
+    private CompactRiverStrengths() {}
 
 
     //--------------------------------------------------------------------
@@ -32,8 +32,7 @@ public class RiverStrengths
         short[] map = new short[ Eval5.VALUE_COUNT ];
         for (short i = 0, r = 0; i < map.length; i++)
         {
-            boolean unused =
-                    (Arrays.binarySearch(unusedRivers, i) >= 0);
+            boolean unused = (Arrays.binarySearch(unusedRivers, i) >= 0);
 
             if (unused) {
                 map[ i ] = -1;
@@ -46,7 +45,7 @@ public class RiverStrengths
 
 
     //--------------------------------------------------------------------
-    public static short lookup(short strength)
+    public static short compact(short strength)
     {
         return MAP[ strength ];
     }

@@ -145,7 +145,7 @@ public class DetailLookup
 //                new ArrayList<CanonRiverDetail>();
 //        for (int canonTurn : turnCanons) {
 //            details.addAll(
-//                    RiverDetails.lookup( canonTurn ));
+//                    RiverExamples.compact( canonTurn ));
 //        }
 //        return details.toArray(new CanonRiverDetail[details.size()]);
 //    }
@@ -159,7 +159,7 @@ public class DetailLookup
 //
 ////        Progress p = new Progress(prevCanonIndexes.length * 50);
 //        for (int canonTurn : prevCanonIndexes) {
-//            RiverDetails.lookup( canonTurn, visit );
+//            RiverExamples.compact( canonTurn, visit );
 ////            p.checkpoint();
 //        }
 //    }
