@@ -1,6 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.BucketList;
+import ao.bucket.abstraction.access.tree.PersistentBucketList;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
 
@@ -10,7 +11,7 @@ import java.io.File;
  * Date: Jan 28, 2009
  * Time: 1:55:44 PM
  */
-public class ThirdBucketList implements BucketList
+public class ThirdBucketList implements PersistentBucketList
 {
     //--------------------------------------------------------------------
     public static void main(String[] args)

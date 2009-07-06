@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 import ao.util.math.rand.MersenneTwisterFast;
@@ -15,7 +15,7 @@ import java.util.Arrays;
  * Date: 12-May-2009
  * Time: 8:51:59 PM
  */
-public class KMeansBucketizer implements Bucketizer
+public class KMeansBucketizer implements ScalarBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =

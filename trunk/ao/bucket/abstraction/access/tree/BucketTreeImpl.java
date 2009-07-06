@@ -32,10 +32,10 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    private final BucketList holes;
-    private final BucketList flops;
-    private final BucketList turns;
-    private final BucketList rivers;
+    private final PersistentBucketList holes;
+    private final PersistentBucketList flops;
+    private final PersistentBucketList turns;
+    private final PersistentBucketList rivers;
     private final File       flushFlag;
 
 

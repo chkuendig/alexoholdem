@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.access.tree.list;
 
-import ao.bucket.abstraction.access.tree.BucketList;
+import ao.bucket.abstraction.access.tree.PersistentBucketList;
 import ao.util.persist.PersistentBytes;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.File;
  * Date: Jan 26, 2009
  * Time: 12:27:51 PM
  */
-public class BucketListImpl implements BucketList
+public class BucketListImpl implements PersistentBucketList
 {
     //--------------------------------------------------------------------
     private final File   FILE;

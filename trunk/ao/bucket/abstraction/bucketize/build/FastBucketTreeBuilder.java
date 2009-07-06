@@ -4,7 +4,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.alloc.SubBucketAllocator;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
 
 import java.io.File;
 

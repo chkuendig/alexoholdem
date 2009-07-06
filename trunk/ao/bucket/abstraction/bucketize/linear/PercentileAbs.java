@@ -2,7 +2,7 @@ package ao.bucket.abstraction.bucketize.linear;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.alloc.BucketAllocator;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
@@ -18,7 +18,7 @@ import java.util.Comparator;
  * Date: 5-May-2009
  * Time: 8:51:58 PM
  */
-public class PercentileAbs implements Bucketizer
+public class PercentileAbs implements ScalarBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =

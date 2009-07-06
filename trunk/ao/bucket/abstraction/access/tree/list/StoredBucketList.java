@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.access.tree.list;
 
-import ao.bucket.abstraction.access.tree.BucketList;
+import ao.bucket.abstraction.access.tree.PersistentBucketList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +12,7 @@ import java.io.RandomAccessFile;
  * Date: 13-Jun-2009
  * Time: 5:49:51 PM
  */
-public class StoredBucketList implements BucketList
+public class StoredBucketList implements PersistentBucketList
 {
     //--------------------------------------------------------------------
     private final RandomAccessFile IN;
