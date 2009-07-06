@@ -48,7 +48,7 @@ public interface BucketTree
 
 
     //--------------------------------------------------------------------
-    public static interface Branch
+    public static interface Branch extends BucketList
     {
         public Round round();
         public int[] parentCanons();
@@ -56,9 +56,8 @@ public interface BucketTree
         public CanonDetail[] details();
 //        public void          details(Traverser<CanonDetail> visit);
 
-//        public void reset(byte fromBucket, byte toBucket);
-        public void set(long canonIndex, byte bucket);
-        public byte get(long canonIndex);
+//        public void set(long canonIndex, byte bucket);
+//        public byte get(long canonIndex);
 
         public byte bucketCount();
         public List<Branch> subBranches();

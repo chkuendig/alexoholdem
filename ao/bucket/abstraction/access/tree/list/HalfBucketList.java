@@ -1,6 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.BucketList;
+import ao.bucket.abstraction.access.tree.PersistentBucketList;
 import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
 
@@ -10,7 +11,7 @@ import java.io.File;
  * Date: Jan 26, 2009
  * Time: 2:51:42 PM
  */
-public class HalfBucketList implements BucketList
+public class HalfBucketList implements PersistentBucketList
 {
     //--------------------------------------------------------------------
     private static final File DIR = Dir.get("test");

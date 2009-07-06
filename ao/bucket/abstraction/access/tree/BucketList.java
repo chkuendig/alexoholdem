@@ -1,23 +1,13 @@
 package ao.bucket.abstraction.access.tree;
 
 /**
- * Date: Jan 26, 2009
- * Time: 12:25:45 PM
+ * User: alex
+ * Date: 5-Jul-2009
+ * Time: 5:45:05 PM
  */
-public interface BucketList
-{
+public interface BucketList {
     //--------------------------------------------------------------------
-    public byte maxBuckets();
+    void set(long index, byte bucket);
 
-
-    //--------------------------------------------------------------------
-    public void set(long index, byte bucket);
-    public byte get(long index);
-
-//    public boolean isEmpty(long index);
-
-
-    //--------------------------------------------------------------------
-    public void flush();
-//    public void flush(long fromCanon, char canonCount);
+    byte get(long index);
 }

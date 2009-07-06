@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.bucketize.linear;
 
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
@@ -18,7 +18,7 @@ import java.util.BitSet;
  * Date: Jan 9, 2009
  * Time: 10:24:57 AM
  */
-public class HandStrengthAbs implements Bucketizer
+public class HandStrengthAbs implements ScalarBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =

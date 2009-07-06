@@ -1,7 +1,7 @@
 package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
@@ -87,7 +87,7 @@ public class BucketizerTest
 
     //--------------------------------------------------------------------
     private static HoldemAbstraction abstractHolem(
-            Bucketizer bucketizer,
+            ScalarBucketizer bucketizer,
             byte       nHoleBuckets,
             char       nFlopBuckets,
             char       nTurnBuckets,
@@ -162,7 +162,7 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("ao-3000"), bot);
+            put(Avatar.local("ao-6000"), bot);
 //            put(Avatar.local("cfr2 290"),
 //                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
@@ -202,7 +202,7 @@ public class BucketizerTest
 //        long offset     =  550 * 1000 * 1000;
         long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
 //        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =   50 * 1000 * 1000;
+        int  milestone  =  250 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);

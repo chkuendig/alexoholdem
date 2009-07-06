@@ -7,8 +7,9 @@ import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.bucketize.Bucketizer;
 import ao.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.regret.holdem.InfoPart;
 import ao.util.io.Dir;
 import org.apache.log4j.Logger;
@@ -35,7 +36,7 @@ public class HoldemAbstraction
 //    private final String ID;
     private final File       DIR;
 
-    private final Bucketizer BUCKETIZER;
+    private final ScalarBucketizer BUCKETIZER;
     private final byte       N_HOLES;
     private final char       N_FLOPS;
     private final char       N_TURNS;
@@ -50,7 +51,7 @@ public class HoldemAbstraction
 
     //--------------------------------------------------------------------
     public HoldemAbstraction(
-            Bucketizer bucketizer,
+            ScalarBucketizer bucketizer,
             byte       nHoleBuckets,
             char       nFlopBuckets,
             char       nTurnBuckets,

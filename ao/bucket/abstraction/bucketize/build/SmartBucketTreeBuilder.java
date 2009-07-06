@@ -2,7 +2,7 @@ package ao.bucket.abstraction.bucketize.build;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.bucketize.Bucketizer;
+import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 import ao.bucket.index.detail.CanonDetail;
@@ -28,11 +28,11 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 
 
     //--------------------------------------------------------------------
-    private final Bucketizer BUCKETIZER;
+    private final ScalarBucketizer BUCKETIZER;
 
 
     //--------------------------------------------------------------------
-    public SmartBucketTreeBuilder(Bucketizer bucketizer)
+    public SmartBucketTreeBuilder(ScalarBucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
     }
