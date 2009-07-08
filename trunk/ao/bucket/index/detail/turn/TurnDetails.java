@@ -126,7 +126,7 @@ public class TurnDetails
         }
     }
 
-    public static byte[] riverCounts()
+    private static byte[] riverCounts()
     {
         final byte[] riverCounts =
                 new byte[ TurnLookup.CANONS];

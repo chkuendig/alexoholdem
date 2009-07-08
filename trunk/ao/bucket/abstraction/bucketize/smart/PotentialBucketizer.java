@@ -6,7 +6,12 @@ import ao.bucket.abstraction.access.tree.list.HalfBucketList;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
-import ao.holdem.model.Round;
+import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.turn.TurnDetails;
+import ao.bucket.index.detail.turn.TurnRivers;
+import ao.unsupervised.cluster.space.impl.CentroidDomain;
+import ao.unsupervised.cluster.space.measure.Centroid;
+import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
 
 /**
  * User: alex
@@ -15,6 +20,17 @@ import ao.holdem.model.Round;
  */
 public class PotentialBucketizer implements Bucketizer
 {
+    //--------------------------------------------------------------------
+    public static void main(String[] args) {
+        new PotentialBucketizer().bucketizeAll(
+                null,
+                (byte) 16,
+                (byte) 10,
+                (byte) 5,
+                (byte) 10);
+    }
+
+
     //--------------------------------------------------------------------
     public PotentialBucketizer()
     {
@@ -27,9 +43,9 @@ public class PotentialBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     public double bucketize(BucketTree.Branch branch, byte numBuckets) {
-        if (branch.round() == Round.PREFLOP) {
+//        if (branch.round() == Round.PREFLOP) {
 //            return bucketizeAll(branch, numBuckets);
-        }
+//        }
 
         return 0;
     }
@@ -51,7 +67,8 @@ public class PotentialBucketizer implements Bucketizer
         BucketList turnBuckets = new HalfBucketList(
                 null, TurnLookup.CANONS);
         bucketizerAllTurns(
-                turnBuckets, riverBuckets, nTurnBuckets);
+                turnBuckets, riverBuckets,
+                nTurnBuckets, nRiverBuckets);
 
 
 
@@ -75,14 +92,43 @@ public class PotentialBucketizer implements Bucketizer
     private double bucketizerAllTurns(
             BucketList turnBuckets,
             BucketList riverBuckets,
-            byte       nTurnBuckets)
+            byte       nTurnBuckets,
+            byte       nRiverBuckets)
     {
-//        Domain
+        CentroidDomain<Centroid<double[]>, double[]> byRiver =
+                new CentroidDomain<Centroid<double[]>, double[]>(
+                        VectorEuclidean.newFactory(nRiverBuckets));
 
+        for (int canonTurn = 0;
+                 canonTurn < TurnLookup.CANONS;
+                 canonTurn++) {
+            byRiver.add(
+                    riverHist(canonTurn, riverBuckets, nRiverBuckets),
+                    TurnDetails.lookup(canonTurn).represents());
+        }
+        
 
 //        BucketTree.Branch allRivers = new
 
         return -1;
+    }
+
+    private double[] riverHist(
+            int        forTurn,
+            BucketList riverBuckets,
+            byte       nRiverBuckets)
+    {
+        double histogram[] = new double[ nRiverBuckets ];
+
+        CanonRange rivers = TurnRivers.rangeOf( forTurn );
+        for (int river  = (int) rivers.fromCanonIndex();
+                 river <= rivers.upToAndIncluding();
+                 river++) {
+            histogram[
+                riverBuckets.get(river)]++;
+        }
+
+        return histogram;
     }
 
 
