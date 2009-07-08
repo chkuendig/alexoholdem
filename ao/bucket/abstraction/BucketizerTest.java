@@ -1,6 +1,7 @@
 package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
+import ao.ai.simple.AlwaysRaiseBot;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
@@ -79,9 +80,9 @@ public class BucketizerTest
 //        abs.sequence();
 
 //        Rand.randomize();
-        computeCfr(abs);
+//        computeCfr(abs);
 //        tournament(abs);
-//        vsHuman(abs);
+        vsHuman(abs);
     }
 
 
@@ -145,9 +146,9 @@ public class BucketizerTest
         final CfrBot2 bot = new CfrBot2(
                 BOT_NAME, abs, true, false, false);
         precompute(bot, false);
-        final CfrBot2 vsBot = new CfrBot2(
-                VS_NAME, abs, true, false, false);
-        precompute(vsBot, false);
+//        final CfrBot2 vsBot = new CfrBot2(
+//                VS_NAME, abs, true, false, false);
+//        precompute(vsBot, false);
 
         long before = System.currentTimeMillis();
         new DealerTest(1000 * 1000).headsUp(new LinkedHashMap<Avatar, Player>(){{
@@ -155,8 +156,8 @@ public class BucketizerTest
 
 //            put(Avatar.local("rc"), new RaiseCallBot());
 
-            put(Avatar.local("ao-2000"), vsBot);
-//            put(Avatar.local("raise"), new AlwaysRaiseBot());
+//            put(Avatar.local("ao-2000"), vsBot);
+            put(Avatar.local("raise"), new AlwaysRaiseBot());
 //            put(Avatar.local("duane"), new DuaneBot());
 
 //            put(Avatar.local("random"), new RandomBot());
