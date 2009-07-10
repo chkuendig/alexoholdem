@@ -8,8 +8,8 @@ import ao.bucket.index.detail.river.compact.CompactProbabilityCounts;
 import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
 import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
-import ao.unsupervised.cluster.space.central_tendency.Mean;
-import ao.unsupervised.cluster.space.impl.RealDomain;
+import ao.unsupervised.cluster.space.impl.ScalarDomain;
+import ao.unsupervised.cluster.space.measure.scalar.MeanEuclidean;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
 import ao.unsupervised.cluster.trial.ParallelTrial;
@@ -42,7 +42,9 @@ public class RiverBucketizer
     {
         LOG.debug("bucketizeAll");
 
-        RealDomain domain = new RealDomain();
+        ScalarDomain<MeanEuclidean> domain =
+                new ScalarDomain<MeanEuclidean>(
+                        MeanEuclidean.newFactory());
         for (char prob = 0;
                   prob < CompactRiverProbabilities.COUNT;
                   prob++) {
@@ -74,17 +76,17 @@ public class RiverBucketizer
 
     //--------------------------------------------------------------------
     private static Clustering cluster(
-            RealDomain domain,
-            byte       nClusters)
+            ScalarDomain<MeanEuclidean> domain,
+            byte                        nClusters)
     {
         LOG.debug("clustering");
 
         domain.normalize();
 
-        ClusteringTrial<Mean> analyzer =
-                new ParallelTrial<Mean>(
-                        new KMeans<Mean>(),
-                        new TwoPassWcss<Mean>(),
+        ClusteringTrial<MeanEuclidean> analyzer =
+                new ParallelTrial<MeanEuclidean>(
+                        new KMeans<MeanEuclidean>(),
+                        new TwoPassWcss<MeanEuclidean>(),
                         512);
         Clustering clusters = analyzer.cluster(domain, nClusters);
         analyzer.close();

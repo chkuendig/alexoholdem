@@ -346,6 +346,7 @@ public class RiverEvalLookup
                     decodeRep(strRep));
         }
 
+        strRepIn .close();
         winProbIn.close();
     }
 
