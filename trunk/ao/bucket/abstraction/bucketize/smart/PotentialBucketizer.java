@@ -7,11 +7,16 @@ import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonRange;
-import ao.bucket.index.detail.turn.TurnDetails;
+import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.turn.TurnRivers;
+import ao.unsupervised.cluster.analysis.KMeans;
+import ao.unsupervised.cluster.error.TwoPassWcss;
 import ao.unsupervised.cluster.space.impl.CentroidDomain;
 import ao.unsupervised.cluster.space.measure.Centroid;
 import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
+import ao.unsupervised.cluster.trial.Clustering;
+import ao.unsupervised.cluster.trial.ClusteringTrial;
+import ao.unsupervised.cluster.trial.ParallelTrial;
 
 /**
  * User: alex
@@ -64,11 +69,16 @@ public class PotentialBucketizer implements Bucketizer
         RiverBucketizer.bucketizeAll(
                         nRiverBuckets, riverBuckets);
 
-        BucketList turnBuckets = new HalfBucketList(
-                null, TurnLookup.CANONS);
-        bucketizerAllTurns(
-                turnBuckets, riverBuckets,
-                nTurnBuckets, nRiverBuckets);
+        for (byte t = 1; t < 30; t++)
+        {
+            BucketList turnBuckets = new HalfBucketList(
+                    null, TurnLookup.CANONS);
+            double err = bucketizerAllTurns(
+                    turnBuckets, riverBuckets,
+                    t /*nTurnBuckets*/, nRiverBuckets);
+            System.out.println(err);
+        }
+
 
 
 
@@ -104,30 +114,46 @@ public class PotentialBucketizer implements Bucketizer
                  canonTurn++) {
             byRiver.add(
                     riverHist(canonTurn, riverBuckets, nRiverBuckets),
-                    TurnDetails.lookup(canonTurn).represents());
+                    1);
         }
-        
 
-//        BucketTree.Branch allRivers = new
+        ClusteringTrial<Centroid<double[]>> analyzer =
+                new ParallelTrial<Centroid<double[]>>(
+                        new KMeans<Centroid<double[]>>(),
+                        new TwoPassWcss<Centroid<double[]>>(),
+                        512);
+        Clustering clusters = analyzer.cluster(
+                                         byRiver, nTurnBuckets);
+        analyzer.close();
 
-        return -1;
+        for (int canonTurn = 0;
+                 canonTurn < TurnLookup.CANONS;
+                 canonTurn++) {
+            turnBuckets.set(
+                    canonTurn,
+                    clusters.cluster(canonTurn));
+        }
+
+        return clusters.error();
     }
 
     private double[] riverHist(
-            int        forTurn,
-            BucketList riverBuckets,
-            byte       nRiverBuckets)
+            final int        forTurn,
+            final BucketList riverBuckets,
+            final byte       nRiverBuckets)
     {
-        double histogram[] = new double[ nRiverBuckets ];
-
-        CanonRange rivers = TurnRivers.rangeOf( forTurn );
-        for (int river  = (int) rivers.fromCanonIndex();
-                 river <= rivers.upToAndIncluding();
-                 river++) {
-            histogram[
-                riverBuckets.get(river)]++;
-        }
-
+        final double histogram[] = new double[ nRiverBuckets ];
+        RiverEvalLookup.traverse(
+                new CanonRange[]{TurnRivers.rangeOf( forTurn )},
+                new RiverEvalLookup.VsRandomVisitor() {
+                    public void traverse(
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
+                        histogram[ riverBuckets.get(canonIndex) ] +=
+                                                            represents;
+                    }
+                });
         return histogram;
     }
 
