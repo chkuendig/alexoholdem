@@ -24,7 +24,10 @@ public class MemProbCounts
         System.out.println(totalCount);
 
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+            new CanonRange[]{new CanonRange(
+//                    (long) Integer.MAX_VALUE - 1, 100
+                    0, RiverLookup.CANONS
+            )},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,
@@ -36,6 +39,7 @@ public class MemProbCounts
                     {
                         System.out.println(canonIndex +" err: " +
                                 rep + " vs " + represents);
+                        System.exit(1);
                     }
                 }
             });
@@ -104,8 +108,26 @@ public class MemProbCounts
                         double strengthVsRandom,
                         byte   represents)
                 {
-                    probCounts[ (int) (canonIndex - from) ] =
+//                    System.out.println(
+//        (int) CompactRiverProbabilities.compact(strengthVsRandom) + "\t" +
+//        represents + "\t" + CompactRiverCounts.indexOf(represents));
+
+                    int index = (int) (canonIndex - from);
+
+                    assert probCounts[ index ] == 0
+                           : canonIndex + "\t" + index;
+
+                    probCounts[ index ] =
                             encode(strengthVsRandom, represents);
+
+//                    assert decodeProb(probCounts[ index ]) ==
+//                            CompactRiverProbabilities.compact(
+//                                    strengthVsRandom)
+//                            : canonIndex + "\t" + index;
+//                    assert decodeRep(encode(
+//                            strengthVsRandom, represents)) ==
+//                                CompactRiverCounts.indexOf(represents)
+//                            : canonIndex + "\t" + index;
                 }
             });
 
@@ -133,7 +155,7 @@ public class MemProbCounts
 
     private static byte decodeRep(char probCount)
     {
-        return (byte)(probCount >>> COUNT_SHIFT);
+        return (byte) (probCount >>> COUNT_SHIFT);
     }
 
 

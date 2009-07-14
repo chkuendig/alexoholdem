@@ -330,8 +330,11 @@ public class RiverEvalLookup
                         new FileInputStream(strRepF)));
 
         if (offset > 0) {
-            long strSkip = offset * (Character.SIZE / 8);
-            if (strSkip != winProbIn.skip( strSkip )) {
+            long toSkip = offset * (Character.SIZE / 8);
+            if (toSkip != winProbIn.skip( toSkip )) {
+                throw new Error("unable to skip");
+            }
+            if (toSkip != strRepIn.skip( toSkip )) {
                 throw new Error("unable to skip");
             }
         }
@@ -339,7 +342,7 @@ public class RiverEvalLookup
         for (long i = 0; i < count; i++) {
             long river   = offset + i;
             char winProb = winProbIn.readChar();
-            char strRep  = strRepIn.readChar();
+            char strRep  = strRepIn .readChar();
             traverser.traverse(
                     river,
                     ProbabilityEncoding.decodeWinProb(winProb),
