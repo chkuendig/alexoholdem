@@ -185,4 +185,9 @@ public class MemProbCounts
         return CompactRiverCounts.count(
                 compactCount(riverIndex));
     }
+    public static byte normRiverCount(long riverIndex)
+    {
+        return CompactRiverCounts.normCount(
+                compactCount(riverIndex));
+    }
 }

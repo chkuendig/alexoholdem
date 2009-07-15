@@ -2,10 +2,9 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.BucketList;
 import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.detail.CanonRange;
-import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.river.compact.CompactProbabilityCounts;
 import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
 import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
 import ao.unsupervised.cluster.space.impl.ScalarDomain;
@@ -55,20 +54,26 @@ public class RiverBucketizer
         final byte       clusters[] = clustering.clusters();
 
         LOG.debug("apply clusters");
-        RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
-            new RiverEvalLookup.VsRandomVisitor() {
-                public void traverse(
-                        long   canonIndex,
-                        double strengthVsRandom,
-                        byte   represents) {
-                    char compactStr =
-                            CompactRiverProbabilities
-                                    .compact(strengthVsRandom);
-                    into.set(canonIndex, clusters[compactStr]);
-                }
-            });
+        for (long river = 0; river < RiverLookup.CANONS; river++)
+        {
+            into.set(river,
+                     clusters[ MemProbCounts.compactProb(river) ]);
+        }
+//        RiverEvalLookup.traverse(
+//            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+//            new RiverEvalLookup.VsRandomVisitor() {
+//                public void traverse(
+//                        long   canonIndex,
+//                        double strengthVsRandom,
+//                        byte   represents) {
+//                    char compactStr =
+//                            CompactRiverProbabilities
+//                                    .compact(strengthVsRandom);
+//                    into.set(canonIndex, clusters[compactStr]);
+//                }
+//            });
 
+        LOG.debug("done: " + clustering.error());
         return clustering.error();
     }
 
