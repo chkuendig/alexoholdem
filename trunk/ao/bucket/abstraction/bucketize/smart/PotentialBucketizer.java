@@ -20,6 +20,7 @@ import ao.unsupervised.cluster.trial.ParallelTrial;
 import ao.util.data.AutovivifiedMap;
 import ao.util.data.primitive.DoubleList;
 import ao.util.misc.Factories;
+import ao.util.persist.PersistentObjects;
 import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
@@ -42,7 +43,7 @@ public class PotentialBucketizer implements Bucketizer
                 (byte) 16,
                 (byte) 10,
                 (byte) 5,
-                (byte) 5);
+                (byte) 10);
     }
 
 
@@ -81,6 +82,10 @@ public class PotentialBucketizer implements Bucketizer
 
         CentroidDomain<Centroid<double[]>, double[]>
                 turnDomain = byRiver(riverBuckets, nRiverBuckets);
+
+        PersistentObjects.persist(turnDomain,
+                "/home/alex/proj/datamine/input/turnDomain.obj");
+
         for (byte t = 1; t < 30; t++)
         {
             BucketList turnBuckets = new HalfBucketList(
@@ -170,7 +175,7 @@ public class PotentialBucketizer implements Bucketizer
             byRiver.add(histogram.getKey().toArray(),
                         histogram.getValue()[ 0 ]);
         }
-        byRiver.normalize();
+//        byRiver.normalize();
 
         LOG.debug("done\t" + histCount.size());
         return byRiver;
@@ -181,7 +186,8 @@ public class PotentialBucketizer implements Bucketizer
             final BucketList riverBuckets,
             final byte       nRiverBuckets)
     {
-        DoubleList histogram = new DoubleList( nRiverBuckets );
+        DoubleList histogram =
+                new DoubleList( nRiverBuckets, nRiverBuckets );
 
         CanonRange rivers = TurnRivers.rangeOf( forTurn );
         for (long river  = rivers.upToAndIncluding();
