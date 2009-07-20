@@ -36,7 +36,7 @@ public class BucketTreeImpl implements BucketTree
     private final PersistentBucketList flops;
     private final PersistentBucketList turns;
     private final PersistentBucketList rivers;
-    private final File       flushFlag;
+    private final File                 flushFlag;
 
 
     //--------------------------------------------------------------------
@@ -110,6 +110,11 @@ public class BucketTreeImpl implements BucketTree
             case RIVER:   setRiver(       canonIndex, bucket); break;
         }
     }
+
+//    public long size(Round round)
+//    {
+//
+//    }
 
 
     //--------------------------------------------------------------------
@@ -195,7 +200,7 @@ public class BucketTreeImpl implements BucketTree
             parentCanons = new int[] {};
         }
 
-        public BranchImpl(Round r, int[] parents)
+        public BranchImpl(Round r, int parents[])
         {
             round        = r;
             parentCanons = parents;

@@ -5,9 +5,14 @@ package ao.bucket.abstraction.access.tree;
  * Date: 5-Jul-2009
  * Time: 5:45:05 PM
  */
-public interface BucketList {
+public interface BucketList
+{
     //--------------------------------------------------------------------
-    void set(long index, byte bucket);
+    public void set(long index, byte bucket);
 
-    byte get(long index);
+    public byte get(long index);
+
+
+//    //--------------------------------------------------------------------
+//    public long size();
 }
