@@ -1,6 +1,5 @@
 package ao.bucket.index.detail.turn;
 
-import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonDetail;
@@ -8,10 +7,8 @@ import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.example.ExampleLookup;
 import ao.holdem.model.card.Card;
 import ao.odds.agglom.Odds;
-import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentChars;
-import ao.util.persist.PersistentInts;
 
 import java.io.File;
 
@@ -25,7 +22,7 @@ public class TurnDetailFlyweight
 //    private static final String F_EXAMPLE     = "ex.byte";
     private static final String F_REPRESENTS  = "rep.byte";
     private static final String F_STRENGTH    = "str.char";
-    private static final String F_FIRST_RIVER = "first_river.int";
+//    private static final String F_FIRST_RIVER = "first_river.int";
 //    private static final String F_RIVER_COUNT = "rcnt.byte";
 
 
@@ -35,12 +32,12 @@ public class TurnDetailFlyweight
 //        File fExample    = new File(toDir, F_EXAMPLE);
         File fRepresent  = new File(toDir, F_REPRESENTS);
         File fStrength   = new File(toDir, F_STRENGTH);
-        File fFirstRiver = new File(toDir, F_FIRST_RIVER);
+//        File fFirstRiver = new File(toDir, F_FIRST_RIVER);
 
 //        PersistentBytes .persist(fw.EXAMPLE    , fExample);
         PersistentBytes.persist(fw.REPRESENT  , fRepresent);
         PersistentChars.persist(fw.STRENGTH   , fStrength);
-        PersistentInts .persist(fw.FIRST_RIVER, fFirstRiver);
+//        PersistentInts .persist(fw.FIRST_RIVER, fFirstRiver);
     }
 
     public static TurnDetailFlyweight retrieve(File fromDir)
@@ -48,24 +45,24 @@ public class TurnDetailFlyweight
 //        File fExample    = new File(fromDir, F_EXAMPLE);
         File fRepresent  = new File(fromDir, F_REPRESENTS);
         File fStrength   = new File(fromDir, F_STRENGTH);
-        File fFirstRiver = new File(fromDir, F_FIRST_RIVER);
+//        File fFirstRiver = new File(fromDir, F_FIRST_RIVER);
 
         if (! fStrength.canRead()) return null;
 
         return new TurnDetailFlyweight(
 //                PersistentBytes .retrieve(fExample),
                 PersistentBytes .retrieve(fRepresent),
-                PersistentChars.retrieve(fStrength),
-                PersistentInts .retrieve(fFirstRiver)
+                PersistentChars.retrieve(fStrength)//,
+//                PersistentInts .retrieve(fFirstRiver)
         );
     }
 
 
     //--------------------------------------------------------------------
 //    private final byte[]  EXAMPLE;
-    private final byte[]  REPRESENT;
+    private final byte[] REPRESENT;
     private final char[] STRENGTH;
-    private final int [] FIRST_RIVER;
+//    private final int [] FIRST_RIVER;
 
 
     //--------------------------------------------------------------------
@@ -74,19 +71,19 @@ public class TurnDetailFlyweight
 //        EXAMPLE     = new byte [ TurnLookup.CANONS];
         REPRESENT   = new byte [ TurnLookup.CANONS];
         STRENGTH    = new char[ TurnLookup.CANONS ];
-        FIRST_RIVER = new int [ TurnLookup.CANONS ];
+//        FIRST_RIVER = new int [ TurnLookup.CANONS ];
     }
     private TurnDetailFlyweight(
 //            byte[]  example,
             byte[]  represent,
-            char[] strength,
-            int [] firstRiver
+            char[] strength//,
+//            int [] firstRiver
             )
     {
 //        EXAMPLE     = example;
         REPRESENT   = represent;
         STRENGTH    = strength;
-        FIRST_RIVER = firstRiver;
+//        FIRST_RIVER = firstRiver;
     }
 
 
@@ -114,12 +111,12 @@ public class TurnDetailFlyweight
                 strengthFromDouble(odds.strengthVsRandom());
     }
 
-    public void setRiverInfo(
-            int  canonIndex,
-            long firstRiver)
-    {
-        FIRST_RIVER[ canonIndex ] = (int) firstRiver;
-    }
+//    public void setRiverInfo(
+//            int  canonIndex,
+//            long firstRiver)
+//    {
+//        FIRST_RIVER[ canonIndex ] = (int) firstRiver;
+//    }
 
     public void incrementRepresentation(int canonIndex)
     {
@@ -175,25 +172,28 @@ public class TurnDetailFlyweight
         //----------------------------------------------------------------
         public long firstCanonRiver()
         {
-            return Calc.unsigned( FIRST_RIVER[ CANON_INDEX ]);
+//            return Calc.unsigned( FIRST_RIVER[ CANON_INDEX ]);
+            return TurnRivers.firstRiverOf(    CANON_INDEX );
         }
         public long lastCanonRiver()
         {
-            return (CANON_INDEX == (TurnLookup.CANONS - 1))
-                    ? RiverLookup.CANONS - 1
-                    : Calc.unsigned(
-                            FIRST_RIVER[ CANON_INDEX + 1 ]) - 1;
+//            return (CANON_INDEX == (TurnLookup.CANONS - 1))
+//                    ? RiverLookup.CANONS - 1
+//                    : Calc.unsigned(
+//                            FIRST_RIVER[ CANON_INDEX + 1 ]) - 1;
+            return TurnRivers.lastRiverOf(     CANON_INDEX );
         }
         public byte canonRiverCount()
         {
-            return (byte)(lastCanonRiver() - firstCanonRiver() + 1);
+//            return (byte)(lastCanonRiver() - firstCanonRiver() + 1);
+            return TurnRivers.canonRiverCount( CANON_INDEX );
         }
-
         public CanonRange range()
         {
-            return new CanonRange(
-                    firstCanonRiver(),
-                    canonRiverCount());
+//            return new CanonRange(
+//                    firstCanonRiver(),
+//                    canonRiverCount());
+            return TurnRivers.rangeOf(         CANON_INDEX );
         }
 
 

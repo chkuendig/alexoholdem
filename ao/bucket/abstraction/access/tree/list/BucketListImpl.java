@@ -25,7 +25,10 @@ public class BucketListImpl implements PersistentBucketList
 
     private byte[] retrieveOrCreate(int size)
     {
-        byte[] list = PersistentBytes.retrieve(FILE);
+        byte[] list =
+                FILE == null
+                ? null
+                : PersistentBytes.retrieve(FILE);
         if (list != null) return list;
 
         list = new byte[ size ];

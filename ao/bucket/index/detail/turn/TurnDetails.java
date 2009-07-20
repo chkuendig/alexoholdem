@@ -2,9 +2,7 @@ package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
@@ -105,39 +103,39 @@ public class TurnDetails
                 }
                 flyweight.incrementRepresentation(index);
             }});
-        computeRiverInfo( flyweight );
+//        computeRiverInfo( flyweight );
         return flyweight;
     }
 
 
     //--------------------------------------------------------------------
-    private static void computeRiverInfo(
-            TurnDetailFlyweight fw)
-    {
-        LOG.debug("computing river info");
+//    private static void computeRiverInfo(
+//            TurnDetailFlyweight fw)
+//    {
+//        LOG.debug("computing river info");
+//
+//        long   riverOffset = 0;
+//        byte[] riverCounts = riverCounts();
+//
+//        for (int i = 0; i < TurnLookup.CANONS; i++)
+//        {
+////            fw.setRiverInfo(i, riverOffset/*, riverCounts[ i ]*/);
+//            riverOffset += riverCounts[ i ];
+//        }
+//    }
 
-        long   riverOffset = 0;
-        byte[] riverCounts = riverCounts();
-
-        for (int i = 0; i < TurnLookup.CANONS; i++)
-        {
-            fw.setRiverInfo(i, riverOffset/*, riverCounts[ i ]*/);
-            riverOffset += riverCounts[ i ];
-        }
-    }
-
-    private static byte[] riverCounts()
-    {
-        final byte[] riverCounts =
-                new byte[ TurnLookup.CANONS];
-
-        HandEnum.uniqueRivers(new Traverser<River>() {
-            public void traverse(River river) {
-                riverCounts[ river.turn().canonIndex() ]++;
-            }});
-
-        return riverCounts;
-    }
+//    private static byte[] riverCounts()
+//    {
+//        final byte[] riverCounts =
+//                new byte[ TurnLookup.CANONS];
+//
+//        HandEnum.uniqueRivers(new Traverser<River>() {
+//            public void traverse(River river) {
+//                riverCounts[ river.turn().canonIndex() ]++;
+//            }});
+//
+//        return riverCounts;
+//    }
 
 
     //--------------------------------------------------------------------

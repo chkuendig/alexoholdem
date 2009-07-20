@@ -6,6 +6,7 @@ import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetails;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
@@ -218,24 +219,38 @@ public class DetailLookup
         switch (forRound)
         {
             case PREFLOP:
-                CanonHoleDetail holeDetail =
-                        lookupHole( (char) canonIndex );
-                return new CanonRange(holeDetail.firstCanonFlop(),
-                                      holeDetail.canonFlopCount());
-            case FLOP:
-                CanonFlopDetail flopDetail =
-                        lookupFlop( (int) canonIndex );
-                return new CanonRange(flopDetail.firstCanonTurn(),
-                                      (char) flopDetail.canonTurnCount());
+                return lookupHole((char) canonIndex).flops();
 
-//            case TURN:
-//                CanonTurnDetail turnDetail =
-//                        lookupTurn( (int) canonIndex );
-//                return new CanonRange(turnDetail.firstCanonRiver(),
-//                                      (char) turnDetail.canonRiverCount());
+            case FLOP:
+                return lookupFlop((int) canonIndex).turns();
+
+            case TURN:
+                return TurnRivers.rangeOf((int) canonIndex);
 
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+
+    //--------------------------------------------------------------------
+    public static int lookupRepresentation(
+            Round forRound, long canonIndex)
+    {
+        switch (forRound)
+        {
+            case PREFLOP:
+                return HoleDetails.lookup((char) canonIndex).represents();
+
+            case FLOP:
+                return FlopDetails.lookup((int)  canonIndex).represents();
+
+            case TURN:
+                return TurnDetails.lookup((int)  canonIndex).represents();
+
+            case RIVER:
+                return MemProbCounts.riverCount( canonIndex );
+        }
+        return -1;
     }
 }

@@ -55,7 +55,7 @@ public class TurnRivers
     {
         LOG.debug("computeFirstRivers");
 
-        final int[] offsets = new int[ TurnLookup.CANONS ];
+        final int offsets[] = new int[ TurnLookup.CANONS ];
         Arrays.fill(offsets, (int)(RiverLookup.CANONS + 1));
 
         final long[] count = {0};
@@ -82,16 +82,33 @@ public class TurnRivers
                 FIRST_RIVER[ canonTurn ]);
     }
 
+    public static long lastRiverOf(int canonTurn)
+    {
+        return (canonTurn == (TurnLookup.CANONS - 1))
+                    ? RiverLookup.CANONS - 1
+                    : Calc.unsigned(
+                            FIRST_RIVER[ canonTurn + 1 ]) - 1;
+    }
+
+    public static byte canonRiverCount(int canonTurn)
+    {
+        return (byte)(lastRiverOf(canonTurn)
+                        - firstRiverOf(canonTurn) + 1);
+    }
+
     public static CanonRange rangeOf(int canonTurn)
     {
-        long fromIncluding = firstRiverOf(canonTurn);
-        long toExcluding   =
-                (canonTurn == (TurnLookup.CANONS - 1))
-                ? RiverLookup.CANONS
-                : firstRiverOf(canonTurn + 1);
+//        long fromIncluding = firstRiverOf(canonTurn);
+//        long toExcluding   =
+//                (canonTurn == (TurnLookup.CANONS - 1))
+//                ? RiverLookup.CANONS
+//                : firstRiverOf(canonTurn + 1);
+//        return new CanonRange(
+//                     fromIncluding,
+//                     (char)(toExcluding - fromIncluding));
         return new CanonRange(
-                     fromIncluding,
-                     (char)(toExcluding - fromIncluding));
+                    firstRiverOf(    canonTurn ),
+                    canonRiverCount( canonTurn ));
     }
 
 

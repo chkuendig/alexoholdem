@@ -189,6 +189,14 @@ public class FlopDetailFlyweight
             return REPRESENTS[ CANON_INDEX ];
         }
 
+        public CanonRange turns()
+        {
+            return new CanonRange(
+                    firstCanonTurn(),
+                    canonTurnCount());
+        }
+
+
         //----------------------------------------------------------------
         @Override public String toString()
         {

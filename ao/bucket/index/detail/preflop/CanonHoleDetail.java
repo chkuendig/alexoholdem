@@ -2,6 +2,7 @@ package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.detail.CanonDetail;
+import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.example.ExampleLookup;
 import ao.holdem.model.card.Hole;
 import ao.holdem.persist.GenericBinding;
@@ -86,6 +87,14 @@ public class CanonHoleDetail implements CanonDetail
     {
         return CANON_FLOP_COUNT;
     }
+
+    public CanonRange flops()
+    {
+        return new CanonRange(
+                firstCanonFlop(),
+                canonFlopCount());
+    }
+
 
 
     //--------------------------------------------------------------------
