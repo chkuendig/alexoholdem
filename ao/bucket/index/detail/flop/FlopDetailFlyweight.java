@@ -105,7 +105,7 @@ public class FlopDetailFlyweight
 
     public CanonRange getTurnRange(int canonIndex)
     {
-        return new CanonRange(
+        return CanonRange.newFromCount(
                 FIRST_TURN[ canonIndex ],
                 (char) TURN_COUNT[ canonIndex ]);
     }
@@ -191,7 +191,7 @@ public class FlopDetailFlyweight
 
         public CanonRange turns()
         {
-            return new CanonRange(
+            return CanonRange.newFromCount(
                     firstCanonTurn(),
                     canonTurnCount());
         }

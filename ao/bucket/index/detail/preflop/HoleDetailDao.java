@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.canon.hole.HoleLookup;
-import ao.util.io.Slurpy;
+import ao.util.persist.PersistentBytes;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import org.apache.log4j.Logger;
@@ -43,7 +43,7 @@ public class HoleDetailDao
     //--------------------------------------------------------------------
     public static CanonHoleDetail[] retrieveDetails()
     {
-        byte[] binDetails = Slurpy.slurp(FILE);
+        byte[] binDetails = PersistentBytes.retrieve(FILE);
         if (binDetails == null || binDetails.length == 0) return null;
         LOG.debug("retrieving details");
 

@@ -90,11 +90,10 @@ public class CanonHoleDetail implements CanonDetail
 
     public CanonRange flops()
     {
-        return new CanonRange(
+        return CanonRange.newFromCount(
                 firstCanonFlop(),
                 canonFlopCount());
     }
-
 
 
     //--------------------------------------------------------------------

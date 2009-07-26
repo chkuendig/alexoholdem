@@ -7,59 +7,70 @@ package ao.bucket.index.detail;
 public class CanonRange implements Comparable<CanonRange>
 {
     //--------------------------------------------------------------------
-    private final long fromCanonIndex;
-    private final long canonIndexCount;
+    public static CanonRange newFromTo(
+            long from, long to)
+    {
+        return new CanonRange(from, to);
+    }
+
+    public static CanonRange newFromCount(
+            long from, long count)
+    {
+        return new CanonRange(from, from + count - 1);
+    }
 
 
     //--------------------------------------------------------------------
-    public CanonRange(long from, long count)
+    private final long from;
+    private final long to;
+
+
+    //--------------------------------------------------------------------
+    private CanonRange(long fromCanonIndexInclusive,
+                       long   toCanonIndexInclusive)
     {
-        fromCanonIndex  = from;
-        canonIndexCount = count;
+        from = fromCanonIndexInclusive;
+        to   =   toCanonIndexInclusive;
     }
 
 
     //--------------------------------------------------------------------
-    public long fromCanonIndex() {
-        return fromCanonIndex;
+    public long from() {
+        return from;
     }
-    public long canonIndexCount() {
-        return canonIndexCount;
+    public long toInclusive() {
+        return to;
     }
-
-    public long upToAndIncluding()
-    {
-        return fromCanonIndex + canonIndexCount - 1;
+    public long count() {
+        return to - from + 1;
     }
 
 
     //--------------------------------------------------------------------
     public boolean contains(long canonIndex)
     {
-        return fromCanonIndex <= canonIndex &&
-                                 canonIndex <= upToAndIncluding();
+        return from <= canonIndex &&
+                       canonIndex <= to;
     }
 
     public long distanceTo(CanonRange next)
     {
-        return next.fromCanonIndex - upToAndIncluding() - 1;
+        return next.from - to - 1;
     }
 
 
     //--------------------------------------------------------------------
     public int compareTo(CanonRange o) {
-        return fromCanonIndex < o.fromCanonIndex ? -1 :
-               fromCanonIndex > o.fromCanonIndex ?  1 : 0;
+        return from < o.from ? -1 :
+               from > o.from ?  1 : 0;
     }
 
 
     //--------------------------------------------------------------------
     @Override public String toString()
     {
-        return "CanonRange{" +
-               "fromCanonIndex=" + fromCanonIndex +
-               ", canonIndexCount=" + (int) canonIndexCount +
-               '}';
+        return "CanonRange[" +
+               from + ".." + to + ']';
     }
 
     @Override public boolean equals(Object o)
@@ -68,15 +79,14 @@ public class CanonRange implements Comparable<CanonRange>
         if (o == null || getClass() != o.getClass()) return false;
 
         CanonRange that = (CanonRange) o;
-        return canonIndexCount == that.canonIndexCount &&
-               fromCanonIndex == that.fromCanonIndex;
-
+        return from == that.from &&
+               to   == that.to;
     }
 
     @Override public int hashCode()
     {
-        int result = (int) (fromCanonIndex ^ (fromCanonIndex >>> 32));
-        result = 31 * result + (int) canonIndexCount;
+        int result = (int) (from ^ (from >>> 32));
+        result = 31 * result + (int) (to ^ (to >>> 32));
         return result;
     }
 }

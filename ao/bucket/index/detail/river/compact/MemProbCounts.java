@@ -24,7 +24,7 @@ public class MemProbCounts
         System.out.println(totalCount);
 
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(
+            new CanonRange[]{CanonRange.newFromCount(
 //                    (long) Integer.MAX_VALUE - 1, 100
                     0, RiverLookup.CANONS
             )},
@@ -101,7 +101,7 @@ public class MemProbCounts
         final char probCounts[] = new char[ len ];
 
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(from, len)},
+            new CanonRange[]{CanonRange.newFromCount(from, len)},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,

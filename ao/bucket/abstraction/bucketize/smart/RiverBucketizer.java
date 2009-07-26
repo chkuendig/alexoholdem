@@ -35,6 +35,17 @@ public class RiverBucketizer
 
 
     //--------------------------------------------------------------------
+    public static double bucketize(
+            final int        parentTurns[],
+            final BucketList into,
+            final byte       nClusters)
+    {
+        LOG.debug("bucketize");
+        return Double.NaN;
+    }
+
+
+    //--------------------------------------------------------------------
     public static double bucketizeAll(
             final byte       nClusters,
             final BucketList into)

@@ -54,7 +54,8 @@ public class RiverEvalLookup
 
         final int byStrength[] = new int[ Character.MAX_VALUE + 1];
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+            new CanonRange[]{CanonRange.newFromTo(
+                    0, RiverLookup.CANONS)},
             new VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,
@@ -279,9 +280,9 @@ public class RiverEvalLookup
     {
         final int nextAllowed[] = {from};
 
-        traverse(allowRivers[from].fromCanonIndex(),
-                 allowRivers[toExclusive - 1].upToAndIncluding()
-                         - allowRivers[from].fromCanonIndex() + 1,
+        traverse(allowRivers[from].from(),
+                 allowRivers[toExclusive - 1].toInclusive()
+                         - allowRivers[from].from() + 1,
                  new VsRandomVisitor() {
              public void traverse(
                             long   canonIndex,
@@ -289,7 +290,7 @@ public class RiverEvalLookup
                             byte   represents) {
 
                  while (allowRivers[ nextAllowed[0] ]
-                          .upToAndIncluding() < canonIndex) {
+                          .toInclusive() < canonIndex) {
                      nextAllowed[0]++;
                  }
 
@@ -361,8 +362,8 @@ public class RiverEvalLookup
     {
         for (CanonRange r : partitionAllowed(allowRivers))
         {
-            traverse(r.fromCanonIndex(),
-                     r.canonIndexCount(),
+            traverse(r.from(),
+                     r.count(),
                      new AbsVisitor() {
                  public void traverse(
                          long canonIndex, short strength, byte count) {
@@ -437,7 +438,7 @@ public class RiverEvalLookup
             if (startOfGap != -1) {
                 long distance = i - lastSet - 1;
                 if (distance > 8192) {
-                    partitions.add(new CanonRange(
+                    partitions.add(CanonRange.newFromCount(
                             startOfGap,
                             (lastSet - startOfGap + 1)));
                     startOfGap = i;
@@ -448,7 +449,7 @@ public class RiverEvalLookup
             lastSet = i;
         }
         if (startOfGap != -1) {
-            partitions.add(new CanonRange(
+            partitions.add(CanonRange.newFromCount(
                     startOfGap,
                     (lastSet - startOfGap + 1)));
         }

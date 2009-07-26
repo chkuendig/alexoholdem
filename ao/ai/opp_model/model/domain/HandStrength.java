@@ -168,10 +168,10 @@ public enum HandStrength
 //    //--------------------------------------------------------------------
 //    private HandStrength(
 //            double fromAndIncluding,
-//            double upToAndIncluding)
+//            double toInclusive)
 //    {
 //        FROM_AND_INCLUDING  = fromAndIncluding;
-//        UP_TO_AND_INCLUDING = upToAndIncluding;
+//        UP_TO_AND_INCLUDING = toInclusive;
 //    }
 //
 //    private boolean intersects(double value)

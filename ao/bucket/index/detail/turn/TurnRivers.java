@@ -106,7 +106,7 @@ public class TurnRivers
 //        return new CanonRange(
 //                     fromIncluding,
 //                     (char)(toExcluding - fromIncluding));
-        return new CanonRange(
+        return CanonRange.newFromCount(
                     firstRiverOf(    canonTurn ),
                     canonRiverCount( canonTurn ));
     }
@@ -123,11 +123,11 @@ public class TurnRivers
             int        mid   = lo + (hi - lo) / 2;
             CanonRange range = rangeOf( mid );
 
-            if (range.fromCanonIndex() > canonRiver)
+            if (range.from() > canonRiver)
             {
                 hi = mid - 1;
             }
-            else if (range.upToAndIncluding() < canonRiver)
+            else if (range.toInclusive() < canonRiver)
             {
                 lo = mid + 1;
             }

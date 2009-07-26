@@ -51,7 +51,8 @@ public class ProbabilityCounts
     {
         final int counts[] = new int[ ProbabilityEncoding.COUNT ];
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+            new CanonRange[]{CanonRange.newFromCount(
+                    0, RiverLookup.CANONS)},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,

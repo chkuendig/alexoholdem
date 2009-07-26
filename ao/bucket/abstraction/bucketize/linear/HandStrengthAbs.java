@@ -123,7 +123,7 @@ public class HandStrengthAbs implements ScalarBucketizer
 
             int canonTurn = branch.parentCanons()[i];
             toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
-            nRivers += toBucketize[ i ].canonIndexCount();
+            nRivers += toBucketize[ i ].count();
         }
         Arrays.sort(toBucketize);
 
