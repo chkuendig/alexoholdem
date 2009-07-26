@@ -90,8 +90,8 @@ public class DetailLookup
         for (int turnIndex : turnCanonIndexes)
         {
             CanonRange rivers = TurnRivers.rangeOf( turnIndex );
-            for (long r  = rivers.upToAndIncluding();
-                      r >= rivers.fromCanonIndex();
+            for (long r  = rivers.toInclusive();
+                      r >= rivers.from();
                       r--)
             {
                 maxBucket = (byte) Math.max(
@@ -175,7 +175,7 @@ public class DetailLookup
         for (int i = 0; i < prevCanonIndexes.length; i++)
         {
             ranges[i]  = lookupRange(prevRound, prevCanonIndexes[i]);
-            size      += ranges[i].canonIndexCount();
+            size      += ranges[i].count();
         }
 
         int           offset = 0;
@@ -184,7 +184,7 @@ public class DetailLookup
         {
             lookupFlopTurnDetails(
                     prevRound.next(), range, subs, offset);
-            offset += range.canonIndexCount();
+            offset += range.count();
         }
         return subs;
     }
@@ -195,14 +195,14 @@ public class DetailLookup
         switch (round)
         {
             case FLOP:
-                lookupFlop((int) range.fromCanonIndex(),
-                           (int) range.canonIndexCount(),
+                lookupFlop((int) range.from(),
+                           (int) range.count(),
                            into, startingAt);
                 return;
 
             case TURN:
-                lookupTurn((int) range.fromCanonIndex(),
-                           (int) range.canonIndexCount(),
+                lookupTurn((int) range.from(),
+                           (int) range.count(),
                            into, startingAt);
                 return;
 
@@ -232,8 +232,35 @@ public class DetailLookup
         }
     }
 
+    public static CanonRange lookupRange(
+            long  fromCanonIndex,
+            Round fromRound,
+            Round toRound)
+    {
+        assert fromRound.ordinal() < toRound.ordinal();
+
+        CanonRange range =
+                lookupRange(fromRound, fromCanonIndex);
+        if (fromRound.next() == toRound) return range;
+
+        fromRound = fromRound.next();
+        long from = lookupRange(fromRound, range.from()).from();
+        long to   = lookupRange(fromRound,
+                                range.toInclusive()).toInclusive();
+        range = CanonRange.newFromTo(from, to);
+        if (fromRound.next() == toRound) return range;
+
+        fromRound = fromRound.next();
+        from = lookupRange(fromRound, range.from()).from();
+        to   = lookupRange(fromRound,
+                           range.toInclusive()).toInclusive();
+        return CanonRange.newFromTo(from, to);
+    }
+
 
     //--------------------------------------------------------------------
+    // @return the number of real hands that the given
+    //          canonical hand index represents
     public static int lookupRepresentation(
             Round forRound, long canonIndex)
     {

@@ -151,11 +151,11 @@ public class FlopDetails
             int        mid       = lo + (hi - lo) / 2;
             CanonRange turnRange = DETAILS.getTurnRange( mid );
 
-            if (turnRange.fromCanonIndex() > turnCanon)
+            if (turnRange.from() > turnCanon)
             {
                 hi = mid - 1;
             }
-            else if (turnRange.upToAndIncluding() < turnCanon)
+            else if (turnRange.toInclusive() < turnCanon)
             {
                 lo = mid + 1;
             }

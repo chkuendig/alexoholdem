@@ -61,7 +61,8 @@ public class CompactRiverCounts
 
         final BitSet used = new BitSet();
         RiverEvalLookup.traverse(
-            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
+            new CanonRange[]{CanonRange.newFromCount(
+                    0, RiverLookup.CANONS)},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,
