@@ -1,15 +1,15 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.BucketList;
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.list.BucketListImpl;
-import ao.bucket.abstraction.access.tree.list.HalfBucketList;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.list.FullLongByteList;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.Canons;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.DetailLookup;
+import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.model.Round;
 import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
@@ -18,7 +18,9 @@ import ao.unsupervised.cluster.space.measure.Centroid;
 import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
-import ao.unsupervised.cluster.trial.ParallelTrial;
+import ao.unsupervised.cluster.trial.SerialTrial;
+import ao.util.data.Arr;
+import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
 import org.apache.log4j.Logger;
 
@@ -34,20 +36,21 @@ public class HistBucketizer implements Bucketizer
             Logger.getLogger(HistBucketizer.class);
 
     public static void main(String[] args) {
-        BucketList holeBuckets =
-                new BucketListImpl(null, HoleLookup.CANONS);
+        LongByteList holeBuckets =
+                new FullLongByteList(null, HoleLookup.CANONS);
 
-        byte nHoleBuckets = 32;
+        byte nHoleBuckets = 16;
         new HistBucketizer().bucketizeHoles(
                 holeBuckets,
                 nHoleBuckets,
                 (byte) 10);
 
         for (byte bucket = 0; bucket < nHoleBuckets; bucket++) {
-            for (int i = 0; i < HoleLookup.CANONS; i++) {
+            for (int i = 0, j = HoleLookup.CANONS - 1;
+                     i < HoleLookup.CANONS; i++, j--) {
                 if (bucket != holeBuckets.get(i)) continue;
                 System.out.print(
-                        HoleLookup.lookup(i) + " ");
+                        HoleLookup.lookup(j) + " ");
             }
             System.out.println();
         }
@@ -86,8 +89,8 @@ public class HistBucketizer implements Bucketizer
             byte              nBuckets,
             byte              nRiverHist)
     {
-//        BucketList riverBuckets =
-//                new HalfBucketList(null, RiverLookup.CANONS);
+//        LongByteList riverBuckets =
+//                new HalfLongByteList(null, RiverLookup.CANONS);
 //        RiverBucketizer.bucketizeAll(nRiverHist, riverBuckets);
 //
 //        CentroidDomain<Centroid<double[]>, double[]> byNextRound =
@@ -114,25 +117,29 @@ public class HistBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     private double bucketizeHoles(
-            BucketList preflopBranch,
+            LongByteList preflopBranch,
             byte       nHoleBuckets,
             byte       nRiverHist)
     {
-        BucketList riverBuckets =
-                new HalfBucketList(null, RiverLookup.CANONS);
+        LongByteList riverBuckets =
+                new FullLongByteList(null, RiverLookup.CANONS);
         RiverBucketizer.bucketizeAll(nRiverHist, riverBuckets);
 
-        CentroidDomain<Centroid<double[]>, double[]> byNextRound =
+        CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
                 allByRiver(Round.PREFLOP, riverBuckets, nRiverHist);
 
+//        CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
+//        PersistentObjects.retrieve(
+//                "/home/alex/proj/datamine/input/holeDomain.obj");
+
         ClusteringTrial<Centroid<double[]>> analyzer =
-                new ParallelTrial<Centroid<double[]>>(
+                new SerialTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        512);
-
+                        1);
         Clustering clustering =
-                analyzer.cluster(byNextRound, nHoleBuckets);
+                analyzer.cluster(byFutureRound, nHoleBuckets);
+        analyzer.close();
 
         for (int i = 0; i < HoleLookup.CANONS; i++) {
             preflopBranch.set(
@@ -148,16 +155,17 @@ public class HistBucketizer implements Bucketizer
     //--------------------------------------------------------------------
     private CentroidDomain<Centroid<double[]>, double[]>
             allByRiver(
-                    Round      thisRound,
-                    BucketList riverBuckets,
-                    byte       nRiverBuckets)
+                    Round        thisRound,
+                    LongByteList riverBuckets,
+                    byte         nRiverBuckets)
     {
         LOG.debug("building full domain for " + thisRound);
 
-        CentroidDomain<Centroid<double[]>, double[]> byNextRound =
+        CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
                 new CentroidDomain<Centroid<double[]>, double[]>(
                         VectorEuclidean.newFactory(nRiverBuckets)
 //                        Mahalanobis.newFactory(nRiverBuckets)
+//                        VectorInfo.newFactory(nRiverBuckets)
                         , Equalizers.doubleArray()
                 );
 
@@ -166,14 +174,35 @@ public class HistBucketizer implements Bucketizer
                  canon >= 0;
                  canon--) {
 
-            double hist[] = futureRoundHist(thisRound, Round.RIVER,
+            double hist    [] = futureRoundHist(
+                    thisRound, Round.RIVER,
                     canon, riverBuckets, nRiverBuckets);
-            byNextRound.add(hist, 1);
+            double normHist[] = Info.normalize(hist);
+
+            byFutureRound.add(
+                    normHist, sum(hist));
+
+            System.out.println(
+                    HoleLookup.lookup(canon) + "\t" +
+                    HoleOdds.lookup(canon).strengthVsRandom() + "\t" +
+                    Arr.join(normHist, "\t"));
         }
         //byFutureRound.normalize();
 
+//        PersistentObjects.persist(byFutureRound,
+//                "/home/alex/proj/datamine/input/holeDomain.obj");
+
         LOG.debug("done");
-        return byNextRound;
+        return byFutureRound;
+    }
+
+    private int sum(double hist[])
+    {
+        double sum = 0;
+        for (double val : hist) {
+            sum += val;
+        }
+        return (int) Math.round(sum);
     }
 
 
@@ -182,7 +211,7 @@ public class HistBucketizer implements Bucketizer
             Round      thisRound,
             Round      futureRound,
             int        forCanon,
-            BucketList futureRoundBuckets,
+            LongByteList futureRoundBuckets,
             byte       nFutureRoundBuckets)
     {
         double     histogram[]      = new double[ nFutureRoundBuckets ];

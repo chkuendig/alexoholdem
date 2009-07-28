@@ -86,6 +86,8 @@ public class Eval7Fast
         compute(vals);
 
         File cacheFile = new File(Eval7FastLookup.F_CACHE);
+        
+        //noinspection ResultOfMethodCallIgnored
         cacheFile.createNewFile();
 
         DataOutputStream cache =

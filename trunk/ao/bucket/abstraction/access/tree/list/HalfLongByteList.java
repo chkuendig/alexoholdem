@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
-import ao.bucket.abstraction.access.tree.BucketList;
-import ao.bucket.abstraction.access.tree.PersistentBucketList;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
 
@@ -11,7 +11,7 @@ import java.io.File;
  * Date: Jan 26, 2009
  * Time: 2:51:42 PM
  */
-public class HalfBucketList implements PersistentBucketList
+public class HalfLongByteList implements PersistentLongByteList
 {
     //--------------------------------------------------------------------
     private static final File DIR = Dir.get("test");
@@ -21,7 +21,7 @@ public class HalfBucketList implements PersistentBucketList
     public static void main(String[] args)
     {
         int        size = 100;
-        BucketList bl   = new HalfBucketList(
+        LongByteList bl   = new HalfLongByteList(
                                 new File(DIR, "hb.test3.byte"), size);
 
         for (int i = 0; i < size; i++)
@@ -47,7 +47,7 @@ public class HalfBucketList implements PersistentBucketList
 
 
     //--------------------------------------------------------------------
-    public HalfBucketList(File file, long size)
+    public HalfLongByteList(File file, long size)
     {
         FILE = file;
         LIST = retrieveOrCreate( size );
@@ -75,7 +75,7 @@ public class HalfBucketList implements PersistentBucketList
     //--------------------------------------------------------------------
     public void set(long index, byte bucket)
     {
-        assert bucket < LO_MASK;
+        assert bucket < LO_MASK : index + " is >= " + LO_MASK;
 
         byte current = LIST[ halfIndex(index) ];
         LIST[ halfIndex(index) ] =

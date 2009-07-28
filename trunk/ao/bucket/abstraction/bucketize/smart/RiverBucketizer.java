@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.BucketList;
+import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.river.compact.CompactProbabilityCounts;
 import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
@@ -37,7 +37,7 @@ public class RiverBucketizer
     //--------------------------------------------------------------------
     public static double bucketize(
             final int        parentTurns[],
-            final BucketList into,
+            final LongByteList into,
             final byte       nClusters)
     {
         LOG.debug("bucketize");
@@ -48,7 +48,7 @@ public class RiverBucketizer
     //--------------------------------------------------------------------
     public static double bucketizeAll(
             final byte       nClusters,
-            final BucketList into)
+            final LongByteList into)
     {
         LOG.debug("bucketizeAll");
 
@@ -70,19 +70,10 @@ public class RiverBucketizer
             into.set(river,
                      clusters[ MemProbCounts.compactProb(river) ]);
         }
-//        RiverEvalLookup.traverse(
-//            new CanonRange[]{new CanonRange(0, RiverLookup.CANONS)},
-//            new RiverEvalLookup.VsRandomVisitor() {
-//                public void traverse(
-//                        long   canonIndex,
-//                        double strengthVsRandom,
-//                        byte   represents) {
-//                    char compactStr =
-//                            CompactRiverProbabilities
-//                                    .compact(strengthVsRandom);
-//                    into.set(canonIndex, clusters[compactStr]);
-//                }
-//            });
+
+
+        LOG.debug("sorting clusters");
+        BucketSort.sortRiver(into, nClusters);
 
         LOG.debug("done: " + clustering.error());
         return clustering.error();

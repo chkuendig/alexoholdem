@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
-import ao.bucket.abstraction.access.tree.BucketList;
-import ao.bucket.abstraction.access.tree.PersistentBucketList;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
 
@@ -11,13 +11,13 @@ import java.io.File;
  * Date: Jan 28, 2009
  * Time: 1:55:44 PM
  */
-public class ThirdBucketList implements PersistentBucketList
+public class ThirdLongByteList implements PersistentLongByteList
 {
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
         int        size = 1000*1000;
-        BucketList bl   = new ThirdBucketList(
+        LongByteList bl   = new ThirdLongByteList(
                 new File(Dir.get("test"), "tb.test3.byte"), size);
 
         for (int i = 0; i < size; i++)
@@ -50,7 +50,7 @@ public class ThirdBucketList implements PersistentBucketList
 
 
     //--------------------------------------------------------------------
-    public ThirdBucketList(File dir, long size)
+    public ThirdLongByteList(File dir, long size)
     {
         DIR = dir;
         A   = retrieveOrCreate(new File(dir, A_FILE), size);
