@@ -45,6 +45,8 @@ public class CfrBot2 extends AbstractPlayer
     private final boolean           DETAILED;
     private final String            NAME;
     private       CardSequence      prevCards;
+
+    @SuppressWarnings({"FieldCanBeLocal"})
     private       boolean           mucked;
 
     private StateTree.Node prevNode = StateTree.headsUpRoot();
@@ -53,6 +55,7 @@ public class CfrBot2 extends AbstractPlayer
     private Turn           canonTurn;
     private Round          prevRound;
 
+    @SuppressWarnings({"FieldCanBeLocal"})
     private byte relBucket;
     private char roundBucket;
 

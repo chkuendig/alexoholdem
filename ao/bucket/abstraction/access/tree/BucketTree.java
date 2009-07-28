@@ -48,7 +48,7 @@ public interface BucketTree
 
 
     //--------------------------------------------------------------------
-    public static interface Branch extends BucketList
+    public static interface Branch extends LongByteList
     {
         public Round round();
         public int[] parentCanons();

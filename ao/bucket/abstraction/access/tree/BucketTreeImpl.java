@@ -1,9 +1,9 @@
 package ao.bucket.abstraction.access.tree;
 
-import ao.bucket.abstraction.access.tree.list.BucketListImpl;
-import ao.bucket.abstraction.access.tree.list.HalfBucketList;
-import ao.bucket.abstraction.access.tree.list.StoredBucketList;
-import ao.bucket.abstraction.access.tree.list.StoredHalfBucketList;
+import ao.bucket.abstraction.access.tree.list.FullLongByteList;
+import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
+import ao.bucket.abstraction.access.tree.list.StoredHalfLongByteList;
+import ao.bucket.abstraction.access.tree.list.StoredLongByteList;
 import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
@@ -32,10 +32,10 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    private final PersistentBucketList holes;
-    private final PersistentBucketList flops;
-    private final PersistentBucketList turns;
-    private final PersistentBucketList rivers;
+    private final PersistentLongByteList holes;
+    private final PersistentLongByteList flops;
+    private final PersistentLongByteList turns;
+    private final PersistentLongByteList rivers;
     private final File                 flushFlag;
 
 
@@ -53,18 +53,18 @@ public class BucketTreeImpl implements BucketTree
         if (storedReadOnly)
         {
             LOG.debug("retrieving stored read-only");
-            holes  = new StoredBucketList    ( holeFile);
-            flops  = new StoredBucketList    ( flopFile);
-            turns  = new StoredHalfBucketList( turnFile);
-            rivers = new StoredHalfBucketList(riverFile);
+            holes  = new StoredLongByteList( holeFile);
+            flops  = new StoredLongByteList( flopFile);
+            turns  = new StoredHalfLongByteList( turnFile);
+            rivers = new StoredHalfLongByteList(riverFile);
         }
         else
         {
             LOG.debug("loading (or creating)");
-            holes  = new BucketListImpl( holeFile,  HoleLookup.CANONS);
-            flops  = new BucketListImpl( flopFile,  FlopLookup.CANONS);
-            turns  = new HalfBucketList( turnFile,  TurnLookup.CANONS);
-            rivers = new HalfBucketList(riverFile, RiverLookup.CANONS);
+            holes  = new FullLongByteList( holeFile,  HoleLookup.CANONS);
+            flops  = new FullLongByteList( flopFile,  FlopLookup.CANONS);
+            turns  = new HalfLongByteList( turnFile,  TurnLookup.CANONS);
+            rivers = new HalfLongByteList(riverFile, RiverLookup.CANONS);
         }
     }
 

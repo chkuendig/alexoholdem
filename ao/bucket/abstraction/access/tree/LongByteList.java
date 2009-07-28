@@ -5,7 +5,7 @@ package ao.bucket.abstraction.access.tree;
  * Date: 5-Jul-2009
  * Time: 5:45:05 PM
  */
-public interface BucketList
+public interface LongByteList
 {
     //--------------------------------------------------------------------
     public void set(long index, byte bucket);

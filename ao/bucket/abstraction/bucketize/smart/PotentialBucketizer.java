@@ -1,12 +1,14 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.BucketList;
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.list.BucketListImpl;
-import ao.bucket.abstraction.access.tree.list.HalfBucketList;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.list.FullLongByteList;
+import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.Canons;
 import ao.bucket.index.canon.flop.FlopLookup;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonRange;
@@ -16,7 +18,7 @@ import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
 import ao.unsupervised.cluster.space.impl.CentroidDomain;
 import ao.unsupervised.cluster.space.measure.Centroid;
-import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
+import ao.unsupervised.cluster.space.measure.vector.VectorInfo;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
 import ao.unsupervised.cluster.trial.ParallelTrial;
@@ -27,6 +29,8 @@ import ao.util.misc.Factories;
 import ao.util.misc.Factory;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,12 +45,34 @@ public class PotentialBucketizer implements Bucketizer
             Logger.getLogger(PotentialBucketizer.class);
 
     public static void main(String[] args) {
+        LongByteList holeBuckets =
+                new FullLongByteList(null, HoleLookup.CANONS);
+
         new PotentialBucketizer().bucketizeAll(
-                null,
-                (byte) 16,
-                (byte) 10,
-                (byte) 6,
-                (byte) 10);
+                holeBuckets,
+                (byte) 20,
+                (byte) 4,
+                (byte) 8,  // 6
+                (byte) 14); // 10
+
+        Map<Byte, List<CanonHole>> byBucket =
+                new AutovivifiedMap<Byte, List<CanonHole>>(
+                        new Factory<List<CanonHole>>() {
+                            public List<CanonHole> newInstance() {
+                                return new ArrayList<CanonHole>();
+                            }});
+        for (int i = 0, j = HoleLookup.CANONS - 1;
+                i < HoleLookup.CANONS; i++, j--)
+        {
+            byBucket.get(
+                    holeBuckets.get(i)
+            ).add( HoleLookup.lookup(i) );
+        }
+
+        for (List<CanonHole> bucket : byBucket.values())
+        {
+            System.out.println(bucket);
+        }
     }
 
 
@@ -72,36 +98,55 @@ public class PotentialBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     private double bucketizeAll(
-            BucketTree.Branch preflopBranch,
-            byte              nHoleBuckets,
-            byte              nFlopBuckets,
-            byte              nTurnBuckets,
-            byte              nRiverBuckets)
+            LongByteList preflopBranch,
+            byte       nHoleBuckets,
+            byte       nFlopBuckets,
+            byte       nTurnBuckets,
+            byte       nRiverBuckets)
     {
-        BucketList turnBuckets = turnBuckets(nTurnBuckets, nRiverBuckets);
+        LongByteList turnBuckets = turnBuckets(nTurnBuckets, nRiverBuckets);
 
         CentroidDomain<Centroid<double[]>, double[]>
                 flopDomain = byNextRound(
-                    Round.FLOP, turnBuckets, nFlopBuckets);
-        BucketList flopBuckets = new BucketListImpl(
+                    Round.FLOP, turnBuckets, nTurnBuckets);
+        LongByteList flopBuckets = new FullLongByteList(
                 null, FlopLookup.CANONS);
 
-        for (byte nBuckets = 1; nBuckets < 30; nBuckets++)
-        {
-            double err = bucketizeAllPreRiver(
-                    Round.FLOP, flopDomain, flopBuckets, turnBuckets,
-                    nBuckets /*nFlopBuckets*/, nTurnBuckets);
-            System.out.println(nBuckets + "\t" + err);
-        }
+//        for (byte nBuckets = 1; nBuckets < 16; nBuckets++)
+//        {
+//            double err = bucketizeAllPreRiver(
+//                    Round.FLOP, flopDomain, flopBuckets, turnBuckets,
+//                    nBuckets /*nFlopBuckets*/, nTurnBuckets);
+//            System.out.println(nBuckets + "\t" + err);
+//        }
+        bucketizeAllPreRiver(
+                Round.FLOP, flopDomain,
+                flopBuckets, turnBuckets,
+                nFlopBuckets, nTurnBuckets);
 
-        return Double.NaN;
+        CentroidDomain<Centroid<double[]>, double[]>
+                holeDomain = byNextRound(
+                    Round.PREFLOP, flopBuckets, nFlopBuckets);
+//        for (byte nBuckets = 1; nBuckets < 30; nBuckets++)
+//        {
+//            double err = bucketizeAllPreRiver(
+//                Round.PREFLOP, holeDomain,
+//                preflopBranch, flopBuckets,
+//                nBuckets, nFlopBuckets);
+//            System.out.println(nBuckets + "\t" + err);
+//        }
+
+        return bucketizeAllPreRiver(
+                Round.PREFLOP, holeDomain,
+                preflopBranch, flopBuckets,
+                nHoleBuckets, nFlopBuckets);
     }
 
-    private BucketList turnBuckets(
+    private LongByteList turnBuckets(
             byte nTurnBuckets, byte nRiverBuckets) {
 
-        BucketList riverBuckets =
-                new HalfBucketList(null, RiverLookup.CANONS);
+        LongByteList riverBuckets =
+                new HalfLongByteList(null, RiverLookup.CANONS);
 
         CentroidDomain<Centroid<double[]>, double[]>
                 turnDomain = turnDomain(nRiverBuckets, riverBuckets);
@@ -112,7 +157,7 @@ public class PotentialBucketizer implements Bucketizer
 //                turnDomain = PersistentObjects.retrieve(
 //                    "/home/alex/proj/datamine/input/turnDomain.obj");
 
-        BucketList turnBuckets = new HalfBucketList(
+        LongByteList turnBuckets = new HalfLongByteList(
                 null, TurnLookup.CANONS);
         bucketizeAllPreRiver(
                 Round.TURN, turnDomain,
@@ -121,9 +166,9 @@ public class PotentialBucketizer implements Bucketizer
     }
 
     private CentroidDomain<Centroid<double[]>, double[]> turnDomain(
-            byte nRiverBuckets, BucketList riverBuckets) {
-//        BucketList riverBuckets =
-//                new HalfBucketList(null, RiverLookup.CANONS);
+            byte nRiverBuckets, LongByteList riverBuckets) {
+//        LongByteList riverBuckets =
+//                new HalfLongByteList(null, RiverLookup.CANONS);
         RiverBucketizer.bucketizeAll(nRiverBuckets, riverBuckets);
         return byNextRound(
                     Round.TURN, riverBuckets, nRiverBuckets);
@@ -135,8 +180,8 @@ public class PotentialBucketizer implements Bucketizer
             Round      round,
             CentroidDomain<Centroid<double[]>, double[]>
                        byNextRound,
-            BucketList roundBuckets,
-            BucketList nextRoundBuckets,
+            LongByteList roundBuckets,
+            LongByteList nextRoundBuckets,
             byte       nRoundBuckets,
             byte       nNextRoundBuckets)
     {
@@ -145,7 +190,7 @@ public class PotentialBucketizer implements Bucketizer
                 new ParallelTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        1 /*512*/);
+                        512 /*512*/);
         Clustering clusters = analyzer.cluster(
                 byNextRound, nRoundBuckets);
         analyzer.close();
@@ -186,7 +231,7 @@ public class PotentialBucketizer implements Bucketizer
     private CentroidDomain<Centroid<double[]>, double[]>
             byNextRound(
                     Round      round,
-                    BucketList nextRoundBuckets,
+                    LongByteList nextRoundBuckets,
                     byte       nNextRoundBuckets)
     {
         LOG.debug("building " + round + " domain");
@@ -211,7 +256,8 @@ public class PotentialBucketizer implements Bucketizer
         LOG.debug("applying domain");
         CentroidDomain<Centroid<double[]>, double[]> byNextRound =
                 new CentroidDomain<Centroid<double[]>, double[]>(
-                        VectorEuclidean.newFactory(nNextRoundBuckets)
+                        VectorInfo.newFactory(nNextRoundBuckets)
+//                        VectorEuclidean.newFactory(nNextRoundBuckets)
 //                        Mahalanobis.newFactory(nRiverBuckets)
                         , Equalizers.doubleArray()
                 );
@@ -232,7 +278,7 @@ public class PotentialBucketizer implements Bucketizer
     private DoubleList nextRoundHist(
             Round      round,
             int        forCanon,
-            BucketList nextRoundBuckets,
+            LongByteList nextRoundBuckets,
             byte       nNextRoundBuckets)
     {
         DoubleList histogram =
@@ -241,8 +287,8 @@ public class PotentialBucketizer implements Bucketizer
         Round      nextRound      = round.next();
         CanonRange nextRoundRange =
                 DetailLookup.lookupRange( round, forCanon );
-        for (long canon  = nextRoundRange.upToAndIncluding();
-                  canon >= nextRoundRange.fromCanonIndex();
+        for (long canon  = nextRoundRange.toInclusive();
+                  canon >= nextRoundRange.from();
                   canon--)
         {
             histogram.increment(

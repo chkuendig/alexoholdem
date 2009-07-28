@@ -1,6 +1,6 @@
 package ao.bucket.abstraction.access.tree.list;
 
-import ao.bucket.abstraction.access.tree.PersistentBucketList;
+import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,16 +10,22 @@ import java.io.RandomAccessFile;
 /**
  * User: alex
  * Date: 13-Jun-2009
- * Time: 5:49:51 PM
+ * Time: 5:56:19 PM
  */
-public class StoredBucketList implements PersistentBucketList
+public class StoredHalfLongByteList implements PersistentLongByteList
 {
+    //--------------------------------------------------------------------
+    private static final byte LO_MASK     =        0x0f;
+    private static final byte HI_MASK     = (byte) 0xf0;
+    private static final int  HI_INT_MASK =  0x000000f0;
+
+
     //--------------------------------------------------------------------
     private final RandomAccessFile IN;
 
 
     //--------------------------------------------------------------------
-    public StoredBucketList(File file)
+    public StoredHalfLongByteList(File file)
     {
         try {
             IN = new RandomAccessFile(file, "r");
@@ -50,7 +56,10 @@ public class StoredBucketList implements PersistentBucketList
         }
     }
     private byte doGet(long index) throws IOException {
-        IN.seek(index);
-        return IN.readByte();
+        IN.seek(HalfLongByteList.halfIndex(index));
+        byte pair = IN.readByte();
+        return (byte)(HalfLongByteList.isLow(index)
+                      ?  pair & LO_MASK
+                      : (pair & HI_INT_MASK) >>> 4);
     }
 }

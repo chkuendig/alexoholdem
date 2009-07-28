@@ -34,6 +34,7 @@ public class NetCode
                 System.out.println("awaiting input...");
                 String rec = recieveString(readSocket);
                 System.out.println("recieved: " + rec);
+                if (rec.equals("exit")) break;
 
                 Matcher matcher = ipPat.matcher(rec);
                 if (matcher.matches()) {
