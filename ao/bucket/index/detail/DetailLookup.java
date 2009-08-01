@@ -174,7 +174,8 @@ public class DetailLookup
         CanonRange[] ranges = new CanonRange[ prevCanonIndexes.length ];
         for (int i = 0; i < prevCanonIndexes.length; i++)
         {
-            ranges[i]  = lookupRange(prevRound, prevCanonIndexes[i]);
+            ranges[i]  = RangeLookup.lookupRange(
+                    prevRound, prevCanonIndexes[i]);
             size      += ranges[i].count();
         }
 
@@ -209,52 +210,6 @@ public class DetailLookup
             default:
                 throw new IllegalArgumentException();
         }
-    }
-
-
-    //--------------------------------------------------------------------
-    public static CanonRange lookupRange(
-            Round forRound, long canonIndex)
-    {
-        switch (forRound)
-        {
-            case PREFLOP:
-                return lookupHole((char) canonIndex).flops();
-
-            case FLOP:
-                return lookupFlop((int) canonIndex).turns();
-
-            case TURN:
-                return TurnRivers.rangeOf((int) canonIndex);
-
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    public static CanonRange lookupRange(
-            long  fromCanonIndex,
-            Round fromRound,
-            Round toRound)
-    {
-        assert fromRound.ordinal() < toRound.ordinal();
-
-        CanonRange range =
-                lookupRange(fromRound, fromCanonIndex);
-        if (fromRound.next() == toRound) return range;
-
-        fromRound = fromRound.next();
-        long from = lookupRange(fromRound, range.from()).from();
-        long to   = lookupRange(fromRound,
-                                range.toInclusive()).toInclusive();
-        range = CanonRange.newFromTo(from, to);
-        if (fromRound.next() == toRound) return range;
-
-        fromRound = fromRound.next();
-        from = lookupRange(fromRound, range.from()).from();
-        to   = lookupRange(fromRound,
-                           range.toInclusive()).toInclusive();
-        return CanonRange.newFromTo(from, to);
     }
 
 
