@@ -1,11 +1,9 @@
 package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
-import ao.util.io.Dir;
 import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
@@ -25,18 +23,6 @@ public class KMeansBucketizer implements ScalarBucketizer
 
     private static final double DELTA_CUTOFF = 0.01;
     private static final int    BEST_OF      = 10;
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args) {
-        BucketTree tree = new BucketTreeImpl(
-                Dir.get("lookup/test"), false);
-
-        new KMeansBucketizer().bucketize(tree.holes(), (byte) 20);
-        BucketSort.sortPreFlop(tree.holes(), 20);
-        HistBucketizer.displayHoleBuckets( tree.holes() );
-
-    }
 
 
     //--------------------------------------------------------------------
