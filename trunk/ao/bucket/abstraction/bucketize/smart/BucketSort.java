@@ -2,10 +2,7 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.preflop.HoleOdds;
-import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
-import ao.bucket.index.detail.river.compact.MemProbCounts;
 
 import java.util.Arrays;
 
@@ -20,38 +17,38 @@ public class BucketSort
     private BucketSort() {}
 
 
-    //--------------------------------------------------------------------
-    public static void sortRiver(
-            LongByteList riverBuckets, int nBuckets)
-    {
-        IndexedValue sortable[] = new IndexedValue[ nBuckets ];
-        for (int i = 0; i < nBuckets; i++)
-        {
-            sortable[i] = new IndexedValue(i);
-        }
-
-        for (long i = 0; i < RiverLookup.CANONS; i++)
-        {
-            sortable[ riverBuckets.get(i) ].add(
-                    (double) MemProbCounts.compactProb(i) /
-                            CompactRiverProbabilities.COUNT);
-        }
-
-        Arrays.sort(sortable);
-
-        byte sortedBuckets[] = new byte[ nBuckets ];
-        for (byte i = 0; i < nBuckets; i++)
-        {
-            sortedBuckets[ sortable[i].index ] = i;
-        }
-
-        for (long i = 0; i < RiverLookup.CANONS; i++)
-        {
-            riverBuckets.set(i,
-                    sortedBuckets[
-                            riverBuckets.get(i)]);
-        }
-    }
+//    //--------------------------------------------------------------------
+//    public static void sortRiver(
+//            LongByteList riverBuckets, int nBuckets)
+//    {
+//        IndexedValue sortable[] = new IndexedValue[ nBuckets ];
+//        for (int i = 0; i < nBuckets; i++)
+//        {
+//            sortable[i] = new IndexedValue(i);
+//        }
+//
+//        for (long i = 0; i < RiverLookup.CANONS; i++)
+//        {
+//            sortable[ riverBuckets.get(i) ].add(
+//                    (double) MemProbCounts.compactProb(i) /
+//                            CompactRiverProbabilities.COUNT);
+//        }
+//
+//        Arrays.sort(sortable);
+//
+//        byte sortedBuckets[] = new byte[ nBuckets ];
+//        for (byte i = 0; i < nBuckets; i++)
+//        {
+//            sortedBuckets[ sortable[i].index ] = i;
+//        }
+//
+//        for (long i = 0; i < RiverLookup.CANONS; i++)
+//        {
+//            riverBuckets.set(i,
+//                    sortedBuckets[
+//                            riverBuckets.get(i)]);
+//        }
+//    }
 
 
     //--------------------------------------------------------------------
@@ -78,6 +75,7 @@ public class BucketSort
             sortedBuckets[ sortable[i].index ] = i;
         }
 
+//        LongByteList original = Cloner.clone(holeBuckets);
         for (int i = 0; i < HoleLookup.CANONS; i++)
         {
             holeBuckets.set(i,
