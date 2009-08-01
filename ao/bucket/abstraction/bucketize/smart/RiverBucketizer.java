@@ -72,8 +72,8 @@ public class RiverBucketizer
         }
 
 
-        LOG.debug("sorting clusters");
-        BucketSort.sortRiver(into, nClusters);
+//        LOG.debug("sorting clusters");
+//        BucketSort.sortRiver(into, nClusters);
 
         LOG.debug("done: " + clustering.error());
         return clustering.error();

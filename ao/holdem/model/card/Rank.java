@@ -13,6 +13,16 @@ public enum Rank
 
     public static final Rank VALUES[] = values();
 
+    public static final Rank VALUES_REVERSE[];
+    static
+    {
+        VALUES_REVERSE = new Rank[ VALUES.length ];
+        for (int i = 0, j = VALUES.length - 1; j >= 0; i++, j--)
+        {
+            VALUES_REVERSE[ i ] = VALUES[ j ];
+        }
+    }
+
 
     //--------------------------------------------------------------------
     private final String NAME;
