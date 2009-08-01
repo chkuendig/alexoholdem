@@ -11,6 +11,8 @@ import ao.holdem.model.card.Suit;
  * User: alex
  * Date: 1-Aug-2009
  * Time: 2:09:26 PM
+ *
+ * Display bucketing information
  */
 public class BucketDisplay
 {
