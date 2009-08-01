@@ -55,7 +55,7 @@ public class BucketizerTest
 //        char nTurnBuckets  = 125;
 //        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 20;
-        byte nHoleBuckets  =    20;
+        byte nHoleBuckets  =    16;
         char nFlopBuckets  =   640;
         char nTurnBuckets  =  4480;
         char nRiverBuckets = 31360;

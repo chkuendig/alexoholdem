@@ -1,8 +1,15 @@
 package ao.bucket.abstraction.bucketize.smart;
 
+import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.RangeLookup;
 import ao.bucket.index.detail.preflop.HoleOdds;
+import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
+import ao.holdem.model.Round;
 
 import java.util.Arrays;
 
@@ -17,38 +24,103 @@ public class BucketSort
     private BucketSort() {}
 
 
-//    //--------------------------------------------------------------------
-//    public static void sortRiver(
-//            LongByteList riverBuckets, int nBuckets)
-//    {
-//        IndexedValue sortable[] = new IndexedValue[ nBuckets ];
-//        for (int i = 0; i < nBuckets; i++)
-//        {
-//            sortable[i] = new IndexedValue(i);
-//        }
-//
-//        for (long i = 0; i < RiverLookup.CANONS; i++)
-//        {
-//            sortable[ riverBuckets.get(i) ].add(
-//                    (double) MemProbCounts.compactProb(i) /
-//                            CompactRiverProbabilities.COUNT);
-//        }
-//
-//        Arrays.sort(sortable);
-//
-//        byte sortedBuckets[] = new byte[ nBuckets ];
-//        for (byte i = 0; i < nBuckets; i++)
-//        {
-//            sortedBuckets[ sortable[i].index ] = i;
-//        }
-//
-//        for (long i = 0; i < RiverLookup.CANONS; i++)
-//        {
-//            riverBuckets.set(i,
-//                    sortedBuckets[
-//                            riverBuckets.get(i)]);
-//        }
-//    }
+    //--------------------------------------------------------------------
+    public static void sortRiverBranch(
+            BucketTree.Branch riverBuckets, byte nBuckets)
+    {
+        sortRiverBranch(
+                riverBuckets,
+                riverBuckets.round(),
+                riverBuckets.parentCanons(),
+                nBuckets);
+    }
+
+    public static void sortRiverBranch(
+            LongByteList branch,
+            Round        parentRound,
+            int          parentCanons[],
+            byte         nBuckets)
+    {
+        IndexedValue sortable[] = new IndexedValue[ nBuckets ];
+        for (int i = 0; i < nBuckets; i++)
+        {
+            sortable[i] = new IndexedValue(i);
+        }
+
+        for (CanonRange rivers : RangeLookup.lookup(
+                parentRound, parentCanons, Round.RIVER)) {
+            accumulateSortingData(
+                    rivers, branch, sortable);
+        }
+
+        Arrays.sort(sortable);
+
+        byte sortedBuckets[] = new byte[ nBuckets ];
+        for (byte i = 0; i < nBuckets; i++)
+        {
+            sortedBuckets[ sortable[i].index ] = i;
+        }
+
+        for (CanonRange rivers : RangeLookup.lookup(
+                parentRound, parentCanons, Round.RIVER))
+        {
+            for (long river  = rivers.from();
+                      river <= rivers.toInclusive();
+                      river++) {
+                branch.set(river,
+                    sortedBuckets[
+                            branch.get(river)]);
+            }
+        }
+    }
+
+    private static void accumulateSortingData(
+            CanonRange   range,
+            LongByteList riverBuckets,
+            IndexedValue into[])
+    {
+        for (long river  = range.from();
+                  river <= range.toInclusive();
+                  river++) {
+            into[ riverBuckets.get(river) ].add(
+                    (double) MemProbCounts.compactProb(river) /
+                            CompactRiverProbabilities.COUNT);
+        }
+    }
+
+
+    //--------------------------------------------------------------------
+    public static void sortRiver(
+            LongByteList riverBuckets, int nBuckets)
+    {
+        IndexedValue sortable[] = new IndexedValue[ nBuckets ];
+        for (int i = 0; i < nBuckets; i++)
+        {
+            sortable[i] = new IndexedValue(i);
+        }
+
+        for (long i = 0; i < RiverLookup.CANONS; i++)
+        {
+            sortable[ riverBuckets.get(i) ].add(
+                    (double) MemProbCounts.compactProb(i) /
+                            CompactRiverProbabilities.COUNT);
+        }
+
+        Arrays.sort(sortable);
+
+        byte sortedBuckets[] = new byte[ nBuckets ];
+        for (byte i = 0; i < nBuckets; i++)
+        {
+            sortedBuckets[ sortable[i].index ] = i;
+        }
+
+        for (long i = 0; i < RiverLookup.CANONS; i++)
+        {
+            riverBuckets.set(i,
+                    sortedBuckets[
+                            riverBuckets.get(i)]);
+        }
+    }
 
 
     //--------------------------------------------------------------------
@@ -75,7 +147,6 @@ public class BucketSort
             sortedBuckets[ sortable[i].index ] = i;
         }
 
-//        LongByteList original = Cloner.clone(holeBuckets);
         for (int i = 0; i < HoleLookup.CANONS; i++)
         {
             holeBuckets.set(i,
