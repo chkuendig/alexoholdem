@@ -75,6 +75,7 @@ public class RiverLookup
         }
 
 //        System.out.println();
+        LOG.info("done");
         return offsets;
     }
 }

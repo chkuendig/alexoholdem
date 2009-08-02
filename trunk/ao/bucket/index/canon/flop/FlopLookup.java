@@ -4,7 +4,7 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.holdem.model.card.Card;
-import static ao.util.data.Arr.swap;
+import ao.util.data.Arr;
 import ao.util.math.stats.Combiner;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
@@ -32,6 +32,21 @@ public class FlopLookup
             retrieveOrCalculateOffsets();
 
 
+    //--------------------------------------------------------------------
+    private static int[][] retrieveOrCalculateOffsets()
+    {
+        int offsets[][] = retrieveOffsets();
+        if (offsets == null)
+        {
+            offsets = calculateOffsets();
+            storeOffsets( offsets );
+        }
+
+        LOG.info("finished retrieveOrCalculateOffsets");
+        return offsets;
+    }
+
+
     private static int[][] retrieveOffsets()
     {
         LOG.info("attempting to retrieveOffsets");
@@ -54,19 +69,6 @@ public class FlopLookup
         return offsets;
     }
 
-    private static int[][] retrieveOrCalculateOffsets()
-    {
-        int offsets[][] = retrieveOffsets();
-        if (offsets == null)
-        {
-            offsets = calculateOffsets();
-            storeOffsets( offsets );
-        }
-        
-        LOG.info("finished retrieveOrCalculateOffsets");
-        return offsets;
-    }
-
     private static void storeOffsets(int offsets[][])
     {
         LOG.info("storing offsets");
@@ -83,17 +85,25 @@ public class FlopLookup
         PersistentInts.persist(flat, OFFSET_FILE);
     }
 
+
+    //--------------------------------------------------------------------
     private static int[][] calculateOffsets()
     {
         LOG.info("calculating offsets");
-        int offsets[][] = new int[HoleLookup.CANONS][];
+        int offsets[][] = new int[ HoleLookup.CANONS ][];
 
         int  offset  = 0;
         Card cards[] = Card.values();
-        for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
+//        for (Card holeCards[] : new Combiner<Card>(Card.VALUES, 2))
+//        {
+//            CanonHole hole = HoleLookup.lookup(
+//                            holeCards[0], holeCards[1]);
+        for (int canonHole = 0;
+                 canonHole < HoleLookup.CANONS;
+                 canonHole++)
         {
-            CanonHole hole = HoleLookup.lookup(
-                            holeCards[0], holeCards[1]);
+            CanonHole hole = HoleLookup.lookup( canonHole );
+            Card holeCards[] = {hole.a(), hole.b()};
 
             int subOffsets[] = offsets[ hole.canonIndex() ];
             if (subOffsets != null) continue;
@@ -102,8 +112,8 @@ public class FlopLookup
 
             offsets[ hole.canonIndex() ] = subOffsets;
 
-            swap(cards, holeCards[1].ordinal(), 51  );
-            swap(cards, holeCards[0].ordinal(), 51-1);
+            Arr.swap(cards, holeCards[1].ordinal(), 51  );
+            Arr.swap(cards, holeCards[0].ordinal(), 51-1);
 
             for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
             {
@@ -119,8 +129,8 @@ public class FlopLookup
                 offset += flopCase.size();
             }
 
-            swap(cards, holeCards[0].ordinal(), 51-1);
-            swap(cards, holeCards[1].ordinal(), 51  );
+            Arr.swap(cards, holeCards[0].ordinal(), 51-1);
+            Arr.swap(cards, holeCards[1].ordinal(), 51  );
         }
 
         return offsets;

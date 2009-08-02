@@ -1,5 +1,6 @@
 package ao.bucket.index.detail.flop;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.enumeration.HandEnum;
@@ -65,8 +66,8 @@ public class FlopOdds
 
 
     //--------------------------------------------------------------------
-    private static final File DIR =
-            Dir.get("lookup/canon/detail/flop_odds/");
+    private static final File DIR = Dir.get(Infrastructure.path(
+            "lookup/canon/detail/flop_odds/"));
 
     private static final File FLAG_FILE  = new File(DIR,   "flag.int");
     private static final File WIN_FILE   = new File(DIR,   "wins.int");

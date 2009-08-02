@@ -11,8 +11,9 @@ import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
-import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.DetailLookup;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
 import ao.holdem.model.Round;
 import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
@@ -286,7 +287,7 @@ public class PotentialBucketizer implements Bucketizer
 
         Round      nextRound      = round.next();
         CanonRange nextRoundRange =
-                DetailLookup.lookupRange( round, forCanon );
+                RangeLookup.lookupRange( round, forCanon );
         for (long canon  = nextRoundRange.toInclusive();
                   canon >= nextRoundRange.from();
                   canon--)
