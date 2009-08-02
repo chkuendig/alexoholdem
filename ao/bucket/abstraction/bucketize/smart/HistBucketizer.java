@@ -6,9 +6,9 @@ import ao.bucket.abstraction.access.tree.list.FullLongByteList;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.detail.RangeLookup;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
 import ao.holdem.model.Round;
 import ao.unsupervised.cluster.analysis.KMeans;
 import ao.unsupervised.cluster.error.TwoPassWcss;
@@ -45,15 +45,7 @@ public class HistBucketizer implements Bucketizer
                 nHoleBuckets,
                 (byte) 4);
 
-        for (byte bucket = 0; bucket < nHoleBuckets; bucket++) {
-            for (int i = 0, j = HoleLookup.CANONS - 1;
-                     i < HoleLookup.CANONS; i++, j--) {
-                if (bucket != holeBuckets.get(i)) continue;
-                System.out.print(
-                        HoleLookup.lookup(j) + " ");
-            }
-            System.out.println();
-        }
+        BucketDisplay.displayHoleBuckets(holeBuckets);
     }
 
 
@@ -79,10 +71,12 @@ public class HistBucketizer implements Bucketizer
                     branch.parentCanons(), numBuckets);
 
             case PREFLOP:
-                return bucketizePreRiver(
+                double error = bucketizePreRiver(
                     branch, branch.round(),
                     new int[]{-1},
                     numBuckets, (byte) 3);
+                BucketSort.sortPreFlop(branch, numBuckets);
+                return error;
 
             default:
                 return bucketizePreRiver(

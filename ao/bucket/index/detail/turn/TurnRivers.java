@@ -4,7 +4,7 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
-import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.util.io.Dir;
 import ao.util.math.Calc;

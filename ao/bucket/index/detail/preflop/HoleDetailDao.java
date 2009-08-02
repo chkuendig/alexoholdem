@@ -1,6 +1,8 @@
 package ao.bucket.index.detail.preflop;
 
+import ao.Infrastructure;
 import ao.bucket.index.canon.hole.HoleLookup;
+import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -27,7 +29,8 @@ public class HoleDetailDao
 
 
     //--------------------------------------------------------------------
-    private static final String  DIR  = "lookup/canon/detail/";
+    private static final File    DIR  = Dir.get(
+            Infrastructure.path("lookup/canon/detail"));
     private static final File    FILE = new File(DIR, "preflop.detail");
 
     private static final boolean isMomoized = FILE.exists();

@@ -6,6 +6,8 @@ import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.bucket.index.detail.preflop.HoleDetails;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
 import ao.bucket.index.detail.river.compact.MemProbCounts;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.detail.turn.TurnDetails;

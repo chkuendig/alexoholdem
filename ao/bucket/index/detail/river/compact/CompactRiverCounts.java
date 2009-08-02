@@ -2,7 +2,7 @@ package ao.bucket.index.detail.river.compact;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;

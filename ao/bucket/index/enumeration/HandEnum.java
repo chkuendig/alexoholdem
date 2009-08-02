@@ -158,7 +158,7 @@ public class HandEnum
         turns(holeFilter, flopFilter, turnFilter,
                       new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                for (int riverCardIndex = 0;
+                for (int riverCardIndex  = 0;
                          riverCardIndex <= 51 - 6;
                          riverCardIndex++)
                 {

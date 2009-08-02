@@ -2,8 +2,8 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.detail.CanonRange;
-import ao.bucket.index.detail.RangeLookup;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
 import ao.bucket.index.detail.river.compact.CompactProbabilityCounts;
 import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
 import ao.bucket.index.detail.river.compact.MemProbCounts;

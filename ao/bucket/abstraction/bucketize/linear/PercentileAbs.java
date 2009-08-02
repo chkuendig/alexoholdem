@@ -4,7 +4,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.CanonRange;
+import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;

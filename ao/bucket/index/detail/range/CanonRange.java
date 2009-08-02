@@ -1,4 +1,4 @@
-package ao.bucket.index.detail;
+package ao.bucket.index.detail.range;
 
 /**
  * Date: Jan 16, 2009

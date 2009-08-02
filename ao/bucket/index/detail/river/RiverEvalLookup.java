@@ -9,9 +9,9 @@ import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.canon.turn.TurnLookup;
-import ao.bucket.index.detail.CanonRange;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
+import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.bucket.index.enumeration.BitFilter;
 import ao.bucket.index.enumeration.HandEnum;
@@ -21,6 +21,7 @@ import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
 import ao.util.misc.Traverser;
 import ao.util.persist.PersistentInts;
+import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -99,7 +100,7 @@ public class RiverEvalLookup
     private static final File winProbF = new File(dir, "winProb.char");
     private static final File flagF    = new File(dir, "flag.byte");
 
-    private static final int  chunk    = 10 * 1000 * 1000;
+    private static final int  chunk    = 20 * 1000 * 1000;
 
 
 
@@ -140,15 +141,16 @@ public class RiverEvalLookup
     private static void computeEvalDetails(long from)
     {
         LOG.debug("chunk from " + from);
+        Stopwatch timer = new Stopwatch();
 
         long toExcluding =
                 Math.min(RiverLookup.CANONS, from + chunk);
         int  count       = (int)(toExcluding - from);
         if (count == 0) return;
 
-        LongBitSet allowHoles  = new LongBitSet(HoleLookup.CANONS);
-        LongBitSet allowFlops  = new LongBitSet(FlopLookup.CANONS);
-        LongBitSet allowTurns  = new LongBitSet(TurnLookup.CANONS);
+        LongBitSet allowHoles  = new LongBitSet( HoleLookup.CANONS);
+        LongBitSet allowFlops  = new LongBitSet( FlopLookup.CANONS);
+        LongBitSet allowTurns  = new LongBitSet( TurnLookup.CANONS);
         LongBitSet allowRivers = new LongBitSet(RiverLookup.CANONS);
         computeAllowedEvalDetails(
                 from, toExcluding,
@@ -162,6 +164,8 @@ public class RiverEvalLookup
                 from, strengths, represents, winProbs,
                 allowHoles, allowFlops, allowTurns, allowRivers);
         appendEvalDetails(strengths, represents, winProbs);
+
+        LOG.debug("chunk from " + from + " took " + timer.timing());
     }
 
     private static void appendEvalDetails(
@@ -204,6 +208,18 @@ public class RiverEvalLookup
     {
         LOG.debug("computing details for allowed");
 
+//        int     cores = Runtime.getRuntime().availableProcessors();
+//        int freeCores = Math.max(1, cores - 1);
+//
+//        final ThreadPoolExecutor exec = new ThreadPoolExecutor(
+//                1,
+//                freeCores,
+//                5, TimeUnit.SECONDS,
+//                new ArrayBlockingQueue<Runnable>(1));
+//        final ExecutorService exec = Executors.newFixedThreadPool(
+//                freeCores);
+//        final ExecutorService exec = Executors.newCachedThreadPool();
+
         final OddFinder odds = new PreciseHeadsUpOdds();
         HandEnum.rivers(
                 new BitFilter<CanonHole>(allowHoles),
@@ -211,19 +227,42 @@ public class RiverEvalLookup
                 new BitFilter<Turn>     (allowTurns),
                 new BitFilter<River>    (allowRivers),
                 new Traverser<River>() {
-            public void traverse(River river) {
-                int index = (int)(river.canonIndex() - offset);
+            public void traverse(final River river) {
+                final int index = (int)(river.canonIndex() - offset);
+
                 if (represents[ index ] == 0) {
-                    strengths[ index ] = river.eval();
-                    winProbs [ index ] =
-                            ProbabilityEncoding.encodeWinProb(
-                                    river.vsRandom(odds));
+                    represents[ index ] = 1;
+
+//                    exec.submit(new Runnable() {
+//                        public void run() {
+                            strengths[ index ] = river.eval();
+                            winProbs [ index ] =
+                                    ProbabilityEncoding.encodeWinProb(
+                                            river.vsRandom(odds));
+//                        }});
+                } else {
+                    represents[ index ]++;
                 }
+
+//                if (Rand.nextBoolean(100000)) {
+//                    System.out.println(
+//                        ((ThreadPoolExecutor) exec).getActiveCount() + "\t" +
+//                        ((ThreadPoolExecutor) exec).getPoolSize() + "\t" +
+//                        ((ThreadPoolExecutor) exec).getQueue().size());
+//                }
+
 //                else if (strengths[ index ] != river.eval()) {
 //                    LOG.error("inconcistent " + river);
 //                }
-                represents[ index ]++;
             }});
+
+//        LOG.debug("awaiting chunk termination");
+//        exec.shutdown();
+//        try {
+//            exec.awaitTermination(100, TimeUnit.DAYS);
+//        } catch (InterruptedException e) {
+//            throw new Error( e );
+//        }
     }
 
 

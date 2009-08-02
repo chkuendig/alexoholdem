@@ -1,6 +1,7 @@
-package ao.bucket.index.detail;
+package ao.bucket.index.detail.range;
 
 import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.Round;
 
@@ -24,6 +25,11 @@ public class RangeLookup
     public static CanonRange lookupRange(
             Round forRound, long canonIndex)
     {
+        if (forRound == null) {
+            return CanonRange.newFromCount(
+                     0, HoleLookup.CANONS);
+        }
+
         switch (forRound)
         {
             case PREFLOP:
@@ -50,20 +56,34 @@ public class RangeLookup
             Round fromRound,
             Round toRound)
     {
-        assert fromRound.ordinal() < toRound.ordinal();
+//        assert fromRound.ordinal() < toRound.ordinal();
 
         CanonRange range =
                 lookupRange(fromRound, fromCanonIndex);
-        if (fromRound.next() == toRound) return range;
+        if (fromRound == null) {
+            if (toRound == Round.PREFLOP) return range;
+            fromRound = Round.PREFLOP;
+        } else {
+            if (fromRound.next() == toRound) return range;
+            fromRound = fromRound.next();
+        }
 
-        fromRound = fromRound.next();
         long from = lookupRange(fromRound, range.from()).from();
         long to   = lookupRange(fromRound,
                                 range.toInclusive()).toInclusive();
         range = CanonRange.newFromTo(from, to);
-        if (fromRound.next() == toRound) return range;
 
+        if (fromRound.next() == toRound) return range;
         fromRound = fromRound.next();
+
+        from = lookupRange(fromRound, range.from()).from();
+        to   = lookupRange(fromRound,
+                           range.toInclusive()).toInclusive();
+        range = CanonRange.newFromTo(from, to);
+
+        if (fromRound.next() == toRound) return range;
+        fromRound = fromRound.next();
+
         from = lookupRange(fromRound, range.from()).from();
         to   = lookupRange(fromRound,
                            range.toInclusive()).toInclusive();
@@ -80,8 +100,8 @@ public class RangeLookup
         Collection<CanonRange> ranges = new ArrayList<CanonRange>();
 
         if (parentRound == null) {
-            ranges.add( CanonRange.newFromCount(
-                                     0, HoleLookup.CANONS) );
+            ranges.add(
+                    lookupRange(-1, null, toRound));
         } else {
             for (int parent : parentCanons) {
                 ranges.add( lookupRange(
