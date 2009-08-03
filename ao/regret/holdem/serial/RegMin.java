@@ -1,21 +1,22 @@
-package ao.regret.holdem;
+package ao.regret.holdem.serial;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-
-import java.util.concurrent.ExecutorService;
+import ao.regret.holdem.InfoMatrix;
+import ao.regret.holdem.InfoPart;
+import ao.regret.holdem.IterativeMinimizer;
 
 /**
  * User: alex
  * Date: 26-Apr-2009
  * Time: 11:03:24 PM
  */
-public class RegMin
+public class RegMin implements IterativeMinimizer
 {
     //--------------------------------------------------------------------
-    private final ExecutorService EXEC;
+//    private final ExecutorService EXEC;
 
     private final InfoPart    INFO;
     private final IBucketOdds ODDS;
@@ -29,13 +30,14 @@ public class RegMin
 
 
     //--------------------------------------------------------------------
-    public RegMin(InfoPart        info,
-                  IBucketOdds     odds,
-                  double          aggression,
-                  ExecutorService exec)
+    public RegMin(InfoPart        info
+            ,     IBucketOdds     odds
+            ,     double          aggression
+//            ,     ExecutorService exec
+            )
                     // 1.0 means neutral, >1 means aggresive
     {
-        EXEC       = exec;
+//        EXEC       = exec;
         INFO       = info;
         ODDS       = odds;
         AGGRESSION = aggression;
@@ -116,7 +118,7 @@ public class RegMin
             immediateCounterfactualRegret[ act.ordinal() ] = cRegret;
         }
 
-        info.add(immediateCounterfactualRegret);
+        info.add( immediateCounterfactualRegret );
         return counterfactualUtility;
     }
 
@@ -138,7 +140,9 @@ public class RegMin
             double val     = advanceOrPassRegret(
                     nextNode, oppReach * actProb);
 
-            if (val > 0) {
+            // todo gotta test this replacement for if (val > 0)
+            if (forDealer && val > 0 ||
+                    !forDealer && val < 0) {
                 val *= AGGRESSION;
             }
 

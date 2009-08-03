@@ -51,7 +51,6 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
 
 
 
-
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
             final Branch holes,
