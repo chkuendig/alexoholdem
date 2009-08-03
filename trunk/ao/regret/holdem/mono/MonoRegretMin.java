@@ -6,13 +6,14 @@ import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
 import ao.regret.holdem.InfoMatrix;
 import ao.regret.holdem.InfoPart;
+import ao.regret.holdem.IterativeMinimizer;
 
 /**
  * User: alex
  * Date: 20-Apr-2009
  * Time: 10:10:13 PM
  */
-public class MonoRegretMin
+public class MonoRegretMin implements IterativeMinimizer
 {
     //--------------------------------------------------------------------
     private final IBucketOdds ODDS;
@@ -33,25 +34,25 @@ public class MonoRegretMin
 
     //--------------------------------------------------------------------
     public void exploit(char absDealerBuckets[],
-                        char absDealeeBuckets[])
-    {
-        updateDealee = false;
-        approximateAndUpdate(
-                StateTree.headsUpRoot(),
-                absDealerBuckets,
-                absDealeeBuckets,
-                1.0, 1.0);
+                        char absDealeeBuckets[]) {
+        iterate(absDealerBuckets, absDealeeBuckets, false);
     }
 
-    public void minimize(char absDealerBuckets[],
-                         char absDealeeBuckets[])
+    public void iterate(char absDealerBuckets[],
+                        char absDealeeBuckets[]) {
+        iterate(absDealerBuckets, absDealeeBuckets, true);
+    }
+
+    private void iterate(char    absDealerBuckets[],
+                         char    absDealeeBuckets[],
+                         boolean dynamicDealee)
     {
         showdownStakesFactor =
                 (ODDS.nonLossProb(
                         absDealerBuckets[3],
                         absDealeeBuckets[3]) - 0.5) * 2.0;
 
-        updateDealee = true;
+        updateDealee = dynamicDealee;
         approximateAndUpdate(
                 StateTree.headsUpRoot(),
                 absDealerBuckets,
@@ -77,7 +78,6 @@ public class MonoRegretMin
         InfoMatrix.InfoSet infoSet    = node.infoSet(roundBucket, INFO);
         double             strategy[] = infoSet.strategy();
 
-        //if (pDealee == 0 && pDealer == 0) {
         if ((dealerProp && pDealee == 0) ||
                 ((!dealerProp) && pDealer == 0)) {
             return approximate(

@@ -11,6 +11,8 @@ import java.io.File;
  * User: alex
  * Date: 20-Apr-2009
  * Time: 10:07:51 PM
+ *
+ * Information partition, made up of
  */
 public class InfoPart
 {

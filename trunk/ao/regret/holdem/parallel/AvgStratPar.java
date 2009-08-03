@@ -13,14 +13,15 @@ import jsr166y.RecursiveAction;
  * Date: 26-Apr-2009
  * Time: 11:02:33 PM
  */
-public class AvgStratPar extends RecursiveAction
+public class AvgStratPar
+        extends RecursiveAction
 {
     //--------------------------------------------------------------------
     public static void iterate(
+            ForkJoinPool exec,
             InfoPart     info,
             char         absDealerBuckets[],
-            char         absDealeeBuckets[],
-            ForkJoinPool exec)
+            char         absDealeeBuckets[])
     {
         exec.invoke(new Starter(
                 info, absDealerBuckets, absDealeeBuckets));

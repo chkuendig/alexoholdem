@@ -2,8 +2,8 @@ package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysRaiseBot;
-import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
-import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
@@ -15,7 +15,8 @@ import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.regret.holdem.InfoPart;
-import ao.regret.holdem.RegretMinimizer;
+import ao.regret.holdem.mono.ChainMinimizer;
+import ao.regret.holdem.parallel.ParallelMinimizer;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;
@@ -55,7 +56,7 @@ public class BucketizerTest
 //        char nTurnBuckets  = 125;
 //        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 20;
-        byte nHoleBuckets  =    16;
+        byte nHoleBuckets  =    32;
         char nFlopBuckets  =   640;
         char nTurnBuckets  =  4480;
         char nRiverBuckets = 31360;
@@ -71,7 +72,9 @@ public class BucketizerTest
                 (int) nHoleBuckets + ", " + (int) nFlopBuckets + ", " +
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
-        HoldemAbstraction abs = abstractHolem(new KMeansBucketizer(),
+        HoldemAbstraction abs = abstractHolem(
+//                new KMeansBucketizer(),
+                new HistBucketizer(),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
@@ -88,7 +91,7 @@ public class BucketizerTest
 
     //--------------------------------------------------------------------
     private static HoldemAbstraction abstractHolem(
-            ScalarBucketizer bucketizer,
+            Bucketizer bucketizer,
             byte       nHoleBuckets,
             char       nFlopBuckets,
             char       nTurnBuckets,
@@ -151,7 +154,8 @@ public class BucketizerTest
 //        precompute(vsBot, false);
 
         long before = System.currentTimeMillis();
-        new DealerTest(1000 * 1000).headsUp(new LinkedHashMap<Avatar, Player>(){{
+        new DealerTest(1000 * 1000).headsUp(
+                new LinkedHashMap<Avatar, Player>(){{
             // dealer last
 
 //            put(Avatar.local("rc"), new RaiseCallBot());
@@ -190,10 +194,10 @@ public class BucketizerTest
     {
         System.out.println("computeCfr");
 
-        Stopwatch       t      = new Stopwatch();
-        InfoPart        info   = abs.infoPart(BOT_NAME, false, true);
-        RegretMinimizer cfrMin =
-                new RegretMinimizer(info, abs.odds() /* abs.oddsCache()*/);
+        Stopwatch         t      = new Stopwatch();
+        InfoPart          info   = abs.infoPart(BOT_NAME, false, true);
+        ParallelMinimizer cfrMin = new ParallelMinimizer(
+                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION));
 //        InfoPart        info   = abs.infoPart("mono", false);
 //        MonoRegretMin cfrMin =
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
@@ -234,13 +238,14 @@ public class BucketizerTest
                                         - before) / 1000);
 
                 if (itr != (offset + 1)) {
+                    cfrMin.flush();
                     info.flush();
                 }
                 before = System.currentTimeMillis();
             }
             char[][] jbs = it.next();
 
-            cfrMin.minimize( jbs[0], jbs[1], AGGRESSION );
+            cfrMin.iterate( jbs[0], jbs[1] );
 
             prog.checkpoint();
         }

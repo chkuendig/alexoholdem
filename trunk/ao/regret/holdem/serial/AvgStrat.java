@@ -1,23 +1,21 @@
-package ao.regret.holdem;
+package ao.regret.holdem.serial;
 
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import ao.regret.holdem.InfoMatrix;
+import ao.regret.holdem.InfoPart;
+import ao.regret.holdem.IterativeMinimizer;
 
 /**
  * User: alex
  * Date: 26-Apr-2009
  * Time: 11:02:33 PM
  */
-public class AvgStrat
+public class AvgStrat implements IterativeMinimizer
 {
     //--------------------------------------------------------------------
-    private final ExecutorService EXEC;
+//    private final ExecutorService EXEC;
 
     private final InfoPart INFO;
     private       char     DEALER_BUCKETS[];
@@ -26,11 +24,12 @@ public class AvgStrat
 
     //--------------------------------------------------------------------
     public AvgStrat(
-            InfoPart        info,
-            ExecutorService exec)
+                InfoPart        info
+//            ,   ExecutorService exec
+            )
     {
         INFO = info;
-        EXEC = exec;
+//        EXEC = exec;
     }
 
 
@@ -54,26 +53,26 @@ public class AvgStrat
 //            throw new Error( e );
 //        }
     }
-    private void doIterate() throws InterruptedException
-    {
-        Collection<Callable<Void>> todo =
-                new ArrayList<Callable<Void>>(2);
-
-        todo.add(new Callable<Void>() {
-                    public Void call() throws Exception {
-                        updateOrPassStrategy(
-                                true, StateTree.headsUpRoot(), 1.0);
-                        return null;
-                    }});
-        todo.add(new Callable<Void>() {
-                    public Void call() throws Exception {
-                        updateOrPassStrategy(
-                                false, StateTree.headsUpRoot(), 1.0);
-                        return null;
-                    }});
-
-        EXEC.invokeAll(todo);
-    }
+//    private void doIterate() throws InterruptedException
+//    {
+//        Collection<Callable<Void>> todo =
+//                new ArrayList<Callable<Void>>(2);
+//
+//        todo.add(new Callable<Void>() {
+//                    public Void call() throws Exception {
+//                        updateOrPassStrategy(
+//                                true, StateTree.headsUpRoot(), 1.0);
+//                        return null;
+//                    }});
+//        todo.add(new Callable<Void>() {
+//                    public Void call() throws Exception {
+//                        updateOrPassStrategy(
+//                                false, StateTree.headsUpRoot(), 1.0);
+//                        return null;
+//                    }});
+//
+//        EXEC.invokeAll(todo);
+//    }
 
 
     //--------------------------------------------------------------------

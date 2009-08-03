@@ -2,9 +2,7 @@ package ao.bucket.abstraction.bucketize.build;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
-import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
-import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
@@ -28,11 +26,11 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 
 
     //--------------------------------------------------------------------
-    private final ScalarBucketizer BUCKETIZER;
+    private final Bucketizer BUCKETIZER;
 
 
     //--------------------------------------------------------------------
-    public SmartBucketTreeBuilder(ScalarBucketizer bucketizer)
+    public SmartBucketTreeBuilder(Bucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
     }
@@ -100,15 +98,11 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                                 maxBuckets[round.ordinal()]);
         LOG.debug("allocated: " + Arrays.toString(subBucketCounts));
 
-        StrengthListBuffer strengthListBuffer =
-                new StrengthListBuffer(prevBuckets);
-
         for (int prevBucketIndex = 0;
                  prevBucketIndex < prevBuckets.size();
                  prevBucketIndex++) {
             BUCKETIZER.bucketize(
                     prevBuckets.get(prevBucketIndex),
-                    strengthListBuffer.nextBranchStrengths(),
                     subBucketCounts[prevBucketIndex]);
         }
 
@@ -129,30 +123,22 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             char                    nBuckets,
             byte                    nTrials)
     {
-        double errors[][]   = new double[ branches.size() ]
-                                        [ nTrials         ];
-        int   parentPaths[] = parentReachPaths(branches);
+        double errors[][]    = new double[ branches.size() ]
+                                         [ nTrials         ];
+        int    parentPaths[] = parentReachPaths(branches);
 
-        StrengthListBuffer strengthListBuffer =
-                new StrengthListBuffer(branches);
-
-        HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
             BucketTree.Branch   branch    = branches.get(branchIndex);
-            IndexedStrengthList strengths =
-                    strengthListBuffer.nextBranchStrengths();
 
             LOG.debug("allocating branch " + (branchIndex + 1) + " of " +
                         branches.size());
             for (byte nBucketTrial = 0;
                       nBucketTrial < nTrials;
                       nBucketTrial++) {
-                BUCKETIZER.bucketize(
-                        branch, strengths, (byte)(nBucketTrial + 1));
-                errors[branchIndex][nBucketTrial] = errorMeasure.error(
-                        branch, strengths, (byte)(nBucketTrial + 1));
+                errors[branchIndex][nBucketTrial] = BUCKETIZER.bucketize(
+                        branch, (byte)(nBucketTrial + 1));
             }
         }
 
