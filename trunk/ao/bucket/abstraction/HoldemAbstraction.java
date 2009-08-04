@@ -121,7 +121,8 @@ public class HoldemAbstraction
         if (decoder != null) return decoder;
         decoder = BucketDecoder.retrieveInstance(DIR);
         if (decoder == null) {
-            decoder = BucketDecoder.computeAndStore(tree(false).holes(), DIR);
+            decoder = BucketDecoder.computeAndStore(
+                          tree(false).holes(), DIR);
         }
         return decoder;
     }
@@ -131,7 +132,8 @@ public class HoldemAbstraction
         if (odds != null) return odds;
         odds = BucketOdds.retrieve(DIR, decoder());
         if (odds == null) {
-            odds = BucketOdds.retrieveOrCompute(DIR, tree(false), decoder());
+            odds = BucketOdds.retrieveOrCompute(
+                          DIR, tree(false), decoder());
         }
         return odds;
     }

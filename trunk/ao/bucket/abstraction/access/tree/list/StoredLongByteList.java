@@ -1,9 +1,9 @@
 package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
+import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -15,6 +15,11 @@ import java.io.RandomAccessFile;
 public class StoredLongByteList implements PersistentLongByteList
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(StoredLongByteList.class);
+
+
+    //--------------------------------------------------------------------
     private final RandomAccessFile IN;
 
 
@@ -22,8 +27,13 @@ public class StoredLongByteList implements PersistentLongByteList
     public StoredLongByteList(File file)
     {
         try {
+//            if (! file.exists()) {
+//                boolean created = file.createNewFile();
+//                LOG.debug("Created: " + created);
+//            }
+
             IN = new RandomAccessFile(file, "r");
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new Error( e );
         }
     }

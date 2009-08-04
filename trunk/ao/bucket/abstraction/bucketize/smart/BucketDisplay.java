@@ -41,5 +41,6 @@ public class BucketDisplay
                         holeBuckets.get(hole.canonIndex()) + "\t");
             }
         }
+        System.out.println();
     }
 }

@@ -53,8 +53,8 @@ public class BucketTreeImpl implements BucketTree
         if (storedReadOnly)
         {
             LOG.debug("retrieving stored read-only");
-            holes  = new StoredLongByteList( holeFile);
-            flops  = new StoredLongByteList( flopFile);
+            holes  = new StoredLongByteList(holeFile);
+            flops  = new StoredLongByteList(flopFile);
             turns  = new StoredHalfLongByteList( turnFile);
             rivers = new StoredHalfLongByteList(riverFile);
         }

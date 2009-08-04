@@ -15,6 +15,7 @@ import ao.unsupervised.cluster.space.measure.scalar.MeanEuclidean;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
 import ao.unsupervised.cluster.trial.ParallelTrial;
+import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 /**
@@ -44,7 +45,12 @@ public class RiverBucketizer
             int          parentCanons[],
             byte         nClusters)
     {
-        LOG.debug("retrieve data");
+        LOG.debug("retrieve data" +
+                    " parentRound " + parentRound +
+                    ", |parentCanons| " + parentCanons.length +
+                    ", nClusters " + nClusters);
+        Stopwatch timer = new Stopwatch();
+
         int probCount[] = new int[ CompactRiverProbabilities.COUNT ];
         for (CanonRange rivers : RangeLookup.lookup(
                 parentRound, parentCanons, Round.RIVER)) {
@@ -61,6 +67,9 @@ public class RiverBucketizer
         ScalarDomain<MeanEuclidean> domain =
                 new ScalarDomain<MeanEuclidean>(
                         MeanEuclidean.newFactory());
+
+        int[] domainIndexes   = new int[ probCount.length ];
+        int   nextDomainIndex = 0;
         for (int probability = 0;
                  probability < probCount.length;
                  probability++)
@@ -70,6 +79,7 @@ public class RiverBucketizer
             if (count > 0)
             {
                 domain.add(probability, count);
+                domainIndexes[ probability ] = nextDomainIndex++;
             }
         }
 
@@ -83,19 +93,16 @@ public class RiverBucketizer
                       river <= rivers.toInclusive();
                       river++)
             {
-                branch.set(river, clusters[
-                        MemProbCounts.compactProb(river) ]);
-
-                probCount[ MemProbCounts.compactProb(river) ]+=
-                        MemProbCounts.compactCount(river);
+                branch.set(river, clusters[domainIndexes[
+                        MemProbCounts.compactProb(river) ]]);
             }
         }
 
-        LOG.debug("sorting clusters");
-        BucketSort.sortRiverBranch(
-                branch, parentRound, parentCanons, nClusters);
+//        LOG.debug("sorting clusters");
+//        BucketSort.sortRiverBranch(
+//                branch, parentRound, parentCanons, nClusters);
 
-        LOG.debug("done: " + clustering.error());
+        LOG.debug("done: " + clustering.error() + " took " + timer);
         return clustering.error();
     }
 
