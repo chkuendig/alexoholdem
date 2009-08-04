@@ -55,15 +55,22 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numFlopBuckets,
                       numTurnBuckets,
                       numRiverBuckets},
+//                new byte[]{
+//                    (byte) Math.min(
+//                             maxBucketBranch[0], numHoleBuckets * 2),
+//                    (byte) Math.min(
+//                             maxBucketBranch[1],
+//                             (numFlopBuckets  / numHoleBuckets) * 2),
+//                    maxBucketBranch[2],
+//                    maxBucketBranch[3]
+//                }
                 new byte[]{
-                    (byte) Math.min(
-                             maxBucketBranch[0], numHoleBuckets * 2),
-                    (byte) Math.min(
-                             maxBucketBranch[1],
-                             (numFlopBuckets  / numHoleBuckets) * 2),
+                    numHoleBuckets,
+                    (byte) (numFlopBuckets / numHoleBuckets),
                     maxBucketBranch[2],
                     maxBucketBranch[3]
-                });
+                }
+        );
         tree.flush();
         return tree;
     }

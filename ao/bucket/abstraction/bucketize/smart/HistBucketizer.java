@@ -3,6 +3,7 @@ package ao.bucket.abstraction.bucketize.smart;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.abstraction.access.tree.list.FullLongByteList;
+import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.RiverLookup;
@@ -20,6 +21,7 @@ import ao.unsupervised.cluster.trial.ClusteringTrial;
 import ao.unsupervised.cluster.trial.SerialTrial;
 import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
+import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 /**
@@ -38,20 +40,30 @@ public class HistBucketizer implements Bucketizer
                 new FullLongByteList(null, HoleLookup.CANONS);
 
         byte nHoleBuckets = 32;
-        new HistBucketizer().bucketizePreRiver(
+        for (byte dim = 2; dim <= nHoleBuckets; dim++)
+        {
+            LOG.debug("clustering " + dim);
+            new HistBucketizer().bucketizePreRiver(
                 holeBuckets,
                 Round.PREFLOP,
                 new int[0],
                 nHoleBuckets,
-                (byte) 4);
-
-        BucketDisplay.displayHoleBuckets(holeBuckets);
+                dim);
+            BucketDisplay.displayHoleBuckets(holeBuckets);
+        }
+//        new HistBucketizer().bucketizePreRiver(
+//                holeBuckets,
+//                Round.PREFLOP,
+//                new int[0],
+//                nHoleBuckets,
+//                (byte) 4);
+//        BucketDisplay.displayHoleBuckets(holeBuckets);
     }
 
 
     //--------------------------------------------------------------------
     private final LongByteList riverBuckets =
-                new FullLongByteList(null, RiverLookup.CANONS);
+                new HalfLongByteList(null, RiverLookup.CANONS);
 
 
     //--------------------------------------------------------------------
@@ -74,7 +86,7 @@ public class HistBucketizer implements Bucketizer
                 double error = bucketizePreRiver(
                     branch, branch.round(),
                     new int[]{-1},
-                    numBuckets, (byte) 3);
+                    numBuckets, (byte) 4);
                 BucketSort.sortPreFlop(branch, numBuckets);
                 return error;
 
@@ -82,7 +94,7 @@ public class HistBucketizer implements Bucketizer
                 return bucketizePreRiver(
                     branch, branch.round(),
                     branch.parentCanons(),
-                    numBuckets, (byte) 3);
+                    numBuckets, (byte) 4);
         }
     }
 
@@ -95,21 +107,45 @@ public class HistBucketizer implements Bucketizer
             byte         nBuckets,
             byte         nRiverHist)
     {
+        LOG.debug("bucketizePreRiver" +
+                    " round " + round +
+                    ", |parents| " + parents.length +
+                    ", nBuckets " + nBuckets +
+                    ", nRiverHist " + nRiverHist);
         RiverBucketizer.bucketize(
                 riverBuckets, round.previous(), parents, nRiverHist);
 
         CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
                 byRiver(round, parents, nRiverHist);
 
+        return cluster(
+                 branch, round, parents, nBuckets, byFutureRound
+               ).error();
+    }
+
+    private Clustering cluster(
+            LongByteList                                 branch,
+            Round                                        round,
+            int[]                                        parents,
+            byte                                         nBuckets,
+            CentroidDomain<Centroid<double[]>, double[]> byFutureRound)
+    {
+        LOG.debug("clustering" +
+                    " round " + round +
+                    ", |parents| " + parents.length +
+                    ", nBuckets " + nBuckets);
+        Stopwatch timer = new Stopwatch();
+
         ClusteringTrial<Centroid<double[]>> analyzer =
-                new SerialTrial<Centroid<double[]>>(
+                new /*Parallel*/SerialTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        1);
+                        1/*512*/);
         Clustering clustering =
                 analyzer.cluster(byFutureRound, nBuckets);
         analyzer.close();
 
+        LOG.debug("applying clusters");
         int clusterIndex = 0;
         for (CanonRange canons : RangeLookup.lookup(
                 round.previous(), parents, round)) {
@@ -122,9 +158,14 @@ public class HistBucketizer implements Bucketizer
             }
         }
 
-        BucketSort.sortPreFlop(branch, nBuckets);
-
-        return clustering.error();
+        if (round == Round.PREFLOP) {
+            LOG.debug("sorting clusters");
+            BucketSort.sortPreFlop(branch, nBuckets);
+        }
+        
+        LOG.debug("done clustering with " + clustering.error() +
+                    ", took " + timer);
+        return clustering;
     }
 
 
@@ -134,7 +175,10 @@ public class HistBucketizer implements Bucketizer
                     int          parents[],
                     byte         nRiverBuckets)
     {
-        LOG.debug("building domain for " + round);
+        LOG.debug("building domain for " + round +
+                  " with " + nRiverBuckets +
+                  " from " + parents.length);
+        Stopwatch timer = new Stopwatch();
 
         CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
                 new CentroidDomain<Centroid<double[]>, double[]>(
@@ -160,7 +204,7 @@ public class HistBucketizer implements Bucketizer
             }
         }
 
-        LOG.debug("done");
+        LOG.debug("done building domain, took " + timer);
         return byFutureRound;
     }
 
@@ -200,6 +244,6 @@ public class HistBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     public String id() {
-        return "Potential";
+        return "Hist";
     }
 }

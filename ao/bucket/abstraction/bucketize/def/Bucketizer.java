@@ -10,7 +10,7 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 public interface Bucketizer {
     // returns the bucketing error, in some distance metric
     double bucketize(BucketTree.Branch branch,
-                            byte   numBuckets);
+                     byte              numBuckets);
 
     String id();
 }

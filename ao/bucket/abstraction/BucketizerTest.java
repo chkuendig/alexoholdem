@@ -78,14 +78,14 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-//        abs.tree();
+        abs.tree(false);
 //        abs.odds();
 //        abs.sequence();
 
 //        Rand.randomize();
 //        computeCfr(abs);
 //        tournament(abs);
-        vsHuman(abs);
+//        vsHuman(abs);
     }
 
 
