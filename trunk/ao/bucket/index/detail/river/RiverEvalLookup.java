@@ -83,7 +83,7 @@ public class RiverEvalLookup
             });
 
         for (int count : byStrength) {
-            System.out.println(count);
+            LOG.info(count);
         }
     }
 

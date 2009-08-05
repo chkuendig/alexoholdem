@@ -6,6 +6,7 @@ import ao.simple.kuhn.state.KuhnSeat;
 import ao.simple.kuhn.state.StateFlow;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,11 @@ import java.util.List;
  */
 public class KuhnDealer
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(KuhnDealer.class);
+
+
     //--------------------------------------------------------------------
     public static void main(String args[])
     {
@@ -54,8 +60,7 @@ public class KuhnDealer
 //            inOrder = !inOrder;
         }
 
-        System.out.println(
-                (double) cumDelta / numHands);
+        LOG.info((double) cumDelta / numHands);
     }
 
     private static KuhnCard[][] generateHands()

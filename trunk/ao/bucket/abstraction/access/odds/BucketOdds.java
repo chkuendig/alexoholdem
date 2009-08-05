@@ -177,7 +177,7 @@ public class BucketOdds implements IBucketOdds
             }
         }
 
-        System.out.println(" DONE!");
+        LOG.debug(" DONE!");
         return hist;
     }
     private static void computeStrengths(

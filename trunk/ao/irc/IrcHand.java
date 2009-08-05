@@ -2,6 +2,7 @@ package ao.irc;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -29,6 +30,11 @@ import java.util.regex.Pattern;
 public class IrcHand
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(IrcHand.class);
+
+
+    //--------------------------------------------------------------------
     // 766303976   1   455  8  6/600   6/1200  6/1800  3/2400  3s Jc Qd 5c Ah
     private final static Pattern pat =
             Pattern.compile(//"\\D*" +
@@ -54,7 +60,7 @@ public class IrcHand
         }
         catch (Error e)
         {
-            System.out.println(e.getMessage());
+            LOG.error("can't load from line: " + line, e);
             return null;
         }
     }

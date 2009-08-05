@@ -6,6 +6,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.replay.Replay;
 import ao.util.math.rand.Rand;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,11 @@ import java.util.List;
 public class PersistanceTest
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(HoldemDao.class);
+
+
+    //--------------------------------------------------------------------
     public static void main(String[] args)
     {
         Rand.nextBoolean();
@@ -24,7 +30,7 @@ public class PersistanceTest
         HoldemViews views = new HoldemViews(db);
         HoldemDao   dao   = new HoldemDao(db, views);
 
-        System.out.println("presisting random hands");
+        LOG.info("presisting random hands");
 //        dao.persist( randomHand() );
         for (int i = 0; i < 10000; i++)
         {
@@ -35,15 +41,17 @@ public class PersistanceTest
         }
         System.out.println();
 
-        System.out.println("retrieving");
+        LOG.info("retrieving");
         retrieve( dao );
 
-        System.out.println("by prevalence");
+        LOG.info("by prevalence");
         dao.printByPrevalence(5);
 
         db.close();
     }
 
+
+    //--------------------------------------------------------------------
     private static void retrieve(HoldemDao dao)
     {
         Avatar prevalent =
@@ -55,7 +63,7 @@ public class PersistanceTest
 //            System.out.println(h);
         }
         long delta = System.currentTimeMillis() - start;
-        System.out.println("took: " + delta);
+        LOG.info("took: " + delta);
     }
 
     private static Replay randomHand()

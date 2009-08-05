@@ -5,6 +5,7 @@ import ao.simple.alexo.player.AlwaysRaise;
 import ao.simple.alexo.player.CrmBot;
 import ao.simple.alexo.state.AlexoRound;
 import ao.simple.alexo.state.AlexoState;
+import org.apache.log4j.Logger;
 
 /**
  * Alexo Holdem is a variant of
@@ -46,6 +47,11 @@ import ao.simple.alexo.state.AlexoState;
 public class AlexoDealer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(AlexoDealer.class);
+
+
+    //--------------------------------------------------------------------
     public static void main(String[] args)
     {
 //        int max = 1000;
@@ -57,9 +63,8 @@ public class AlexoDealer
 
         for (double aggression = 0; aggression < 1.0; aggression += 0.01)
         {
-            System.out.println(
-                    "aggression: " +
-                    (double) Math.round(aggression * 1000) / 1000);
+            LOG.info("aggression: " +
+                     (double) Math.round(aggression * 1000) / 1000);
             touney(new CrmBot(100000, aggression), new AlwaysRaise());
         }
     }
@@ -87,9 +92,8 @@ public class AlexoDealer
 //            inOrder = !inOrder;
 //        }
 
-        System.out.println(
-                (double) cumDelta / numHands +
-                " for " + playerA + " vs " + playerB);
+        LOG.info((double) cumDelta / numHands +
+                  " for " + playerA + " vs " + playerB);
     }
 
     private static AlexoCardSequence[] generate(int n)

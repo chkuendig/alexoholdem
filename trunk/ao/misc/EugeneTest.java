@@ -3,6 +3,7 @@ package ao.misc;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;
 import ao.util.math.rand.Rand;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,12 @@ import java.util.List;
  */
 public class EugeneTest
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(EugeneTest.class);
+
+
+    //--------------------------------------------------------------------
     public static void main(String[] args)
     {
 
@@ -22,6 +29,9 @@ public class EugeneTest
             test(opps, 20, 100 * 1000);
         }
     }
+
+
+    //--------------------------------------------------------------------
     public static void test(
             int opps,
             int trials,
@@ -84,7 +94,6 @@ public class EugeneTest
 
         double average =
                 ((double) total) / (trials * repeat);
-        System.out.println(
-                trials + "\t" + repeat + "\t" + opps + "\t" + average);
+        LOG.info(trials + "\t" + repeat + "\t" + opps + "\t" + average);
     }
 }

@@ -12,6 +12,7 @@ import ao.simple.kuhn.rules.KuhnSequencer;
 import ao.simple.kuhn.state.KuhnState;
 import ao.util.math.rand.Rand;
 import ao.util.text.Txt;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -20,6 +21,11 @@ import java.util.Arrays;
  */
 public class KuhnInfoTree
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(KuhnInfoTree.class);
+
+
     //--------------------------------------------------------------------
     private final double passRegret[][];
     private final double betRegret [][];
@@ -171,7 +177,7 @@ public class KuhnInfoTree
                     1.0, 1.0);
         }
 
-        System.out.println("first:\n" + firstRoot);
-        System.out.println("last:\n"  + lastRoot);
+        LOG.info("first:\n" + firstRoot);
+        LOG.info("last:\n"  + lastRoot);
     }
 }

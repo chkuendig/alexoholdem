@@ -59,7 +59,7 @@ public class HoleDetails
                 Buffer buff = buffers[ canonHole.canonIndex() ];
                 if (buff == null)
                 {
-                    System.out.println( canonHole.reify() );
+                    LOG.info( canonHole.reify() );
                     buff = new Buffer( canonHole.reify() );
                     buffers[ canonHole.canonIndex() ] = buff;
                 }

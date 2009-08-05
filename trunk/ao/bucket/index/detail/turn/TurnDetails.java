@@ -44,12 +44,12 @@ public class TurnDetails
                 CanonTurnDetail details = TurnDetails.lookup(index);
 
                 if (details.canonIndex() != index) {
-                    System.out.println("TurnDetailFlyweight index error");
+                    LOG.error("TurnDetailFlyweight index error");
                 }
                 if (((char)(details.strength() * Character.MAX_VALUE)) !=
                         ((char)(TurnOdds.lookup(index).strengthVsRandom()
                                   * Character.MAX_VALUE))) {
-                    System.out.println(
+                    LOG.error(
                             "TurnDetailFlyweight strength error: " +
                             details.strength() + " vs " +
                             TurnOdds.lookup(index).strengthVsRandom());

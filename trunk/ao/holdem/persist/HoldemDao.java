@@ -7,6 +7,7 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.collections.StoredMap;
 import com.sleepycat.collections.TransactionWorker;
 import com.sleepycat.je.*;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -15,6 +16,11 @@ import java.util.*;
  */
 public class HoldemDao
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(HoldemDao.class);
+
+
     //--------------------------------------------------------------------
     private HoldemDb                              db;
     private StoredMap/*<UniqueId, Hand>*/         hands;
@@ -77,7 +83,7 @@ public class HoldemDao
         for (Map.Entry<Avatar, Integer> e :
                 mostPrevalent(howMany).entrySet())
         {
-            System.out.println(e.getKey() + ": " + e.getValue());
+            LOG.info(e.getKey() + ": " + e.getValue());
         }
     }
 

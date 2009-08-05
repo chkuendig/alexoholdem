@@ -9,6 +9,7 @@ import ao.simple.kuhn.state.KuhnState;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
 import ao.util.time.Progress;
+import org.apache.log4j.Logger;
 
 /**
  * User: alex
@@ -18,6 +19,11 @@ import ao.util.time.Progress;
 public class Crm2Bot implements KuhnPlayer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(Crm2Bot.class);
+
+
+    //--------------------------------------------------------------------
     private final KuhnInfoTree tree = new KuhnInfoTree();
 
 
@@ -26,7 +32,7 @@ public class Crm2Bot implements KuhnPlayer
     {
         Equalibrium equalibrium = new Equalibrium();
 
-        System.out.println("Computing Equilibrium");
+        LOG.info("Computing Equilibrium");
         Progress progres = new Progress(iterations);
 
         KuhnCard hands[][] = generateHands();
@@ -42,7 +48,7 @@ public class Crm2Bot implements KuhnPlayer
 //            System.out.println("last:\n"  + lastRoot);
         }
 
-        System.out.println( tree );
+        LOG.info( tree );
     }
 
 

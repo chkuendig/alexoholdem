@@ -45,7 +45,7 @@ public class RiverRawLookup
         {
             size += RiverCaseSet.VALUES[ caseOrdinal ].size();
         }
-        System.out.println(size);
+        LOG.info(size);
     }
 
 

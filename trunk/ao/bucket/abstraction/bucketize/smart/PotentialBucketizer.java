@@ -72,7 +72,7 @@ public class PotentialBucketizer implements Bucketizer
 
         for (List<CanonHole> bucket : byBucket.values())
         {
-            System.out.println(bucket);
+            LOG.info(bucket);
         }
     }
 

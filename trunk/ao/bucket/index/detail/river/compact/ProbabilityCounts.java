@@ -6,6 +6,7 @@ import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.persist.PersistentInts;
+import org.apache.log4j.Logger;
 
 /**
  * User: alex
@@ -15,14 +16,16 @@ import ao.util.persist.PersistentInts;
 public class ProbabilityCounts
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(ProbabilityCounts.class);
+
     private ProbabilityCounts() {}
 
     public static void main(String[] args)
     {
         for (int i = 0; i < ProbabilityEncoding.COUNT; i++)
         {
-            System.out.println(
-                    i + "\t" + countOf((char) i));
+            LOG.info(i + "\t" + countOf((char) i));
         }
     }
 

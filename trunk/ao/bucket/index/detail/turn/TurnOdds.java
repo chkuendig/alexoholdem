@@ -47,14 +47,14 @@ public class TurnOdds
             maxTies = Math.max(maxTies, odds.splitOdds());
         }
 
-        System.out.println("minWins = " + minWins);
-        System.out.println("maxWins = " + maxWins);
+        LOG.info("minWins = " + minWins);
+        LOG.info("maxWins = " + maxWins);
 
-        System.out.println("minLose = " + minLose);
-        System.out.println("maxLose = " + maxLose);
+        LOG.info("minLose = " + minLose);
+        LOG.info("maxLose = " + maxLose);
 
-        System.out.println("minTies = " + minTies);
-        System.out.println("maxTies = " + maxTies);
+        LOG.info("minTies = " + minTies);
+        LOG.info("maxTies = " + maxTies);
     }
 
 
@@ -63,6 +63,7 @@ public class TurnOdds
             Logger.getLogger(TurnOdds.class);
 
     private static final char SENTINAL = Character.MAX_VALUE;
+
 
     //--------------------------------------------------------------------
     private static final File DIR =
@@ -140,7 +141,7 @@ public class TurnOdds
                     skipCount[0]++;
                     return;
                 } else if (skipCount[0] != 0) {
-                    System.out.println("skipped " + skipCount[0]);
+                    LOG.info("skipped " + skipCount[0]);
                     skipCount[0] = 0;
                 }
 
@@ -165,17 +166,17 @@ public class TurnOdds
         if (milestoneStart[0] == 0)
             milestoneStart[0] = System.currentTimeMillis();
 
-        if (count % 100 == 0)
+        if (count % 1000 == 0)
             System.out.print(".");
 
-        boolean milesoneReached = ((count + 1) % 5000 == 0);
+        boolean milesoneReached = ((count + 1) % 50000 == 0);
         if (milesoneReached) {
             System.out.println(
-                    " " + (count + 1) + ", completed 5000 in " +
+                    " " + (count + 1) + ", completed 50,000 in " +
                     (System.currentTimeMillis() - milestoneStart[0]));
         }
 
-        if ((count + 1) % 100000 == 0) flush();
+        if ((count + 1) % 1000000 == 0) flush();
 
         if (milesoneReached)
             milestoneStart[0] = System.currentTimeMillis();

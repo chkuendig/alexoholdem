@@ -2,6 +2,7 @@ package ao.irc;
 
 import ao.holdem.model.replay.Replay;
 import com.google.inject.Inject;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -11,6 +12,11 @@ import java.io.File;
 public class IrcRunner
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(IrcRunner.class);
+
+
+    //--------------------------------------------------------------------
     @Inject IrcHistorian   historian;
 //    @Inject HandHistoryDao hands;
 
@@ -18,7 +24,7 @@ public class IrcRunner
     //--------------------------------------------------------------------
     public void run(String ircDir)
     {
-        System.out.println("ircDir: " + ircDir);
+        LOG.info("ircDir: " + ircDir);
 
         for (Replay hist :
                 historian.fromSnapshot(ircDir))
@@ -41,7 +47,7 @@ public class IrcRunner
                 run( subdir.toString() );
             }
             long end = System.currentTimeMillis();
-            System.out.println("took " + (end - start));
+            LOG.info("took " + (end - start));
         }
     }
 }

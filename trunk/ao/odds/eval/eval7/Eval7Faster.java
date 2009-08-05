@@ -7,6 +7,7 @@ import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval_567.EvalSlow;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -15,6 +16,11 @@ import java.util.Arrays;
  */
 public class Eval7Faster
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(Eval7Faster.class);
+
+
     //--------------------------------------------------------------------
     private static final String DIR    = Infrastructure.path(
                                          "lookup/eval/eval7_faster/");
@@ -307,8 +313,7 @@ public class Eval7Faster
                     break;
 
                 default :
-                    System.out.println(
-                            "ERROR: Invalid hand in GetRank method.");
+                    LOG.error("ERROR: Invalid hand in GetRank method.");
                     break;
             }
         }

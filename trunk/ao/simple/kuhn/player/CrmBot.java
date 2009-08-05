@@ -12,12 +12,18 @@ import ao.simple.kuhn.state.KuhnState;
 import ao.util.math.stats.Combo;
 import ao.util.math.stats.Permuter;
 import ao.util.time.Progress;
+import org.apache.log4j.Logger;
 
 /**
  * Counterfactual Regret Minimizing player
  */
 public class CrmBot implements KuhnPlayer
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(CrmBot.class);
+
+
     //--------------------------------------------------------------------
     private final BucketNode firstRoot;
     private final BucketNode lastRoot;
@@ -32,7 +38,7 @@ public class CrmBot implements KuhnPlayer
         firstRoot = KuhnInfoTree.initialize(sequencer.root(), false);
         lastRoot  = KuhnInfoTree.initialize(sequencer.root(), true);
 
-        System.out.println("Computing Equilibrium");
+        LOG.info("Computing Equilibrium");
         Progress progres = new Progress(iterations);
 
         KuhnCard hands[][] = generateHands();

@@ -3,6 +3,7 @@ package ao.holdem.engine.state;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.act.AbstractAction;
 import ao.util.io.Console;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -18,6 +19,10 @@ import java.util.Map;
 public class StateTest
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(StateTest.class);
+
+
     public static void main(String[] args)
     {
 //        new StateTest().interactiveHeadsUp();
@@ -42,8 +47,7 @@ public class StateTest
             int sum = 0;
             for (int count : byDepth) sum += count;
 
-            System.out.println(
-                    Arrays.toString(byDepth) + " = " + sum);
+            LOG.info(Arrays.toString(byDepth) + " = " + sum);
         }
     }
 
@@ -77,21 +81,18 @@ public class StateTest
         {
             boolean isDealer = (state.dealerIsNext());
 
-            System.out.println( state );
-
-            System.out.println(
-                    (isDealer ? dealer : dealee) + " to act...");
+            LOG.info( state );
+            LOG.info((isDealer ? dealer : dealee) + " to act...");
 
             Map<AbstractAction, State>
                            acts    = state.viableActions();
             AbstractAction nextAct = inputNextAct(acts);
 
-            System.out.println("Performing " + nextAct);
+            LOG.info("Performing " + nextAct);
             state = acts.get( nextAct );
         }
 
-        System.out.println(
-                state.headsUpStatus());
+        LOG.info(state.headsUpStatus());
     }
 
     private AbstractAction inputNextAct(

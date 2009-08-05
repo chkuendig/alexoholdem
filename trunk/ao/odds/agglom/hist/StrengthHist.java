@@ -7,6 +7,7 @@ import ao.util.math.crypt.MD5;
 import ao.util.math.crypt.SecureHash;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -18,6 +19,11 @@ import java.util.Arrays;
  */
 public class StrengthHist implements Comparable<StrengthHist>
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(StrengthHist.class);
+
+
     //--------------------------------------------------------------------
     private final int    HIST[];
     private       double mean = Double.NaN;
@@ -161,15 +167,15 @@ public class StrengthHist implements Comparable<StrengthHist>
     public static void main(String[] args)
     {
         StrengthHist h = new StrengthHist();
-        System.out.println(h.secureHashCode());
+        LOG.info(h.secureHashCode());
 
         h.count((short) 0);
-        System.out.println(h.secureHashCode());
+        LOG.info(h.secureHashCode());
 
         h.count((short) 1);
-        System.out.println(h.secureHashCode());
+        LOG.info(h.secureHashCode());
 
         h.count((short) 2);
-        System.out.println(h.secureHashCode());
+        LOG.info(h.secureHashCode());
     }
 }
