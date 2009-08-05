@@ -1,5 +1,7 @@
 package ao.irc;
 
+import org.apache.log4j.Logger;
+
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,11 @@ import java.util.regex.Pattern;
  */
 public class IrcRoster
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(IrcRoster.class);
+
+
     //--------------------------------------------------------------------
     // 766303976  8  Marzon spiney doublebag neoncap maurer andrea zorak justin
     private final static Pattern pat =
@@ -27,7 +34,7 @@ public class IrcRoster
         }
         catch (Error e)
         {
-            System.out.println(e.getMessage());
+            LOG.error("can't load from line: " + line, e);
             return null;
         }
     }

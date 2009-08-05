@@ -133,8 +133,7 @@ public class InfoMatrix
     //--------------------------------------------------------------------
     public void displayHeadsUpRoot() {
         for (int bucket = 0; bucket < averageStrategy.rows(); bucket++) {
-            System.out.println(
-                    StateTree.headsUpRoot().infoSet(bucket, this));
+            LOG.info(StateTree.headsUpRoot().infoSet(bucket, this));
         }
     }
 

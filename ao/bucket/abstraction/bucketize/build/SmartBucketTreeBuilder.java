@@ -137,7 +137,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
-            BucketTree.Branch   branch    = branches.get(branchIndex);
+            BucketTree.Branch branch = branches.get(branchIndex);
 
             LOG.debug("allocating branch " + (branchIndex + 1) + " of " +
                         branches.size());

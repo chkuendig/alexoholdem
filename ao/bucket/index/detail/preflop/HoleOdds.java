@@ -41,14 +41,14 @@ public class HoleOdds
             maxTies = Math.max(maxTies, odds.splitOdds());
         }
 
-        System.out.println("minWins = " + minWins);
-        System.out.println("maxWins = " + maxWins);
+        LOG.info("minWins = " + minWins);
+        LOG.info("maxWins = " + maxWins);
 
-        System.out.println("minLose = " + minLose);
-        System.out.println("maxLose = " + maxLose);
+        LOG.info("minLose = " + minLose);
+        LOG.info("maxLose = " + maxLose);
 
-        System.out.println("minTies = " + minTies);
-        System.out.println("maxTies = " + maxTies);
+        LOG.info("minTies = " + minTies);
+        LOG.info("maxTies = " + maxTies);
     }
 
 
@@ -99,7 +99,7 @@ public class HoleOdds
                     skinCount[0]++;
                     return;
                 } else if (skinCount[0] != 0) {
-                    System.out.println("skipped " + skinCount[0]);
+                    LOG.info("skipped " + skinCount[0]);
                     skinCount[0] = 0;
                 }
 

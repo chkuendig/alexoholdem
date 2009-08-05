@@ -5,6 +5,7 @@ import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 21, 2009
@@ -17,6 +18,9 @@ public class TestCanonDetails
 
 
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(TestCanonDetails.class);
+
     public static void main(String[] args)
     {
 //        testHoleDetails();
@@ -32,7 +36,7 @@ public class TestCanonDetails
                   canonHole < HoleLookup.CANONS;
                   canonHole++)
         {
-            System.out.println( DetailLookup.lookupHole(canonHole) );
+            LOG.info( DetailLookup.lookupHole(canonHole) );
         }
     }
 
@@ -57,9 +61,9 @@ public class TestCanonDetails
                                        details.canonTurnCount());
         }
 
-        System.out.println("turnCountTotal = " + turnCountTotal);
-        System.out.println("turnCountMax   = " + turnCountMax);
-        System.out.println("turnCountMin   = " + turnCountMin);
+        LOG.info("turnCountTotal = " + turnCountTotal);
+        LOG.info("turnCountMax   = " + turnCountMax);
+        LOG.info("turnCountMin   = " + turnCountMin);
     }
 
 
@@ -87,7 +91,8 @@ public class TestCanonDetails
 //                                       details.canonRiverCount());
         }
 
-        System.out.println("totalStrength/n = " + (totalStrength / TurnLookup.CANONS));
+        LOG.info("totalStrength/n = " +
+                    (totalStrength / TurnLookup.CANONS));
 
 //        System.out.println("riverCountTotal = " + riverCountTotal);
 //        System.out.println("riverCountMax   = " + riverCountMax);

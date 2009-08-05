@@ -14,6 +14,7 @@ import ao.odds.eval.eval_567.EvalSlow;
 import ao.util.data.Arr;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
+import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -25,6 +26,11 @@ import java.util.BitSet;
  */
 public class Main
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(Main.class);
+
+
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
@@ -107,8 +113,7 @@ public class Main
 //                Odds exactOdds =
 //                        fg.compute(Hole.valueOf(holes[0], holes[1]), c, opps);
 
-                System.out.println(
-                        "approxLookup[" + opps + "]" +
+                LOG.info("approxLookup[" + opps + "]" +
                               "[" + holes[0].ordinal() + "]" +
                               "[" + holes[1].ordinal() + "]\t" + approxOdds);
 //                System.out.println(
@@ -220,11 +225,11 @@ public class Main
             int index = Eval7FastLookup.index52c7(mask);
             if (index >= 133784560)
             {
-                System.out.println("OUT OF BOUNDS " + mask + " with " + index);
+                LOG.error("OUT OF BOUNDS " + mask + " with " + index);
             }
             if (mapped.get(index))
             {
-                System.out.println("COLLISION AT " + mask + " for " + index);
+                LOG.error("COLLISION AT " + mask + " for " + index);
             }
             mapped.set(index);
         }
@@ -312,10 +317,12 @@ public class Main
 //                }
 //            });
 
-            if (value != EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6))
+            if (value != EvalSlow.valueOf(
+                    card0, card1, card2, card3, card4, card5, card6))
             {
-                System.out.println("WTF!!!!!\t" + value + "\t" +
-                                   EvalSlow.valueOf(card0, card1, card2, card3, card4, card5, card6));
+                LOG.error("WTF!!!!!\t" + value + "\t" +
+                        EvalSlow.valueOf(card0, card1, card2,
+                                card3, card4, card5, card6));
             }
             frequency[ HandRank.fromValue(value).ordinal() ]++;
             exactFrequency[ value ]++;
@@ -323,9 +330,9 @@ public class Main
         }}}}}}}
 //        }
 
-        System.out.println("total: " + total);
-        System.out.println(Arrays.toString(frequency));
-        System.out.println(Arr.join(exactFrequency, "\t"));
+        LOG.info("total: " + total);
+        LOG.info(Arrays.toString(frequency));
+        LOG.info(Arr.join(exactFrequency, "\t"));
     }
 
 
@@ -349,8 +356,8 @@ public class Main
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
             if (value != EvalSlow.valueOf(hand))
             {
-                System.out.println(Arrays.toString(hand) + "\t" +
-                                   value + "\t" + EvalSlow.valueOf(hand));
+                LOG.info(Arrays.toString(hand) + "\t" +
+                        value + "\t" + EvalSlow.valueOf(hand));
                 Eval7Faster.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
             }
@@ -358,8 +365,8 @@ public class Main
             frequency[ HandRank.fromValue(value).ordinal() ]++;
         }
 
-        System.out.println(Arrays.toString(frequency));
-        System.out.println("took: " + (System.currentTimeMillis() - start));
+        LOG.info(Arrays.toString(frequency));
+        LOG.info("took: " + (System.currentTimeMillis() - start));
     }
     public static void doRunHandsOf5()
     {
@@ -383,8 +390,8 @@ public class Main
             frequency[ HandRank.fromValue(value).ordinal() ]++;
         }
 
-        System.out.println(Arrays.toString(frequency));
-        System.out.println("took: " + (System.currentTimeMillis() - start));
+        LOG.info(Arrays.toString(frequency));
+        LOG.info("took: " + (System.currentTimeMillis() - start));
     }
 }
 

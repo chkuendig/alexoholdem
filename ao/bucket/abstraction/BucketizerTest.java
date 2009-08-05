@@ -68,7 +68,7 @@ public class BucketizerTest
             nTurnBuckets  = (char) Integer.parseInt(args[2]);
             nRiverBuckets = (char) Integer.parseInt(args[3]);
         }
-        System.out.println("Using " +
+        LOG.debug("Using " +
                 (int) nHoleBuckets + ", " + (int) nFlopBuckets + ", " +
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
@@ -136,7 +136,7 @@ public class BucketizerTest
             new PreciseHeadsUpOdds().compute(hole, flop);
         }
         
-        System.out.println("Done Loading!  Took " + time.timing());
+        LOG.debug("Done Loading!  Took " + time.timing());
     }
 
 
@@ -192,7 +192,7 @@ public class BucketizerTest
     public static void computeCfr(
             HoldemAbstraction abs) throws IOException
     {
-        System.out.println("computeCfr");
+        LOG.debug("computeCfr");
 
         Stopwatch         t      = new Stopwatch();
         InfoPart          info   = abs.infoPart(BOT_NAME, false, true);
@@ -213,7 +213,7 @@ public class BucketizerTest
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
 
         if (offset > 0) {
-            System.out.println("Offsetting " + offset + "...");
+            LOG.debug("Offsetting " + offset + "...");
             for (; itr < offset; itr++) {
                 it.next();
             }
@@ -223,14 +223,14 @@ public class BucketizerTest
         while (it.hasNext())
         {
             if (itr % (5 * 1000 * 1000) == 0) {
-                System.out.println("\t" + itr + " took " + t.timing());
+                LOG.debug("\t" + itr + " took " + t.timing());
                 t = new Stopwatch();
 
                 info.displayHeadsUpRoots();
             }
 
             if (itr++ % (milestone) == 0) {
-                System.out.println(
+                LOG.debug(
                         " " + milestone +
                         " totalling " + (itr - 1) +
                         " took " +
@@ -250,7 +250,7 @@ public class BucketizerTest
             prog.checkpoint();
         }
 
-        System.out.println(" " + (itr - 1));
+        LOG.debug(" " + (itr - 1));
         info.displayHeadsUpRoots();
         info.flush();
     }

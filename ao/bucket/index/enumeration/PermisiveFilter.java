@@ -2,6 +2,7 @@ package ao.bucket.index.enumeration;
 
 import ao.bucket.index.CanonIndexed;
 import ao.util.misc.Filter;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 22, 2009
@@ -10,6 +11,11 @@ import ao.util.misc.Filter;
 public class PermisiveFilter<T extends CanonIndexed>
         implements Filter<T>
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(PermisiveFilter.class);
+
+
     //--------------------------------------------------------------------
     private final String FORMAT;
 
@@ -25,7 +31,7 @@ public class PermisiveFilter<T extends CanonIndexed>
     public boolean accept(T canonIndexed)
     {
         if (FORMAT != null) {
-            System.out.println(String.format(FORMAT, canonIndexed));
+            LOG.info(String.format(FORMAT, canonIndexed));
         }
 
         return true;

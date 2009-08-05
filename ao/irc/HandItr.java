@@ -8,6 +8,7 @@ import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.LiteralCards;
 import ao.holdem.model.replay.Replay;
 import ao.holdem.model.replay.StackedReplay;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -16,6 +17,11 @@ import java.util.*;
  */
 public class HandItr implements Iterable<Replay>
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(HandItr.class);
+
+
     //--------------------------------------------------------------------
     private Map<String, List<IrcAction>> players;
     private Map<Long, IrcRoster>         rosters;
@@ -111,15 +117,13 @@ public class HandItr implements Iterable<Replay>
         {
             if (e.getMessage() == null)
             {
-                System.out.println("nextHandIndex " + (nextHandIndex-1));
-                e.printStackTrace();
+                LOG.error("nextHandIndex " + (nextHandIndex-1), e);
                 displayHand(hand, action);
             }
             else if (! e.getMessage()
                         .contains("round betting cap exceeded"))
             {
-                System.out.println("nextHandIndex " + (nextHandIndex-1));
-                System.out.println(e.getMessage());
+                LOG.error("nextHandIndex " + (nextHandIndex-1), e);
                 displayHand(hand, action);
             }
             return null;
@@ -130,10 +134,10 @@ public class HandItr implements Iterable<Replay>
             IrcHand         hand,
             List<IrcAction> action)
     {
-        System.out.println(hand);
+        LOG.info(hand);
         for (IrcAction act : action)
         {
-            System.out.println(act);
+            LOG.info(act);
         }
     }
 

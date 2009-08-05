@@ -1,5 +1,7 @@
 package ao.holdem.net;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,6 +15,9 @@ import java.util.regex.Pattern;
 public class NetCode
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(NetCode.class);
+
     private static final int  IN_PORT = 7911;
     private static final int OUT_PORT = 45067;
 
@@ -31,20 +36,19 @@ public class NetCode
 
             while (true)
             {
-                System.out.println("awaiting input...");
+                LOG.info("awaiting input...");
                 String rec = recieveString(readSocket);
-                System.out.println("recieved: " + rec);
+                LOG.info("recieved: " + rec);
                 if (rec.equals("exit")) break;
 
                 Matcher matcher = ipPat.matcher(rec);
                 if (matcher.matches()) {
                     String addr = matcher.group(1);
-                    System.out.println("Sending to " + addr);
+                    LOG.info("Sending to " + addr);
 
                     send(writeSocket, addr, "?INSTANCEID=0#ACTION=0");
                 } else {
-                    System.out.println(
-                            "unable to get address from: " + rec);
+                    LOG.info("unable to get address from: " + rec);
                 }
             }
         }

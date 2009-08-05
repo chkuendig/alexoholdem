@@ -2,6 +2,7 @@ package ao.bucket.abstraction.bucketize.build;
 
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -13,6 +14,9 @@ import java.util.Arrays;
 public class Optimizer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(Optimizer.class);
+
     public static void main(String[] args) {
 //        double errors[][] =
 //                {{3, 2, 1},
@@ -33,9 +37,9 @@ public class Optimizer
 
         long before     = System.currentTimeMillis();
         byte solution[] = optimize(errors, holes * flopsPerHole);
-        System.out.println(
+        LOG.info(
                 "took " + (System.currentTimeMillis() - before));
-        System.out.println(Arrays.toString(solution));
+        LOG.info(Arrays.toString(solution));
     }
 
 

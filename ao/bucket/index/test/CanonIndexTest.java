@@ -149,16 +149,16 @@ public class CanonIndexTest
                     public void traverse(River river) {}
                 });
 
-        System.out.println("Hole Gapper Status:");
+        LOG.info("Hole Gapper Status:");
         holeFilter.gapper().displayStatus();
 
-        System.out.println("Flop Gapper Status:");
+        LOG.info("Flop Gapper Status:");
         flopFilter.gapper().displayStatus();
 
-        System.out.println("Turn Gapper Status:");
+        LOG.info("Turn Gapper Status:");
         turnFilter.gapper().displayStatus();
 
-        System.out.println("River Gapper Status:");
+        LOG.info("River Gapper Status:");
         riverFilter.gapper().displayStatus();
     }
 

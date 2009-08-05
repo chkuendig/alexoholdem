@@ -46,14 +46,14 @@ public class FlopOdds
             maxTies = Math.max(maxTies, odds.splitOdds());
         }
 
-        System.out.println("minWins = " + minWins);
-        System.out.println("maxWins = " + maxWins);
+        LOG.info("minWins = " + minWins);
+        LOG.info("maxWins = " + maxWins);
 
-        System.out.println("minLose = " + minLose);
-        System.out.println("maxLose = " + maxLose);
+        LOG.info("minLose = " + minLose);
+        LOG.info("maxLose = " + maxLose);
 
-        System.out.println("minTies = " + minTies);
-        System.out.println("maxTies = " + maxTies);
+        LOG.info("minTies = " + minTies);
+        LOG.info("maxTies = " + maxTies);
     }
 
 
@@ -154,7 +154,7 @@ public class FlopOdds
                     skinCount[0]++;
                     return;
                 } else if (skinCount[0] != 0) {
-                    System.out.println("skipped " + skinCount[0]);
+                    LOG.info("skipped " + skinCount[0]);
                     skinCount[0] = 0;
                 }
 
@@ -184,7 +184,7 @@ public class FlopOdds
 
         boolean milesoneReached = ((count + 1) % 5000 == 0);
         if (milesoneReached) {
-            System.out.println(
+            LOG.info(
                     " " + (count + 1) + ", completed 5000 in " +
                     (System.currentTimeMillis() - milestoneStart[0]));
         }

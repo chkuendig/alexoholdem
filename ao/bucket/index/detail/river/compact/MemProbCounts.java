@@ -21,7 +21,7 @@ public class MemProbCounts
         for (long r = 0; r < RiverLookup.CANONS; r++) {
             totalCount += MemProbCounts.riverCount(r);
         }
-        System.out.println(totalCount);
+        LOG.info("totalCount: " + totalCount);
 
         RiverEvalLookup.traverse(
             new CanonRange[]{CanonRange.newFromCount(
@@ -37,8 +37,8 @@ public class MemProbCounts
                     byte rep = MemProbCounts.riverCount(canonIndex);
                     if (rep != represents)
                     {
-                        System.out.println(canonIndex +" err: " +
-                                rep + " vs " + represents);
+                        LOG.error(canonIndex +" err: " +
+                                  rep + " vs " + represents);
                         System.exit(1);
                     }
                 }

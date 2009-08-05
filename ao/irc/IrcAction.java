@@ -5,6 +5,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -36,6 +37,11 @@ import java.util.regex.Pattern;
 public class IrcAction
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(IrcAction.class);
+
+
+    //--------------------------------------------------------------------
     // Marzon    766303976  8  1 Bc  bc    kc    kf      12653  300    0
     private final static Pattern pat =
             Pattern.compile(//"\\s*" +
@@ -60,7 +66,7 @@ public class IrcAction
         }
         catch (Error e)
         {
-            System.out.println(e.getMessage());
+            LOG.error("can't load from line " + line, e);
             return null;
         }
     }

@@ -3,6 +3,7 @@ package ao.bucket.index.enumeration;
 import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.test.Gapper;
 import ao.util.misc.Filter;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 22, 2009
@@ -11,6 +12,11 @@ import ao.util.misc.Filter;
 public class UniqueFilter<T extends CanonIndexed>
         implements Filter<T>
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(UniqueFilter.class);
+
+
     //--------------------------------------------------------------------
     private final String FORMAT;
     private final Gapper GAPPER;
@@ -38,7 +44,7 @@ public class UniqueFilter<T extends CanonIndexed>
         if (GAPPER.get( index )) return false;
 
         if (FORMAT != null) {
-            System.out.println(String.format(FORMAT, indexed));
+            LOG.info(String.format(FORMAT, indexed));
         }
 
         GAPPER.set( index );

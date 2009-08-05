@@ -3,6 +3,7 @@ package ao.bucket.index.detail.river.compact;
 import ao.Infrastructure;
 import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.util.persist.PersistentChars;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -14,11 +15,14 @@ import java.util.Arrays;
 public class CompactRiverProbabilities
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(CompactRiverProbabilities.class);
+
     private CompactRiverProbabilities() {}
 
     public static void main(String[] args) {
         for (int raw = 0; raw < ProbabilityEncoding.COUNT; raw++) {
-            System.out.println(raw + "\t" + (int) compact((char) raw));
+            LOG.info(raw + "\t" + (int) compact((char) raw));
         }
     }
 

@@ -21,8 +21,7 @@ public class CompactRiverCounts
         for (int i = 0;
                  i < CompactRiverCounts.NUM_COUNTS;
                  i++) {
-            System.out.println(
-                    i + "\t" + CompactRiverCounts.count(i));
+            LOG.info(i + "\t" + CompactRiverCounts.count(i));
         }
     }
 

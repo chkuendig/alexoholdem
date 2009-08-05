@@ -6,6 +6,7 @@ import ao.util.data.primitive.IntList;
 import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
+import org.apache.log4j.Logger;
 
 /**
  * Date: Jan 30, 2009
@@ -14,6 +15,10 @@ import com.sleepycat.bind.tuple.TupleOutput;
 public class SlimRiverHist
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(SlimRiverHist.class);
+
+
     public static void main(String[] args)
     {
         for (int i = 0; i < 100000; i++) {
@@ -26,7 +31,7 @@ public class SlimRiverHist
             double     prob =  rhA.nonLossProb(  rhB );
             double slimProb = srhA.nonLossProb( srhB );
             if (prob != slimProb) {
-                System.out.println(
+                LOG.debug(
                         prob + "\t" + slimProb + "\t" +
                         Math.abs(prob - slimProb));
             }

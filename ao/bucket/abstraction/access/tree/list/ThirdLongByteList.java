@@ -4,6 +4,7 @@ import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.data.LongBitSet;
 import ao.util.io.Dir;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -14,6 +15,9 @@ import java.io.File;
 public class ThirdLongByteList implements PersistentLongByteList
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(ThirdLongByteList.class);
+
     public static void main(String[] args)
     {
         int        size = 1000*1000;
@@ -28,7 +32,7 @@ public class ThirdLongByteList implements PersistentLongByteList
 //            }
 
             if (bl.get(i) != (i % 8)) {
-                System.out.println("ERORR at " + i);
+                LOG.error("ERORR at " + i);
             }
         }
     }

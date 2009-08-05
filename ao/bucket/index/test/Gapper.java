@@ -1,6 +1,7 @@
 package ao.bucket.index.test;
 
 import ao.util.math.Calc;
+import org.apache.log4j.Logger;
 
 import java.util.BitSet;
 
@@ -10,6 +11,11 @@ import java.util.BitSet;
  */
 public class Gapper
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(Gapper.class);
+
+
     //--------------------------------------------------------------------
     private final BitSet indexes;
     private final BitSet indexesB;
@@ -99,9 +105,8 @@ public class Gapper
         boolean isContinuous = continuous();
         if (isContinuous)
         {
-            System.out.println(
-                "Compressed " + count + " into " +
-                    length() + " bytes.");
+            LOG.info("Compressed " + count + " into " +
+                     length() + " bytes.");
         }
         else
         {
@@ -111,8 +116,7 @@ public class Gapper
                 gap += indexesB.nextClearBit(0);
             }
 
-            System.out.println(
-                    "ERROR: gap at " + gap +
+            LOG.error("ERROR: gap at " + gap +
                         " of " + length() + " indexes.");
         }
         return isContinuous;

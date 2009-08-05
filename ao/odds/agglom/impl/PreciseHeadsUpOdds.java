@@ -10,6 +10,7 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
 import static ao.util.data.Arr.swap;
+import org.apache.log4j.Logger;
 
 import java.util.EnumSet;
 
@@ -21,6 +22,11 @@ import java.util.EnumSet;
  */
 public class PreciseHeadsUpOdds implements OddFinder
 {
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+        Logger.getLogger(PreciseHeadsUpOdds.class);
+
+
     //--------------------------------------------------------------------
     private static final int HOLE_A = 51 - 1,
                              HOLE_B = 51,
@@ -339,7 +345,7 @@ public class PreciseHeadsUpOdds implements OddFinder
             }
         }
 
-        System.out.println(time + " " + ((double) time / trials));
+        LOG.info(time + " " + ((double) time / trials));
 
 //        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //        Odds oddsA =

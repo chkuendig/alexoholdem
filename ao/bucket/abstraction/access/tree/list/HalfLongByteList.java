@@ -4,6 +4,7 @@ import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.io.Dir;
 import ao.util.persist.PersistentBytes;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -14,6 +15,9 @@ import java.io.File;
 public class HalfLongByteList implements PersistentLongByteList
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(HalfLongByteList.class);
+
     private static final File DIR = Dir.get("test");
 
 
@@ -29,7 +33,7 @@ public class HalfLongByteList implements PersistentLongByteList
             bl.set(i, (byte) (i % 15));
 
             if (bl.get(i) != (i % 15)) {
-                System.out.println("ERORR at " + i);
+                LOG.error("ERORR at " + i);
             }
         }
     }
