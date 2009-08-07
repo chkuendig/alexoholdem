@@ -18,7 +18,7 @@ import ao.unsupervised.cluster.space.measure.Centroid;
 import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
-import ao.unsupervised.cluster.trial.SerialTrial;
+import ao.unsupervised.cluster.trial.ParallelTrial;
 import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
 import ao.util.time.Stopwatch;
@@ -85,7 +85,7 @@ public class HistBucketizer implements Bucketizer
             case PREFLOP:
                 double error = bucketizePreRiver(
                     branch, branch.round(),
-                    new int[]{-1},
+                    new int[0],
                     numBuckets, (byte) 4);
                 BucketSort.sortPreFlop(branch, numBuckets);
                 return error;
@@ -137,10 +137,10 @@ public class HistBucketizer implements Bucketizer
         Stopwatch timer = new Stopwatch();
 
         ClusteringTrial<Centroid<double[]>> analyzer =
-                new /*Parallel*/SerialTrial<Centroid<double[]>>(
+                new ParallelTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        1/*512*/);
+                        16);
         Clustering clustering =
                 analyzer.cluster(byFutureRound, nBuckets);
         analyzer.close();

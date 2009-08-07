@@ -110,7 +110,7 @@ public class HoldemAbstraction
 //                    new FastBucketTreeBuilder(BUCKETIZER);
                     new SmartBucketTreeBuilder(BUCKETIZER);
 
-            treeBuilder.bucketize(
+            tree = treeBuilder.bucketize(
                     DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
         }
         return tree;

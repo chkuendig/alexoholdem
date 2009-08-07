@@ -78,9 +78,9 @@ public class BucketizerTest
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
-        abs.tree(false);
-//        abs.odds();
-//        abs.sequence();
+//        abs.tree(false);
+        abs.odds();
+        abs.sequence();
 
 //        Rand.randomize();
 //        computeCfr(abs);
