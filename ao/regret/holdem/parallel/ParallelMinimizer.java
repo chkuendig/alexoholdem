@@ -4,6 +4,7 @@ import ao.holdem.model.Round;
 import ao.regret.holdem.IterativeMinimizer;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -17,14 +18,18 @@ import java.util.concurrent.Executors;
 public class ParallelMinimizer implements IterativeMinimizer
 {
     //--------------------------------------------------------------------
-    private static final int WINDOW_SIZE = 128;
-    private static final int BUFFER_SIZE = Math.max(1,
+    private static final int PROCESSORS  = Math.max(1,
             Runtime.getRuntime().availableProcessors() - 1);
+
+    private static final int WINDOW_SIZE = 128;
+    private static final int BUFFER_SIZE = PROCESSORS;
 
 
     //--------------------------------------------------------------------
 //    private final ForkJoinPool EXEC = new ForkJoinPool();
-    private final ExecutorService EXEC = Executors.newCachedThreadPool();
+    private final ExecutorService EXEC =
+            Executors.newFixedThreadPool( PROCESSORS );
+//            Executors.newCachedThreadPool();
 
     private final char  windowBuckets[][][]    =
             new char[ WINDOW_SIZE ][ 2 ][ Round.COUNT ];
@@ -32,6 +37,9 @@ public class ParallelMinimizer implements IterativeMinimizer
 
     private       int[] uniqueIndexes = new int[ BUFFER_SIZE ];
     private       int   nextUnique    = 0;
+
+    private final BitSet uniqueHoles  = new BitSet();
+
 
 //    private final LongBitSet bufferedHoles =
 //            new LongBitSet(HoleLookup.CANONS);
@@ -53,8 +61,9 @@ public class ParallelMinimizer implements IterativeMinimizer
     {
         if (nextUnique == uniqueIndexes.length ||
                 nextWindow == windowBuckets.length) {
-            drainUniques();
-            loadUniques();
+//            drainUniques();
+//            loadUniques();
+            flush();
         }
 
         enBuffer(new char[][]{
@@ -81,7 +90,7 @@ public class ParallelMinimizer implements IterativeMinimizer
         Collection<Callable<Void>> todo =
                 new ArrayList<Callable<Void>>(nextUnique);
 
-        for (--nextUnique; nextUnique >= 0; nextUnique--) {
+        while (--nextUnique >= 0) {
             final char[][] bucketSequences =
                     windowBuckets[ uniqueIndexes[nextUnique] ];
 
@@ -97,7 +106,8 @@ public class ParallelMinimizer implements IterativeMinimizer
                 }
             });
         }
-        nextUnique = 0;
+
+        clearUniques();
 
         try {
             EXEC.invokeAll(todo);
@@ -113,9 +123,8 @@ public class ParallelMinimizer implements IterativeMinimizer
         for (int i = 0; i < nextWindow; i++)
         {
             if (isUnique( windowBuckets[i] )) {
-                uniqueIndexes[ nextUnique++ ] = i;
-
-                if (uniquesFull())  return;
+                if (uniquesFull()) return;
+                addUnique(i);
             }
         }
     }
@@ -127,7 +136,7 @@ public class ParallelMinimizer implements IterativeMinimizer
         windowBuckets[ nextWindow++ ] = bucketSequences;
 
         if (!uniquesFull() && isUnique(bucketSequences)) {
-            uniqueIndexes[ nextUnique++ ] = (nextWindow - 1);
+            addUnique(nextWindow - 1);
         }
     }
 
@@ -135,16 +144,21 @@ public class ParallelMinimizer implements IterativeMinimizer
     //--------------------------------------------------------------------
     private boolean isUnique(char[][] bucketSequences)
     {
-        for (int i = 0; i < nextUnique; i++) {
-            char[][] bufferedBuckets =
-                    windowBuckets[ uniqueIndexes[i] ];
-            if (bufferedBuckets[0][0] == bucketSequences[0][0] ||
-                bufferedBuckets[1][0] == bucketSequences[1][0])
-            {
-                return false;
-            }
-        }
-        return true;
+        return ! (uniqueHoles.get(bucketSequences[0][0]) ||
+                  uniqueHoles.get(bucketSequences[1][0]));
+    }
+
+    private void addUnique(int windowIndex)
+    {
+        uniqueIndexes[ nextUnique++ ] = windowIndex;
+        uniqueHoles.set( windowBuckets[windowIndex][0][0] );
+        uniqueHoles.set( windowBuckets[windowIndex][1][0] );
+    }
+
+    private void clearUniques()
+    {
+        nextUnique = 0;
+        uniqueHoles.clear();
     }
 
 

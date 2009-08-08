@@ -37,8 +37,16 @@ public class BucketSequencer
             File dir, BucketDecoder decoder)
     {
         File store = new File(dir, FILE_NAME);
-        if (! store.canRead() ||
-              store.length() != (CACHE_SIZE * 8)) return null;
+        LOG.debug("attempting to retrieve " + store);
+
+        if (! store.canRead()) {
+            LOG.debug("can't read");
+            return null;
+        } else if (store.length() < (CACHE_SIZE * 8)) {
+            LOG.debug("too small " +
+                      store.length() + " vs " + (CACHE_SIZE * 8));
+            return null;
+        }
 
         LOG.debug("retrieved");
         return new BucketSequencer(store, decoder);

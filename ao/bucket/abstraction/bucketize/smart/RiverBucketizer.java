@@ -1,10 +1,9 @@
 package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.LongByteList;
-import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.range.RangeLookup;
-import ao.bucket.index.detail.river.compact.CompactProbabilityCounts;
+import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
 import ao.bucket.index.detail.river.compact.MemProbCounts;
 import ao.holdem.model.Round;
@@ -45,25 +44,26 @@ public class RiverBucketizer
             int          parentCanons[],
             byte         nClusters)
     {
-        LOG.debug("retrieve data" +
+        LOG.trace("bucketizing " +
                     " parentRound " + parentRound +
                     ", |parentCanons| " + parentCanons.length +
                     ", nClusters " + nClusters);
         Stopwatch timer = new Stopwatch();
 
-        int probCount[] = new int[ CompactRiverProbabilities.COUNT ];
+        int probCount[] = new int[ ProbabilityEncoding.COUNT ];
         for (CanonRange rivers : RangeLookup.lookup(
                 parentRound, parentCanons, Round.RIVER)) {
             for (long river  = rivers.from();
                       river <= rivers.toInclusive();
                       river++)
             {
-                probCount[ MemProbCounts.compactProb(river) ]+=
+                probCount[ CompactRiverProbabilities.nonLossProbability(
+                        MemProbCounts.compactProb(river)) ]+=
                         MemProbCounts.compactCount(river);
             }
         }
 
-        LOG.debug("encoding clustering domain");
+        LOG.trace("encoding clustering domain");
         ScalarDomain<MeanEuclidean> domain =
                 new ScalarDomain<MeanEuclidean>(
                         MeanEuclidean.newFactory());
@@ -78,7 +78,8 @@ public class RiverBucketizer
 
             if (count > 0)
             {
-                domain.add(probability, count);
+                domain.add(ProbabilityEncoding.decodeWinProb(
+                        (char) probability), count);
                 domainIndexes[ probability ] = nextDomainIndex++;
             }
         }
@@ -86,7 +87,7 @@ public class RiverBucketizer
         Clustering clustering = cluster(domain, nClusters);
         byte       clusters[] = clustering.clusters();
 
-        LOG.debug("apply clusters");
+        LOG.trace("apply clusters");
         for (CanonRange rivers : RangeLookup.lookup(
                 parentRound, parentCanons, Round.RIVER)) {
             for (long river  = rivers.from();
@@ -94,51 +95,31 @@ public class RiverBucketizer
                       river++)
             {
                 branch.set(river, clusters[domainIndexes[
-                        MemProbCounts.compactProb(river) ]]);
+                        CompactRiverProbabilities.nonLossProbability(
+                                MemProbCounts.compactProb(river)) ]]);
             }
         }
 
-//        LOG.debug("sorting clusters");
+//        LOG.trace("sorting clusters");
 //        BucketSort.sortRiverBranch(
 //                branch, parentRound, parentCanons, nClusters);
 
-        LOG.debug("done: " + clustering.error() + " took " + timer);
+        LOG.debug("bucketized " +
+                    " parentRound " + parentRound +
+                    ", |parentCanons| " + parentCanons.length +
+                    ", nClusters " + nClusters +
+                    ", err " + clustering.error() +
+                    ", took " + timer);
         return clustering.error();
     }
 
 
     //--------------------------------------------------------------------
     public static double bucketizeAll(
-            final byte       nClusters,
+            final byte         nClusters,
             final LongByteList into)
     {
-        LOG.debug("bucketizeAll");
-
-        ScalarDomain<MeanEuclidean> domain =
-                new ScalarDomain<MeanEuclidean>(
-                        MeanEuclidean.newFactory());
-        for (char prob = 0;
-                  prob < CompactRiverProbabilities.COUNT;
-                  prob++) {
-            domain.add(prob, CompactProbabilityCounts.countOf(prob));
-        }
-
-        final Clustering clustering = cluster(domain, nClusters);
-        final byte       clusters[] = clustering.clusters();
-
-        LOG.debug("apply clusters");
-        for (long river = 0; river < RiverLookup.CANONS; river++)
-        {
-            into.set(river,
-                     clusters[ MemProbCounts.compactProb(river) ]);
-        }
-
-
-        LOG.debug("sorting clusters");
-        BucketSort.sortRiver(into, nClusters);
-
-        LOG.debug("done: " + clustering.error());
-        return clustering.error();
+        return bucketize(into, null, new int[0], nClusters);
     }
 
 
@@ -148,7 +129,7 @@ public class RiverBucketizer
             ScalarDomain<MeanEuclidean> domain,
             byte                        nClusters)
     {
-        LOG.debug("clustering");
+        LOG.trace("clustering");
 
         domain.normalize();
 

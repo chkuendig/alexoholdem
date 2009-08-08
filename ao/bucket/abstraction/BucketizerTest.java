@@ -3,6 +3,7 @@ package ao.bucket.abstraction;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.ai.simple.AlwaysRaiseBot;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
@@ -40,7 +41,7 @@ public class BucketizerTest
 
 //    private static final String BOT_NAME = "agro";
     private static final String BOT_NAME   = "serial";
-    private static final String  VS_NAME   = "serial_2000";
+    private static final String  VS_NAME   = "serial";
     private static final double AGGRESSION = 1.0;
 
 
@@ -56,10 +57,14 @@ public class BucketizerTest
 //        char nTurnBuckets  = 125;
 //        char nRiverBuckets = 625;
 //        byte nHoleBuckets  = 20;
-        byte nHoleBuckets  =    32;
-        char nFlopBuckets  =   640;
-        char nTurnBuckets  =  4480;
-        char nRiverBuckets = 31360;
+//        byte nHoleBuckets  =    32;
+//        char nFlopBuckets  =   640;
+//        char nTurnBuckets  =  4480;
+//        char nRiverBuckets = 31360;
+        byte nHoleBuckets  =   127;
+        char nFlopBuckets  =  1200;
+        char nTurnBuckets  =  6000;
+        char nRiverBuckets = 30000;
 
         if (args.length > 1)
         {
@@ -74,19 +79,25 @@ public class BucketizerTest
 
         HoldemAbstraction abs = abstractHolem(
 //                new KMeansBucketizer(),
-                new HistBucketizer((byte) 4),
+                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+//        HoldemAbstraction vsAbs = abstractHolem(
+//                new HistBucketizer((byte) 4),
+//                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+        HoldemAbstraction vsAbs = null;
 
         // preload
-//        BucketDisplay.displayHoleBuckets(
-//                abs.tree(false).holes());
+        BucketDisplay.displayHoleBuckets(
+                abs.tree(false).holes());
 //        abs.tree(false);
-//        abs.odds();
-//        abs.sequence();
+        abs.odds();
+        abs.sequence();
 
 //        Rand.randomize();
-        computeCfr(abs);
-//        tournament(abs);
+//        computeCfr(abs);
+
+//        tournament(abs, vsAbs);
+
 //        vsHuman(abs);
     }
 
@@ -144,7 +155,8 @@ public class BucketizerTest
 
     //--------------------------------------------------------------------
     public static void tournament(
-            final HoldemAbstraction abs) throws IOException
+            final HoldemAbstraction abs,
+            final HoldemAbstraction vsAbs) throws IOException
     {
         LOG.debug("running tournament");
 
@@ -152,7 +164,7 @@ public class BucketizerTest
                 BOT_NAME, abs, true, false, false);
         precompute(bot, false);
 //        final CfrBot2 vsBot = new CfrBot2(
-//                VS_NAME, abs, true, false, false);
+//                VS_NAME, vsAbs, true, false, false);
 //        precompute(vsBot, false);
 
         long before = System.currentTimeMillis();
@@ -169,7 +181,10 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("ao-hist3"), bot);
+            put(Avatar.local("ao-hist4"), bot);
+                    
+//            put(Avatar.local("ao-hist3"), bot);
+//            put(Avatar.local("ao-hist4"), vsBot);
 //            put(Avatar.local("cfr2 290"),
 //                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);

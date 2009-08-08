@@ -38,6 +38,7 @@ public class CompactRiverCounts
                         "lookup/eval/river/compact_count.byte");
 
     private static final byte   COUNTS[]  = retrieveOrComputeCounts();
+//    private static final byte   COUNTS[]  = ;
 
 
     //--------------------------------------------------------------------
@@ -93,7 +94,7 @@ public class CompactRiverCounts
 
     public static byte normCount(int index)
     {
-        return (byte)(count(index) / 4);
+        return (byte)(count(index) / 4); // todo: 4 is gcd(COUNTS);
     }
 
     public static byte indexOf(byte count)
