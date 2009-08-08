@@ -53,6 +53,7 @@ public class AvgStrat implements IterativeMinimizer
 //            throw new Error( e );
 //        }
     }
+
 //    private void doIterate() throws InterruptedException
 //    {
 //        Collection<Callable<Void>> todo =
@@ -135,4 +136,8 @@ public class AvgStrat implements IterativeMinimizer
                  : DEALEE_BUCKETS)[ node.round().ordinal() ];
         return node.infoSet(roundBucket, INFO);
     }
+
+
+    //--------------------------------------------------------------------
+    public void flush() {}
 }

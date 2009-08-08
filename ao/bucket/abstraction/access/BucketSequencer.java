@@ -29,7 +29,7 @@ public class BucketSequencer
             Logger.getLogger(BucketSequencer.class);
 
     private static final String FILE_NAME  = "bucket_seq.byte";
-    private static final long   CACHE_SIZE = 1000 * 1000 * 1000;
+    private static final long   CACHE_SIZE = 250 * 1000 * 1000;
 
     
     //--------------------------------------------------------------------

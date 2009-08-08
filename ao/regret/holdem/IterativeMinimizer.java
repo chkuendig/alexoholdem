@@ -10,4 +10,6 @@ public interface IterativeMinimizer
     public void iterate(
             char absDealerBuckets[],
             char absDealeeBuckets[]);
+
+    public void flush();
 }

@@ -15,8 +15,8 @@ import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.regret.holdem.InfoPart;
+import ao.regret.holdem.IterativeMinimizer;
 import ao.regret.holdem.mono.ChainMinimizer;
-import ao.regret.holdem.parallel.ParallelMinimizer;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;
@@ -74,16 +74,18 @@ public class BucketizerTest
 
         HoldemAbstraction abs = abstractHolem(
 //                new KMeansBucketizer(),
-                new HistBucketizer(),
+                new HistBucketizer((byte) 4),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
 
         // preload
+//        BucketDisplay.displayHoleBuckets(
+//                abs.tree(false).holes());
 //        abs.tree(false);
-        abs.odds();
-        abs.sequence();
+//        abs.odds();
+//        abs.sequence();
 
 //        Rand.randomize();
-//        computeCfr(abs);
+        computeCfr(abs);
 //        tournament(abs);
 //        vsHuman(abs);
     }
@@ -167,7 +169,7 @@ public class BucketizerTest
 //            put(Avatar.local("random"), new RandomBot());
 //            put(Avatar.local("math"), new MathBot());
 //            put(Avatar.local("human"), new ConsoleBot());
-            put(Avatar.local("ao-6000"), bot);
+            put(Avatar.local("ao-hist3"), bot);
 //            put(Avatar.local("cfr2 290"),
 //                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
@@ -196,18 +198,20 @@ public class BucketizerTest
 
         Stopwatch         t      = new Stopwatch();
         InfoPart          info   = abs.infoPart(BOT_NAME, false, true);
-        ParallelMinimizer cfrMin = new ParallelMinimizer(
-                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION));
+
+//        IterativeMinimizer cfrMin = new ParallelMinimizer(
+//                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION));
+        IterativeMinimizer cfrMin =
+                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION);
+
 //        InfoPart        info   = abs.infoPart("mono", false);
 //        MonoRegretMin cfrMin =
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
-//        long offset     =  550 * 1000 * 1000;
-        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
-//        long iterations = 1000 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =  250 * 1000 * 1000;
+        long iterations = 250 * 1000 * 1000;//1000 * 1000 * 1000;
+        int  milestone  =  10 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
@@ -222,7 +226,7 @@ public class BucketizerTest
         Progress  prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr % (5 * 1000 * 1000) == 0) {
+            if (itr % (1000 * 1000) == 0) {
                 LOG.debug("\t" + itr + " took " + t.timing());
                 t = new Stopwatch();
 

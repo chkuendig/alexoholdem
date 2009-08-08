@@ -81,7 +81,7 @@ public class ParallelMinimizer implements IterativeMinimizer
         Collection<Callable<Void>> todo =
                 new ArrayList<Callable<Void>>(nextUnique);
 
-        for (; nextUnique > 0; nextUnique--) {
+        for (--nextUnique; nextUnique >= 0; nextUnique--) {
             final char[][] bucketSequences =
                     windowBuckets[ uniqueIndexes[nextUnique] ];
 
@@ -97,6 +97,7 @@ public class ParallelMinimizer implements IterativeMinimizer
                 }
             });
         }
+        nextUnique = 0;
 
         try {
             EXEC.invokeAll(todo);
