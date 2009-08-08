@@ -195,4 +195,8 @@ public class RegMin implements IterativeMinimizer
                  : DEALEE_BUCKETS)[ node.round().ordinal() ];
         return node.infoSet(roundBucket, INFO);
     }
+
+
+    //--------------------------------------------------------------------
+    public void flush() {}
 }

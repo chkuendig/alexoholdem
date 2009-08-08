@@ -229,4 +229,8 @@ public class MonoRegretMin implements IterativeMinimizer
 
         return count;
     }
+    
+
+    //--------------------------------------------------------------------
+    public void flush() {}
 }

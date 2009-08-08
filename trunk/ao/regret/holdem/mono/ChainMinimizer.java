@@ -61,4 +61,11 @@ public class ChainMinimizer implements IterativeMinimizer
         A.iterate(absDealerBuckets, absDealeeBuckets);
         B.iterate(absDealerBuckets, absDealeeBuckets);
     }
+
+
+    //--------------------------------------------------------------------
+    public void flush() {
+        A.flush();
+        B.flush();
+    }
 }

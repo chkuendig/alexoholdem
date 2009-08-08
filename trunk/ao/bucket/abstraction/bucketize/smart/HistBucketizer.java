@@ -19,6 +19,7 @@ import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
 import ao.unsupervised.cluster.trial.Clustering;
 import ao.unsupervised.cluster.trial.ClusteringTrial;
 import ao.unsupervised.cluster.trial.ParallelTrial;
+import ao.util.data.Arr;
 import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
 import ao.util.time.Stopwatch;
@@ -65,12 +66,28 @@ public class HistBucketizer implements Bucketizer
     private final LongByteList riverBuckets =
                 new HalfLongByteList(null, RiverLookup.CANONS);
 
+    private final byte[]       nDimensions;
+
+
 
     //--------------------------------------------------------------------
     public HistBucketizer()
     {
-
+        this((byte) 3);
     }
+
+    public HistBucketizer(byte dim)
+    {
+        this(dim, dim, dim);
+    }
+
+    public HistBucketizer(
+            byte holeDim, byte flopDim, byte turnDim)
+    {
+        nDimensions = new byte[]{
+                holeDim, flopDim, flopDim};
+    }
+
 
 
     //--------------------------------------------------------------------
@@ -79,22 +96,22 @@ public class HistBucketizer implements Bucketizer
         {
             case RIVER:
                 return RiverBucketizer.bucketize(
-                    branch, Round.TURN,
-                    branch.parentCanons(), numBuckets);
+                        branch, Round.TURN,
+                        branch.parentCanons(), numBuckets);
 
             case PREFLOP:
                 double error = bucketizePreRiver(
-                    branch, branch.round(),
-                    new int[0],
-                    numBuckets, (byte) 4);
+                        branch, branch.round(),
+                        new int[0],
+                        numBuckets, nDimensions[0]);
                 BucketSort.sortPreFlop(branch, numBuckets);
                 return error;
 
             default:
                 return bucketizePreRiver(
-                    branch, branch.round(),
-                    branch.parentCanons(),
-                    numBuckets, (byte) 4);
+                        branch, branch.round(),
+                        branch.parentCanons(), numBuckets,
+                        nDimensions[ branch.round().ordinal() ]);
         }
     }
 
@@ -244,6 +261,6 @@ public class HistBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     public String id() {
-        return "Hist";
+        return "Hist." + Arr.join(nDimensions, ".");
     }
 }

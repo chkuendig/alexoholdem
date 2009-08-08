@@ -25,8 +25,10 @@ public class FullLongByteList implements PersistentLongByteList
     {
         if (dir != null)
         {
-            FILE_A = new File(Dir.get(dir), "a.byte");
-            FILE_B = new File(        dir , "b.byte");
+            FILE_A = new File(Dir.get(dir),
+                    StoredLongByteList.FILENAME_A);
+            FILE_B = new File(        dir ,
+                    StoredLongByteList.FILENAME_B);
         }
         else
         {   FILE_A = null;

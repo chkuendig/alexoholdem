@@ -18,13 +18,18 @@ public class StoredLongByteList implements PersistentLongByteList
     private static final Logger LOG =
             Logger.getLogger(StoredLongByteList.class);
 
+    public static final String FILENAME_A = "a.byte";
+    public static final String FILENAME_B = "b.byte";
+
+
 
     //--------------------------------------------------------------------
-    private final RandomAccessFile IN;
+    private final RandomAccessFile IN_A;
+    private final RandomAccessFile IN_B;
 
 
     //--------------------------------------------------------------------
-    public StoredLongByteList(File file)
+    public StoredLongByteList(File dir)
     {
         try {
 //            if (! file.exists()) {
@@ -32,7 +37,8 @@ public class StoredLongByteList implements PersistentLongByteList
 //                LOG.debug("Created: " + created);
 //            }
 
-            IN = new RandomAccessFile(file, "r");
+            IN_A = new RandomAccessFile(new File(dir, FILENAME_A), "r");
+            IN_B = new RandomAccessFile(new File(dir, FILENAME_B), "r");
         } catch (IOException e) {
             throw new Error( e );
         }
@@ -60,7 +66,15 @@ public class StoredLongByteList implements PersistentLongByteList
         }
     }
     private byte doGet(long index) throws IOException {
-        IN.seek(index);
-        return IN.readByte();
+        if (index < Integer.MAX_VALUE)
+        {
+            IN_A.seek(index);
+            return IN_A.readByte();
+        }
+        else
+        {
+            IN_B.seek( (int) (index - Integer.MAX_VALUE) );
+            return IN_B.readByte();
+        }
     }
 }

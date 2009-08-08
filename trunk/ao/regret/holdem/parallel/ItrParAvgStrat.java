@@ -34,4 +34,8 @@ public class ItrParAvgStrat implements IterativeMinimizer
         AvgStratPar.iterate(EXEC, INFO,
                 absDealerBuckets, absDealeeBuckets);
     }
+
+
+    //--------------------------------------------------------------------
+    public void flush() {}
 }
