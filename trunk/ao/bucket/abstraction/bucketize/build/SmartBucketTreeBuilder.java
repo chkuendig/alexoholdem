@@ -57,10 +57,10 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numRiverBuckets},
                 new byte[]{
                     (byte) Math.min(
-                             maxBucketBranch[0], numHoleBuckets * 2),
+                             maxBucketBranch[0], numHoleBuckets      * 2),
                     (byte) Math.min(
                              maxBucketBranch[1],
-                             (numFlopBuckets  / numHoleBuckets) * 2),
+                             (numFlopBuckets  / numHoleBuckets + .5) * 2),
                     maxBucketBranch[2],
                     maxBucketBranch[3]
                 }

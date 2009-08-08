@@ -85,7 +85,7 @@ public class HistBucketizer implements Bucketizer
             byte holeDim, byte flopDim, byte turnDim)
     {
         nDimensions = new byte[]{
-                holeDim, flopDim, flopDim};
+                holeDim, flopDim, turnDim};
     }
 
 
@@ -162,7 +162,7 @@ public class HistBucketizer implements Bucketizer
                 analyzer.cluster(byFutureRound, nBuckets);
         analyzer.close();
 
-        LOG.debug("applying clusters");
+        LOG.trace("applying clusters");
         int clusterIndex = 0;
         for (CanonRange canons : RangeLookup.lookup(
                 round.previous(), parents, round)) {
@@ -176,7 +176,7 @@ public class HistBucketizer implements Bucketizer
         }
 
         if (round == Round.PREFLOP) {
-            LOG.debug("sorting clusters");
+            LOG.trace("sorting clusters");
             BucketSort.sortPreFlop(branch, nBuckets);
         }
         
@@ -192,7 +192,7 @@ public class HistBucketizer implements Bucketizer
                     int          parents[],
                     byte         nRiverBuckets)
     {
-        LOG.debug("building domain for " + round +
+        LOG.trace("building domain for " + round +
                   " with " + nRiverBuckets +
                   " from " + parents.length);
         Stopwatch timer = new Stopwatch();
@@ -221,7 +221,7 @@ public class HistBucketizer implements Bucketizer
             }
         }
 
-        LOG.debug("done building domain, took " + timer);
+        LOG.trace("done building domain, took " + timer);
         return byFutureRound;
     }
 
