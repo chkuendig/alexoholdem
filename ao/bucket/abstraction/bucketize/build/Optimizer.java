@@ -1,5 +1,6 @@
 package ao.bucket.abstraction.bucketize.build;
 
+import ao.util.time.Stopwatch;
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 import org.apache.log4j.Logger;
@@ -79,13 +80,16 @@ public class Optimizer
         }
     }
 
-    public static byte[] doOptimize(
+    private static byte[] doOptimize(
             LpSolve solver,
             int     parentBucketReachPaths[],
             byte    subBucketCounts       [][],
             double  subBucketingErrors    [][],
             int     nBuckets) throws LpSolveException
     {
+        LOG.debug("optimizing for " + nBuckets);
+        Stopwatch timer = new Stopwatch();
+
         validate(parentBucketReachPaths,
                  subBucketCounts,
                  subBucketingErrors);
@@ -164,8 +168,9 @@ public class Optimizer
             }
         }
 
-//        System.out.println(
+//        LOG.debug(
 //                "Value of objective function: " + solver.getObjective());
+        LOG.debug("done, took " + timer);
         return solution;
     }
 
@@ -180,7 +185,7 @@ public class Optimizer
 
         for (int i = 0; i < parentBucketReachPaths.length; i++)
         {
-            parentBucketReachPaths[i] = 24 * 1000 * 1000;
+            parentBucketReachPaths[i] = 1;
         }
 
         return optimize(parentBucketReachPaths,

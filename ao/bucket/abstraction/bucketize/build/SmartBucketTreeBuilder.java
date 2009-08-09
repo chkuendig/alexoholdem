@@ -3,8 +3,6 @@ package ao.bucket.abstraction.bucketize.build;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
 import org.apache.log4j.Logger;
 
@@ -57,19 +55,13 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numRiverBuckets},
                 new byte[]{
                     (byte) Math.min(
-                             maxBucketBranch[0], numHoleBuckets      * 2),
+                             maxBucketBranch[0], numHoleBuckets * 2),
                     (byte) Math.min(
                              maxBucketBranch[1],
-                             (numFlopBuckets  / numHoleBuckets + .5) * 2),
+                             (numFlopBuckets / numHoleBuckets) * 2 + 1),
                     maxBucketBranch[2],
                     maxBucketBranch[3]
                 }
-//                new byte[]{
-//                    numHoleBuckets,
-//                    (byte) (numFlopBuckets / numHoleBuckets),
-//                    maxBucketBranch[2],
-//                    maxBucketBranch[3]
-//                }
         );
         tree.flush();
         return tree;
@@ -82,8 +74,10 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             char              numBuckets[],
             byte              maxBuckets[])
     {
+        BUCKETIZER.setThorough(true);
         BUCKETIZER.bucketize(
                 root, (byte) numBuckets[Round.PREFLOP.ordinal()]);
+        BUCKETIZER.setThorough(false);
 
         bucketize(root.subBranches(),
                   Round.FLOP,
@@ -105,6 +99,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                                 maxBuckets[round.ordinal()]);
         LOG.debug("allocated: " + Arrays.toString(subBucketCounts));
 
+        BUCKETIZER.setThorough(true);
         for (int prevBucketIndex = 0;
                  prevBucketIndex < prevBuckets.size();
                  prevBucketIndex++) {
@@ -132,8 +127,9 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
     {
         double errors[][]    = new double[ branches.size() ]
                                          [ nTrials         ];
-        int    parentPaths[] = parentReachPaths(branches);
+//        int    parentPaths[] = parentReachPaths(branches);
 
+        BUCKETIZER.setThorough(false);
         for (int branchIndex = 0;
                  branchIndex < branches.size();
                  branchIndex++) {
@@ -149,24 +145,25 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
             }
         }
 
-        return Optimizer.optimize(parentPaths, errors, nBuckets);
+        return Optimizer.optimize(errors, nBuckets);
     }
 
-    private int[] parentReachPaths(List<BucketTree.Branch> branches)
-    {
-        int parentPaths[] = new int[ branches.size() ];
-
-        for (int i = 0, branchesSize = branches.size(); i < branchesSize; i++)
-        {
-            BucketTree.Branch branch = branches.get(i);
-
-            for (CanonDetail detail : DetailLookup.lookupPreRiver(
-                                        branch.round().previous(),
-                                        branch.parentCanons())) {
-                parentPaths[ i ] += detail.represents();
-            }
-        }
-
-        return parentPaths;
-    }
+//    private int[] parentReachPaths(List<BucketTree.Branch> branches)
+//    {
+//        int parentPaths[] = new int[ branches.size() ];
+//
+//        for (int i = 0, branchesSize = branches.size();
+//                 i <    branchesSize; i++)
+//        {
+//            BucketTree.Branch branch = branches.get(i);
+//
+//            for (CanonDetail detail : DetailLookup.lookupPreRiver(
+//                                        branch.round().previous(),
+//                                        branch.parentCanons())) {
+//                parentPaths[ i ] += detail.represents();
+//            }
+//        }
+//
+//        return parentPaths;
+//    }
 }

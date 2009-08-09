@@ -125,6 +125,10 @@ public class PercentileAbs implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
+    public void setThorough(boolean highPercision) {}
+
+
+    //--------------------------------------------------------------------
     public String id()
     {
         return "percent";

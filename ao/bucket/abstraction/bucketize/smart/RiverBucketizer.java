@@ -104,7 +104,7 @@ public class RiverBucketizer
 //        BucketSort.sortRiverBranch(
 //                branch, parentRound, parentCanons, nClusters);
 
-        LOG.debug("bucketized " +
+        LOG.trace("bucketized " +
                     " parentRound " + parentRound +
                     ", |parentCanons| " + parentCanons.length +
                     ", nClusters " + nClusters +

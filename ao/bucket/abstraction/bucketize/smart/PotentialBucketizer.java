@@ -302,6 +302,10 @@ public class PotentialBucketizer implements Bucketizer
 
 
     //--------------------------------------------------------------------
+    public void setThorough(boolean highPercision) {}
+
+
+    //--------------------------------------------------------------------
     public String id() {
         return "Potential";
     }
