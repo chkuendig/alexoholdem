@@ -12,5 +12,8 @@ public interface Bucketizer {
     double bucketize(BucketTree.Branch branch,
                      byte              numBuckets);
 
+
+    void setThorough(boolean highPercision);
+
     String id();
 }

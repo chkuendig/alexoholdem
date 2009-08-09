@@ -40,7 +40,7 @@ public class HistBucketizer implements Bucketizer
         LongByteList holeBuckets =
                 new FullLongByteList(null, HoleLookup.CANONS);
 
-        byte nHoleBuckets = 32;
+        byte nHoleBuckets = 127;
         for (byte dim = 2; dim <= nHoleBuckets; dim++)
         {
             LOG.debug("clustering " + dim);
@@ -68,6 +68,7 @@ public class HistBucketizer implements Bucketizer
 
     private final byte[]       nDimensions;
 
+    private       boolean      isThorough;
 
 
     //--------------------------------------------------------------------
@@ -88,6 +89,11 @@ public class HistBucketizer implements Bucketizer
                 holeDim, flopDim, turnDim};
     }
 
+
+    //--------------------------------------------------------------------
+    public void setThorough(boolean highPercision) {
+        isThorough = highPercision;
+    }
 
 
     //--------------------------------------------------------------------
@@ -124,7 +130,7 @@ public class HistBucketizer implements Bucketizer
             byte         nBuckets,
             byte         nRiverHist)
     {
-        LOG.debug("bucketizePreRiver" +
+        LOG.trace("bucketizePreRiver" +
                     " round " + round +
                     ", |parents| " + parents.length +
                     ", nBuckets " + nBuckets +
@@ -135,9 +141,16 @@ public class HistBucketizer implements Bucketizer
         CentroidDomain<Centroid<double[]>, double[]> byFutureRound =
                 byRiver(round, parents, nRiverHist);
 
-        return cluster(
+        double error = cluster(
                  branch, round, parents, nBuckets, byFutureRound
                ).error();
+        LOG.debug("bucketizePreRiver" +
+                    " round " + round +
+                    ", |parents| " + parents.length +
+                    ", nBuckets " + nBuckets +
+                    ", nRiverHist " + nRiverHist +
+                    ", error " + error);
+        return error;
     }
 
     private Clustering cluster(
@@ -147,7 +160,7 @@ public class HistBucketizer implements Bucketizer
             byte                                         nBuckets,
             CentroidDomain<Centroid<double[]>, double[]> byFutureRound)
     {
-        LOG.debug("clustering" +
+        LOG.trace("clustering" +
                     " round " + round +
                     ", |parents| " + parents.length +
                     ", nBuckets " + nBuckets);
@@ -157,7 +170,7 @@ public class HistBucketizer implements Bucketizer
                 new ParallelTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        16);
+                        (isThorough ? 512 : 32));
         Clustering clustering =
                 analyzer.cluster(byFutureRound, nBuckets);
         analyzer.close();
@@ -180,7 +193,7 @@ public class HistBucketizer implements Bucketizer
             BucketSort.sortPreFlop(branch, nBuckets);
         }
         
-        LOG.debug("done clustering with " + clustering.error() +
+        LOG.trace("done clustering with " + clustering.error() +
                     ", took " + timer);
         return clustering;
     }
