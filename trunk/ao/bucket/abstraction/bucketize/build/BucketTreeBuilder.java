@@ -14,7 +14,7 @@ public interface BucketTreeBuilder
     //--------------------------------------------------------------------
     public BucketTree bucketize(
             File dir,
-            byte numHoleBuckets,
+            int  numHoleBuckets,
             char numFlopBuckets,
             char numTurnBuckets,
             char numRiverBuckets);

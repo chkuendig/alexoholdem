@@ -12,5 +12,5 @@ public interface ScalarBucketizer extends Bucketizer
     // returns the error
     public double bucketize(Branch              branch,
                             IndexedStrengthList details,
-                            byte                numBuckets);
+                            int                 numBuckets);
 }

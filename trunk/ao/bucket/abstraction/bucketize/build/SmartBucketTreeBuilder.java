@@ -37,7 +37,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
     //--------------------------------------------------------------------
     public BucketTree bucketize(
             File dir,
-            byte numHoleBuckets,
+            int  numHoleBuckets,
             char numFlopBuckets,
             char numTurnBuckets,
             char numRiverBuckets)
@@ -45,7 +45,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
         BucketTree tree = new BucketTreeImpl( dir, false );
         if (tree.isFlushed()) return tree;
 
-        byte maxBucketBranch[] = tree.maxBucketBranch();
+        int maxBucketBranch[] = tree.maxBucketBranch();
         bucketizeHolesDown(
                 tree.holes(),
                 new char[]{(char)
@@ -53,10 +53,10 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
                       numFlopBuckets,
                       numTurnBuckets,
                       numRiverBuckets},
-                new byte[]{
-                    (byte) Math.min(
+                new int[]{
+                    Math.min(
                              maxBucketBranch[0], numHoleBuckets * 2),
-                    (byte) Math.min(
+                    Math.min(
                              maxBucketBranch[1],
                              (numFlopBuckets / numHoleBuckets) * 2 + 1),
                     maxBucketBranch[2],
@@ -71,12 +71,12 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
             BucketTree.Branch root,
-            char              numBuckets[],
-            byte              maxBuckets[])
+            char[]            numBuckets,
+            int []            maxBuckets)
     {
         BUCKETIZER.setThorough(true);
         BUCKETIZER.bucketize(
-                root, (byte) numBuckets[Round.PREFLOP.ordinal()]);
+                root, numBuckets[Round.PREFLOP.ordinal()]);
         BUCKETIZER.setThorough(false);
 
         bucketize(root.subBranches(),
@@ -90,10 +90,10 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
     private void bucketize(
             List<BucketTree.Branch> prevBuckets,
             Round                   round,
-            char                    numBuckets[],
-            byte                    maxBuckets[])
+            char[]                  numBuckets,
+            int []                  maxBuckets)
     {
-        byte subBucketCounts[] =
+        int subBucketCounts[] =
                 allocateBuckets(prevBuckets,
                                 numBuckets[round.ordinal()],
                                 maxBuckets[round.ordinal()]);
@@ -120,10 +120,10 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 
 
     //--------------------------------------------------------------------
-    private byte[] allocateBuckets(
+    private int[] allocateBuckets(
             List<BucketTree.Branch> branches,
             char                    nBuckets,
-            byte                    nTrials)
+            int                     nTrials)
     {
         double errors[][]    = new double[ branches.size() ]
                                          [ nTrials         ];

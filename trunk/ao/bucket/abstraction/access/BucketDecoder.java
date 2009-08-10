@@ -261,10 +261,10 @@ public class BucketDecoder
 
     //--------------------------------------------------------------------
     public char decode(
-            byte  holeBucket,
-            byte  flopBucket,
-            byte  turnBucket,
-            byte riverBucket)
+            int  holeBucket,
+            int  flopBucket,
+            int  turnBucket,
+            int riverBucket)
     {
         return rivers[  holeBucket ]
                      [  flopBucket ]
@@ -273,9 +273,9 @@ public class BucketDecoder
     }
 
     public char decode(
-            byte  holeBucket,
-            byte  flopBucket,
-            byte  turnBucket)
+            int  holeBucket,
+            int  flopBucket,
+            int  turnBucket)
     {
         return turns[ holeBucket ]
                     [ flopBucket ]
@@ -283,8 +283,8 @@ public class BucketDecoder
     }
 
     public char decode(
-            byte  holeBucket,
-            byte  flopBucket)
+            int  holeBucket,
+            int  flopBucket)
     {
         return flops[ holeBucket ]
                     [ flopBucket ];

@@ -42,7 +42,7 @@ public class RiverBucketizer
             LongByteList branch,
             Round        parentRound,
             int          parentCanons[],
-            byte         nClusters)
+            int          nClusters)
     {
         LOG.trace("bucketizing " +
                     " parentRound " + parentRound +
@@ -85,7 +85,7 @@ public class RiverBucketizer
         }
 
         Clustering clustering = cluster(domain, nClusters);
-        byte       clusters[] = clustering.clusters();
+        int        clusters[] = clustering.clusters();
 
         LOG.trace("apply clusters");
         for (CanonRange rivers : RangeLookup.lookup(
@@ -127,7 +127,7 @@ public class RiverBucketizer
     //--------------------------------------------------------------------
     private static Clustering cluster(
             ScalarDomain<MeanEuclidean> domain,
-            byte                        nClusters)
+            int                         nClusters)
     {
         LOG.trace("clustering");
 

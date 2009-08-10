@@ -88,7 +88,7 @@ public class PotentialBucketizer implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public double bucketize(BucketTree.Branch branch, byte numBuckets) {
+    public double bucketize(BucketTree.Branch branch, int numBuckets) {
 //        if (branch.round() == Round.PREFLOP) {
 //            return bucketizeAll(branch, numBuckets);
 //        }

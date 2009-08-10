@@ -1,6 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
+import ao.util.math.Calc;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -46,11 +47,11 @@ public class StoredLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte maxBuckets() {
-        return Byte.MAX_VALUE;
+    public int maxBuckets() {
+        return FullLongByteList.MAX_BUCKETS;
     }
 
-    public void set(long index, byte bucket) {
+    public void set(long index, int bucket) {
         throw new UnsupportedOperationException();
     }
 
@@ -58,23 +59,25 @@ public class StoredLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte get(long index) {
+    public int get(long index) {
         try {
             return doGet(index);
         } catch (IOException e) {
             throw new Error( e );
         }
     }
-    private byte doGet(long index) throws IOException {
+    private int doGet(long index) throws IOException {
+        byte signed;
         if (index < Integer.MAX_VALUE)
         {
             IN_A.seek(index);
-            return IN_A.readByte();
+            signed = IN_A.readByte();
         }
         else
         {
             IN_B.seek( (int) (index - Integer.MAX_VALUE) );
-            return IN_B.readByte();
+            signed = IN_B.readByte();
         }
+        return Calc.unsigned( signed );
     }
 }

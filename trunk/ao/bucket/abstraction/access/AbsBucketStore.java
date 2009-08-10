@@ -155,7 +155,7 @@ public class AbsBucketStore implements Iterable<Character>
 
     public static char bucketOf(
             BucketTree tree, BucketDecoder decoder,
-            char hole, int flop, int turn, long river)
+            int hole, int flop, int turn, long river)
     {
         return decoder.decode(
                 tree.getHole ( hole  ),

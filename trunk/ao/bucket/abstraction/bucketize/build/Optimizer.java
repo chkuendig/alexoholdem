@@ -37,7 +37,7 @@ public class Optimizer
         }
 
         long before     = System.currentTimeMillis();
-        byte solution[] = optimize(errors, holes * flopsPerHole);
+        int  solution[] = optimize(errors, holes * flopsPerHole);
         LOG.info(
                 "took " + (System.currentTimeMillis() - before));
         LOG.info(Arrays.toString(solution));
@@ -50,9 +50,9 @@ public class Optimizer
     //
     // the contents of the output are in the form
     //   1 .. n (i.e. one based)
-    public static byte[] optimize(
+    public static int[] optimize(
             int    parentBucketReachPaths[],
-            byte   subBucketCounts       [][],
+            int    subBucketCounts       [][],
             double subBucketingErrors    [][],
             int    nBuckets)
     {
@@ -80,10 +80,10 @@ public class Optimizer
         }
     }
 
-    private static byte[] doOptimize(
+    private static int[] doOptimize(
             LpSolve solver,
             int     parentBucketReachPaths[],
-            byte    subBucketCounts       [][],
+            int     subBucketCounts       [][],
             double  subBucketingErrors    [][],
             int     nBuckets) throws LpSolveException
     {
@@ -116,7 +116,7 @@ public class Optimizer
         // total buckets <= nBuckets (WORKS)
         double totalBuckets[]        = new double[nVars + 1];
         int    nextBucketGranularity = 0;
-        for (byte subBucketCount[] : subBucketCounts) {
+        for (int subBucketCount[] : subBucketCounts) {
             for (int count : subBucketCount) {
                 totalBuckets[ ++nextBucketGranularity ] = count;
             }
@@ -156,8 +156,7 @@ public class Optimizer
 //                solver.getPresolveloops());
         solver.solve();
 
-        // (WORKS)
-        byte   solution[] = new byte[ parentBucketReachPaths.length ];
+        int    solution[] = new int[ parentBucketReachPaths.length ];
         double var     [] = solver.getPtrVariables();
 //        System.out.println(Arrays.toString(var));
 
@@ -176,7 +175,7 @@ public class Optimizer
 
 
     //--------------------------------------------------------------------
-    public static byte[] optimize(
+    public static int[] optimize(
             double subBucketingErrors[][],
             int    nBuckets)
     {
@@ -192,17 +191,17 @@ public class Optimizer
                         subBucketingErrors,
                         nBuckets);
     }
-    public static byte[] optimize(
+    public static int[] optimize(
             int    parentBucketReachPaths[],
             double subBucketingErrors    [][],
             int    nBuckets)
     {
-        byte subBucketCounts[][] =
-                new byte[subBucketingErrors.length][];
+        int subBucketCounts[][] =
+                new int[ subBucketingErrors.length ][];
 
         for (int i = 0; i < parentBucketReachPaths.length; i++)
         {
-            subBucketCounts[i] = new byte[ subBucketingErrors[i].length ];
+            subBucketCounts[i] = new int[ subBucketingErrors[i].length ];
             for (byte j = 0; j < subBucketingErrors[i].length; j++)
             {
                 subBucketCounts[i][j] = (byte)(j + 1);
@@ -217,7 +216,7 @@ public class Optimizer
 
     private static void validate(
             int    parentBucketReachPaths[],
-            byte   subBucketCounts[][],
+            int    subBucketCounts[][],
             double subBucketingErrors[][])
     {
         assert parentBucketReachPaths.length == subBucketCounts.length &&

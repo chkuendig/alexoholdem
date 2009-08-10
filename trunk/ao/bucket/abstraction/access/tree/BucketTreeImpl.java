@@ -36,7 +36,7 @@ public class BucketTreeImpl implements BucketTree
     private final PersistentLongByteList flops;
     private final PersistentLongByteList turns;
     private final PersistentLongByteList rivers;
-    private final File                 flushFlag;
+    private final File                   flushFlag;
 
 
     //--------------------------------------------------------------------
@@ -70,37 +70,37 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public byte[] maxBucketBranch() {
-        return new byte[]{
+    public int[] maxBucketBranch() {
+        return new int[]{
                 holes.maxBuckets(),  flops.maxBuckets(),
                 turns.maxBuckets(), rivers.maxBuckets()};
     }
 
 
     //--------------------------------------------------------------------
-    public void setHole(char canonHole, byte holeBucket)
+    public void setHole(char canonHole, int holeBucket)
     {
         holes.set( canonHole, holeBucket );
     }
 
-    public void setFlop(int  canonFlop, byte flopBucket)
+    public void setFlop(int  canonFlop, int flopBucket)
     {
         flops.set( canonFlop, flopBucket );
     }
 
-    public void setTurn(int  canonTurn, byte turnBucket)
+    public void setTurn(int  canonTurn, int turnBucket)
     {
         turns.set( canonTurn, turnBucket );
     }
 
-    public void setRiver(long canonRiver, byte riverBucket)
+    public void setRiver(long canonRiver, int riverBucket)
     {
         rivers.set(canonRiver, riverBucket);
     }
 
     public void set(Round round,
                     long  canonIndex,
-                    byte  bucket)
+                    int   bucket)
     {
         switch (round)
         {
@@ -118,27 +118,27 @@ public class BucketTreeImpl implements BucketTree
 
 
     //--------------------------------------------------------------------
-    public byte getHole(char canonHole)
+    public int getHole(int canonHole)
     {
         return holes.get( canonHole );
     }
 
-    public byte getFlop(int canonFlop)
+    public int getFlop(int canonFlop)
     {
         return flops.get( canonFlop );
     }
 
-    public byte getTurn(int canonTurn)
+    public int getTurn(int canonTurn)
     {
         return turns.get( canonTurn );
     }
 
-    public byte getRiver(long canonRiver)
+    public int getRiver(long canonRiver)
     {
         return rivers.get( canonRiver );
     }
 
-    public byte get(Round round, long canonIndex)
+    public int get(Round round, long canonIndex)
     {
         switch (round)
         {
@@ -156,9 +156,9 @@ public class BucketTreeImpl implements BucketTree
     //--------------------------------------------------------------------
     public void flush()
     {
-        holes.flush();
-        flops.flush();
-        turns.flush();
+        holes .flush();
+        flops .flush();
+        turns .flush();
         rivers.flush();
 
         PersistentBytes.persist(new byte[]{1}, flushFlag);
@@ -220,7 +220,7 @@ public class BucketTreeImpl implements BucketTree
             return parentCanons;
         }
 
-        public byte parentBucket()
+        public int parentBucket()
         {
             return BucketTreeImpl.this.get(
                     round.previous(), parentCanons[0]);
@@ -228,12 +228,12 @@ public class BucketTreeImpl implements BucketTree
 
 
         //----------------------------------------------------------------
-        public void set(long canonIndex, byte bucket)
+        public void set(long canonIndex, int bucket)
         {
             BucketTreeImpl.this.set(round, canonIndex, bucket);
         }
 
-        public byte get(long canonIndex)
+        public int get(long canonIndex)
         {
             return BucketTreeImpl.this.get(round, canonIndex);
         }
@@ -279,7 +279,7 @@ public class BucketTreeImpl implements BucketTree
 
             for (CanonDetail detail : details())
             {
-                byte bucket = get( detail.canonIndex() );
+                int bucket = get( detail.canonIndex() );
 
                 IntList bucketCanons = subBranchCanons.get(bucket);
                 if (bucketCanons == null) {

@@ -26,7 +26,7 @@ public class HandStrengthAbs implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
-    public double bucketize(Branch branch, byte nBuckets)
+    public double bucketize(Branch branch, int nBuckets)
     {
         assert nBuckets > 0;
 //        if (branch.isBucketized()) return false;
@@ -46,14 +46,14 @@ public class HandStrengthAbs implements ScalarBucketizer
     public double bucketize(
             Branch              branch,
             IndexedStrengthList details,
-            byte                numBuckets)
+            int                 numBuckets)
     {
         return bucketize(branch, numBuckets);
     }
 
 
     //--------------------------------------------------------------------
-    private void bucketizeByList(Branch branch, byte nBuckets)
+    private void bucketizeByList(Branch branch, int nBuckets)
     {
         CanonDetail[] details = branch.details();
 
@@ -72,15 +72,15 @@ public class HandStrengthAbs implements ScalarBucketizer
             double norm = Math.min(
                     (detail.strength() - min) / (max - min),
                     0.999999); // make [0, 1) instead of [0, 1]
-            byte bucket = (byte)(norm * nBuckets);
+            int bucket = (int)(norm * nBuckets);
             branch.set(detail.canonIndex(), bucket);
 
             seen.set(bucket);
         }
 
         if (seen.nextClearBit(0) != seen.length()) {
-            final byte[] map  = new byte[ nBuckets ];
-            for (byte i = 0, j = 0; i < map.length; i++) {
+            final int[] map  = new int[ nBuckets ];
+            for (int i = 0, j = 0; i < map.length; i++) {
                 map[i] = j;
 
                 if (seen.get(i)) {
@@ -93,8 +93,8 @@ public class HandStrengthAbs implements ScalarBucketizer
                 double norm = Math.min(
                         (detail.strength() - min) / (max - min),
                         0.999999); // make [0, 1) instead of [0, 1]
-                byte bucket = (byte)(norm * nBuckets);
-                byte fixed  = map[bucket];
+                int bucket = (int)(norm * nBuckets);
+                int fixed  = map[bucket];
 
                 branch.set(detail.canonIndex(), fixed);
                 seen.set(fixed);
@@ -111,7 +111,7 @@ public class HandStrengthAbs implements ScalarBucketizer
 
     //--------------------------------------------------------------------
     private void bucketizeRiver(
-            final Branch branch, final byte nBuckets)
+            final Branch branch, final int nBuckets)
     {
         assert nBuckets > 0;
 //        LOG.debug("scanning " + branch.round());
@@ -156,7 +156,7 @@ public class HandStrengthAbs implements ScalarBucketizer
 
     private BitSet setStrengthRangeAndBuckets(
             Branch     branch,
-            byte       nBuckets,
+            int        nBuckets,
             CanonRange toBucketize[],
             double     setMin[],
             double     setMax[],
@@ -172,15 +172,15 @@ public class HandStrengthAbs implements ScalarBucketizer
 
     private BitSet setBuckets(
             final Branch     branch,
-            final byte       nBuckets,
+            final int        nBuckets,
             final CanonRange toBucketize[],
             final double     min,
             final double     max,
             final BitSet     skip,
             final int        count[])
     {
-        final byte[] map  = new byte[ nBuckets ];
-        for (byte i = 0, j = 0; i < map.length; i++) {
+        final int[] map  = new int[ nBuckets ];
+        for (int i = 0, j = 0; i < map.length; i++) {
             map[i] = j;
             if (! skip.get(i)) j++;
         }
@@ -199,8 +199,8 @@ public class HandStrengthAbs implements ScalarBucketizer
                                         / (max    - min),
                                 0.99999); // [0, 1) instead of [0, 1]
 
-                        byte bucket = (byte)(norm * nBuckets);
-                        byte fixed  = map[bucket];
+                        int bucket = (int)(norm * nBuckets);
+                        int fixed  = map[bucket];
 
                         branch.set(canonIndex, fixed);
                         seen.set(fixed);

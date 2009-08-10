@@ -56,12 +56,12 @@ public class CfrBot2 extends AbstractPlayer
     private Round          prevRound;
 
     @SuppressWarnings({"FieldCanBeLocal"})
-    private byte relBucket;
+    private int  relBucket;
     private char roundBucket;
 
-    private byte holeBucket;
-    private byte flopBucket;
-    private byte turnBucket;
+    private int  holeBucket;
+    private int  flopBucket;
+    private int  turnBucket;
 
     private final List<String> handProbabilities =
             new ArrayList<String>();
@@ -236,7 +236,8 @@ public class CfrBot2 extends AbstractPlayer
 
         River canonRiver =
                 canonTurn.addRiver( cards.community().river() );
-        byte riverBucket = ABS.tree(true).getRiver(canonRiver.canonIndex());
+        int  riverBucket = ABS.tree(true)
+                .getRiver(canonRiver.canonIndex());
 
         roundBucket = ABS.decoder().decode(
                         holeBucket, flopBucket, turnBucket, riverBucket);

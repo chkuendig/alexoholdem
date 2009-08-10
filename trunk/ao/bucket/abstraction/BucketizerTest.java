@@ -2,7 +2,6 @@ package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
@@ -90,17 +89,17 @@ public class BucketizerTest
         HoldemAbstraction vsAbs = null;
 
         // preload
-        BucketDisplay.displayHoleBuckets(
-                abs.tree(false).holes());
-        abs.odds();
-        abs.sequence();
+//        BucketDisplay.displayHoleBuckets(
+//                abs.tree(false).holes());
+//        abs.odds();
+//        abs.sequence();
 
 //        Rand.randomize();
-//        computeCfr(abs);
+        computeCfr(abs);
 
 //        tournament(abs, vsAbs);
 
-        vsHuman(abs);
+//        vsHuman(abs);
     }
 
 
@@ -226,10 +225,10 @@ public class BucketizerTest
 //                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
-//        long offset     = 0; //(125 + 560) * 1000 * 1000;
-        long offset     =  10 * 1000 * 1000;
+        long offset     = 0; //(125 + 560) * 1000 * 1000;
+//        long offset     =  10 * 1000 * 1000;
         long iterations = 250 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =  50 * 1000 * 1000;
+        int  milestone  =  10 * 1000 * 1000;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
