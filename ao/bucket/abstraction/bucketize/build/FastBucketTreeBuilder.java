@@ -28,7 +28,7 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
     //--------------------------------------------------------------------
     public BucketTree bucketize(
             File dir,
-            byte numHoleBuckets,
+            int  numHoleBuckets,
             char numFlopBuckets,
             char numTurnBuckets,
             char numRiverBuckets)
@@ -53,7 +53,7 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
     //--------------------------------------------------------------------
     private void bucketizeHolesDown(
             final Branch holes,
-            final byte   numHoleBuckets,
+            final int    numHoleBuckets,
             final char   numFlopBuckets,
             final char   numTurnBuckets,
             final char   numRiverBuckets)

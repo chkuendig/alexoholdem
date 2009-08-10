@@ -2,6 +2,7 @@ package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.io.Dir;
+import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 
 import java.io.File;
@@ -12,6 +13,10 @@ import java.io.File;
  */
 public class FullLongByteList implements PersistentLongByteList
 {
+    //--------------------------------------------------------------------
+    public static final int MAX_BUCKETS = (1 << Byte.SIZE);
+
+
     //--------------------------------------------------------------------
     private final File   FILE_A;
     private final File   FILE_B;
@@ -37,7 +42,7 @@ public class FullLongByteList implements PersistentLongByteList
 
 
         LIST_A = retrieveOrCreate(FILE_A, (int)
-                Math.min(size, Integer.MAX_VALUE));
+                Math.min(size,  Integer.MAX_VALUE));
         LIST_B = retrieveOrCreate(FILE_B, (int)
                 Math.max(size - Integer.MAX_VALUE, 0));
     }
@@ -54,35 +59,36 @@ public class FullLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte maxBuckets() {
-        return Byte.MAX_VALUE;
+    public int maxBuckets() {
+        return MAX_BUCKETS;
     }
 
 
     //--------------------------------------------------------------------
-    public void set(long index, byte bucket)
+    public void set(long index, int bucket)
     {
         if (index < Integer.MAX_VALUE)
         {
-            LIST_A[ (int)  index                      ] = bucket;
+            LIST_A[ (int)  index                      ] = (byte) bucket;
         }
         else
         {
-            LIST_B[ (int) (index - Integer.MAX_VALUE) ] = bucket;
+            LIST_B[ (int) (index - Integer.MAX_VALUE) ] = (byte) bucket;
         }
 
+        // if (index > Integer.MAX_VALUE) with Calc.signedPart()
+        //  would make more sense here, but reasons of not wanting
+        //  to recalculate my data and being too lazy to transform the
+        //  data in a more intelligent way,
+        //  i'm gonna leave it as is for now.
     }
 
-    public byte get(long index)
+    public int get(long index)
     {
-        if (index < Integer.MAX_VALUE)
-        {
-            return LIST_A[ (int)  index                      ];
-        }
-        else
-        {
-            return LIST_B[ (int) (index - Integer.MAX_VALUE) ];
-        }
+        return Calc.unsigned(
+                (index < Integer.MAX_VALUE)
+                ? LIST_A[ (int)  index                      ]
+                : LIST_B[ (int) (index - Integer.MAX_VALUE) ]);
     }
 
 

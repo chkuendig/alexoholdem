@@ -44,6 +44,8 @@ public class HalfLongByteList implements PersistentLongByteList
     private static final byte HI_MASK     = (byte) 0xf0;
     private static final int  HI_INT_MASK =  0x000000f0;
 
+    public  static final int  MAX_BUCKETS = LO_MASK;
+
 
     //--------------------------------------------------------------------
     private final File   FILE;
@@ -71,13 +73,13 @@ public class HalfLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte maxBuckets() {
-        return LO_MASK;
+    public int maxBuckets() {
+        return MAX_BUCKETS;
     }
 
 
     //--------------------------------------------------------------------
-    public void set(long index, byte bucket)
+    public void set(long index, int bucket)
     {
         assert bucket < LO_MASK : index + " is >= " + LO_MASK;
 
@@ -88,12 +90,12 @@ public class HalfLongByteList implements PersistentLongByteList
                        : current & LO_MASK | bucket << 4);
     }
 
-    public byte get(long index)
+    public int get(long index)
     {
         byte pair = LIST[ halfIndex(index) ];
-        return (byte)(isLow(index)
-                      ?  pair & LO_MASK
-                      : (pair & HI_INT_MASK) >>> 4);
+        return (isLow(index)
+               ?  pair & LO_MASK
+               : (pair & HI_INT_MASK) >>> 4);
     }
 
 

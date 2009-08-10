@@ -36,11 +36,11 @@ public class StoredHalfLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte maxBuckets() {
-        return Byte.MAX_VALUE;
+    public int maxBuckets() {
+        return HalfLongByteList.MAX_BUCKETS;
     }
 
-    public void set(long index, byte bucket) {
+    public void set(long index, int bucket) {
         throw new UnsupportedOperationException();
     }
 
@@ -48,18 +48,18 @@ public class StoredHalfLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte get(long index) {
+    public int get(long index) {
         try {
             return doGet(index);
         } catch (IOException e) {
             throw new Error( e );
         }
     }
-    private byte doGet(long index) throws IOException {
+    private int doGet(long index) throws IOException {
         IN.seek(HalfLongByteList.halfIndex(index));
         byte pair = IN.readByte();
-        return (byte)(HalfLongByteList.isLow(index)
-                      ?  pair & LO_MASK
-                      : (pair & HI_INT_MASK) >>> 4);
+        return (HalfLongByteList.isLow(index)
+               ?  pair & LO_MASK
+               : (pair & HI_INT_MASK) >>> 4);
     }
 }

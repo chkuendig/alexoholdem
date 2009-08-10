@@ -72,13 +72,13 @@ public class ThirdLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte maxBuckets() {
+    public int maxBuckets() {
         return 1 << 3;
     }
 
 
     //--------------------------------------------------------------------
-    public void set(long index, byte bucket)
+    public void set(long index, int bucket)
     {
         assert 0 <= bucket && bucket <= 7;
 
@@ -93,7 +93,7 @@ public class ThirdLongByteList implements PersistentLongByteList
 
 
     //--------------------------------------------------------------------
-    public byte get(long index)
+    public int get(long index)
     {
         boolean a = A.get(index);
         boolean b = B.get(index);
@@ -104,7 +104,7 @@ public class ThirdLongByteList implements PersistentLongByteList
         if (b) bucket |= B_BIT;
         if (c) bucket |= C_BIT;
 
-        return (byte) bucket;
+        return bucket;
     }
 
 

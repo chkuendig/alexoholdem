@@ -7,7 +7,7 @@ package ao.bucket.abstraction.access.tree;
 public interface PersistentLongByteList extends LongByteList
 {
     //--------------------------------------------------------------------
-    public byte maxBuckets();
+    public int maxBuckets();
 
     //--------------------------------------------------------------------
     public void flush();

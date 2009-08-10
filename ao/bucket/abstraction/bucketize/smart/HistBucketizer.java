@@ -97,7 +97,7 @@ public class HistBucketizer implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public double bucketize(BucketTree.Branch branch, byte numBuckets) {
+    public double bucketize(BucketTree.Branch branch, int numBuckets) {
         switch (branch.round())
         {
             case RIVER:
@@ -127,7 +127,7 @@ public class HistBucketizer implements Bucketizer
             LongByteList branch,
             Round        round,
             int          parents[],
-            byte         nBuckets,
+            int          nBuckets,
             byte         nRiverHist)
     {
         LOG.trace("bucketizePreRiver" +
@@ -135,6 +135,8 @@ public class HistBucketizer implements Bucketizer
                     ", |parents| " + parents.length +
                     ", nBuckets " + nBuckets +
                     ", nRiverHist " + nRiverHist);
+        Stopwatch timer = new Stopwatch();
+
         RiverBucketizer.bucketize(
                 riverBuckets, round.previous(), parents, nRiverHist);
 
@@ -144,12 +146,14 @@ public class HistBucketizer implements Bucketizer
         double error = cluster(
                  branch, round, parents, nBuckets, byFutureRound
                ).error();
+
         LOG.debug("bucketizePreRiver" +
                     " round " + round +
                     ", |parents| " + parents.length +
                     ", nBuckets " + nBuckets +
                     ", nRiverHist " + nRiverHist +
-                    ", error " + error);
+                    ", error " + error +
+                    ", took " + timer);
         return error;
     }
 
@@ -157,7 +161,7 @@ public class HistBucketizer implements Bucketizer
             LongByteList                                 branch,
             Round                                        round,
             int[]                                        parents,
-            byte                                         nBuckets,
+            int                                          nBuckets,
             CentroidDomain<Centroid<double[]>, double[]> byFutureRound)
     {
         LOG.trace("clustering" +

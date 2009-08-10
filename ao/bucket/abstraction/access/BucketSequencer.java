@@ -107,19 +107,20 @@ public class BucketSequencer
             Community  community)
     {
         CanonHole canonHole  = hole.asCanon();
-        byte      holeBucket = tree.getHole(canonHole.canonIndex());
+        int       holeBucket = tree.getHole(canonHole.canonIndex());
 
         Flop flop        = canonHole.addFlop(community);
-        byte flopBucket  = tree.getFlop( flop.canonIndex() );
+        int  flopBucket  = tree.getFlop( flop.canonIndex() );
 
         Turn turn        = flop.addTurn(community.turn());
-        byte turnBucket  = tree.getTurn( turn.canonIndex() );
+        int  turnBucket  = tree.getTurn( turn.canonIndex() );
 
         River river       = turn.addRiver(community.river());
-        byte  riverBucket = tree.getRiver( river.canonIndex() );
+        int  riverBucket = tree.getRiver( river.canonIndex() );
 
         return new byte[]{
-                holeBucket, flopBucket, turnBucket, riverBucket};
+                (byte) holeBucket, (byte) flopBucket,
+                (byte) turnBucket, (byte) riverBucket};
     }
 
 

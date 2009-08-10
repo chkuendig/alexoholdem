@@ -22,7 +22,7 @@ public class HandStrengthMeasure
     public double error(
             BucketTree.Branch   branch,
             IndexedStrengthList details,
-            byte                nBuckets)
+            int                 nBuckets)
     {
         double error = 0;
         int    total = 0;

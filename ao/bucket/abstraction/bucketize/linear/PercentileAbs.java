@@ -26,7 +26,7 @@ public class PercentileAbs implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
-    public double bucketize(BucketTree.Branch branch, byte nBuckets)
+    public double bucketize(BucketTree.Branch branch, int nBuckets)
     {
         assert nBuckets > 0;
 //        if (branch.isBucketized()) return false;
@@ -46,13 +46,13 @@ public class PercentileAbs implements ScalarBucketizer
     public double bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList details,
-            byte                numBuckets) {
+            int                 numBuckets) {
         return bucketize(branch, numBuckets);
     }
 
 
     //--------------------------------------------------------------------
-    private void bucketizeByList(BucketTree.Branch branch, byte nBuckets)
+    private void bucketizeByList(BucketTree.Branch branch, int nBuckets)
     {
         LOG.debug("bucketizing " + branch.round() + " into " + nBuckets);
 
@@ -76,7 +76,7 @@ public class PercentileAbs implements ScalarBucketizer
 
     //--------------------------------------------------------------------
     private void bucketizeRiver(
-            final BucketTree.Branch branch, final byte nBuckets)
+            final BucketTree.Branch branch, final int nBuckets)
     {
         assert nBuckets > 0;
 

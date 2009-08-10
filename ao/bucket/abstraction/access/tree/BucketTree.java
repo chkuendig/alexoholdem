@@ -12,28 +12,28 @@ import java.util.List;
 public interface BucketTree
 {
     //--------------------------------------------------------------------
-    public byte[] maxBucketBranch();
+    public int[] maxBucketBranch();
 
 
     //--------------------------------------------------------------------
     public void setHole(char canonHole,
-                        byte holeBucket);
+                        int  holeBucket);
 
     public void setFlop(int  canonFlop,
-                        byte flopBucket);
+                        int  flopBucket);
 
     public void setTurn(int  canonTurn,
-                        byte turnBucket);
+                        int  turnBucket);
 
 
     //--------------------------------------------------------------------
-    public byte getHole(char canonHole);
+    public int getHole (int  canonHole);
 
-    public byte getFlop(int canonFlop);
+    public int getFlop (int  canonFlop);
 
-    public byte getTurn(int canonTurn);
+    public int getTurn (int  canonTurn);
 
-    public byte getRiver(long canonTurn);
+    public int getRiver(long canonTurn);
 
 
     //--------------------------------------------------------------------

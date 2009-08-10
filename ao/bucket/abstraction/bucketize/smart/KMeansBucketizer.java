@@ -28,7 +28,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     //--------------------------------------------------------------------
     public double bucketize(
             BucketTree.Branch branch,
-            byte              numBuckets)
+            int               numBuckets)
     {
         IndexedStrengthList strengths =
                 IndexedStrengthList.strengths(branch);
@@ -37,7 +37,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     public double bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList details,
-            byte                numBuckets)
+            int                 numBuckets)
     {
         MersenneTwisterFast rand =
                 new MersenneTwisterFast(
@@ -77,15 +77,15 @@ public class KMeansBucketizer implements ScalarBucketizer
     private void bucketize(
             BucketTree.Branch   branch,
             IndexedStrengthList strengths,
-            byte                numBuckets,
+            int                 numBuckets,
             MersenneTwisterFast rand,
             boolean             verbose)
     {
         Stopwatch time    = new Stopwatch();
         double    means[] = initMeans(strengths, numBuckets, rand);
 
-        int  counts  [] = new int[numBuckets];
-        byte clusters[] = cluster(means, strengths);
+        int counts  [] = new int[numBuckets];
+        int clusters[] = cluster(means, strengths);
         for (int i = 0; i < clusters.length; i++) {
             branch.set(strengths.index(i),
                        clusters[i]);
@@ -104,11 +104,11 @@ public class KMeansBucketizer implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
-    private byte[] cluster(
+    private int[] cluster(
             double              means[],
             IndexedStrengthList strengths)
     {
-        byte clusters[] = new byte[ strengths.length() ];
+        int clusters[] = new int[ strengths.length() ];
 
         double delta;
         do
@@ -124,7 +124,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     private double iterateKMeans(
             double              means[],
             IndexedStrengthList strengths,
-            byte                clusters[])
+            int                 clusters[])
     {
         assignmentStep(means, strengths, clusters);
         return updateStep(means, strengths, clusters);
@@ -138,7 +138,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     private void assignmentStep(
             double              means[],
             IndexedStrengthList strengths,
-            byte                clusters[])
+            int                 clusters[])
     {
         for (int i = 0; i < strengths.length(); i++) {
             double strength = strengths.strengthNorm(i);
@@ -165,7 +165,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     private double updateStep(
             double              means[],
             IndexedStrengthList details,
-            byte                clusters[])
+            int                 clusters[])
     {
         double maxDelta = 0;
         for (int i = 0; i < means.length; i++) {
@@ -199,7 +199,7 @@ public class KMeansBucketizer implements ScalarBucketizer
      */
     private double[] initMeans(
             IndexedStrengthList details,
-            byte                nBuckets,
+            int                 nBuckets,
             MersenneTwisterFast rand)
     {
         int means[] = new int[ nBuckets ];
