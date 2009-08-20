@@ -1,11 +1,10 @@
 package ao.regret.holdem.parallel;
 
-import ao.holdem.model.Round;
+import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.regret.holdem.IterativeMinimizer;
+import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,11 +17,16 @@ import java.util.concurrent.Executors;
 public class ParallelMinimizer implements IterativeMinimizer
 {
     //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(ParallelMinimizer.class);
+
+
+    //--------------------------------------------------------------------
     private static final int PROCESSORS  = Math.max(1,
             Runtime.getRuntime().availableProcessors() - 1);
 
-    private static final int WINDOW_SIZE = 128;
-    private static final int BUFFER_SIZE = PROCESSORS;
+    private static final int BUFFER_SIZE = 2;
+    private static final int WINDOW_SIZE = BUFFER_SIZE;
 
 
     //--------------------------------------------------------------------
@@ -31,26 +35,21 @@ public class ParallelMinimizer implements IterativeMinimizer
             Executors.newFixedThreadPool( PROCESSORS );
 //            Executors.newCachedThreadPool();
 
-    private final char  windowBuckets[][][]    =
-            new char[ WINDOW_SIZE ][ 2 ][ Round.COUNT ];
-    private       int   nextWindow = 0;
+    private final List<char[][]> windowBuckets =
+            new LinkedList<char[][]>();
 
-    private       int[] uniqueIndexes = new int[ BUFFER_SIZE ];
-    private       int   nextUnique    = 0;
-
-    private final BitSet uniqueHoles  = new BitSet();
-
-
-//    private final LongBitSet bufferedHoles =
-//            new LongBitSet(HoleLookup.CANONS);
     private final IterativeMinimizer DELEGET;
+    private final LongByteList       HOLE_BUCKETS;
 
 
     //--------------------------------------------------------------------
     public ParallelMinimizer(
-            IterativeMinimizer deleget)
+              IterativeMinimizer deleget
+            , LongByteList       holeBuckets
+            )
     {
-        DELEGET = deleget;
+        DELEGET      = deleget;
+        HOLE_BUCKETS = holeBuckets;
     }
 
 
@@ -59,14 +58,11 @@ public class ParallelMinimizer implements IterativeMinimizer
             char[] absDealerBuckets,
             char[] absDealeeBuckets)
     {
-        if (nextUnique == uniqueIndexes.length ||
-                nextWindow == windowBuckets.length) {
-//            drainUniques();
-//            loadUniques();
+        if (windowBuckets.size() >= WINDOW_SIZE) {
             flush();
         }
 
-        enBuffer(new char[][]{
+        windowBuckets.add(new char[][]{
                 absDealerBuckets, absDealeeBuckets});
     }
 
@@ -75,39 +71,48 @@ public class ParallelMinimizer implements IterativeMinimizer
     //--------------------------------------------------------------------
     public void flush()
     {
-        drainUniques();
-        while (nextWindow > 0)
-        {
-            loadUniques();
-            drainUniques();
+        while (! windowBuckets.isEmpty()) {
+            flushGreedy();
         }
     }
 
-
-    //--------------------------------------------------------------------
-    private void drainUniques()
+    private void flushGreedy()
     {
+        LOG.debug("flushGreedy");
+
         Collection<Callable<Void>> todo =
-                new ArrayList<Callable<Void>>(nextUnique);
+                new ArrayList<Callable<Void>>();
 
-        while (--nextUnique >= 0) {
-            final char[][] bucketSequences =
-                    windowBuckets[ uniqueIndexes[nextUnique] ];
+        BitSet seen = new BitSet();
+        for (Iterator<char[][]> bucketItr = windowBuckets.iterator();
+                                bucketItr.hasNext() &&
+                                    todo.size() < BUFFER_SIZE;)
+        {
+            final char[][] bucketSequences = bucketItr.next();
 
-            windowBuckets[ uniqueIndexes[nextUnique] ] =
-                    windowBuckets[ --nextWindow ];
+            if (! (seen.get( bucketSequences[0][0] ) ||
+                   seen.get( bucketSequences[1][0] )))
+            {
+                   seen.set( bucketSequences[0][0] );
+                   seen.set( bucketSequences[1][0] );
 
-            todo.add(new Callable<Void>() {
-                public Void call() throws Exception {
-                    DELEGET.iterate(
-                            bucketSequences[0],
-                            bucketSequences[1]);
-                    return null;
-                }
-            });
+                LOG.debug("enqueueing " + display(bucketSequences[0]) +
+                                  " | " + display(bucketSequences[1]));
+                todo.add(new Callable<Void>() {
+                    public Void call() throws Exception {
+                        LOG.debug("iterating " +
+                                        display(bucketSequences[0]) +
+                                " | " + display(bucketSequences[1]));
+                        DELEGET.iterate(
+                                bucketSequences[0],
+                                bucketSequences[1]);
+                        return null;
+                    }
+                });
+
+                bucketItr.remove();
+            }
         }
-
-        clearUniques();
 
         try {
             EXEC.invokeAll(todo);
@@ -116,55 +121,22 @@ public class ParallelMinimizer implements IterativeMinimizer
         }
     }
 
+    private String display(char[] asChar) {
+        StringBuilder str = new StringBuilder();
 
-    //--------------------------------------------------------------------
-    private void loadUniques()
-    {
-        for (int i = 0; i < nextWindow; i++)
-        {
-            if (isUnique( windowBuckets[i] )) {
-                if (uniquesFull()) return;
-                addUnique(i);
-            }
+        int[] asInt = fromChar(asChar);
+        str.append(Arrays.toString(asInt));
+        str.append("\t");
+        str.append(HOLE_BUCKETS.get(asInt[0]));
+
+        return str.toString();
+    }
+
+    private int[] fromChar(char[] asChar) {
+        int[] asInt = new int[ asChar.length ];
+        for (int i = 0; i < asChar.length; i++) {
+            asInt[ i ] = asChar[ i ];
         }
-    }
-
-
-    //--------------------------------------------------------------------
-    private void enBuffer(char[][] bucketSequences)
-    {
-        windowBuckets[ nextWindow++ ] = bucketSequences;
-
-        if (!uniquesFull() && isUnique(bucketSequences)) {
-            addUnique(nextWindow - 1);
-        }
-    }
-
-
-    //--------------------------------------------------------------------
-    private boolean isUnique(char[][] bucketSequences)
-    {
-        return ! (uniqueHoles.get(bucketSequences[0][0]) ||
-                  uniqueHoles.get(bucketSequences[1][0]));
-    }
-
-    private void addUnique(int windowIndex)
-    {
-        uniqueIndexes[ nextUnique++ ] = windowIndex;
-        uniqueHoles.set( windowBuckets[windowIndex][0][0] );
-        uniqueHoles.set( windowBuckets[windowIndex][1][0] );
-    }
-
-    private void clearUniques()
-    {
-        nextUnique = 0;
-        uniqueHoles.clear();
-    }
-
-
-    //--------------------------------------------------------------------
-    private boolean uniquesFull()
-    {
-        return nextUnique == uniqueIndexes.length;
+        return asInt;
     }
 }

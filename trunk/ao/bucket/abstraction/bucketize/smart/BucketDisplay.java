@@ -43,4 +43,14 @@ public class BucketDisplay
         }
         System.out.println();
     }
+
+
+    //--------------------------------------------------------------------
+    public static void displayCanonHoleBuckets(LongByteList holeBuckets)
+    {
+        for (int i = 0; i < HoleLookup.CANONS; i++)
+        {
+            System.out.println(i + "\t" + holeBuckets.get(i));
+        }
+    }
 }

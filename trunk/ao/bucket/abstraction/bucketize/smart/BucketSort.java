@@ -55,8 +55,8 @@ public class BucketSort
 
         Arrays.sort(sortable);
 
-        byte sortedBuckets[] = new byte[ nBuckets ];
-        for (byte i = 0; i < nBuckets; i++)
+        int sortedBuckets[] = new int[ nBuckets ];
+        for (int i = 0; i < nBuckets; i++)
         {
             sortedBuckets[ sortable[i].index ] = i;
         }
@@ -108,8 +108,8 @@ public class BucketSort
 
         Arrays.sort(sortable);
 
-        byte sortedBuckets[] = new byte[ nBuckets ];
-        for (byte i = 0; i < nBuckets; i++)
+        int sortedBuckets[] = new int[ nBuckets ];
+        for (int i = 0; i < nBuckets; i++)
         {
             sortedBuckets[ sortable[i].index ] = i;
         }
@@ -141,8 +141,8 @@ public class BucketSort
 
         Arrays.sort(sortable);
 
-        byte sortedBuckets[] = new byte[ nBuckets ];
-        for (byte i = 0; i < nBuckets; i++)
+        int sortedBuckets[] = new int[ nBuckets ];
+        for (int i = 0; i < nBuckets; i++)
         {
             sortedBuckets[ sortable[i].index ] = i;
         }

@@ -11,6 +11,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.DeckCards;
+import ao.util.math.Calc;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import org.apache.log4j.Logger;
@@ -134,18 +135,18 @@ public class BucketSequencer
         }
     }
 
-    private static byte[][] readBuckets(DataInput in) {
+    private static int[][] readBuckets(DataInput in) {
         try {
             return doReadBuckets(in);
         } catch (IOException e) {
             throw new Error( e );
         }
     }
-    private static byte[][] doReadBuckets(DataInput in) throws IOException {
-        byte[][] buckets = new byte[2][4];
+    private static int[][] doReadBuckets(DataInput in) throws IOException {
+        int[][] buckets = new int[2][4];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 4; j++) {
-                buckets[i][j] = in.readByte();
+                buckets[i][j] = Calc.unsigned( in.readByte() );
             }
         }
         return buckets;
@@ -232,7 +233,7 @@ public class BucketSequencer
 
 
     //--------------------------------------------------------------------
-    private char[] decode(byte buckets[])
+    private char[] decode(int buckets[])
     {
         return new char[]{
                 (char) buckets[0],
@@ -242,7 +243,7 @@ public class BucketSequencer
                                buckets[2], buckets[3])};
     }
 
-    private char[][] decode(byte buckets[][])
+    private char[][] decode(int buckets[][])
     {
         return new char[][]{
                 decode(buckets[0]),

@@ -31,7 +31,7 @@ public class InfoPart
     //--------------------------------------------------------------------
     public static InfoPart retrieveOrCreate(
             File    dir,
-            byte    nHoleBuckets,
+            int     nHoleBuckets,
             char    nFlopBuckets,
             char    nTurnBuckets,
             char    nRiverBuckets,
@@ -43,11 +43,11 @@ public class InfoPart
 
         return new InfoPart(
                 get(dir,  HOLE_DIR,  nHoleBuckets, Round.PREFLOP,
-                        readOnly, doublePrecision),
+                        readOnly, true),
                 get(dir,  FLOP_DIR,  nFlopBuckets, Round.FLOP   ,
-                        readOnly, doublePrecision),
+                        readOnly, true),
                 get(dir,  TURN_DIR,  nTurnBuckets, Round.TURN   ,
-                        readOnly, doublePrecision),
+                        readOnly, true),
                 get(dir, RIVER_DIR, nRiverBuckets, Round.RIVER  ,
                         readOnly, doublePrecision),
                     dir);
