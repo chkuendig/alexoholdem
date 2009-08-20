@@ -17,6 +17,16 @@ public class FullLongByteList implements PersistentLongByteList
     public static final int MAX_BUCKETS = (1 << Byte.SIZE);
 
 
+    public static void main(String[] args) {
+        FullLongByteList t = new FullLongByteList(null, 300);
+
+        for (int i = 0; i < 300; i++) {
+            t.set(i, i);
+            System.out.println(i + "\t" + t.get(i));
+        }
+    }
+
+
     //--------------------------------------------------------------------
     private final File   FILE_A;
     private final File   FILE_B;

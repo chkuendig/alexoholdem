@@ -37,7 +37,7 @@ public class HoldemAbstraction
     private final File       DIR;
 
     private final Bucketizer BUCKETIZER;
-    private final byte       N_HOLES;
+    private final int        N_HOLES;
     private final char       N_FLOPS;
     private final char       N_TURNS;
     private final char       N_RIVERS;
@@ -52,7 +52,7 @@ public class HoldemAbstraction
     //--------------------------------------------------------------------
     public HoldemAbstraction(
             Bucketizer bucketizer,
-            byte       nHoleBuckets,
+            int        nHoleBuckets,
             char       nFlopBuckets,
             char       nTurnBuckets,
             char       nRiverBuckets)
@@ -74,7 +74,7 @@ public class HoldemAbstraction
     //--------------------------------------------------------------------
     private String id(
             Bucketizer bucketizer,
-            byte       numHoleBuckets,
+            int        numHoleBuckets,
             char       numFlopBuckets,
             char       numTurnBuckets,
             char       numRiverBuckets)
