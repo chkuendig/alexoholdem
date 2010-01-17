@@ -29,6 +29,21 @@ public class InfoPart
 
 
     //--------------------------------------------------------------------
+    public static boolean exists(File dir)
+    {
+        return exists(dir,  HOLE_DIR) &&
+               exists(dir,  FLOP_DIR) &&
+               exists(dir,  TURN_DIR) &&
+               exists(dir, RIVER_DIR);
+    }
+
+    private static boolean exists(
+            File dir, String subDir) {
+        return InfoMatrix.exists(Dir.get(dir, subDir));
+    }
+
+
+    //--------------------------------------------------------------------
     public static InfoPart retrieveOrCreate(
             File    dir,
             int     nHoleBuckets,

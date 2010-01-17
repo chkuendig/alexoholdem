@@ -116,6 +116,8 @@ public class HoldemAbstraction
         return tree;
     }
 
+
+    //--------------------------------------------------------------------
     public BucketDecoder decoder()
     {
         if (decoder != null) return decoder;
@@ -127,6 +129,8 @@ public class HoldemAbstraction
         return decoder;
     }
 
+
+    //--------------------------------------------------------------------
     public BucketOdds odds()
     {
         if (odds != null) return odds;
@@ -137,6 +141,7 @@ public class HoldemAbstraction
         }
         return odds;
     }
+
     public IBucketOdds oddsCache()
     {
         BucketOdds bucketOdds;
@@ -153,6 +158,12 @@ public class HoldemAbstraction
     }
 
 
+    //--------------------------------------------------------------------
+    public boolean deleteSequence()
+    {
+        return BucketSequencer.delete(DIR);
+    }
+
     public BucketSequencer sequence()
     {
         if (sequence != null) return sequence;
@@ -164,6 +175,8 @@ public class HoldemAbstraction
         return sequence;
     }
 
+
+    //--------------------------------------------------------------------
     public InfoPart infoPart(boolean readOnly, boolean doublePrecision)
     {
         return infoPart(null, readOnly, doublePrecision);
@@ -182,12 +195,32 @@ public class HoldemAbstraction
         }
 
         infoPart = InfoPart.retrieveOrCreate(
-                     Dir.get(DIR, "info/" + name +
-                             (doublePrecision ? "_d" : "_f")),
+                     infoPartDir(name, doublePrecision),
                      N_HOLES, N_FLOPS, N_TURNS, N_RIVERS,
                      readOnly, doublePrecision);
         infoParts.put(name, infoPart);
 
         return infoPart;
+    }
+
+    private File infoPartDir(String name, boolean doublePrecision)
+    {
+        return Dir.get(DIR, "info/" + name +
+                            (doublePrecision ? "_d" : "_f"));
+    }
+
+    public boolean hasInfoPart(boolean doublePrecision)
+    {
+        return hasInfoPart(null, doublePrecision);
+    }
+    public boolean hasInfoPart(String name, boolean doublePrecision)
+    {
+        if (name == null) {
+            return hasInfoPart("main", doublePrecision);
+        }
+
+        return infoParts.get(name) != null ||
+               InfoPart.exists(infoPartDir(name, doublePrecision));
+
     }
 }
