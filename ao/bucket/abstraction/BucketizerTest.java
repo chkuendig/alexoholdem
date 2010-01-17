@@ -1,7 +1,9 @@
 package ao.bucket.abstraction;
 
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
+import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.engine.Player;
@@ -40,7 +42,7 @@ public class BucketizerTest
 //    private static final String BOT_NAME = "agro";
     private static final String  BOT_NAME   = "serial";
     private static final String   VS_NAME   = "serial";
-    private static final double  AGGRESSION = 1.0;
+    private static final double  AGGRESSION = 1.00;
     private static final boolean    PRECISE = false;
     private static final boolean VS_PRECISE = true;
 
@@ -48,76 +50,95 @@ public class BucketizerTest
     //--------------------------------------------------------------------
     public static void main(String[] args) throws IOException
     {
-//        int  nHoleBuckets  = 3;
-//        char nFlopBuckets  = 9;
-//        char nTurnBuckets  = 27;
-//        char nRiverBuckets = 81;
-//        int  nHoleBuckets  = 5;
-//        char nFlopBuckets  = 25;
-//        char nTurnBuckets  = 125;
-//        char nRiverBuckets = 625;
-//        byte nHoleBuckets  = 20;
-//        int  nHoleBuckets  =    32;
-//        char nFlopBuckets  =   658;
-//        char nTurnBuckets  =  4608;
-//        char nRiverBuckets = 32256; // 31360
-//        int  nHoleBuckets  =   169;
-//        char nFlopBuckets  =  1300;
-//        char nTurnBuckets  =  6500;
-//        char nRiverBuckets = 32256;
-        int  nHoleBuckets  =   169;
-        char nFlopBuckets  =  2028;
-        char nTurnBuckets  = 10140;
-        char nRiverBuckets = 49000;
-//        int  nHoleBuckets  =    64;
-//        char nFlopBuckets  =   896;
-//        char nTurnBuckets  =  5376;
-//        char nRiverBuckets = 32256;
+        int  nHoleBuckets  =    64;
+        char nFlopBuckets  =  1600;
+        char nTurnBuckets  = 10239;
+        char nRiverBuckets = 65535;
 
+        Boolean needSamples = null;
         if (args.length > 1)
         {
             nHoleBuckets  = (byte) Integer.parseInt(args[0]);
             nFlopBuckets  = (char) Integer.parseInt(args[1]);
             nTurnBuckets  = (char) Integer.parseInt(args[2]);
             nRiverBuckets = (char) Integer.parseInt(args[3]);
+            needSamples   =        Boolean.parseBoolean(args[4]);
         }
+
         LOG.debug("Using " +
                       nHoleBuckets + ", " + (int) nFlopBuckets + ", " +
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
-        HoldemAbstraction abs = abstractHolem(
-//                new KMeansBucketizer(),
-                new HistBucketizer((byte) 3),
+        Rand.randomize();
+        if (needSamples == null) {
+            HoldemAbstraction abs = computeSamples(
+                    nHoleBuckets, nFlopBuckets,
+                    nTurnBuckets, nRiverBuckets,
+                    false);
+            computeCfr(abs);
+        } else {
+            if (needSamples) {
+                computeSamples(
+                        nHoleBuckets, nFlopBuckets,
+                        nTurnBuckets, nRiverBuckets,
+                        true);
+            } else {
+                computeCfr(
+                        nHoleBuckets, nFlopBuckets,
+                        nTurnBuckets, nRiverBuckets);
+            }
+        }
+    }
+
+    public static HoldemAbstraction computeSamples(
+            int     nHoleBuckets,
+            char    nFlopBuckets,
+            char    nTurnBuckets,
+            char    nRiverBuckets,
+            boolean deleteExisting)
+    {
+        HoldemAbstraction abs = abstractHoldem(
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
-//        HoldemAbstraction vsAbs = abstractHolem(
-//                new HistBucketizer((byte) 3),
-//                127, (char) 1200, (char) 6000, (char) 30000);
-//        HoldemAbstraction vsAbs = abstractHolem(
-//                new HistBucketizer((byte) 3),
-//                64, (char) 896, (char) 5376, (char) 32256);
-//        HoldemAbstraction vsAbs = null;
 
-        // preload
-//        abs.infoPart(false, false);
-//        System.out.println("passed!");
-//        BucketDisplay.displayHoleBuckets(
-//                abs.tree(false).holes());
-//        BucketDisplay.displayCanonHoleBuckets(
-//                abs.tree(false).holes());
-//        abs.odds();
-//        abs.sequence();
+//        if (abs.hasInfoPart(BOT_NAME, PRECISE)) {
+//
+//        }
 
-//        Rand.randomize();
-        computeCfr(abs);
 
-//        tournament(abs, vsAbs);
+        if (deleteExisting)
+        {
+            abs.deleteSequence();
 
-//        vsHuman(abs);
+            abs.infoPart(BOT_NAME, false, PRECISE);
+            LOG.info("infoPart loaded!");
+
+            BucketDisplay.displayHoleBuckets(
+                    abs.tree(false).holes());
+            BucketDisplay.displayCanonHoleBuckets(
+                    abs.tree(false).holes());
+
+            abs.odds();
+            abs.sequence();
+        }
+
+        return abs;
     }
 
 
     //--------------------------------------------------------------------
-    private static HoldemAbstraction abstractHolem(
+    private static HoldemAbstraction abstractHoldem(
+            int        nHoleBuckets,
+            char       nFlopBuckets,
+            char       nTurnBuckets,
+            char       nRiverBuckets)
+    {
+        return abstractHoldem(
+//                new KMeansBucketizer(),
+                new HistBucketizer((byte) 3),
+                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+    }
+
+    private static HoldemAbstraction abstractHoldem(
             Bucketizer bucketizer,
             int        nHoleBuckets,
             char       nFlopBuckets,
@@ -198,8 +219,8 @@ public class BucketizerTest
 //            put(Avatar.local("human"), new ConsoleBot());
 //            put(Avatar.local("ao-hist4"), bot);
                     
-            put(Avatar.local("ao-hist3-32"), bot);
-            put(Avatar.local("ao-hist3-64"), vsBot);
+            put(Avatar.local("ao-hist3-64b"), bot);
+            put(Avatar.local("ao-hist3-64s"), vsBot);
 //            put(Avatar.local("cfr2 290"),
 //                    new CfrBot2("serial_290", abs, false, false, false));
         }}, true);
@@ -222,7 +243,20 @@ public class BucketizerTest
 
     //--------------------------------------------------------------------
     public static void computeCfr(
-            HoldemAbstraction abs) throws IOException
+            int        nHoleBuckets,
+            char       nFlopBuckets,
+            char       nTurnBuckets,
+            char       nRiverBuckets)
+    {
+        computeCfr(abstractHoldem(
+                nHoleBuckets,
+                nFlopBuckets,
+                nTurnBuckets,
+                nRiverBuckets));
+    }
+
+    public static void computeCfr(
+            HoldemAbstraction abs)
     {
         LOG.debug("computeCfr");
 
@@ -242,8 +276,9 @@ public class BucketizerTest
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
 //        long offset     = 200 * 1000 * 1000;
-        long iterations = 250 * 1000 * 1000;//1000 * 1000 * 1000;
-        int  milestone  =  50 * 1000 * 1000;
+        long iterations = BucketSequencer.COUNT;
+        long milestone  = iterations * 2; // i.e. never
+//        long milestone  = iterations / 4;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);
@@ -258,7 +293,7 @@ public class BucketizerTest
         Progress  prog = new Progress(iterations - offset);
         while (it.hasNext())
         {
-            if (itr % (1000 * 1000/*12*/) == 0) {
+            if (itr % (50 * 1000 * 1000/*12*/) == 0) {
                 LOG.debug("\t" + itr + " took " + t.timing());
                 t = new Stopwatch();
 

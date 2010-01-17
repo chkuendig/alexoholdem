@@ -200,9 +200,14 @@ public class CfrBot2 extends AbstractPlayer
 
 
         if (canonHole == null) {
-            canonHole  = cards.hole().asCanon();
-            holeBucket = ABS.tree(true).getHole(
-                                canonHole.canonIndex());
+            try{
+                canonHole  = cards.hole().asCanon();
+                holeBucket = ABS.tree(true).getHole(
+                                    canonHole.canonIndex());
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
         }
         if (round == Round.PREFLOP) {
             roundBucket = (char) holeBucket;

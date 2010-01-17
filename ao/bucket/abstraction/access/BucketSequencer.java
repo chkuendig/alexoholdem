@@ -29,11 +29,17 @@ public class BucketSequencer
     private static final Logger LOG =
             Logger.getLogger(BucketSequencer.class);
 
-    private static final String FILE_NAME  = "bucket_seq.byte";
-    private static final long   CACHE_SIZE = 250 * 1000 * 1000;
+    private static final String FILE_NAME = "bucket_seq.byte";
+    public  static final long   COUNT     = 1000 * 1000 * 1000;
 
-    
+
     //--------------------------------------------------------------------
+    public static boolean delete(File dir)
+    {
+        File store = new File(dir, FILE_NAME);
+        return ! store.exists() || store.delete();
+    }
+
     public static BucketSequencer retrieve(
             File dir, BucketDecoder decoder)
     {
@@ -43,9 +49,9 @@ public class BucketSequencer
         if (! store.canRead()) {
             LOG.debug("can't read");
             return null;
-        } else if (store.length() < (CACHE_SIZE * 8)) {
+        } else if (store.length() < (COUNT * 8)) {
             LOG.debug("too small " +
-                      store.length() + " vs " + (CACHE_SIZE * 8));
+                      store.length() + " vs " + (COUNT * 8));
             return null;
         }
 
@@ -74,14 +80,14 @@ public class BucketSequencer
             File store, BucketTree tree) throws IOException
     {
         LOG.debug("computeSequences");
-        Progress p = new Progress(CACHE_SIZE);
+        Progress p = new Progress(COUNT);
 
         Rand.randomize();
 
         DataOutputStream out = new DataOutputStream(
                 new BufferedOutputStream(
                         new FileOutputStream(store)));
-        for (long i = 0; i < CACHE_SIZE; i++) {
+        for (long i = 0; i < COUNT; i++) {
             byte[][] pair = randomBucketSequencePair(tree);
             writeBuckets(out, pair);
             p.checkpoint();
@@ -179,7 +185,7 @@ public class BucketSequencer
                             new BufferedInputStream(
                                     new FileInputStream(STORE),
                                     1024 * 1024));
-                    long toSkip = ((at % CACHE_SIZE) * 8);
+                    long toSkip = ((at % COUNT) * 8);
                     if (in.skip( toSkip ) != toSkip) {
                         throw new Error("skip failed");
                     }
@@ -206,7 +212,7 @@ public class BucketSequencer
 
             public char[][] next() {
                 try {
-                    if ((location++ % CACHE_SIZE) == 0) {
+                    if ((location++ % COUNT) == 0) {
                         if (in != null) {
                             in.close();
                             in = open(0);

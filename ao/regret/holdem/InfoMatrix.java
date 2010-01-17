@@ -46,10 +46,10 @@ public class InfoMatrix
 
 
     //--------------------------------------------------------------------
-    public static InfoMatrix retrieveOrCreate(
-            File dir, int nBuckets, int nIntents) {
-        return retrieveOrCreate(dir, nBuckets, nIntents, false, true);
+    public static boolean exists(File dir) {
+        return new File(dir, COUNT_FILE).exists();
     }
+
     public static InfoMatrix retrieveOrCreate(
             File dir, int nBuckets, int nIntents,
             boolean readOnly, boolean doublePrecision) {
@@ -301,9 +301,10 @@ public class InfoMatrix
         //----------------------------------------------------------------
         @Override public String toString() {
             return Arrays.toString(new int[]{
-                    (int) (averageStrategy()[0] * 100),
-                    (int) (averageStrategy()[1] * 100),
-                    (int) (averageStrategy()[2] * 100)}) + "\t" +
+                    (int) Math.round(averageStrategy()[0] * 100),
+                    (int) Math.round(averageStrategy()[1] * 100),
+                    (int) Math.round(averageStrategy()[2] * 100)})
+                    + "\t" +
                     (long) Math.ceil(
                             average(fIntent) +
                             average(cIntent) +
@@ -312,9 +313,9 @@ public class InfoMatrix
 
         public String toShortString()
         {
-            return (int) (averageStrategy()[0] * 100) + "/" +
-                   (int) (averageStrategy()[1] * 100) + "/" +
-                   (int) (averageStrategy()[2] * 100);
+            return (int) Math.round(averageStrategy()[0] * 100) + "/" +
+                   (int) Math.round(averageStrategy()[1] * 100) + "/" +
+                   (int) Math.round(averageStrategy()[2] * 100);
         }
     }
 }
