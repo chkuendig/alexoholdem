@@ -6,8 +6,6 @@ import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
-import ao.bucket.index.detail.river.ProbabilityEncoding;
-import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.engine.state.StateFlow;

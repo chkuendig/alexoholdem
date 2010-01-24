@@ -597,10 +597,8 @@ public class Eval7Faster
 
     //--------------------------------------------------------------------
 	public static void main(String [] args) {
-//        generateTables();
-//        System.out.println("persisting");
-//        PersistentInts.persist(handRanks, F_RANK);
-//        PersistentLongs.persist(keys,     F_KEY);
+        // much faster if called from here (when commented out above)
+//        retrieveOrCompute();
         
         int c0, c1, c2, c3, c4, c5, c6;
         int u0, u1, u2, u3, u4, u5;
