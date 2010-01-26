@@ -1,5 +1,5 @@
 #summary Overview of techniques used for reducing the size of the game tree by grouping together strategically similar situations.
-#labels bucketing
+#labels bucketing,gametheory,abstraction,Phase-Design
 
 = Introduction =
 
