@@ -85,6 +85,10 @@ public class BucketizerTest
 //            ProbabilityEncoding.main(null);
 //            CompactRiverProbabilities.main(null);
 //            HoleOdds.main(null);
+//            TurnDetails.main(null);
+//            FlopLookup.main(null);
+//            TurnLookup.main(null);
+//            TurnOdds.main(null);
 
             HoldemAbstraction abs = computeSamples(
                     nHoleBuckets, nFlopBuckets,

@@ -56,7 +56,8 @@ public class RangeLookup
             Round fromRound,
             Round toRound)
     {
-//        assert fromRound.ordinal() < toRound.ordinal();
+        assert fromRound == null ||
+               fromRound.ordinal() < toRound.ordinal();
 
         CanonRange range =
                 lookupRange(fromRound, fromCanonIndex);

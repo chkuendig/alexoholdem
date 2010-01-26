@@ -144,8 +144,7 @@ public class FlopLookup
         for (int subOffsets[] : OFFSETS)
         {
             LOG.info(
-                    Arrays.toString(
-                            subOffsets));
+                    Arrays.toString( subOffsets ));
         }
     }
 

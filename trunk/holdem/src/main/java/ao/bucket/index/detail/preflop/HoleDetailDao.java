@@ -59,6 +59,7 @@ public class HoleDetailDao
             details[ i ] = CanonHoleDetail.BINDING.read( in );
         }
 
+        LOG.debug("done");
         return details;
     }
 

@@ -7,7 +7,8 @@ import ao.bucket.abstraction.access.tree.BucketTree;
  * Date: 5-Jul-2009
  * Time: 5:32:44 PM
  */
-public interface Bucketizer {
+public interface Bucketizer
+{
     // returns the bucketing error, in some distance metric
     double bucketize(BucketTree.Branch branch,
                      int               numBuckets);

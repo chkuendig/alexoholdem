@@ -91,8 +91,8 @@ public class HistBucketizer implements Bucketizer
 
 
     //--------------------------------------------------------------------
-    public void setThorough(boolean highPercision) {
-        isThorough = highPercision;
+    public void setThorough(boolean highPrecision) {
+        isThorough = highPrecision;
     }
 
 
@@ -174,7 +174,7 @@ public class HistBucketizer implements Bucketizer
                 new ParallelTrial<Centroid<double[]>>(
                         new KMeans<Centroid<double[]>>(),
                         new TwoPassWcss<Centroid<double[]>>(),
-                        (isThorough ? 512 : 32));
+                        (isThorough ? 512 : 8));
         Clustering clustering =
                 analyzer.cluster(byFutureRound, nBuckets);
         analyzer.close();

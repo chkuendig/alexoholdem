@@ -33,7 +33,7 @@ public interface BucketTree
 
     public int getTurn (int  canonTurn);
 
-    public int getRiver(long canonTurn);
+    public int getRiver(long canonRiver);
 
 
     //--------------------------------------------------------------------

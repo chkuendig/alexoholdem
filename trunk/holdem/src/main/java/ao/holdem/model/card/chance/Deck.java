@@ -4,7 +4,6 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.util.data.Arr;
-import ao.util.math.rand.Rand;
 
 /**
  *
@@ -20,12 +19,7 @@ public class Deck
     public Deck()
     {
         cards = Card.VALUES.clone();
-
-        // Shuffle cards
-        for (int i = cards.length; i > 1; i--)
-        {
-            Arr.swap(cards, i-1, Rand.nextInt(i));
-        }
+        Arr.shuffle(cards);
     }
 
     private Deck(Card copyCards[], int copyNextIndex)

@@ -81,6 +81,8 @@ public class TurnDetails
             details = computeDetails();
             TurnDetailFlyweight.persist(details, DIR);
         }
+
+        LOG.debug("done");
         return details;
     }
 

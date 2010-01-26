@@ -49,6 +49,8 @@ public class FlopDetails
             details = computeDetails();
             FlopDetailFlyweight.persist(details, DIR);
         }
+
+        LOG.debug("done");
         return details;
     }
 
