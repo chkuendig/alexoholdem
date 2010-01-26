@@ -4,7 +4,9 @@
 = Introduction =
 
 Glossary:
-bucket: set of card sequences (within a betting round) that the computer will consider identical
+  * bucket: set of card sequences (within a betting round) that the computer will consider identical.
+  * hand strength: probability of winning + half probability of a split pot (assuming all players remain until the showdown).
+  * millibet: in a limit hold'em game, the size of the small bet, divided by 1,000.
 
 The abstraction process consists of the following stages:
   # Pick number of buckets per round.
@@ -12,10 +14,11 @@ The abstraction process consists of the following stages:
 
 (1) can be solved optimally for any fixed (2), given enough time (because your total number of buckets is limited finite available memory).  However, since each trial takes so long to compute, I have only performed basic trial & error optimization for (1).
 
-The approaches I've tried for (2) are:
-  # a
-  # b
-  # c
+The approaches implemented for (2) are:
+  # Sort card sequences by their hand strength, and split at equal percentiles.
+  # Use cluster analysis (K means ++) to group card sequences by hand strength.  This is the version that was used in AAAI 2009 heads-up limit hold'em competition averaging -2 millibets per hand.  Seems to make the most sense for card sequences at the river.
+  # For pre-river rounds: cluster over frequencies of clusters in subsequent river betting sequence strengths.  Has as a parameter the number of river buckets to use.
+  # For pre-river rounds: cluster over frequency with which subsequent betting hands fall into clusters their respective clusters.  This for examples allows for the hole buckets to take into account information from card sequences in all future betting rounds.  As of 2010-01-25 this method is not working very well.
 
 
 2) Pick a distance measure between card sequences (within the same round).
