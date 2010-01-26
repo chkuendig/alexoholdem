@@ -9,7 +9,7 @@ Glossary:
   * millibet: in a limit hold'em game, the size of the small bet, divided by 1,000.
 
 The abstraction process consists of the following stages:
-  # Pick number of buckets per round.
+  # Pick number of buckets per betting round.
   # Given a set of betting sequences (within a betting round), and a desired number of buckets: place each card sequence into one of the buckets.
 
 (1) can be solved optimally for any fixed (2), given enough time (because your total number of buckets is limited finite available memory).  However, since each trial takes so long to compute, I have only performed basic trial & error optimization for (1).
@@ -20,17 +20,9 @@ The approaches implemented for (2) are:
   # For pre-river rounds: cluster over frequencies of clusters in subsequent river betting sequence strengths.  Has as a parameter the number of river buckets to use.
   # For pre-river rounds: cluster over frequency with which subsequent betting hands fall into clusters their respective clusters.  This for examples allows for the hole buckets to take into account information from card sequences in all future betting rounds.  As of 2010-01-25 this method is not working very well.
 
-
-2) Pick a distance measure between card sequences (within the same round).
-3) Use clustering algorithm (or some other method)
-
-
-Card-sequences are abstracted, while betting-sequences are kept in full.
+Note that each set of card sequences is bucketed for a wide range of bucket counts, and the optimal way of spreading the bucket counts within a round is guaranteed.  This is done by formulating an integer linear programming problem, who's solution corresponds to the optimal arrangement.
 
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Details with citations... filler.
