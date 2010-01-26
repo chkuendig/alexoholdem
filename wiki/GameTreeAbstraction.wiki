@@ -1,0 +1,19 @@
+#summary Overview of techniques used for reducing the size of the game tree by grouping together strategically similar situations.
+#labels bucketing
+
+= Introduction =
+
+A number of techniques have emerged for reducing the size of the game tree.  The abstraction process can (roughly) be split into the following stages:
+1) Decide on the number of buckets to be used for each of the four rounds.
+2) 
+
+
+Card-sequences are abstracted, while betting-sequences are kept in full.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
