@@ -7,8 +7,15 @@ Glossary:
 bucket: set of card sequences (within a betting round) that the computer will consider identical
 
 The abstraction process consists of the following stages:
-1) Pick number of buckets per round.
-2) Given a set of betting sequences (within a betting round), and a desired number of buckets: place each card sequence into one of the buckets.
+# Pick number of buckets per round.
+# Given a set of betting sequences (within a betting round), and a desired number of buckets: place each card sequence into one of the buckets.
+
+(1) can be solved optimally for any fixed (2), given enough time (because your total number of buckets is limited finite available memory).  However, since each trial takes so long to compute, I have only performed basic trial & error optimization for (1).
+
+The approaches I've tried for (2) are:
+# a
+# b
+# c
 
 
 2) Pick a distance measure between card sequences (within the same round).
