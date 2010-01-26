@@ -1,0 +1,16 @@
+#summary Direction that this project is taking
+#labels Featured,Phase-Requirements
+
+= Introduction =
+
+Plan to:
+  * Refactor packages to be cleaner
+  * Find FOSS pure-Java integer linear programming kit to eliminate system-specific dependency.
+  * Make a pretty interface for playing games, possibly web-based, probably as part of a separate project.
+  * Parallelize the CFRM algorithm, previous attempts at this have failed.
+  * Make this project a lot more developer-friendly, please let me know if you are interested in participating in developing this project.
+
+
+= Details =
+
+...
