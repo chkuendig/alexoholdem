@@ -13,9 +13,9 @@ The abstraction process consists of the following stages:
 (1) can be solved optimally for any fixed (2), given enough time (because your total number of buckets is limited finite available memory).  However, since each trial takes so long to compute, I have only performed basic trial & error optimization for (1).
 
 The approaches I've tried for (2) are:
-# a
-# b
-# c
+  # a
+  # b
+  # c
 
 
 2) Pick a distance measure between card sequences (within the same round).
