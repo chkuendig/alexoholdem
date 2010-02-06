@@ -13,7 +13,7 @@ public class HandStrengthMeasure
     //--------------------------------------------------------------------
     public double error(
             BucketTree.Branch branch,
-            byte              nBuckets)
+            int               nBuckets)
     {
         IndexedStrengthList details =
                 IndexedStrengthList.strengths(branch);
@@ -34,7 +34,7 @@ public class HandStrengthMeasure
             {
                 if (bucket != branch.get(details.index(i))) continue;
 
-                sum   += details.strengthNorm(i) *
+                sum   += details.realStrength(i) *
                          details.represents(i);
                 count += details.represents(i);
             }
@@ -44,7 +44,7 @@ public class HandStrengthMeasure
             {
                 if (bucket != branch.get(details.index(i))) continue;
 
-                error += Math.pow(details.strengthNorm(i) - mean, 2) *
+                error += Math.pow(details.realStrength(i) - mean, 2) *
                          details.represents(i);
                 total += details.represents(i);
             }

@@ -21,8 +21,25 @@ public class KMeansBucketizer implements ScalarBucketizer
     private static final Logger LOG =
             Logger.getLogger(KMeansBucketizer.class);
 
-    private static final double DELTA_CUTOFF = 0.01;
-    private static final int    BEST_OF      = 10;
+
+    //--------------------------------------------------------------------
+    private static final double HEAVY_DELTA_CUTOFF = 0.01;
+    private static final int    HEAVY_BEST_OF      = 10;
+
+    private static final double LIGHT_DELTA_CUTOFF = 0.1;
+    private static final int    LIGHT_BEST_OF      = 2;
+
+
+    //--------------------------------------------------------------------
+    private double deltaCutoff;
+    private int    bestOf;
+
+
+    //--------------------------------------------------------------------
+    public KMeansBucketizer()
+    {
+        setThorough( false );
+    }
 
 
     //--------------------------------------------------------------------
@@ -44,7 +61,7 @@ public class KMeansBucketizer implements ScalarBucketizer
                         branch.parentCanons().length *
                         details.length() * numBuckets);
 
-        long seeds[] = new long[ BEST_OF ];
+        long seeds[] = new long[ bestOf ];
         for (int i = 0; i < seeds.length; i++) {
             seeds[ i ] = rand.nextLong();
         }
@@ -54,7 +71,7 @@ public class KMeansBucketizer implements ScalarBucketizer
         int    minErrIndex = -1;
 
         HandStrengthMeasure errorMeasure = new HandStrengthMeasure();
-        for (int i = 0; i < BEST_OF; i++) {
+        for (int i = 0; i < bestOf; i++) {
             rand.setSeed(seeds[i]);
 
             bucketize(branch, details, numBuckets, rand, false);
@@ -99,7 +116,7 @@ public class KMeansBucketizer implements ScalarBucketizer
                   "\t(p " + branch.parentCanons().length +
                   " \tc " + strengths.length()   +
                   ")\t" + Arrays.toString(counts) +
-                  "\ttook " + time + " per " + BEST_OF + " trials");
+                  "\ttook " + time + " per " + bestOf + " trials");
     }
 
 
@@ -115,7 +132,7 @@ public class KMeansBucketizer implements ScalarBucketizer
         {
             delta = iterateKMeans(means, strengths, clusters);
         }
-        while (delta > DELTA_CUTOFF);
+        while (delta > deltaCutoff);
 
         return clusters;
     }
@@ -141,7 +158,7 @@ public class KMeansBucketizer implements ScalarBucketizer
             int                 clusters[])
     {
         for (int i = 0; i < strengths.length(); i++) {
-            double strength = strengths.strengthNorm(i);
+            double strength = strengths.realStrength(i);
 
             byte   leastDistIndex = -1;
             double leastDistance  = Double.POSITIVE_INFINITY;
@@ -176,7 +193,7 @@ public class KMeansBucketizer implements ScalarBucketizer
             for (int j = 0; j < clusters.length; j++) {
                 if (clusters[j] != i) continue;
 
-                sum += details.strengthNorm(j) *
+                sum += details.realStrength(j) *
                        details.represents(j);
                 count += details.represents(j);
             }
@@ -223,8 +240,8 @@ public class KMeansBucketizer implements ScalarBucketizer
                 for (int j = 0; j < k; j++) {
                     if (i == means[j]) continue next_point;
 
-                    double dist = Math.abs(details.strengthNorm(i) -
-                                           details.strengthNorm(means[j]));
+                    double dist = Math.abs(details.realStrength(i) -
+                                           details.realStrength(means[j]));
                     if (nearestCluster > dist) {
                         nearestCluster = dist;
                     }
@@ -247,14 +264,26 @@ public class KMeansBucketizer implements ScalarBucketizer
 
         double meanVals[] = new double[ means.length ];
         for (int i = 0; i < means.length; i++) {
-            meanVals[ i ] = details.strengthNorm( means[i] );
+            meanVals[ i ] = details.realStrength( means[i] );
         }
         return meanVals;
     }
 
 
     //--------------------------------------------------------------------
-    public void setThorough(boolean highPercision) {}
+    public void setThorough(boolean highPrecision)
+    {
+        if (highPrecision)
+        {
+            bestOf      = HEAVY_BEST_OF;
+            deltaCutoff = HEAVY_DELTA_CUTOFF;
+        }
+        else
+        {
+            bestOf      = LIGHT_BEST_OF;
+            deltaCutoff = LIGHT_DELTA_CUTOFF;
+        }
+    }
 
 
     //--------------------------------------------------------------------

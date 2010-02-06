@@ -1,5 +1,6 @@
 package ao.bucket.abstraction.bucketize.linear;
 
+import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.util.math.Calc;
 
 /**
@@ -18,7 +19,7 @@ public class IndexedStrength
     //--------------------------------------------------------------------
     public IndexedStrength(long canonIndex, double handStrength) {
         index    = (int) canonIndex;
-        strength = (char)(Character.MAX_VALUE * handStrength);
+        strength = ProbabilityEncoding.encodeWinProb( handStrength );
     }
 
 
@@ -27,10 +28,10 @@ public class IndexedStrength
         return Calc.unsigned(index);
     }
 
-//    public double strength()
-//    {
-//        return (double) strength / Character.MAX_VALUE;
-//    }
+    public double realStrength()
+    {
+        return ProbabilityEncoding.decodeWinProb( strength );
+    }
     public char strength()
     {
         return strength;

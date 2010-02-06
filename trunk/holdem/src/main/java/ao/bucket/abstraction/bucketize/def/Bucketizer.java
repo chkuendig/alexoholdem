@@ -14,7 +14,7 @@ public interface Bucketizer
                      int               numBuckets);
 
 
-    void setThorough(boolean highPercision);
+    void setThorough(boolean highPrecision);
 
     String id();
 }

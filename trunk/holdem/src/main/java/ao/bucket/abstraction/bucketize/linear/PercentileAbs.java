@@ -3,6 +3,7 @@ package ao.bucket.abstraction.bucketize.linear;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
+import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
@@ -29,18 +30,12 @@ public class PercentileAbs implements ScalarBucketizer
     public double bucketize(BucketTree.Branch branch, int nBuckets)
     {
         assert nBuckets > 0;
-//        if (branch.isBucketized()) return false;
 
-//        if (branch.round() == Round.PREFLOP && nBuckets == 10) {
-//            return bucketizeTenHoles(branch);
-//        }
         if (branch.round() == Round.RIVER) {
-            bucketizeRiver(branch, nBuckets);
+            return bucketizeRiver(branch, nBuckets);
         } else {
-            bucketizeByList(branch, nBuckets);
+            return bucketizeByList(branch, nBuckets);
         }
-
-        return -1;
     }
 
     public double bucketize(
@@ -52,9 +47,12 @@ public class PercentileAbs implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
-    private void bucketizeByList(BucketTree.Branch branch, int nBuckets)
+    private double bucketizeByList(BucketTree.Branch branch, int nBuckets)
     {
         LOG.debug("bucketizing " + branch.round() + " into " + nBuckets);
+
+//        IndexedStrengthList strengthList =
+//                IndexedStrengthList.strengths(branch);
 
         CanonDetail[] details = branch.details();
         Arrays.sort(details, new Comparator<CanonDetail>() {
@@ -64,18 +62,34 @@ public class PercentileAbs implements ScalarBucketizer
             }
         });
 
+//        BucketError     error = new BucketError( nBuckets );
         BucketAllocator alloc = new BucketAllocator(
                           details.length, (char) nBuckets);
         for (CanonDetail detail : details)
         {
-            branch.set(detail.canonIndex(),
-                       (byte) alloc.nextBucket(1));
+            long   index    = detail.canonIndex();
+            int    bucket   = (int) alloc.nextBucket(1);
+//            double strength = detail.strength();
+
+//            error.add(bucket, strength);
+            branch.set(index, bucket);
         }
+
+//        for (CanonDetail detail : details)
+//        {
+//            int    bucket   = (int) alloc.nextBucket(1);
+//            double strength = detail.strength();
+//
+//            error.check(bucket, strength);
+//        }
+
+//        return error.error();
+        return new HandStrengthMeasure().error(branch, nBuckets);
     }
 
 
     //--------------------------------------------------------------------
-    private void bucketizeRiver(
+    private double bucketizeRiver(
             final BucketTree.Branch branch, final int nBuckets)
     {
         assert nBuckets > 0;
@@ -114,13 +128,20 @@ public class PercentileAbs implements ScalarBucketizer
                 });
         Arrays.sort(rivers);
 
+//        BucketError     error = new BucketError( nBuckets );
         BucketAllocator alloc =
                 new BucketAllocator(nRivers, (char) nBuckets);
         for (IndexedStrength river : rivers)
         {
+//            long   index    = river.index();
+//            int    bucket   = (int) alloc.nextBucket(1);
+//            double strength = river.strength();
+
             branch.set(river.index(),
                        (byte) alloc.nextBucket(1));
         }
+        
+        return new HandStrengthMeasure().error(branch, nBuckets);
     }
 
 

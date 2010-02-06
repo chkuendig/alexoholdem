@@ -3,6 +3,7 @@ package ao.bucket.abstraction.bucketize.linear;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;
@@ -107,7 +108,7 @@ public class IndexedStrengthList
                     double handStrength,
                     byte   sequenceRepresents) {
         index     [i] = (int) canonIndex;
-        strength  [i] = (char)(Character.MAX_VALUE * handStrength);
+        strength  [i] = ProbabilityEncoding.encodeWinProb( handStrength );
         represents[i] = sequenceRepresents;
     }
 
@@ -117,9 +118,9 @@ public class IndexedStrengthList
         return Calc.unsigned(index[i]);
     }
 
-    public double strengthNorm(int i)
+    public double realStrength(int i)
     {
-        return (double) strength[ i ] / Character.MAX_VALUE;
+        return ProbabilityEncoding.decodeWinProb(strength[ i ]);
     }
     public char strength(int i)
     {
