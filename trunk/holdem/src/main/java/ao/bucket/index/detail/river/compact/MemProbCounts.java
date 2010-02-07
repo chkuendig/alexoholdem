@@ -165,6 +165,11 @@ public class MemProbCounts
 
 
     //--------------------------------------------------------------------
+    public static double realProb(long riverIndex)
+    {
+        return CompactRiverProbabilities.nonLossProbability(
+                 compactProb( riverIndex ));
+    }
     public static char compactProb(long riverIndex)
     {
         if (riverIndex < Integer.MAX_VALUE) {

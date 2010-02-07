@@ -4,15 +4,14 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.alloc.BucketAllocator;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
-import ao.bucket.index.detail.CanonDetail;
-import ao.bucket.index.detail.range.CanonRange;
-import ao.bucket.index.detail.river.RiverEvalLookup;
-import ao.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;
+import com.google.inject.internal.Function;
+import com.google.inject.internal.MapMaker;
+import com.google.inject.internal.Nullable;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * User: alex
@@ -23,7 +22,42 @@ public class PercentileAbs implements ScalarBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(HandStrengthAbs.class);
+            Logger.getLogger(PercentileAbs.class);
+
+
+    //--------------------------------------------------------------------
+    private static final ConcurrentMap<
+            BucketTree.Branch, IndexedStrengthList> sortedDetails =
+                new MapMaker()
+                            .softValues()
+                            .makeComputingMap(
+                        new Function<BucketTree.Branch,
+                                     IndexedStrengthList>() {
+                    @Override public IndexedStrengthList apply(
+                            @Nullable BucketTree.Branch branch) {
+                        LOG.info("computing: " + branch);
+                        return computeSortedDetails(branch);
+                    }
+                });
+
+    private static IndexedStrengthList computeSortedDetails(
+            BucketTree.Branch branch)
+    {
+        IndexedStrengthList strengths =
+                IndexedStrengthList.strengths(branch);
+        Collections.sort( strengths );
+        return strengths;
+
+//        CanonDetail[] details = branch.details();
+//        Arrays.sort(details, new Comparator<CanonDetail>() {
+//            public int compare(CanonDetail a, CanonDetail b) {
+//                return Double.compare(
+//                         a.strength(), b.strength());
+//            }
+//        });
+//        return details;
+    }
+
 
 
     //--------------------------------------------------------------------
@@ -54,25 +88,33 @@ public class PercentileAbs implements ScalarBucketizer
 //        IndexedStrengthList strengthList =
 //                IndexedStrengthList.strengths(branch);
 
-        CanonDetail[] details = branch.details();
-        Arrays.sort(details, new Comparator<CanonDetail>() {
-            public int compare(CanonDetail a, CanonDetail b) {
-                return Double.compare(
-                         a.strength(), b.strength());
-            }
-        });
+//        CanonDetail[] details = branch.details();
+//        Arrays.sort(details, new Comparator<CanonDetail>() {
+//            public int compare(CanonDetail a, CanonDetail b) {
+//                return Double.compare(
+//                         a.strength(), b.strength());
+//            }
+//        });
 
-//        BucketError     error = new BucketError( nBuckets );
+        IndexedStrengthList details   = sortedDetails.get( branch );
+
+        long cardCount = 0;
+        for (int i = 0; i < details.size(); i++) {
+            cardCount += details.represents( i );
+        }
+
         BucketAllocator alloc = new BucketAllocator(
-                          details.length, (char) nBuckets);
-        for (CanonDetail detail : details)
+                          cardCount, (char) nBuckets);
+        for (int i = 0; i < details.size(); i++)
         {
-            long   index    = detail.canonIndex();
-            int    bucket   = (int) alloc.nextBucket(1);
+//            long   index    = detail.canonIndex();
+//            int    bucket   = (int) alloc.nextBucket(1);
 //            double strength = detail.strength();
 
 //            error.add(bucket, strength);
-            branch.set(index, bucket);
+            branch.set(details.index(i),
+                       (int) alloc.nextBucket(
+                               details.represents(i)));
         }
 
 //        for (CanonDetail detail : details)
@@ -84,7 +126,8 @@ public class PercentileAbs implements ScalarBucketizer
 //        }
 
 //        return error.error();
-        return new HandStrengthMeasure().error(branch, nBuckets);
+        return new HandStrengthMeasure().error(
+                     branch, details, nBuckets);
     }
 
 
@@ -94,52 +137,70 @@ public class PercentileAbs implements ScalarBucketizer
     {
         assert nBuckets > 0;
 
-        int        nRivers       = 0;
-        CanonRange toBucketize[] =
-                new CanonRange[ branch.parentCanons().length ];
-        for (int i = 0; i < branch.parentCanons().length; i++) {
+//        int        nRivers       = 0;
+//        CanonRange toBucketize[] =
+//                new CanonRange[ branch.parentCanons().length ];
+//        for (int i = 0; i < branch.parentCanons().length; i++) {
+//
+//            int canonTurn = branch.parentCanons()[i];
+//            toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
+//            nRivers += toBucketize[ i ].count();
+//        }
+//        Arrays.sort(toBucketize);
 
-            int canonTurn = branch.parentCanons()[i];
-            toBucketize[ i ] = TurnDetails.lookup(canonTurn).range();
-            nRivers += toBucketize[ i ].count();
-        }
-        Arrays.sort(toBucketize);
+        IndexedStrengthList details   = sortedDetails.get( branch );
 
         LOG.debug("bucketizing " + branch.round() +
                   " into " + nBuckets +
                   " (p " + branch.parentCanons().length +
-                  ", c " + nRivers   +
+                  ", c " + details.size()   +
                   ")");
 
-        final int             nextIndex[] = {0};
-        final IndexedStrength rivers   [] =
-                new IndexedStrength[ nRivers ];
-        RiverEvalLookup.traverse(
-                toBucketize,
-                new RiverEvalLookup.VsRandomVisitor() {
-                    public void traverse(
-                            long   canonIndex,
-                            double strengthVsRandom,
-                            byte   represents) {
-
-                        rivers[ nextIndex[0]++ ] = new IndexedStrength(
-                                canonIndex, strengthVsRandom);
-                    }
-                });
-        Arrays.sort(rivers);
+//        final int             nextIndex[] = {0};
+//        final IndexedStrength rivers   [] =
+//                new IndexedStrength[ nRivers ];
+//        RiverEvalLookup.traverse(
+//                toBucketize,
+//                new RiverEvalLookup.VsRandomVisitor() {
+//                    public void traverse(
+//                            long   canonIndex,
+//                            double strengthVsRandom,
+//                            byte   represents) {
+//
+//                        rivers[ nextIndex[0]++ ] = new IndexedStrength(
+//                                canonIndex, strengthVsRandom);
+//                    }
+//                });
+//        for (CanonRange riverRange : toBucketize) {
+//            for (long river  = riverRange.from();
+//                      river <= riverRange.toInclusive();
+//                      river++) {
+//                rivers[ nextIndex[0]++ ] = new IndexedStrength(
+//                        river, MemProbCounts.compactProb( river ));
+//            }
+//        }
+//        Arrays.sort(rivers);
 
 //        BucketError     error = new BucketError( nBuckets );
         BucketAllocator alloc =
-                new BucketAllocator(nRivers, (char) nBuckets);
-        for (IndexedStrength river : rivers)
+                new BucketAllocator(
+                        details.size(), (char) nBuckets);
+        for (int i = 0; i < details.size(); i++)
         {
+            branch.set(details.index(i),
+                       alloc.nextBucket(
+                               details.represents(i)));
+        }
+
+//        for (IndexedStrength river : rivers)
+//        {
 //            long   index    = river.index();
 //            int    bucket   = (int) alloc.nextBucket(1);
 //            double strength = river.strength();
-
-            branch.set(river.index(),
-                       (byte) alloc.nextBucket(1));
-        }
+//
+//            branch.set(river.index(),
+//                       (byte) alloc.nextBucket(1));
+//        }
         
         return new HandStrengthMeasure().error(branch, nBuckets);
     }

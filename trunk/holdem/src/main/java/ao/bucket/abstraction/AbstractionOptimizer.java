@@ -4,7 +4,7 @@ import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.abstraction.bucketize.linear.PercentileAbs;
+import ao.bucket.abstraction.bucketize.linear.HandStrengthAbs;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.card.Card;
@@ -231,8 +231,8 @@ public class AbstractionOptimizer
         return abstractHoldem(
 //                new KMeansBucketizer(),
 //                new PotentialBucketizer(),
-//                new HandStrengthAbs(),
-                new PercentileAbs(),
+                new HandStrengthAbs(),
+//                new PercentileAbs(),
 //                new HistBucketizer((byte) 4),
 //                new HistBucketizer((byte) 2),
 //                new HistBucketizer((byte) 3),

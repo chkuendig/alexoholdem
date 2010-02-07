@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -297,6 +298,36 @@ public class BucketTreeImpl implements BucketTree
                                 subBranchCanon.toArray()));
             }
             return subBranches;
+        }
+
+
+        //----------------------------------------------------------------
+        @Override
+        public String toString()
+        {
+            return round + " (" +
+                   parentCanons.length + " parents)";
+        }
+
+
+        //----------------------------------------------------------------
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof BranchImpl)) return false;
+
+            BranchImpl branch = (BranchImpl) o;
+
+            return Arrays.equals(parentCanons, branch.parentCanons) &&
+                   round == branch.round;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Arrays.hashCode(parentCanons);
+            result = 31 * result + round.hashCode();
+            return result;
         }
     }
 }

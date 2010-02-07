@@ -4,11 +4,12 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.ProbabilityEncoding;
-import ao.bucket.index.detail.river.RiverEvalLookup;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
 import ao.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;
 import ao.util.math.Calc;
 
+import java.util.AbstractList;
 import java.util.Arrays;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Arrays;
  * Time: 5:47:00 PM
  */
 public class IndexedStrengthList
+        extends AbstractList<IndexedStrength>
 {
     //--------------------------------------------------------------------
     public static IndexedStrengthList
@@ -33,8 +35,8 @@ public class IndexedStrengthList
             strengthsRiver(BucketTree.Branch branch)
     {
         int        nRivers       = 0;
-        CanonRange toBucketize[] =
-                new CanonRange[ branch.parentCanons().length ];
+        CanonRange toBucketize[] = new CanonRange[
+                        branch.parentCanons().length ];
         for (int i = 0; i < branch.parentCanons().length; i++) {
 
             int canonIndex = branch.parentCanons()[i];
@@ -46,20 +48,34 @@ public class IndexedStrengthList
         final int                 nextIndex[] = {0};
         final IndexedStrengthList rivers =
                 new IndexedStrengthList( nRivers );
-        RiverEvalLookup.traverse(
-                toBucketize,
-                new RiverEvalLookup.VsRandomVisitor() {
-                    public void traverse(
-                            long   canonIndex,
-                            double strengthVsRandom,
-                            byte   represents) {
 
-                        rivers.set(nextIndex[0]++,
-                                   canonIndex,
-                                   strengthVsRandom,
-                                   represents);
-                    }
-                });
+        for (CanonRange riverRange : toBucketize)
+        {
+            for (long river  = riverRange.from();
+                      river <= riverRange.toInclusive();
+                      river++)
+            {
+                rivers.set(nextIndex[0]++,
+                           river,
+                           MemProbCounts.realProb  ( river ),
+                           MemProbCounts.riverCount( river ));
+            }
+        }
+
+//        RiverEvalLookup.traverse(
+//                toBucketize,
+//                new RiverEvalLookup.VsRandomVisitor() {
+//                    public void traverse(
+//                            long   canonIndex,
+//                            double strengthVsRandom,
+//                            byte   represents) {
+//
+//                        rivers.set(nextIndex[0]++,
+//                                   canonIndex,
+//                                   strengthVsRandom,
+//                                   represents);
+//                    }
+//                });
 
         return rivers;
     }
@@ -106,7 +122,8 @@ public class IndexedStrengthList
     public void set(int    i,
                     long   canonIndex,
                     double handStrength,
-                    byte   sequenceRepresents) {
+                    byte   sequenceRepresents)
+    {
         index     [i] = (int) canonIndex;
         strength  [i] = ProbabilityEncoding.encodeWinProb( handStrength );
         represents[i] = sequenceRepresents;
@@ -130,5 +147,34 @@ public class IndexedStrengthList
     public byte represents(int i)
     {
         return represents[ i ];
+    }
+
+    
+    //--------------------------------------------------------------------
+    @Override
+    public IndexedStrength set(
+            int index, IndexedStrength item)
+    {
+        IndexedStrength prev = get( index );
+
+        set(index,
+            item.index(),
+            item.realStrength(),
+            item.represents());
+
+        return prev;
+    }
+
+    @Override
+    public IndexedStrength get(int i)
+    {
+        return new IndexedStrength(
+                index(i), strength(i), represents(i));
+    }
+
+    @Override
+    public int size()
+    {
+        return index.length;
     }
 }

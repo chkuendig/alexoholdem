@@ -14,17 +14,35 @@ public class IndexedStrength
     //--------------------------------------------------------------------
     private final int  index;
     private final char strength;
+    private final byte represents;
 
 
     //--------------------------------------------------------------------
-    public IndexedStrength(long canonIndex, double handStrength) {
-        index    = (int) canonIndex;
-        strength = ProbabilityEncoding.encodeWinProb( handStrength );
+    public IndexedStrength(
+            long   canonIndex,
+            double handStrength,
+            byte   represents)
+    {
+        this(canonIndex,
+             ProbabilityEncoding.encodeWinProb(
+                     handStrength),
+             represents);
+    }
+
+    public IndexedStrength(
+            long canonIndex,
+            char compactHandStrength,
+            byte representsCards)
+    {
+        index      = (int) canonIndex;
+        strength   = compactHandStrength;
+        represents = representsCards;
     }
 
 
     //--------------------------------------------------------------------
-    public long index() {
+    public long index()
+    {
         return Calc.unsigned(index);
     }
 
@@ -35,6 +53,11 @@ public class IndexedStrength
     public char strength()
     {
         return strength;
+    }
+
+    public byte represents()
+    {
+        return represents;
     }
 
 
