@@ -3,7 +3,7 @@ package ao.bucket.abstraction.access;
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.util.data.primitive.CharList;
 import ao.util.data.primitive.IntList;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
@@ -134,7 +134,7 @@ public class BucketDecoder
 
     private static char[][][][] retrieve(File fromDir)
     {
-        File fromSubDir = Dir.get(fromDir, SUB_DIR);
+        File fromSubDir = Dirs.get(fromDir, SUB_DIR);
 
         int[] flopCounts = PersistentInts.retrieve(
                 new File(fromSubDir, F_NUM_FLOPS));
@@ -194,12 +194,12 @@ public class BucketDecoder
             }
         }
 
-        File toSubDir = Dir.get(toDir, SUB_DIR);
-        PersistentInts.persist(flops.toArray(),
+        File toSubDir = Dirs.get(toDir, SUB_DIR);
+        PersistentInts.persist(flops.toIntArray(),
                                new File(toSubDir, F_NUM_FLOPS));
-        PersistentInts.persist(turns.toArray(),
+        PersistentInts.persist(turns.toIntArray(),
                                new File(toSubDir, F_NUM_TURNS));
-        PersistentInts.persist(rivers.toArray(),
+        PersistentInts.persist(rivers.toIntArray(),
                                new File(toSubDir, F_NUM_RIVERS));
     }
 
@@ -255,7 +255,7 @@ public class BucketDecoder
         for (byte i = river.bucketCount(); i > 0; i--) {
             riverBuckets.add( nextRiverBucket[0]++ );
         }
-        return riverBuckets.toArray();
+        return riverBuckets.toCharArray();
     }
 
 

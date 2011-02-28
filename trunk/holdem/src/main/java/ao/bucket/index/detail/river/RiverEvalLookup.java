@@ -18,8 +18,8 @@ import ao.bucket.index.enumeration.HandEnum;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.LongBitSet;
-import ao.util.io.Dir;
-import ao.util.misc.Traverser;
+import ao.util.io.Dirs;
+import ao.util.pass.Traverser;
 import ao.util.persist.PersistentInts;
 import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
@@ -93,7 +93,7 @@ public class RiverEvalLookup
     private static final Logger LOG =
             Logger.getLogger(RiverEvalLookup.class);
 
-    private static final File dir      = Dir.get(Infrastructure.path(
+    private static final File dir      = Dirs.get(Infrastructure.path(
             "lookup/canon/detail/river"));
     private static final File strRepF  = new File(dir, "str_rep.char");
     private static final File winProbF = new File(dir, "winProb.char");

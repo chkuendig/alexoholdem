@@ -6,7 +6,7 @@ import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.data.primitive.CharList;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentChars;
 import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
@@ -38,8 +38,8 @@ public class CompactRiverProbabilities
 
 
     //--------------------------------------------------------------------
-    private static final File dir = Dir.get(Infrastructure.path(
-                        "lookup/eval/river"));
+    private static final File dir = Dirs.get(Infrastructure.path(
+            "lookup/eval/river"));
 
     private static final File compactFile =
             new File(dir, "compact_prob.char");
@@ -107,7 +107,7 @@ public class CompactRiverProbabilities
             }
         }
 
-        return new char[][]{compact, unCompact.toArray()};
+        return new char[][]{compact, unCompact.toCharArray()};
     }
 
 
@@ -125,7 +125,7 @@ public class CompactRiverProbabilities
                 usedStrengths.add((char) strength);
             }
         }
-        return usedStrengths.toArray();
+        return usedStrengths.toCharArray();
     }
 
     private static int[] rawProbCounts()

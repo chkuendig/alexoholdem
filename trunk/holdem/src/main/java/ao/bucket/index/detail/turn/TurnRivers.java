@@ -6,9 +6,9 @@ import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.math.Calc;
-import ao.util.misc.Traverser;
+import ao.util.pass.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
@@ -28,7 +28,7 @@ public class TurnRivers
             Logger.getLogger(TurnRivers.class);
 
     private static final File store =
-            new File(Dir.get(Infrastructure.path(
+            new File(Dirs.get(Infrastructure.path(
                     "lookup/canon/detail/turn")),
                      "first_river.int");
 

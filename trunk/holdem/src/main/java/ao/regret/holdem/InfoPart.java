@@ -2,7 +2,7 @@ package ao.regret.holdem;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Round;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class InfoPart
 
     private static boolean exists(
             File dir, String subDir) {
-        return InfoMatrix.exists(Dir.get(dir, subDir));
+        return InfoMatrix.exists(Dirs.get(dir, subDir));
     }
 
 
@@ -72,7 +72,7 @@ public class InfoPart
             int nBuckets, Round intentRound,
             boolean readOnly, boolean doublePrecision) {
         return InfoMatrix.retrieveOrCreate(
-                 Dir.get(dir, subDir),
+                 Dirs.get(dir, subDir),
                  nBuckets, StateTree.intentCount(intentRound),
                  readOnly, doublePrecision);
     }
@@ -82,10 +82,10 @@ public class InfoPart
         LOG.debug("persisting...");
         long before = System.currentTimeMillis();
 
-        InfoMatrix.persist(Dir.get(dir,  HOLE_DIR), part.hole);
-        InfoMatrix.persist(Dir.get(dir,  FLOP_DIR), part.flop);
-        InfoMatrix.persist(Dir.get(dir,  TURN_DIR), part.turn);
-        InfoMatrix.persist(Dir.get(dir, RIVER_DIR), part.river);
+        InfoMatrix.persist(Dirs.get(dir,  HOLE_DIR), part.hole);
+        InfoMatrix.persist(Dirs.get(dir,  FLOP_DIR), part.flop);
+        InfoMatrix.persist(Dirs.get(dir,  TURN_DIR), part.turn);
+        InfoMatrix.persist(Dirs.get(dir, RIVER_DIR), part.river);
 
         LOG.debug("done persisting, took " +
                     (System.currentTimeMillis() - before) / 1000);

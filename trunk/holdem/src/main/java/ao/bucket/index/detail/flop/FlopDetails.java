@@ -10,8 +10,8 @@ import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.util.data.LongBitSet;
-import ao.util.io.Dir;
-import ao.util.misc.Traverser;
+import ao.util.io.Dirs;
+import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -27,7 +27,7 @@ public class FlopDetails
             Logger.getLogger(FlopDetails.class);
 
     private static final File DIR =
-            Dir.get("lookup/canon/detail/flop/");
+            Dirs.get("lookup/canon/detail/flop/");
 
     private FlopDetails() {}
 

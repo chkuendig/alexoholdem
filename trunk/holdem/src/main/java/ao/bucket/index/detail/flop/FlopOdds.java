@@ -6,8 +6,8 @@ import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
-import ao.util.io.Dir;
-import ao.util.misc.Traverser;
+import ao.util.io.Dirs;
+import ao.util.pass.Traverser;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
 
@@ -66,7 +66,7 @@ public class FlopOdds
 
 
     //--------------------------------------------------------------------
-    private static final File DIR = Dir.get(Infrastructure.path(
+    private static final File DIR = Dirs.get(Infrastructure.path(
             "lookup/canon/detail/flop_odds/"));
 
     private static final File FLAG_FILE  = new File(DIR,   "flag.int");

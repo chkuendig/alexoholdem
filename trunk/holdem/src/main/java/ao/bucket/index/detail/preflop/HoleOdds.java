@@ -6,7 +6,7 @@ import ao.bucket.index.enumeration.HandEnum;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
-import ao.util.misc.Traverser;
+import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 
 /**

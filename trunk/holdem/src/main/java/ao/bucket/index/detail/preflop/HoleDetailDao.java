@@ -2,7 +2,7 @@ package ao.bucket.index.detail.preflop;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.hole.HoleLookup;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentBytes;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -29,7 +29,7 @@ public class HoleDetailDao
 
 
     //--------------------------------------------------------------------
-    private static final File    DIR  = Dir.get(
+    private static final File    DIR  = Dirs.get(
             Infrastructure.path("lookup/canon/detail"));
     private static final File    FILE = new File(DIR, "preflop.detail");
 

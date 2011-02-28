@@ -3,7 +3,7 @@ package ao.holdem.model.card.chance;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 
 /**
  *
@@ -19,7 +19,7 @@ public class Deck
     public Deck()
     {
         cards = Card.VALUES.clone();
-        Arr.shuffle(cards);
+        Arrs.shuffle(cards);
     }
 
     private Deck(Card copyCards[], int copyNextIndex)

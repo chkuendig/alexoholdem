@@ -1,7 +1,7 @@
 package ao.ai.opp_model.mix;
 
+import ao.ai.classify.decision.impl.classification.RealHistogram;
 import ao.holdem.model.act.AbstractAction;
-import ao.supervised.decision.classification.RealHistogram;
 import ao.util.math.rand.Rand;
 
 /**

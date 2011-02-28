@@ -1,7 +1,7 @@
 package ao.holdem.model.card;
 
 import ao.holdem.persist.EnumBinding;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 
 import java.util.Comparator;
 
@@ -69,7 +69,7 @@ public enum Card
     ACE_OF_SPADES  (Rank.ACE,   Suit.SPADES);
 
     public static final Card VALUES[]  = Card.values();
-    public static final int  INDEXES[] = Arr.sequence( VALUES.length );
+    public static final int  INDEXES[] = Arrs.sequence(VALUES.length);
     
 
     //--------------------------------------------------------------------

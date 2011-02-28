@@ -15,14 +15,14 @@ import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.range.RangeLookup;
 import ao.holdem.model.Round;
-import ao.unsupervised.cluster.analysis.KMeans;
-import ao.unsupervised.cluster.error.TwoPassWcss;
-import ao.unsupervised.cluster.space.impl.CentroidDomain;
-import ao.unsupervised.cluster.space.measure.Centroid;
-import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
-import ao.unsupervised.cluster.trial.Clustering;
-import ao.unsupervised.cluster.trial.ClusteringTrial;
-import ao.unsupervised.cluster.trial.ParallelTrial;
+import ao.ai.cluster.analysis.KMeans;
+import ao.ai.cluster.error.TwoPassWcss;
+import ao.ai.cluster.space.impl.CentroidDomain;
+import ao.ai.cluster.space.measure.Centroid;
+import ao.ai.cluster.space.measure.vector.VectorEuclidean;
+import ao.ai.cluster.trial.Clustering;
+import ao.ai.cluster.trial.ClusteringTrial;
+import ao.ai.cluster.trial.ParallelTrial;
 import ao.util.data.AutovivifiedMap;
 import ao.util.data.primitive.DoubleList;
 import ao.util.misc.Equalizers;
@@ -265,7 +265,7 @@ public class PotentialBucketizer implements Bucketizer
         for (Map.Entry<DoubleList, int[]> histogram :
                 histCount.entrySet()) {
             byNextRound.add(
-                    histogram.getKey().toArray(),
+                    histogram.getKey().toDoubleArray(),
                     histogram.getValue()[ 0 ]);
         }
         //byNextRound.normalize();

@@ -7,9 +7,9 @@ import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
-import ao.util.misc.Filter;
-import ao.util.misc.Filters;
-import ao.util.misc.Traverser;
+import ao.util.pass.Filter;
+import ao.util.pass.Filters;
+import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
@@ -90,11 +90,11 @@ public class HoleDetails
     {
         final int filterIndex = buff.HOLE.asCanon().canonIndex();
         HandEnum.flops(Filters.and(
-            new Filter<CanonHole>() {
-                public boolean accept(CanonHole canonHole) {
-                    return canonHole.canonIndex() == filterIndex;
-                }
-            }, new UniqueFilter<CanonHole>()),
+                new Filter<CanonHole>() {
+                    public boolean accept(CanonHole canonHole) {
+                        return canonHole.canonIndex() == filterIndex;
+                    }},
+                new UniqueFilter<CanonHole>()),
             new UniqueFilter<Flop>(),
             new Traverser<Flop>() {
                 public void traverse(Flop flop) {

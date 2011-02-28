@@ -10,7 +10,7 @@ import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 import ao.odds.eval.eval7.Eval7Faster;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
 import org.apache.log4j.Logger;
@@ -109,7 +109,7 @@ public class AbstractionOptimizer
         for (int i = 0; i < MONTE_CARLO_RUNS; i++)
         {
             Card[] cards = Card.VALUES.clone();
-            Arr.shuffle(cards);
+            Arrs.shuffle(cards);
 
             short propValue = Eval7Faster.valueOf(cards[0], cards[1],
                     cards[4], cards[5], cards[6], cards[7], cards[8]);

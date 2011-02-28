@@ -5,7 +5,7 @@ import ao.holdem.model.Round;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 
 import java.util.Random;
 
@@ -41,7 +41,7 @@ public class SwapCards implements ChanceCards
             {
                 nextCard = rand.nextInt(52);
             }
-            while ( Arr.indexOf(cards, nextCard) != -1 );
+            while ( Arrs.indexOf(cards, nextCard) != -1 );
 
             cards[ i ] = nextCard;
         }

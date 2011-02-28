@@ -4,7 +4,7 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class CompactRiverCounts
 
     //--------------------------------------------------------------------
     private static final File dir =
-            Dir.get(Infrastructure.path("lookup/eval/river"));
+            Dirs.get(Infrastructure.path("lookup/eval/river"));
 
     private static final File storeFile =
             new File(dir, "compact_count.byte");

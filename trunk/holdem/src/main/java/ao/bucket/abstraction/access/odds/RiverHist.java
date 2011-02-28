@@ -4,7 +4,7 @@ import ao.holdem.persist.GenericBinding;
 import ao.odds.agglom.hist.CompactRiverStrengths;
 import ao.odds.agglom.hist.StrengthHist;
 import ao.odds.eval.eval5.Eval5;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
@@ -152,7 +152,7 @@ public class RiverHist
     //--------------------------------------------------------------------
     @Override public String toString()
     {
-        return Arr.join(HIST, "\t");
+        return Arrs.join(HIST, "\t");
     }
 
     @Override public boolean equals(Object o)

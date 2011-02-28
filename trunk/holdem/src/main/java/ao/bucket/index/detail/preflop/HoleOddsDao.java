@@ -2,7 +2,7 @@ package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.odds.agglom.Odds;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
 
@@ -24,7 +24,7 @@ public class HoleOddsDao
 
     //--------------------------------------------------------------------
     private static final File DIR =
-            Dir.get("lookup/canon/detail/hole_odds/");
+            Dirs.get("lookup/canon/detail/hole_odds/");
 
     private static final File FLAG_FILE  = new File(DIR,   "flag.int");
     private static final File WIN_FILE   = new File(DIR,   "wins.long");

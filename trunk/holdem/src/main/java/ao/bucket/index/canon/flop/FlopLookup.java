@@ -4,8 +4,8 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.hole.HoleLookup;
 import ao.holdem.model.card.Card;
-import ao.util.data.Arr;
-import ao.util.io.Dir;
+import ao.util.data.Arrs;
+import ao.util.io.Dirs;
 import ao.util.math.stats.Combiner;
 import ao.util.persist.PersistentInts;
 import org.apache.log4j.Logger;
@@ -29,8 +29,8 @@ public class FlopLookup
 
     //--------------------------------------------------------------------
     private static final File OFFSET_FILE = new File(
-            Dir.get(Infrastructure.path("lookup/canon")),
-                                             "flop.offsets.cache");
+            Dirs.get(Infrastructure.path("lookup/canon")),
+                     "flop.offsets.cache");
     private static final int  OFFSETS[][] =
             retrieveOrCalculateOffsets();
 
@@ -115,8 +115,8 @@ public class FlopLookup
 
             offsets[ hole.canonIndex() ] = subOffsets;
 
-            Arr.swap(cards, holeCards[1].ordinal(), 51  );
-            Arr.swap(cards, holeCards[0].ordinal(), 51-1);
+            Arrs.swap(cards, holeCards[1].ordinal(), 51  );
+            Arrs.swap(cards, holeCards[0].ordinal(), 51-1);
 
             for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
             {
@@ -132,8 +132,8 @@ public class FlopLookup
                 offset += flopCase.size();
             }
 
-            Arr.swap(cards, holeCards[0].ordinal(), 51-1);
-            Arr.swap(cards, holeCards[1].ordinal(), 51  );
+            Arrs.swap(cards, holeCards[0].ordinal(), 51-1);
+            Arrs.swap(cards, holeCards[1].ordinal(), 51);
         }
 
         return offsets;

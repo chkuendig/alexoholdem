@@ -1,7 +1,7 @@
 package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 
@@ -40,7 +40,7 @@ public class FullLongByteList implements PersistentLongByteList
     {
         if (dir != null)
         {
-            FILE_A = new File(Dir.get(dir),
+            FILE_A = new File(Dirs.get(dir),
                     StoredLongByteList.FILENAME_A);
             FILE_B = new File(        dir ,
                     StoredLongByteList.FILENAME_B);

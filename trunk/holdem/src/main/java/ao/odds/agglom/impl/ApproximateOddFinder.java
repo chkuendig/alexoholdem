@@ -7,7 +7,7 @@ import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import static ao.odds.agglom.impl.PreciseHeadsUpOdds.initKnownCardsToEnd;
 import ao.odds.eval.eval7.Eval7Faster;
-import static ao.util.data.Arr.swap;
+import static ao.util.data.Arrs.swap;
 import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.math.stats.FastIntCombiner;
 

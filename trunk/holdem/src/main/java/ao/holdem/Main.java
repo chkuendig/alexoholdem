@@ -11,7 +11,7 @@ import ao.odds.eval.HandRank;
 import ao.odds.eval.eval7.Eval7FastLookup;
 import ao.odds.eval.eval7.Eval7Faster;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
 import org.apache.log4j.Logger;
@@ -332,7 +332,7 @@ public class Main
 
         LOG.info("total: " + total);
         LOG.info(Arrays.toString(frequency));
-        LOG.info(Arr.join(exactFrequency, "\t"));
+        LOG.info(Arrs.join(exactFrequency, "\t"));
     }
 
 

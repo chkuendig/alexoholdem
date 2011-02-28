@@ -5,7 +5,7 @@ import ao.holdem.model.card.Card;
 import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval7.Eval7Faster;
 import ao.util.data.primitive.ShortList;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.math.stats.Combiner;
 import ao.util.persist.PersistentShorts;
 import org.apache.log4j.Logger;
@@ -31,7 +31,7 @@ public class CompactRiverStrengths
 
 
     //--------------------------------------------------------------------
-    private final static File DIR         = Dir.get(Infrastructure.path(
+    private final static File DIR         = Dirs.get(Infrastructure.path(
             "lookup/eval/river/compact"));
     private final static File MAP_STORE   =
             new File(DIR, "compact_strength_map.short");
@@ -99,7 +99,7 @@ public class CompactRiverStrengths
             compactUnused.add((short) i);
         }
 
-        return compactUnused.toArray();
+        return compactUnused.toShortArray();
     }
 
 

@@ -300,8 +300,8 @@ public class BucketizerTest
         long offset     = 0; //(125 + 560) * 1000 * 1000;
 //        long offset     = 200 * 1000 * 1000;
         long iterations = BucketSequencer.COUNT;
-        long milestone  = iterations * 2; // i.e. never
-//        long milestone  = iterations / 4;
+//        long milestone  = iterations * 2; // i.e. never
+        long milestone  = iterations / 4;
 
         long before     = System.currentTimeMillis();
         Iterator<char[][]> it = abs.sequence().iterator(iterations);

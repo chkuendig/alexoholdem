@@ -6,12 +6,14 @@ import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.card.Card;
-import static ao.util.data.Arr.swap;
+import ao.util.data.Arrs;
 import ao.util.math.stats.FastIntCombiner;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
-import ao.util.misc.Filter;
-import ao.util.misc.Traverser;
+import ao.util.pass.Filter;
+import ao.util.pass.Traverser;
+
+import static ao.util.data.Arrs.swap;
 
 /**
  * Date: Jan 21, 2009
@@ -37,7 +39,7 @@ public class HandEnum
                       holeTraverser);
     }
     public static void holes(
-            final Filter<CanonHole>    holeFilter,
+            final Filter<CanonHole> holeFilter,
             final Traverser<CanonHole> holeTraverser)
     {
         new FastIntCombiner(Card.INDEXES, Card.INDEXES.length)
@@ -48,7 +50,7 @@ public class HandEnum
                         CARDS[holeA], CARDS[holeB]);
                 if (holeFilter.accept(canonHole))
                 {
-                    swap(CARDS, holeB, 51  );
+                    swap(CARDS, holeB, 51);
                     swap(CARDS, holeA, 51-1);
 
                     holeTraverser.traverse( canonHole );

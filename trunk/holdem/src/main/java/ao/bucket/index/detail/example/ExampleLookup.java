@@ -18,8 +18,8 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
-import ao.util.io.Dir;
-import ao.util.misc.Traverser;
+import ao.util.io.Dirs;
+import ao.util.pass.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
@@ -100,7 +100,7 @@ public class ExampleLookup
 
     //--------------------------------------------------------------------
     private static final File DIR =
-            Dir.get("lookup/canon/detail/example/");
+            Dirs.get("lookup/canon/detail/example/");
 
     private static final File F_HOLE_A = new File(DIR, "holeA.byte");
     private static final File F_HOLE_B = new File(DIR, "holeB.byte");

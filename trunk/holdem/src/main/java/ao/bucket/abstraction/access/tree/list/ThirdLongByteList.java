@@ -3,7 +3,7 @@ package ao.bucket.abstraction.access.tree.list;
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
 import ao.util.data.LongBitSet;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class ThirdLongByteList implements PersistentLongByteList
     {
         int        size = 1000*1000;
         LongByteList bl   = new ThirdLongByteList(
-                new File(Dir.get("test"), "tb.test3.byte"), size);
+                new File(Dirs.get("test"), "tb.test3.byte"), size);
 
         for (int i = 0; i < size; i++)
         {

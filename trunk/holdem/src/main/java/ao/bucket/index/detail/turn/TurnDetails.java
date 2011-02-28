@@ -9,9 +9,9 @@ import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnDetailFlyweight.CanonTurnDetail;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
-import ao.util.io.Dir;
-import ao.util.misc.Filter;
-import ao.util.misc.Traverser;
+import ao.util.io.Dirs;
+import ao.util.pass.Filter;
+import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class TurnDetails
             Logger.getLogger(TurnDetails.class);
 
     private static final File   DIR =
-            Dir.get("lookup/canon/detail/turn/");
+            Dirs.get("lookup/canon/detail/turn/");
 
     private TurnDetails() {}
 

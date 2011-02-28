@@ -2,12 +2,13 @@ package ao.bucket.abstraction.bucketize.build;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.linear.IndexedStrengthList;
-import ao.util.async.Condition;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 
 /**
  * User: alex
@@ -25,8 +26,8 @@ public class StrengthListBuffer
             strengthLists =
                 new ArrayBlockingQueue<IndexedStrengthList>(BUFFER_SIZE);
 
-    private final Condition branchConsumed = new Condition(false);
-    private final Condition branchReady    = new Condition(false);
+//    private final CountDownLatch branchConsumed = new CountDownLatch(1);
+//    private final CountDownLatch branchReady    = new CountDownLatch(1);
 
 
     //--------------------------------------------------------------------

@@ -5,7 +5,7 @@ import ao.holdem.model.card.Card;
 import ao.odds.eval.HandRank;
 import ao.odds.eval.eval5.Eval5;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
 import org.apache.log4j.Logger;
@@ -24,8 +24,8 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
-    private static final File DIR    = Dir.get(Infrastructure.path(
-                                         "lookup/eval/eval7_faster"));
+    private static final File DIR    = Dirs.get(Infrastructure.path(
+            "lookup/eval/eval7_faster"));
     private static final File F_RANK = new File(DIR, "ranks.cache");
     private static final File F_KEY  = new File(DIR, "keys.cache");
 

@@ -2,7 +2,7 @@ package ao.bucket.abstraction.access.tree.list;
 
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.abstraction.access.tree.PersistentLongByteList;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
@@ -18,7 +18,7 @@ public class HalfLongByteList implements PersistentLongByteList
     private static final Logger LOG =
             Logger.getLogger(HalfLongByteList.class);
 
-    private static final File DIR = Dir.get("test");
+    private static final File DIR = Dirs.get("test");
 
 
     //--------------------------------------------------------------------

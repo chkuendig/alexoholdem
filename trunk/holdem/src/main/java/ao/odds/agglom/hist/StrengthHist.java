@@ -2,7 +2,7 @@ package ao.odds.agglom.hist;
 
 import ao.holdem.persist.GenericBinding;
 import ao.odds.eval.eval5.Eval5;
-import ao.util.data.Arr;
+import ao.util.data.Arrs;
 import ao.util.math.crypt.MD5;
 import ao.util.math.crypt.SecureHash;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -122,7 +122,7 @@ public class StrengthHist implements Comparable<StrengthHist>
     //--------------------------------------------------------------------
     @Override public String toString()
     {
-        return Arr.join(HIST, "\t");
+        return Arrs.join(HIST, "\t");
     }
 
     @Override public boolean equals(Object o)

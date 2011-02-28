@@ -1,6 +1,7 @@
 package ao.ai.opp_model.predict.act;
 
-import ao.supervised.decision.input.raw.example.Context;
+
+import ao.ai.classify.decision.impl.input.raw.example.Context;
 
 /**
  *

@@ -8,8 +8,8 @@ import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.bucket.index.enumeration.HandEnum;
-import ao.util.misc.Filter;
-import ao.util.misc.Traverser;
+import ao.util.pass.Filter;
+import ao.util.pass.Traverser;
 
 import java.util.ArrayList;
 import java.util.List;

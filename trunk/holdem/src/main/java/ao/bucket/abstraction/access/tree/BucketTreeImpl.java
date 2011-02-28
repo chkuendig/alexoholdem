@@ -295,7 +295,7 @@ public class BucketTreeImpl implements BucketTree
                 subBranches.add(
                         new BranchImpl(
                                 round.next(),
-                                subBranchCanon.toArray()));
+                                subBranchCanon.toIntArray()));
             }
             return subBranches;
         }

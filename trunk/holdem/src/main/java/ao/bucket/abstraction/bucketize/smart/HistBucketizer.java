@@ -11,15 +11,15 @@ import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.range.RangeLookup;
 import ao.holdem.model.Round;
-import ao.unsupervised.cluster.analysis.KMeans;
-import ao.unsupervised.cluster.error.TwoPassWcss;
-import ao.unsupervised.cluster.space.impl.CentroidDomain;
-import ao.unsupervised.cluster.space.measure.Centroid;
-import ao.unsupervised.cluster.space.measure.vector.VectorEuclidean;
-import ao.unsupervised.cluster.trial.Clustering;
-import ao.unsupervised.cluster.trial.ClusteringTrial;
-import ao.unsupervised.cluster.trial.ParallelTrial;
-import ao.util.data.Arr;
+import ao.ai.cluster.analysis.KMeans;
+import ao.ai.cluster.error.TwoPassWcss;
+import ao.ai.cluster.space.impl.CentroidDomain;
+import ao.ai.cluster.space.measure.Centroid;
+import ao.ai.cluster.space.measure.vector.VectorEuclidean;
+import ao.ai.cluster.trial.Clustering;
+import ao.ai.cluster.trial.ClusteringTrial;
+import ao.ai.cluster.trial.ParallelTrial;
+import ao.util.data.Arrs;
 import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
 import ao.util.time.Stopwatch;
@@ -278,6 +278,6 @@ public class HistBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     public String id() {
-        return "Hist." + Arr.join(nDimensions, ".");
+        return "Hist." + Arrs.join(nDimensions, ".");
     }
 }

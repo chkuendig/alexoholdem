@@ -66,7 +66,7 @@ public class SlimRiverHist
         } else {
             IntList slim = new IntList();
             slim(slim, riverHistOrSlim);
-            HIST = slim.toArray();
+            HIST = slim.toIntArray();
         }
     }
 

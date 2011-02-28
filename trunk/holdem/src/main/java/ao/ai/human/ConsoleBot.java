@@ -10,7 +10,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
-import ao.util.io.Console;
+import ao.util.ui.AoConsole;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -129,7 +129,7 @@ public class ConsoleBot extends AbstractPlayer
                .append(state.stakes().smallBlinds());
 
         FallbackAction act = null;
-        String         in  = Console.text(message.toString());
+        String         in  = AoConsole.text(message.toString());
         if (in.equals("1") || in.equalsIgnoreCase("f")) {
             act = FallbackAction.CHECK_OR_FOLD;
         } else if (in.equals("2") || in.equalsIgnoreCase("c")) {

@@ -2,9 +2,10 @@ package ao.holdem.engine.state;
 
 import ao.holdem.model.Avatar;
 import ao.holdem.model.act.AbstractAction;
-import ao.util.io.Console;
+import ao.util.ui.AoConsole;
 import org.apache.log4j.Logger;
 
+import java.io.Console;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ public class StateTest
             if (acts.containsKey(AbstractAction.BET_RAISE))
                 query.append("(3) Bet/Raise  ");
 
-            int choice = Console.integer(query.toString());
+            int choice = AoConsole.integer(query.toString());
             if (1 <= choice && choice <= 3)
             {
                 AbstractAction act =

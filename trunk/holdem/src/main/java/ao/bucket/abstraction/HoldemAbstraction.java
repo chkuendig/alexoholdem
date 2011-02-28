@@ -11,7 +11,7 @@ import ao.bucket.abstraction.bucketize.build.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.regret.holdem.InfoPart;
-import ao.util.io.Dir;
+import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -57,9 +57,9 @@ public class HoldemAbstraction
             char       nTurnBuckets,
             char       nRiverBuckets)
     {
-        DIR = Dir.get(Infrastructure.path(
+        DIR = Dirs.get(Infrastructure.path(
                 "lookup/bucket/" + id(bucketizer, nHoleBuckets,
-                      nFlopBuckets, nTurnBuckets, nRiverBuckets)));
+                                      nFlopBuckets, nTurnBuckets, nRiverBuckets)));
 
         BUCKETIZER = bucketizer;
         N_HOLES    = nHoleBuckets;
@@ -205,7 +205,7 @@ public class HoldemAbstraction
 
     private File infoPartDir(String name, boolean doublePrecision)
     {
-        return Dir.get(DIR, "info/" + name +
+        return Dirs.get(DIR, "info/" + name +
                             (doublePrecision ? "_d" : "_f"));
     }
 

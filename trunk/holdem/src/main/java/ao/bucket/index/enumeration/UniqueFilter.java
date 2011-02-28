@@ -2,7 +2,7 @@ package ao.bucket.index.enumeration;
 
 import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.test.Gapper;
-import ao.util.misc.Filter;
+import ao.util.pass.Filter;
 import org.apache.log4j.Logger;
 
 /**

@@ -8,7 +8,7 @@ import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
-import ao.util.misc.Traverser;
+import ao.util.pass.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
 
