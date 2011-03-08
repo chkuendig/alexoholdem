@@ -12,6 +12,7 @@
         <groupId>ao.common</groupId>
         <artifactId>ao-parent</artifactId>
         <version>6</version>
+        <relativePath>../ao-parent</relativePath>
     </parent>
 
 
