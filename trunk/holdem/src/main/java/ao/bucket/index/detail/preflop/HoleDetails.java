@@ -2,7 +2,6 @@ package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
@@ -56,7 +55,7 @@ public class HoleDetails
     {
         LOG.debug("computing details");
         final CanonHoleDetail.Buffer[] buffers =
-                new CanonHoleDetail.Buffer[HoleLookup.CANONS];
+                new CanonHoleDetail.Buffer[CanonHole.CANONS];
 
         HandEnum.holes(
                 new PermisiveFilter<CanonHole>(),
@@ -73,7 +72,7 @@ public class HoleDetails
             }});
 
         CanonHoleDetail[] details =
-                new CanonHoleDetail[HoleLookup.CANONS];
+                new CanonHoleDetail[CanonHole.CANONS];
         for (int i = 0; i < buffers.length; i++)
         {
             System.out.print(".");

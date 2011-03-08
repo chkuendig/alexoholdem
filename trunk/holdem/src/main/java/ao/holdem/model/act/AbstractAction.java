@@ -1,6 +1,6 @@
 package ao.holdem.model.act;
 
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 
 
 /**
@@ -14,19 +14,19 @@ public enum AbstractAction
     //--------------------------------------------------------------------
     QUIT_FOLD(FallbackAction.CHECK_OR_FOLD){
         public Action toAction(
-                Chips toCall, boolean betMadeThisRound) {
+                ChipStack toCall, boolean betMadeThisRound) {
             return Action.FOLD;
         }},
     CHECK_CALL(FallbackAction.CHECK_OR_CALL){
         public Action toAction(
-                Chips toCall, boolean betMadeThisRound) {
-            return toCall.equals( Chips.ZERO )
+                ChipStack toCall, boolean betMadeThisRound) {
+            return toCall.equals( ChipStack.ZERO )
                    ? Action.CHECK
                    : Action.CALL;
         }},
     BET_RAISE(FallbackAction.RAISE_OR_CALL){
         public Action toAction(
-                Chips toCall, boolean betMadeThisRound) {
+                ChipStack toCall, boolean betMadeThisRound) {
             return betMadeThisRound
                    ? Action.RAISE
                    : Action.BET;
@@ -54,7 +54,7 @@ public enum AbstractAction
 //    }
 
     public abstract Action toAction(
-            Chips toCall,
+            ChipStack toCall,
             boolean betMadeThisRound);
 
 

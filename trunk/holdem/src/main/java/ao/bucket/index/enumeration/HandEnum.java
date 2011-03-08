@@ -2,11 +2,9 @@ package ao.bucket.index.enumeration;
 
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.card.Card;
-import ao.util.data.Arrs;
 import ao.util.math.stats.FastIntCombiner;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor2;
 import ao.util.math.stats.FastIntCombiner.CombinationVisitor3;
@@ -46,7 +44,7 @@ public class HandEnum
                 .combine(new CombinationVisitor2() {
             public void visit(int holeA, int holeB)
             {
-                CanonHole canonHole = HoleLookup.lookup(
+                CanonHole canonHole = CanonHole.create(
                         CARDS[holeA], CARDS[holeB]);
                 if (holeFilter.accept(canonHole))
                 {

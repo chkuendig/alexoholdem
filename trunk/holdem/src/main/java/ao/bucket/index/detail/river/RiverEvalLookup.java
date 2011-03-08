@@ -2,13 +2,9 @@ package ao.bucket.index.detail.river;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.River;
-import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.range.CanonRange;
@@ -57,7 +53,7 @@ public class RiverEvalLookup
         final int byStrength[] = new int[ Character.MAX_VALUE + 1];
         RiverEvalLookup.traverse(
             new CanonRange[]{CanonRange.newFromTo(
-                    0, RiverLookup.CANONS - 1)},
+                    0, River.CANONS - 1)},
             new VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,
@@ -129,7 +125,7 @@ public class RiverEvalLookup
         LOG.debug("computing");
 
         long offset    = strRepF.length() / (Character.SIZE / 8);
-        long remaining = (RiverLookup.CANONS + 1) - offset;
+        long remaining = (River.CANONS + 1) - offset;
         long chunks    = remaining / chunk + 1;
         for (long c = 0; c < chunks; c++)
         {
@@ -143,14 +139,14 @@ public class RiverEvalLookup
         Stopwatch timer = new Stopwatch();
 
         long toExcluding =
-                Math.min(RiverLookup.CANONS, from + chunk);
+                Math.min(River.CANONS, from + chunk);
         int  count       = (int)(toExcluding - from);
         if (count == 0) return;
 
-        LongBitSet allowHoles  = new LongBitSet( HoleLookup.CANONS);
-        LongBitSet allowFlops  = new LongBitSet( FlopLookup.CANONS);
-        LongBitSet allowTurns  = new LongBitSet( TurnLookup.CANONS);
-        LongBitSet allowRivers = new LongBitSet(RiverLookup.CANONS);
+        LongBitSet allowHoles  = new LongBitSet( CanonHole.CANONS);
+        LongBitSet allowFlops  = new LongBitSet( Flop.CANONS);
+        LongBitSet allowTurns  = new LongBitSet( Turn.CANONS);
+        LongBitSet allowRivers = new LongBitSet(River.CANONS);
         computeAllowedEvalDetails(
                 from, toExcluding,
                 allowHoles, allowFlops, allowTurns, allowRivers);
@@ -416,7 +412,7 @@ public class RiverEvalLookup
 
     public static void traverse(AbsVisitor traverser)
     {
-        traverse(0, RiverLookup.CANONS, traverser);
+        traverse(0, River.CANONS, traverser);
     }
     public static void traverse(
             long               offset,

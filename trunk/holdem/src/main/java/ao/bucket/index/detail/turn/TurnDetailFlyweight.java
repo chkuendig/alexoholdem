@@ -1,7 +1,6 @@
 package ao.bucket.index.detail.turn;
 
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.example.ExampleLookup;
 import ao.bucket.index.detail.range.CanonRange;
@@ -69,8 +68,8 @@ public class TurnDetailFlyweight
     public TurnDetailFlyweight()
     {
 //        EXAMPLE     = new byte [ TurnLookup.CANONS];
-        REPRESENT   = new byte [ TurnLookup.CANONS];
-        STRENGTH    = new char[ TurnLookup.CANONS ];
+        REPRESENT   = new byte [ Turn.CANONS];
+        STRENGTH    = new char[ Turn.CANONS ];
 //        FIRST_RIVER = new int [ TurnLookup.CANONS ];
     }
     private TurnDetailFlyweight(

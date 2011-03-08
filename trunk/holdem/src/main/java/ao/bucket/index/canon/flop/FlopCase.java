@@ -1,6 +1,7 @@
 package ao.bucket.index.canon.flop;
 
 import ao.bucket.index.canon.card.CanonSuit;
+
 import static ao.bucket.index.canon.flop.FlopUtil.offset;
 import static ao.bucket.index.canon.flop.FlopUtil.sortColex;
 import static ao.util.math.stats.Combo.colex;
@@ -9,7 +10,7 @@ import static ao.util.math.stats.Combo.colex;
  * Date: Aug 14, 2008
  * Time: 3:41:50 AM
  */
-public enum FlopCase
+/*package-private*/ enum FlopCase
 {
     //--------------------------------------------------------------------
     //[ONE, ONE][ONE, TWO, TWO]

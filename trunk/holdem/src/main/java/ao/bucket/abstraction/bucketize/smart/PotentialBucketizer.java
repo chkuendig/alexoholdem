@@ -1,20 +1,5 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.LongByteList;
-import ao.bucket.abstraction.access.tree.list.FullLongByteList;
-import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
-import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.index.canon.Canons;
-import ao.bucket.index.canon.flop.FlopLookup;
-import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.canon.turn.TurnLookup;
-import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.detail.range.CanonRange;
-import ao.bucket.index.detail.range.RangeLookup;
-import ao.holdem.model.Round;
 import ao.ai.cluster.analysis.KMeans;
 import ao.ai.cluster.error.TwoPassWcss;
 import ao.ai.cluster.space.impl.CentroidDomain;
@@ -23,6 +8,21 @@ import ao.ai.cluster.space.measure.vector.VectorEuclidean;
 import ao.ai.cluster.trial.Clustering;
 import ao.ai.cluster.trial.ClusteringTrial;
 import ao.ai.cluster.trial.ParallelTrial;
+import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.list.FullLongByteList;
+import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.index.canon.Canons;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
+import ao.bucket.index.detail.DetailLookup;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
+import ao.holdem.model.Round;
 import ao.util.data.AutovivifiedMap;
 import ao.util.data.primitive.DoubleList;
 import ao.util.misc.Equalizers;
@@ -47,7 +47,7 @@ public class PotentialBucketizer implements Bucketizer
 
     public static void main(String[] args) {
         LongByteList holeBuckets =
-                new FullLongByteList(null, HoleLookup.CANONS);
+                new FullLongByteList(null, CanonHole.CANONS);
 
         new PotentialBucketizer().bucketizeAll(
                 holeBuckets,
@@ -62,8 +62,8 @@ public class PotentialBucketizer implements Bucketizer
                             public List<CanonHole> newInstance() {
                                 return new ArrayList<CanonHole>();
                             }});
-        for (int i = 0, j = HoleLookup.CANONS - 1;
-                i < HoleLookup.CANONS; i++, j--)
+        for (int i = 0, j = CanonHole.CANONS - 1;
+                i < CanonHole.CANONS; i++, j--)
         {
             byBucket.get(
                     holeBuckets.get(i)
@@ -111,7 +111,7 @@ public class PotentialBucketizer implements Bucketizer
                 flopDomain = byNextRound(
                     Round.FLOP, turnBuckets, nTurnBuckets);
         LongByteList flopBuckets = new FullLongByteList(
-                null, FlopLookup.CANONS);
+                null, Flop.CANONS);
 
 //        for (byte nBuckets = 1; nBuckets < 16; nBuckets++)
 //        {
@@ -147,7 +147,7 @@ public class PotentialBucketizer implements Bucketizer
             byte nTurnBuckets, byte nRiverBuckets) {
 
         LongByteList riverBuckets =
-                new HalfLongByteList(null, RiverLookup.CANONS);
+                new HalfLongByteList(null, River.CANONS);
 
         CentroidDomain<Centroid<double[]>, double[]>
                 turnDomain = turnDomain(nRiverBuckets, riverBuckets);
@@ -159,7 +159,7 @@ public class PotentialBucketizer implements Bucketizer
 //                    "/home/alex/proj/datamine/input/turnDomain.obj");
 
         LongByteList turnBuckets = new HalfLongByteList(
-                null, TurnLookup.CANONS);
+                null, Turn.CANONS);
         bucketizeAllPreRiver(
                 Round.TURN, turnDomain,
                 turnBuckets, riverBuckets, nTurnBuckets, nRiverBuckets);

@@ -25,7 +25,7 @@ public class IrcHistorian
         Map<String, List<IrcAction>> players = groupPlayers(r);
         Map<Long, IrcRoster>         rosters = indexRosters(r);
 
-        return new HandItr(players, rosters, r.hands());
+        return new IrcHandItr(players, rosters, r.hands());
     }
 
 

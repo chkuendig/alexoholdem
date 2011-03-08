@@ -1,8 +1,8 @@
 package ao.holdem.engine.state;
 
-import ao.holdem.engine.analysis.Analysis;
+//import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.Card;
@@ -27,7 +27,7 @@ public class StateFlow
     private Round                     lastActRound;
     private List<Avatar>              players;
     private Map<Avatar, List<Action>> actions;
-    private Analysis                  analysis;
+//    private Analysis                  analysis;
 //    private List<Avatar>              allIns;
 
 
@@ -39,8 +39,8 @@ public class StateFlow
         players  = clockwiseDealerLast;
         head     = new State( players );
 
-        analysis = new Analysis();
-        analysis.analyze( head );
+//        analysis = new Analysis();
+//        analysis.analyze( head );
 
         actions = new HashMap<Avatar, List<Action>>();
         for (Avatar avatar : clockwiseDealerLast)
@@ -79,7 +79,7 @@ public class StateFlow
 
         lastActRound = head.round();
         head         = head.advance(act);
-        analysis.analyze( head );
+//        analysis.analyze( head );
 
         actions.get(nextToAct).add( act );
 
@@ -104,42 +104,42 @@ public class StateFlow
 
         lastActRound = head.round();
         head         = head.advanceQuitter( quitter );
-        analysis.analyze( head );
+//        analysis.analyze( head );
     }
 
 
     //--------------------------------------------------------------------
-    public Analysis analysis()
-    {
-        return analysis;
-    }
+//    public Analysis analysis()
+//    {
+//        return analysis;
+//    }
 
 
     //--------------------------------------------------------------------
-    public Replay asHand(ChanceCards cards)
+    public Replay asReplay(ChanceCards cards)
     {
         return new Replay(players, cards, lastActRound, actions);
     }
 
-    public Map<Avatar, Chips> deltas(ChanceCards cards)
+    public Map<Avatar, ChipStack> deltas(ChanceCards cards)
     {
-        List<Avatar>       winners = winners(cards);
-        Map<Avatar, Chips> deltas  = new HashMap<Avatar, Chips>();
+        List<Avatar>           winners = winners(cards);
+        Map<Avatar, ChipStack> deltas  = new HashMap<Avatar, ChipStack>();
 
-        Chips totalCommit = Chips.ZERO;
+        ChipStack totalCommit = ChipStack.ZERO;
         for (Seat seat : head().seats())
         {
-            Chips commit = seat.commitment();
+            ChipStack commit = seat.commitment();
             totalCommit = totalCommit.plus(commit);
             deltas.put(seat.player(), commit.negate());
         }
 
-        Chips winnings  = totalCommit.split(     winners.size() );
-        Chips remainder = totalCommit.remainder( winners.size() );
+        ChipStack winnings  = totalCommit.split(     winners.size() );
+        ChipStack remainder = totalCommit.remainder( winners.size() );
         for (int i = 0; i < winners.size(); i++)
         {
             Avatar winner = winners.get(i);
-            Chips total  = (i == 0)
+            ChipStack total  = (i == 0)
                              ? winnings.plus( remainder )
                              : winnings;
             deltas.put(winner, deltas.get(winner).plus(total));

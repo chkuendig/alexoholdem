@@ -44,20 +44,24 @@ public class Replay
             addHole(avatar, cards.hole(avatar));
         }
     }
-    public Replay(List<Avatar> clockwiseDealerLast,
-                ChanceCards  cards,
-                Round        asOf)
+
+    public Replay(
+            List<Avatar> clockwiseDealerLast,
+            ChanceCards  cards,
+            Round        asOf)
     {
         this(clockwiseDealerLast,
              cards,
              asOf,
              initPlayerAction(clockwiseDealerLast));
     }
-    private Replay(UniqueId handId,
-                 List<Avatar>              clockwiseDealerLast,
-                 Map<Avatar, List<Action>> playerAction,
-                 Community                 communityCards,
-                 Map<Avatar, Hole>         holeCards)
+
+    private Replay(
+            UniqueId handId,
+            List<Avatar>              clockwiseDealerLast,
+            Map<Avatar, List<Action>> playerAction,
+            Community                 communityCards,
+            Map<Avatar, Hole>         holeCards)
     {
         id        = handId;
         players   = clockwiseDealerLast;
@@ -157,16 +161,16 @@ public class Replay
     //  (number of actions)
     //  (actions) x n
     public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleTupleBinding
+    public static class Binding extends TupleTupleBinding<Replay>
     {
-        public void objectToKey(Object object, TupleOutput output)
+        public void objectToKey(Replay object, TupleOutput output)
         {
             Replay hand = (Replay) object;
             UniqueId.BINDING.objectToEntry(
                     hand.id, output);
         }
 
-        public void objectToData(Object object, TupleOutput output)
+        public void objectToData(Replay object, TupleOutput output)
         {
             Replay hand = (Replay) object;
 

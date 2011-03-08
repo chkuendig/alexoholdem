@@ -2,7 +2,7 @@ package ao.holdem.engine.state;
 
 import ao.holdem.engine.RuleBreach;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
@@ -20,13 +20,13 @@ public class State
 
 
     //--------------------------------------------------------------------
-    private final Round round;
-    private final Seat  seats[];
-    private final int   nextToAct;
-    private final int   remainingRoundBets;
-    private final int   latestRoundStaker;
-    private final Chips stakes;
-    private final State startOfRound;
+    private final Round     round;
+    private final Seat      seats[];
+    private final int       nextToAct;
+    private final int       remainingRoundBets;
+    private final int       latestRoundStaker;
+    private final ChipStack stakes;
+    private final State     startOfRound;
 
 //    /**
 //     * This is the first player scheduled to act, not necessarily
@@ -51,7 +51,7 @@ public class State
         nextToAct             = (isHeadsUp ? 1 : 0);
         remainingRoundBets    = BETS_PER_ROUND - 1; // -1 for upcoming BB
         latestRoundStaker     = -1;
-        stakes                = Chips.ZERO;
+        stakes                = ChipStack.ZERO;
         startOfRound          = this;
 //        firstToActVoluntarely = index(nextToAct + 2);
     }
@@ -78,7 +78,7 @@ public class State
                   int   copyNextToAct,
                   int   copyRemainingRoundBets,
                   int   copyLatestRoundStaker,
-                  Chips copyStakes,
+                  ChipStack copyStakes,
                   State copyStartOfRound)//,
 //                  int   copyFirstToActVoluntarely)
     {
@@ -169,7 +169,7 @@ public class State
         Seat  nextPlayers[]     = nextPlayers(act);
         int   nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
         int   nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
-        Chips nextStakes        = nextStakes(nextPlayers, betRaise);
+        ChipStack nextStakes        = nextStakes(nextPlayers, betRaise);
         int   nextRoundStaker   =
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
@@ -192,7 +192,7 @@ public class State
         return nextPlayers;
     }
 
-    private Chips nextStakes(Seat[] nextPlayers, boolean betRaise)
+    private ChipStack nextStakes(Seat[] nextPlayers, boolean betRaise)
     {
         return (betRaise)
                ? nextPlayers[nextToAct].commitment()
@@ -252,12 +252,12 @@ public class State
     {
         boolean isSmall = act.isSmallBlind();
 
-        if ( isSmall && !stakes.equals( Chips.ZERO ))
+        if ( isSmall && !stakes.equals( ChipStack.ZERO ))
             throw new RuleBreach("Small Blind already in.");
-        if (!isSmall && stakes.compareTo( Chips.BIG_BLIND ) >= 0)
+        if (!isSmall && stakes.compareTo( ChipStack.BIG_BLIND ) >= 0)
             throw new RuleBreach("Big Blind already in.");
 
-        Chips betSize       = Chips.blind(isSmall);
+        ChipStack betSize       = ChipStack.blind(isSmall);
         Seat  nextPlayers[] = seats.clone();
         nextPlayers[nextToAct] =
                 nextPlayers[nextToAct].advanceBlind(act, betSize);
@@ -371,9 +371,9 @@ public class State
         return round == null;
     }
 
-    public Chips betSize()
+    public ChipStack betSize()
     {
-        return isSmallBet() ? Chips.SMALL_BET : Chips.BIG_BET;
+        return isSmallBet() ? ChipStack.SMALL_BET : ChipStack.BIG_BET;
     }
     private boolean isSmallBet()
     {
@@ -439,15 +439,15 @@ public class State
         return condenters;
     }
 
-    public Chips pot()
+    public ChipStack pot()
     {
-        Chips pot = Chips.ZERO;
+        ChipStack pot = ChipStack.ZERO;
         for (Seat player : seats)
             pot = pot.plus( player.commitment() );
         return pot;
     }
 
-    public Chips stakes()
+    public ChipStack stakes()
     {
         return stakes;
     }
@@ -457,7 +457,7 @@ public class State
         return remainingRoundBets;
     }
 
-    public Chips toCall()
+    public ChipStack toCall()
     {
         return stakes.minus( nextToAct().commitment() );
     }

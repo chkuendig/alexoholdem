@@ -2,7 +2,6 @@ package ao.bucket.index.detail.turn;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
@@ -33,7 +32,7 @@ public class TurnOdds
         long minTies = Integer.MAX_VALUE;
         long maxTies = Integer.MIN_VALUE;
 
-        for (int i = 0; i < TurnLookup.CANONS; i++)
+        for (int i = 0; i < Turn.CANONS; i++)
         {
             Odds odds = lookup(i);
 
@@ -119,7 +118,7 @@ public class TurnOdds
 
     private static char[] oddsComponent()
     {
-        char[] component = new char[ TurnLookup.CANONS ];
+        char[] component = new char[ Turn.CANONS ];
         Arrays.fill( component, SENTINAL );
         return component;
     }

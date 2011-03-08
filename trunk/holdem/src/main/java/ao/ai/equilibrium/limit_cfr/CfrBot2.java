@@ -6,11 +6,10 @@ import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.turn.Turn;
-import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
@@ -25,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+//import ao.holdem.engine.analysis.Analysis;
 
 /**
  * User: alex
@@ -88,7 +89,7 @@ public class CfrBot2 extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, Chips> deltas)
+    public void handEnded(Map<Avatar, ChipStack> deltas)
     {
         prevNode = StateTree.headsUpRoot();
         resetRoundCanons();
@@ -125,8 +126,8 @@ public class CfrBot2 extends AbstractPlayer
     //--------------------------------------------------------------------
     @SuppressWarnings({"UnusedAssignment"})
     public Action act(State        state,
-                      CardSequence cards,
-                      Analysis     analysis)
+                      CardSequence cards/*,
+                      Analysis     analysis*/)
     {
         assert state.seats().length == 2
                 : "Only works in heads-up mode";

@@ -71,7 +71,7 @@ public class UniqueId
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding
+    public static class Binding extends TupleBinding<UniqueId>
     {
         public UniqueId entryToObject(TupleInput input)
         {
@@ -80,7 +80,7 @@ public class UniqueId
             return new UniqueId( id );
         }
 
-        public void objectToEntry(Object object, TupleOutput output)
+        public void objectToEntry(UniqueId object, TupleOutput output)
         {
             // negated for newest-to-last sort order
             UniqueId handId = (UniqueId) object;

@@ -170,7 +170,7 @@ public class RiverHist
     }
 
 
-    //--------------------------------------------------------------------
+    //------------------------------------------------------------------------
     public static final int     BINDING_SIZE = CompactRiverStrengths.COUNT * 4;
     public static final Binding BINDING      = new Binding();
     public static class Binding extends GenericBinding<RiverHist>

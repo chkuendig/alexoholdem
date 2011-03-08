@@ -20,11 +20,12 @@ public class LiteralCardSequence implements CardSequence
         this(hole, Community.PREFLOP);
     }
 
-    public LiteralCardSequence(Hole      hole,
-                               Community communitry)
+    public LiteralCardSequence(
+            Hole      hole,
+            Community community)
     {
         HOLE      = hole;
-        COMMUNITY = communitry;
+        COMMUNITY = community;
     }
 
 

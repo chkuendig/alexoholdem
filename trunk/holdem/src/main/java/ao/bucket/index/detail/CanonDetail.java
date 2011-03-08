@@ -6,9 +6,10 @@ package ao.bucket.index.detail;
  */
 public interface CanonDetail
 {
-    public byte   represents();
+    //------------------------------------------------------------------------
+    byte   represents();
 
-    public double strength();
+    double strength();
 
-    public long   canonIndex();
+    long   canonIndex();
 }

@@ -2,7 +2,6 @@ package ao.bucket.index.detail.flop;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
@@ -32,7 +31,7 @@ public class FlopOdds
         long minTies = Integer.MAX_VALUE;
         long maxTies = Integer.MIN_VALUE;
 
-        for (int i = 0; i < FlopLookup.CANONS; i++)
+        for (int i = 0; i < Flop.CANONS; i++)
         {
             Odds odds = lookup(i);
 
@@ -115,7 +114,7 @@ public class FlopOdds
 
     private static int[] oddsComponent()
     {
-        int[] component = new int[ FlopLookup.CANONS ];
+        int[] component = new int[ Flop.CANONS ];
         Arrays.fill( component, SENTINAL );
         return component;
     }

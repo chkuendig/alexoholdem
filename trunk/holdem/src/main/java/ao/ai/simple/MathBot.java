@@ -1,10 +1,9 @@
 package ao.ai.simple;
 
 import ao.ai.AbstractPlayer;
-import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -15,6 +14,8 @@ import ao.odds.agglom.impl.ApproximateOddFinder;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+
+//import ao.holdem.engine.analysis.Analysis;
 
 /**
  * Designed for heads up play.
@@ -27,13 +28,13 @@ public class MathBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, Chips> deltas) {}
+    public void handEnded(Map<Avatar, ChipStack> deltas) {}
 
     
     //--------------------------------------------------------------------
     public Action act(State        state,
-                      CardSequence cards,
-                      Analysis     analysis)
+                      CardSequence cards/*,
+                      Analysis     analysis*/)
     {
         Odds odds;
         if (cards.equals( prevCards )) {

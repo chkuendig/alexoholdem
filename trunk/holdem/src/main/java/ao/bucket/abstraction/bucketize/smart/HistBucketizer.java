@@ -1,16 +1,5 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.LongByteList;
-import ao.bucket.abstraction.access.tree.list.FullLongByteList;
-import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
-import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.detail.DetailLookup;
-import ao.bucket.index.detail.range.CanonRange;
-import ao.bucket.index.detail.range.RangeLookup;
-import ao.holdem.model.Round;
 import ao.ai.cluster.analysis.KMeans;
 import ao.ai.cluster.error.TwoPassWcss;
 import ao.ai.cluster.space.impl.CentroidDomain;
@@ -19,6 +8,17 @@ import ao.ai.cluster.space.measure.vector.VectorEuclidean;
 import ao.ai.cluster.trial.Clustering;
 import ao.ai.cluster.trial.ClusteringTrial;
 import ao.ai.cluster.trial.ParallelTrial;
+import ao.bucket.abstraction.access.tree.BucketTree;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.abstraction.access.tree.list.FullLongByteList;
+import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
+import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.detail.DetailLookup;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
+import ao.holdem.model.Round;
 import ao.util.data.Arrs;
 import ao.util.math.stats.Info;
 import ao.util.misc.Equalizers;
@@ -38,7 +38,7 @@ public class HistBucketizer implements Bucketizer
 
     public static void main(String[] args) {
         LongByteList holeBuckets =
-                new FullLongByteList(null, HoleLookup.CANONS);
+                new FullLongByteList(null, CanonHole.CANONS);
 
         byte nHoleBuckets = 127;
         for (byte dim = 2; dim <= nHoleBuckets; dim++)
@@ -64,7 +64,7 @@ public class HistBucketizer implements Bucketizer
 
     //--------------------------------------------------------------------
     private final LongByteList riverBuckets =
-                new HalfLongByteList(null, RiverLookup.CANONS);
+                new HalfLongByteList(null, River.CANONS);
 
     private final byte[]       nDimensions;
 

@@ -3,7 +3,7 @@ package ao.holdem.engine.dealer;
 import ao.ai.human.ConsoleBot;
 import ao.holdem.engine.Player;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.card.chance.DeckCards;
 import ao.holdem.model.card.chance.SwapCards;
 import ao.util.math.rand.Rand;
@@ -87,25 +87,25 @@ public class DealerTest
         List<Avatar>       order       = orderA;
         Progress           progress    = new Progress(DUPLICATE_ROUNDS);
         Dealer             dealer      = new Dealer(true, brains);
-        Map<Avatar, Chips> cumDeltas   = new HashMap<Avatar, Chips>();
-        Chips              dealerDelta = Chips.ZERO;
+        Map<Avatar, ChipStack> cumDeltas   = new HashMap<Avatar, ChipStack>();
+        ChipStack dealerDelta = ChipStack.ZERO;
         for (int trialSet = 0; trialSet < DUPLICATE_ROUNDS; trialSet++)
         {
             SwapCards cards = new SwapCards(r);
-            Map<Avatar, Chips> deltas =
+            Map<Avatar, ChipStack> deltas =
                     dealer.play(order, cards).deltas();
-            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+            for (Map.Entry<Avatar, ChipStack> delta : deltas.entrySet()) {
                 cumDeltas.put(
                         delta.getKey(),
-                        Chips.orZero(
-                            cumDeltas.get(delta.getKey()))
+                        ChipStack.orZero(
+                                cumDeltas.get(delta.getKey()))
                                 .plus(delta.getValue()));
             }
             dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
 
             cards.swap();
             deltas = dealer.play(order, cards).deltas();
-            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+            for (Map.Entry<Avatar, ChipStack> delta : deltas.entrySet()) {
                 cumDeltas.put(
                         delta.getKey(),
                         cumDeltas.get(delta.getKey())
@@ -149,12 +149,12 @@ public class DealerTest
     }
 
     private void displayDeltas(
-            Map<Avatar, Chips>  cumDeltas,
-            Chips               dealerDelta,
+            Map<Avatar, ChipStack>  cumDeltas,
+            ChipStack dealerDelta,
             Map<Avatar, Player> brains,
             long                dupeRounds)
     {
-        for (Map.Entry<Avatar, Chips> delta
+        for (Map.Entry<Avatar, ChipStack> delta
                 : cumDeltas.entrySet())
         {
             System.out.println(

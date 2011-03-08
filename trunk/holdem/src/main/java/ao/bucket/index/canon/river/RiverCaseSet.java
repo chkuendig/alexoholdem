@@ -1,10 +1,10 @@
 package ao.bucket.index.canon.river;
 
-import static ao.bucket.index.canon.river.RiverCase.*;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
+
+import static ao.bucket.index.canon.river.RiverCase.*;
 
 /**
  * Date: Sep 16, 2008
@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * there are 37 RiverCaseSets
  */
-public enum RiverCaseSet
+/*package-private*/ enum RiverCaseSet
 {
     //--------------------------------------------------------------------
     F1_S1_T2_R2(F1, S1, T2, R2),

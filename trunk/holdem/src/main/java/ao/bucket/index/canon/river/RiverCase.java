@@ -1,6 +1,7 @@
 package ao.bucket.index.canon.river;
 
 import ao.bucket.index.canon.card.CanonSuit;
+
 import static ao.bucket.index.canon.card.CanonSuit.*;
 
 /**
@@ -9,7 +10,7 @@ import static ao.bucket.index.canon.card.CanonSuit.*;
  *
  * also split cases by how many other cards are in their equivalence class
  */
-public enum RiverCase
+/*package-private*/ enum RiverCase
 {
     //--------------------------------------------------------------------
     F1(FIRST, 1),

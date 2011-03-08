@@ -3,7 +3,7 @@ package ao.holdem.model.card;
 /**
  * important:
  *  the order of the cards [clubs, diamonds, hearts, spades] is
- *  chritical to the operations of this program.
+ *  critical to the operations of this program.
  */
 public enum Suit
 {

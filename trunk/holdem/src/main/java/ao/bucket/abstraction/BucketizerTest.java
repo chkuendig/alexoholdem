@@ -6,6 +6,7 @@ import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
+import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.engine.state.StateFlow;
@@ -79,7 +80,8 @@ public class BucketizerTest
 //            Eval7Faster.main(null); // 2
 //            HoleDetails.load();     // 3
 //            FlopDetails.lookup(0);
-//            RiverEvalLookup.main(null);
+//            TurnRivers.main(null);
+            RiverEvalLookup.main(null);
 //            CompactRiverCounts.main(null);
 //            MemProbCounts.main(null);
 //            ProbabilityEncoding.main(null);
@@ -191,8 +193,8 @@ public class BucketizerTest
         bot.act(sf.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,
-                                     Card.FIVE_OF_SPADES)),
-                sf.analysis());
+                                     Card.FIVE_OF_SPADES))/*,
+                sf.analysis()*/);
 
         Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
         Community flop = new Community(Card.ACE_OF_HEARTS,

@@ -4,12 +4,13 @@ import ao.holdem.engine.Player;
 import ao.holdem.engine.state.Seat;
 import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.holdem.model.replay.StackedReplay;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,18 +50,19 @@ public class Dealer
                                     cards.hole( player ),
                                     cards.community(
                                             stateFlow.head().round() )
-                            ),
-                            stateFlow.analysis());
+                            )/*,
+                            stateFlow.analysis()*/);
 
             stateFlow.advance(act);
             handleQuitters( stateFlow );
         }
         while (! stateFlow.head().atEndOfHand());
 
-        Map<Avatar, Chips> deltas = stateFlow.deltas(cards);
-        publishOutcome( deltas );
+        Map<Avatar, ChipStack> deltas = stateFlow.deltas(cards);
+        publishOutcome(
+                Collections.unmodifiableMap( deltas ));
         return new StackedReplay(
-                    stateFlow.asHand( cards ),
+                    stateFlow.asReplay(cards),
                     deltas);
     }
 
@@ -76,7 +78,7 @@ public class Dealer
         }
     }
 
-    private void publishOutcome(Map<Avatar, Chips> deltas)
+    private void publishOutcome(Map<Avatar, ChipStack> deltas)
     {
         for (Avatar avatar : deltas.keySet())
         {

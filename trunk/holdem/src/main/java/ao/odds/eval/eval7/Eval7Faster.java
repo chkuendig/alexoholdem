@@ -56,18 +56,28 @@ public class Eval7Faster
 
     private static void retrieveOrCompute()
     {
+        LOG.info("retrieveOrCompute");
+
         handRanks = PersistentInts.retrieve(F_RANK);
         keys      = PersistentLongs.retrieve(F_KEY);
 
         if (handRanks == null || keys == null)
         {
+            LOG.info("computing");
+
             handRanks = new int[32487834];
             keys      = new long[612978];
 
             generateTables();
 
-            PersistentInts.persist(handRanks, F_RANK);
-            PersistentLongs.persist(keys,     F_KEY);
+            PersistentInts .persist(handRanks, F_RANK);
+            PersistentLongs.persist(keys     , F_KEY);
+
+            LOG.info("done (computed)");
+        }
+        else
+        {
+            LOG.info("retrieved");
         }
     }
 
@@ -624,7 +634,7 @@ public class Eval7Faster
                                 u5 = handRanks[u4 + c5];
                                 for (c6 = c5 + 1; c6 < 53; c6++)
                                 {
-                                    final int value = handRanks[u5 + c6];
+                                    final short value = (short) handRanks[u5 + c6];
                                     frequency[
                                             HandRank.fromValue(value)
                                                     .ordinal()

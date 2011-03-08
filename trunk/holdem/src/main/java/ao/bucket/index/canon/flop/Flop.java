@@ -3,7 +3,6 @@ package ao.bucket.index.canon.flop;
 import ao.bucket.index.CanonIndexed;
 import ao.bucket.index.canon.card.CanonCard;
 import ao.bucket.index.canon.card.Order;
-import static ao.bucket.index.canon.flop.FlopUtil.distinct;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.card.Card;
@@ -13,6 +12,8 @@ import ao.holdem.model.card.Suit;
 
 import java.util.Arrays;
 
+import static ao.bucket.index.canon.flop.FlopUtil.distinct;
+
 /**
  * Date: Jun 18, 2008
  * Time: 2:57:55 PM
@@ -21,6 +22,11 @@ public class Flop implements CanonIndexed
 {
     //--------------------------------------------------------------------
     private static final CanonCard FLOPS[][][][];
+
+
+    //--------------------------------------------------------------------
+    public static final int CANONS = 1286792;
+
     static
     {
         FLOPS = new CanonCard[ CanonCard.VALUES.length ]
@@ -68,6 +74,12 @@ public class Flop implements CanonIndexed
         this(hole,
              community.flopA(), community.flopB(), community.flopC());
     }
+    public Flop(Card holeA, Card holeB,
+                Card flopA, Card flopB, Card flopC)
+    {
+        this(CanonHole.create(holeA, holeB),
+             flopA, flopB, flopC);
+    }
     public Flop(CanonHole hole,
                 Card      flopA,
                 Card      flopB,
@@ -87,7 +99,7 @@ public class Flop implements CanonIndexed
 
 
     //--------------------------------------------------------------------
-    public FlopCase flopCase()
+    /*package-private*/ FlopCase flopCase()
     {
         return FLOP_CASE;
     }

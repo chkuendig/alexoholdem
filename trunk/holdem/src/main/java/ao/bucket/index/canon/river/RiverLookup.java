@@ -1,6 +1,6 @@
 package ao.bucket.index.canon.river;
 
-import ao.bucket.index.canon.turn.TurnLookup;
+import ao.bucket.index.canon.turn.Turn;
 import ao.util.math.Calc;
 import org.apache.log4j.Logger;
 
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
  * Date: Sep 16, 2008
  * Time: 3:53:13 PM
  */
-public class RiverLookup
+/*package-private*/ class RiverLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -17,8 +17,6 @@ public class RiverLookup
     private static final int  SHRINK    = 3;
     private static final int  CHUNK     = (1 << (SHRINK));
     private static final int  OFFSETS[] = computeOffsets();
-
-    public  static final long CANONS    = 2428287420L;
 
 
     //--------------------------------------------------------------------
@@ -53,10 +51,10 @@ public class RiverLookup
 
         int offset    = 0;
         int offsets[] =
-                new int[ TurnLookup.CANONS / CHUNK + 1 ];
+                new int[ Turn.CANONS / CHUNK + 1 ];
 
         int prevIndex = -1;
-        for (int i = 0; i < TurnLookup.CANONS; i++)
+        for (int i = 0; i < Turn.CANONS; i++)
         {
 //            if (i % 1000000 == 1)
 //            {

@@ -1,9 +1,9 @@
 package ao.holdem.engine;
 
-import ao.holdem.engine.analysis.Analysis;
+//import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.sequence.CardSequence;
 
@@ -16,6 +16,12 @@ import java.util.Map;
 public interface Player
 {
     /**
+     * @param nextToActState state of opponent, they need to perform
+     *          an action at this point
+     */
+    void observe(State nextToActState);
+
+    /**
      * Requests the player to perform an action.
      * A player will only be asked to act if a valid
      *  action is available for the taking.
@@ -24,26 +30,26 @@ public interface Player
      *          hand state from POV of this player.
      * @param cards
      *          private hole cards, and public community cards.
-     * @param analysis
-     *          shared analysis of the players in this hand.
-     *          can be used to predict players' actions.
+//     * @param analysis
+//     *          shared analysis of the players in this hand.
+//     *          can be used to predict players' actions.
      * @return
      *          the action you wish to perform.  If it is not
      *          a valid action, then it will be processed though
      *          FallbackAction.
      */
-    public Action act(State        state,
-                      CardSequence cards,
-                      Analysis     analysis);
+     Action act(State        state,
+                CardSequence cards/*,
+                Analysis     analysis*/);
 
 
     /**
      * There has to be a special case for QUIT actions because
      *  they are the only ones that can happen out-of-turn.
      *
-     * @return weather or not the given player has quit.
+     * @return whether or not the given player has quit.
      */
-    public boolean hasQuit();
+    boolean hasQuit();
 
 
     /**
@@ -54,5 +60,5 @@ public interface Player
      * @param deltas
      *          the change in stack size for each player.
      */
-    public void handEnded(Map<Avatar, Chips> deltas);
+    void handEnded(Map<Avatar, ChipStack> deltas);
 }

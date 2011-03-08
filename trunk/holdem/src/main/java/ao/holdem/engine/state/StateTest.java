@@ -5,7 +5,6 @@ import ao.holdem.model.act.AbstractAction;
 import ao.util.ui.AoConsole;
 import org.apache.log4j.Logger;
 
-import java.io.Console;
 import java.util.Arrays;
 import java.util.Map;
 

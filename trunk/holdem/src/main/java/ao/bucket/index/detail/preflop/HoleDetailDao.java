@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.Infrastructure;
-import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentBytes;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -52,7 +52,7 @@ public class HoleDetailDao
 
         TupleInput in      = new TupleInput(binDetails);
         CanonHoleDetail[] details =
-                new CanonHoleDetail[HoleLookup.CANONS];
+                new CanonHoleDetail[CanonHole.CANONS];
 
         for (int i = 0; i < details.length; i++)
         {

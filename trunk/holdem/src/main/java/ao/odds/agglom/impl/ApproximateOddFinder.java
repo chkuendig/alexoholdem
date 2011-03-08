@@ -5,11 +5,12 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
-import static ao.odds.agglom.impl.PreciseHeadsUpOdds.initKnownCardsToEnd;
 import ao.odds.eval.eval7.Eval7Faster;
-import static ao.util.data.Arrs.swap;
 import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.math.stats.FastIntCombiner;
+
+import static ao.odds.agglom.impl.PreciseHeadsUpOdds.initKnownCardsToEnd;
+import static ao.util.data.Arrs.swap;
 
 /**
  * Threadsafe!!

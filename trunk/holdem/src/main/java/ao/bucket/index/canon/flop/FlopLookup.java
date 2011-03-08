@@ -17,14 +17,10 @@ import java.util.Arrays;
  * Date: Aug 16, 2008
  * Time: 2:48:07 PM
  */
-public class FlopLookup
+/*package-private*/ class FlopLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG = Logger.getLogger(FlopLookup.class);
-
-
-    //--------------------------------------------------------------------
-    public static final int CANONS = 1286792;
 
 
     //--------------------------------------------------------------------
@@ -58,7 +54,7 @@ public class FlopLookup
 
         LOG.info("indexing retrieved offsets");
         int offsets[][] =
-                new int[ HoleLookup.CANONS      ]
+                new int[ CanonHole.CANONS      ]
                        [ FlopCase.VALUES.length ];
 
         for (int i = 0; i < flat.length; i++)
@@ -93,7 +89,7 @@ public class FlopLookup
     private static int[][] calculateOffsets()
     {
         LOG.info("calculating offsets");
-        int offsets[][] = new int[ HoleLookup.CANONS ][];
+        int offsets[][] = new int[ CanonHole.CANONS ][];
 
         int  offset  = 0;
         Card cards[] = Card.values();
@@ -102,7 +98,7 @@ public class FlopLookup
 //            CanonHole hole = HoleLookup.lookup(
 //                            holeCards[0], holeCards[1]);
         for (int canonHole = 0;
-                 canonHole < HoleLookup.CANONS;
+                 canonHole < CanonHole.CANONS;
                  canonHole++)
         {
             CanonHole hole = HoleLookup.lookup( canonHole );

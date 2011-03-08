@@ -1,7 +1,7 @@
 package ao.bucket.index.detail;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -112,7 +112,7 @@ public class DetailLookup
 
         if (prevRound == null /*&& prevCanonIndexes.length == 0*/) {
             return lookupHole((char) 0,
-                              (char) HoleLookup.CANONS);
+                              (char) CanonHole.CANONS);
         } else if (prevRound.ordinal() < Round.TURN.ordinal()) {
             return lookupPreTurnSub(prevRound, prevCanonIndexes);
         } else {

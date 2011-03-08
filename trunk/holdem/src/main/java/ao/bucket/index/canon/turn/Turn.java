@@ -19,6 +19,8 @@ import ao.holdem.model.card.Community;
 public class Turn implements CanonIndexed
 {
     //--------------------------------------------------------------------
+    public  static final int    CANONS = 55190538;
+    //--------------------------------------------------------------------
     private final CanonCard HOLE[],
 //                            FLOP[],
                             TURN;

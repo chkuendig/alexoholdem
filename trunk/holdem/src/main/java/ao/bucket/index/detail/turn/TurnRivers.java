@@ -2,8 +2,7 @@ package ao.bucket.index.detail.turn;
 
 import ao.Infrastructure;
 import ao.bucket.index.canon.river.River;
-import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.canon.turn.TurnLookup;
+import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.util.io.Dirs;
@@ -55,8 +54,8 @@ public class TurnRivers
     {
         LOG.debug("computeFirstRivers");
 
-        final int offsets[] = new int[ TurnLookup.CANONS ];
-        Arrays.fill(offsets, (int)(RiverLookup.CANONS + 1));
+        final int offsets[] = new int[ Turn.CANONS ];
+        Arrays.fill(offsets, (int)(River.CANONS + 1));
 
         final long[] count = {0};
         HandEnum.uniqueRivers(new Traverser<River>() {
@@ -84,8 +83,8 @@ public class TurnRivers
 
     public static long lastRiverOf(int canonTurn)
     {
-        return (canonTurn == (TurnLookup.CANONS - 1))
-                    ? RiverLookup.CANONS - 1
+        return (canonTurn == (Turn.CANONS - 1))
+                    ? River.CANONS - 1
                     : Calc.unsigned(
                             FIRST_RIVER[ canonTurn + 1 ]) - 1;
     }
@@ -116,7 +115,7 @@ public class TurnRivers
     public static int turnFor(long canonRiver)
     {
         int lo = 0;
-        int hi = TurnLookup.CANONS - 1;
+        int hi = Turn.CANONS - 1;
 
         while (lo <= hi)
         {

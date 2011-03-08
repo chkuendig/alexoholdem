@@ -47,7 +47,10 @@ public enum Round
     public abstract Community ofCommunity(Community full);
 
 
-    //--------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    /**
+     * @return PREFLOP -> FLOP, FLOP -> TURN, TURN -> RIVER, RIVER -> null
+     */
     public Round next()
     {
         return (this == RIVER)
@@ -55,6 +58,9 @@ public enum Round
                 : values()[ ordinal() + 1 ];
     }
 
+    /**
+     * @return RIVER -> TURN, TURN -> FLOP, FLOP -> PREFLOP, PREFLOP -> null
+     */
     public Round previous()
     {
         return (this == PREFLOP)

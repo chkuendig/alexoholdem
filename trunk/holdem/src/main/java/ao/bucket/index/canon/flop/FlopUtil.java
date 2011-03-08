@@ -6,7 +6,7 @@ import static ao.util.math.stats.Combo.colex;
  * Date: Aug 21, 2008
  * Time: 8:20:22 PM
  */
-public class FlopUtil
+/*package-private*/ class FlopUtil
 {
     //--------------------------------------------------------------------
     private FlopUtil() {}

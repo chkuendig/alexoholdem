@@ -4,7 +4,6 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.card.CanonCard;
 import ao.bucket.index.canon.card.CanonSuit;
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
@@ -23,10 +22,9 @@ import java.util.Set;
  * Date: Sep 14, 2008
  * Time: 9:50:10 PM
  */
-public class TurnLookup
+/*package-private*/ class TurnLookup
 {
     //--------------------------------------------------------------------
-    public  static final int    CANONS = 55190538;
     private static final Logger LOG    =
             Logger.getLogger(TurnLookup.class);
 
@@ -110,7 +108,7 @@ public class TurnLookup
     private static TurnCase[][] calculateCases()
     {
         final TurnCase caseSets[][] =
-                new TurnCase[ FlopLookup.CANONS      ]
+                new TurnCase[ Flop.CANONS      ]
                             [ /*Rank.VALUES.length*/ ];
 
         final int[]                prevFlop  = {-1};

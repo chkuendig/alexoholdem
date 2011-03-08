@@ -9,7 +9,7 @@ import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.*;
@@ -158,10 +158,10 @@ public class AaaiAdapter extends PokerClient
             prevBankroll = state.bankroll;
 
             LOG.debug("hand ended: " + bankrollDelta);
-            deleget.handEnded(new HashMap<Avatar, Chips>(){{
+            deleget.handEnded(new HashMap<Avatar, ChipStack>(){{
                 int sbDelta = (int) bankrollDelta;
-                put(HOME, Chips.newInstance( sbDelta));
-                put(AWAY, Chips.newInstance(-sbDelta));
+                put(HOME, ChipStack.newInstance(sbDelta));
+                put(AWAY, ChipStack.newInstance(-sbDelta));
             }});
         }
         else if (state.isOurTurn())
@@ -233,8 +233,8 @@ public class AaaiAdapter extends PokerClient
                                 toAoCard(state.board[2]),
                                 toAoCard(state.board[3]),
                                 toAoCard(state.board[4])
-                        )),
-                stateFlow.analysis());
+                        ))/*,
+                stateFlow.analysis()*/);
 
         switch (act.abstraction())
         {

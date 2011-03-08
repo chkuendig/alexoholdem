@@ -1,7 +1,6 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.CanonDetail;
@@ -61,7 +60,7 @@ public class FlopDetails
         LOG.debug("computing details");
 
         final LongBitSet          initiated =
-                new LongBitSet(FlopLookup.CANONS);
+                new LongBitSet(Flop.CANONS);
         final FlopDetailFlyweight flyweight = new FlopDetailFlyweight();
         HandEnum.flops(
                 new PermisiveFilter<CanonHole>(),
@@ -91,7 +90,7 @@ public class FlopDetails
         int    turnOffset = 0;
         byte[] turnCounts = turnCounts();
 
-        for (int i = 0; i < FlopLookup.CANONS; i++)
+        for (int i = 0; i < Flop.CANONS; i++)
         {
             fw.setTurnInfo(i, turnOffset, turnCounts[ i ]);
             turnOffset += turnCounts[ i ];
@@ -101,7 +100,7 @@ public class FlopDetails
     public static byte[] turnCounts()
     {
         final byte[] turnCounts =
-                new byte[ FlopLookup.CANONS];
+                new byte[ Flop.CANONS];
 
         HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
@@ -146,7 +145,7 @@ public class FlopDetails
     public static CanonFlopDetail containing(int turnCanon)
     {
         int lo = 0;
-        int hi = FlopLookup.CANONS - 1;
+        int hi = Flop.CANONS - 1;
 
         while (lo <= hi)
         {

@@ -1,8 +1,8 @@
 package ao.bucket.index.detail.range;
 
-import ao.bucket.index.canon.flop.FlopLookup;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.turn.TurnLookup;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.Round;
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,7 @@ public class CanonRangeTest
 
 //        Progress   progress      = new Progress(FlopLookup.CANONS);
         CanonRange previousRange = null;
-        for (int hole = 0; hole < HoleLookup.CANONS; hole++)
+        for (int hole = 0; hole < CanonHole.CANONS; hole++)
         {
             CanonRange range =
                     RangeLookup.lookupRange(Round.PREFLOP, hole);
@@ -63,7 +63,7 @@ public class CanonRangeTest
 
 //        Progress   progress      = new Progress(FlopLookup.CANONS);
         CanonRange previousRange = null;
-        for (int flop = 0; flop < FlopLookup.CANONS; flop++)
+        for (int flop = 0; flop < Flop.CANONS; flop++)
         {
             CanonRange range =
                     RangeLookup.lookupRange(Round.FLOP, flop);
@@ -90,7 +90,7 @@ public class CanonRangeTest
 
 //        Progress   progress      = new Progress(TurnLookup.CANONS);
         CanonRange previousRange = null;
-        for (int turn = 0; turn < TurnLookup.CANONS; turn++)
+        for (int turn = 0; turn < Turn.CANONS; turn++)
         {
             CanonRange riverRange =
                     RangeLookup.lookupRange(Round.TURN, turn);

@@ -2,10 +2,9 @@ package ao.ai.human;
 
 import ao.ai.AbstractPlayer;
 import ao.ai.equilibrium.limit_cfr.CfrBot2;
-import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -15,6 +14,8 @@ import ao.util.ui.AoConsole;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+//import ao.holdem.engine.analysis.Analysis;
+
 /**
  * User: alex
  * Date: 1-Apr-2009
@@ -23,16 +24,16 @@ import java.util.Map;
 public class ConsoleBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    private Map<Avatar, Chips> total = new LinkedHashMap<Avatar, Chips>();
+    private Map<Avatar, ChipStack> total = new LinkedHashMap<Avatar, ChipStack>();
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, Chips> deltas)
+    public void handEnded(Map<Avatar, ChipStack> deltas)
     {
         if (total.isEmpty()) {
             total.putAll( deltas );
         } else {
-            for (Map.Entry<Avatar, Chips> delta : deltas.entrySet()) {
+            for (Map.Entry<Avatar, ChipStack> delta : deltas.entrySet()) {
                 total.put(
                         delta.getKey(),
                         total.get( delta.getKey() )
@@ -51,8 +52,8 @@ public class ConsoleBot extends AbstractPlayer
 
     //--------------------------------------------------------------------
     public Action act(State        state,
-                      CardSequence cards,
-                      Analysis     analysis)
+                      CardSequence cards/*,
+                      Analysis     analysis*/)
     {
 //        System.out.println(
 //                state.toString());
@@ -95,7 +96,7 @@ public class ConsoleBot extends AbstractPlayer
             message.append("[1] Fold ");
         }
 
-        if (state.toCall().equals( Chips.ZERO ))
+        if (state.toCall().equals( ChipStack.ZERO ))
         {
             message.append("     [2] Check ");
         }

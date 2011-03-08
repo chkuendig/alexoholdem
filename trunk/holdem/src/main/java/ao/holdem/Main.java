@@ -352,7 +352,7 @@ public class Main
             Card hand[] = permuter.nextElement();
 
 //            int value = EvalSlow.valueOf(hand);
-            int value = Eval7Faster.valueOf(
+            short value = Eval7Faster.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
             if (value != EvalSlow.valueOf(hand))
             {
@@ -384,7 +384,7 @@ public class Main
 
             Card hand[] = permuter.nextElement();
 
-            int value = EvalSlow.valueOf(hand);
+            short value = EvalSlow.valueOf(hand);
 //            int value = Eval7Faster.valueOf(
 //                            hand[0], hand[1], hand[2], hand[3], hand[4]);
             frequency[ HandRank.fromValue(value).ordinal() ]++;

@@ -1,12 +1,9 @@
 package ao.bucket.index.test;
 
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.river.River;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
@@ -56,7 +53,7 @@ public class CanonIndexTest
 
         final int[]  count = {0};
         final int[] turns =
-                new int[ TurnLookup.CANONS ];
+                new int[ Turn.CANONS ];
         HandEnum.turns(
                 new PermisiveFilter<CanonHole>(),
                 new PermisiveFilter<Flop>(),
@@ -86,7 +83,7 @@ public class CanonIndexTest
 
         final int[] count = {0};
         final int[] flops =
-                new int[ FlopLookup.CANONS ];
+                new int[ Flop.CANONS ];
         HandEnum.flops(
                 new PermisiveFilter<CanonHole>(),
                 new PermisiveFilter<Flop>(),
@@ -113,7 +110,7 @@ public class CanonIndexTest
     {
         LOG.debug("testHoleConsistency");
 
-        final Odds[] holes = new Odds[ HoleLookup.CANONS ];
+        final Odds[] holes = new Odds[ CanonHole.CANONS ];
         HandEnum.holes(
                 new PermisiveFilter<CanonHole>(),
                 new Traverser<CanonHole>() {

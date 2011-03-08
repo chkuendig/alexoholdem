@@ -1,6 +1,5 @@
 package ao.odds.eval.eval5;
 
-import ao.Infrastructure;
 import ao.util.persist.PersistentShorts;
 
 /**
@@ -8,7 +7,7 @@ import ao.util.persist.PersistentShorts;
  *  http://www.suffecool.net/poker/code/arrays.h
  *  http://www.geocities.com/psenzee/code/fast_eval.c
  */
-public class Eval5Lookup
+/*package-private*/ class Eval5Lookup
 {
     //--------------------------------------------------------------------
 //    private static final String DIR        = Infrastructure.path(

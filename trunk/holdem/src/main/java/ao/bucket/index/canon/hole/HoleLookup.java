@@ -16,13 +16,12 @@ public class HoleLookup
     //--------------------------------------------------------------------
     private static final int PAIR_COUNT             = 13;
     private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
-    public  static final int CANONS                 = 169;
 
     private HoleLookup() {}
 
 
     //--------------------------------------------------------------------
-    private static final CanonHole[]   BY_CANON = new CanonHole[ CANONS ];
+    private static final CanonHole[]   BY_CANON = new CanonHole[ CanonHole.CANONS ];
     private static final CanonHole[][] CACHE    = computeCanons(BY_CANON);
 
 
@@ -68,7 +67,7 @@ public class HoleLookup
     //--------------------------------------------------------------------
     private static char computeCanonicalIndex(Hole hole)
     {
-        if (hole.paired())
+        if (hole.isPair())
         {
             return (char) hole.a().rank().ordinal();
         }
@@ -80,7 +79,7 @@ public class HoleLookup
             int subIndex = hi * (hi - 1) / 2 + lo;
 
             return (char)
-                   ((hole.suited()
+                   ((hole.isSuited()
                       ? PAIR_COUNT
                       : PAIR_PLUS_SUITED_COUNT) +
                      subIndex);
@@ -89,9 +88,9 @@ public class HoleLookup
 
     private static Order computeOrder(Hole hole)
     {
-        return hole.paired()
+        return hole.isPair()
                ? Order.pair(hole.a().suit(), hole.b().suit())
-               : hole.suited()
+               : hole.isSuited()
                  ? Order.suited  (hole.a().suit())
                  : Order.unsuited(hole.hi().suit(),
                                   hole.lo().suit());
@@ -103,7 +102,7 @@ public class HoleLookup
     {
         return lookup(holeCards[0], holeCards[1]);
     }
-    public static CanonHole lookup(Card a, Card b)
+    /*package-private*/ static CanonHole lookup(Card a, Card b)
     {
         return CACHE[ a.ordinal() ][ b.ordinal() ];
     }
@@ -112,8 +111,4 @@ public class HoleLookup
     {
         return BY_CANON[ canonIndex ];
     }
-
-
-    //--------------------------------------------------------------------
-    
 }

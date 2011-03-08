@@ -1,7 +1,8 @@
 package ao.bucket.index.canon.card;
 
-import static ao.bucket.index.canon.card.CanonSuit.*;
 import ao.holdem.model.card.Rank;
+
+import static ao.bucket.index.canon.card.CanonSuit.*;
 import static ao.holdem.model.card.Rank.*;
 
 /**

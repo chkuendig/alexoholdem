@@ -9,6 +9,7 @@ import java.util.Comparator;
  * Note that this given order of cards
  *  is standard and will not be changed.
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public enum Card
 {
     //--------------------------------------------------------------------
@@ -68,11 +69,17 @@ public enum Card
     KING_OF_SPADES (Rank.KING,  Suit.SPADES),
     ACE_OF_SPADES  (Rank.ACE,   Suit.SPADES);
 
-    public static final Card VALUES[]  = Card.values();
+    public static final Card VALUES[]  = Card.values(); // optimization
     public static final int  INDEXES[] = Arrs.sequence(VALUES.length);
     
 
     //--------------------------------------------------------------------
+    /**
+     * Create a new Card from the given rank and suit.
+     * @param rank of card to create
+     * @param suit of card to create
+     * @return new Card with the given rank and suit.
+     */
     public static Card valueOf(Rank rank, Suit suit)
     {
         return VALUES[ rank.ordinal() +
@@ -127,7 +134,7 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-    /* Card to integer conversions:
+    /** Card to integer conversions:
         2c =  1    2d = 14    2h = 27    2s = 40
         3c =  2    3d = 15    3h = 28    3s = 41
         4c =  3    4d = 16    4h = 29    4s = 42
@@ -141,13 +148,14 @@ public enum Card
         Qc = 11    Qd = 24    Qh = 37    Qs = 50
         Kc = 12    Kd = 25    Kh = 38    Ks = 51
         Ac = 13    Ad = 26    Ah = 39    As = 52
-	*/
+     * @return the index from the table above
+     */
     public int index()
     {
         return INDEX;
     }
 
-    /*
+    /** Card to inverted index conversion:
        2c =  1    2d =  2    2h =  3    2s =  4
        3c =  5    3d =  6    3h =  7    3s =  8
        4c =  9    4d = 10    4h = 11    4s = 12
@@ -161,6 +169,7 @@ public enum Card
        Qc = 41    Qd = 42    Qh = 43    Qs = 44
        Kc = 45    Kd = 46    Kh = 47    Ks = 48
        Ac = 49    Ad = 50    Ah = 51    As = 52
+     * @return index from table above
      */
     public int invertedIndex()
     {

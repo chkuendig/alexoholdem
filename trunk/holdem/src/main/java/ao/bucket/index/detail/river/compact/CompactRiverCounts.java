@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.river.compact;
 
 import ao.Infrastructure;
-import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.river.River;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.io.Dirs;
@@ -67,7 +67,7 @@ public class CompactRiverCounts
         final BitSet used = new BitSet();
         RiverEvalLookup.traverse(
             new CanonRange[]{CanonRange.newFromCount(
-                    0, RiverLookup.CANONS)},
+                    0, River.CANONS)},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,

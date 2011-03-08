@@ -11,6 +11,7 @@ import java.util.Arrays;
  *
  * mass boilerplate
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public enum Order
 {
     //--------------------------------------------------------------------
@@ -403,22 +404,20 @@ public enum Order
 
 
     //--------------------------------------------------------------------
-
-    // lower precedence means it comes before
-//    private final int PRECEDENCE_CLUB;
-//    private final int PRECEDENCE_DIAMOND;
-//    private final int PRECEDENCE_HEART;
-//    private final int PRECEDENCE_SPADE;
+    // - lower precedence means it comes before
+    // - Suit.ordinal() indexed
+    // So essentially, this is EnumMap<Suit, Integer>
     private final int       PRECEDENCE[];
+
     //private final CanonSuit AS_WILD[];
     private final boolean IS_WILD[];
 
 
     //--------------------------------------------------------------------
     private Order(int precedenceClub,
-                      int precedenceDiamond,
-                      int precedenceHeart,
-                      int precedenceSpade)
+                  int precedenceDiamond,
+                  int precedenceHeart,
+                  int precedenceSpade)
     {
         this(new int[]{
                 precedenceClub,

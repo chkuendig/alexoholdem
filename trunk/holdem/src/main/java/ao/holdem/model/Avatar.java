@@ -67,7 +67,7 @@ public class Avatar implements Serializable
 
     //--------------------------------------------------------------------
     public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding
+    public static class Binding extends TupleBinding<Avatar>
     {
         public Avatar entryToObject(TupleInput input)
         {
@@ -76,8 +76,9 @@ public class Avatar implements Serializable
             return new Avatar(domain, name);
         }
 
-        public void objectToEntry(Object      object,
-                                  TupleOutput output)
+        public void objectToEntry(
+                Avatar      object,
+                TupleOutput output)
         {
             Avatar avatar = (Avatar) object;
             output.writeString(avatar.DOMAIN);

@@ -15,6 +15,10 @@ import ao.holdem.model.card.Hole;
 public class CanonHole implements CanonIndexed
 {
     //--------------------------------------------------------------------
+    public  static final int CANONS = 169;
+
+
+    //--------------------------------------------------------------------
     private final Hole        HOLE;
     private final char        CANON_INDEX;
     private final Order       ORDER;
@@ -22,10 +26,16 @@ public class CanonHole implements CanonIndexed
 
 
     //--------------------------------------------------------------------
-    public CanonHole(Hole        hole,
-                     char        canonIndex,
-                     Order       order,
-                     CanonCard[] canon)
+    public static CanonHole create(Card a, Card b)
+    {
+        return HoleLookup.lookup(a, b);
+    }
+
+    /*package-private*/
+            CanonHole(Hole        hole,
+                      char        canonIndex,
+                      Order       order,
+                      CanonCard[] canon)
     {
         HOLE        = hole;
         CANON_INDEX = canonIndex;
@@ -42,7 +52,7 @@ public class CanonHole implements CanonIndexed
 
     public boolean paired()
     {
-        return HOLE.paired();
+        return HOLE.isPair();
     }
 
     public Card a()

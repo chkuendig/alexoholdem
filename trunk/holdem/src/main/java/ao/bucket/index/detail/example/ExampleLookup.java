@@ -1,11 +1,8 @@
 package ao.bucket.index.detail.example;
 
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -138,12 +135,12 @@ public class ExampleLookup
         }
         else
         {
-            HOLE_A = ordinalArray( HoleLookup.CANONS );
-            HOLE_B = ordinalArray( HoleLookup.CANONS );
-            FLOP_A = ordinalArray( FlopLookup.CANONS );
-            FLOP_B = ordinalArray( FlopLookup.CANONS );
-            FLOP_C = ordinalArray( FlopLookup.CANONS );
-            TURN   = ordinalArray( TurnLookup.CANONS );
+            HOLE_A = ordinalArray( CanonHole.CANONS );
+            HOLE_B = ordinalArray( CanonHole.CANONS );
+            FLOP_A = ordinalArray( Flop.CANONS );
+            FLOP_B = ordinalArray( Flop.CANONS );
+            FLOP_C = ordinalArray( Flop.CANONS );
+            TURN   = ordinalArray( Turn.CANONS );
 
             computeExamples();
 

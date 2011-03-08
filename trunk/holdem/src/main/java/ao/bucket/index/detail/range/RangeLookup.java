@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.range;
 
-import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.detail.DetailLookup;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.Round;
@@ -27,7 +27,7 @@ public class RangeLookup
     {
         if (forRound == null) {
             return CanonRange.newFromCount(
-                     0, HoleLookup.CANONS);
+                     0, CanonHole.CANONS);
         }
 
         switch (forRound)

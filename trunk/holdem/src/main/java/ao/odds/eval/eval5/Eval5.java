@@ -6,7 +6,7 @@ import ao.util.math.stats.Combiner;
 import java.util.Arrays;
 
 /**
- * see
+ * See
  *  http://www.suffecool.net/poker/evaluator.html
  */
 public class Eval5

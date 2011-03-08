@@ -30,7 +30,7 @@ public class PersistanceTest
         HoldemViews views = new HoldemViews(db);
         HoldemDao   dao   = new HoldemDao(db, views);
 
-        LOG.info("presisting random hands");
+        LOG.info("persisting random hands");
 //        dao.persist( randomHand() );
         for (int i = 0; i < 10000; i++)
         {

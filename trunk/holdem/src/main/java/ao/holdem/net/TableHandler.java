@@ -59,8 +59,8 @@ public class TableHandler
 
         Action act = BRAIN.act(
                 stateFlow.head(),
-                new LiteralCardSequence(hole),
-                stateFlow.analysis());
+                new LiteralCardSequence(hole)/*,
+                stateFlow.analysis()*/);
 
         stateFlow.advance(act);
         return act.abstraction();
@@ -88,8 +88,8 @@ public class TableHandler
 
         Action act = BRAIN.act(
                 stateFlow.head(),
-                new LiteralCardSequence(hole, community),
-                stateFlow.analysis());
+                new LiteralCardSequence(hole, community)/*,
+                stateFlow.analysis()*/);
 
         stateFlow.advance(act);
         return act.abstraction();

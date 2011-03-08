@@ -4,7 +4,6 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.river.River;
-import ao.bucket.index.canon.river.RiverLookup;
 import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.bucket.index.detail.flop.FlopDetails;
@@ -42,7 +41,7 @@ public class AbsBucketStore implements Iterable<Character>
         ioFile = new File(dir, fName);
 
         if (! (ioFile.canRead() &&
-               ioFile.length() == (RiverLookup.CANONS * 2)))
+               ioFile.length() == (River.CANONS * 2)))
         {
             computeAndPersist(bucketTree, decoder);
         }
@@ -70,8 +69,8 @@ public class AbsBucketStore implements Iterable<Character>
                 new BufferedOutputStream(
                         new FileOutputStream(ioFile)));
 
-        Progress p = new Progress(RiverLookup.CANONS);
-        for (long r = 0; r < RiverLookup.CANONS; r++) {
+        Progress p = new Progress(River.CANONS);
+        for (long r = 0; r < River.CANONS; r++) {
             char absoluteRiverBucket = bucketOf(tree, decoder, r);
             out.writeChar( absoluteRiverBucket );
 
@@ -98,7 +97,7 @@ public class AbsBucketStore implements Iterable<Character>
         return new Iterator<Character>() {
             private long position = 0;
             public boolean hasNext() {
-                return position < RiverLookup.CANONS;
+                return position < River.CANONS;
             }
 
             public Character next() {

@@ -1,6 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
-import ao.bucket.index.canon.hole.HoleLookup;
+import ao.bucket.index.canon.hole.CanonHole;
 import ao.odds.agglom.Odds;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
@@ -51,7 +51,7 @@ public class HoleOddsDao
 
     private static long[] oddsComponent()
     {
-        long[] component = new long[ HoleLookup.CANONS];
+        long[] component = new long[ CanonHole.CANONS];
         Arrays.fill( component, SENTINAL );
         return component;
     }

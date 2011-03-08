@@ -1,7 +1,7 @@
 package ao.holdem.engine.state;
 
 import ao.holdem.model.Avatar;
-import ao.holdem.model.Chips;
+import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
@@ -12,41 +12,41 @@ import ao.holdem.model.act.Action;
 public class Seat
 {
     //--------------------------------------------------------------------
-    private final Avatar  player;
-    private final Chips   commitment;
-    private final boolean isAllIn;
-    private final boolean isFolded;
-    private final Round   lastVolanteryActRound;
+    private final Avatar    player;
+    private final ChipStack commitment;
+    private final boolean   isAllIn;
+    private final boolean   isFolded;
+    private final Round     lastVoluntaryActRound;
 
 
     //--------------------------------------------------------------------
     public Seat(Avatar playerHandle)
     {
-        this(playerHandle, Chips.ZERO, false, false, null);
+        this(playerHandle, ChipStack.ZERO, false, false, null);
     }
 
     private Seat(
-            Avatar  playerHandle,
-            Chips   totalCommitment,
-            boolean allIn,
-            boolean folded,
-            Round   round)
+            Avatar    playerHandle,
+            ChipStack totalCommitment,
+            boolean   allIn,
+            boolean   folded,
+            Round     round)
     {
         player     = playerHandle;
         commitment = totalCommitment;
         isAllIn    = allIn;
         isFolded   = folded;
 
-        lastVolanteryActRound = round;
+        lastVoluntaryActRound = round;
     }
 
 
     //--------------------------------------------------------------------
     public Seat advance(
-            Action action,
-            Chips  stakes,
-            Chips  betSize,
-            Round  round)
+            Action    action,
+            ChipStack stakes,
+            ChipStack betSize,
+            Round     round)
     {
         AbstractAction abstraction = action.abstraction();
         if (abstraction == AbstractAction.QUIT_FOLD)
@@ -60,7 +60,7 @@ public class Seat
                 : raise( nextIsAllIn, stakes, betSize, round );
     }
 
-    public Seat advanceBlind(Action act, Chips betSize)
+    public Seat advanceBlind(Action act, ChipStack betSize)
     {
         return new Seat(
                     player, betSize, act.isAllIn(), false, null);
@@ -75,7 +75,7 @@ public class Seat
     }
 
     private Seat call(boolean nextIsAllIn,
-                      Chips   stakes,
+                      ChipStack stakes,
                       Round   round)
     {
         return new Seat(
@@ -84,8 +84,8 @@ public class Seat
 
     private Seat raise(
             boolean nextIsAllIn,
-            Chips   stakes,
-            Chips   money,
+            ChipStack stakes,
+            ChipStack money,
             Round   round)
     {
         return new Seat(player, stakes.plus(money),
@@ -111,15 +111,15 @@ public class Seat
 
     public boolean hasActedVoluntarily()
     {
-        return lastVolanteryActRound != null;
+        return lastVoluntaryActRound != null;
     }
 
     public boolean voluntarilyActedDuring(Round round)
     {
-        return lastVolanteryActRound == round;
+        return lastVoluntaryActRound == round;
     }
 
-    public Chips commitment()
+    public ChipStack commitment()
     {
         return commitment;
     }
@@ -147,7 +147,7 @@ public class Seat
                 !(commitment != null
                     ? !commitment.equals(seat.commitment)
                     : seat.commitment != null) &&
-                lastVolanteryActRound == seat.lastVolanteryActRound;
+                lastVoluntaryActRound == seat.lastVoluntaryActRound;
 
     }
 
@@ -156,8 +156,8 @@ public class Seat
         result = 31 * result + (commitment != null ? commitment.hashCode() : 0);
         result = 31 * result + (isAllIn ? 1 : 0);
         result = 31 * result + (isFolded ? 1 : 0);
-        result = 31 * result + (lastVolanteryActRound != null
-                                ? lastVolanteryActRound.hashCode() : 0);
+        result = 31 * result + (lastVoluntaryActRound != null
+                                ? lastVoluntaryActRound.hashCode() : 0);
         return result;
     }
 }

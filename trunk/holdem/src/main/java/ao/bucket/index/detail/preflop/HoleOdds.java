@@ -1,7 +1,6 @@
 package ao.bucket.index.detail.preflop;
 
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
@@ -27,7 +26,7 @@ public class HoleOdds
         long minTies = Integer.MAX_VALUE;
         long maxTies = Integer.MIN_VALUE;
 
-        for (int i = 0; i < HoleLookup.CANONS; i++)
+        for (int i = 0; i < CanonHole.CANONS; i++)
         {
             Odds odds = lookup(i);
 

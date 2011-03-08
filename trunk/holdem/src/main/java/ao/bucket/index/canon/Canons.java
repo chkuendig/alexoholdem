@@ -1,9 +1,9 @@
 package ao.bucket.index.canon;
 
-import ao.bucket.index.canon.flop.FlopLookup;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.canon.turn.TurnLookup;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
 import ao.holdem.model.Round;
 
 /**
@@ -22,10 +22,10 @@ public class Canons
     {
         switch (round)
         {
-            case PREFLOP: return HoleLookup.CANONS;
-            case FLOP:    return FlopLookup.CANONS;
-            case TURN:    return TurnLookup.CANONS;
-            case RIVER:   return RiverLookup.CANONS;
+            case PREFLOP: return CanonHole.CANONS;
+            case FLOP:    return Flop.CANONS;
+            case TURN:    return Turn.CANONS;
+            case RIVER:   return River.CANONS;
         }
         return -1;
     }

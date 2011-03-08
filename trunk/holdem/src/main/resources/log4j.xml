@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM
+        "http://ao-commons.googlecode.com/svn/repo/ext-releases/log4j/log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- ================================================================== -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%c{1} %x - %m%n"/>
+        </layout>
+    </appender>
+
+
+    <appender name="file" class="org.apache.log4j.FileAppender">
+        <param name="File" value="dd-desktop.log"/>
+        <param name="Append" value="false"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%-4r [%t] %-5p %c %x - %m%n"/>
+        </layout>
+    </appender>
+
+
+    <!-- ================================================================== -->
+    <logger name="ao">
+        <level value="trace"/>
+    </logger>
+
+
+    <!-- ================================================================== -->
+    <root>
+        <priority value="warn"/>
+        <appender-ref ref="console"/>
+        <!--<appender-ref ref="file"/>-->
+    </root>
+
+</log4j:configuration>

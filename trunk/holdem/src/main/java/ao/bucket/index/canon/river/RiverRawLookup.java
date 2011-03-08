@@ -4,7 +4,6 @@ import ao.Infrastructure;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.turn.Turn;
-import ao.bucket.index.canon.turn.TurnLookup;
 import ao.bucket.index.enumeration.HandEnum;
 import ao.bucket.index.enumeration.PermisiveFilter;
 import ao.bucket.index.enumeration.UniqueFilter;
@@ -19,7 +18,7 @@ import java.util.Set;
  * Date: Sep 4, 2008
  * Time: 12:40:23 PM
  */
-public class RiverRawLookup
+/*package-private*/ class RiverRawLookup
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
@@ -68,7 +67,7 @@ public class RiverRawLookup
         final Set<RiverCase> caseBuffer =
                 EnumSet.noneOf( RiverCase.class );
         final byte[]         riverCases =
-                new byte[ TurnLookup.CANONS];
+                new byte[ Turn.CANONS];
 
         HandEnum.rivers(
                 new UniqueFilter<CanonHole>("%1$s"),

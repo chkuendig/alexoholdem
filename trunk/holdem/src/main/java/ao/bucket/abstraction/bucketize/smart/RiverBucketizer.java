@@ -1,12 +1,5 @@
 package ao.bucket.abstraction.bucketize.smart;
 
-import ao.bucket.abstraction.access.tree.LongByteList;
-import ao.bucket.index.detail.range.CanonRange;
-import ao.bucket.index.detail.range.RangeLookup;
-import ao.bucket.index.detail.river.ProbabilityEncoding;
-import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
-import ao.bucket.index.detail.river.compact.MemProbCounts;
-import ao.holdem.model.Round;
 import ao.ai.cluster.analysis.KMeans;
 import ao.ai.cluster.error.TwoPassWcss;
 import ao.ai.cluster.space.impl.ScalarDomain;
@@ -14,6 +7,13 @@ import ao.ai.cluster.space.measure.scalar.MeanEuclidean;
 import ao.ai.cluster.trial.Clustering;
 import ao.ai.cluster.trial.ClusteringTrial;
 import ao.ai.cluster.trial.ParallelTrial;
+import ao.bucket.abstraction.access.tree.LongByteList;
+import ao.bucket.index.detail.range.CanonRange;
+import ao.bucket.index.detail.range.RangeLookup;
+import ao.bucket.index.detail.river.ProbabilityEncoding;
+import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
+import ao.holdem.model.Round;
 import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 

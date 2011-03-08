@@ -18,6 +18,9 @@ import ao.odds.eval.eval7.Eval7Faster;
 public class River implements CanonIndexed
 {
     //--------------------------------------------------------------------
+    public  static final long CANONS    = 2428287420L;
+
+    //--------------------------------------------------------------------
     private final CanonCard RIVER;
     private final Card      RIVER_CARD;
     private final RiverCase CASE;

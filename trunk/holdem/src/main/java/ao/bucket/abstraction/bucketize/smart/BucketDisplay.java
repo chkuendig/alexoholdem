@@ -2,7 +2,6 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.LongByteList;
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;
@@ -35,7 +34,7 @@ public class BucketDisplay
                 Card cardB = Card.valueOf(rB,
                         (r.ordinal() > rB.ordinal())
                         ? Suit.CLUBS : Suit.DIAMONDS);
-                CanonHole hole = HoleLookup.lookup(cardA, cardB);
+                CanonHole hole = CanonHole.create(cardA, cardB);
 
                 System.out.print(
                         holeBuckets.get(hole.canonIndex()) + "\t");
@@ -48,7 +47,7 @@ public class BucketDisplay
     //--------------------------------------------------------------------
     public static void displayCanonHoleBuckets(LongByteList holeBuckets)
     {
-        for (int i = 0; i < HoleLookup.CANONS; i++)
+        for (int i = 0; i < CanonHole.CANONS; i++)
         {
             System.out.println(i + "\t" + holeBuckets.get(i));
         }

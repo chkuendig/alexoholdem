@@ -2,8 +2,8 @@ package ao.bucket.abstraction.bucketize.smart;
 
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.access.tree.LongByteList;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
 import ao.bucket.index.detail.preflop.HoleOdds;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.range.RangeLookup;
@@ -99,7 +99,7 @@ public class BucketSort
             sortable[i] = new IndexedValue(i);
         }
 
-        for (long i = 0; i < RiverLookup.CANONS; i++)
+        for (long i = 0; i < River.CANONS; i++)
         {
             sortable[ riverBuckets.get(i) ].add(
                     (double) MemProbCounts.compactProb(i) /
@@ -114,7 +114,7 @@ public class BucketSort
             sortedBuckets[ sortable[i].index ] = i;
         }
 
-        for (long i = 0; i < RiverLookup.CANONS; i++)
+        for (long i = 0; i < River.CANONS; i++)
         {
             riverBuckets.set(i,
                     sortedBuckets[
@@ -133,7 +133,7 @@ public class BucketSort
             sortable[i] = new IndexedValue(i);
         }
 
-        for (int i = 0; i < HoleLookup.CANONS; i++)
+        for (int i = 0; i < CanonHole.CANONS; i++)
         {
             sortable[ holeBuckets.get(i) ].add(
                     HoleOdds.lookup(i).strengthVsRandom());
@@ -147,7 +147,7 @@ public class BucketSort
             sortedBuckets[ sortable[i].index ] = i;
         }
 
-        for (int i = 0; i < HoleLookup.CANONS; i++)
+        for (int i = 0; i < CanonHole.CANONS; i++)
         {
             holeBuckets.set(i,
                     sortedBuckets[

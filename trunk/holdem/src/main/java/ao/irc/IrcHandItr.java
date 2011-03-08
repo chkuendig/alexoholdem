@@ -15,11 +15,11 @@ import java.util.*;
 /**
  * Hand History Iterator
  */
-public class HandItr implements Iterable<Replay>
+public class IrcHandItr implements Iterable<Replay>
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(HandItr.class);
+            Logger.getLogger(IrcHandItr.class);
 
 
     //--------------------------------------------------------------------
@@ -32,9 +32,9 @@ public class HandItr implements Iterable<Replay>
 
 
     //--------------------------------------------------------------------
-    public HandItr(Map<String, List<IrcAction>> players,
-                   Map<Long, IrcRoster>         rosters,
-                   List<IrcHand>                hands)
+    public IrcHandItr(Map<String, List<IrcAction>> players,
+                      Map<Long, IrcRoster> rosters,
+                      List<IrcHand> hands)
     {
         init(players, rosters, hands);
     }

@@ -9,10 +9,11 @@ import ao.holdem.model.card.chance.Deck;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.Odds;
 import ao.odds.eval.eval7.Eval7Faster;
-import static ao.util.data.Arrs.swap;
 import org.apache.log4j.Logger;
 
 import java.util.EnumSet;
+
+import static ao.util.data.Arrs.swap;
 
 
 /**

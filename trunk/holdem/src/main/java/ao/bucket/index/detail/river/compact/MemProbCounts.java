@@ -1,7 +1,7 @@
 package ao.bucket.index.detail.river.compact;
 
 import ao.Infrastructure;
-import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.river.River;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.io.Dirs;
@@ -21,7 +21,7 @@ public class MemProbCounts
     //--------------------------------------------------------------------
     public static void main(String[] args) {
         long totalCount = 0;
-        for (long r = 0; r < RiverLookup.CANONS; r++) {
+        for (long r = 0; r < River.CANONS; r++) {
             totalCount += MemProbCounts.riverCount(r);
         }
         LOG.info("totalCount: " + totalCount);
@@ -29,7 +29,7 @@ public class MemProbCounts
         RiverEvalLookup.traverse(
             new CanonRange[]{CanonRange.newFromCount(
 //                    (long) Integer.MAX_VALUE - 1, 100
-                    0, RiverLookup.CANONS
+                    0, River.CANONS
             )},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
@@ -72,7 +72,7 @@ public class MemProbCounts
     private static final char PROB_COUNT_B[] =
             retrieveOrCreate(storeFileB,
                              Integer.MAX_VALUE,
-                             RiverLookup.CANONS - 1);
+                             River.CANONS - 1);
 
 
     //--------------------------------------------------------------------

@@ -1,11 +1,12 @@
 package ao.holdem.engine.state.tree;
 
 import ao.holdem.model.act.AbstractAction;
-import static ao.holdem.model.act.AbstractAction.BET_RAISE;
-import static ao.holdem.model.act.AbstractAction.CHECK_CALL;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static ao.holdem.model.act.AbstractAction.BET_RAISE;
+import static ao.holdem.model.act.AbstractAction.CHECK_CALL;
 
 /**
  * User: shalom

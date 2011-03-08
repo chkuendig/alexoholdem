@@ -3,7 +3,7 @@ package ao.bucket.abstraction.access.odds;
 import ao.bucket.abstraction.access.AbsBucketStore;
 import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.index.canon.river.RiverLookup;
+import ao.bucket.index.canon.river.River;
 import ao.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.time.Progress;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -240,7 +240,7 @@ public class BucketOdds implements IBucketOdds
         }
 
         LOG.debug("computing all strengths");
-        final Progress progress = new Progress(RiverLookup.CANONS);
+        final Progress progress = new Progress(River.CANONS);
         RiverEvalLookup.traverse(new RiverEvalLookup.AbsVisitor() {public void traverse(
                      long river, short strength, byte count) {
             char absoluteRiverBucket =

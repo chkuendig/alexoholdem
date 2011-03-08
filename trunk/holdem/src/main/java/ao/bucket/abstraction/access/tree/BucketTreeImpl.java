@@ -4,10 +4,10 @@ import ao.bucket.abstraction.access.tree.list.FullLongByteList;
 import ao.bucket.abstraction.access.tree.list.HalfLongByteList;
 import ao.bucket.abstraction.access.tree.list.StoredHalfLongByteList;
 import ao.bucket.abstraction.access.tree.list.StoredLongByteList;
-import ao.bucket.index.canon.flop.FlopLookup;
-import ao.bucket.index.canon.hole.HoleLookup;
-import ao.bucket.index.canon.river.RiverLookup;
-import ao.bucket.index.canon.turn.TurnLookup;
+import ao.bucket.index.canon.flop.Flop;
+import ao.bucket.index.canon.hole.CanonHole;
+import ao.bucket.index.canon.river.River;
+import ao.bucket.index.canon.turn.Turn;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.DetailLookup;
 import ao.holdem.model.Round;
@@ -62,10 +62,10 @@ public class BucketTreeImpl implements BucketTree
         else
         {
             LOG.debug("loading (or creating)");
-            holes  = new FullLongByteList( holeFile,  HoleLookup.CANONS);
-            flops  = new FullLongByteList( flopFile,  FlopLookup.CANONS);
-            turns  = new HalfLongByteList( turnFile,  TurnLookup.CANONS);
-            rivers = new HalfLongByteList(riverFile, RiverLookup.CANONS);
+            holes  = new FullLongByteList( holeFile,  CanonHole.CANONS);
+            flops  = new FullLongByteList( flopFile,  Flop.CANONS);
+            turns  = new HalfLongByteList( turnFile,  Turn.CANONS);
+            rivers = new HalfLongByteList(riverFile, River.CANONS);
         }
     }
 

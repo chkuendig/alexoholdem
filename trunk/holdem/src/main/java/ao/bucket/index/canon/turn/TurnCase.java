@@ -1,15 +1,16 @@
 package ao.bucket.index.canon.turn;
 
 import ao.bucket.index.canon.card.CanonSuit;
-import static ao.bucket.index.canon.card.CanonSuit.*;
 
 import java.util.*;
+
+import static ao.bucket.index.canon.card.CanonSuit.*;
 
 /**
  * Date: Sep 15, 2008
  * Time: 4:09:49 PM
  */
-public enum TurnCase
+/*package-private*/ enum TurnCase
 {
     //--------------------------------------------------------------------
     F   (FIRST),

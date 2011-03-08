@@ -1,6 +1,7 @@
 package ao.ai;
 
 import ao.holdem.engine.Player;
+import ao.holdem.engine.state.State;
 
 /**
  *
@@ -8,6 +9,15 @@ import ao.holdem.engine.Player;
 public abstract class AbstractPlayer implements Player
 {
     //--------------------------------------------------------------------
+    @Override
+    public void observe(State nextToActState)
+    {
+        // ignore
+    }
+
+
+    //--------------------------------------------------------------------
+    @Override
     public boolean hasQuit()
     {
         return false;

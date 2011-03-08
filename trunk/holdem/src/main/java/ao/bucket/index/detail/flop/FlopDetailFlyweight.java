@@ -1,7 +1,6 @@
 package ao.bucket.index.detail.flop;
 
 import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.flop.FlopLookup;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.example.ExampleLookup;
 import ao.bucket.index.detail.preflop.CanonHoleDetail;
@@ -76,11 +75,11 @@ public class FlopDetailFlyweight
     //--------------------------------------------------------------------
     public FlopDetailFlyweight()
     {
-        HOLE       = new byte [ FlopLookup.CANONS ];
-        STRENGTH   = new float[ FlopLookup.CANONS ];
-        FIRST_TURN = new int  [ FlopLookup.CANONS ];
-        TURN_COUNT = new byte [ FlopLookup.CANONS ];
-        REPRESENTS = new byte [ FlopLookup.CANONS ];
+        HOLE       = new byte [ Flop.CANONS ];
+        STRENGTH   = new float[ Flop.CANONS ];
+        FIRST_TURN = new int  [ Flop.CANONS ];
+        TURN_COUNT = new byte [ Flop.CANONS ];
+        REPRESENTS = new byte [ Flop.CANONS ];
     }
     private FlopDetailFlyweight(
             byte  hole      [],

@@ -5,7 +5,7 @@ import ao.holdem.engine.state.State;
 /**
  *
  */
-public class Analysis
+/*package-private*/ class Analysis
 {
     public void analyze(State nextToActState)
     {

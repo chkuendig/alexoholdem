@@ -4,7 +4,7 @@ package ao.bucket.index.canon.turn;
  * Date: Sep 15, 2008
  * Time: 4:40:05 PM
  */
-public class TurnUtil
+/*package-private*/ class TurnUtil
 {
     //--------------------------------------------------------------------
     private static final int SUIT_SET_BITS = (int)
