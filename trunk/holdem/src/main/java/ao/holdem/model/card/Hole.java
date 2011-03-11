@@ -1,7 +1,6 @@
 package ao.holdem.model.card;
 
 import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.hole.HoleLookup;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -30,7 +29,14 @@ public class Hole
     }
 
 
-    //--------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    /**
+     * Create a new instance of a Hole.
+     * @param a the first card
+     * @param b the second card
+     * @return Hole consisting of a and b, if a == b then null.
+     * @throws NullPointerException if a or b are null
+     */
     public static Hole valueOf(Card a, Card b)
     {
         return VALUES[ a.ordinal() ][ b.ordinal() ];
@@ -52,7 +58,7 @@ public class Hole
         A           = a;
         B           = b;
         AS_ARRAY    = new Card[]{A, B};
-        IS_PAIR     = computePaired();
+        IS_PAIR     = computeIsPair();
     }
 
 
@@ -69,32 +75,32 @@ public class Hole
 
     public CanonHole asCanon()
     {
-        return HoleLookup.lookup(A, B);
+        return CanonHole.create(A, B);
     }
 
 
     //--------------------------------------------------------------------
-    public boolean ranks(Rank rankA, Rank rankB)
+    public boolean hasRanks(Rank rankA, Rank rankB)
     {
         return A.rank() == rankA && B.rank() == rankB ||
                A.rank() == rankB && B.rank() == rankA;
     }
 
-    public boolean ranks(Rank rank)
+    public boolean hasRank(Rank rank)
     {
         return A.rank() == rank || B.rank() == rank;
     }
 
-    public boolean suited()
+    public boolean isSuited()
     {
         return A.suit() == B.suit();
     }
 
-    public boolean paired()
+    public boolean isPair()
     {
         return IS_PAIR;
     }
-    private boolean computePaired()
+    private boolean computeIsPair()
     {
         return A.rank() == B.rank();
     }
@@ -112,15 +118,24 @@ public class Hole
 
 
     //--------------------------------------------------------------------
+    /**
+     * @return the card with the higher rank.
+     * @throws AssertionError if Hole is paired()
+     */
     public Card hi()
     {
-        assert !paired();
+        assert !isPair();
         return (A.rank().compareTo( B.rank() ) > 0
                 ? A : B);
     }
+
+    /**
+     * @return the card with the lower rank.
+     * @throws AssertionError if Hole is paired()
+     */
     public Card lo()
     {
-        assert !paired();
+        assert !isPair();
         return (A.rank().compareTo( B.rank() ) < 0
                 ? A : B);
     }
@@ -132,17 +147,20 @@ public class Hole
 
 
     //--------------------------------------------------------------------
+    @Override
     public String toString()
     {
         return "[" + A + ", " + B + "]";
     }
 
+    @Override
     @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass"})
     public boolean equals(Object obj)
     {
         return this == obj;
     }
 
+    @Override
     public int hashCode()
     {
         return A.ordinal() * 52 + B.ordinal();
