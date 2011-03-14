@@ -1,0 +1,5 @@
+#summary Pre-computed hand strength for each canonical card sequence (with a count indicating the number of real card sequences are represented).
+
+= Odds for canonical card sequences =
+
+Since card sequence odds are so useful, yet so time consuming to compute, there is support of caching these computations.
