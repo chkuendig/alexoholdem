@@ -5,3 +5,4 @@
   * BasicHoldemModel
   * HoldemCardModel
   * ActionModel
+  * ReplayModel
