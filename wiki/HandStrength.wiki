@@ -1,0 +1,5 @@
+#summary Odds vs. random (aka hand strength)
+
+  * Roll out all chance cards uniformly at random.
+  * Count how many wins, losses, and ties you would experience if the game were to reach the showdown.
+  * Hand strength = (wins + ties / 2) / (wins + losses + ties)
