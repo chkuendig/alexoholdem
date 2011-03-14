@@ -6,3 +6,4 @@
   * HoldemCardModel
   * ActionModel
   * ReplayModel
+  * PersistenceApi
