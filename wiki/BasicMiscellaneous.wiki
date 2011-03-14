@@ -1,0 +1,7 @@
+#summary Basic miscellaneous classes.  These could potentially be used in different contexts beyond this project.
+
+= Avatar =
+
+  * Each player has a unique ID called an Avatar.
+  * An Avatar has a domain and a name.
+  * For example, you could have new Avatar(“AAAI-2009”, “alexo-holdem”).
