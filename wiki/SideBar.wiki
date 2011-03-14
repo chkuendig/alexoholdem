@@ -1,3 +1,4 @@
 #summary Sidebar
 
-  * BasicCardModel
+  * GenericCardModel
+  * BasicMiscellaneous
