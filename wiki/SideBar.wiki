@@ -13,4 +13,5 @@
   * HandStrength
   * CanonicalCardSequenceIndexing
   * CardSequenceDetailLookup
-  * Bucketing
+  * [Bucketing]
+  * CounterfactualRegretMinimization
