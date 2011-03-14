@@ -1,0 +1,7 @@
+#summary IRC poker model
+
+  * There is native support for parsing the IRC poker hand format as described in:<br> [http://games.cs.ualberta.ca/poker/IRC/]
+  * There are many thousands of high-quality games available for download in that location.<br> You can use them for training card-prediction algorithms, or for any other purpose.
+  * The main API for reading IRC hands is:<br> {{{IrcHistorian.fromSnapshot(direcotryName: String) : Iterable<Replay>}}}<br> where directoryName is a dir with a day-full of playing history (as per download format).
+  * To make this happen, a number of support classes exist:<br> IrcAction, IrcPlayer, IrcRoster, IrcHand, IrcReader, IrcHandItr.
+  * One caveat with the IRC poker database is that it uses one non-standard rule.<br> Betting is not always limited to 4 bets per round.  The one exception is if a number of players keep raising, they can keep going until they run out of money.
