@@ -12,3 +12,4 @@
   * PokerHandEvaluation
   * HandStrength
   * CanonicalCardSequenceIndexing
+  * CardSequenceDetailLookup
