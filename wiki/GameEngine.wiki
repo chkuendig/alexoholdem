@@ -1,0 +1,66 @@
+#summary Limit Hold'em Game Engine
+
+= Seat =
+
+The state at every table position at a particular time is stored in the Seat object.
+  * The Seat state object encapsulates the following components:
+   * The Seat belongs to a particular Avatar.
+   * It has some ChipStack commitment to the pot.
+   * Is might be all-in or quit/folded.
+   * The round in which the last voluntary action was taken is tracked.
+   * These can all be accessed with:<br> player, commitment, isAllIn, isFolded, volultarityActedDuring(Round), isActive.
+  * There are a number of ways to advance the state of a Seat object:
+   * Seat.advance takes an Action with a ChickStack of stakes, a betSize, and a Round.
+   * There is a special case {{{Seat.advanceBlind(Action, ChipStack)}}}.
+   * You can also advance with Seat.fold(Round).
+
+= State =
+
+  * The State object encapsulates the following components:<br> The Round, all Seats, next Seat to act, remaining bets in round (max 4 per betting round, big blind counts as a bet), the last Avatar in the round that bet or called, the ChipStack stakes (i.e. how much each player must have to stay in), and the state at the start of the current round..
+  * To create a State, all you need is a list of Avatar objects in clockwise dealer-last order.
+  * You can advance the State using State.advance(Action).<br> A special case of an Action advancement is advanceQuitter(quitter: Avatar).
+  * To get a list of non-dominated actions, use {{{State.viableActions() :  Map<AbstractAction, State>}}} –these will not include folding when checking is possible–  or use {{{State.actions(nonDominated = false) : Map<AbstractAction, State>}}} to get a raw list of all legal actions.
+  * You can query the State object with atEndOfHand(): boolean.
+  * You can check the betSize(), if you canCheck() or canRaise(), and isSmallBet().
+  * You can {{{reify(easeAction: FallbackAction): Action}}}
+  * You can also check the:<br> {{{round(), seats(), numActivePlayers(), unfolded(): List<Seat>, pot(): ChipStack, stakes(): ChipState}}} –this is the amount required to have in the pot to stay in the hand–, remainingBetsInRound(), toCall(): ChipStack.
+  * You can check who is going to act next with:<br> nextToActIndex(): int, and nextToAct(): Seat, dealerIsNext(): boolean.
+  * You can also ask for the HeadsUpStatus (will return null if number of players is not 2):<br> In progress, showdown, dealer wins, dealee wins.
+
+
+= Player =
+
+The Player interface represents a Limit Texas Hold'em player.
+  * A Player can observe the state before the action of every opponent with the {{{Player.observe(nextToActState: State)}}} callback.
+  * {{{Player.act(State, CardSequence): Action}}} is where the decision about which action to take happens.
+  * There has to be a special case for QUIT actions because they are the only ones that can happen out-of-turn.  The {{{Player.hasQuit(): boolean}}} method indicates whether or not the given player has quit.
+  * Finally, the {{{Player.handEnded(deltas: Map<Avatar, ChipStack>)}}} callback is invoked at the end of a hand.  After that, the player may start playing the next hand.
+
+
+= Dealer =
+
+The Dealer object facilitates the playing of a poker hands.
+  * To create a Dealer, you need to supply a Map from Avatar to Player objects.  Additionally, you need to specify whether or not the dealer should automatically post the blinds (otherwise the Player objects will be expected to return SMALL_BLIND and BIG_BLIND actions).
+  * To play out a hand of poker, use:<br> {{{Dealer.play(clockwiseDealerLast: List<Avatar>, ChanceCards): StackedReplay}}}.
+  * The Dealer will ask each Player in turn to act, and advance the game State.
+  * The Dealer also handles Players quitting and going all-in.
+  * Finally, the Dealer is responsible for publishing the handEnded event.
+
+
+= StateFlow =
+
+The Dealer does its job with the help of StateFlow.
+  * StateFlow starts off with the initial state, the most recent state is the head().
+  * StateFlow.advance(Action) and advanceQuitter(Avatar) are used to move the head forward.
+  * {{{StateFlow.asReplay(ChanceCards): Replay}}} provides a replay upto the current point.
+  * {{{StateFlow.deltas(ChanceCards): Map<Avatar, ChipStack>}}} how much money each Avatar has won.  Note that before the end of the game these will all be negative, and at the end of the game one Avatar will have everybody's money, or there could also be pot splits.
+
+
+= StateTree =
+
+StateTree can be used to pre-compute every possible state ahead of time (or up to a specified ply), and then allows you to navigate the game tree.
+  * StateTree.Node objects represent the individual possible states.
+  * Each StateTree.Node has an intent(): char –here char being used in the sense of an unsigned 16 bit value, not an actual character– which is a unique index.  It is possible that some Nodes will have the same intent(), because one is dominated by the other (e.g. folding when you can check).  This helps not waste resources on considering dominated actions.
+  * The intent numbers within each round range from [0, # of unique intents in that round).<br> Also, intents in later Rounds are continuous between two earlier Round intents.
+  * This indexing can be used to efficiently represent all possible states within a Round as an array.
+  * {{{StateTree.Node.acts(): Map<AbstractAction, Node>}}} can be used to retrieve the next nodes down the tree of possible States.
