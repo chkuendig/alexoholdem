@@ -11,3 +11,4 @@
   * GameEngine
   * PokerHandEvaluation
   * HandStrength
+  * CanonicalCardSequenceIndexing
