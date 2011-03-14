@@ -2,3 +2,5 @@
 
   * GenericCardModel
   * BasicMiscellaneous
+  * BasicHoldemModel
+  * HoldemCardModel
