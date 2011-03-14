@@ -9,3 +9,4 @@
   * PersistenceApi
   * IrcPoker
   * GameEngine
+  * PokerHandEvaluation
