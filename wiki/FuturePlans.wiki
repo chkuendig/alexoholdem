@@ -11,6 +11,11 @@ Plan to:
   * Make this project a lot more developer-friendly, please let me know if you are interested in participating in developing this project.
 
 
-= Details =
+= Modularize =
 
-...
+  * General card game stuff:<br> Suit, Rank, Card
+  * Poker specific stuff:<br> Round, Hole, Community
+  * Canonical card-sequence stuff:<br> CanonHole, Flop, Turn, River<br> Lookups, etc.
+
+
+Remove all global state, make testable, test.
