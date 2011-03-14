@@ -1,0 +1,10 @@
+#summary Project direction.
+
+= Modularize =
+
+  * General card game stuff:<br> Suit, Rank, Card
+  * Poker specific stuff:<br> Round, Hole, Community
+  * Canonical card-sequence stuff:<br> CanonHole, Flop, Turn, River<br> Lookups, etc.
+
+
+Remove all global state, make testable, test.
