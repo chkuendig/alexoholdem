@@ -12,7 +12,7 @@
         <groupId>ao.common</groupId>
         <artifactId>ao-parent</artifactId>
         <version>6</version>
-        <relativePath>../ao-parent</relativePath>
+        <!--<relativePath>../ao-parent</relativePath>-->
     </parent>
 
 
@@ -23,7 +23,7 @@
 
 
     <!--====================================================================-->
-    <name>AlexO Holdem</name>
+    <name>AlexO Hold'em</name>
     <url>http://code.google.com/p/alexoholdem</url>
 
 

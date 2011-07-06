@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * User: Alex
  * Date: 21-May-2009
  * Time: 6:08:15 PM
  */

@@ -40,10 +40,6 @@ import ao.util.persist.PersistentShorts;
 
     static
     {
-//        unique5    = PersistentShorts.asArray(F_UNIQUE5);
-//        flushes    = PersistentShorts.asArray(F_FLUSHES);
-//        hashAdjust = PersistentShorts.asArray(F_HASH_ADJ);
-//        hashVals   = PersistentShorts.asArray(F_HASH_VAL);
         unique5    = PersistentShorts.retrieve(F_UNIQUE5);
         flushes    = PersistentShorts.retrieve(F_FLUSHES);
         hashAdjust = PersistentShorts.retrieve(F_HASH_ADJ);

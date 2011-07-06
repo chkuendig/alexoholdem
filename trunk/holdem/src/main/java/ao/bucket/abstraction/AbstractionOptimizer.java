@@ -5,6 +5,8 @@ import ao.bucket.abstraction.access.odds.BucketOdds;
 import ao.bucket.abstraction.access.tree.BucketTree;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.abstraction.bucketize.linear.HandStrengthAbs;
+import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
+import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.bucket.index.detail.flop.FlopDetails;
 import ao.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.card.Card;
@@ -39,14 +41,14 @@ public class AbstractionOptimizer
     {
         Rand.randomize();
 
-//        int  nHoleBuckets  =   5;
-//        char nFlopBuckets  =  25;
-//        char nTurnBuckets  = 125;
-//        char nRiverBuckets = 625;
-        int  nHoleBuckets  =    48;
-        char nFlopBuckets  =  1024;
-        char nTurnBuckets  =  8192;
-        char nRiverBuckets = 65535;
+        int  nHoleBuckets  =   5;
+        char nFlopBuckets  =  25;
+        char nTurnBuckets  = 125;
+        char nRiverBuckets = 625;
+//        int  nHoleBuckets  =    48;
+//        char nFlopBuckets  =  1024;
+//        char nTurnBuckets  =  8192;
+//        char nRiverBuckets = 65535;
 
         if (args.length > 1)
         {
@@ -61,6 +63,13 @@ public class AbstractionOptimizer
                 (int) nTurnBuckets + ", " + (int) nRiverBuckets);
 
         HoldemAbstraction abs = abstractHoldem(
+//                new KMeansBucketizer(),
+//                new PotentialBucketizer(),
+//                new HandStrengthAbs(),
+//                new PercentileAbs(),
+//                new HistBucketizer((byte) 4),
+//                new HistBucketizer((byte) 2),
+//                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets,
                 nTurnBuckets, nRiverBuckets);
 
@@ -231,11 +240,11 @@ public class AbstractionOptimizer
         return abstractHoldem(
 //                new KMeansBucketizer(),
 //                new PotentialBucketizer(),
-                new HandStrengthAbs(),
+//                new HandStrengthAbs(),
 //                new PercentileAbs(),
 //                new HistBucketizer((byte) 4),
 //                new HistBucketizer((byte) 2),
-//                new HistBucketizer((byte) 3),
+                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
     }
 

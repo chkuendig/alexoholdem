@@ -453,7 +453,7 @@ public class RiverEvalLookup
             char strRep = strRepIn.readChar();
             traverser.traverse(
                     river,
-                    decoreStrength(strRep),
+                    decodeStrength(strRep),
                     decodeRep(strRep));
         }
 
@@ -507,7 +507,7 @@ public class RiverEvalLookup
         return (byte)(  repIndex == 0 ? 4
                       : repIndex == 1 ? 12 : 24);
     }
-    private static short decoreStrength(char strRep) {
+    private static short decodeStrength(char strRep) {
         return (short)(strRep >>> 3);
     }
 

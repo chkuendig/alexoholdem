@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 /**
- * User: iscott
  * Date: Jan 9, 2009
  * Time: 10:24:57 AM
  */

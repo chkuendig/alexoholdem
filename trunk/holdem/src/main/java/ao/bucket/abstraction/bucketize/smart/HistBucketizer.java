@@ -26,7 +26,6 @@ import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 /**
- * User: aostrovsky
  * Date: 25-Jul-2009
  * Time: 11:42:15 AM
  */

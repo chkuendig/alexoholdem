@@ -5,7 +5,6 @@ import ao.bucket.abstraction.access.tree.BucketTree;
 import java.io.File;
 
 /**
- * User: Cross Creek Marina
  * Date: 21-May-2009
  * Time: 6:08:04 PM
  */

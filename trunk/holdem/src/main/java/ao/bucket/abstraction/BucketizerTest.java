@@ -6,7 +6,13 @@ import ao.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.bucket.index.detail.preflop.HoleOdds;
+import ao.bucket.index.detail.river.ProbabilityEncoding;
 import ao.bucket.index.detail.river.RiverEvalLookup;
+import ao.bucket.index.detail.river.compact.CompactRiverCounts;
+import ao.bucket.index.detail.river.compact.CompactRiverProbabilities;
+import ao.bucket.index.detail.river.compact.MemProbCounts;
+import ao.bucket.index.detail.turn.TurnDetails;
+import ao.bucket.index.detail.turn.TurnOdds;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.dealer.DealerTest;
 import ao.holdem.engine.state.StateFlow;
@@ -55,10 +61,18 @@ public class BucketizerTest
 //        char nFlopBuckets  =  1600;
 //        char nTurnBuckets  = 10239;
 //        char nRiverBuckets = 65535;
-        int  nHoleBuckets  =    48;
-        char nFlopBuckets  =  1024;
-        char nTurnBuckets  =  8192;
-        char nRiverBuckets = 65535;
+//        int  nHoleBuckets  =    48;
+//        char nFlopBuckets  =  1024;
+//        char nTurnBuckets  =  8192;
+//        char nRiverBuckets = 65535;
+        int  nHoleBuckets  =   5;
+        char nFlopBuckets  =  25;
+        char nTurnBuckets  = 125;
+        char nRiverBuckets = 625;
+//        int  nHoleBuckets  =    48;
+//        char nFlopBuckets  =  1024;
+//        char nTurnBuckets  =  8192;
+//        char nRiverBuckets = 65535;
 
         Boolean needSamples = null;
         if (args.length > 1)
@@ -81,8 +95,8 @@ public class BucketizerTest
 //            HoleDetails.load();     // 3
 //            FlopDetails.lookup(0);
 //            TurnRivers.main(null);
-            RiverEvalLookup.main(null);
-//            CompactRiverCounts.main(null);
+//            RiverEvalLookup.main(null);
+//            CompactRiverCounts.main(null);//
 //            MemProbCounts.main(null);
 //            ProbabilityEncoding.main(null);
 //            CompactRiverProbabilities.main(null);

@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import java.util.Arrays;
 
 /**
- * User: Cross Creek Marina
  * Date: 24-May-2009
  * Time: 8:18:36 PM
  */
