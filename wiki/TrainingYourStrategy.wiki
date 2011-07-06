@@ -21,7 +21,7 @@ Note that the above defaults are a very small strategy, we have experimented wit
     char nFlopBuckets  =  1024;
     char nTurnBuckets  =  8192;
     char nRiverBuckets = 65535;
-}}
+}}}
 
 The place that invokes the (cached) abstraction calculation is:
 {{{
