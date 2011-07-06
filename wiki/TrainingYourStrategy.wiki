@@ -1,0 +1,23 @@
+#summary How to have an infinite loop that keeps training a strategy and saving from time to time.
+
+= Introduction =
+
+First, we'll need to build or (much easier) [http://code.google.com/p/alexoholdem/downloads/list download] all of the indexes.  The LpSolve platform-specific libraries are required for `Optimizer` (I heard that Ubuntu comes with them, ideally this requirement should be removed).
+
+We start by generating an abstraction using (for example) `AbstractionOptimizer.main()`,  you can pass in four arguments to set the desired abstraction size.  By default, you get:
+{{{
+    int  nHoleBuckets  =    48;
+    char nFlopBuckets  =  1024;
+    char nTurnBuckets  =  8192;
+    char nRiverBuckets = 65535;
+}}}
+`char` is used to represent an `unsigned short` value, not anything character related. Note that `65535` (Character.MAX_VALUE) is the largest possible number of river buckets with the current implementation.
+
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
