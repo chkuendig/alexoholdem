@@ -1,11 +1,11 @@
 #summary How to get a unique index for each card sequence.
 
   * There are Suit isomorphisms, where for example "A5 Suited" could mean one of 4 equally good hands.
-  * The scheme I used is based on a paper:<br> [http://www.cs.cmu.edu/~sandholm/gs3.aaai07.pdf] section "Exploiting suit isomorphism".
-  * The main idea is to use the co-lexicographic index function within each unique suit strength sequence.<br> This part of the coding was extremely tedious, and was possibly the hardest part of the project to get right.
+  * The scheme used in is project is based on the following paper:<br> [http://www.cs.cmu.edu/~sandholm/gs3.aaai07.pdf] section "Exploiting suit isomorphism".
+  * The main idea is to use the co-lexicographic index function within each set of suit-strength rankingings.<br> This part of the coding was tedious and was possibly the hardest part of the project to get right (not that we're sure everything works right :D).
   * There is a friendly public API that hides the complexity.
-   * CanonHole is like a Hole (you can get it from {{{Hole.asCanon()}}}) but it takes into account suit isomorphisms when computing equality.  Each CanonHole has a canonical index in the range [0, 169).
-   * Flop is the same thing, but with 2 + 3 = 5 cards.  Flops also have canon indexes.<br> For any two CanonHole indexes `i, j st. i < j` all of the Flops in between i and j will has consecutive canonical indexes.
-    * You can get a Flop directly using the constructor or by using CanonHole.addFlop(...)
-   * Turn, see: CanonHole, Flop<br> Flop.addTurn(...): Turn
-   * River, see: CanonHole, Flop, Turn<br> Turn.addRiver(...): River
+   * `CanonHole` is like a `Hole` (you can get it from {{{Hole.asCanon()}}}) but it takes into account suit isomorphisms when computing equality.  Each CanonHole has a canonical index in the range [0, 169).
+   * `Flop` work in a similar way, but with 2 + 3 = 5 cards.  Flops also have canon indexes.<br> For any two CanonHole indexes `i, j st. i < j` all of the Flops in between i and j will has consecutive canonical indexes.
+    * You can get a `Flop` directly using the constructor or by using `CanonHole.addFlop(...)`
+   * `Turn`, see: `CanonHole`, `Flop`<br> `Flop.addTurn(...): Turn`
+   * `River`, see: `CanonHole`, `Flop`, `Turn`<br> `Turn.addRiver(...): River`
