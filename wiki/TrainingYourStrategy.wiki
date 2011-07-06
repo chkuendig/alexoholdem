@@ -8,12 +8,20 @@ First, we'll need to build or (much easier) [http://code.google.com/p/alexoholde
 
 We start by generating an abstraction using (for example) `AbstractionOptimizer.main()`,  you can pass in four arguments to set the desired abstraction size.  By default, you get:
 {{{
+    int  nHoleBuckets  =   5;
+    char nFlopBuckets  =  25;
+    char nTurnBuckets  = 125;
+    char nRiverBuckets = 625;
+}}}
+`char` is used to represent an `unsigned short` value, not anything character related. Note that `65535` (Character.MAX_VALUE) is the largest possible number of river buckets with the current implementation.
+
+Note that the above defaults are a very small strategy, we have experimented with strategies as big as:
+{{{
     int  nHoleBuckets  =    48;
     char nFlopBuckets  =  1024;
     char nTurnBuckets  =  8192;
     char nRiverBuckets = 65535;
-}}}
-`char` is used to represent an `unsigned short` value, not anything character related. Note that `65535` (Character.MAX_VALUE) is the largest possible number of river buckets with the current implementation.
+}}
 
 The place that invokes the (cached) abstraction calculation is:
 {{{
@@ -34,4 +42,4 @@ You will see an output such as: "Error is: <root mean squared error>".  The lowe
 
 
 = Training the Strategy =
-
+Use `BucketizerTest` ((( TODO: Finish this section )))
