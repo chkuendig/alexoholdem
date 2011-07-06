@@ -5,7 +5,7 @@
   * The main idea is to use the co-lexicographic index function within each unique suit strength sequence.<br> This part of the coding was extremely tedious, and was possibly the hardest part of the project to get right.
   * There is a friendly public API that hides the complexity.
    * CanonHole is like a Hole (you can get it from {{{Hole.asCanon()}}}) but it takes into account suit isomorphisms when computing equality.  Each CanonHole has a canonical index in the range [0, 169).
-   * Flop is the same thing, but with 2 + 3 = 5 cards.  Flops also have canon indexes.<br> For any two CanonHole indexes [i, j st. i < j] all of the Flops in between i and j will has consinuous consecutive canonical indexes.
+   * Flop is the same thing, but with 2 + 3 = 5 cards.  Flops also have canon indexes.<br> For any two CanonHole indexes `i, j st. i < j` all of the Flops in between i and j will has consinuous consecutive canonical indexes.
     * You can get a Flop directly using the constructor or by using CanonHole.addFlop(...)
    * Turn, see: CanonHole, Flop<br> Flop.addTurn(...): Turn
    * River, see: CanonHole, Flop, Turn<br> Turn.addRiver(...): River
