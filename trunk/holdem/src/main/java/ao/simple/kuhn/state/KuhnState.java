@@ -26,7 +26,7 @@ public enum KuhnState
                new StateFlow(AFTER_RAISE, null),
                false),
 
-    //The first player may then either bet or pass.
+    // The first player can either bet or pass.
     FIRST_ACTION(new StateFlow(AFTER_PASS, null),
                  new StateFlow(AFTER_BET,  null),
                  true);
@@ -49,7 +49,6 @@ public enum KuhnState
         ON_BET_RAISE = onBetRaise;
         FIRST_TO_ACT = firstToAct;
     }
-
 
 
     //--------------------------------------------------------------------

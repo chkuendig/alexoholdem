@@ -2,7 +2,7 @@ package ao.regret.khun.node;
 
 import ao.bucket.Bucket;
 import ao.regret.InfoNode;
-import ao.regret.khun.Equalibrium;
+import ao.regret.khun.Equilibrium;
 import ao.regret.khun.JointBucketSequence;
 import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.KuhnCard;
@@ -36,7 +36,7 @@ public class KuhnInfoTree
     //--------------------------------------------------------------------
     public KuhnInfoTree()
     {
-        int nBuckets =  KuhnCard.VALUES.length;
+        int nBuckets = KuhnCard.VALUES.length;
         int nStates  = KuhnState.VALUES.length;
 
         passRegret = new double[ nBuckets ][ nStates ];
@@ -74,7 +74,7 @@ public class KuhnInfoTree
             reachSum[bucket][state] += proponentReachProbability;
 
             passRegret[bucket][state] += counterfactualRegret[0];
-             betRegret[bucket][state] += counterfactualRegret[1];
+            betRegret [bucket][state] += counterfactualRegret[1];
         }
 
         //----------------------------------------------------------------
@@ -162,7 +162,7 @@ public class KuhnInfoTree
     {
         KuhnSequencer sequencer = new KuhnSequencer();
 
-        Equalibrium equalibrium = new Equalibrium();
+        Equilibrium equilibrium = new Equilibrium();
 
         InfoNode firstRoot =
                 KuhnInfoTree.initialize(sequencer.root(), false);
@@ -171,7 +171,7 @@ public class KuhnInfoTree
 
         for (int i = 0; i < 1000000; i++)
         {
-            equalibrium.approximate(
+            equilibrium.approximate(
                     firstRoot, lastRoot,
                     new JointBucketSequence(),
                     1.0, 1.0);

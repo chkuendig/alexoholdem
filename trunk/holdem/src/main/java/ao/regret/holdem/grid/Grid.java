@@ -32,6 +32,8 @@ public interface Grid
     //--------------------------------------------------------------------
     public static class Impl
     {
+        private Impl() {}
+
         public static Grid newInstance(
                 int     rows,
                 int     cols,
@@ -50,9 +52,7 @@ public interface Grid
                 int     cols,
                 boolean doublePrecision)
         {
-            return doublePrecision
-                   ? new DoubleArrayGrid(rows, cols)
-                   : new FloatArrayGrid (rows, cols);
+            return newInstance(rows, cols, false, doublePrecision);
         }
     }
 }

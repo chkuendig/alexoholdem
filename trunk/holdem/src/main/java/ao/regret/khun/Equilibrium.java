@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  *
  */
-public class Equalibrium
+public class Equilibrium
 {
     //--------------------------------------------------------------------
     public void minimizeRegret(
@@ -50,7 +50,7 @@ public class Equalibrium
             StateFlow next = state.advance(act);
             if (next.endOfHand()) {
                 val = TerminalNode.vs(
-                        buckets[0],buckets[1], next.outcome());
+                        buckets[0], buckets[1], next.outcome());
             } else {
                 val = minimizeRegret(
                         next.state(),

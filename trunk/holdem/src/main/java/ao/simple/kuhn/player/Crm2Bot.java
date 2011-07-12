@@ -1,13 +1,11 @@
 package ao.simple.kuhn.player;
 
-import ao.regret.khun.Equalibrium;
+import ao.regret.khun.Equilibrium;
 import ao.regret.khun.node.KuhnInfoTree;
 import ao.simple.kuhn.KuhnAction;
 import ao.simple.kuhn.KuhnCard;
 import ao.simple.kuhn.KuhnPlayer;
 import ao.simple.kuhn.state.KuhnState;
-import ao.util.math.stats.Combo;
-import ao.util.math.stats.Permuter;
 import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
@@ -30,15 +28,15 @@ public class Crm2Bot implements KuhnPlayer
     //--------------------------------------------------------------------
     public Crm2Bot(int iterations)
     {
-        Equalibrium equalibrium = new Equalibrium();
+        Equilibrium equilibrium = new Equilibrium();
 
         LOG.info("Computing Equilibrium");
         Progress progres = new Progress(iterations);
 
-        KuhnCard hands[][] = generateHands();
+        KuhnCard hands[][] = KuhnCardUtils.generateHands();
         for (int i = 0; i < iterations; i++)
         {
-            equalibrium.minimizeRegret(
+            equilibrium.minimizeRegret(
                     tree, hands[i % hands.length]);
 
             progres.checkpoint();
@@ -49,21 +47,6 @@ public class Crm2Bot implements KuhnPlayer
         }
 
         LOG.info( tree );
-    }
-
-
-    private static KuhnCard[][] generateHands()
-    {
-        KuhnCard hands[][] = new KuhnCard[ (int)
-                Combo.factorial(KuhnCard.values().length) ][2];
-
-        int i = 0;
-        for (KuhnCard c[] :
-                new Permuter<KuhnCard>(KuhnCard.values(), 2)) {
-            hands[ i++ ] = c;
-        }
-
-        return hands;
     }
 
 

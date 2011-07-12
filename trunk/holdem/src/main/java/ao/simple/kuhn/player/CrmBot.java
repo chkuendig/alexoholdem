@@ -1,6 +1,6 @@
 package ao.simple.kuhn.player;
 
-import ao.regret.khun.Equalibrium;
+import ao.regret.khun.Equilibrium;
 import ao.regret.khun.JointBucketSequence;
 import ao.regret.khun.node.*;
 import ao.simple.kuhn.KuhnAction;
@@ -9,8 +9,6 @@ import ao.simple.kuhn.KuhnPlayer;
 import ao.simple.kuhn.rules.KuhnBucket;
 import ao.simple.kuhn.rules.KuhnSequencer;
 import ao.simple.kuhn.state.KuhnState;
-import ao.util.math.stats.Combo;
-import ao.util.math.stats.Permuter;
 import ao.util.time.Progress;
 import org.apache.log4j.Logger;
 
@@ -33,7 +31,7 @@ public class CrmBot implements KuhnPlayer
     public CrmBot(int iterations)
     {
         KuhnSequencer sequencer   = new KuhnSequencer();
-        Equalibrium   equalibrium = new Equalibrium();
+        Equilibrium equilibrium = new Equilibrium();
 
         firstRoot = KuhnInfoTree.initialize(sequencer.root(), false);
         lastRoot  = KuhnInfoTree.initialize(sequencer.root(), true);
@@ -41,13 +39,13 @@ public class CrmBot implements KuhnPlayer
         LOG.info("Computing Equilibrium");
         Progress progres = new Progress(iterations);
 
-        KuhnCard hands[][] = generateHands();
+        KuhnCard hands[][] = KuhnCardUtils.generateHands();
         for (int i = 0; i < iterations; i++)
         {
             JointBucketSequence jbs =
                     new JointBucketSequence( hands[i % hands.length] );
 
-            equalibrium.approximate(
+            equilibrium.approximate(
                     firstRoot, lastRoot,
                     jbs, 1.0, 1.0);
 
@@ -61,22 +59,6 @@ public class CrmBot implements KuhnPlayer
 //        System.out.println("first:\n" + firstRoot);
 //        System.out.println("last:\n"  + lastRoot);
     }
-
-
-    private static KuhnCard[][] generateHands()
-    {
-        KuhnCard hands[][] = new KuhnCard[ (int)
-                Combo.factorial(KuhnCard.values().length) ][2];
-
-        int i = 0;
-        for (KuhnCard c[] :
-                new Permuter<KuhnCard>(KuhnCard.values(), 2)) {
-            hands[ i++ ] = c;
-        }
-
-        return hands;
-    }
-
 
 
     //--------------------------------------------------------------------

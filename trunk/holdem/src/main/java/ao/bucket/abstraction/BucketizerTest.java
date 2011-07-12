@@ -25,6 +25,7 @@ import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.regret.holdem.InfoPart;
 import ao.regret.holdem.IterativeMinimizer;
 import ao.regret.holdem.mono.ChainMinimizer;
+import ao.regret.holdem.mono.MonoRegretMin;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;
@@ -305,12 +306,12 @@ public class BucketizerTest
 //        IterativeMinimizer cfrMin = new ParallelMinimizer(
 //                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION),
 //                abs.tree(false).holes());
-        IterativeMinimizer cfrMin =
-                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION);
+//        IterativeMinimizer cfrMin =
+//                ChainMinimizer.newMulti(info, abs.odds(), AGGRESSION);
 
 //        InfoPart        info   = abs.infoPart("mono", false);
-//        MonoRegretMin cfrMin =
-//                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
+        MonoRegretMin cfrMin =
+                new MonoRegretMin(info, abs.odds() /* abs.oddsCache()*/);
 
         long itr        = 0;
         long offset     = 0; //(125 + 560) * 1000 * 1000;
