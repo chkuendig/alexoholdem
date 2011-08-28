@@ -94,7 +94,7 @@ public class Optimizer
                  subBucketingErrors);
 
         int nVars = 0;
-        for (double bucketErr[] : subBucketingErrors) {
+        for (double[] bucketErr : subBucketingErrors) {
             nVars += bucketErr.length;
         }
 
@@ -115,7 +115,7 @@ public class Optimizer
         // total buckets <= nBuckets (WORKS)
         double totalBuckets[]        = new double[nVars + 1];
         int    nextBucketGranularity = 0;
-        for (int subBucketCount[] : subBucketCounts) {
+        for (int[] subBucketCount : subBucketCounts) {
             for (int count : subBucketCount) {
                 totalBuckets[ ++nextBucketGranularity ] = count;
             }

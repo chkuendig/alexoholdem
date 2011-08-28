@@ -74,7 +74,7 @@ import java.util.Arrays;
         int flat[] = new int[ offsets.length * offsets[0].length ];
 
         int index = 0;
-        for (int subOffsets[] : offsets)
+        for (int[] subOffsets : offsets)
         {
             for (int offset : subOffsets)
             {
@@ -114,7 +114,7 @@ import java.util.Arrays;
             Arrs.swap(cards, holeCards[1].ordinal(), 51  );
             Arrs.swap(cards, holeCards[0].ordinal(), 51-1);
 
-            for (Card flopCards[] : new Combiner<Card>(cards, 50, 3))
+            for (Card[] flopCards : new Combiner<Card>(cards, 50, 3))
             {
                 Flop isoFlop = hole.addFlop(
                                     flopCards[0],
@@ -137,7 +137,7 @@ import java.util.Arrays;
 
     public static void main(String[] args)
     {
-        for (int subOffsets[] : OFFSETS)
+        for (int[] subOffsets : OFFSETS)
         {
             LOG.info(
                     Arrays.toString( subOffsets ));

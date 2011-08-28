@@ -69,7 +69,7 @@ public class KuhnDealer
                 Combo.factorial(KuhnCard.values().length) ][2];
 
         int i = 0;
-        for (KuhnCard c[] :
+        for (KuhnCard[] c :
                 new Permuter<KuhnCard>(KuhnCard.values(), 2)) {
             hands[ i++ ] = c;
         }

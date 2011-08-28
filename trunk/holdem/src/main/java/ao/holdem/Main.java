@@ -106,7 +106,7 @@ public class Main
 //        OddFinder fg = new PreciseHeadsUpOdds();
         for (int opps = 1; opps <= 1; opps++)
         {
-            for (Card holes[] : new Combiner<Card>(Card.values(), 2))
+            for (Card[] holes : new Combiner<Card>(Card.values(), 2))
             {
                 Odds approxOdds =
                         fa.compute(Hole.valueOf(holes[0], holes[1]), c, opps);

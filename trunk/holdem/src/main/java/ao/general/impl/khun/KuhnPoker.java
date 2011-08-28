@@ -25,7 +25,7 @@ public class KuhnPoker
         List<TwoTuple<int[], int[]>> hands =
                 new ArrayList<TwoTuple<int[], int[]>>();
 
-        for (KuhnCard permutation[] :
+        for (KuhnCard[] permutation :
                 new Permuter<KuhnCard>(KuhnCard.values(), 2))
         {
             hands.add(new TwoTuple<int[], int[]>(
