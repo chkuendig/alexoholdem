@@ -2,6 +2,7 @@ package ao.bucket.abstraction.bucketize.linear;
 
 import ao.bucket.abstraction.access.tree.BucketTree.Branch;
 import ao.bucket.abstraction.bucketize.def.ScalarBucketizer;
+import ao.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.bucket.index.detail.CanonDetail;
 import ao.bucket.index.detail.range.CanonRange;
 import ao.bucket.index.detail.river.RiverEvalLookup;
@@ -39,7 +40,7 @@ public class HandStrengthAbs implements ScalarBucketizer
             bucketizeByList(branch, nBuckets);
         }
 
-        return -1;
+        return new HandStrengthMeasure().error(branch, nBuckets);
     }
 
     public double bucketize(
