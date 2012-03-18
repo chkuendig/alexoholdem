@@ -1,7 +1,7 @@
 package ao.learn.mst.gen2.game
 
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
-import ao.learn.mst.gen2.player.FiniteAction
+import ao.learn.mst.gen2.player.{FiniteAction, ChancePlayer}
 
 /**
  * Date: 03/12/11
@@ -9,12 +9,16 @@ import ao.learn.mst.gen2.player.FiniteAction
  */
 
 trait ExtensiveGameChance
-    extends ExtensiveGameNode
+    extends ExtensiveGameNonTerminal
 {
+  //--------------------------------------------------------------------------------------------------------------------
+  def player = ChancePlayer
+
+
   //--------------------------------------------------------------------------------------------------------------------
   def probabilities : ActionProbabilityMass
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def child(outcome : FiniteAction) : ExtensiveGameDecision
+  override def child(outcome : FiniteAction) : ExtensiveGameDecision
 }

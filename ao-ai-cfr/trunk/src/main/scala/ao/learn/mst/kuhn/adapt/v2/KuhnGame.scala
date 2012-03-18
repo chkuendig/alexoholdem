@@ -10,19 +10,19 @@ import ao.learn.mst.gen.utility.ExtensiveUtilityRange._
  */
 
 class KuhnGame
-    extends ExtensiveGame
+//    extends ExtensiveGame
 {
-  //--------------------------------------------------------------------------------------------------------------------
-  def rationalPlayers =
-    Set(RationalPlayer(0),
-        RationalPlayer(1))
-
-//  def utilityRanges = {
-//    val utilityRange =
-//      ExtensiveUtilityRange(-2.0, 2.0)
+//  //--------------------------------------------------------------------------------------------------------------------
+//  def rationalPlayers =
+//    Set(RationalPlayer(0),
+//        RationalPlayer(1))
 //
-//    Seq.fill(2)(utilityRange)
-//  }
-
-  def gameTreeRoot = null
+////  def utilityRanges = {
+////    val utilityRange =
+////      ExtensiveUtilityRange(-2.0, 2.0)
+////
+////    Seq.fill(2)(utilityRange)
+////  }
+//
+//  def gameTreeRoot = null
 }

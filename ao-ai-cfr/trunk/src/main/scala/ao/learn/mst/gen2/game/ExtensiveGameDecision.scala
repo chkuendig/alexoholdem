@@ -10,14 +10,14 @@ import ao.learn.mst.gen2.info.InformationSet
  */
 
 trait ExtensiveGameDecision
-    extends ExtensiveGameNode
+    extends ExtensiveGameNonTerminal
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def player : RationalPlayer
+  override def player : RationalPlayer
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def child(decision : FiniteAction) : ExtensiveGameNode
+//  override def child(decision : FiniteAction) : ExtensiveGameNode
 
 
   //--------------------------------------------------------------------------------------------------------------------

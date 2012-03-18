@@ -16,7 +16,8 @@ trait ExtensiveGame
 {
   //--------------------------------------------------------------------------------------------------------------------
   /** "A finite set of n (rational) players" */
-  def rationalPlayers : Set[RationalPlayer]
+  //def rationalPlayers : Set[RationalPlayer]
+  def rationalPlayerCount : Int
 
 //  /** Utility range for each (rational) player */
 //  def utilityRanges : Map[RationalPlayer, ExtensiveUtilityRange]
