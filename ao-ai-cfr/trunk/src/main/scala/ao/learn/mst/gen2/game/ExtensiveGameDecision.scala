@@ -13,6 +13,9 @@ trait ExtensiveGameDecision
     extends ExtensiveGameNonTerminal
 {
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @return RationalPlayer, i.e. next to act.
+   */
   override def player : RationalPlayer
 
 
@@ -21,5 +24,8 @@ trait ExtensiveGameDecision
 
 
   //--------------------------------------------------------------------------------------------------------------------
+  /**
+   * @return InformationSet from the point of view of "player"
+   */
   def informationSet : InformationSet
 }

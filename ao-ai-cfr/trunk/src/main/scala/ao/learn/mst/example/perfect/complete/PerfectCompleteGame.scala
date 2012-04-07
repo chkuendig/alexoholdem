@@ -1,4 +1,4 @@
-package ao.learn.mst.example
+package ao.learn.mst.example.perfect.complete
 
 import ao.learn.mst.gen2.game.ExtensiveGame
 
@@ -8,10 +8,9 @@ import ao.learn.mst.gen2.game.ExtensiveGame
  * Time: 8:48 PM
  */
 class PerfectCompleteGame
-    extends ExtensiveGame
-{
+  extends ExtensiveGame {
   //--------------------------------------------------------------------------------------------------------------------
-//  def rationalPlayers = null
+  //  def rationalPlayers = null
   def rationalPlayerCount = 2
 
 

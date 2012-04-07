@@ -1,4 +1,4 @@
-package ao.learn.mst.example
+package ao.learn.mst.example.perfect.complete
 
 import ao.learn.mst.gen2.player.{RationalPlayer, FiniteAction}
 import ao.learn.mst.gen2.info.InformationSet
@@ -11,23 +11,22 @@ import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameTerminal, Ext
  * Game tree for first game at:
  *  http://en.wikipedia.org/wiki/Extensive-form_game#Perfect_and_complete_information
  */
-object PerfectCompleteNode
-{
+object PerfectCompleteNode {
   val root = PerfectCompleteDecisionFirst
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object PerfectCompleteDecisionFirst extends ExtensiveGameDecision
-{
+object PerfectCompleteDecisionFirst extends ExtensiveGameDecision {
   override def player =
     new RationalPlayer(0)
 
   def actions =
     Set(new FiniteAction(0),
-        new FiniteAction(1))
+      new FiniteAction(1))
 
   object FirstDecisionInfoSet extends InformationSet
+
   def informationSet = FirstDecisionInfoSet
 
   def child(action: FiniteAction) =
@@ -39,16 +38,16 @@ object PerfectCompleteDecisionFirst extends ExtensiveGameDecision
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object PerfectCompleteDecisionAfterUp extends ExtensiveGameDecision
-{
+object PerfectCompleteDecisionAfterUp extends ExtensiveGameDecision {
   override def player =
     RationalPlayer(1)
 
   def actions =
     Set(new FiniteAction(0),
-        new FiniteAction(1))
+      new FiniteAction(1))
 
   object AfterUpInfoSet extends InformationSet
+
   def informationSet = AfterUpInfoSet
 
   def child(action: FiniteAction) =
@@ -60,16 +59,16 @@ object PerfectCompleteDecisionAfterUp extends ExtensiveGameDecision
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object PerfectCompleteDecisionAfterDown extends ExtensiveGameDecision
-{
+object PerfectCompleteDecisionAfterDown extends ExtensiveGameDecision {
   override def player =
     RationalPlayer(1)
 
   def actions =
     Set(new FiniteAction(0),
-        new FiniteAction(1))
+      new FiniteAction(1))
 
   object AfterDownInfoSet extends InformationSet
+
   def informationSet = AfterDownInfoSet
 
   def child(action: FiniteAction) =
@@ -81,30 +80,26 @@ object PerfectCompleteDecisionAfterDown extends ExtensiveGameDecision
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object PerfectCompleteTerminalUpUp extends ExtensiveGameTerminal
-{
+object PerfectCompleteTerminalUpUp extends ExtensiveGameTerminal {
   def payoff = ExpectedValue(
     Map(RationalPlayer(0) -> 0,
-        RationalPlayer(1) -> 0))
+      RationalPlayer(1) -> 0))
 }
 
-object PerfectCompleteTerminalUpDown extends ExtensiveGameTerminal
-{
+object PerfectCompleteTerminalUpDown extends ExtensiveGameTerminal {
   def payoff = ExpectedValue(
     Map(RationalPlayer(0) -> 2,
-        RationalPlayer(1) -> 1))
+      RationalPlayer(1) -> 1))
 }
 
-object PerfectCompleteTerminalDownUp extends ExtensiveGameTerminal
-{
+object PerfectCompleteTerminalDownUp extends ExtensiveGameTerminal {
   def payoff = ExpectedValue(
     Map(RationalPlayer(0) -> 1,
-        RationalPlayer(1) -> 2))
+      RationalPlayer(1) -> 2))
 }
 
-object PerfectCompleteTerminalDownDown extends ExtensiveGameTerminal
-{
+object PerfectCompleteTerminalDownDown extends ExtensiveGameTerminal {
   def payoff = ExpectedValue(
     Map(RationalPlayer(0) -> 3,
-        RationalPlayer(1) -> 1))
+      RationalPlayer(1) -> 1))
 }
