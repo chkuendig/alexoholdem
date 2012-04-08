@@ -1,11 +1,11 @@
 package ao.learn.mst.example
 
-import perfect.complete.PerfectCompleteGame
+import imperfect.complete.ImperfectCompleteGame
 import xml.{PrettyPrinter}
 import ao.learn.mst.gen2.game.{ExtensiveGameTerminal, ExtensiveGameDecision, ExtensiveGameNode, ExtensiveGame}
-import ao.learn.mst.gen2.player.RationalPlayer
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.cfr._
+import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
 
 
 /**
@@ -23,7 +23,8 @@ object ExtensiveGameSolver
 
   //--------------------------------------------------------------------------------------------------------------------
   val game : ExtensiveGame =
-    new PerfectCompleteGame
+//    PerfectCompleteGame
+    ImperfectCompleteGame
 
   val extensiveGameRoot =
     game.gameTreeRoot
@@ -41,23 +42,23 @@ object ExtensiveGameSolver
 
 
   //-------------------------------------------------------
-  val firstPlayerView =
-    PlayerViewBuilder.expand(
-      game,
-      RationalPlayer(0))
-
-  println("First player's view")
-  println(formatter.format(
-    displayPlayerViewNode( firstPlayerView )))
-
-  val secondPlayerView =
-    PlayerViewBuilder.expand(
-      game,
-      RationalPlayer(1))
-
-  println("Second player's view")
-  println(formatter.format(
-    displayPlayerViewNode( secondPlayerView )))
+//  val firstPlayerView =
+//    PlayerViewBuilder.expand(
+//      game,
+//      RationalPlayer(0))
+//
+//  println("First player's view")
+//  println(formatter.format(
+//    displayPlayerViewNode( firstPlayerView )))
+//
+//  val secondPlayerView =
+//    PlayerViewBuilder.expand(
+//      game,
+//      RationalPlayer(1))
+//
+//  println("Second player's view")
+//  println(formatter.format(
+//    displayPlayerViewNode( secondPlayerView )))
 
 
   //-------------------------------------------------------
@@ -65,18 +66,31 @@ object ExtensiveGameSolver
   println("\n\n\nCalculating Equalibrium: " +
     equilibriumApproximationIterations)
 
+
+  val informationSetIndex =
+    TraversingInformationSetIndexer.index( game )
+
+  val strategyProfile =
+    new StrategyProfile( informationSetIndex )
+
+  println( strategyProfile )
+
   val minimizer = new CfrMinimizer()
   for (i <- 1 to equilibriumApproximationIterations) {
-    minimizer.walkTree(firstPlayerView, secondPlayerView)
+    minimizer.walkTree(
+      game, informationSetIndex, strategyProfile)
   }
 
-  println("\nFirst player's view")
-  println(formatter.format(
-    displayPlayerViewNode( firstPlayerView )))
+  println("\n\n\n\n\n")
+  println( strategyProfile )
 
-  println("\nSecond player's view")
-  println(formatter.format(
-    displayPlayerViewNode( secondPlayerView )))
+//  println("\nFirst player's view")
+//  println(formatter.format(
+//    displayPlayerViewNode( firstPlayerView )))
+//
+//  println("\nSecond player's view")
+//  println(formatter.format(
+//    displayPlayerViewNode( secondPlayerView )))
 
   
   //--------------------------------------------------------------------------------------------------------------------

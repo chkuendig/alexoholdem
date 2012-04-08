@@ -19,6 +19,8 @@ object PlayerViewBuilder
   {
     root match {
       case decision : ExtensiveGameDecision => {
+//        decision.informationSet
+
         val kids : Seq[PlayerViewNode] =
           decision.actions
             .map(decision.child(_))

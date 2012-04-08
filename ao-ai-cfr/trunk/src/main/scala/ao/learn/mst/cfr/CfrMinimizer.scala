@@ -1,7 +1,8 @@
 package ao.learn.mst.cfr
 
 import ao.learn.mst.gen2.player.RationalPlayer
-import ao.learn.mst.gen2.game.{ExtensiveGame, ExtensiveGameNode}
+import ao.learn.mst.gen2.info.InformationSetIndex
+import ao.learn.mst.gen2.game._
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -9,79 +10,137 @@ class CfrMinimizer
 {
   //--------------------------------------------------------------------------------------------------------------------
   def walkTree(
-      firstPlayerNode             : PlayerViewNode,
-      lastPlayerNode              : PlayerViewNode)
+      game                : ExtensiveGame,
+      informationSetIndex : InformationSetIndex,
+      strategyProfile     : StrategyProfile)
   {
-    walkTree(
-      firstPlayerNode,
-      lastPlayerNode,
-//      new JointBucketSequence,
-      1.0,
-      1.0)
+    walkTree(game,
+             game.gameTreeRoot,
+//             informationSetIndex,
+             strategyProfile,
+             Seq(1.0, 1.0))
   }
 
   private def walkTree(
-      firstPlayerNode             : PlayerViewNode,
-      lastPlayerNode              : PlayerViewNode,
+      game                        : ExtensiveGame,
+      node                        : ExtensiveGameNode,
+//      informationSetIndex         : InformationSetIndex,
+      strategyProfile             : StrategyProfile,
 //      joinBucketSequence          : JointBucketSequence,
-      firstPlayerReachProbability : Double,
-      lastPlayerReachProbability  : Double) : Seq[Double] =
+      reachProbabilities          : Seq[Double]
+      ): Seq[Double] =
   {
-    firstPlayerNode match {
-      case decision : DecisionNode =>
+    node match {
+      case decision: ExtensiveGameDecision => {
         walkProponent(
-          firstPlayerNode.asInstanceOf[DecisionNode],
-          lastPlayerNode.asInstanceOf[DecisionNode],
-//          joinBucketSequence,
-          firstPlayerReachProbability,
-          lastPlayerReachProbability,
-          decision.isInstanceOf[ProponentNode])
-
-      case bucket : ChanceNode => {
-        throw new UnsupportedOperationException
+          game,
+          decision,
+//          informationSetIndex,
+          strategyProfile,
+          reachProbabilities)
       }
 
-      case terminal : TerminalNode =>
-        terminal.outcome
+      case chance: ExtensiveGameChance =>
+        throw new UnsupportedOperationException
+
+      case terminal : ExtensiveGameTerminal => {
+        val rationalPlayers: Seq[RationalPlayer] =
+          (0 until game.rationalPlayerCount).map( RationalPlayer(_) )
+
+        rationalPlayers.map(terminal.payoff.outcomes(_))
+      }
     }
   }
 
 
   //--------------------------------------------------------------------------------------------------------------------
+//  def walkTree(
+//      firstPlayerNode             : PlayerViewNode,
+//      lastPlayerNode              : PlayerViewNode)
+//  {
+//    walkTree(
+//      firstPlayerNode,
+//      lastPlayerNode,
+////      new JointBucketSequence,
+//      1.0,
+//      1.0)
+//  }
+//
+//  private def walkTree(
+//      firstPlayerNode             : PlayerViewNode,
+//      lastPlayerNode              : PlayerViewNode,
+////      joinBucketSequence          : JointBucketSequence,
+//      firstPlayerReachProbability : Double,
+//      lastPlayerReachProbability  : Double) : Seq[Double] =
+//  {
+//    firstPlayerNode match {
+//      case decision : DecisionNode =>
+//        walkProponent(
+//          firstPlayerNode.asInstanceOf[DecisionNode],
+//          lastPlayerNode.asInstanceOf[DecisionNode],
+////          joinBucketSequence,
+//          firstPlayerReachProbability,
+//          lastPlayerReachProbability,
+//          decision.isInstanceOf[ProponentNode])
+//
+//      case bucket : ChanceNode => {
+//        throw new UnsupportedOperationException
+//      }
+//
+//      case terminal : TerminalNode =>
+//        terminal.outcome
+//    }
+//  }
+
+
+  //--------------------------------------------------------------------------------------------------------------------
   private def walkProponent(
-      firstPlayerNode             : DecisionNode,
-      lastPlayerNode              : DecisionNode,
+      game                        : ExtensiveGame,
+      node                        : ExtensiveGameDecision,
+//      informationSetIndex         : InformationSetIndex,
+      strategyProfile             : StrategyProfile,                           
 //      joinBucketSequence          : JointBucketSequence,
-      firstPlayerReachProbability : Double,
-      lastPlayerReachProbability  : Double,
-      firstPlayerIsNextToAct      : Boolean) : Seq[Double] =
+      reachProbabilities          : Seq[Double]/*,
+      firstPlayerIsNextToAct      : Boolean*/
+      ) : Seq[Double] =
   {
-    val proponent: ProponentNode =
-      (if (firstPlayerIsNextToAct) firstPlayerNode else lastPlayerNode)
-        .asInstanceOf[ProponentNode];
+//    val proponent: ProponentNode =
+//      (if (firstPlayerIsNextToAct) firstPlayerNode else lastPlayerNode)
+//        .asInstanceOf[ProponentNode];
 
     // Compute σ1(I(r1)) according to Equation 8.
     val actionProbabilities: Seq[Double] =
-      proponent.positiveRegretStrategy()
-
+      strategyProfile.positiveRegretStrategy(
+        node.informationSet, node.actions.size)
+//      proponent.positiveRegretStrategy()
+    
     // for Each action a ∈ A(I(r1))
     //   Compute u1(σ, I(r1), a) and u2(σ, r2, a)
     val playerChildUtilities: Seq[Seq[Double]] =
       childUtilities(
-        firstPlayerNode, lastPlayerNode, proponent,
+        game,
+        node,
+        strategyProfile,
         actionProbabilities,
-        firstPlayerReachProbability, lastPlayerReachProbability,
-        firstPlayerIsNextToAct
+        reachProbabilities
       ).transpose
 
-    val (firstPlayerChildUtilities : Seq[Double],
-         lastPlayerChildUtilities  : Seq[Double]) =
-        (playerChildUtilities(0), playerChildUtilities(1))
+//    val (firstPlayerChildUtilities : Seq[Double],
+//         lastPlayerChildUtilities  : Seq[Double]) =
+//        (playerChildUtilities(0), playerChildUtilities(1))
+    
+    if (game.rationalPlayerCount != 2) {
+      throw new UnsupportedOperationException(
+        "Number of players must be 2: " + game.rationalPlayerCount);
+    }
+    val proponentIndex = node.player.index
+    val opponentIndex  = 1 - node.player.index
     
     val proponentChildUtilities: Seq[Double] =
-      if (firstPlayerIsNextToAct) firstPlayerChildUtilities else lastPlayerChildUtilities
+      playerChildUtilities( proponentIndex )
+    
     val opponentChildUtilities: Seq[Double] =
-      if (firstPlayerIsNextToAct) lastPlayerChildUtilities else firstPlayerChildUtilities
+      playerChildUtilities( opponentIndex )
 
     // Compute u1(σ, I(r1))) = sum[a∈A(I(r1)) | σ1(I(r1))(a) × u1(σ, I(r1), a)].
     val counterfactualUtility: Double =
@@ -97,19 +156,20 @@ class CfrMinimizer
 
     // Update counterfactual regret and average strategy
     val proponentReachProbability =
-      if (firstPlayerIsNextToAct) firstPlayerReachProbability else lastPlayerReachProbability
+      reachProbabilities( proponentIndex )
     val opponentReachProbability  =
-      if (firstPlayerIsNextToAct) lastPlayerReachProbability else firstPlayerReachProbability
+      reachProbabilities( opponentIndex )
 
     val counterfactualRegret: Seq[Double] =
       proponentChildUtilities.map(childUtility =>
         (childUtility - counterfactualUtility) * opponentReachProbability)
 
-    proponent.update(
+//    proponent.update(
+    strategyProfile.update(node.informationSet,
       counterfactualRegret, proponentReachProbability)
 
     // Utility for each player
-    if (firstPlayerIsNextToAct) {
+    if (proponentIndex == 0) {
       Seq(counterfactualUtility, opponentUtility)
     } else {
       Seq(opponentUtility, counterfactualUtility)
@@ -119,39 +179,43 @@ class CfrMinimizer
 
   //--------------------------------------------------------------------------------------------------------------------
   private def childUtilities(
-      firstPlayerNode             : DecisionNode,
-      lastPlayerNode              : DecisionNode,
-      proponent                   : ProponentNode,
-      actionProbabilities         : Seq[Double],
-      firstPlayerReachProbability : Double,
-      lastPlayerReachProbability  : Double,
-      firstPlayerIsNextToAct      : Boolean
+      game                : ExtensiveGame,
+      node                : ExtensiveGameDecision,
+      strategyProfile     : StrategyProfile,
+      actionProbabilities : Seq[Double],
+      reachProbabilities  : Seq[Double]
       ): Seq[Seq[Double]] =
   {
-    for (action <- 0 until proponent.kids.size)
+    for (action <- node.actions.toSeq)
     yield {
       // Find the associated child of c1 of r1 and c2 of r2.
-      val firstPlayerChild: PlayerViewNode =
-        firstPlayerNode.kids( action )
-
-      val lastPlayerChild: PlayerViewNode =
-        lastPlayerNode.kids( action )
+      val child:ExtensiveGameNode = node.child( action )
+      
+//      val firstPlayerChild: PlayerViewNode =
+//        firstPlayerNode.kids( action )
+//
+//      val lastPlayerChild: PlayerViewNode =
+//        lastPlayerNode.kids( action )
 
       // Compute u1(σ, I(r1), a) and u2(σ, r2, a) from walkTree(c1, c2, b, p1 × σ1(I(r1))(a), p2).
       val actionProbability: Double =
-        actionProbabilities( action )
+        actionProbabilities( action.index )
 
-      val firstPlayerChildReachProbability =
-        firstPlayerReachProbability * (if (firstPlayerIsNextToAct) actionProbability else 1.0)
-
-      val lastPlayerChildReachProbability =
-        lastPlayerReachProbability  * (if (firstPlayerIsNextToAct) 1.0 else actionProbability)
+      val childReachProbabilities =
+        reachProbabilities.updated(node.player.index,
+          reachProbabilities(node.player.index) * actionProbability) 
+      
+//      val firstPlayerChildReachProbability =
+//        firstPlayerReachProbability * (if (firstPlayerIsNextToAct) actionProbability else 1.0)
+//
+//      val lastPlayerChildReachProbability =
+//        lastPlayerReachProbability  * (if (firstPlayerIsNextToAct) 1.0 else actionProbability)
 
       walkTree(
-          firstPlayerChild,
-          lastPlayerChild,
-          firstPlayerChildReachProbability,
-          lastPlayerChildReachProbability)
+        game,
+        child, 
+        strategyProfile,
+        childReachProbabilities)
     }
   }
 }

@@ -1,6 +1,5 @@
 package ao.learn.mst.cfr
 
-import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.info.InformationSet
 
 /**
@@ -40,20 +39,20 @@ class OpponentNode(
     extends DecisionNode(kids)
     with    NonProponent
 {
-//  def kids : Seq[NonOpponent] = null
+
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
 class ProponentNode(
-  /*override val */kids  : Seq[PlayerViewNode/*NonProponent*/],
+  kids  : Seq[PlayerViewNode],
   val informationSet : InformationSet)
     extends DecisionNode(kids)
     with    NonOpponent
 {
   //--------------------------------------------------------------------------------------------------------------------
   var visitCount            = 0
-  val regretSum             = new Array[Double]( kids.length )
+  val regretSums            = new Array[Double]( kids.length )
   val actionProbabilitySums = new Array[Double]( kids.length )
   var reachProbabilitySum   = 0.0
 
@@ -74,7 +73,7 @@ class ProponentNode(
   }
 
   private def positiveCounterfactualRegret() : Seq[Double] =
-    regretSum.map(math.max(0, _))
+    regretSums.map(math.max(0, _))
 
   private def positiveCumulativeCounterfactualRegret() : Double =
     positiveCounterfactualRegret().sum
@@ -91,7 +90,7 @@ class ProponentNode(
     reachProbabilitySum += reachProbability
 
     for (action <- 0 until counterfactualRegret.size) {
-      regretSum( action ) += counterfactualRegret( action )
+      regretSums( action ) += counterfactualRegret( action )
     }
 
     visitCount += 1

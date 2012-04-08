@@ -30,10 +30,8 @@ package ao.learn.mst.gen2.info
  * A player cannot distinguish between nodes in the same information set when making a decision.
  * If a game has an information set with more than one member that game is said to have imperfect information.
  *
- *
  */
-class InformationSet
+class InformationSet(/*index: Int*/)
 {
-  //--------------------------------------------------------------------------------------------------------------------
-
+  // equals, hashCode
 }

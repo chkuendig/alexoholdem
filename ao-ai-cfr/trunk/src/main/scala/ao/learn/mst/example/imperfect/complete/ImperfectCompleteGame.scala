@@ -1,21 +1,22 @@
-package ao.learn.mst.example.perfect.complete
+package ao.learn.mst.example.imperfect.complete
 
 import ao.learn.mst.gen2.game.ExtensiveGame
+import ao.learn.mst.example.perfect.complete.PerfectCompleteNode
 
 /**
  * User: ao
- * Date: 11/03/12
- * Time: 8:48 PM
+ * Date: 07/04/12
+ * Time: 5:09 PM
  */
-object PerfectCompleteGame
+
+object ImperfectCompleteGame
   extends ExtensiveGame
 {
   //--------------------------------------------------------------------------------------------------------------------
-  //  def rationalPlayers = null
   def rationalPlayerCount = 2
 
 
   //--------------------------------------------------------------------------------------------------------------------
   def gameTreeRoot =
-    PerfectCompleteNode.root
+    ImperfectCompleteNode.root
 }
