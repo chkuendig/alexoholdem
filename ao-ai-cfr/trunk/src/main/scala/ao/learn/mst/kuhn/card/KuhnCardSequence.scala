@@ -16,7 +16,3 @@ case class KuhnCardSequence(
   def winner =
     if (first > last) FirstToAct else LastToAct
 }
-
-//case object KuhnCardSequence {
-//  def empty : KuhnCardSequence = KuhnCardSequence(null, null)
-//}

@@ -1,11 +1,13 @@
 package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
+import perfect.complete.PerfectCompleteGame
+import prs.DuanePaperRockScissorsGame
 import xml.{PrettyPrinter}
 import ao.learn.mst.gen2.game.{ExtensiveGameTerminal, ExtensiveGameDecision, ExtensiveGameNode, ExtensiveGame}
 import ao.learn.mst.gen2.solve.ExpectedValue
-import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
+import ao.learn.mst.cfr._
 
 
 /**
@@ -23,8 +25,9 @@ object ExtensiveGameSolver
 
   //--------------------------------------------------------------------------------------------------------------------
   val game : ExtensiveGame =
+    DuanePaperRockScissorsGame
 //    PerfectCompleteGame
-    ImperfectCompleteGame
+//    ImperfectCompleteGame
 
   val extensiveGameRoot =
     game.gameTreeRoot
@@ -62,7 +65,7 @@ object ExtensiveGameSolver
 
 
   //-------------------------------------------------------
-  val equilibriumApproximationIterations = 100 * 1000
+  val equilibriumApproximationIterations = 100 * 1000 * 1000
   println("\n\n\nCalculating Equalibrium: " +
     equilibriumApproximationIterations)
 
@@ -77,6 +80,10 @@ object ExtensiveGameSolver
 
   val minimizer = new CfrMinimizer()
   for (i <- 1 to equilibriumApproximationIterations) {
+    if (i % (100 * 1000) == 0) {
+      println(i + "\t" + strategyProfile)
+    }
+
     minimizer.walkTree(
       game, informationSetIndex, strategyProfile)
   }

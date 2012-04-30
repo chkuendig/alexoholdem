@@ -52,47 +52,6 @@ class CfrMinimizer
     }
   }
 
-
-  //--------------------------------------------------------------------------------------------------------------------
-//  def walkTree(
-//      firstPlayerNode             : PlayerViewNode,
-//      lastPlayerNode              : PlayerViewNode)
-//  {
-//    walkTree(
-//      firstPlayerNode,
-//      lastPlayerNode,
-////      new JointBucketSequence,
-//      1.0,
-//      1.0)
-//  }
-//
-//  private def walkTree(
-//      firstPlayerNode             : PlayerViewNode,
-//      lastPlayerNode              : PlayerViewNode,
-////      joinBucketSequence          : JointBucketSequence,
-//      firstPlayerReachProbability : Double,
-//      lastPlayerReachProbability  : Double) : Seq[Double] =
-//  {
-//    firstPlayerNode match {
-//      case decision : DecisionNode =>
-//        walkProponent(
-//          firstPlayerNode.asInstanceOf[DecisionNode],
-//          lastPlayerNode.asInstanceOf[DecisionNode],
-////          joinBucketSequence,
-//          firstPlayerReachProbability,
-//          lastPlayerReachProbability,
-//          decision.isInstanceOf[ProponentNode])
-//
-//      case bucket : ChanceNode => {
-//        throw new UnsupportedOperationException
-//      }
-//
-//      case terminal : TerminalNode =>
-//        terminal.outcome
-//    }
-//  }
-
-
   //--------------------------------------------------------------------------------------------------------------------
   private def walkProponent(
       game                        : ExtensiveGame,
@@ -104,9 +63,6 @@ class CfrMinimizer
       firstPlayerIsNextToAct      : Boolean*/
       ) : Seq[Double] =
   {
-//    val proponent: ProponentNode =
-//      (if (firstPlayerIsNextToAct) firstPlayerNode else lastPlayerNode)
-//        .asInstanceOf[ProponentNode];
 
     // Compute σ1(I(r1)) according to Equation 8.
     val actionProbabilities: Seq[Double] =
