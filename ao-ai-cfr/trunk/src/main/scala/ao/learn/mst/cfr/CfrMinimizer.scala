@@ -68,7 +68,6 @@ class CfrMinimizer
     val actionProbabilities: Seq[Double] =
       strategyProfile.positiveRegretStrategy(
         node.informationSet, node.actions.size)
-//      proponent.positiveRegretStrategy()
     
     // for Each action a ∈ A(I(r1))
     //   Compute u1(σ, I(r1), a) and u2(σ, r2, a)
@@ -120,7 +119,6 @@ class CfrMinimizer
       proponentChildUtilities.map(childUtility =>
         (childUtility - counterfactualUtility) * opponentReachProbability)
 
-//    proponent.update(
     strategyProfile.update(node.informationSet,
       counterfactualRegret, proponentReachProbability)
 

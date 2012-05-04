@@ -107,7 +107,9 @@ class StrategyProfile(
 
   //--------------------------------------------------------------------------------------------------------------------
   def averageStrategy(informationSet : InformationSet, childCount: Int): Seq[Double] =
-    averageStrategy( informationSetIndex.indexOf(informationSet), childCount )
+    averageStrategy(
+      informationSetIndex.indexOf(informationSet),
+      childCount)
 
   private def averageStrategy(informationSet : Int, childCount: Int): Seq[Double] = {
     initializeInformationSet(informationSet, childCount)
@@ -119,24 +121,39 @@ class StrategyProfile(
   //--------------------------------------------------------------------------------------------------------------------
   override def toString: String =
   {
-    val buffer = new StringBuilder
+    var buffer = ""
     for (informationSet <- informationSetIndex.informationSets)
     {
-      buffer.append(informationSet)
+      buffer += informationSet
       
       if (isInformationSetInitialized( informationSet ))
       {
-        buffer.append(": ")
-              .append(averageStrategy( informationSet, childCount(informationSet) ))
+        val informationSetStrategy =
+          averageStrategy(
+            informationSet,
+            childCount(informationSet) )
+
+        val strategyDescription =
+          (for (action <- informationSetIndex.actionsOf(informationSet).toList)
+            yield {
+              val probabilityPercentage =
+                100 * informationSetStrategy( action.index )
+
+              action + " %" + probabilityPercentage.formatted("%.3f")
+            }
+          ).mkString(", ")
+
+        buffer +=
+          ":\t" + strategyDescription
       }
       else
       {
-        buffer.append(": Not calculated")
+        buffer += ":\tNot calculated"
       }
-      
-      buffer.append("\n")
+
+      buffer += "\n"
     }
 
-    buffer.toString()
+    buffer
   }
 }

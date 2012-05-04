@@ -1,15 +1,15 @@
 
-package ao.learn.mst.example.prs
+package ao.learn.mst.example.rps
 
 import ao.learn.mst.gen2.game.ExtensiveGame
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object DuanePaperRockScissorsGame
+case object DuaneRockPaperScissorsGame
     extends ExtensiveGame
 {
   def rationalPlayerCount = 2
 
   def gameTreeRoot =
-    DuanePaperRockScissorsNode.root
+    DuaneRockPaperScissorsNode.root
 }

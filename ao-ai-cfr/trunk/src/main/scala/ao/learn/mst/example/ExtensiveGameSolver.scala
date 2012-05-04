@@ -2,7 +2,7 @@ package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
 import perfect.complete.PerfectCompleteGame
-import prs.DuanePaperRockScissorsGame
+import rps.DuaneRockPaperScissorsGame
 import xml.{PrettyPrinter}
 import ao.learn.mst.gen2.game.{ExtensiveGameTerminal, ExtensiveGameDecision, ExtensiveGameNode, ExtensiveGame}
 import ao.learn.mst.gen2.solve.ExpectedValue
@@ -25,7 +25,7 @@ object ExtensiveGameSolver
 
   //--------------------------------------------------------------------------------------------------------------------
   val game : ExtensiveGame =
-    DuanePaperRockScissorsGame
+    DuaneRockPaperScissorsGame
 //    PerfectCompleteGame
 //    ImperfectCompleteGame
 
@@ -64,7 +64,7 @@ object ExtensiveGameSolver
 //    displayPlayerViewNode( secondPlayerView )))
 
 
-  //-------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   val equilibriumApproximationIterations = 100 * 1000 * 1000
   println("\n\n\nCalculating Equalibrium: " +
     equilibriumApproximationIterations)
@@ -81,7 +81,7 @@ object ExtensiveGameSolver
   val minimizer = new CfrMinimizer()
   for (i <- 1 to equilibriumApproximationIterations) {
     if (i % (100 * 1000) == 0) {
-      println(i + "\t" + strategyProfile)
+      println(i + "\n" + strategyProfile)
     }
 
     minimizer.walkTree(

@@ -1,4 +1,4 @@
-package ao.learn.mst.example.prs
+package ao.learn.mst.example.rps
 
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.player.{FiniteAction, RationalPlayer}
@@ -7,33 +7,34 @@ import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision, Extensi
 import scala.Predef._
 
 //----------------------------------------------------------------------------------------------------------------------
-object DuanePaperRockScissorsNode {
-  val root = DuanePaperRockScissorsNodeFirst
+object DuaneRockPaperScissorsNode {
+  val root = DuaneRockPaperScissorsNodeFirst
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
-sealed abstract class DuanePaperRockScissorsAction(
+sealed abstract class DuaneRockPaperScissorsAction(
     index : Int,
     val value : Double)
       extends FiniteAction(index)
 
-case object Rock     extends DuanePaperRockScissorsAction(0, 3)
-case object Paper    extends DuanePaperRockScissorsAction(1, 2)
-case object Scissors extends DuanePaperRockScissorsAction(2, 1)
-//case object Rock     extends DuanePaperRockScissorsAction(0, 1)
-//case object Paper    extends DuanePaperRockScissorsAction(1, 1)
-//case object Scissors extends DuanePaperRockScissorsAction(2, 1)
+case object Rock     extends DuaneRockPaperScissorsAction(0, 3)
+case object Paper    extends DuaneRockPaperScissorsAction(1, 1)
+case object Scissors extends DuaneRockPaperScissorsAction(2, 2)
+//case object Rock     extends DuaneRockPaperScissorsAction(0, 1)
+//case object Paper    extends DuaneRockPaperScissorsAction(1, 1)
+//case object Scissors extends DuaneRockPaperScissorsAction(2, 1)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-case object SingletonInfoSet extends InformationSet
+case object EitherPlayerPov extends InformationSet
 
-abstract class DuanePaperRockScissorsNodeDecision extends ExtensiveGameDecision {
+abstract class DuaneRockPaperScissorsNodeDecision extends ExtensiveGameDecision {
   def actions =
     Set(Rock, Paper, Scissors)
 
-  def informationSet = SingletonInfoSet
+  def informationSet =
+    EitherPlayerPov
 
   def child(action: FiniteAction) = action match {
     case Rock     => child(Rock)
@@ -41,33 +42,39 @@ abstract class DuanePaperRockScissorsNodeDecision extends ExtensiveGameDecision 
     case Scissors => child(Scissors)
   }
 
-  def child(action: DuanePaperRockScissorsAction) : ExtensiveGameNode
+  def child(action: DuaneRockPaperScissorsAction) : ExtensiveGameNode
 }
 
-object DuanePaperRockScissorsNodeFirst extends DuanePaperRockScissorsNodeDecision {
+//case object FirstPlayerPov extends InformationSet
+case object DuaneRockPaperScissorsNodeFirst extends DuaneRockPaperScissorsNodeDecision {
   override def player =
     new RationalPlayer(0)
 
-  def child(action: DuanePaperRockScissorsAction) =
-    new DuanePaperRockScissorsNodeSecond(action)
+//  def informationSet = FirstPlayerPov
+
+  def child(action: DuaneRockPaperScissorsAction) =
+    new DuaneRockPaperScissorsNodeSecond(action)
 }
 
-case class DuanePaperRockScissorsNodeSecond(
-    firstPlayerAction : DuanePaperRockScissorsAction)
-      extends DuanePaperRockScissorsNodeDecision
+//case object SecondPlayerPov extends InformationSet
+case class DuaneRockPaperScissorsNodeSecond(
+    firstPlayerAction : DuaneRockPaperScissorsAction)
+      extends DuaneRockPaperScissorsNodeDecision
 {
   override def player =
     new RationalPlayer(1)
 
-  def child(action: DuanePaperRockScissorsAction) =
-   new DuanePaperRockScissorsTerminal(firstPlayerAction, action)
+//  def informationSet = SecondPlayerPov
+
+  def child(action: DuaneRockPaperScissorsAction) =
+   new DuaneRockPaperScissorsTerminal(firstPlayerAction, action)
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class DuanePaperRockScissorsTerminal(
-    firstPlayerAction  : DuanePaperRockScissorsAction,
-    secondPlayerAction : DuanePaperRockScissorsAction)
+class DuaneRockPaperScissorsTerminal(
+    firstPlayerAction  : DuaneRockPaperScissorsAction,
+    secondPlayerAction : DuaneRockPaperScissorsAction)
       extends ExtensiveGameTerminal
 {
   def payoff = {

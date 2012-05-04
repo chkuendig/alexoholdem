@@ -1,7 +1,7 @@
 package ao.learn.mst.gen2.info
 
-import ao.learn.mst.gen2.game.{ExtensiveGameNonTerminal, ExtensiveGameDecision, ExtensiveGameNode, ExtensiveGame}
-import collection.mutable
+import annotation.tailrec
+import ao.learn.mst.gen2.game._
 
 
 /**
@@ -13,49 +13,79 @@ object TraversingInformationSetIndexer
   //--------------------------------------------------------------------------------------------------------------------
   def index(extensiveGame: ExtensiveGame): InformationSetIndex =
   {
-    var informationSets = Map[InformationSet, Int]()
-
-    traverse(extensiveGame.gameTreeRoot, (informationSet: InformationSet) => {
-      if (! informationSets.contains( informationSet )) {
-        informationSets = informationSets +
-          (informationSet -> informationSets.size)
-      }
-    })
+//    var informationSets = Map[InformationSet, Int]()
+//
+//    traverse(extensiveGame.gameTreeRoot, (informationSet: InformationSet) => {
+//      if (! informationSets.contains( informationSet )) {
+//        informationSets = informationSets +
+//          (informationSet -> informationSets.size)
+//      }
+//    })
 
     new MappedInformationSetIndex(
-      informationSets)
+      informationSetDecisionNodeIndex(
+        extensiveGame.gameTreeRoot))
   }
 
-  private def traverse(node: ExtensiveGameNode, visitor: (InformationSet) => Unit)
+  private def informationSetDecisionNodeIndex(
+      node: ExtensiveGameNode): Map[InformationSet, (ExtensiveGameDecision, Int)] =
   {
-    node match {
-      case decision: ExtensiveGameDecision => {
-        visitor( decision.informationSet )
-      }
-      case _ => {}
-    }
+    @tailrec def accumulateChildren(
+        stack: List[ExtensiveGameNode],
+        acc: Map[InformationSet, (ExtensiveGameDecision, Int)]
+        ): Map[InformationSet, (ExtensiveGameDecision, Int)] =
+    {
+      stack match {
+        case Nil => acc
 
-    node match {
-      case nonTerminal: ExtensiveGameNonTerminal => {
-        for (action <- nonTerminal.actions) {
-          traverse(nonTerminal.child( action ), visitor)
+        case (_: ExtensiveGameTerminal) :: rest =>
+          accumulateChildren(rest, acc)
+
+        case (nonTerminal: ExtensiveGameNonTerminal) :: rest => {
+
+          val nextAcc:Map[InformationSet, (ExtensiveGameDecision, Int)] = nonTerminal match {
+            case decision: ExtensiveGameDecision => {
+
+              val informationSetNotEncounteredBefore =
+                ! acc.contains( decision.informationSet )
+
+              acc ++ (if (informationSetNotEncounteredBefore) {
+                Some(decision.informationSet -> (decision, acc.size))
+              } else {
+                None
+              })
+            }
+            case _ => acc
+          }
+
+          val children:List[ExtensiveGameNode] =
+            for (action <- nonTerminal.actions.toList)
+              yield nonTerminal.child( action )
+
+          accumulateChildren(
+            children ::: rest,
+            nextAcc)
         }
       }
-
-      case _ => {}
     }
+
+    accumulateChildren(List(node), Map())
   }
   
   
   //--------------------------------------------------------------------------------------------------------------------
-  private class MappedInformationSetIndex(val index: Map[InformationSet, Int])
-      extends InformationSetIndex
+  private class MappedInformationSetIndex(
+      val index: Map[InformationSet, (ExtensiveGameDecision, Int)]
+      ) extends InformationSetIndex
   {
     def informationSetCount = index.size
 
     def indexOf(informationSet: InformationSet) =
-      index(informationSet)
+      index(informationSet)._2
 
     def informationSets = index.keys
+
+    def actionsOf(informationSet: InformationSet) =
+      index(informationSet)._1.actions
   }
 }

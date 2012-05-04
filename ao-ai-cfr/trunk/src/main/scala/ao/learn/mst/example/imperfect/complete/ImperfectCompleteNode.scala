@@ -1,9 +1,9 @@
 package ao.learn.mst.example.imperfect.complete
 
-import ao.learn.mst.gen2.player.{RationalPlayer, FiniteAction}
 import ao.learn.mst.gen2.info.InformationSet
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameTerminal, ExtensiveGameNode}
+import ao.learn.mst.gen2.player.{DefaultFiniteAction, RationalPlayer, FiniteAction}
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -11,21 +11,20 @@ import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameTerminal, Ext
  * Game tree for first game at:
  *  http://en.wikipedia.org/wiki/Extensive-form_game#Imperfect_information
  */
-object ImperfectCompleteNode {
+case object ImperfectCompleteNode {
   val root = ImperfectCompleteDecisionFirst
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object ImperfectCompleteDecisionFirst extends ExtensiveGameDecision {
+case object FirstDecisionInfoSet extends InformationSet
+case object ImperfectCompleteDecisionFirst extends ExtensiveGameDecision {
   override def player =
     new RationalPlayer(0)
 
   def actions =
-    Set(new FiniteAction(0),
-        new FiniteAction(1))
+    DefaultFiniteAction.sequence(2)
 
-  object FirstDecisionInfoSet extends InformationSet
   def informationSet = FirstDecisionInfoSet
 
   def child(action: FiniteAction) =
@@ -37,15 +36,14 @@ object ImperfectCompleteDecisionFirst extends ExtensiveGameDecision {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-object AfterFirstInfoSet extends InformationSet
+case object AfterFirstInfoSet extends InformationSet
 
 object ImperfectCompleteDecisionAfterUp extends ExtensiveGameDecision {
   override def player =
     RationalPlayer(1)
 
   def actions =
-    Set(new FiniteAction(0),
-      new FiniteAction(1))
+    DefaultFiniteAction.sequence(2)
 
   def informationSet = AfterFirstInfoSet
 
