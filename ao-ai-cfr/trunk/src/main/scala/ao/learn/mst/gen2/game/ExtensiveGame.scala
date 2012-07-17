@@ -1,7 +1,5 @@
 package ao.learn.mst.gen2.game
 
-import ao.learn.mst.gen.utility.ExtensiveUtilityRange
-import ao.learn.mst.gen2.player.RationalPlayer
 
 /**
  * http://en.wikipedia.org/wiki/Extensive-form_game

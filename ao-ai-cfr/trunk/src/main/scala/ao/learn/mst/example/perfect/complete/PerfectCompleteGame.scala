@@ -1,21 +1,28 @@
 package ao.learn.mst.example.perfect.complete
 
 import ao.learn.mst.gen2.game.ExtensiveGame
+import decision.PerfectCompleteDecisionFirst
 
 /**
- * User: ao
- * Date: 11/03/12
- * Time: 8:48 PM
+ * Fully deterministic, 2 players, each gets 1 binary choice.
+ *
+ * Game tree for at:
+ *  http://en.wikipedia.org/wiki/Extensive-form_game#Perfect_and_complete_information
+ *
+ * Perfect play:
+ *  Player 1 will play U and then
+ *    player 2 plays D.
+ *  If Player 1 plays D (sub-optimal), then
+ *    player 2 plays U.
  */
 object PerfectCompleteGame
   extends ExtensiveGame
 {
   //--------------------------------------------------------------------------------------------------------------------
-  //  def rationalPlayers = null
   def rationalPlayerCount = 2
 
 
   //--------------------------------------------------------------------------------------------------------------------
   def gameTreeRoot =
-    PerfectCompleteNode.root
+    PerfectCompleteDecisionFirst
 }

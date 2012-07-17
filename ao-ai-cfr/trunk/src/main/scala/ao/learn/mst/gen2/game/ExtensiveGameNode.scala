@@ -1,6 +1,7 @@
 package ao.learn.mst.gen2.game
 
 import ao.learn.mst.gen2.player.FiniteAction
+import collection.immutable.SortedSet
 
 /**
  * http://en.wikipedia.org/wiki/Extensive-form_game
@@ -8,5 +9,5 @@ import ao.learn.mst.gen2.player.FiniteAction
 trait ExtensiveGameNode
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def actions : Set[FiniteAction]
+  def actions : SortedSet[FiniteAction]
 }

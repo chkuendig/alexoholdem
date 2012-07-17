@@ -1,19 +1,15 @@
 package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
-import perfect.complete.PerfectCompleteGame
-import rps.DuaneRockPaperScissorsGame
-import xml.{PrettyPrinter}
-import ao.learn.mst.gen2.game.{ExtensiveGameTerminal, ExtensiveGameDecision, ExtensiveGameNode, ExtensiveGame}
+import xml.PrettyPrinter
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
 import ao.learn.mst.cfr._
+import ao.learn.mst.gen2.game._
 
 
 /**
  * User: ao
- * Date: 11/03/12
- * Time: 9:44 PM
  */
 
 object ExtensiveGameSolver
@@ -25,9 +21,12 @@ object ExtensiveGameSolver
 
   //--------------------------------------------------------------------------------------------------------------------
   val game : ExtensiveGame =
-    DuaneRockPaperScissorsGame
+//    DeterministicBinaryBanditGame
+//    new MarkovBanditGame(16)
+//    RockPaperScissorsGame
 //    PerfectCompleteGame
-//    ImperfectCompleteGame
+    ImperfectCompleteGame
+//    IncompleteGame
 
   val extensiveGameRoot =
     game.gameTreeRoot
@@ -40,28 +39,36 @@ object ExtensiveGameSolver
     displayExtensiveGameNode(
       extensiveGameRoot)
 
-//  println("Full extensive game")
-//  println(formatter.format(extensiveGameViewRoot))
+  val showFullGame = true
+  val showGameViews = true
+
+  if (showFullGame)
+  {
+    println("Full extensive game")
+    println(formatter.format(extensiveGameViewRoot))
+  }
 
 
   //-------------------------------------------------------
-//  val firstPlayerView =
-//    PlayerViewBuilder.expand(
-//      game,
-//      RationalPlayer(0))
+  if (showGameViews)
+  {
+//      val firstPlayerView =
+//        PlayerViewBuilder.expand(
+//          game, RationalPlayer(0))
 //
-//  println("First player's view")
-//  println(formatter.format(
-//    displayPlayerViewNode( firstPlayerView )))
+//      println("First player's view")
+//      println(formatter.format(
+//        displayPlayerViewNode( firstPlayerView )))
 //
-//  val secondPlayerView =
-//    PlayerViewBuilder.expand(
-//      game,
-//      RationalPlayer(1))
+//      val secondPlayerView =
+//        PlayerViewBuilder.expand(
+//          game, RationalPlayer(1))
 //
-//  println("Second player's view")
-//  println(formatter.format(
-//    displayPlayerViewNode( secondPlayerView )))
+//      println("Second player's view")
+//      println(formatter.format(
+//        displayPlayerViewNode( secondPlayerView )))
+  }
+
 
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -84,7 +91,7 @@ object ExtensiveGameSolver
       println(i + "\n" + strategyProfile)
     }
 
-    minimizer.walkTree(
+    minimizer.reduceRegret(
       game, informationSetIndex, strategyProfile)
   }
 
@@ -105,7 +112,7 @@ object ExtensiveGameSolver
       node : ExtensiveGameNode) : xml.Node =
     node match {
       case decision : ExtensiveGameDecision =>
-        <decision player={ decision.player.index.toString }>
+        <decision player={ decision.player.index.toString } name={ decision.toString }>
           <information-set>
             { decision.informationSet.getClass.getSimpleName }
           </information-set>
@@ -113,7 +120,7 @@ object ExtensiveGameSolver
           <actions>
             {
               for (action <- decision.actions) yield
-                <action index={ action.index.toString }>
+                <action index={ action.index.toString } name={ action.toString }>
                   { displayExtensiveGameNode(
                       decision.child(action)) }
                 </action>
@@ -121,8 +128,24 @@ object ExtensiveGameSolver
           </actions>
         </decision>
 
+      case chance : ExtensiveGameChance =>
+        <chance name={ chance.toString }>
+          {
+            for (action <- chance.probabilityMass.actionProbabilities) yield
+              <outcome
+                  index={ action._1.index.toString }
+                  name={ action._1.toString }
+                  probability={ action._2.toString }>
+                {
+                  displayExtensiveGameNode(
+                    chance.child( action._1 ))
+                }
+              </outcome>
+          }
+        </chance>
+
       case terminal : ExtensiveGameTerminal =>
-        <terminal>
+        <terminal name={ terminal.toString }>
           { displayExpectedValue( terminal.payoff ) }
         </terminal>
     }
@@ -151,7 +174,9 @@ object ExtensiveGameSolver
         </proponent>
 
       case chance: ChanceNode =>
-        throw new UnsupportedOperationException
+        <chance>
+          { displayPlayerViewKids( chance.kids ) }
+        </chance>
 
       case other =>
         throw new IllegalArgumentException(other.toString)

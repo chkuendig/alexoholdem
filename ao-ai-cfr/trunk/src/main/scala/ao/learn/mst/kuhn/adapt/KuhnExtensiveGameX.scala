@@ -1,7 +1,7 @@
 package ao.learn.mst.kuhn.adapt
 
 import ao.learn.mst.gen.utility.ExtensiveUtilityRange
-import ao.learn.mst.gen.{ExtensiveGameNodeX, ExtensiveGameX}
+import ao.learn.mst.gen.ExtensiveGameX
 
 /**
  * Date: 15/11/11

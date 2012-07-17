@@ -1,7 +1,6 @@
 package ao.learn.mst.kuhn.state
 
 import KuhnPosition._
-import terminal.KuhnTerminalStatus
 import terminal.KuhnTerminalStatus._
 import ao.learn.mst.kuhn.action.KuhnAction
 import ao.learn.mst.kuhn.action.KuhnAction._

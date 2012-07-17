@@ -1,22 +1,27 @@
 package ao.learn.mst.example.imperfect.complete
 
 import ao.learn.mst.gen2.game.ExtensiveGame
-import ao.learn.mst.example.perfect.complete.PerfectCompleteNode
+import decision.ImperfectCompleteDecisionFirst
 
 /**
- * User: ao
- * Date: 07/04/12
- * Time: 5:09 PM
+ *
+ * Optimal strategy:
+ *  player 1 plays D and
+ *    player 2 plays U
+ *    (and player 2 holds the belief that player 1 will definitely play D).
+ *
+ * Game tree:
+ *  http://en.wikipedia.org/wiki/Extensive-form_game#Imperfect_information
  */
 
 object ImperfectCompleteGame
   extends ExtensiveGame
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def rationalPlayerCount = 2
+  val rationalPlayerCount = 2
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def gameTreeRoot =
-    ImperfectCompleteNode.root
+  val gameTreeRoot =
+    ImperfectCompleteDecisionFirst
 }

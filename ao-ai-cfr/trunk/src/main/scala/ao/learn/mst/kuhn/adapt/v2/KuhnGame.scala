@@ -1,8 +1,5 @@
 package ao.learn.mst.kuhn.adapt.v2
 
-import ao.learn.mst.gen2.game.ExtensiveGame
-import ao.learn.mst.gen2.player.RationalPlayer
-import ao.learn.mst.gen.utility.ExtensiveUtilityRange._
 
 /**
  * Date: 03/12/11

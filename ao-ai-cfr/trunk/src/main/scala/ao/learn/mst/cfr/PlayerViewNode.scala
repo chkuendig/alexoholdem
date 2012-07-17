@@ -15,12 +15,13 @@ sealed trait NonOpponent
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class ChanceNode
-    extends PlayerViewNode
-    with    NonProponent
-    with    NonOpponent
+class ChanceNode(
+    val kids : Seq[/*_ >: */PlayerViewNode])
+      extends PlayerViewNode
+      with    NonProponent
+      with    NonOpponent
 {
-  def kids : Seq[DecisionNode] = null
+//  def kids : Seq[DecisionNode] = null
 }
 
 
@@ -45,7 +46,7 @@ class OpponentNode(
 
 //----------------------------------------------------------------------------------------------------------------------
 class ProponentNode(
-  kids  : Seq[PlayerViewNode],
+  kids : Seq[PlayerViewNode],
   val informationSet : InformationSet)
     extends DecisionNode(kids)
     with    NonOpponent

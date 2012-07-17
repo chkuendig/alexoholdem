@@ -1,6 +1,6 @@
 package ao.learn.mst.kuhn.play
 
-import impl.{KuhnRandomPlayer, KuhnConsolePlayer}
+import impl.KuhnConsolePlayer
 import ao.learn.mst.kuhn.card.KuhnDeck
 import util.Random
 

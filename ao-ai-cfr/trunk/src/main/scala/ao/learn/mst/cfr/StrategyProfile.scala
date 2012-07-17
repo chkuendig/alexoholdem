@@ -1,6 +1,7 @@
 package ao.learn.mst.cfr
 
 import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
+import scala.{Int, Double}
 
 
 /**
@@ -10,6 +11,10 @@ import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 class StrategyProfile(
     private val informationSetIndex : InformationSetIndex)
 {
+  //--------------------------------------------------------------------------------------------------------------------
+  private val epsilon: Double = 1e-7
+
+
   //--------------------------------------------------------------------------------------------------------------------
   private val visitCount            = new Array[Long         ]( informationSetIndex.informationSetCount )
   private val regretSums            = new Array[Array[Double]]( informationSetIndex.informationSetCount )
@@ -24,18 +29,35 @@ class StrategyProfile(
 //  var reachProbabilitySum   = 0.0
 
 
+  def visitCount(informationSet: InformationSet): Long =
+    visitCount(informationSetIndex.indexOf( informationSet ))
+
+  def reachProbabilitySum(informationSet: InformationSet): Double =
+    reachProbabilitySum(informationSetIndex.indexOf( informationSet ))
+
+  private def getRegretSums(informationSet: InformationSet): Seq[Double] =
+    regretSums(informationSetIndex.indexOf( informationSet ))
+
+  private def getActionProbabilitySums(informationSet: InformationSet): Seq[Double] =
+    actionProbabilitySums(informationSetIndex.indexOf( informationSet ))
+
+
   //--------------------------------------------------------------------------------------------------------------------
   private def isInformationSetInitialized(informationSet: InformationSet) : Boolean =
     isInformationSetInitialized( informationSetIndex.indexOf(informationSet) )
+
   private def isInformationSetInitialized(informationSet: Int) : Boolean =
-    (regretSums( informationSet ) != null)
+    regretSums( informationSet ) != null
+
 
   private def childCount(informationSet: InformationSet): Int =
     childCount( informationSetIndex.indexOf(informationSet) )
+
   private def childCount(informationSet: Int): Int =
     regretSums( informationSet ).length
 
-  private def initializeInformationSet(informationSet: Int, childCount: Int)
+
+  private def initializeInformationSetIfRequired(informationSet: Int, childCount: Int)
   {
     if (! isInformationSetInitialized( informationSet )) {
       regretSums( informationSet ) = new Array[Double](childCount)
@@ -47,28 +69,27 @@ class StrategyProfile(
   //--------------------------------------------------------------------------------------------------------------------
   def positiveRegretStrategy(informationSet: InformationSet, childCount: Int) : Seq[Double] =
     positiveRegretStrategy( informationSetIndex.indexOf(informationSet), childCount )
-  
+
+  // verified against Leduc CFR train.get_probability (line 450)
   private def positiveRegretStrategy(informationSet: Int, childCount: Int) : Seq[Double] =
   {
-    initializeInformationSet(informationSet, childCount)
-    
-    val cumRegret = positiveCumulativeCounterfactualRegret(informationSet)
+    initializeInformationSetIfRequired(informationSet, childCount)
 
-    if (cumRegret <= 0)
+    val positiveCounterfactualRegret: Seq[Double] =
+      regretSums(informationSet).map(math.max(0, _))
+
+    val positiveRegretSum =
+      positiveCounterfactualRegret.sum
+
+    if (positiveRegretSum <= epsilon)
     {
       Seq.fill(childCount)(1.0 / childCount)
     }
     else
     {
-      positiveCounterfactualRegret(informationSet).map(_ / cumRegret)
+      positiveCounterfactualRegret.map(_ / positiveRegretSum)
     }
   }
-
-  private def positiveCounterfactualRegret(informationSet: Int) : Seq[Double] =
-    regretSums( informationSet ).map(math.max(0, _))
-
-  private def positiveCumulativeCounterfactualRegret(informationSet: Int) : Double =
-    positiveCounterfactualRegret(informationSet).sum
 
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -98,6 +119,8 @@ class StrategyProfile(
     reachProbabilitySum( informationSet ) += reachProbability
 
     for (action <- 0 until counterfactualRegret.size) {
+      // Corresponds to line 682 in train.cpp,
+      //  over there the addend is something called "delta_regret".
       regretSums( informationSet )( action ) += counterfactualRegret( action )
     }
 
@@ -112,7 +135,7 @@ class StrategyProfile(
       childCount)
 
   private def averageStrategy(informationSet : Int, childCount: Int): Seq[Double] = {
-    initializeInformationSet(informationSet, childCount)
+    initializeInformationSetIfRequired(informationSet, childCount)
     
     actionProbabilitySums( informationSet ).map(_ / reachProbabilitySum( informationSet ))
   }
@@ -143,13 +166,21 @@ class StrategyProfile(
             }
           ).mkString(", ")
 
+        val informationSetRegretSums = getRegretSums( informationSet )
+        val informationSetActionProbabilitySums = getActionProbabilitySums( informationSet )
+
         buffer +=
-          ":\t" + strategyDescription
+          ":\t" + strategyDescription +
+          " | regret sums = " + informationSetRegretSums.mkString("/") +
+          " | act pob sums = " + informationSetActionProbabilitySums.mkString("/")
       }
       else
       {
         buffer += ":\tNot calculated"
       }
+
+      buffer += " | visits = " + visitCount( informationSet ) +
+                " / reach sum = " + reachProbabilitySum( informationSet )
 
       buffer += "\n"
     }

@@ -1,7 +1,6 @@
 package ao.learn.mst.gen.history
 
-import ao.learn.mst.gen.player.ExtensivePlayerPartition
-import ao.learn.mst.gen.act.{ExtensiveActionObservation, ExtensiveAction}
+import ao.learn.mst.gen.act.ExtensiveActionObservation
 
 /**
  * Sequence of actions taken by rational players or chance.

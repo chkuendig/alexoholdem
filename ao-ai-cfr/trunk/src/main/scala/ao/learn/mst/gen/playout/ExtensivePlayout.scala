@@ -1,7 +1,6 @@
 package ao.learn.mst.gen.playout
 
 import ao.learn.mst.gen.{ExtensiveGameNodeX, ExtensiveGameX}
-import ao.learn.mst.gen.utility.ExtensivePayoff
 import ao.learn.mst.gen.history.ExtensiveHistory
 import util.Random
 import ao.learn.mst.gen.player._

@@ -1,6 +1,6 @@
 package ao.learn.mst.gen2.game
 
-import ao.learn.mst.gen2.player.{FiniteAction, PlayerIdentity, RationalPlayer}
+import ao.learn.mst.gen2.player.{FiniteAction, PlayerIdentity}
 
 
 /**

@@ -10,5 +10,6 @@ object IncompleteGame
   //--------------------------------------------------------------------------------------------------------------------
   def rationalPlayerCount = 2
 
-  def gameTreeRoot = null
+  def gameTreeRoot =
+    IncompleteNode.root
 }

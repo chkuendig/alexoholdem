@@ -1,13 +1,11 @@
 package ao.learn.mst.kuhn.adapt.v2
 
-import ao.learn.mst.kuhn.card.KuhnCard._
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
-import ao.learn.mst.kuhn.card.{KuhnCardSequence, KuhnCard}
-import ao.learn.mst.kuhn.state.{KuhnStake, KuhnState}
-import ao.learn.mst.kuhn.action.KuhnActionSequence
-import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision, ExtensiveGameChance}
-import ao.learn.mst.gen2.player.FiniteAction
+import ao.learn.mst.kuhn.state.KuhnState
+import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision}
 import ao.learn.mst.kuhn.action.KuhnAction._
+import ao.learn.mst.gen2.player.{IndexedFiniteAction, FiniteAction}
+import collection.immutable.{SortedSet, SortedMap}
 
 /**
  * Date: 03/12/11
@@ -17,14 +15,18 @@ class KuhnGameDecision(delegate : KuhnState)
     extends ExtensiveGameNode
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def actions : Set[FiniteAction] = {
-    val x : Set[FiniteAction] =
-     Set( new FiniteAction(0) )
+  def actions : SortedSet[FiniteAction] = {
+//    val x : Set[FiniteAction] =
+//     Set( new FiniteAction(0) )
     
 //    delegate.availableActions.map(_ => new FiniteAction(0))
 
-    x
+//    x
+
+    IndexedFiniteAction.sequence(2)
   }
+
+
 
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ class KuhnGameDecision(delegate : KuhnState)
     val uniformProbability : Double =
       1.0 / possibilities.size
 
-    val possibilityProbabilities = Map[FiniteAction, Double]() ++
+    val possibilityProbabilities = SortedMap[FiniteAction, Double]() ++
       possibilities.map(_ -> uniformProbability)
 
     ActionProbabilityMass(

@@ -6,12 +6,10 @@ import ao.learn.mst.gen.history.{ExtensiveHistory, ExtensiveInformationPartition
 import ao.learn.mst.gen.act.{ExtensiveActionObservation, ExtensiveAction}
 import ao.learn.mst.kuhn.card.KuhnCardSequence
 import ao.learn.mst.kuhn.card.KuhnCard
-import ao.learn.mst.kuhn.card.KuhnCard._
-import ao.learn.mst.kuhn.state.{KuhnStake, KuhnState}
+import ao.learn.mst.kuhn.state.KuhnState
 import ao.learn.mst.gen.utility.ExtensivePayoff
-import ao.learn.mst.gen.player.{Rational, ExtensivePlayerPartition, ExtensivePlayerPosition, Chance}
-import ao.learn.mst.kuhn.state.KuhnPosition._
-import ao.learn.mst.kuhn.action.{KuhnAction, KuhnActionSequence}
+import ao.learn.mst.gen.player.{Rational, ExtensivePlayerPosition, Chance}
+import ao.learn.mst.kuhn.action.KuhnAction
 
 
 //----------------------------------------------------------------------------------------------------------------------

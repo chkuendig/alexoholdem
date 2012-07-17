@@ -5,4 +5,7 @@ package ao.learn.mst.gen2.player
  * Time: 5:20 AM
  */
 
-class FiniteAction(val index : Int)
+class FiniteAction(val index : Int) extends Ordered[FiniteAction] {
+  def compare(that: FiniteAction) =
+    this.index compare that.index
+}

@@ -1,6 +1,7 @@
 package ao.learn.mst.gen2.prob
 
 import ao.learn.mst.gen2.player.FiniteAction
+import collection.immutable.SortedMap
 
 /**
  * Date: 22/11/11
@@ -8,4 +9,4 @@ import ao.learn.mst.gen2.player.FiniteAction
  */
 
 case class ActionProbabilityMass(
-  probabilities : Map[FiniteAction, Double])
+  actionProbabilities : SortedMap[FiniteAction, Double])
