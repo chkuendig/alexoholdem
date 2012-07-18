@@ -11,6 +11,6 @@ case object RockPaperScissorsGame
 {
   def rationalPlayerCount = 2
 
-  def gameTreeRoot =
+  def treeRoot =
     RockPaperScissorsNodeFirst
 }

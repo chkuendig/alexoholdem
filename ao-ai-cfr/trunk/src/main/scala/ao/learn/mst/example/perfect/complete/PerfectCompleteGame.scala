@@ -9,7 +9,7 @@ import decision.PerfectCompleteDecisionFirst
  * Game tree for at:
  *  http://en.wikipedia.org/wiki/Extensive-form_game#Perfect_and_complete_information
  *
- * Perfect play:
+ * Perfect play (where U = first action (index 0), and D = second action (index 1)):
  *  Player 1 will play U and then
  *    player 2 plays D.
  *  If Player 1 plays D (sub-optimal), then
@@ -23,6 +23,6 @@ object PerfectCompleteGame
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def gameTreeRoot =
+  def treeRoot =
     PerfectCompleteDecisionFirst
 }

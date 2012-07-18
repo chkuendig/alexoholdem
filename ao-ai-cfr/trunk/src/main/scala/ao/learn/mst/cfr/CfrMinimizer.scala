@@ -1,12 +1,27 @@
 package ao.learn.mst.cfr
 
-import ao.learn.mst.gen2.info.InformationSetIndex
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 import ao.learn.mst.gen2.game._
-import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.player.{FiniteAction, RationalPlayer}
 import scala._
+import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.player.RationalPlayer
 
 
 //----------------------------------------------------------------------------------------------------------------------
+/**
+ * CFR (aka. CFRM: Counterfactual Regret Minimization) - basic:
+  for n = 1 to number of iterations {
+     for each player {
+        calculate counterfactual regret for all actions at all nodes;
+        if positive, add to total positive cfr for all actions at all nodes;
+        set strategy weights in proportion to total positive cfr at all nodes;
+     }
+  }
+ *
+ * http://pokerai.org/pf3/viewtopic.php?f=3&t=2662
+ *
+ */
 class CfrMinimizer
 {
   //--------------------------------------------------------------------------------------------------------------------
@@ -20,23 +35,102 @@ class CfrMinimizer
 //        "Number of players must be 2: " + game.rationalPlayerCount);
 //    }
 
-    println("\n")
+//    println("\n")
 
     val rootCounterfactualReachProbabilities =
       Seq.fill( game.rationalPlayerCount )( 1.0 )
+
+    //      cfrUpdate(
+    //        game,
+    //        game.gameTreeRoot,
+    //        strategyProfile,
+    //        rootCounterfactualReachProbabilities,
+    //        playerIndex)
 
     for (playerIndex <- 0 until game.rationalPlayerCount)
     {
       cfrUpdate(
         game,
-        game.gameTreeRoot,
+        game.treeRoot,
         strategyProfile,
         rootCounterfactualReachProbabilities,
         playerIndex)
 
-      println( strategyProfile )
+//      reduceRegret(
+//        game, informationSetIndex, strategyProfile, playerIndex)
+
+//      println( strategyProfile )
     }
   }
+
+  private def reduceRegret(
+      game                : ExtensiveGame,
+      informationSetIndex : InformationSetIndex,
+      strategyProfile     : StrategyProfile,
+      playerIndex         : Int)
+  {
+    for (informationSet <- informationSetIndex.informationSets
+         if informationSetIndex.nextToAct(informationSet).index == playerIndex)
+    {
+      // calculate counterfactual regret for all actions at all nodes
+      val decision = getDecisionForInformationSet(game.treeRoot, informationSet)
+
+      val actionProbabilities: Seq[Double] =
+        strategyProfile.positiveRegretStrategy(
+          informationSet, informationSetIndex.actionsOf(informationSet).size)
+
+
+
+
+
+//      if positive, add to total positive cfr for all actions at all nodes;
+
+//      set strategy weights in proportion to total positive cfr at all nodes;
+
+    }
+  }
+
+
+
+
+  private def getDecisionForInformationSet(
+      root           : ExtensiveGameNode,
+      informationSet : InformationSet
+      ): ExtensiveGameDecision =
+  {
+    if (root.isInstanceOf[ExtensiveGameDecision])
+    {
+      val decision = root.asInstanceOf[ExtensiveGameDecision]
+
+      if (decision.informationSet == informationSet)
+      {
+        return decision
+      }
+    }
+
+    getChildDecisionForInformationSet(
+      root, informationSet)
+  }
+  private def getChildDecisionForInformationSet(
+      root           : ExtensiveGameNode,
+      informationSet : InformationSet
+      ): ExtensiveGameDecision =
+  {
+    root match {
+      case terminal: ExtensiveGameTerminal => null
+      case nonTerminal: ExtensiveGameNonTerminal => {
+          for (action <- root.actions) {
+            val childNode = nonTerminal.child(action)
+            val matchingNode = getDecisionForInformationSet(childNode, informationSet)
+            if (matchingNode != null) {
+              return matchingNode
+            }
+          }
+          null
+        }
+    }
+  }
+
 
   private def cfrUpdate(
       game               : ExtensiveGame,
@@ -64,6 +158,8 @@ class CfrMinimizer
           proponentIndex)
 
       case terminal : ExtensiveGameTerminal => {
+        // train.cpp line 606
+
         val rationalPlayers: Seq[RationalPlayer] =
           (0 until game.rationalPlayerCount).map( RationalPlayer(_) )
 
@@ -196,7 +292,6 @@ class CfrMinimizer
       ).toSeq
 
 
-
 //    val proponentIndex = node.player.index
 //    val opponentIndex  = 1 - node.player.index
 //    val opponentIndex  = game.rationalPlayerCount - proponentIndex
@@ -293,9 +388,21 @@ class CfrMinimizer
       actionProbability   : Double
       ): Seq[Double] =
   {
+    // each player's contribution to the probability is in its own bucket.
+
+    // todo: resolve contradiction!!!
     reachProbabilities.zipWithIndex map Function.tupled {
-      (p: Double, i: Int) =>
-        if (i == actingPlayerIndex) p else p * actionProbability}
+      (reachProbability: Double, playerIndex: Int) =>
+        if (playerIndex == actingPlayerIndex)
+          reachProbability
+        else
+          reachProbability * actionProbability
+
+//        if (playerIndex == actingPlayerIndex)
+//          reachProbability * actionProbability
+//        else
+//          reachProbability
+    }
   }
 
 

@@ -22,6 +22,6 @@ object ImperfectCompleteGame
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  val gameTreeRoot =
+  val treeRoot =
     ImperfectCompleteDecisionFirst
 }

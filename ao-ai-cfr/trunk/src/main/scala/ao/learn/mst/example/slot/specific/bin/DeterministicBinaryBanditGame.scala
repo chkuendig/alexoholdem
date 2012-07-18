@@ -13,6 +13,6 @@ case object DeterministicBinaryBanditGame
   extends SlotMachineGame
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def gameTreeRoot =
+  def treeRoot =
     DeterministicBinaryBanditChoice
 }

@@ -21,5 +21,5 @@ trait ExtensiveGame
 //  def utilityRanges : Map[RationalPlayer, ExtensiveUtilityRange]
 
   /** "A rooted tree, called the game tree" */
-  def gameTreeRoot : ExtensiveGameNode
+  def treeRoot : ExtensiveGameNode
 }

@@ -1,6 +1,10 @@
 package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
+import perfect.complete.PerfectCompleteGame
+import rps.RockPaperScissorsGame
+import slot.specific.bin.DeterministicBinaryBanditGame
+import slot.specific.k.MarkovBanditGame
 import xml.PrettyPrinter
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
@@ -24,12 +28,12 @@ object ExtensiveGameSolver
 //    DeterministicBinaryBanditGame
 //    new MarkovBanditGame(16)
 //    RockPaperScissorsGame
-//    PerfectCompleteGame
-    ImperfectCompleteGame
+    PerfectCompleteGame
+//    ImperfectCompleteGame
 //    IncompleteGame
 
   val extensiveGameRoot =
-    game.gameTreeRoot
+    game.treeRoot
 
   println("rational player count = " +
     game.rationalPlayerCount)

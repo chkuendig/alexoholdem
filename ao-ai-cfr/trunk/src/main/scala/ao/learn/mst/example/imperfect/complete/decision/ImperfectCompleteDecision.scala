@@ -17,9 +17,9 @@ abstract class ImperfectCompleteDecision
 
 
 //----------------------------------------------------------------------------------------------------------------------
-case object FirstDecisionInfoSet extends InformationSet
+case object ImperfectCompleteDecisionFirstInfo extends InformationSet
 
-case object AfterFirstInfoSet extends InformationSet
+case object ImperfectCompleteDecisionSecondInfo extends InformationSet
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ case object ImperfectCompleteDecisionFirst
   override def player =
     new RationalPlayer(0)
 
-  val informationSet = FirstDecisionInfoSet
+  val informationSet = ImperfectCompleteDecisionFirstInfo
 
   def child(action: FiniteAction) =
     action.index match {
@@ -46,7 +46,7 @@ object ImperfectCompleteDecisionAfterUp
   override def player =
     RationalPlayer(1)
 
-  def informationSet = AfterFirstInfoSet
+  def informationSet = ImperfectCompleteDecisionSecondInfo
 
   def child(action: FiniteAction) =
     action.index match {
@@ -63,7 +63,7 @@ object ImperfectCompleteDecisionAfterDown
   override def player =
     RationalPlayer(1)
 
-  def informationSet = AfterFirstInfoSet
+  def informationSet = ImperfectCompleteDecisionSecondInfo
 
   def child(action: FiniteAction) =
     action.index match {

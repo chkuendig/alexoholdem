@@ -1,11 +1,9 @@
 package ao.learn.mst.gen2.info
 
-import ao.learn.mst.gen2.player.FiniteAction
+import ao.learn.mst.gen2.player.{RationalPlayer, FiniteAction}
 
 /**
- * User: ao
- * Date: 07/04/12
- * Time: 7:52 PM
+ *
  */
 
 trait InformationSetIndex
@@ -18,4 +16,6 @@ trait InformationSetIndex
   def actionsOf(informationSet: InformationSet): Set[FiniteAction]
 
   def informationSets: Traversable[InformationSet]
+
+  def nextToAct(informationSet: InformationSet): RationalPlayer
 }

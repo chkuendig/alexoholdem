@@ -24,7 +24,7 @@ object TraversingInformationSetIndexer
 
     new MappedInformationSetIndex(
       informationSetDecisionNodeIndex(
-        extensiveGame.gameTreeRoot))
+        extensiveGame.treeRoot))
   }
 
   private def informationSetDecisionNodeIndex(
@@ -87,5 +87,8 @@ object TraversingInformationSetIndexer
 
     def actionsOf(informationSet: InformationSet) =
       index(informationSet)._1.actions
+
+    def nextToAct(informationSet: InformationSet) =
+      index(informationSet)._1.player
   }
 }

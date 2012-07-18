@@ -78,6 +78,13 @@ class StrategyProfile(
     val positiveCounterfactualRegret: Seq[Double] =
       regretSums(informationSet).map(math.max(0, _))
 
+    // Corresponds to train.cpp:
+    // 465: /* compute sum of positive regret */
+    // 466: double sum = 0;
+    // 467: for(int i=0; i<leduc::NUM_ACTIONS; ++i) {
+    // 468:
+    // 469:   sum += max(0., regret[u.get_id()][bucket][i]);
+    // 470: }
     val positiveRegretSum =
       positiveCounterfactualRegret.sum
 
@@ -111,7 +118,11 @@ class StrategyProfile(
     val currentPositiveRegretStrategy =
       positiveRegretStrategy( informationSet, counterfactualRegret.length )
     
-    for (action <- 0 until counterfactualRegret.size) {
+    for (action <- 0 until counterfactualRegret.size)
+    {
+      // Corresponds to train.cpp line 653:
+      //  average_probability[i] += reach[player]*probability[i];
+
       actionProbabilitySums( informationSet )( action ) +=
         reachProbability * currentPositiveRegretStrategy( action )
     }
@@ -120,7 +131,7 @@ class StrategyProfile(
 
     for (action <- 0 until counterfactualRegret.size) {
       // Corresponds to line 682 in train.cpp,
-      //  over there the addend is something called "delta_regret".
+      //  over there the addend is called "delta_regret".
       regretSums( informationSet )( action ) += counterfactualRegret( action )
     }
 
@@ -134,10 +145,29 @@ class StrategyProfile(
       informationSetIndex.indexOf(informationSet),
       childCount)
 
+  // Corresponds to train.cpp get_normalized_average_probability line 489
   private def averageStrategy(informationSet : Int, childCount: Int): Seq[Double] = {
     initializeInformationSetIfRequired(informationSet, childCount)
-    
-    actionProbabilitySums( informationSet ).map(_ / reachProbabilitySum( informationSet ))
+
+    // In train.cpp, see the following relevant (lines 504 .. 509):
+    //  /* compute sum */
+    //  double sum = 0;
+    //  for(int i=0; i<leduc::NUM_ACTIONS; ++i) {
+    //
+    //    sum += average_probability[u.get_id()][bucket][i];
+    //  }
+    //
+    // Where average_probability is the equivalent of actionProbabilitySums.
+    //
+    // Then this sum is used to normalize relative to siblings (train.cpp line 516):
+    //  probability[i] = average_probability[u.get_id()][bucket][i]/sum;
+    //
+    // Here we are dividing by sum of reach probabilities for the information set.
+    // Should it be normalized in relation to siblings instead?
+
+    actionProbabilitySums(informationSet)
+      .map(_ / reachProbabilitySum(informationSet))
+//      .map(_ / visitCount(informationSet))
   }
 
 

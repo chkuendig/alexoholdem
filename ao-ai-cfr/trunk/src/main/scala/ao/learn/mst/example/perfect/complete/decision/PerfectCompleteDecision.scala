@@ -17,14 +17,15 @@ abstract class PerfectCompleteDecision
 
 
 //----------------------------------------------------------------------------------------------------------------------
+case object PerfectCompleteDecisionFirstInfo extends InformationSet
+
 case object PerfectCompleteDecisionFirst
     extends PerfectCompleteDecision
 {
   override def player =
     new RationalPlayer(0)
 
-  case object FirstDecisionInfoSet extends InformationSet
-  def informationSet = FirstDecisionInfoSet
+  def informationSet = PerfectCompleteDecisionFirstInfo
 
   def child(action: FiniteAction) =
     action.index match {
@@ -35,14 +36,15 @@ case object PerfectCompleteDecisionFirst
 
 
 //----------------------------------------------------------------------------------------------------------------------
+case object PerfectCompleteDecisionAfterUpInfo extends InformationSet
+
 case object PerfectCompleteDecisionAfterUp
     extends PerfectCompleteDecision
 {
   override def player =
     RationalPlayer(1)
 
-  case object AfterUpInfoSet extends InformationSet
-  def informationSet = AfterUpInfoSet
+  def informationSet = PerfectCompleteDecisionAfterUpInfo
 
   def child(action: FiniteAction) =
     action.index match {
@@ -53,14 +55,15 @@ case object PerfectCompleteDecisionAfterUp
 
 
 //----------------------------------------------------------------------------------------------------------------------
+case object PerfectCompleteDecisionAfterDownInfo extends InformationSet
+
 case object PerfectCompleteDecisionAfterDown
     extends PerfectCompleteDecision
 {
   override def player =
     RationalPlayer(1)
 
-  case object AfterDownInfoSet extends InformationSet
-  def informationSet = AfterDownInfoSet
+  def informationSet = PerfectCompleteDecisionAfterDownInfo
 
   def child(action: FiniteAction) =
     action.index match {

@@ -11,6 +11,6 @@ import ao.learn.mst.example.slot.general.SlotMachineGame
 case class MarkovBanditGame(k: Int)
     extends SlotMachineGame
 {
-  val gameTreeRoot =
+  val treeRoot =
     new MarkovBanditChoice(k)
 }
