@@ -1,6 +1,7 @@
 package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
+import incomplete.IncompleteGame
 import perfect.complete.PerfectCompleteGame
 import rps.RockPaperScissorsGame
 import slot.specific.bin.DeterministicBinaryBanditGame
@@ -28,9 +29,9 @@ object ExtensiveGameSolver
 //    DeterministicBinaryBanditGame
 //    new MarkovBanditGame(16)
 //    RockPaperScissorsGame
-    PerfectCompleteGame
+//    PerfectCompleteGame
 //    ImperfectCompleteGame
-//    IncompleteGame
+    IncompleteGame
 
   val extensiveGameRoot =
     game.treeRoot

@@ -1,30 +1,27 @@
 package ao.learn.mst.gen
 
-import ao.learn.mst.kuhn.card.KuhnDeck
-import util.Random
 import org.specs2.mutable.Specification
-import org.specs2.ScalaCheck
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGame}
 import ao.learn.mst.example.perfect.complete.PerfectCompleteGame
 import ao.learn.mst.gen2.info.{InformationSetIndex, TraversingInformationSetIndexer}
 import ao.learn.mst.cfr.{StrategyProfile, CfrMinimizer}
 import ao.learn.mst.example.slot.specific.bin.DeterministicBinaryBanditGame
-import ao.learn.mst.example.slot.general.SlotMachineInfoSet
 import ao.learn.mst.example.slot.specific.k.MarkovBanditGame
 import ao.learn.mst.example.rps.RockPaperScissorsGame
 import ao.learn.mst.example.perfect.complete.decision.{PerfectCompleteDecisionAfterDownInfo, PerfectCompleteDecisionAfterUpInfo, PerfectCompleteDecisionFirstInfo}
 import ao.learn.mst.example.imperfect.complete.ImperfectCompleteGame
 import ao.learn.mst.example.imperfect.complete.decision.{ImperfectCompleteDecisionSecondInfo, ImperfectCompleteDecisionFirstInfo}
+import ao.learn.mst.example.incomplete.IncompleteGame
+import ao.learn.mst.example.incomplete.node.{IncompleteInfoPlayerTwoAfterDown, IncompleteInfoPlayerTwoAfterUp, IncompleteInfoPlayerOneTypeTwo, IncompleteInfoPlayerOneTypeOne}
+
 
 /**
- * Date: 20/09/11
- * Time: 12:03 AM
+ *
  */
-
 class CfrMinimizerSpec
     extends Specification
 {
-  //--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   "Counterfactual Regret Minimization algorithm" should {
     val minimizer = new CfrMinimizer()
 
@@ -61,7 +58,6 @@ class CfrMinimizerSpec
 
 
     "Solve singleton information set problems" in {
-
       def approximateOptimalSingletonInformationSetStrategy(
            game: ExtensiveGame,
            iterations: Int): Seq[Double] =
@@ -81,7 +77,7 @@ class CfrMinimizerSpec
 
         "Markovian K-armed Bandit" in {
           val optimalStrategy = approximateOptimalSingletonInformationSetStrategy(
-            new MarkovBanditGame(16), 26 * 1024)
+            new MarkovBanditGame(16), 28 * 1024)
 
           optimalStrategy.last must be greaterThan(0.99)
         }
@@ -97,7 +93,6 @@ class CfrMinimizerSpec
     }
 
     "Solve sample problems from Wikipedia" in {
-
       "Perfect and complete information" in {
         val optimalStrategyProfile = approximateOptimalStrategy(
           PerfectCompleteGame, 256)._2
@@ -132,30 +127,31 @@ class CfrMinimizerSpec
 
         secondStrategy(0) must be greaterThan(0.99)
       }
+
+      "Incomplete information" in {
+        val optimalStrategyProfile = approximateOptimalStrategy(
+          IncompleteGame, 128)._2
+
+        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerOneTypeOne, 2)
+
+        playerOneTypeOneStrategy(1) must be greaterThan(0.99)
+
+        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerOneTypeTwo, 2)
+
+        playerOneTypeTwoStrategy(0) must be greaterThan(0.99)
+
+        val playerTwoAfterUpStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerTwoAfterUp, 2)
+
+        playerTwoAfterUpStrategy.min must be greaterThan(0.49)
+
+        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerTwoAfterDown, 2)
+
+        playerTwoAfterDownStrategy(0) must be greaterThan(0.99)
+      }
     }
-
-
-
-//    val game : ExtensiveGame =
-    //    ImperfectCompleteGame
-    //    IncompleteGame
-
-//    val informationSetIndex =
-//      TraversingInformationSetIndexer.index( game )
-//
-//    val strategyProfile =
-//      new StrategyProfile( informationSetIndex )
-//
-//    println( strategyProfile )
-//
-
-//    for (i <- 1 to equilibriumApproximationIterations) {
-//      if (i % (100 * 1000) == 0) {
-//        println(i + "\n" + strategyProfile)
-//      }
-//
-//      minimizer.reduceRegret(
-//        game, informationSetIndex, strategyProfile)
-//    }
   }
 }
