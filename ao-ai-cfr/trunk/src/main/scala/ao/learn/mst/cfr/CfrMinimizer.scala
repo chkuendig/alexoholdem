@@ -40,27 +40,27 @@ class CfrMinimizer
     val rootCounterfactualReachProbabilities =
       Seq.fill( game.rationalPlayerCount )( 1.0 )
 
-    //      cfrUpdate(
-    //        game,
-    //        game.gameTreeRoot,
-    //        strategyProfile,
-    //        rootCounterfactualReachProbabilities,
-    //        playerIndex)
-
-    for (playerIndex <- 0 until game.rationalPlayerCount)
-    {
       cfrUpdate(
         game,
         game.treeRoot,
         strategyProfile,
         rootCounterfactualReachProbabilities,
-        playerIndex)
+        0)
 
-//      reduceRegret(
-//        game, informationSetIndex, strategyProfile, playerIndex)
-
+//    for (playerIndex <- 0 until game.rationalPlayerCount)
+//    {
+//      cfrUpdate(
+//        game,
+//        game.treeRoot,
+//        strategyProfile,
+//        rootCounterfactualReachProbabilities,
+//        playerIndex)
+//
+////      reduceRegret(
+////        game, informationSetIndex, strategyProfile, playerIndex)
+//
 //      println( strategyProfile )
-    }
+//    }
   }
 
   private def reduceRegret(
@@ -283,11 +283,14 @@ class CfrMinimizer
     // Compute u1(σ, I(r1))) = sum[a∈A(I(r1)) | σ1(I(r1))(a) × u1(σ, I(r1), a)].
     def playerUtility(playerIndex: Int): Double =
       (for ((actionProbability, action) <- actionProbabilities.zipWithIndex)
+        // train.cpp line 668: expected += ev[player]*probability[i];
         yield actionProbability * playerChildUtilities(playerIndex)(action)
       ).sum
 
     val utilities: Seq[Double] =
       (for (playerIndex <- 0 until game.rationalPlayerCount)
+        // train.cpp line 669: sum      += ev[opponent];
+        // todo: why doesn't it multiply by action probability? (is it done internally?)
         yield playerUtility(playerIndex)
       ).toSeq
 
@@ -314,7 +317,7 @@ class CfrMinimizer
 //       yield actionProbability * opponentChildUtilities(action)
 //      ).sum
 
-    if (node.player.index == proponentIndex)
+//    if (node.player.index == proponentIndex)
     {
       // Update counterfactual regret and average strategy
       val opponentReachProbability =
@@ -390,18 +393,12 @@ class CfrMinimizer
   {
     // each player's contribution to the probability is in its own bucket.
 
-    // todo: resolve contradiction!!!
     reachProbabilities.zipWithIndex map Function.tupled {
       (reachProbability: Double, playerIndex: Int) =>
         if (playerIndex == actingPlayerIndex)
-          reachProbability
-        else
           reachProbability * actionProbability
-
-//        if (playerIndex == actingPlayerIndex)
-//          reachProbability * actionProbability
-//        else
-//          reachProbability
+        else
+          reachProbability
     }
   }
 

@@ -97,6 +97,7 @@ object ExtensiveGameSolver
 
     minimizer.reduceRegret(
       game, informationSetIndex, strategyProfile)
+    println( strategyProfile )
   }
 
   println("\n\n\n\n\n")

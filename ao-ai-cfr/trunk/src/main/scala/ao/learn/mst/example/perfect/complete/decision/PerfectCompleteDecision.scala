@@ -10,7 +10,7 @@ import ao.learn.mst.example.perfect.complete.terminal.{PerfectCompleteTerminalDo
 abstract class PerfectCompleteDecision
     extends ExtensiveGameDecision
 {
-  def actions =
+  val actions =
     NamedFiniteAction.sequence(
       "U", "D")
 }

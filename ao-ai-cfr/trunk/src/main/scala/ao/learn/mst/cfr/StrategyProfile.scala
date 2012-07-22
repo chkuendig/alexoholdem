@@ -75,9 +75,6 @@ class StrategyProfile(
   {
     initializeInformationSetIfRequired(informationSet, childCount)
 
-    val positiveCounterfactualRegret: Seq[Double] =
-      regretSums(informationSet).map(math.max(0, _))
-
     // Corresponds to train.cpp:
     // 465: /* compute sum of positive regret */
     // 466: double sum = 0;
@@ -85,16 +82,20 @@ class StrategyProfile(
     // 468:
     // 469:   sum += max(0., regret[u.get_id()][bucket][i]);
     // 470: }
+    val positiveCounterfactualRegret: Seq[Double] =
+      regretSums(informationSet).map(math.max(0, _))
+
     val positiveRegretSum =
       positiveCounterfactualRegret.sum
 
-    if (positiveRegretSum <= epsilon)
+    // compute probability as the proportion of positive regret
+    if (positiveRegretSum > epsilon)
     {
-      Seq.fill(childCount)(1.0 / childCount)
+      positiveCounterfactualRegret.map(_ / positiveRegretSum)
     }
     else
     {
-      positiveCounterfactualRegret.map(_ / positiveRegretSum)
+      Seq.fill(childCount)(1.0 / childCount)
     }
   }
 
@@ -117,22 +118,33 @@ class StrategyProfile(
   {
     val currentPositiveRegretStrategy =
       positiveRegretStrategy( informationSet, counterfactualRegret.length )
-    
+
+    // See train.cpp (average the strategy for the player):
+    // 651: for(int i=0; i<3; ++i) {
+    // 652:
+    // 653:   average_probability[i] += reach[player]*probability[i];
+    // 654: }
     for (action <- 0 until counterfactualRegret.size)
     {
-      // Corresponds to train.cpp line 653:
-      //  average_probability[i] += reach[player]*probability[i];
-
       actionProbabilitySums( informationSet )( action ) +=
         reachProbability * currentPositiveRegretStrategy( action )
     }
 
+    // technically not necessary because we can weigh
+    //  by sum of parent's child (i.e. sibling + self)
     reachProbabilitySum( informationSet ) += reachProbability
 
     for (action <- 0 until counterfactualRegret.size) {
       // Corresponds to line 682 in train.cpp,
       //  over there the addend is called "delta_regret".
-      regretSums( informationSet )( action ) += counterfactualRegret( action )
+      regretSums( informationSet )( action ) +=
+        counterfactualRegret( action )
+
+      // note that the explanation on:
+      //  http://pokerai.org/pf3/viewtopic.php?f=3&t=2662
+      // suggests that it should be:
+      //   math.max(0, counterfactualRegret( action ))
+      // which appears to be incorrect.
     }
 
     visitCount( informationSet ) += 1
@@ -163,7 +175,7 @@ class StrategyProfile(
     //  probability[i] = average_probability[u.get_id()][bucket][i]/sum;
     //
     // Here we are dividing by sum of reach probabilities for the information set.
-    // Should it be normalized in relation to siblings instead?
+    // todo: Should it be normalized in relation to siblings instead? (would that make a difference?)
 
     actionProbabilitySums(informationSet)
       .map(_ / reachProbabilitySum(informationSet))
