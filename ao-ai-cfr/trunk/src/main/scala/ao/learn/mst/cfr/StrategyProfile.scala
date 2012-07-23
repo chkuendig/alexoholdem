@@ -21,7 +21,7 @@ class StrategyProfile(
   private val actionProbabilitySums = new Array[Array[Double]]( informationSetIndex.informationSetCount )
   private val reachProbabilitySum   = new Array[Double       ]( informationSetIndex.informationSetCount )
 
-  private val reachProbabilityBuffer  = new Array[Double       ]( informationSetIndex.informationSetCount )
+  private val reachProbabilityBuffer     = new Array[Double       ]( informationSetIndex.informationSetCount )
   private val counterfactualRegretBuffer = new Array[Array[Double]]( informationSetIndex.informationSetCount )
   
   
@@ -302,13 +302,13 @@ class StrategyProfile(
         val informationSetRegretSums = getRegretSums( informationSet )
         val positiveRegretProbabilities : Seq[Double] =
           positiveRegretStrategy(informationSet, childCount(informationSet))
-//        val informationSetActionProbabilitySums = getActionProbabilitySums( informationSet )
+        val informationSetActionProbabilitySums = getActionProbabilitySums( informationSet )
 
         buffer +=
           ":\t" + strategyDescription +
           " | regret sums = " + informationSetRegretSums.mkString("/") +
-          " | pos reg probs = " + positiveRegretProbabilities.mkString("/")
-//          " | act pob sums = " + informationSetActionProbabilitySums.mkString("/")
+          " | pos reg probs = " + positiveRegretProbabilities.mkString("/") +
+          " | act pob sums = " + informationSetActionProbabilitySums.mkString("/")
       }
       else
       {

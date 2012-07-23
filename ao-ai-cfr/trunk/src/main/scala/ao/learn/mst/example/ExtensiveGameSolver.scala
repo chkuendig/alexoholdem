@@ -32,8 +32,8 @@ object ExtensiveGameSolver
 //    RockPaperScissorsGame
 //    PerfectCompleteGame
 //    ImperfectCompleteGame
-//    IncompleteGame
-    ZeroSumGame
+    IncompleteGame
+//    ZeroSumGame
 
   val extensiveGameRoot =
     game.treeRoot

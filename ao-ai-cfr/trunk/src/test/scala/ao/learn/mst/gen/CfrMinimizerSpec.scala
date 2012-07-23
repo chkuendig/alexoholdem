@@ -131,30 +131,29 @@ class CfrMinimizerSpec
         secondStrategy(0) must be greaterThan(0.99)
       }
 
-//      "Incomplete information (non-zero-sum)" in {
-//        val optimalStrategyProfile = approximateOptimalStrategy(
-//          IncompleteGame, 1024)._2
-//
-//        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
-//          IncompleteInfoPlayerOneTypeOne, 2)
-//
-//        playerOneTypeOneStrategy(IncompleteActionDown.index) must be greaterThan(0.99)
-//
-//        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
-//          IncompleteInfoPlayerOneTypeTwo, 2)
-//
-//        playerOneTypeTwoStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
-//
-//        val playerTwoAfterUpStrategy = optimalStrategyProfile.averageStrategy(
-//          IncompleteInfoPlayerTwoAfterUp, 2)
-//
-//        playerTwoAfterUpStrategy.min must be greaterThan(0.49)
-//
-//        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
-//          IncompleteInfoPlayerTwoAfterDown, 2)
-//
-//        playerTwoAfterDownStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
-//      }
+      "Incomplete information (non-zero-sum adjusted)" in {
+        // see adjustment in: IncompleteTerminal -> IncompleteTypeOne -> IncompleteActionDown
+
+        val optimalStrategyProfile = approximateOptimalStrategy(
+          IncompleteGame, 256)._2
+
+        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerOneTypeOne, 2)
+
+        playerOneTypeOneStrategy(IncompleteActionDown.index) must be greaterThan(0.99)
+
+        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerOneTypeTwo, 2)
+
+        playerOneTypeTwoStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+
+        // playerTwoAfterUpStrategy is irrelevant(i.e. all actions produce same outcome)
+
+        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
+          IncompleteInfoPlayerTwoAfterDown, 2)
+
+        playerTwoAfterDownStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+      }
 
       "Zero sum" in {
         val optimalStrategyProfile = approximateOptimalStrategy(
