@@ -20,6 +20,9 @@ class StrategyProfile(
   private val regretSums            = new Array[Array[Double]]( informationSetIndex.informationSetCount )
   private val actionProbabilitySums = new Array[Array[Double]]( informationSetIndex.informationSetCount )
   private val reachProbabilitySum   = new Array[Double       ]( informationSetIndex.informationSetCount )
+
+  private val reachProbabilityBuffer  = new Array[Double       ]( informationSetIndex.informationSetCount )
+  private val counterfactualRegretBuffer = new Array[Array[Double]]( informationSetIndex.informationSetCount )
   
   
   //--------------------------------------------------------------------------------------------------------------------
@@ -62,6 +65,8 @@ class StrategyProfile(
     if (! isInformationSetInitialized( informationSet )) {
       regretSums( informationSet ) = new Array[Double](childCount)
       actionProbabilitySums( informationSet ) = new Array[Double](childCount)
+
+      counterfactualRegretBuffer( informationSet ) = new Array[Double](childCount)
     }
   }
   
@@ -101,30 +106,55 @@ class StrategyProfile(
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def update(
-      informationSet       : InformationSet,
-      counterfactualRegret : Seq[Double],
-      reachProbability     : Double)
+  def bufferUpdate(
+      informationSet   : InformationSet,
+      actionRegret     : Seq[Double],
+      reachProbability : Double)
   {
-    update(informationSetIndex.indexOf(informationSet),
-           counterfactualRegret,
-           reachProbability)
+    bufferUpdate(
+      informationSetIndex.indexOf(informationSet),
+      actionRegret,
+      reachProbability)
   }
-  
-  private def update(
-      informationSet       : Int,
-      counterfactualRegret : Seq[Double],
-      reachProbability     : Double)
+
+  private def bufferUpdate(
+      informationSet   : Int,
+      actionRegret     : Seq[Double],
+      reachProbability : Double)
   {
+    val childCount = actionRegret.length
+    initializeInformationSetIfRequired(informationSet, childCount)
+
+    reachProbabilityBuffer(informationSet) += reachProbability
+
+    for (action <- 0 until childCount) {
+      counterfactualRegretBuffer(informationSet)(action) +=
+        actionRegret(action) * reachProbability
+    }
+
+    visitCount( informationSet ) += 1
+  }
+
+
+  def commitBuffers() {
+    for (informationSet <- 0 until regretSums.length) {
+      commitBuffer(informationSet)
+    }
+  }
+  private def commitBuffer(informationSet: Int) {
+    val childCount = regretSums(informationSet).length
+
     val currentPositiveRegretStrategy =
-      positiveRegretStrategy( informationSet, counterfactualRegret.length )
+      positiveRegretStrategy(informationSet, childCount)
+
+    val reachProbability = reachProbabilityBuffer( informationSet )
 
     // See train.cpp (average the strategy for the player):
     // 651: for(int i=0; i<3; ++i) {
     // 652:
     // 653:   average_probability[i] += reach[player]*probability[i];
     // 654: }
-    for (action <- 0 until counterfactualRegret.size)
+    for (action <- 0 until childCount)
     {
       actionProbabilitySums( informationSet )( action ) +=
         reachProbability * currentPositiveRegretStrategy( action )
@@ -134,7 +164,68 @@ class StrategyProfile(
     //  by sum of parent's child (i.e. sibling + self)
     reachProbabilitySum( informationSet ) += reachProbability
 
-    for (action <- 0 until counterfactualRegret.size) {
+    for (action <- 0 until childCount) {
+      // Corresponds to line 682 in train.cpp,
+      //  over there the addend is called "delta_regret".
+      regretSums( informationSet )( action ) +=
+        counterfactualRegretBuffer( informationSet )( action )
+
+      // note that the explanation on:
+      //  http://pokerai.org/pf3/viewtopic.php?f=3&t=2662
+      // suggests that it should be:
+      //   math.max(0, actionRegret( action ))
+      // which appears to be incorrect.
+    }
+
+    // clear buffers
+    reachProbabilityBuffer(informationSet) = 0
+    for (action <- 0 until childCount) {
+      counterfactualRegretBuffer( informationSet )( action ) = 0
+    }
+  }
+
+
+
+  //--------------------------------------------------------------------------------------------------------------------
+  def update(
+      informationSet   : InformationSet,
+      actionRegret     : Seq[Double],
+      reachProbability : Double)
+  {
+    update(informationSetIndex.indexOf(informationSet),
+           actionRegret,
+           reachProbability)
+  }
+  
+  private def update(
+      informationSet   : Int,
+      actionRegret     : Seq[Double],
+      reachProbability : Double)
+  {
+    val childCount = actionRegret.length
+
+    val currentPositiveRegretStrategy =
+      positiveRegretStrategy(informationSet, childCount)
+
+    // See train.cpp (average the strategy for the player):
+    // 651: for(int i=0; i<3; ++i) {
+    // 652:
+    // 653:   average_probability[i] += reach[player]*probability[i];
+    // 654: }
+    for (action <- 0 until childCount)
+    {
+      actionProbabilitySums( informationSet )( action ) +=
+        reachProbability * currentPositiveRegretStrategy( action )
+    }
+
+    // technically not necessary because we can weigh
+    //  by sum of parent's child (i.e. sibling + self)
+    reachProbabilitySum( informationSet ) += reachProbability
+
+    val counterfactualRegret =
+      actionRegret.map(_ * reachProbability)
+
+    for (action <- 0 until childCount) {
       // Corresponds to line 682 in train.cpp,
       //  over there the addend is called "delta_regret".
       regretSums( informationSet )( action ) +=
@@ -143,7 +234,7 @@ class StrategyProfile(
       // note that the explanation on:
       //  http://pokerai.org/pf3/viewtopic.php?f=3&t=2662
       // suggests that it should be:
-      //   math.max(0, counterfactualRegret( action ))
+      //   math.max(0, actionRegret( action ))
       // which appears to be incorrect.
     }
 
@@ -196,7 +287,7 @@ class StrategyProfile(
         val informationSetStrategy =
           averageStrategy(
             informationSet,
-            childCount(informationSet) )
+            childCount(informationSet))
 
         val strategyDescription =
           (for (action <- informationSetIndex.actionsOf(informationSet).toList)
@@ -209,12 +300,15 @@ class StrategyProfile(
           ).mkString(", ")
 
         val informationSetRegretSums = getRegretSums( informationSet )
-        val informationSetActionProbabilitySums = getActionProbabilitySums( informationSet )
+        val positiveRegretProbabilities : Seq[Double] =
+          positiveRegretStrategy(informationSet, childCount(informationSet))
+//        val informationSetActionProbabilitySums = getActionProbabilitySums( informationSet )
 
         buffer +=
           ":\t" + strategyDescription +
           " | regret sums = " + informationSetRegretSums.mkString("/") +
-          " | act pob sums = " + informationSetActionProbabilitySums.mkString("/")
+          " | pos reg probs = " + positiveRegretProbabilities.mkString("/")
+//          " | act pob sums = " + informationSetActionProbabilitySums.mkString("/")
       }
       else
       {

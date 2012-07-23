@@ -10,7 +10,7 @@ import collection.immutable.SortedSet
 
 //----------------------------------------------------------------------------------------------------------------------
 abstract class IncompleteDecision extends ExtensiveGameDecision {
-  def actions =
+  val actions =
     SortedSet[FiniteAction](
       IncompleteActionUp, IncompleteActionDown)
 }

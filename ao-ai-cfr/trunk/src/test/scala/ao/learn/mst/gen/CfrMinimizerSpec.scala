@@ -11,8 +11,11 @@ import ao.learn.mst.example.rps.RockPaperScissorsGame
 import ao.learn.mst.example.perfect.complete.decision.{PerfectCompleteDecisionAfterDownInfo, PerfectCompleteDecisionAfterUpInfo, PerfectCompleteDecisionFirstInfo}
 import ao.learn.mst.example.imperfect.complete.ImperfectCompleteGame
 import ao.learn.mst.example.imperfect.complete.decision.{ImperfectCompleteDecisionSecondInfo, ImperfectCompleteDecisionFirstInfo}
-import ao.learn.mst.example.incomplete.IncompleteGame
+import ao.learn.mst.example.incomplete.{IncompleteActionUp, IncompleteActionDown, IncompleteGame}
 import ao.learn.mst.example.incomplete.node.{IncompleteInfoPlayerTwoAfterDown, IncompleteInfoPlayerTwoAfterUp, IncompleteInfoPlayerOneTypeTwo, IncompleteInfoPlayerOneTypeOne}
+import ao.learn.mst.example.zerosum.ZeroSumGame
+import ao.learn.mst.example.zerosum.info.{ZeroSumInfoBlue, ZeroSumInfoRed}
+import ao.learn.mst.example.zerosum.node.ZeroSumDecisionRed
 
 
 /**
@@ -77,7 +80,7 @@ class CfrMinimizerSpec
 
         "Markovian K-armed Bandit" in {
           val optimalStrategy = approximateOptimalSingletonInformationSetStrategy(
-            new MarkovBanditGame(16), 28 * 1024)
+            new MarkovBanditGame(8), 16 * 1024)
 
           optimalStrategy.last must be greaterThan(0.99)
         }
@@ -128,29 +131,45 @@ class CfrMinimizerSpec
         secondStrategy(0) must be greaterThan(0.99)
       }
 
-      "Incomplete information" in {
+//      "Incomplete information (non-zero-sum)" in {
+//        val optimalStrategyProfile = approximateOptimalStrategy(
+//          IncompleteGame, 1024)._2
+//
+//        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerOneTypeOne, 2)
+//
+//        playerOneTypeOneStrategy(IncompleteActionDown.index) must be greaterThan(0.99)
+//
+//        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerOneTypeTwo, 2)
+//
+//        playerOneTypeTwoStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+//
+//        val playerTwoAfterUpStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerTwoAfterUp, 2)
+//
+//        playerTwoAfterUpStrategy.min must be greaterThan(0.49)
+//
+//        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerTwoAfterDown, 2)
+//
+//        playerTwoAfterDownStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+//      }
+
+      "Zero sum" in {
         val optimalStrategyProfile = approximateOptimalStrategy(
-          IncompleteGame, 128)._2
+          ZeroSumGame, 64)._2
 
-        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerOneTypeOne, 2)
+        val redStrategy = optimalStrategyProfile.averageStrategy(
+          ZeroSumInfoRed, 2)
 
-        playerOneTypeOneStrategy(1) must be greaterThan(0.99)
+        redStrategy(0) must be greaterThan(4.0/7 - 0.01)
 
-        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerOneTypeTwo, 2)
+        val blueStrategy = optimalStrategyProfile.averageStrategy(
+          ZeroSumInfoBlue, 3)
 
-        playerOneTypeTwoStrategy(0) must be greaterThan(0.99)
-
-        val playerTwoAfterUpStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerTwoAfterUp, 2)
-
-        playerTwoAfterUpStrategy.min must be greaterThan(0.49)
-
-        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerTwoAfterDown, 2)
-
-        playerTwoAfterDownStrategy(0) must be greaterThan(0.99)
+        blueStrategy(0) must be lessThan(0.01)
+        blueStrategy(1) must be greaterThan(4.0/7 - 0.01)
       }
     }
   }

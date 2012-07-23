@@ -40,12 +40,14 @@ class CfrMinimizer
     val rootCounterfactualReachProbabilities =
       Seq.fill( game.rationalPlayerCount )( 1.0 )
 
-      cfrUpdate(
-        game,
-        game.treeRoot,
-        strategyProfile,
-        rootCounterfactualReachProbabilities,
-        0)
+    cfrUpdate(
+      game,
+      game.treeRoot,
+      strategyProfile,
+      rootCounterfactualReachProbabilities,
+      0)
+
+    strategyProfile.commitBuffers()
 
 //    for (playerIndex <- 0 until game.rationalPlayerCount)
 //    {
@@ -61,33 +63,6 @@ class CfrMinimizer
 //
 //      println( strategyProfile )
 //    }
-  }
-
-  private def reduceRegret(
-      game                : ExtensiveGame,
-      informationSetIndex : InformationSetIndex,
-      strategyProfile     : StrategyProfile,
-      playerIndex         : Int)
-  {
-    for (informationSet <- informationSetIndex.informationSets
-         if informationSetIndex.nextToAct(informationSet).index == playerIndex)
-    {
-      // calculate counterfactual regret for all actions at all nodes
-      val decision = getDecisionForInformationSet(game.treeRoot, informationSet)
-
-      val actionProbabilities: Seq[Double] =
-        strategyProfile.positiveRegretStrategy(
-          informationSet, informationSetIndex.actionsOf(informationSet).size)
-
-
-
-
-
-//      if positive, add to total positive cfr for all actions at all nodes;
-
-//      set strategy weights in proportion to total positive cfr at all nodes;
-
-    }
   }
 
 
@@ -287,7 +262,7 @@ class CfrMinimizer
         yield actionProbability * playerChildUtilities(playerIndex)(action)
       ).sum
 
-    val utilities: Seq[Double] =
+    val expectedUtilities: Seq[Double] =
       (for (playerIndex <- 0 until game.rationalPlayerCount)
         // train.cpp line 669: sum      += ev[opponent];
         // todo: why doesn't it multiply by action probability? (is it done internally?)
@@ -331,12 +306,17 @@ class CfrMinimizer
       //    val opponentReachProbability  =
       //      reachProbabilities( opponentIndex )
 
-      val counterfactualRegret: Seq[Double] =
+      val actionRegret: Seq[Double] =
         playerChildUtilities(node.player.index).map(childUtility =>
-          (childUtility - utilities(node.player.index)) * opponentReachProbability)
+          childUtility - expectedUtilities(node.player.index))
 
-      strategyProfile.update(node.informationSet,
-        counterfactualRegret, opponentReachProbability)
+//      val counterfactualRegret: Seq[Double] =
+//        actionRegret.map(actionRegret => actionRegret * opponentReachProbability)
+
+//      strategyProfile.update(node.informationSet,
+      strategyProfile.bufferUpdate(node.informationSet,
+        actionRegret, opponentReachProbability)
+//        counterfactualRegret, opponentReachProbability)
       //      counterfactualRegret, proponentReachProbability)
     }
 
@@ -346,7 +326,7 @@ class CfrMinimizer
 //    } else {
 //      Seq(opponentUtility, counterfactualUtility)
 //    }
-    utilities
+    expectedUtilities
   }
 
 

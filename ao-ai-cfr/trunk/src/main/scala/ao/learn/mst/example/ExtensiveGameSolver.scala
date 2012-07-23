@@ -11,6 +11,7 @@ import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
+import zerosum.ZeroSumGame
 
 
 /**
@@ -31,7 +32,8 @@ object ExtensiveGameSolver
 //    RockPaperScissorsGame
 //    PerfectCompleteGame
 //    ImperfectCompleteGame
-    IncompleteGame
+//    IncompleteGame
+    ZeroSumGame
 
   val extensiveGameRoot =
     game.treeRoot
