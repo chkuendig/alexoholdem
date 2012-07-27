@@ -3,9 +3,10 @@ package ao.learn.mst.kuhn.adapt.v2
 import ao.learn.mst.gen2.player.FiniteAction
 import ao.learn.mst.kuhn.card.KuhnCard._
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
-import ao.learn.mst.kuhn.card.KuhnCard
-import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision}
+import ao.learn.mst.kuhn.card.{KuhnCardSequence, KuhnCard}
+import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameChance, ExtensiveGameNode}
 import collection.immutable.{SortedSet, SortedMap}
+import ao.learn.mst.kuhn.state.KuhnState
 
 /**
  * KuhnGameDecision
@@ -14,7 +15,7 @@ import collection.immutable.{SortedSet, SortedMap}
  * Time: 8:03 PM
  */
 object KuhnGameChance
-    extends ExtensiveGameNode
+    extends ExtensiveGameChance
 {
   //--------------------------------------------------------------------------------------------------------------------
   def actions : SortedSet[FiniteAction] = {
@@ -25,7 +26,7 @@ object KuhnGameChance
         if secondCard != firstCard
       } yield (firstCard, secondCard)
 
-    val possibilities =
+    val possibilities: Set[Possibility] =
       for {
         ((firstCard, secondCard), index)
         <- cardPermutations.zipWithIndex
@@ -45,7 +46,7 @@ object KuhnGameChance
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def probabilities : ActionProbabilityMass =
+  def probabilityMass : ActionProbabilityMass =
   {
     val possibilities = actions
 
@@ -61,8 +62,17 @@ object KuhnGameChance
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def child(outcome: FiniteAction) : ExtensiveGameDecision = {
-    null
+  def child(outcome: FiniteAction) = {
+    val instance: Possibility =
+      actions.toSeq(outcome.index).asInstanceOf[Possibility]
+
+    val cardSequence =
+      KuhnCardSequence(
+        instance.firstPlayerCard,
+        instance.secondPlayerCard)
+
+    KuhnGameDecision(
+      new KuhnState(cardSequence))
   }
 
 

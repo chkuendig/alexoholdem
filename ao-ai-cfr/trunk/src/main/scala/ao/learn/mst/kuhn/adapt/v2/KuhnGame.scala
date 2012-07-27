@@ -1,15 +1,15 @@
 package ao.learn.mst.kuhn.adapt.v2
 
+import ao.learn.mst.gen2.game.ExtensiveGame
+
 
 /**
- * Date: 03/12/11
- * Time: 7:51 PM
+ *
  */
-
-class KuhnGame
-//    extends ExtensiveGame
+object KuhnGame
+    extends ExtensiveGame
 {
-//  //--------------------------------------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
 //  def rationalPlayers =
 //    Set(RationalPlayer(0),
 //        RationalPlayer(1))
@@ -22,4 +22,9 @@ class KuhnGame
 ////  }
 //
 //  def gameTreeRoot = null
+
+  def rationalPlayerCount = 2
+
+  /**"A rooted tree, called the game tree" */
+  def treeRoot = KuhnGameChance
 }

@@ -12,6 +12,7 @@ import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
+import ao.learn.mst.kuhn.adapt.v2.KuhnGame
 
 
 /**
@@ -32,8 +33,9 @@ object ExtensiveGameSolver
 //    RockPaperScissorsGame
 //    PerfectCompleteGame
 //    ImperfectCompleteGame
-    IncompleteGame
+//    IncompleteGame
 //    ZeroSumGame
+    KuhnGame
 
   val extensiveGameRoot =
     game.treeRoot
@@ -122,7 +124,10 @@ object ExtensiveGameSolver
       case decision : ExtensiveGameDecision =>
         <decision player={ decision.player.index.toString } name={ decision.toString }>
           <information-set>
-            { decision.informationSet.getClass.getSimpleName }
+            {
+//              decision.informationSet.getClass.getSimpleName
+              decision.informationSet.toString
+            }
           </information-set>
 
           <actions>

@@ -8,3 +8,7 @@ package ao.learn.mst.kuhn.state
 case class KuhnOutcome(
     firstPlayerDelta : Int,
     lastPlayerDelta  : Int)
+{
+  def toSeq: Seq[Double] =
+    Seq(firstPlayerDelta, lastPlayerDelta)
+}

@@ -63,7 +63,7 @@ case class KuhnState(
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def act(action : KuhnAction) =
+  def act(action : KuhnAction):KuhnState =
     actions match {
       case FirstAction => action match {
         case CheckFold =>
