@@ -6,6 +6,7 @@ import ao.learn.mst.gen2.player.{FiniteAction, RationalPlayer}
 import scala._
 import ao.learn.mst.gen2.player.RationalPlayer
 import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.solve.ExtensiveGameSolver
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ import ao.learn.mst.gen2.player.RationalPlayer
  * http://pokerai.org/pf3/viewtopic.php?f=3&t=2662
  *
  */
-class CfrMinimizer
+class CfrMinimizer extends ExtensiveGameSolver
 {
   //--------------------------------------------------------------------------------------------------------------------
   def reduceRegret(
@@ -34,8 +35,6 @@ class CfrMinimizer
 //      throw new UnsupportedOperationException(
 //        "Number of players must be 2: " + game.rationalPlayerCount);
 //    }
-
-//    println("\n")
 
     val rootCounterfactualReachProbabilities =
       Seq.fill( game.rationalPlayerCount )( 1.0 )

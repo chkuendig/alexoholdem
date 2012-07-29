@@ -8,7 +8,7 @@ object KuhnCard extends Enumeration
 {
   type KuhnCard = Value
 
+  val Jack  = Value("J")
   val Queen = Value("Q")
   val King  = Value("K")
-  val Ace   = Value("A")
 }
