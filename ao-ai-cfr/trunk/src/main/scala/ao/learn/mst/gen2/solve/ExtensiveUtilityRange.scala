@@ -1,4 +1,4 @@
-package ao.learn.mst.gen.utility
+package ao.learn.mst.gen2.solve
 
 /**
  * http://poker.cs.ualberta.ca/publications/abourisk.msc.pdf
@@ -7,8 +7,8 @@ package ao.learn.mst.gen.utility
  * Define delta(u,i) = max(z)(ui(z)) - min(z)(ui(z)) to be the range of utilities to player i.
  */
 case class ExtensiveUtilityRange(
-    minimum : Double,
-    maximum : Double)
+    minimum: Double,
+    maximum: Double)
 {
   //--------------------------------------------------------------------------------------------------------------------
   assert(minimum < maximum)

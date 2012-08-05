@@ -7,6 +7,12 @@ import org.specs2.internal.scalaz.Digit._0
 
 
 //----------------------------------------------------------------------------------------------------------------------
+/**
+ * "Each terminal (leaf) node of the game tree has an n-tuple of payoffs,
+ *  meaning there is one payoff for each player at the end of every possible play".
+ *
+ * @param outcomes payoffs
+ */
 case class ExpectedValue(outcomes : Map[RationalPlayer, Double])
 
 

@@ -3,7 +3,7 @@ package ao.learn.mst.gen
 import org.specs2.mutable.Specification
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGame}
 import ao.learn.mst.example.perfect.complete.PerfectCompleteGame
-import ao.learn.mst.gen2.info.{InformationSetIndex, TraversingInformationSetIndexer}
+import ao.learn.mst.gen2.info.{InformationSet, ValueInformationSet, InformationSetIndex, TraversingInformationSetIndexer}
 import ao.learn.mst.cfr.{StrategyProfile, CfrMinimizer}
 import ao.learn.mst.example.slot.specific.bin.DeterministicBinaryBanditGame
 import ao.learn.mst.example.slot.specific.k.MarkovBanditGame
@@ -15,7 +15,15 @@ import ao.learn.mst.example.incomplete.{IncompleteActionUp, IncompleteActionDown
 import ao.learn.mst.example.incomplete.node.{IncompleteInfoPlayerTwoAfterDown, IncompleteInfoPlayerTwoAfterUp, IncompleteInfoPlayerOneTypeTwo, IncompleteInfoPlayerOneTypeOne}
 import ao.learn.mst.example.zerosum.ZeroSumGame
 import ao.learn.mst.example.zerosum.info.{ZeroSumInfoBlue, ZeroSumInfoRed}
-import ao.learn.mst.example.zerosum.node.ZeroSumDecisionRed
+import ao.learn.mst.kuhn.adapt.v2.{KuhnGameInfo, KuhnGameDecision, KuhnGame}
+import ao.learn.mst.kuhn.card.KuhnCard._
+import ao.learn.mst.kuhn.action.KuhnAction._
+import ao.learn.mst.kuhn.action.KuhnActionSequence._
+import ao.learn.mst.kuhn.card.KuhnCard
+import ao.learn.mst.kuhn.card.KuhnCard.KuhnCard
+import ao.learn.mst.kuhn.action.{KuhnAction, KuhnActionSequence}
+import ao.learn.mst.kuhn.action.KuhnActionSequence.KuhnActionSequence
+import ao.learn.mst.kuhn.action.KuhnAction.KuhnAction
 
 
 /**
@@ -131,29 +139,29 @@ class CfrMinimizerSpec
         secondStrategy(0) must be greaterThan(0.99)
       }
 
-      "Incomplete information (non-zero-sum adjusted)" in {
-        // see adjustment in: IncompleteTerminal -> IncompleteTypeOne -> IncompleteActionDown
-
-        val optimalStrategyProfile = approximateOptimalStrategy(
-          IncompleteGame, 256)._2
-
-        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerOneTypeOne, 2)
-
-        playerOneTypeOneStrategy(IncompleteActionDown.index) must be greaterThan(0.99)
-
-        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerOneTypeTwo, 2)
-
-        playerOneTypeTwoStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
-
-        // playerTwoAfterUpStrategy is irrelevant(i.e. all actions produce same outcome)
-
-        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
-          IncompleteInfoPlayerTwoAfterDown, 2)
-
-        playerTwoAfterDownStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
-      }
+//      "Incomplete information (non-zero-sum adjusted)" in {
+//        // see adjustment in: IncompleteTerminal -> IncompleteTypeOne -> IncompleteActionDown
+//
+//        val optimalStrategyProfile = approximateOptimalStrategy(
+//          IncompleteGame, 256)._2
+//
+//        val playerOneTypeOneStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerOneTypeOne, 2)
+//
+//        playerOneTypeOneStrategy(IncompleteActionDown.index) must be greaterThan(0.99)
+//
+//        val playerOneTypeTwoStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerOneTypeTwo, 2)
+//
+//        playerOneTypeTwoStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+//
+//        // playerTwoAfterUpStrategy is irrelevant(i.e. all actions produce same outcome)
+//
+//        val playerTwoAfterDownStrategy = optimalStrategyProfile.averageStrategy(
+//          IncompleteInfoPlayerTwoAfterDown, 2)
+//
+//        playerTwoAfterDownStrategy(IncompleteActionUp.index) must be greaterThan(0.99)
+//      }
 
       "Zero sum" in {
         val optimalStrategyProfile = approximateOptimalStrategy(
@@ -169,6 +177,58 @@ class CfrMinimizerSpec
 
         blueStrategy(0) must be lessThan(0.01)
         blueStrategy(1) must be greaterThan(4.0/7 - 0.01)
+      }
+    }
+
+    "Solve Kuhn Poker" in {
+      val (informationSetIndex, optimalStrategyProfile) = approximateOptimalStrategy(
+        KuhnGame, 16 * 1024)
+
+      def kuhnStrategy(playerCard: KuhnCard, actionSequence: KuhnActionSequence, action:KuhnAction): Double =
+        optimalStrategyProfile.averageStrategy(kuhnInfo(playerCard, actionSequence), 2)(action.id)
+
+      def kuhnInfo(playerCard: KuhnCard, actionSequence: KuhnActionSequence): InformationSet =
+        informationSetIndex.informationSets.find(_ match {
+          case kuhnDecision: KuhnGameInfo =>
+            kuhnDecision.contains(playerCard, actionSequence)
+          case _ => false
+        }).get
+
+      "Strategies should not be dominated" in {
+        val firstPlayerFirstActionWithQueenPass =
+          kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.FirstAction, KuhnAction.CheckFold)
+        firstPlayerFirstActionWithQueenPass must be greaterThan(0.99)
+
+        val secondPlayerAfterPassWithQueenPass =
+          kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.Check, KuhnAction.CheckFold)
+        secondPlayerAfterPassWithQueenPass must be greaterThan(0.99)
+
+        val secondPlayerAfterPassWithKingBet =
+          kuhnStrategy(KuhnCard.King, KuhnActionSequence.Check, KuhnAction.CallRaise)
+        secondPlayerAfterPassWithKingBet must be greaterThan(0.99)
+        val secondPlayerAfterBetWithKingBet =
+          kuhnStrategy(KuhnCard.King, KuhnActionSequence.Raise, KuhnAction.CallRaise)
+        secondPlayerAfterBetWithKingBet must be greaterThan(0.99)
+
+        val firstPlayerCheckRaiseWithJackPass =
+          kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.CheckRaise, KuhnAction.CheckFold)
+        firstPlayerCheckRaiseWithJackPass must be greaterThan(0.99)
+
+        val secondPlayerAfterRaiseWithJackPass =
+          kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.Raise, KuhnAction.CheckFold)
+        secondPlayerAfterRaiseWithJackPass must be greaterThan(0.99)
+      }
+
+      "Second player should have unique optimal strategy" in {
+        val secondPlayerAfterPassWithJackBet =
+          kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.Check, KuhnAction.CallRaise)
+        secondPlayerAfterPassWithJackBet must be greaterThan(0.32)
+        secondPlayerAfterPassWithJackBet must be lessThan(0.34)
+
+        val secondPlayerAfterBetWithQueenBet =
+          kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.Raise, KuhnAction.CallRaise)
+        secondPlayerAfterBetWithQueenBet must be greaterThan(0.32)
+        secondPlayerAfterBetWithQueenBet must be lessThan(0.34)
       }
     }
   }

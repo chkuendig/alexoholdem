@@ -1,6 +1,6 @@
 package ao.learn.mst.kuhn.adapt
 
-import ao.learn.mst.gen.utility.ExtensiveUtilityRange
+import ao.learn.mst.gen2.solve.ExtensiveUtilityRange
 import ao.learn.mst.gen.ExtensiveGameX
 
 /**
