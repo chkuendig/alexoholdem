@@ -1,4 +1,4 @@
-package ao.learn.mst.kuhn.adapt.v2
+package ao.learn.mst.example.kuhn.adapt
 
 import ao.learn.mst.gen2.game.ExtensiveGame
 

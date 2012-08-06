@@ -1,4 +1,4 @@
-package ao.learn.mst.kuhn.action
+package ao.learn.mst.example.kuhn.action
 
 //----------------------------------------------------------------------------
 object KuhnActionSequence extends Enumeration

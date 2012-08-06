@@ -1,4 +1,4 @@
-package ao.learn.mst.kuhn.state.terminal
+package ao.learn.mst.example.kuhn.state.terminal
 
 import ao.learn.mst.lib.Enum
 

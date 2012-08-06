@@ -1,12 +1,12 @@
-package ao.learn.mst.kuhn.adapt.v2
+package ao.learn.mst.example.kuhn.adapt
 
 import ao.learn.mst.gen2.player.FiniteAction
-import ao.learn.mst.kuhn.card.KuhnCard._
+import ao.learn.mst.example.kuhn.card.KuhnCard._
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
-import ao.learn.mst.kuhn.card.{KuhnCardSequence, KuhnCard}
+import ao.learn.mst.example.kuhn.card.{KuhnCardSequence, KuhnCard}
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameChance, ExtensiveGameNode}
 import collection.immutable.{SortedSet, SortedMap}
-import ao.learn.mst.kuhn.state.KuhnState
+import ao.learn.mst.example.kuhn.state.KuhnState
 
 /**
  * KuhnGameDecision

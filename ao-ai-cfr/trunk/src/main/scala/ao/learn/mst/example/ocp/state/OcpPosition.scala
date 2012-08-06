@@ -1,15 +1,15 @@
-package ao.learn.mst.example.kuhn.state
+package ao.learn.mst.example.ocp.state
 
 /**
  * Date: 25/10/11
  * Time: 11:29 PM
  */
 
-object KuhnPosition extends Enumeration
+object OcpPosition extends Enumeration
 {
   //--------------------------------------------------------------------------
-  type KuhnPosition = Value
+  type OcpPosition = Value
 
   val FirstToAct = Value("FirstToAct")
-  val LastToAct  = Value("LastToAct")
+  val LastToAct = Value("LastToAct")
 }

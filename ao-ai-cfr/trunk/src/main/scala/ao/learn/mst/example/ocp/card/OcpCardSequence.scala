@@ -1,12 +1,12 @@
-package ao.learn.mst.example.kuhn.card
+package ao.learn.mst.example.ocp.card
 
-import KuhnCard._
-import ao.learn.mst.example.kuhn.state.KuhnPosition._
+import OcpCard._
+import ao.learn.mst.example.ocp.state.OcpPosition._
 
 
 //---------------------------------------------------------------------------------------------------------------------
-case class KuhnCardSequence(
-    first : KuhnCard, last : KuhnCard)
+case class OcpCardSequence(
+    first: OcpCard, last: OcpCard)
 {
   //--------------------------------------------------------------------------
   def hands = (first, last)
@@ -18,7 +18,7 @@ case class KuhnCardSequence(
 
 
   //--------------------------------------------------------------------------
-  def forPlayer(index: Int): KuhnCard = {
+  def forPlayer(index: Int): OcpCard = {
     require((0 until hands.productArity) contains index)
 
     index match {

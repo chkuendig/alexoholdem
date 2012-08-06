@@ -1,6 +1,6 @@
-package ao.learn.mst.kuhn.state.terminal
+package ao.learn.mst.example.kuhn.state.terminal
 
-import ao.learn.mst.kuhn.state.KuhnPosition._
+import ao.learn.mst.example.kuhn.state.KuhnPosition._
 
 /**
  * Date: 10/11/11

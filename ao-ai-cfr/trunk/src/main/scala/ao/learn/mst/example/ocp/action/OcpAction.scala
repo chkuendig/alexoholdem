@@ -1,4 +1,4 @@
-package ao.learn.mst.example.kuhn.action
+package ao.learn.mst.example.ocp.action
 
 /**
  * Date: 25/10/11
@@ -6,10 +6,10 @@ package ao.learn.mst.example.kuhn.action
  */
 
 //----------------------------------------------------------------------------
-object KuhnAction extends Enumeration
+object OcpAction extends Enumeration
 {
   //--------------------------------------------------------------------------
-  type KuhnAction = Value
+  type OcpAction = Value
 
   val CheckFold = Value("Check/Fold")
   val CallRaise = Value("Call/Raise")

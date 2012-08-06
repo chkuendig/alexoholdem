@@ -1,8 +1,8 @@
-package ao.learn.mst.kuhn.play.impl
+package ao.learn.mst.example.kuhn.play.impl
 
-import ao.learn.mst.kuhn.play.KuhnPlayer
-import ao.learn.mst.kuhn.state.KuhnState
-import ao.learn.mst.kuhn.action.KuhnAction
+import ao.learn.mst.example.kuhn.play.KuhnPlayer
+import ao.learn.mst.example.kuhn.state.KuhnState
+import ao.learn.mst.example.kuhn.action.KuhnAction
 import util.Random
 
 /**

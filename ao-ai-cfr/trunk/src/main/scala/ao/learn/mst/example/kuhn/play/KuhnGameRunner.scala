@@ -1,7 +1,7 @@
-package ao.learn.mst.kuhn.play
+package ao.learn.mst.example.kuhn.play
 
 import impl.KuhnConsolePlayer
-import ao.learn.mst.kuhn.card.KuhnDeck
+import ao.learn.mst.example.kuhn.card.KuhnDeck
 import util.Random
 
 

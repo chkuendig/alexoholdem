@@ -1,4 +1,4 @@
-package ao.learn.mst.kuhn.card
+package ao.learn.mst.example.kuhn.card
 
 /**
  * Date: 20/09/11

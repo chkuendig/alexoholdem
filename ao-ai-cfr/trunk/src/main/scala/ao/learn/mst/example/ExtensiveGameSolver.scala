@@ -12,7 +12,7 @@ import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
-import ao.learn.mst.kuhn.adapt.v2.KuhnGame
+import ao.learn.mst.example.kuhn.adapt.KuhnGame
 
 
 /**

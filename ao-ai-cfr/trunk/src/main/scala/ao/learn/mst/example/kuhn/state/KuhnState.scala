@@ -1,12 +1,12 @@
-package ao.learn.mst.kuhn.state
+package ao.learn.mst.example.kuhn.state
 
 import KuhnPosition._
 import terminal.KuhnTerminalStatus._
-import ao.learn.mst.kuhn.action.KuhnAction
-import ao.learn.mst.kuhn.action.KuhnAction._
-import ao.learn.mst.kuhn.action.KuhnActionSequence
-import ao.learn.mst.kuhn.action.KuhnActionSequence._
-import ao.learn.mst.kuhn.card.KuhnCardSequence
+import ao.learn.mst.example.kuhn.action.KuhnAction
+import ao.learn.mst.example.kuhn.action.KuhnAction._
+import ao.learn.mst.example.kuhn.action.KuhnActionSequence
+import ao.learn.mst.example.kuhn.action.KuhnActionSequence._
+import ao.learn.mst.example.kuhn.card.KuhnCardSequence
 
 
 //----------------------------------------------------------------------------------------------------------------------

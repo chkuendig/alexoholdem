@@ -1,4 +1,4 @@
-package ao.learn.mst.kuhn.card
+package ao.learn.mst.example.kuhn.card
 
 //import KuhnCard._
 import util.Random

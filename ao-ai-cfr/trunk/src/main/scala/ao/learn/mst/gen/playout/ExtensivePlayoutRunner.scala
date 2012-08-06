@@ -3,7 +3,7 @@ package ao.learn.mst.gen.playout
 import ao.learn.mst.gen.ExtensiveGameX
 import ao.learn.mst.gen.player.ExtensivePlayer
 import ao.learn.mst.kuhn.adapt.{KuhnExtensivePlayer, KuhnExtensiveGameX}
-import ao.learn.mst.kuhn.play.impl.KuhnConsolePlayer
+import ao.learn.mst.example.kuhn.play.impl.KuhnConsolePlayer
 
 /**
  * Date: 15/11/11

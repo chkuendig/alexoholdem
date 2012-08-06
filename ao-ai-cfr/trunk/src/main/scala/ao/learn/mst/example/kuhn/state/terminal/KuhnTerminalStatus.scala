@@ -1,12 +1,11 @@
-package ao.learn.mst.kuhn.state.terminal
+package ao.learn.mst.example.kuhn.state.terminal
 
-import ao.learn.mst.kuhn.state.KuhnPosition._
-import ao.learn.mst.kuhn.state.KuhnPosition
+import ao.learn.mst.example.kuhn.state.KuhnPosition._
+import ao.learn.mst.example.kuhn.state.KuhnPosition
 
 
 //----------------------------------------------------------------------------------------------------------------------
 object KuhnTerminalStatus
-//    extends Enumeration
     extends EnumWithWinner
 {
   //--------------------------------------------------------------------------------------------------------------------
