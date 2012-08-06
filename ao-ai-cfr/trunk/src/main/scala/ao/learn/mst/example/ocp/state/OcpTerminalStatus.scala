@@ -6,14 +6,14 @@ import ao.learn.mst.example.kuhn.state.terminal.{NamedWinnerIndicator, EnumWithW
 
 //----------------------------------------------------------------------------------------------------------------------
 object OcpTerminalStatus
-  extends EnumWithWinner
+  extends EnumWithWinner[OcpPosition]
 {
   //--------------------------------------------------------------------------------------------------------------------
   case class EnumVal private[OcpTerminalStatus](
       name: String, preShowdownWinner: Option[OcpPosition])
-    extends Value with NamedWinnerIndicator
+    extends Value with NamedWinnerIndicator[OcpPosition]
 
-  type KuhnTerminalStatus = EnumVal
+  type OcpTerminalStatus = EnumVal
 
   val SmallShowdown = EnumVal("SmallShowdown", None)
   val BigShowdown = EnumVal("BigShowdown", None)

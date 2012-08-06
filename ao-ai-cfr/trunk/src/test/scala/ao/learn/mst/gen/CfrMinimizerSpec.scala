@@ -15,15 +15,15 @@ import ao.learn.mst.example.incomplete.{IncompleteActionUp, IncompleteActionDown
 import ao.learn.mst.example.incomplete.node.{IncompleteInfoPlayerTwoAfterDown, IncompleteInfoPlayerTwoAfterUp, IncompleteInfoPlayerOneTypeTwo, IncompleteInfoPlayerOneTypeOne}
 import ao.learn.mst.example.zerosum.ZeroSumGame
 import ao.learn.mst.example.zerosum.info.{ZeroSumInfoBlue, ZeroSumInfoRed}
-import ao.learn.mst.kuhn.adapt.v2.{KuhnGameInfo, KuhnGameDecision, KuhnGame}
-import ao.learn.mst.kuhn.card.KuhnCard._
-import ao.learn.mst.kuhn.action.KuhnAction._
-import ao.learn.mst.kuhn.action.KuhnActionSequence._
-import ao.learn.mst.kuhn.card.KuhnCard
-import ao.learn.mst.kuhn.card.KuhnCard.KuhnCard
-import ao.learn.mst.kuhn.action.{KuhnAction, KuhnActionSequence}
-import ao.learn.mst.kuhn.action.KuhnActionSequence.KuhnActionSequence
-import ao.learn.mst.kuhn.action.KuhnAction.KuhnAction
+import ao.learn.mst.example.kuhn.adapt.{KuhnGameInfo, KuhnGameDecision, KuhnGame}
+import ao.learn.mst.example.kuhn.card.KuhnCard._
+import ao.learn.mst.example.kuhn.action.KuhnAction._
+import ao.learn.mst.example.kuhn.action.KuhnActionSequence._
+import ao.learn.mst.example.kuhn.card.KuhnCard
+import ao.learn.mst.example.kuhn.card.KuhnCard.KuhnCard
+import ao.learn.mst.example.kuhn.action.{KuhnAction, KuhnActionSequence}
+import ao.learn.mst.example.kuhn.action.KuhnActionSequence.KuhnActionSequence
+import ao.learn.mst.example.kuhn.action.KuhnAction.KuhnAction
 
 
 /**

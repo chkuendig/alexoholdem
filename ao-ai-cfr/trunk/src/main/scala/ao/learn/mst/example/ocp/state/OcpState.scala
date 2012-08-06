@@ -6,7 +6,7 @@ import ao.learn.mst.example.ocp.action.OcpAction._
 import ao.learn.mst.example.ocp.action.OcpActionSequence
 import ao.learn.mst.example.ocp.action.OcpActionSequence._
 import ao.learn.mst.example.ocp.card.OcpCardSequence
-import ao.learn.mst.example.ocp.state.OcpTerminalStatus._
+import OcpTerminalStatus._
 import OcpPosition._
 
 

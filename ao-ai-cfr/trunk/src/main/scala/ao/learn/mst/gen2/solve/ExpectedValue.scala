@@ -1,9 +1,7 @@
 package ao.learn.mst.gen2.solve
 
-import ao.learn.mst.gen2.player.RationalPlayer
 import scala.Predef._
 import ao.learn.mst.gen2.player.RationalPlayer
-import org.specs2.internal.scalaz.Digit._0
 
 
 //----------------------------------------------------------------------------------------------------------------------

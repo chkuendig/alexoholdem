@@ -2,7 +2,7 @@ package ao.learn.mst.kuhn.adapt
 
 import ao.learn.mst.gen.player.ExtensivePlayer
 import ao.learn.mst.gen.ExtensiveGameNodeX
-import ao.learn.mst.kuhn.play.KuhnPlayer
+import ao.learn.mst.example.kuhn.play.KuhnPlayer
 import ao.learn.mst.gen.act.ExtensiveAction
 
 /**
