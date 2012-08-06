@@ -33,6 +33,10 @@ class CfrMinimizerSpec
     extends Specification
 {
   //--------------------------------------------------------------------------------------------------------------------
+  val epsilonProbability:Double = 0.01
+
+
+  //--------------------------------------------------------------------------------------------------------------------
   "Counterfactual Regret Minimization algorithm" should {
     val minimizer = new CfrMinimizer()
 
@@ -83,14 +87,14 @@ class CfrMinimizerSpec
           val optimalStrategy = approximateOptimalSingletonInformationSetStrategy(
             DeterministicBinaryBanditGame, 64)
 
-          optimalStrategy.last must be greaterThan(0.99)
+          optimalStrategy.last must be greaterThan(1.0 - epsilonProbability)
         }
 
         "Markovian K-armed Bandit" in {
           val optimalStrategy = approximateOptimalSingletonInformationSetStrategy(
-            new MarkovBanditGame(8), 16 * 1024)
+            new MarkovBanditGame(6), 16 * 1024)
 
-          optimalStrategy.last must be greaterThan(0.99)
+          optimalStrategy.last must be greaterThan(1.0 - epsilonProbability)
         }
       }
 
@@ -99,7 +103,8 @@ class CfrMinimizerSpec
           RockPaperScissorsGame, 1024)
 
         // (roughly) equal distribution
-        optimalStrategy.min must be greaterThan(0.32)
+        optimalStrategy.min must be greaterThan(
+          1.0/RockPaperScissorsGame.treeRoot.actions.size - epsilonProbability)
       }
     }
 
@@ -111,17 +116,17 @@ class CfrMinimizerSpec
         val firstStrategy = optimalStrategyProfile.averageStrategy(
           PerfectCompleteDecisionFirstInfo, 2)
 
-        firstStrategy(0) must be greaterThan(0.99)
+        firstStrategy(0) must be greaterThan(1.0 - epsilonProbability)
 
         val afterUpStrategy = optimalStrategyProfile.averageStrategy(
           PerfectCompleteDecisionAfterUpInfo, 2)
 
-        afterUpStrategy(1) must be greaterThan(0.99)
+        afterUpStrategy(1) must be greaterThan(1.0 - epsilonProbability)
 
         val afterDownStrategy = optimalStrategyProfile.averageStrategy(
           PerfectCompleteDecisionAfterDownInfo, 2)
 
-        afterDownStrategy(0) must be greaterThan(0.66)
+        afterDownStrategy(0) must be greaterThan(2.0/3 - epsilonProbability)
       }
 
       "Imperfect information" in {
@@ -131,12 +136,12 @@ class CfrMinimizerSpec
         val firstStrategy = optimalStrategyProfile.averageStrategy(
           ImperfectCompleteDecisionFirstInfo, 2)
 
-        firstStrategy(1) must be greaterThan(0.99)
+        firstStrategy(1) must be greaterThan(1.0 - epsilonProbability)
 
         val secondStrategy = optimalStrategyProfile.averageStrategy(
           ImperfectCompleteDecisionSecondInfo, 2)
 
-        secondStrategy(0) must be greaterThan(0.99)
+        secondStrategy(0) must be greaterThan(1.0 - epsilonProbability)
       }
 
 //      "Incomplete information (non-zero-sum adjusted)" in {
@@ -170,13 +175,13 @@ class CfrMinimizerSpec
         val redStrategy = optimalStrategyProfile.averageStrategy(
           ZeroSumInfoRed, 2)
 
-        redStrategy(0) must be greaterThan(4.0/7 - 0.01)
+        redStrategy(0) must be greaterThan(4.0/7 - epsilonProbability)
 
         val blueStrategy = optimalStrategyProfile.averageStrategy(
           ZeroSumInfoBlue, 3)
 
-        blueStrategy(0) must be lessThan(0.01)
-        blueStrategy(1) must be greaterThan(4.0/7 - 0.01)
+        blueStrategy(0) must be lessThan(epsilonProbability)
+        blueStrategy(1) must be greaterThan(4.0/7 - epsilonProbability)
       }
     }
 
@@ -197,38 +202,55 @@ class CfrMinimizerSpec
       "Strategies should not be dominated" in {
         val firstPlayerFirstActionWithQueenPass =
           kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.FirstAction, KuhnAction.CheckFold)
-        firstPlayerFirstActionWithQueenPass must be greaterThan(0.99)
+        firstPlayerFirstActionWithQueenPass must be greaterThan(1.0 - epsilonProbability)
 
         val secondPlayerAfterPassWithQueenPass =
           kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.Check, KuhnAction.CheckFold)
-        secondPlayerAfterPassWithQueenPass must be greaterThan(0.99)
+        secondPlayerAfterPassWithQueenPass must be greaterThan(1.0 - epsilonProbability)
 
         val secondPlayerAfterPassWithKingBet =
           kuhnStrategy(KuhnCard.King, KuhnActionSequence.Check, KuhnAction.CallRaise)
-        secondPlayerAfterPassWithKingBet must be greaterThan(0.99)
+        secondPlayerAfterPassWithKingBet must be greaterThan(1.0 - epsilonProbability)
         val secondPlayerAfterBetWithKingBet =
           kuhnStrategy(KuhnCard.King, KuhnActionSequence.Raise, KuhnAction.CallRaise)
-        secondPlayerAfterBetWithKingBet must be greaterThan(0.99)
+        secondPlayerAfterBetWithKingBet must be greaterThan(1.0 - epsilonProbability)
 
         val firstPlayerCheckRaiseWithJackPass =
           kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.CheckRaise, KuhnAction.CheckFold)
-        firstPlayerCheckRaiseWithJackPass must be greaterThan(0.99)
+        firstPlayerCheckRaiseWithJackPass must be greaterThan(1.0 - epsilonProbability)
 
         val secondPlayerAfterRaiseWithJackPass =
           kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.Raise, KuhnAction.CheckFold)
-        secondPlayerAfterRaiseWithJackPass must be greaterThan(0.99)
+        secondPlayerAfterRaiseWithJackPass must be greaterThan(1.0 - epsilonProbability)
       }
 
       "Second player should have unique optimal strategy" in {
         val secondPlayerAfterPassWithJackBet =
           kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.Check, KuhnAction.CallRaise)
-        secondPlayerAfterPassWithJackBet must be greaterThan(0.32)
-        secondPlayerAfterPassWithJackBet must be lessThan(0.34)
+        secondPlayerAfterPassWithJackBet must be greaterThan(1.0/3 - epsilonProbability)
+        secondPlayerAfterPassWithJackBet must be lessThan(1.0/3 + epsilonProbability)
 
         val secondPlayerAfterBetWithQueenBet =
           kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.Raise, KuhnAction.CallRaise)
-        secondPlayerAfterBetWithQueenBet must be greaterThan(0.32)
-        secondPlayerAfterBetWithQueenBet must be lessThan(0.34)
+        secondPlayerAfterBetWithQueenBet must be greaterThan(1.0/3 - epsilonProbability)
+        secondPlayerAfterBetWithQueenBet must be lessThan(1.0/3 + epsilonProbability)
+      }
+
+      "First player should have one of the optimal strategies" in {
+        val betWithJack =
+          kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.FirstAction, KuhnAction.CallRaise)
+
+        val betWithQueenAfterPassBet =
+          kuhnStrategy(KuhnCard.Queen, KuhnActionSequence.CheckRaise, KuhnAction.CallRaise)
+
+        val betWithKing =
+          kuhnStrategy(KuhnCard.King, KuhnActionSequence.FirstAction, KuhnAction.CallRaise)
+
+        betWithJack must be lessThan(betWithKing / 3 + epsilonProbability)
+        betWithJack must be greaterThan(betWithKing / 3 - epsilonProbability)
+
+        betWithQueenAfterPassBet must be lessThan((1 + betWithKing) / 3 + epsilonProbability)
+        betWithQueenAfterPassBet must be greaterThan((1 + betWithKing) / 3 - epsilonProbability)
       }
     }
   }
