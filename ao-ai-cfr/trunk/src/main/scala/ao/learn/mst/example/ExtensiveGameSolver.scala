@@ -2,6 +2,7 @@ package ao.learn.mst.example
 
 import imperfect.complete.ImperfectCompleteGame
 import incomplete.IncompleteGame
+import ocp.adapt.OcpGame
 import perfect.complete.PerfectCompleteGame
 import rps.RockPaperScissorsGame
 import slot.specific.bin.DeterministicBinaryBanditGame
@@ -35,7 +36,8 @@ object ExtensiveGameSolver
 //    ImperfectCompleteGame
 //    IncompleteGame
 //    ZeroSumGame
-    KuhnGame
+//    KuhnGame
+    OcpGame
 
   val extensiveGameRoot =
     game.treeRoot
@@ -96,13 +98,13 @@ object ExtensiveGameSolver
 
   val minimizer = new CfrMinimizer()
   for (i <- 1 to equilibriumApproximationIterations) {
-    if (i % (100 * 1000) == 0) {
+    if (i % (100 /** 1000*/) == 0) {
       println(i + "\n" + strategyProfile)
     }
 
     minimizer.reduceRegret(
       game, informationSetIndex, strategyProfile)
-    println( strategyProfile )
+//    println( strategyProfile )
   }
 
   println("\n\n\n\n\n")
