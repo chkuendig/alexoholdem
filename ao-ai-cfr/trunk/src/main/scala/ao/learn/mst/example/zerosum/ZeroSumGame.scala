@@ -10,6 +10,8 @@ import node.ZeroSumDecisionRed
  *  while Blue should assign the probabilities 0, 4/7, and 3/7 to the three actions A, B, and C.
  *  Red will then win 20/7 points on average per game.
  *
+ * Red: 57.143% / 42.857%
+ * Blue: 0 / 57.143% / 42.857%
  */
 object ZeroSumGame
   extends ExtensiveGame

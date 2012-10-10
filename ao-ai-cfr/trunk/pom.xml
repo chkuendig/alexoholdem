@@ -54,6 +54,12 @@
 
     <!--===================================================================-->
     <dependencies>
+        <dependency>
+            <groupId>org.scalaj</groupId>
+            <artifactId>scalaj-time_2.9.2</artifactId>
+            <version>0.6</version>
+        </dependency>
+
         <!-- Scala -->
         <dependency>
             <groupId>org.scala-lang</groupId>

@@ -142,7 +142,12 @@ class StrategyProfile(
     }
   }
   private def commitBuffer(informationSet: Int) {
-    val childCount = regretSums(informationSet).length
+    val regretSum = regretSums(informationSet)
+    if (regretSum == null) {
+      return
+    }
+
+    val childCount = regretSum.length
 
     val currentPositiveRegretStrategy =
       positiveRegretStrategy(informationSet, childCount)

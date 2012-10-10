@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGame}
 import ao.learn.mst.example.perfect.complete.PerfectCompleteGame
 import ao.learn.mst.gen2.info.{InformationSet, ValueInformationSet, InformationSetIndex, TraversingInformationSetIndexer}
-import ao.learn.mst.cfr.{StrategyProfile, CfrMinimizer}
+import ao.learn.mst.cfr.{ChanceSampledCfrMinimizer, StrategyProfile, CfrMinimizer}
 import ao.learn.mst.example.slot.specific.bin.DeterministicBinaryBanditGame
 import ao.learn.mst.example.slot.specific.k.MarkovBanditGame
 import ao.learn.mst.example.rps.RockPaperScissorsGame
@@ -38,7 +38,9 @@ class CfrMinimizerSpec
 
   //--------------------------------------------------------------------------------------------------------------------
   "Counterfactual Regret Minimization algorithm" should {
-    val minimizer = new CfrMinimizer()
+    val minimizer =
+      new ChanceSampledCfrMinimizer()
+//      new CfrMinimizer()
 
     def approximateOptimalStrategy(
         game: ExtensiveGame,
@@ -187,7 +189,8 @@ class CfrMinimizerSpec
 
     "Solve Kuhn Poker" in {
       val (informationSetIndex, optimalStrategyProfile) = approximateOptimalStrategy(
-        KuhnGame, 16 * 1024)
+//        KuhnGame, 16 * 1024)
+        KuhnGame, 512 * 1024)
 
       def kuhnStrategy(playerCard: KuhnCard, actionSequence: KuhnActionSequence, action:KuhnAction): Double =
         optimalStrategyProfile.averageStrategy(kuhnInfo(playerCard, actionSequence), 2)(action.id)

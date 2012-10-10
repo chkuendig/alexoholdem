@@ -14,6 +14,7 @@ import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
 import ao.learn.mst.example.kuhn.adapt.KuhnGame
+import org.joda.time.{Duration, LocalTime, DateTime}
 
 
 /**
@@ -34,10 +35,10 @@ object ExtensiveGameSolver
 //    RockPaperScissorsGame
 //    PerfectCompleteGame
 //    ImperfectCompleteGame
-//    IncompleteGame
+//    IncompleteGame // does not randomize?
 //    ZeroSumGame
-//    KuhnGame
-    OcpGame
+    KuhnGame
+//    OcpGame
 
   val extensiveGameRoot =
     game.treeRoot
@@ -96,10 +97,15 @@ object ExtensiveGameSolver
 
   println( strategyProfile )
 
-  val minimizer = new CfrMinimizer()
+  val minimizer =
+//    new CfrMinimizer()
+    new ChanceSampledCfrMinimizer()
+
+  val startTime = System.currentTimeMillis()
   for (i <- 1 to equilibriumApproximationIterations) {
-    if (i % (100 /** 1000*/) == 0) {
-      println(i + "\n" + strategyProfile)
+    if (i % (100 * 1000) == 0) {
+      println(i + " " + new Duration(startTime, System.currentTimeMillis()))
+      println(strategyProfile)
     }
 
     minimizer.reduceRegret(
