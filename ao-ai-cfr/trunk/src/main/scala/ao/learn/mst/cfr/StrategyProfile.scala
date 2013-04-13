@@ -44,6 +44,9 @@ class StrategyProfile(
   private def getActionProbabilitySums(informationSet: InformationSet): Seq[Double] =
     actionProbabilitySums(informationSetIndex.indexOf( informationSet ))
 
+  //private def applyIndex()
+
+
 
   //--------------------------------------------------------------------------------------------------------------------
   private def isInformationSetInitialized(informationSet: InformationSet) : Boolean =

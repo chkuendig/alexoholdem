@@ -13,9 +13,17 @@ trait InformationSetIndex
 
   def indexOf(informationSet: InformationSet): Int
 
+  /**
+   * @param informationSet to look up in index
+   * @return arbitrary indexing of actions, index must be unique within information set
+   */
   def actionsOf(informationSet: InformationSet): Set[FiniteAction]
 
+  /**
+   * use for informational purposes only
+   * does not necessarily reflect what was indexed
+   */
   def informationSets: Traversable[InformationSet]
 
-  def nextToAct(informationSet: InformationSet): RationalPlayer
+//  def nextToAct(informationSet: InformationSet): RationalPlayer
 }

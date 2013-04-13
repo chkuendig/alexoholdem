@@ -48,7 +48,7 @@ class CfrMinimizerSpec
         ): (InformationSetIndex, StrategyProfile) =
     {
       val informationSetIndex =
-        TraversingInformationSetIndexer.index( game )
+        TraversingInformationSetIndexer.preciseIndex( game )
 
       val strategyProfile = trainStrategyProfile(
         game, informationSetIndex, iterations)

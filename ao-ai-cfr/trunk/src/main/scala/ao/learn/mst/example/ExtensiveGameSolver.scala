@@ -9,7 +9,7 @@ import slot.specific.bin.DeterministicBinaryBanditGame
 import slot.specific.k.MarkovBanditGame
 import xml.PrettyPrinter
 import ao.learn.mst.gen2.solve.ExpectedValue
-import ao.learn.mst.gen2.info.TraversingInformationSetIndexer
+import ao.learn.mst.gen2.info.{SingleInformationSetIndexer, TraversingInformationSetIndexer}
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
@@ -90,7 +90,8 @@ object ExtensiveGameSolver
 
 
   val informationSetIndex =
-    TraversingInformationSetIndexer.index( game )
+    //TraversingInformationSetIndexer.preciseIndex( game )
+    SingleInformationSetIndexer.single( game )
 
   val strategyProfile =
     new StrategyProfile( informationSetIndex )

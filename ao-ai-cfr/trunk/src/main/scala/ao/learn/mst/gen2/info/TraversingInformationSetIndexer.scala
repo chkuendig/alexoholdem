@@ -11,7 +11,7 @@ import ao.learn.mst.gen2.game._
 object TraversingInformationSetIndexer
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def index(extensiveGame: ExtensiveGame): InformationSetIndex =
+  def preciseIndex(extensiveGame: ExtensiveGame): InformationSetIndex =
   {
 //    var informationSets = Map[InformationSet, Int]()
 //
