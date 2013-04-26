@@ -2,6 +2,9 @@ package ao.learn.mst.cfr
 
 import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 import scala.{Int, Double}
+import ao.learn.mst.gen2.player.model.FiniteAction
+import scala.Predef._
+import scala.collection.immutable.SortedSet
 
 
 /**
@@ -251,6 +254,38 @@ class StrategyProfile(
 
 
   //--------------------------------------------------------------------------------------------------------------------
+  def averageStrategy(informationSet : InformationSet): Map[FiniteAction, Double] = {
+    val actions:Set[FiniteAction] =
+      informationSetIndex.actionsOf(informationSet)
+
+    val actionsOrderedByIndex:Seq[FiniteAction] =
+      (SortedSet[FiniteAction]() ++ actions).toSeq
+
+    val actionWithGreatestIndex:FiniteAction =
+      actionsOrderedByIndex.last
+
+    val averageStrategyPerAction:Seq[Double] =
+      averageStrategy(informationSet, actionWithGreatestIndex.index + 1)
+
+    val nonZeroAverageStrategiesPerAction:Seq[(Double, Int)] =
+      averageStrategyPerAction.zipWithIndex.filter(_._1 != 0)
+
+    val actionIndexToAverageStrategy:Seq[(Int, Double)] =
+      nonZeroAverageStrategiesPerAction.map(_.swap)
+
+    val actionIndexToAction:Map[Int, FiniteAction] =
+      Map() ++ actions.map(
+        (action: FiniteAction) =>
+          (action.index, action))
+
+    val actionToAverageStrategy:Map[FiniteAction, Double] =
+      Map() ++ actionIndexToAverageStrategy.map(
+        (e: (Int, Double)) =>
+          actionIndexToAction(e._1) -> e._2)
+
+    actionToAverageStrategy
+  }
+
   def averageStrategy(informationSet : InformationSet, childCount: Int): Seq[Double] =
     averageStrategy(
       informationSetIndex.indexOf(informationSet),
@@ -274,7 +309,7 @@ class StrategyProfile(
     //  probability[i] = average_probability[u.get_id()][bucket][i]/sum;
     //
     // Here we are dividing by sum of reach probabilities for the information set.
-    // todo: Should it be normalized in relation to siblings instead? (would that make a difference?)
+    // note: should it be normalized in relation to siblings instead? (would that make a difference?)
 
     actionProbabilitySums(informationSet)
       .map(_ / reachProbabilitySum(informationSet))
@@ -329,6 +364,6 @@ class StrategyProfile(
       buffer += "\n"
     }
 
-    buffer
+    buffer.trim
   }
 }

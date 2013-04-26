@@ -11,7 +11,7 @@ object ExtensiveGameDisplay
 {
   //--------------------------------------------------------------------------------------------------------------------
   def displayExtensiveGameNode(
-                                node : ExtensiveGameNode) : xml.Node =
+      node : ExtensiveGameNode) : xml.Node =
     node match {
       case decision : ExtensiveGameDecision =>
         <decision player={ decision.player.index.toString } name={ decision.toString }>

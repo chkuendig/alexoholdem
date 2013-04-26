@@ -8,5 +8,9 @@ import ao.learn.mst.gen2.player.model.FiniteAction
  */
 trait ExtensiveGamePlayer
 {
-  def rankActions(node:ExtensiveGameDecision):Seq[FiniteAction]
+  /**
+   * @param node node in which to select actions
+   * @return action to take in given node
+   */
+  def selectAction(node:ExtensiveGameDecision):FiniteAction
 }

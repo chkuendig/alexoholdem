@@ -9,7 +9,7 @@ import slot.specific.bin.DeterministicBinaryBanditGame
 import slot.specific.k.MarkovBanditGame
 import xml.PrettyPrinter
 import ao.learn.mst.gen2.solve.ExpectedValue
-import ao.learn.mst.gen2.info.{SingleInformationSetIndexer, TraversingInformationSetIndexer}
+import ao.learn.mst.gen2.info.{InformationSetIndex, SingleInformationSetIndexer, TraversingInformationSetIndexer}
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
@@ -92,31 +92,8 @@ object ExtensiveGameSolver
   println("\n\n\nCalculating Equilibrium " +
     equilibriumApproximationIterations)
 
-
-  val informationSetIndex =
-    //TraversingInformationSetIndexer.preciseIndex( game )
-    SingleInformationSetIndexer.single( game )
-
   val strategyProfile =
-    new StrategyProfile( informationSetIndex )
-
-  println( strategyProfile )
-
-  val minimizer =
-//    new CfrMinimizer()
-    new ChanceSampledCfrMinimizer()
-
-  val startTime = System.currentTimeMillis()
-  for (i <- 1 to equilibriumApproximationIterations) {
-    if (i % (100 * 1000) == 0) {
-      println(i + " " + new Duration(startTime, System.currentTimeMillis()))
-      println(strategyProfile)
-    }
-
-    minimizer.reduceRegret(
-      game, informationSetIndex, strategyProfile)
-//    println( strategyProfile )
-  }
+    computeStrategy(game, equilibriumApproximationIterations)
 
   println("\n\n\n\n\n")
   println( strategyProfile )
@@ -128,4 +105,47 @@ object ExtensiveGameSolver
 //  println("\nSecond player's view")
 //  println(formatter.format(
 //    displayPlayerViewNode( secondPlayerView )))
+
+
+  //--------------------------------------------------------------------------------------------------------------------
+  def computeStrategy(
+      game:ExtensiveGame,
+      iterations:Int):StrategyProfile =
+  {
+    val informationSetIndex =
+//      TraversingInformationSetIndexer.preciseIndex( game )
+          SingleInformationSetIndexer.single( game )
+
+    computeStrategy(game, iterations, informationSetIndex)
+  }
+
+  def computeStrategy(
+      game:ExtensiveGame,
+      iterations:Int,
+      informationSetIndex:InformationSetIndex)
+      :StrategyProfile =
+  {
+    val strategyProfile =
+      new StrategyProfile( informationSetIndex )
+
+    println( strategyProfile )
+
+    val minimizer =
+    //    new CfrMinimizer()
+      new ChanceSampledCfrMinimizer()
+
+    val startTime = System.currentTimeMillis()
+    for (i <- 1 to iterations) {
+      if (i % (100 * 1000) == 0) {
+        println(i + " " + new Duration(startTime, System.currentTimeMillis()))
+        println(strategyProfile)
+      }
+
+      minimizer.reduceRegret(
+        game, informationSetIndex, strategyProfile)
+      //    println( strategyProfile )
+    }
+
+    strategyProfile
+  }
 }
