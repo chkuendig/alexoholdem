@@ -1,7 +1,7 @@
 package ao.learn.mst.gen2.solve
 
 import scala.Predef._
-import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.player.model.RationalPlayer
 
 
 //----------------------------------------------------------------------------------------------------------------------

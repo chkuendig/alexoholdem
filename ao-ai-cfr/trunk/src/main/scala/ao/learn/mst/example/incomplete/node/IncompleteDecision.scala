@@ -1,11 +1,10 @@
 package ao.learn.mst.example.incomplete.node
 
 import ao.learn.mst.gen2.game.ExtensiveGameDecision
-import ao.learn.mst.gen2.player.FiniteAction
 import ao.learn.mst.example.incomplete._
 import ao.learn.mst.gen2.info.InformationSet
-import ao.learn.mst.gen2.player.RationalPlayer
 import collection.immutable.SortedSet
+import ao.learn.mst.gen2.player.model.{RationalPlayer, FiniteAction}
 
 
 //----------------------------------------------------------------------------------------------------------------------

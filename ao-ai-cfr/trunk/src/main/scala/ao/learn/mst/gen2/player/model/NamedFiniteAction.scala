@@ -1,4 +1,4 @@
-package ao.learn.mst.gen2.player
+package ao.learn.mst.gen2.player.model
 
 import collection.immutable.SortedSet
 

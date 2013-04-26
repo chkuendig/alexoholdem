@@ -1,6 +1,6 @@
 package ao.learn.mst.gen2.strategy
 
-import ao.learn.mst.gen2.player.PlayerIdentity
+import ao.learn.mst.gen2.player.model.PlayerIdentity
 
 //----------------------------------------------------------------------------------------------------------------------
 class StrategyProfile

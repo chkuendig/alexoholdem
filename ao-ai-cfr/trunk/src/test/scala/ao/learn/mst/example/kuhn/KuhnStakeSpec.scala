@@ -28,14 +28,13 @@ class KuhnStakeSpec
     new KuhnStake().ante.lastPlayer  === 1
   }
 
-  "Incrementing first player should not affect last player" in {
-    new KuhnStake().incrementLastPlayer.firstPlayer === 1
-    new KuhnStake().incrementLastPlayer.lastPlayer  === 0
+  "Incrementing first player should only affect first player" in {
+    new KuhnStake().incrementFirstPlayer.firstPlayer === 1
+    new KuhnStake().incrementFirstPlayer.lastPlayer  === 0
   }
 
-  "Incrementing last player should not affect first player" in {
-    new KuhnStake().incrementLastPlayer.firstPlayer === 0
+  "Incrementing last player should only affect last player" in {
     new KuhnStake().incrementLastPlayer.lastPlayer  === 1
+    new KuhnStake().incrementLastPlayer.firstPlayer === 0
   }
-
 }

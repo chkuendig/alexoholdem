@@ -1,8 +1,8 @@
 package ao.learn.mst.example.rps.decision
 
 import ao.learn.mst.example.rps.act.RockPaperScissorsAction
-import ao.learn.mst.gen2.player.RationalPlayer
 import ao.learn.mst.example.rps.RockPaperScissorsTerminal
+import ao.learn.mst.gen2.player.model.RationalPlayer
 
 case class RockPaperScissorsNodeSecond(
       firstPlayerAction: RockPaperScissorsAction)

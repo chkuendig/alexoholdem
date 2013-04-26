@@ -3,22 +3,17 @@ package ao.learn.mst.gen
 import org.specs2.mutable.Specification
 import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGame}
 import ao.learn.mst.example.perfect.complete.PerfectCompleteGame
-import ao.learn.mst.gen2.info.{InformationSet, ValueInformationSet, InformationSetIndex, TraversingInformationSetIndexer}
-import ao.learn.mst.cfr.{ChanceSampledCfrMinimizer, StrategyProfile, CfrMinimizer}
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex, TraversingInformationSetIndexer}
+import ao.learn.mst.cfr.{CfrMinimizer, ChanceSampledCfrMinimizer, StrategyProfile}
 import ao.learn.mst.example.slot.specific.bin.DeterministicBinaryBanditGame
 import ao.learn.mst.example.slot.specific.k.MarkovBanditGame
 import ao.learn.mst.example.rps.RockPaperScissorsGame
 import ao.learn.mst.example.perfect.complete.decision.{PerfectCompleteDecisionAfterDownInfo, PerfectCompleteDecisionAfterUpInfo, PerfectCompleteDecisionFirstInfo}
 import ao.learn.mst.example.imperfect.complete.ImperfectCompleteGame
 import ao.learn.mst.example.imperfect.complete.decision.{ImperfectCompleteDecisionSecondInfo, ImperfectCompleteDecisionFirstInfo}
-import ao.learn.mst.example.incomplete.{IncompleteActionUp, IncompleteActionDown, IncompleteGame}
-import ao.learn.mst.example.incomplete.node.{IncompleteInfoPlayerTwoAfterDown, IncompleteInfoPlayerTwoAfterUp, IncompleteInfoPlayerOneTypeTwo, IncompleteInfoPlayerOneTypeOne}
 import ao.learn.mst.example.zerosum.ZeroSumGame
 import ao.learn.mst.example.zerosum.info.{ZeroSumInfoBlue, ZeroSumInfoRed}
-import ao.learn.mst.example.kuhn.adapt.{KuhnGameInfo, KuhnGameDecision, KuhnGame}
-import ao.learn.mst.example.kuhn.card.KuhnCard._
-import ao.learn.mst.example.kuhn.action.KuhnAction._
-import ao.learn.mst.example.kuhn.action.KuhnActionSequence._
+import ao.learn.mst.example.kuhn.adapt.{KuhnGameInfo, KuhnGame}
 import ao.learn.mst.example.kuhn.card.KuhnCard
 import ao.learn.mst.example.kuhn.card.KuhnCard.KuhnCard
 import ao.learn.mst.example.kuhn.action.{KuhnAction, KuhnActionSequence}
@@ -33,7 +28,9 @@ class CfrMinimizerSpec
     extends Specification
 {
   //--------------------------------------------------------------------------------------------------------------------
-  val epsilonProbability:Double = 0.01
+  val epsilonProbability:Double =
+//    0.01
+    0.05
 
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -189,8 +186,10 @@ class CfrMinimizerSpec
 
     "Solve Kuhn Poker" in {
       val (informationSetIndex, optimalStrategyProfile) = approximateOptimalStrategy(
+        KuhnGame, 14 * 1024)
 //        KuhnGame, 16 * 1024)
-        KuhnGame, 512 * 1024)
+//        KuhnGame, 24 * 1024)
+//        KuhnGame, 512 * 1024)
 
       def kuhnStrategy(playerCard: KuhnCard, actionSequence: KuhnActionSequence, action:KuhnAction): Double =
         optimalStrategyProfile.averageStrategy(kuhnInfo(playerCard, actionSequence), 2)(action.id)
@@ -239,7 +238,7 @@ class CfrMinimizerSpec
         secondPlayerAfterBetWithQueenBet must be lessThan(1.0/3 + epsilonProbability)
       }
 
-      "First player should have one of the optimal strategies" in {
+      "First player should have one of the many optimal strategies" in {
         val betWithJack =
           kuhnStrategy(KuhnCard.Jack, KuhnActionSequence.FirstAction, KuhnAction.CallRaise)
 

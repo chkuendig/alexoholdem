@@ -1,7 +1,7 @@
 package ao.learn.mst.example.slot.specific.bin
 
 import ao.learn.mst.example.slot.general.{SlotMachineTerminal, SlotMachineDecision}
-import ao.learn.mst.gen2.player.{FiniteAction, NamedFiniteAction}
+import ao.learn.mst.gen2.player.model.{NamedFiniteAction, FiniteAction}
 
 
 case object DeterministicBinaryBanditChoice

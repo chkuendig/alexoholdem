@@ -1,6 +1,6 @@
 package ao.learn.mst.gen2.info
 
-import ao.learn.mst.gen2.player.{RationalPlayer, FiniteAction}
+import ao.learn.mst.gen2.player.model.FiniteAction
 
 /**
  *

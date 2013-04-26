@@ -3,9 +3,9 @@ package ao.learn.mst.cfr
 import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 import ao.learn.mst.gen2.game._
 import scala._
-import ao.learn.mst.gen2.player.{FiniteAction, RationalPlayer}
 import ao.learn.mst.gen2.solve.ExtensiveGameSolver
 import collection.immutable.SortedMap
+import ao.learn.mst.gen2.player.model.{RationalPlayer, FiniteAction}
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
     val expectedUtilities: Seq[Double] =
       (for (playerIndex <- 0 until game.rationalPlayerCount)
         // train.cpp line 669: sum      += ev[opponent];
-        // todo: why doesn't it multiply by action probability? (is it done internally?)
+        // note: why doesn't it multiply by action probability? (is it done internally?)
         yield playerUtility(playerIndex)
       ).toSeq
 

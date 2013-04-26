@@ -3,7 +3,7 @@ package ao.learn.mst.example.kuhn.adapt
 import ao.learn.mst.example.kuhn.state.{KuhnStake, KuhnState}
 import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision}
 import ao.learn.mst.example.kuhn.action.KuhnActionSequence._
-import ao.learn.mst.gen2.player.{RationalPlayer, IndexedFiniteAction, FiniteAction}
+import ao.learn.mst.gen2.player.model.{RationalPlayer, IndexedFiniteAction, FiniteAction}
 import collection.immutable.SortedSet
 import ao.learn.mst.gen2.info.ValueInformationSet
 import ao.learn.mst.example.kuhn.action.KuhnAction

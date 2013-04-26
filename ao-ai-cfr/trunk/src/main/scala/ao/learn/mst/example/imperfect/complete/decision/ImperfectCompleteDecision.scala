@@ -2,8 +2,8 @@ package ao.learn.mst.example.imperfect.complete.decision
 
 import ao.learn.mst.gen2.info.InformationSet
 import ao.learn.mst.gen2.game.ExtensiveGameDecision
-import ao.learn.mst.gen2.player.{NamedFiniteAction, FiniteAction, RationalPlayer}
 import ao.learn.mst.example.imperfect.complete.terminal.{ImperfectCompleteTerminalDownDown, ImperfectCompleteTerminalDownUp, ImperfectCompleteTerminalUpDown, ImperfectCompleteTerminalUpUp}
+import ao.learn.mst.gen2.player.model.{RationalPlayer, NamedFiniteAction, FiniteAction}
 
 
 //----------------------------------------------------------------------------------------------------------------------

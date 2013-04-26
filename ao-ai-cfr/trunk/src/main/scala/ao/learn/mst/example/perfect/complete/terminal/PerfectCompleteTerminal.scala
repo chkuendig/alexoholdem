@@ -3,7 +3,7 @@ package ao.learn.mst.example.perfect.complete.terminal
 import scala.Double
 import ao.learn.mst.gen2.game.ExtensiveGameTerminal
 import ao.learn.mst.gen2.solve.ExpectedValue
-import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.player.model.RationalPlayer
 
 
 //----------------------------------------------------------------------------------------------------------------------

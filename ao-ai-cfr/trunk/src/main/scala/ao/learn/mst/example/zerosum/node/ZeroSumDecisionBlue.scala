@@ -1,11 +1,10 @@
 package ao.learn.mst.example.zerosum.node
 
 import ao.learn.mst.gen2.game.ExtensiveGameDecision
-import ao.learn.mst.gen2.player.FiniteAction
 import ao.learn.mst.example.zerosum.act._
 import ao.learn.mst.example.zerosum.info.ZeroSumInfoBlue
 import collection.immutable.SortedSet
-import ao.learn.mst.gen2.player.RationalPlayer
+import ao.learn.mst.gen2.player.model.{RationalPlayer, FiniteAction}
 
 
 case class ZeroSumDecisionBlue(redPlayerAction: ZeroSumActionRed)

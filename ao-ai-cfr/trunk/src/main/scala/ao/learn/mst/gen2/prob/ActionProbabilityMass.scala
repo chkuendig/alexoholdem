@@ -1,7 +1,7 @@
 package ao.learn.mst.gen2.prob
 
-import ao.learn.mst.gen2.player.FiniteAction
 import collection.immutable.SortedMap
+import ao.learn.mst.gen2.player.model.FiniteAction
 
 /**
  * Date: 22/11/11

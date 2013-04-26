@@ -1,6 +1,6 @@
 package ao.learn.mst.example.incomplete
 
-import ao.learn.mst.gen2.player.NamedFiniteAction
+import ao.learn.mst.gen2.player.model.NamedFiniteAction
 
 
 //----------------------------------------------------------------------------------------------------------------------

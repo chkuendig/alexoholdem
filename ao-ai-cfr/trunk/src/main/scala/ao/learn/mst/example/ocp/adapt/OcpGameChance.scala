@@ -1,6 +1,5 @@
 package ao.learn.mst.example.ocp.adapt
 
-import ao.learn.mst.gen2.player.FiniteAction
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
 import ao.learn.mst.gen2.game.ExtensiveGameChance
 import collection.immutable.{SortedSet, SortedMap}
@@ -8,6 +7,7 @@ import ao.learn.mst.example.ocp.card.{OcpCard, OcpCardSequence}
 import ao.learn.mst.example.ocp.card.OcpCard._
 import ao.learn.mst.example.ocp.state.OcpState
 import ao.learn.mst.example.ocp.card.OcpCard.OcpCard
+import ao.learn.mst.gen2.player.model.FiniteAction
 
 /**
  *
