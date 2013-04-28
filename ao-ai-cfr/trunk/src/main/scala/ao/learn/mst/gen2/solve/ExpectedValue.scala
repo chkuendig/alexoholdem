@@ -16,7 +16,8 @@ case class ExpectedValue(outcomes : Map[RationalPlayer, Double])
 
 object ExpectedValue {
   def apply(values: Seq[Double]):ExpectedValue = {
-    val valuesWithIndex: Seq[(Double, Int)] = values.zipWithIndex
+    val valuesWithIndex: Seq[(Double, Int)] =
+      values.zipWithIndex
 
     val playersWithValues: Seq[(RationalPlayer, Double)] =
       valuesWithIndex.map(vi => (RationalPlayer(vi._2), vi._1))

@@ -8,7 +8,6 @@ package ao.learn.mst.gen2.player.model
  *    player called Chance (or Nature). Each player's subset of nodes is referred
  *    to as the "nodes of the player".
  *    (A game of complete information thus has an empty set of Chance nodes.)"
- *
  */
 
 

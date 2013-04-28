@@ -4,9 +4,11 @@ import collection.immutable.SortedMap
 import ao.learn.mst.gen2.player.model.FiniteAction
 
 /**
- * Date: 22/11/11
- * Time: 5:23 AM
+ * http://en.wikipedia.org/wiki/Probability_mass_function
+ *
+ * In probability theory and statistics, a probability mass function (pmf)
+ *  is a function that gives the probability that a discrete random
+ *  variable is exactly equal to some value.
  */
-
 case class ActionProbabilityMass(
   actionProbabilities : SortedMap[FiniteAction, Double])
