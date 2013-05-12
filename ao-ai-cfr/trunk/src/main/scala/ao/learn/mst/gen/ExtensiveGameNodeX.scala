@@ -1,10 +1,10 @@
 package ao.learn.mst.gen
 
 import act.ExtensiveAction
-import chance.ProbabilityMass
 import history.ExtensiveInformationPartition
 import player.{Rational, ExtensivePlayerPartition, ExtensivePlayerPosition}
 import utility.ExtensivePayoff
+import ao.learn.mst.gen3.ProbabilityMass
 
 /**
  * http://en.wikipedia.org/wiki/Extensive-form_game

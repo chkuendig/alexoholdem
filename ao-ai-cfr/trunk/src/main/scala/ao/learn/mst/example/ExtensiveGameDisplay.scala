@@ -1,8 +1,8 @@
 package ao.learn.mst.example
 
-import ao.learn.mst.gen2.game.{ExtensiveGameTerminal, ExtensiveGameChance, ExtensiveGameDecision, ExtensiveGameNode}
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.solve.ExpectedValue
+import ao.learn.mst.gen2.game.node.{ExtensiveGameTerminal, ExtensiveGameNode, ExtensiveGameDecision, ExtensiveGameChance}
 
 /**
  *

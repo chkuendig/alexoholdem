@@ -1,10 +1,10 @@
 package ao.learn.mst.example.rps.decision
 
-import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision}
 import collection.immutable.SortedSet
 import ao.learn.mst.example.rps.act.{RockPaperScissorsAction, Scissors, Paper, Rock}
 import ao.learn.mst.example.rps.RockPaperScissorsInfoSet
 import ao.learn.mst.gen2.player.model.FiniteAction
+import ao.learn.mst.gen2.game.node.{ExtensiveGameNode, ExtensiveGameDecision}
 
 abstract class RockPaperScissorsNodeDecision
   extends ExtensiveGameDecision {

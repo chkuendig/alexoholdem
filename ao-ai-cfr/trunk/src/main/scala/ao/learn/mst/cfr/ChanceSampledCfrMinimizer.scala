@@ -6,6 +6,8 @@ import scala._
 import ao.learn.mst.gen2.solve.ExtensiveGameSolver
 import collection.immutable.SortedMap
 import ao.learn.mst.gen2.player.model.{RationalPlayer, FiniteAction}
+import ao.learn.mst.gen2.game.node._
+import ao.learn.mst.gen2.player.model.RationalPlayer
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -18,8 +20,8 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
   //--------------------------------------------------------------------------------------------------------------------
   def reduceRegret(
       game                : ExtensiveGame,
-      informationSetIndex : InformationSetIndex,
-      strategyProfile     : StrategyProfile)
+      informationSetIndex : InformationSetIndex[InformationSet],
+      strategyProfile     : StrategyProfile[InformationSet])
   {
     val rootCounterfactualReachProbabilities =
       Seq.fill( game.rationalPlayerCount )( 1.0 )
@@ -75,7 +77,7 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
   private def cfrUpdate(
       game               : ExtensiveGame,
       node               : ExtensiveGameNode,
-      strategyProfile    : StrategyProfile,
+      strategyProfile    : StrategyProfile[InformationSet],
       reachProbabilities : Seq[Double]
       ): Seq[Double] =
   {
@@ -110,7 +112,7 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
   private def walkChance(
       game               : ExtensiveGame,
       node               : ExtensiveGameChance,
-      strategyProfile    : StrategyProfile,
+      strategyProfile    : StrategyProfile[InformationSet],
       reachProbabilities : Seq[Double]
       ): Seq[Double] =
   {
@@ -141,7 +143,7 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
   private def walkDecision(
       game               : ExtensiveGame,
       node               : ExtensiveGameDecision,
-      strategyProfile    : StrategyProfile,
+      strategyProfile    : StrategyProfile[InformationSet],
       reachProbabilities : Seq[Double]
       ) : Seq[Double] =
   {
@@ -199,7 +201,7 @@ class ChanceSampledCfrMinimizer extends ExtensiveGameSolver
   private def childUtilities(
       game                : ExtensiveGame,
       node                : ExtensiveGameDecision,
-      strategyProfile     : StrategyProfile,
+      strategyProfile     : StrategyProfile[InformationSet],
       actionProbabilities : Seq[Double],
       reachProbabilities  : Seq[Double]
       ): Seq[Seq[Double]] =

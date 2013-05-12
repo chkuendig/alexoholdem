@@ -2,6 +2,8 @@ package ao.learn.mst.cfr
 
 import ao.learn.mst.gen2.game._
 import ao.learn.mst.gen2.player.model.RationalPlayer
+import ao.learn.mst.gen2.game.node._
+import ao.learn.mst.gen2.player.model.RationalPlayer
 
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,9 @@
-package ao.learn.mst.gen2.info
+package ao.learn.mst.gen2.info.index
 
 import annotation.tailrec
 import ao.learn.mst.gen2.game._
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
+import ao.learn.mst.gen2.game.node.{ExtensiveGameTerminal, ExtensiveGameNonTerminal, ExtensiveGameNode, ExtensiveGameDecision}
 
 
 /**
@@ -11,7 +13,7 @@ import ao.learn.mst.gen2.game._
 object TraversingInformationSetIndexer
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def preciseIndex(extensiveGame: ExtensiveGame): InformationSetIndex =
+  def preciseIndex(extensiveGame: ExtensiveGame): InformationSetIndex[InformationSet] =
   {
 //    var informationSets = Map[InformationSet, Int]()
 //
@@ -76,7 +78,7 @@ object TraversingInformationSetIndexer
   //--------------------------------------------------------------------------------------------------------------------
   private class MappedInformationSetIndex(
       val index: Map[InformationSet, (ExtensiveGameDecision, Int)]
-      ) extends InformationSetIndex
+      ) extends InformationSetIndex[InformationSet]
   {
     def informationSetCount = index.size
 

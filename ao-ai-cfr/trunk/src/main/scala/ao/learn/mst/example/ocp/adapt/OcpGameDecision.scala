@@ -1,12 +1,12 @@
 package ao.learn.mst.example.ocp.adapt
 
 import ao.learn.mst.example.kuhn.state.KuhnState
-import ao.learn.mst.gen2.game.{ExtensiveGameNode, ExtensiveGameDecision}
 import collection.immutable.SortedSet
 import ao.learn.mst.example.kuhn.action.KuhnAction
 import ao.learn.mst.example.ocp.state.OcpState
 import ao.learn.mst.example.ocp.action.OcpAction
 import ao.learn.mst.gen2.player.model.{RationalPlayer, IndexedFiniteAction, FiniteAction}
+import ao.learn.mst.gen2.game.node.{ExtensiveGameNode, ExtensiveGameDecision}
 
 /**
  * Date: 03/12/11

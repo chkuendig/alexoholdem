@@ -1,5 +1,7 @@
 package ao.learn.mst.gen2.game
 
+import ao.learn.mst.gen2.game.node.ExtensiveGameNode
+
 
 /**
  * http://en.wikipedia.org/wiki/Extensive-form_game

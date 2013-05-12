@@ -1,9 +1,9 @@
 package ao.learn.mst.gen2.player.impl
 
 import ao.learn.mst.gen2.player.ExtensiveGamePlayer
-import ao.learn.mst.gen2.game.ExtensiveGameDecision
 import ao.learn.mst.gen2.player.model.FiniteAction
 import scala.util.Random
+import ao.learn.mst.gen2.game.node.ExtensiveGameDecision
 
 /**
  * 25/04/13 8:15 PM

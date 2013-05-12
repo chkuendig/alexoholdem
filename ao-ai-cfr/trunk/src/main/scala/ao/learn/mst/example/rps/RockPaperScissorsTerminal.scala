@@ -1,9 +1,9 @@
 package ao.learn.mst.example.rps
 
 import act.{Scissors, Paper, Rock, RockPaperScissorsAction}
-import ao.learn.mst.gen2.game.ExtensiveGameTerminal
 import ao.learn.mst.gen2.solve.ExpectedValue
 import ao.learn.mst.gen2.player.model.RationalPlayer
+import ao.learn.mst.gen2.game.node.ExtensiveGameTerminal
 
 
 //----------------------------------------------------------------------------------------------------------------------

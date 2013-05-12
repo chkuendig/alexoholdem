@@ -1,4 +1,4 @@
-package ao.learn.mst.gen.chance
+package ao.learn.mst.gen3
 
 /**
  * http://en.wikipedia.org/wiki/Probability_mass_function

@@ -11,7 +11,11 @@ import scala.annotation.tailrec
 import scala.Predef._
 import ao.learn.mst.gen2.player.model.RationalPlayer
 import ao.learn.mst.example.ocp.adapt.OcpGame
-import ao.learn.mst.gen2.info.{TraversingInformationSetIndexer, SingleInformationSetIndexer, InformationSetIndex}
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
+import ao.learn.mst.gen2.info.index.{SingleInformationSetIndexer, TraversingInformationSetIndexer}
+import ao.learn.mst.gen2.game.node._
+import ao.learn.mst.gen2.player.model.RationalPlayer
+import ao.learn.mst.gen2.player.impl.StrategyProfileExtensiveGamePlayer
 
 /**
  * 25/04/13 7:58 PM
@@ -52,7 +56,7 @@ object ExtensiveGameTournament
   //--------------------------------------------------------------------------------------------------------------------
   def computePlayers(
         game : ExtensiveGame,
-        informationSets : Map[Int, InformationSetIndex],
+        informationSets : Map[Int, InformationSetIndex[InformationSet]],
         iterations:Int)
         : Seq[ExtensiveGamePlayer] =
   {

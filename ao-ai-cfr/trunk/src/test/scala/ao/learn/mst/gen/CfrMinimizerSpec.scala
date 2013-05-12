@@ -1,9 +1,9 @@
 package ao.learn.mst.gen
 
 import org.specs2.mutable.Specification
-import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGame}
+import ao.learn.mst.gen2.game.{ExtensiveGame}
 import ao.learn.mst.example.perfect.complete.PerfectCompleteGame
-import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex, TraversingInformationSetIndexer}
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 import ao.learn.mst.cfr.{CfrMinimizer, ChanceSampledCfrMinimizer, StrategyProfile}
 import ao.learn.mst.example.slot.specific.bin.DeterministicBinaryBanditGame
 import ao.learn.mst.example.slot.specific.k.MarkovBanditGame
@@ -19,6 +19,8 @@ import ao.learn.mst.example.kuhn.card.KuhnCard.KuhnCard
 import ao.learn.mst.example.kuhn.action.{KuhnAction, KuhnActionSequence}
 import ao.learn.mst.example.kuhn.action.KuhnActionSequence.KuhnActionSequence
 import ao.learn.mst.example.kuhn.action.KuhnAction.KuhnAction
+import ao.learn.mst.gen2.info.index.TraversingInformationSetIndexer
+import ao.learn.mst.gen2.game.node.ExtensiveGameDecision
 
 
 /**
@@ -42,7 +44,7 @@ class CfrMinimizerSpec
     def approximateOptimalStrategy(
         game: ExtensiveGame,
         iterations: Int
-        ): (InformationSetIndex, StrategyProfile) =
+        ): (InformationSetIndex[InformationSet], StrategyProfile[InformationSet]) =
     {
       val informationSetIndex =
         TraversingInformationSetIndexer.preciseIndex( game )
@@ -55,9 +57,9 @@ class CfrMinimizerSpec
 
     def trainStrategyProfile(
         game: ExtensiveGame,
-        informationSetIndex: InformationSetIndex,
+        informationSetIndex: InformationSetIndex[InformationSet],
         iterations: Int
-        ): StrategyProfile =
+        ): StrategyProfile[InformationSet] =
     {
       val strategyProfile =
         new StrategyProfile( informationSetIndex )

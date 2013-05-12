@@ -9,12 +9,14 @@ import slot.specific.bin.DeterministicBinaryBanditGame
 import slot.specific.k.MarkovBanditGame
 import xml.PrettyPrinter
 import ao.learn.mst.gen2.solve.ExpectedValue
-import ao.learn.mst.gen2.info.{InformationSetIndex, SingleInformationSetIndexer, TraversingInformationSetIndexer}
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
 import ao.learn.mst.cfr._
 import ao.learn.mst.gen2.game._
 import zerosum.ZeroSumGame
 import ao.learn.mst.example.kuhn.adapt.KuhnGame
 import org.joda.time.{Duration, LocalTime, DateTime}
+import ao.learn.mst.gen2.info.index.{PlayerInformationSetIndexer, TraversingInformationSetIndexer, SingleInformationSetIndexer}
+import ao.learn.mst.gen2.info.set.PlayerInformationSet
 
 
 /**
@@ -110,11 +112,12 @@ object ExtensiveGameSolver
   //--------------------------------------------------------------------------------------------------------------------
   def computeStrategy(
       game:ExtensiveGame,
-      iterations:Int):StrategyProfile =
+      iterations:Int):StrategyProfile[InformationSet] =
   {
-    val informationSetIndex =
+    val informationSetIndex:InformationSetIndex[InformationSet] =
+      SingleInformationSetIndexer.single( game )
+//      PlayerInformationSetIndexer.playerIndex( game )
 //      TraversingInformationSetIndexer.preciseIndex( game )
-          SingleInformationSetIndexer.single( game )
 
     computeStrategy(game, iterations, informationSetIndex)
   }
@@ -122,8 +125,8 @@ object ExtensiveGameSolver
   def computeStrategy(
       game:ExtensiveGame,
       iterations:Int,
-      informationSetIndex:InformationSetIndex)
-      :StrategyProfile =
+      informationSetIndex:InformationSetIndex[InformationSet])
+      :StrategyProfile[InformationSet] =
   {
     val strategyProfile =
       new StrategyProfile( informationSetIndex )

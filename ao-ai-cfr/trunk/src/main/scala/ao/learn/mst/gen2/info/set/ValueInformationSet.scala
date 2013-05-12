@@ -1,4 +1,6 @@
-package ao.learn.mst.gen2.info
+package ao.learn.mst.gen2.info.set
+
+import ao.learn.mst.gen2.info.InformationSet
 
 /**
  * User: ao

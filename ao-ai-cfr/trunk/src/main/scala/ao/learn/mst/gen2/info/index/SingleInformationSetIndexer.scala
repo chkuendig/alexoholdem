@@ -1,9 +1,12 @@
-package ao.learn.mst.gen2.info
+package ao.learn.mst.gen2.info.index
 
 import ao.learn.mst.gen2.game._
 import scala.annotation.tailrec
 import scala.collection.immutable.SortedSet
 import ao.learn.mst.gen2.player.model.FiniteAction
+import ao.learn.mst.gen2.info.{InformationSet, InformationSetIndex}
+import ao.learn.mst.gen2.info.set.ValueInformationSet
+import ao.learn.mst.gen2.game.node.{ExtensiveGameTerminal, ExtensiveGameNonTerminal, ExtensiveGameNode, ExtensiveGameDecision}
 
 //----------------------------------------------------------------------------------------------------------------------
 /**
@@ -12,7 +15,7 @@ import ao.learn.mst.gen2.player.model.FiniteAction
 object SingleInformationSetIndexer
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def single(extensiveGame: ExtensiveGame): InformationSetIndex =
+  def single(extensiveGame: ExtensiveGame): InformationSetIndex[InformationSet] =
   {
     new MappedInformationSetIndex(
       actionDecisionNodeIndex(
@@ -20,12 +23,12 @@ object SingleInformationSetIndexer
   }
 
   private def actionDecisionNodeIndex(
-      node: ExtensiveGameNode): Map[Int, FiniteAction] =
+      node: ExtensiveGameNode): Set[FiniteAction] =
   {
     @tailrec def accumulateActions(
         stack: List[ExtensiveGameNode],
-        acc: Map[Int, FiniteAction]
-        ): Map[Int, FiniteAction] =
+        acc: SortedSet[FiniteAction]
+        ): SortedSet[FiniteAction] =
     {
       stack match {
         case Nil => acc
@@ -35,10 +38,10 @@ object SingleInformationSetIndexer
 
         case (nonTerminal: ExtensiveGameNonTerminal) :: rest => {
 
-          val nextAcc:Map[Int, FiniteAction] =
+          val nextAcc:SortedSet[FiniteAction] =
             nonTerminal match {
               case decision: ExtensiveGameDecision =>
-                acc ++ decision.actions.map(a => (a.index, a))
+                acc ++ decision.actions
 
               case _ => acc
             }
@@ -54,14 +57,14 @@ object SingleInformationSetIndexer
       }
     }
 
-    accumulateActions(List(node), Map())
+    accumulateActions(List(node), SortedSet())
   }
 
 
   //--------------------------------------------------------------------------------------------------------------------
   private class MappedInformationSetIndex(
-      val index: Map[Int, FiniteAction]
-      ) extends InformationSetIndex
+      val index: Set[FiniteAction]
+      ) extends InformationSetIndex[InformationSet]
   {
     def informationSetCount = 1
 
@@ -70,6 +73,6 @@ object SingleInformationSetIndexer
     def informationSets = List(new ValueInformationSet("singleton"))
 
     def actionsOf(informationSet: InformationSet) =
-      index.values.toSet
+      index
   }
 }

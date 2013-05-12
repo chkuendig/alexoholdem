@@ -1,10 +1,10 @@
 package ao.learn.mst.example.incomplete.node
 
-import ao.learn.mst.gen2.game.ExtensiveGameChance
 import ao.learn.mst.example.incomplete.{IncompleteTypeTwo, IncompleteTypeOne}
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
 import collection.immutable.{SortedMap, SortedSet}
 import ao.learn.mst.gen2.player.model.FiniteAction
+import ao.learn.mst.gen2.game.node.ExtensiveGameChance
 
 
 //----------------------------------------------------------------------------------------------------------------------

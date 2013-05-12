@@ -4,9 +4,9 @@ import ao.learn.mst.gen2.player.model.FiniteAction
 import ao.learn.mst.example.kuhn.card.KuhnCard._
 import ao.learn.mst.gen2.prob.ActionProbabilityMass
 import ao.learn.mst.example.kuhn.card.{KuhnCardSequence, KuhnCard}
-import ao.learn.mst.gen2.game.{ExtensiveGameDecision, ExtensiveGameChance, ExtensiveGameNode}
 import collection.immutable.{SortedSet, SortedMap}
 import ao.learn.mst.example.kuhn.state.KuhnState
+import ao.learn.mst.gen2.game.node.ExtensiveGameChance
 
 /**
  * KuhnGameDecision

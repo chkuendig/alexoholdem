@@ -11,8 +11,8 @@ import scala.collection.immutable.SortedSet
  * Date: 07/04/12
  * Time: 10:36 PM
  */
-class StrategyProfile(
-    private val informationSetIndex : InformationSetIndex)
+class StrategyProfile[T <: InformationSet](
+    private val informationSetIndex : InformationSetIndex[T])
 {
   //--------------------------------------------------------------------------------------------------------------------
   private val epsilon: Double = 1e-7
@@ -35,16 +35,16 @@ class StrategyProfile(
 //  var reachProbabilitySum   = 0.0
 
 
-  def visitCount(informationSet: InformationSet): Long =
+  private def visitCount(informationSet: T): Long =
     visitCount(informationSetIndex.indexOf( informationSet ))
 
-  def reachProbabilitySum(informationSet: InformationSet): Double =
+  private def reachProbabilitySum(informationSet: T): Double =
     reachProbabilitySum(informationSetIndex.indexOf( informationSet ))
 
-  private def getRegretSums(informationSet: InformationSet): Seq[Double] =
+  private def getRegretSums(informationSet: T): Seq[Double] =
     regretSums(informationSetIndex.indexOf( informationSet ))
 
-  private def getActionProbabilitySums(informationSet: InformationSet): Seq[Double] =
+  private def getActionProbabilitySums(informationSet: T): Seq[Double] =
     actionProbabilitySums(informationSetIndex.indexOf( informationSet ))
 
   //private def applyIndex()
@@ -52,14 +52,14 @@ class StrategyProfile(
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  private def isInformationSetInitialized(informationSet: InformationSet) : Boolean =
+  private def isInformationSetInitialized(informationSet: T) : Boolean =
     isInformationSetInitialized( informationSetIndex.indexOf(informationSet) )
 
   private def isInformationSetInitialized(informationSet: Int) : Boolean =
     regretSums( informationSet ) != null
 
 
-  private def childCount(informationSet: InformationSet): Int =
+  private def childCount(informationSet: T): Int =
     childCount( informationSetIndex.indexOf(informationSet) )
 
   private def childCount(informationSet: Int): Int =
@@ -78,7 +78,7 @@ class StrategyProfile(
   
   
   //--------------------------------------------------------------------------------------------------------------------
-  def positiveRegretStrategy(informationSet: InformationSet, childCount: Int) : Seq[Double] =
+  def positiveRegretStrategy(informationSet: T, childCount: Int) : Seq[Double] =
     positiveRegretStrategy( informationSetIndex.indexOf(informationSet), childCount )
 
   // verified against Leduc CFR train.get_probability (line 450)
@@ -113,7 +113,7 @@ class StrategyProfile(
 
   //--------------------------------------------------------------------------------------------------------------------
   def bufferUpdate(
-      informationSet   : InformationSet,
+      informationSet   : T,
       actionRegret     : Seq[Double],
       reachProbability : Double)
   {
@@ -199,7 +199,7 @@ class StrategyProfile(
 
   //--------------------------------------------------------------------------------------------------------------------
   def update(
-      informationSet   : InformationSet,
+      informationSet   : T,
       actionRegret     : Seq[Double],
       reachProbability : Double)
   {
@@ -254,7 +254,7 @@ class StrategyProfile(
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def averageStrategy(informationSet : InformationSet): Map[FiniteAction, Double] = {
+  def averageStrategy(informationSet : T): Map[FiniteAction, Double] = {
     val actions:Set[FiniteAction] =
       informationSetIndex.actionsOf(informationSet)
 
@@ -286,7 +286,7 @@ class StrategyProfile(
     actionToAverageStrategy
   }
 
-  def averageStrategy(informationSet : InformationSet, childCount: Int): Seq[Double] =
+  def averageStrategy(informationSet : T, childCount: Int): Seq[Double] =
     averageStrategy(
       informationSetIndex.indexOf(informationSet),
       childCount)

@@ -1,4 +1,4 @@
-package ao.learn.mst.gen2.game
+package ao.learn.mst.gen2.game.node
 
 import ao.learn.mst.gen2.player.model.FiniteAction
 import ao.learn.mst.gen2.solve.ExpectedValue
