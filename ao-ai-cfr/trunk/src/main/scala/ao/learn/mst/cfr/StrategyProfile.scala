@@ -335,7 +335,7 @@ class StrategyProfile[T <: InformationSet](
         val strategyDescription =
           (for (action <- informationSetIndex.actionsOf(informationSet).toList)
             yield {
-              val probabilityPercentage =
+              val probabilityPercentage:Double =
                 100 * informationSetStrategy( action.index )
 
               action + " %" + probabilityPercentage.formatted("%.3f")
