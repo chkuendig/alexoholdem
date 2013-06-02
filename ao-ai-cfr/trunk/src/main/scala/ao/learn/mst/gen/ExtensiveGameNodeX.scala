@@ -1,6 +1,6 @@
 package ao.learn.mst.gen
 
-import act.ExtensiveAction
+import act.ExtensiveActionX
 import history.ExtensiveInformationPartition
 import player.{Rational, ExtensivePlayerPartition, ExtensivePlayerPosition}
 import utility.ExtensivePayoff
@@ -56,5 +56,5 @@ trait ExtensiveGameNodeX
 
 
   //--------------------------------------------------------------------------------------------------------------------
-  def child(index : ExtensiveAction) : Option[ExtensiveGameNodeX]
+  def child(index : ExtensiveActionX) : Option[ExtensiveGameNodeX]
 }

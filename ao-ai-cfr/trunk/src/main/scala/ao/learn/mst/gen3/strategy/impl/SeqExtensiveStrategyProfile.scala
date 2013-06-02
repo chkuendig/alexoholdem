@@ -1,6 +1,6 @@
 package ao.learn.mst.gen3.strategy.impl
 
-import ao.learn.mst.gen3.{ProbabilityMass, ExtensiveGameAbstraction}
+import ao.learn.mst.gen3.{ProbabilityMass}
 import ao.learn.mst.gen2.info.InformationSet
 import ao.learn.mst.gen2.player.model.FiniteAction
 import ao.learn.mst.gen3.strategy.ExtensiveStrategyProfile

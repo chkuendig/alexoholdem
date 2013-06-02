@@ -4,7 +4,7 @@ import ao.learn.mst.gen.{ExtensiveGameNodeX, ExtensiveGameX}
 import ao.learn.mst.gen.history.ExtensiveHistory
 import util.Random
 import ao.learn.mst.gen.player._
-import ao.learn.mst.gen.act.{ExtensiveActionObservation, ExtensiveAction}
+import ao.learn.mst.gen.act.{ExtensiveActionObservation, ExtensiveActionX}
 
 /**
  * Date: 15/11/11
@@ -53,7 +53,7 @@ class ExtensivePlayout(rand : Random)
             val maxWeightIndex =
               weightedIndexes.sortBy(_._1).last._1
 
-            ExtensiveAction( maxWeightIndex )
+            ExtensiveActionX( maxWeightIndex )
           }
 
           case Rational(ExtensivePlayerPosition( position )) => {

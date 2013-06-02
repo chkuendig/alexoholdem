@@ -60,5 +60,8 @@ class MapCfrStrategyBuffer
         counterfactualRegretBuffer(informationSetIndex),
         reachProbabilityBuffer(informationSetIndex))
     }
+
+    counterfactualRegretBuffer.clear()
+    reachProbabilityBuffer.clear()
   }
 }

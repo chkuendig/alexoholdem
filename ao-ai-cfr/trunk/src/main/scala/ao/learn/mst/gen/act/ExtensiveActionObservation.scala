@@ -8,4 +8,4 @@ import ao.learn.mst.gen.player.ExtensivePlayerPartition
  */
 case class ExtensiveActionObservation(
     player : ExtensivePlayerPartition,
-    action : ExtensiveAction)
+    action : ExtensiveActionX)

@@ -1,7 +1,7 @@
 package ao.learn.mst.gen.player
 
 import ao.learn.mst.gen.ExtensiveGameNodeX
-import ao.learn.mst.gen.act.ExtensiveAction
+import ao.learn.mst.gen.act.ExtensiveActionX
 
 /**
  * Date: 15/11/11
@@ -11,5 +11,5 @@ import ao.learn.mst.gen.act.ExtensiveAction
 trait ExtensivePlayer
 {
   //--------------------------------------------------------------------------------------------------------------------
-  def act(state : ExtensiveGameNodeX) : ExtensiveAction
+  def act(state : ExtensiveGameNodeX) : ExtensiveActionX
 }
