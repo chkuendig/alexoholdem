@@ -188,9 +188,9 @@ class CfrMinimizerSpec
 
     "Solve Kuhn Poker" in {
       val (informationSetIndex, optimalStrategyProfile) = approximateOptimalStrategy(
-        KuhnGame, 14 * 1024)
+//        KuhnGame, 14 * 1024)
 //        KuhnGame, 16 * 1024)
-//        KuhnGame, 24 * 1024)
+        KuhnGame, 24 * 1024)
 //        KuhnGame, 512 * 1024)
 
       def kuhnStrategy(playerCard: KuhnCard, actionSequence: KuhnActionSequence, action:KuhnAction): Double =

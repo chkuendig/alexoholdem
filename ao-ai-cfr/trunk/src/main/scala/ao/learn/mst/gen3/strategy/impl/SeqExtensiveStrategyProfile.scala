@@ -16,7 +16,7 @@ case class SeqExtensiveStrategyProfile(probabilities:Seq[Seq[Double]])
   {
     val actionProbabilities:Seq[Double] = probabilities(informationSetIndex)
 
-    if (actionProbabilities == null || Ordering.Int.ne(actionProbabilities.length, actionCount)) {
+    if (actionProbabilities == null || actionProbabilities.length != actionCount) {
       throw new IllegalArgumentException("Unexpected number of actions: " +
         informationSetIndex + " | " + actionCount + " | " + actionProbabilities)
     }
