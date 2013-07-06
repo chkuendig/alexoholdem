@@ -42,9 +42,9 @@ public class Equilibrium
         double utilities[]           = {0, 0, 0};
         double counterfactualUtility = 0;
 
-        double probabilities[] = info.positiveRegretStrategy();
+        double actionProbabilities[] = info.positiveRegretStrategy();
         for (KuhnAction act : KuhnAction.VALUES) {
-            double actProb = probabilities[ act.ordinal() ];
+            double actProb = actionProbabilities[ act.ordinal() ];
 
             double val;
             StateFlow next = state.advance(act);
@@ -77,7 +77,7 @@ public class Equilibrium
 
         }
         info.add(immediateCounterfactualRegret,
-                 probabilities,
+                 actionProbabilities,
                  firstToAct ? pA : pB);
 
         return counterfactualUtility;

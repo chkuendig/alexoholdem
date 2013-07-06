@@ -101,7 +101,7 @@ public class KuhnInfoTree
                 prob[0] = Math.max(0,
                             passRegret[bucket][state] / cumRegret);
                 prob[1] = Math.max(0,
-                             betRegret[bucket][state] / cumRegret);
+                            betRegret [bucket][state] / cumRegret);
             }
 
             return prob;
@@ -109,7 +109,7 @@ public class KuhnInfoTree
 
         private double positiveCumulativeCounterfactualRegret() {
             return Math.max(passRegret[bucket][state], 0) +
-                   Math.max( betRegret[bucket][state], 0);
+                   Math.max(betRegret [bucket][state], 0);
         }
 
         //----------------------------------------------------------------
