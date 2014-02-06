@@ -9,10 +9,6 @@ import static ao.holdem.model.act.AbstractAction.BET_RAISE;
 import static ao.holdem.model.act.AbstractAction.CHECK_CALL;
 
 /**
- * User: shalom
- * Date: Feb 26, 2009
- * Time: 11:37:33 AM
- *
  * All possible preflop sequences that lead to the flop.
  */
 public enum PathToFlop

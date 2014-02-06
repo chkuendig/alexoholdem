@@ -42,7 +42,7 @@ public class StateFlow
 //        analysis = new Analysis();
 //        analysis.analyze( head );
 
-        actions = new HashMap<Avatar, List<Action>>();
+        actions = new HashMap<>();
         for (Avatar avatar : clockwiseDealerLast)
         {
             actions.put(avatar, new ArrayList<Action>());

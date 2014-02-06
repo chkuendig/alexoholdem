@@ -19,11 +19,11 @@ public class Community implements Prototype<Community>
 
 
     //--------------------------------------------------------------------
-    private Card FLOP_A;
-    private Card FLOP_B;
-    private Card FLOP_C;
-    private Card TURN;
-    private Card RIVER;
+    private final Card FLOP_A;
+    private final Card FLOP_B;
+    private final Card FLOP_C;
+    private final Card TURN;
+    private final Card RIVER;
 
 
     //--------------------------------------------------------------------

@@ -15,7 +15,7 @@ public interface CardSequence
     /**
      * @return hole cards corresponding to this player.
      */
-    Hole      hole();
+    Hole hole();
 
 
     /**
