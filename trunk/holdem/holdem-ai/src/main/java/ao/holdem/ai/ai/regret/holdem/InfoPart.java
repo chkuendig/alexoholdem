@@ -1,6 +1,7 @@
-package ao.holdem.ai.ai.regret.holdem;
+package ao.regret.holdem;
 
-import ao.holdem.ai.ai.regret.holdem.tree.StateTree;
+import ao.holdem.ai.ai.regret.holdem.InfoMatrix;
+import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Round;
 import ao.util.io.Dirs;
 import org.apache.log4j.Logger;

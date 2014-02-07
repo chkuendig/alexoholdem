@@ -1,4 +1,4 @@
-package ao.ai.opp_model;
+package ao.holdem.ai.ai.opp_model;
 
 //import com.wideplay.warp.persist.Transactional;
 

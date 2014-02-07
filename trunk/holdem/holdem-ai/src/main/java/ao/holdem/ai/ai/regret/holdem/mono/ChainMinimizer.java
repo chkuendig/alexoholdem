@@ -1,6 +1,6 @@
 package ao.holdem.ai.ai.regret.holdem.mono;
 
-import ao.holdem.ai.bucket.abstraction.access.odds.IBucketOdds;
+import ao.holdem.ai.abstraction.access.odds.IBucketOdds;
 import ao.holdem.ai.ai.regret.holdem.InfoPart;
 import ao.holdem.ai.ai.regret.holdem.IterativeMinimizer;
 import ao.holdem.ai.ai.regret.holdem.parallel.ItrParAvgStrat;

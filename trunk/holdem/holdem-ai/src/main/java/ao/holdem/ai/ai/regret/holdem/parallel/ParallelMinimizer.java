@@ -1,6 +1,6 @@
 package ao.holdem.ai.ai.regret.holdem.parallel;
 
-import ao.holdem.ai.bucket.abstraction.access.tree.LongByteList;
+import ao.holdem.ai.abstraction.access.tree.LongByteList;
 import ao.holdem.ai.ai.regret.holdem.IterativeMinimizer;
 import org.apache.log4j.Logger;
 

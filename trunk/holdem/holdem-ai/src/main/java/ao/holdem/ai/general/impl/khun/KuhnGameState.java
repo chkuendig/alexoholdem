@@ -1,7 +1,7 @@
 package ao.holdem.ai.general.impl.khun;
 
 import ao.holdem.ai.general.GameState;
-import ao.holdem.ai.ai.odds.agglom.Odds;
+import ao.holdem.engine.agglom.Odds;
 import ao.holdem.ai.ai.simple.kuhn.KuhnAction;
 import ao.holdem.ai.ai.simple.kuhn.state.KuhnOutcome;
 import ao.holdem.ai.ai.simple.kuhn.state.KuhnState;

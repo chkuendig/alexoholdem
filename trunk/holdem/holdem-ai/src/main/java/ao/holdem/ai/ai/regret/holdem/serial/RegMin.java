@@ -1,6 +1,6 @@
 package ao.holdem.ai.ai.regret.holdem.serial;
 
-import ao.holdem.ai.bucket.abstraction.access.odds.IBucketOdds;
+import ao.holdem.ai.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.ai.ai.regret.holdem.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;

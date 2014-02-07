@@ -1,4 +1,6 @@
-package ao.ai.monte_carlo.uct;
+package ao.holdem.ai.ai.monte_carlo.uct;
+
+import ao.holdem.ai.ai.monte_carlo.uct.Reward;
 
 /**
  * Normalizes rewards so that they are in [0, 1]

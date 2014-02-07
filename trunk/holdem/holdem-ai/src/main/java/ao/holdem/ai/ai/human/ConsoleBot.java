@@ -1,14 +1,14 @@
-package ao.ai.human;
+package ao.holdem.ai.ai.human;
 
 import ao.ai.AbstractPlayer;
-import ao.ai.equilibrium.limit_cfr.CfrBot2;
+import ao.holdem.ai.ai.equilibrium.limit_cfr.CfrBot2;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.ai.ai.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.engine.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.ui.AoConsole;
 
 import java.util.LinkedHashMap;

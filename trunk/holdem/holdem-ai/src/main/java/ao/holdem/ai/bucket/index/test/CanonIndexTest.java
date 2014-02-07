@@ -4,14 +4,14 @@ import ao.holdem.model.canon.flop.Flop;
 import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.canon.river.River;
 import ao.holdem.model.canon.turn.Turn;
-import ao.holdem.ai.bucket.index.detail.river.RiverEvalLookup;
+import ao.holdem.engine.detail.river.RiverEvalLookup;
 import ao.holdem.model.enumeration.HandEnum;
 import ao.holdem.model.enumeration.PermisiveFilter;
 import ao.holdem.model.enumeration.UniqueFilter;
 import ao.holdem.model.card.Community;
-import ao.holdem.ai.ai.odds.agglom.Odds;
-import ao.holdem.ai.ai.odds.agglom.hist.GeneralHistFinder;
-import ao.holdem.ai.ai.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.engine.agglom.Odds;
+import ao.holdem.engine.agglom.hist.GeneralHistFinder;
+import ao.holdem.engine.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 

@@ -1,6 +1,6 @@
 package ao.holdem.ai.ai.regret.khun.node;
 
-import ao.holdem.ai.bucket.Bucket;
+import ao.holdem.bucket.Bucket;
 import ao.holdem.ai.ai.regret.InfoNode;
 import ao.holdem.ai.ai.regret.khun.Equilibrium;
 import ao.holdem.ai.ai.regret.khun.JointBucketSequence;

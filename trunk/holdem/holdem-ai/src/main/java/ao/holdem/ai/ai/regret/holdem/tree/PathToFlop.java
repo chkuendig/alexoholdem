@@ -28,7 +28,7 @@ public enum PathToFlop
 
     R_R_R_C  (BET_RAISE, BET_RAISE, BET_RAISE, CHECK_CALL);
 
-    public static final PathToFlop VALUES[] = values();
+    public static final PathToFlop[] VALUES = values();
 
 
     //--------------------------------------------------------------------

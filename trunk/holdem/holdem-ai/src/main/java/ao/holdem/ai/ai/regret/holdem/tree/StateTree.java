@@ -1,8 +1,8 @@
 package ao.holdem.ai.ai.regret.holdem.tree;
 
 import ao.holdem.ai.ai.regret.holdem.InfoMatrix;
-import ao.holdem.ai.ai.regret.holdem.InfoPart;
-import ao.holdem.ai.ai.regret.holdem.tree.PathToFlop;
+//import ao.holdem.ai.ai.regret.holdem.InfoPart;
+//import ao.holdem.ai.ai.regret.holdem.tree.PathToFlop;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
@@ -267,7 +267,7 @@ public class StateTree
         }
 
         public InfoMatrix.InfoSet infoSet(
-                int bucket, InfoPart from) {
+                int bucket, ao.regret.holdem.InfoPart from) {
             return infoSet(bucket, from.infoMatrix(ROUND));
         }
         public InfoMatrix.InfoSet infoSet(

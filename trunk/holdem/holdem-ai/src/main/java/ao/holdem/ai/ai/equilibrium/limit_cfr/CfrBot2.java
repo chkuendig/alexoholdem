@@ -1,7 +1,7 @@
 package ao.holdem.ai.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
-import ao.holdem.ai.bucket.abstraction.HoldemAbstraction;
+import ao.holdem.ai.abstraction.HoldemAbstraction;
 import ao.holdem.model.canon.flop.Flop;
 import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.canon.river.River;
@@ -15,8 +15,8 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.ai.ai.odds.eval.HandRank;
-import ao.holdem.ai.ai.odds.eval.eval_567.EvalSlow;
+import ao.holdem.engine.eval.HandRank;
+import ao.holdem.engine.eval.eval_567.EvalSlow;
 import ao.holdem.ai.ai.regret.holdem.InfoMatrix;
 import org.apache.log4j.Logger;
 
