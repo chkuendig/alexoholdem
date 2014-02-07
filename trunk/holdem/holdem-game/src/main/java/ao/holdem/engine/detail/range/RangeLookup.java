@@ -1,7 +1,6 @@
 package ao.holdem.engine.detail.range;
 
 import ao.holdem.model.canon.hole.CanonHole;
-import ao.holdem.engine.detail.DetailLookup;
 import ao.holdem.engine.detail.turn.TurnRivers;
 import ao.holdem.model.Round;
 

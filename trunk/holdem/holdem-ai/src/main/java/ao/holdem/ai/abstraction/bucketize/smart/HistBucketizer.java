@@ -15,7 +15,6 @@ import ao.holdem.ai.abstraction.access.tree.list.HalfLongByteList;
 import ao.holdem.ai.abstraction.bucketize.def.Bucketizer;
 import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.canon.river.River;
-import ao.holdem.engine.detail.DetailLookup;
 import ao.holdem.engine.detail.range.CanonRange;
 import ao.holdem.engine.detail.range.RangeLookup;
 import ao.holdem.model.Round;

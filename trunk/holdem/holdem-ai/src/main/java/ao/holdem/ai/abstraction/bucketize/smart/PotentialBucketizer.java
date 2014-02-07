@@ -19,7 +19,6 @@ import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.canon.hole.HoleLookup;
 import ao.holdem.model.canon.river.River;
 import ao.holdem.model.canon.turn.Turn;
-import ao.holdem.engine.detail.DetailLookup;
 import ao.holdem.engine.detail.range.CanonRange;
 import ao.holdem.engine.detail.range.RangeLookup;
 import ao.holdem.model.Round;
