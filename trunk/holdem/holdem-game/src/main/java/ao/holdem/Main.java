@@ -1,16 +1,16 @@
 package ao.holdem;
 
 
+import ao.holdem.engine.agglom.OddFinder;
+import ao.holdem.engine.agglom.Odds;
+import ao.holdem.engine.agglom.impl.ApproximateOddFinder;
+import ao.holdem.engine.eval.HandRank;
+import ao.holdem.engine.eval.eval7.Eval7FastLookup;
+import ao.holdem.engine.eval.eval7.Eval7Faster;
+import ao.holdem.engine.eval.eval_567.EvalSlow;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.ai.ai.odds.agglom.OddFinder;
-import ao.holdem.ai.ai.odds.agglom.Odds;
-import ao.holdem.ai.ai.odds.agglom.impl.ApproximateOddFinder;
-import ao.holdem.ai.ai.odds.eval.HandRank;
-import ao.holdem.ai.ai.odds.eval.eval7.Eval7FastLookup;
-import ao.holdem.ai.ai.odds.eval.eval7.Eval7Faster;
-import ao.holdem.ai.ai.odds.eval.eval_567.EvalSlow;
 import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
