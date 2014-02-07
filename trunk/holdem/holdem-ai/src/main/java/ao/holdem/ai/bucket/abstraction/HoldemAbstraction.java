@@ -10,7 +10,7 @@ import ao.holdem.ai.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.holdem.ai.bucket.abstraction.bucketize.build.BucketTreeBuilder;
 import ao.holdem.ai.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
 import ao.holdem.ai.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.regret.holdem.InfoPart;
+import ao.holdem.ai.ai.regret.holdem.InfoPart;
 import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 

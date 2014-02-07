@@ -10,7 +10,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.replay.Replay;
-import ao.odds.eval.eval_567.EvalSlow;
+import ao.holdem.ai.ai.odds.eval.eval_567.EvalSlow;
 
 import java.util.ArrayList;
 import java.util.HashMap;

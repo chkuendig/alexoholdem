@@ -9,7 +9,7 @@ import ao.holdem.ai.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.ai.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
-import ao.odds.eval.eval7.Eval7Faster;
+import ao.holdem.ai.ai.odds.eval.eval7.Eval7Faster;
 import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;

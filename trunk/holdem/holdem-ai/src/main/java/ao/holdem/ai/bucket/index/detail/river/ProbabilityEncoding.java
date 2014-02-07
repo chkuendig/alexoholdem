@@ -3,9 +3,9 @@ package ao.holdem.ai.bucket.index.detail.river;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.odds.agglom.OddFinder;
-import ao.odds.agglom.Odds;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.ai.ai.odds.agglom.OddFinder;
+import ao.holdem.ai.ai.odds.agglom.Odds;
+import ao.holdem.ai.ai.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.math.stats.Combiner;
 import org.apache.log4j.Logger;
 

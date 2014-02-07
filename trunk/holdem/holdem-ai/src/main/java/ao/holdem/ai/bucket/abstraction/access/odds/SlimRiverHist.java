@@ -1,7 +1,7 @@
 package ao.holdem.ai.bucket.abstraction.access.odds;
 
 import ao.holdem.persist.GenericBinding;
-import ao.odds.agglom.hist.CompactRiverStrengths;
+import ao.holdem.ai.ai.odds.agglom.hist.CompactRiverStrengths;
 import ao.util.data.primitive.IntList;
 import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;

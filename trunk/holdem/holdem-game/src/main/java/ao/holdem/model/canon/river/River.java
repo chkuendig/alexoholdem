@@ -7,9 +7,9 @@ import ao.holdem.model.canon.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.odds.agglom.OddFinder;
-import ao.odds.agglom.hist.CompactRiverStrengths;
-import ao.odds.eval.eval7.Eval7Faster;
+import ao.holdem.ai.ai.odds.agglom.OddFinder;
+import ao.holdem.ai.ai.odds.agglom.hist.CompactRiverStrengths;
+import ao.holdem.ai.ai.odds.eval.eval7.Eval7Faster;
 
 /**
  * Date: Sep 1, 2008

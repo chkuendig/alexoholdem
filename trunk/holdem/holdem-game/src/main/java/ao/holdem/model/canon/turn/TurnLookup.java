@@ -6,6 +6,9 @@ import ao.holdem.model.canon.card.CanonSuit;
 import ao.holdem.model.canon.flop.Flop;
 import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.card.Rank;
+import ao.holdem.model.enumeration.HandEnum;
+import ao.holdem.model.enumeration.PermisiveFilter;
+import ao.holdem.model.enumeration.UniqueFilter;
 import ao.util.pass.Traverser;
 import ao.util.persist.PersistentBytes;
 import org.apache.log4j.Logger;
@@ -122,19 +125,19 @@ import java.util.Set;
                 new UniqueFilter<Flop>(),
                 new PermisiveFilter<Turn>(),
                 new Traverser<Turn>() {
-            public void traverse(Turn t) {
-                if (prevFlop[0] != t.flop().canonIndex())
-                {
-                    if (prevFlop[0] != -1) {
-                        caseSets[ prevFlop[0] ] = drainBuffers(turnCases);
-                    }
+                    public void traverse(Turn t) {
+                        if (prevFlop[0] != t.flop().canonIndex()) {
+                            if (prevFlop[0] != -1) {
+                                caseSets[prevFlop[0]] = drainBuffers(turnCases);
+                            }
 
-                    for (Set<CanonSuit> buff : turnCases) buff.clear();
-                    prevFlop[0] = t.flop().canonIndex();
-                }
-                turnCases.get(t.turnCard().rank().ordinal())
-                         .add(t.turnSuit());
-            }});
+                            for (Set<CanonSuit> buff : turnCases) buff.clear();
+                            prevFlop[0] = t.flop().canonIndex();
+                        }
+                        turnCases.get(t.turnCard().rank().ordinal())
+                                .add(t.turnSuit());
+                    }
+                });
         caseSets[ prevFlop[0] ] = drainBuffers(turnCases);
 
         return caseSets;

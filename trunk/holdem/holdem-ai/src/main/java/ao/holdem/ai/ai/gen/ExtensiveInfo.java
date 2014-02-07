@@ -1,6 +1,6 @@
 package ao.ai.gen;
 
-import ao.holdem.engine.state.tree.StateTree;
+import ao.holdem.ai.ai.regret.holdem.tree.StateTree;
 import ao.holdem.model.card.sequence.CardSequence;
 import com.google.common.base.Preconditions;
 

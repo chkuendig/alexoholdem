@@ -1,9 +1,9 @@
 package ao.holdem.ai.bucket.abstraction.access.odds;
 
 import ao.holdem.persist.GenericBinding;
-import ao.odds.agglom.hist.CompactRiverStrengths;
-import ao.odds.agglom.hist.StrengthHist;
-import ao.odds.eval.eval5.Eval5;
+import ao.holdem.ai.ai.odds.agglom.hist.CompactRiverStrengths;
+import ao.holdem.ai.ai.odds.agglom.hist.StrengthHist;
+import ao.holdem.ai.ai.odds.eval.eval5.Eval5;
 import ao.util.data.Arrs;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

@@ -1,7 +1,7 @@
 package ao.holdem.ai.bucket.index.detail.preflop;
 
 import ao.holdem.model.canon.hole.CanonHole;
-import ao.odds.agglom.Odds;
+import ao.holdem.ai.ai.odds.agglom.Odds;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;

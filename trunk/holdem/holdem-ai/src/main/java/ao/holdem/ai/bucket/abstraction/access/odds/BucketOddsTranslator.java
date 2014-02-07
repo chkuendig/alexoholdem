@@ -1,6 +1,6 @@
 package ao.holdem.ai.bucket.abstraction.access.odds;
 
-import ao.odds.agglom.hist.StrengthHist;
+import ao.holdem.ai.ai.odds.agglom.hist.StrengthHist;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import org.apache.log4j.Logger;

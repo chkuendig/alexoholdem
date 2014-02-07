@@ -3,8 +3,8 @@ package ao.holdem.ai.bucket.index.detail.preflop;
 import ao.holdem.model.canon.hole.CanonHole;
 import ao.holdem.model.enumeration.HandEnum;
 import ao.holdem.model.card.Community;
-import ao.odds.agglom.Odds;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.ai.ai.odds.agglom.Odds;
+import ao.holdem.ai.ai.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;
 

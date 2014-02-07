@@ -1,6 +1,6 @@
 package ao.ai.gen;
 
-import ao.holdem.engine.state.tree.StateTree;
+import ao.holdem.ai.ai.regret.holdem.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
