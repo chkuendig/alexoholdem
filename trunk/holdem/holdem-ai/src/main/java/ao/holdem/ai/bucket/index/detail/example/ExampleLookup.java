@@ -7,9 +7,9 @@ import ao.holdem.ai.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail
 import ao.holdem.ai.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.ai.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.holdem.ai.bucket.index.detail.preflop.HoleDetails;
-import ao.holdem.ai.bucket.index.enumeration.HandEnum;
-import ao.holdem.ai.bucket.index.enumeration.PermisiveFilter;
-import ao.holdem.ai.bucket.index.enumeration.UniqueFilter;
+import ao.holdem.model.enumeration.HandEnum;
+import ao.holdem.model.enumeration.PermisiveFilter;
+import ao.holdem.model.enumeration.UniqueFilter;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

@@ -1,4 +1,4 @@
-package ao.holdem.ai.bucket.index.test;
+package ao.holdem.model.enumeration;
 
 import ao.util.math.Calc;
 import org.apache.log4j.Logger;

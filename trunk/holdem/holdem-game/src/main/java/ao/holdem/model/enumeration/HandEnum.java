@@ -1,4 +1,4 @@
-package ao.holdem.ai.bucket.index.enumeration;
+package ao.holdem.model.enumeration;
 
 import ao.holdem.model.canon.flop.Flop;
 import ao.holdem.model.canon.hole.CanonHole;

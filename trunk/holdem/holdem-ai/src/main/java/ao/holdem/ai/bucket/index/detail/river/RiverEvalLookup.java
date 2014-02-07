@@ -9,8 +9,8 @@ import ao.holdem.ai.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail
 import ao.holdem.ai.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.ai.bucket.index.detail.range.CanonRange;
 import ao.holdem.ai.bucket.index.detail.turn.TurnRivers;
-import ao.holdem.ai.bucket.index.enumeration.BitFilter;
-import ao.holdem.ai.bucket.index.enumeration.HandEnum;
+import ao.holdem.model.enumeration.BitFilter;
+import ao.holdem.model.enumeration.HandEnum;
 import ao.odds.agglom.OddFinder;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.data.LongBitSet;

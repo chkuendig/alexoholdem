@@ -1,7 +1,7 @@
 package ao.holdem.ai.bucket.index.detail.preflop;
 
 import ao.holdem.model.canon.hole.CanonHole;
-import ao.holdem.ai.bucket.index.enumeration.HandEnum;
+import ao.holdem.model.enumeration.HandEnum;
 import ao.holdem.model.card.Community;
 import ao.odds.agglom.Odds;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;

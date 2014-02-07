@@ -7,7 +7,7 @@ import ao.holdem.model.canon.turn.Turn;
 import ao.holdem.ai.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.holdem.ai.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.ai.bucket.index.detail.turn.TurnRivers;
-import ao.holdem.ai.bucket.index.enumeration.HandEnum;
+import ao.holdem.model.enumeration.HandEnum;
 import ao.util.pass.Filter;
 import ao.util.pass.Traverser;
 

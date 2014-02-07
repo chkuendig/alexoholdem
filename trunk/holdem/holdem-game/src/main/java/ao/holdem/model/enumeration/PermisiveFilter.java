@@ -1,6 +1,6 @@
-package ao.holdem.ai.bucket.index.enumeration;
+package ao.holdem.model.enumeration;
 
-import ao.holdem.ai.bucket.index.CanonIndexed;
+import ao.holdem.model.canon.CanonIndexed;
 import ao.util.pass.Filter;
 import org.apache.log4j.Logger;
 

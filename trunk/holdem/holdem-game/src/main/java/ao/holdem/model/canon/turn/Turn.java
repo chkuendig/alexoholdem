@@ -1,6 +1,6 @@
 package ao.holdem.model.canon.turn;
 
-import ao.holdem.ai.bucket.index.CanonIndexed;
+import ao.holdem.model.canon.CanonIndexed;
 import ao.holdem.model.canon.card.CanonCard;
 import ao.holdem.model.canon.card.CanonSuit;
 import ao.holdem.model.canon.card.Order;

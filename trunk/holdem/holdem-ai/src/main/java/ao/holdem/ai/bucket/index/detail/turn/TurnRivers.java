@@ -4,7 +4,7 @@ import ao.Infrastructure;
 import ao.holdem.model.canon.river.River;
 import ao.holdem.model.canon.turn.Turn;
 import ao.holdem.ai.bucket.index.detail.range.CanonRange;
-import ao.holdem.ai.bucket.index.enumeration.HandEnum;
+import ao.holdem.model.enumeration.HandEnum;
 import ao.util.io.Dirs;
 import ao.util.math.Calc;
 import ao.util.pass.Traverser;

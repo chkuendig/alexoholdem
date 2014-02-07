@@ -1,6 +1,7 @@
 package ao.holdem.model.canon.turn;
 
 import ao.holdem.model.canon.card.CanonSuit;
+import static ao.holdem.model.canon.card.CanonSuit.*;
 
 import java.util.*;
 
