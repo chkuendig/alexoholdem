@@ -1,6 +1,6 @@
 package ao.simple.kuhn.rules;
 
-import ao.bucket.Bucket;
+import ao.holdem.ai.bucket.Bucket;
 import ao.odds.agglom.Odds;
 import ao.simple.kuhn.KuhnCard;
 

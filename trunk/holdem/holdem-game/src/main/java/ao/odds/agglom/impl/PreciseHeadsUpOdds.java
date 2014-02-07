@@ -1,7 +1,7 @@
 package ao.odds.agglom.impl;
 
-import ao.bucket.index.detail.preflop.HoleOdds;
-import ao.bucket.index.detail.preflop.HoleOddsDao;
+import ao.holdem.ai.bucket.index.detail.preflop.HoleOdds;
+import ao.holdem.ai.bucket.index.detail.preflop.HoleOddsDao;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

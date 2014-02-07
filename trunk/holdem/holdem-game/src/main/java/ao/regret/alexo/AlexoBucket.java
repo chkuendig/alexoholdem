@@ -1,6 +1,6 @@
 package ao.regret.alexo;
 
-import ao.bucket.Bucket;
+import ao.holdem.ai.bucket.Bucket;
 import ao.odds.agglom.Odds;
 import ao.simple.alexo.card.AlexoCard;
 import ao.simple.alexo.card.AlexoCardSequence;

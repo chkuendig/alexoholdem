@@ -1,6 +1,6 @@
 package ao.holdem.model.card;
 
-import ao.bucket.index.canon.hole.CanonHole;
+import ao.holdem.model.canon.hole.CanonHole;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

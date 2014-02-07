@@ -1,11 +1,11 @@
 package ao.holdem.ai.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
-import ao.bucket.abstraction.HoldemAbstraction;
-import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.river.River;
-import ao.bucket.index.canon.turn.Turn;
+import ao.holdem.ai.bucket.abstraction.HoldemAbstraction;
+import ao.holdem.model.canon.flop.Flop;
+import ao.holdem.model.canon.hole.CanonHole;
+import ao.holdem.model.canon.river.River;
+import ao.holdem.model.canon.turn.Turn;
 import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Avatar;
