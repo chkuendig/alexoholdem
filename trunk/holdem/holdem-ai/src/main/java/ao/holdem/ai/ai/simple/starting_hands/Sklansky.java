@@ -1,6 +1,7 @@
-package ao.ai.simple.starting_hands;
+package ao.holdem.ai.ai.simple.starting_hands;
 
 import ao.holdem.model.card.Hole;
+import static ao.holdem.model.card.Rank.*;
 
 
 /**
@@ -17,7 +18,7 @@ public class Sklansky
     // - if it doesn't say "suited", does that mean its unsuited,
     //                               or that suit doesn't matter?
     //      ^ doesn't actually matter, coz a suited variant would
-    //          always be slurped up by a higher sklansky group.
+    //          always be slurped up by a higher Sklansky group.
 
     public static int groupOf(Hole hole)
     {

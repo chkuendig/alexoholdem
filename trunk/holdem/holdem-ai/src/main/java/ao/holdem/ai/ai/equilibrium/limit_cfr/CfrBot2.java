@@ -1,4 +1,4 @@
-package ao.ai.equilibrium.limit_cfr;
+package ao.holdem.ai.ai.equilibrium.limit_cfr;
 
 import ao.ai.AbstractPlayer;
 import ao.bucket.abstraction.HoldemAbstraction;

@@ -2,6 +2,7 @@ package ao.holdem.model.card;
 
 import ao.holdem.persist.EnumBinding;
 import ao.util.data.Arrs;
+import com.google.common.base.Preconditions;
 
 import java.util.Comparator;
 
@@ -82,6 +83,9 @@ public enum Card
      */
     public static Card valueOf(Rank rank, Suit suit)
     {
+        Preconditions.checkNotNull(rank);
+        Preconditions.checkNotNull(suit);
+
         return VALUES[ rank.ordinal() +
                        suit.ordinal() * Rank.values().length ];
     }

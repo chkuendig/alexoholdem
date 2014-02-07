@@ -1,8 +1,8 @@
-package ao.ai;
+package ao.holdem.ai.ai;
 
 import ao.Infrastructure;
-import ao.ai.equilibrium.limit_cfr.CfrBot2;
-import ao.ai.simple.RandomBot;
+import ao.holdem.ai.ai.equilibrium.limit_cfr.CfrBot2;
+import ao.holdem.ai.ai.simple.RandomBot;
 import ao.bucket.abstraction.BucketizerTest;
 import ao.bucket.abstraction.HoldemAbstraction;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
@@ -12,9 +12,11 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
+import ao.holdem.model.card.*;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ca.ualberta.cs.poker.free.client.ClientPokerDynamics;
 import ca.ualberta.cs.poker.free.client.PokerClient;
+import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -224,8 +226,8 @@ public class AaaiAdapter extends PokerClient
                 stateFlow.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(
-                                toAoCard(state.hole[ seat ][0]),
-                                toAoCard(state.hole[ seat ][1])),
+                                toAoCard(state.hole[seat][0]),
+                                toAoCard(state.hole[seat][1])),
                         new Community(
                                 toAoCard(state.board[0]),
                                 toAoCard(state.board[1]),
@@ -275,7 +277,6 @@ public class AaaiAdapter extends PokerClient
             case ACE:   aoRank = Rank.ACE;   break;
         }
 
-        return aoRank == null || aoSuit == null
-               ? null : Card.valueOf(aoRank, aoSuit);
+        return Card.valueOf(aoRank, aoSuit);
     }
 }

@@ -1,4 +1,4 @@
-package ao.ai.simple;
+package ao.holdem.ai.ai.simple;
 
 import ao.ai.AbstractPlayer;
 import ao.ai.simple.starting_hands.Sklansky;
