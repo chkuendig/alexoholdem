@@ -92,7 +92,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ao.holdem.ai.bucket.abstraction.AbstractionOptimizer</mainClass>
+                            <mainClass>ao.holdem.ai.abstraction.AbstractionOptimizer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

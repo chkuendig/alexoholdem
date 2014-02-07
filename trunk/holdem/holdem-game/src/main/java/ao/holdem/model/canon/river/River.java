@@ -1,5 +1,8 @@
 package ao.holdem.model.canon.river;
 
+import ao.holdem.engine.agglom.OddFinder;
+import ao.holdem.engine.agglom.hist.CompactRiverStrengths;
+import ao.holdem.engine.eval.eval7.Eval7Faster;
 import ao.holdem.model.canon.CanonIndexed;
 import ao.holdem.model.canon.card.CanonCard;
 import ao.holdem.model.canon.card.Order;
@@ -7,9 +10,9 @@ import ao.holdem.model.canon.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.ai.ai.odds.agglom.OddFinder;
-import ao.holdem.ai.ai.odds.agglom.hist.CompactRiverStrengths;
-import ao.holdem.ai.ai.odds.eval.eval7.Eval7Faster;
+//import ao.holdem.engine.agglom.OddFinder;
+//import ao.holdem.engine.agglom.hist.CompactRiverStrengths;
+//import ao.holdem.engine.eval.eval7.Eval7Faster;
 
 /**
  * Date: Sep 1, 2008
@@ -124,9 +127,9 @@ public class River implements CanonIndexed
         Community c = TURN_CARDS.community();
         short     v = Eval7Faster.valueOf(
                 h.a(), h.b(),
-                c.flopA(),c.flopB(), c.flopC(),
+                c.flopA(), c.flopB(), c.flopC(),
                 c.turn(), RIVER_CARD);
-        return CompactRiverStrengths.compact( v );
+        return CompactRiverStrengths.compact(v);
     }
     public double vsRandom(OddFinder odds)
     {
