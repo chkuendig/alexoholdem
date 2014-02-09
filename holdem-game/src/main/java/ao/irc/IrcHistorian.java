@@ -14,10 +14,6 @@ import java.util.Map;
 public class IrcHistorian
 {
     //--------------------------------------------------------------------
-//    @Inject PlayerHandleLookup playerLookup;
-
-
-    //--------------------------------------------------------------------
     public Iterable<Replay> fromSnapshot(String dirName)
     {
         IrcReader r = new IrcReader(new File(dirName));

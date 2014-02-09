@@ -1,42 +1,17 @@
 package ao.holdem.engine.state.eval;
 
 import ao.holdem.model.card.Card;
-import ao.util.math.stats.Combiner;
-
-import java.util.Arrays;
+import com.google.common.base.Preconditions;
 
 /**
  * See
  *  http://www.suffecool.net/poker/evaluator.html
  */
-public class Eval5
-{
-    //--------------------------------------------------------------------
-    public static final short LOWEST      = 0;
-    public static final short HIGHEST     = 7461;
-    public static final short VALUE_COUNT = HIGHEST + 1;
-
-
+public enum Eval5
+{;
     //--------------------------------------------------------------------
     private static final int PRIMES[] =
             {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41};
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        int[] hist = new int[ VALUE_COUNT ];
-        for (Card[] fiveCards :
-                new Combiner<Card>(Card.VALUES, 5))
-        {
-            hist[ valueOf(fiveCards) ]++;
-        }
-        System.out.println(Arrays.toString( hist ));
-    }
-
-
-    //--------------------------------------------------------------------
-    private Eval5() {}
 
 
     //--------------------------------------------------------------------
@@ -44,8 +19,8 @@ public class Eval5
     // from 0 (lowest) to 7461 (highest)
     public static short valueOf(Card... fiveCards)
     {
-        return valueOf(fiveCards[0], fiveCards[1],
-                        fiveCards[2], fiveCards[3], fiveCards[4]);
+        Preconditions.checkArgument(fiveCards.length == 5);
+        return valueOf(fiveCards[0], fiveCards[1], fiveCards[2], fiveCards[3], fiveCards[4]);
     }
 
     // from 0 (lowest) to 7461 (highest)
@@ -64,7 +39,7 @@ public class Eval5
     public static short valueOf(
             int ck1, int ck2, int ck3, int ck4, int ck5)
     {
-        return (short)(VALUE_COUNT -
+        return (short)(HandStrength.COUNT -
                          kevsValueOf(ck1, ck2, ck3, ck4, ck5));
     }
 

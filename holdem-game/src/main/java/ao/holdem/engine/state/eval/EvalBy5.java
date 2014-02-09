@@ -2,14 +2,16 @@ package ao.holdem.engine.state.eval;
 
 import ao.holdem.model.card.Card;
 
+import java.util.Arrays;
+
 /**
  * All card values are returned in the range of...
  *  0 (lowest) to 7461 (highest)
- * see
- *  http://www.suffecool.net/poker/7462.html
+ *
+ * See: http://www.suffecool.net/poker/7462.html
  */
-public class EvalSlow
-{
+public enum EvalBy5
+{;
     //--------------------------------------------------------------------
     public static short valueOf(Card... cards)
     {
@@ -29,7 +31,7 @@ public class EvalSlow
                            cards[3], cards[4], cards[5],
                            cards[6]);
         }
-        throw new Error("can only handle 5 or 7 cards.");
+        throw new Error("Can only handle 5 to 7 cards: " + Arrays.toString(cards));
     }
 
     public static short valueOf(

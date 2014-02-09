@@ -1,9 +1,10 @@
 package ao.holdem.abs.odds.agglom.impl;
 
+import ao.holdem.engine.state.eval.EvalBy5;
+import ao.holdem.engine.state.eval.HandStrength;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.engine.state.eval.Eval5;
-import ao.holdem.engine.state.eval.EvalSlow;
 import ao.util.math.stats.FastCombiner;
 
 /**
@@ -111,9 +112,9 @@ public class CommunityMeasure
             hand[ hand.length - 1 ] = cardA;
             hand[ hand.length - 2 ] = cardB;
             
-            short value = EvalSlow.valueOf(hand);
+            short value = EvalBy5.valueOf(hand);
 
-            double heat = value / (double) Eval5.HIGHEST;
+            double heat = value / (double) HandStrength.HIGHEST;
 
             count++;
             cumulativeHeat += heat;

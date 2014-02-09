@@ -1,6 +1,7 @@
 package ao.holdem.abs.odds.agglom.hist;
 
 import ao.Infrastructure;
+import ao.holdem.engine.state.eval.HandStrength;
 import ao.holdem.model.card.Card;
 import ao.holdem.engine.state.eval.Eval5;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
@@ -85,8 +86,8 @@ public class CompactRiverStrengths
     //--------------------------------------------------------------------
     private static short[] computeSortedUnusedRivers()
     {
-        BitSet unUsed = new BitSet(Eval5.VALUE_COUNT);
-        unUsed.set(0, Eval5.VALUE_COUNT);
+        BitSet unUsed = new BitSet(HandStrength.COUNT);
+        unUsed.set(0, HandStrength.COUNT);
 
         for (Card[] hand : new Combiner<Card>(Card.VALUES, 7)) {
             unUsed.clear( Eval7Faster.valueOf(hand) );
@@ -109,7 +110,7 @@ public class CompactRiverStrengths
 //        short[] unusedRivers =
 //                PersistentShorts.asArray(STORE);
 
-        short[] map = new short[ Eval5.VALUE_COUNT ];
+        short[] map = new short[ HandStrength.COUNT ];
         for (short i = 0, r = 0; i < map.length; i++)
         {
             boolean unused = (Arrays.binarySearch(unusedRivers, i) >= 0);

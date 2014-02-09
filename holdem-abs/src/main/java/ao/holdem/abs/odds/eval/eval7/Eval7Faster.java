@@ -1,10 +1,10 @@
 package ao.holdem.abs.odds.eval.eval7;
 
 import ao.Infrastructure;
+import ao.holdem.engine.state.eval.EvalBy5;
 import ao.holdem.model.card.Card;
 import ao.holdem.engine.state.eval.HandRank;
 import ao.holdem.engine.state.eval.Eval5;
-import ao.holdem.engine.state.eval.EvalSlow;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
@@ -311,22 +311,22 @@ public class Eval7Faster
 
             switch (numCards) {
                 case 5 :
-                    handRank = EvalSlow.valueOf(
+                    handRank = EvalBy5.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4]);
                     break;
 
                 case 6 :
-                    handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],
-                            hand[2],hand[3],hand[4],
+                    handRank = EvalBy5.valueOf(
+                            hand[0], hand[1],
+                            hand[2], hand[3], hand[4],
                             hand[5]);
                     break;
 
                 case 7 :
-                    handRank = EvalSlow.valueOf(
-                            hand[0],hand[1],
-                            hand[2],hand[3],hand[4],
-                            hand[5],hand[6]);
+                    handRank = EvalBy5.valueOf(
+                            hand[0], hand[1],
+                            hand[2], hand[3], hand[4],
+                            hand[5], hand[6]);
                     break;
 
                 default :

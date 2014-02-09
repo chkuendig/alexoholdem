@@ -37,6 +37,7 @@ public class HoldemDao
 
 
     //--------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     public void persist(final Replay hand)
     {
         db.atomic(new TransactionWorker() {
@@ -62,7 +63,7 @@ public class HoldemDao
     public List<Replay> retrieve(
             Avatar withPlayer, int numLatest)
     {
-        List<Replay> playerHands = new ArrayList<Replay>();
+        List<Replay> playerHands = new ArrayList<>();
 
         int count = 0;
         for (Object handId : avatars.duplicates(withPlayer))
@@ -90,7 +91,7 @@ public class HoldemDao
     public Map<Avatar, Integer> mostPrevalent(int howMany)
     {
         Map<Avatar, Integer> byAvatar =
-                new LinkedHashMap<Avatar, Integer>();
+                new LinkedHashMap<>();
         for (Map.Entry<Double, Avatar> e :
                 safeByHands(howMany).entrySet())
         {
@@ -115,7 +116,7 @@ public class HoldemDao
             throws DatabaseException
     {
         SortedMap<Double, Avatar> byHands =
-                new TreeMap<Double, Avatar>();
+                new TreeMap<>();
 
         double min    = Long.MIN_VALUE;
         Cursor cursor = db.openAvatarCursor();
