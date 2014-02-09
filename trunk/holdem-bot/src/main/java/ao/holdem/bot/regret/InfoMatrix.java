@@ -1,9 +1,9 @@
-package ao.regret.holdem;
+package ao.holdem.bot.regret;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.grid.Grid;
-import ao.regret.holdem.grid.StoredGrid;
+import ao.holdem.bot.regret.grid.Grid;
+import ao.holdem.bot.regret.grid.StoredGrid;
 import ao.util.math.rand.Rand;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentInts;
@@ -133,7 +133,9 @@ public class InfoMatrix
     //--------------------------------------------------------------------
     public void displayHeadsUpRoot() {
         for (int bucket = 0; bucket < averageStrategy.rows(); bucket++) {
-            LOG.info(StateTree.headsUpRoot().infoSet(bucket, this));
+            StateTree.Node node = StateTree.headsUpRoot();
+            InfoSet infoSet = infoSet(bucket, node.foldIntent(), node.callIntent(), node.raiseIntent());
+            LOG.info(infoSet);
         }
     }
 
@@ -143,10 +145,11 @@ public class InfoMatrix
 
 
     //--------------------------------------------------------------------
-    public InfoSet infoSet(int bucket,
-                           int foldIntent,
-                           int callIntent,
-                           int raiseIntent)
+    public InfoSet infoSet(
+            int bucket,
+            int foldIntent,
+            int callIntent,
+            int raiseIntent)
     {
         return new InfoSet(bucket, foldIntent, callIntent, raiseIntent);
     }

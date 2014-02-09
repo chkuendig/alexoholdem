@@ -1,4 +1,4 @@
-package ao.regret.holdem;
+package ao.holdem.bot.regret;
 
 /**
  * User: alex

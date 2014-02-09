@@ -3,7 +3,7 @@ package ao.holdem.bot.main;
 import ao.Infrastructure;
 import ao.holdem.bot.limit_cfr.CfrBot2;
 import ao.holdem.bot.simple.RandomBot;
-import ao.bucket.abstraction.HoldemAbstraction;
+import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.StateFlow;

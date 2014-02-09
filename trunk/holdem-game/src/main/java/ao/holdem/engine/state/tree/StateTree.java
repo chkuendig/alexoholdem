@@ -5,8 +5,6 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.InfoMatrix;
-import ao.regret.holdem.InfoPart;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -265,14 +263,24 @@ public class StateTree
             return KID_NODES[ act.ordinal() ];
         }
 
-        public InfoMatrix.InfoSet infoSet(
-                int bucket, InfoPart from) {
-            return infoSet(bucket, from.infoMatrix(ROUND));
+        public int foldIntent() {
+            return F_INTENT;
         }
-        public InfoMatrix.InfoSet infoSet(
-                int bucket, InfoMatrix from) {
-            return from.infoSet(bucket, F_INTENT, C_INTENT, R_INTENT);
+        public int callIntent() {
+            return C_INTENT;
         }
+        public int raiseIntent() {
+            return R_INTENT;
+        }
+
+//        public InfoMatrix.InfoSet infoSet(
+//                int bucket, InfoPart from) {
+//            return infoSet(bucket, from.infoMatrix(ROUND));
+//        }
+//        public InfoMatrix.InfoSet infoSet(
+//                int bucket, InfoMatrix from) {
+//            return from.infoSet(bucket, F_INTENT, C_INTENT, R_INTENT);
+//        }
 
 
         //----------------------------------------------------------------

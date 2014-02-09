@@ -1,4 +1,4 @@
-package ao.regret.holdem.grid;
+package ao.holdem.bot.regret.grid;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package ao.holdem.bot.main;
 
-import ao.bucket.abstraction.HoldemAbstraction;
+import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.bot.limit_cfr.CfrBot2;
 import ao.bucket.abstraction.access.BucketSequencer;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
@@ -15,9 +15,9 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.odds.agglom.impl.PreciseHeadsUpOdds;
-import ao.regret.holdem.InfoPart;
-import ao.regret.holdem.IterativeMinimizer;
-import ao.regret.holdem.mono.ChainMinimizer;
+import ao.holdem.bot.regret.InfoPart;
+import ao.holdem.bot.regret.IterativeMinimizer;
+import ao.holdem.bot.regret.mono.ChainMinimizer;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;

@@ -1,4 +1,4 @@
-package ao.regret.holdem;
+package ao.holdem.bot.regret;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Round;
@@ -166,6 +166,12 @@ public class InfoPart
     {
         return infoMatrix(intentRound).infoSet(
                 bucket, foldIntent, callIntent, raiseIntent);
+    }
+
+    public InfoMatrix.InfoSet infoSet(
+            StateTree.Node node, int bucket)
+    {
+        return infoSet(node.round(), bucket, node.foldIntent(), node.callIntent(), node.raiseIntent());
     }
 
 

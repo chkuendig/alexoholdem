@@ -1,11 +1,11 @@
-package ao.regret.holdem.serial;
+package ao.holdem.bot.regret.serial;
 
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.InfoMatrix;
-import ao.regret.holdem.InfoPart;
-import ao.regret.holdem.IterativeMinimizer;
+import ao.holdem.bot.regret.InfoMatrix;
+import ao.holdem.bot.regret.InfoPart;
+import ao.holdem.bot.regret.IterativeMinimizer;
 
 /**
  * User: alex
@@ -134,7 +134,8 @@ public class AvgStrat implements IterativeMinimizer
                 (node.dealerIsNext()
                  ? DEALER_BUCKETS
                  : DEALEE_BUCKETS)[ node.round().ordinal() ];
-        return node.infoSet(roundBucket, INFO);
+
+        return INFO.infoSet(node, roundBucket);
     }
 
 

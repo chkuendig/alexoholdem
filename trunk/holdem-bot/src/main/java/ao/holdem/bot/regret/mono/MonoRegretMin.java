@@ -1,12 +1,12 @@
-package ao.regret.holdem.mono;
+package ao.holdem.bot.regret.mono;
 
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
-import ao.regret.holdem.InfoMatrix;
-import ao.regret.holdem.InfoPart;
-import ao.regret.holdem.IterativeMinimizer;
+import ao.holdem.bot.regret.InfoMatrix;
+import ao.holdem.bot.regret.InfoPart;
+import ao.holdem.bot.regret.IterativeMinimizer;
 
 /**
  * User: alex
@@ -75,8 +75,10 @@ public class MonoRegretMin implements IterativeMinimizer
                     ? absDealerBuckets
                     : absDealeeBuckets)[ node.round().ordinal() ];
 
-        InfoMatrix.InfoSet infoSet    = node.infoSet(roundBucket, INFO);
-        double             strategy[] = infoSet.strategy();
+        InfoMatrix.InfoSet infoSet =
+                INFO.infoSet(node, roundBucket);
+
+        double strategy[] = infoSet.strategy();
 
         if ((dealerProp && pDealee == 0) ||
                 ((!dealerProp) && pDealer == 0)) {
@@ -210,8 +212,10 @@ public class MonoRegretMin implements IterativeMinimizer
                     ? absDealerBuckets
                     : absDealeeBuckets)[ node.round().ordinal() ];
 
-        InfoMatrix.InfoSet infoSet    = node.infoSet(roundBucket, INFO);
-        double             strategy[] = infoSet.strategy();
+        InfoMatrix.InfoSet infoSet =
+                INFO.infoSet(node, roundBucket);
+
+        double strategy[] = infoSet.strategy();
 
         int count = 0;
         for (AbstractAction act : AbstractAction.VALUES) {
