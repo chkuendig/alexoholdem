@@ -1,6 +1,6 @@
 package ao.holdem.bot.regret.mono;
 
-import ao.bucket.abstraction.access.odds.IBucketOdds;
+import ao.holdem.abs.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.engine.state.HeadsUpStatus;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;

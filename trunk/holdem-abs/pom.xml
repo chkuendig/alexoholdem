@@ -22,4 +22,16 @@
     <!--====================================================================-->
     <name>Texas Hold'em : Abstraction</name>
 
+
+    <!--====================================================================-->
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-game</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-canon</artifactId>
+        </dependency>
+    </dependencies>
 </project>

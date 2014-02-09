@@ -2,11 +2,12 @@ package ao.holdem.bot.main;
 
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.bot.limit_cfr.CfrBot2;
-import ao.bucket.abstraction.access.BucketSequencer;
-import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.abstraction.bucketize.smart.BucketDisplay;
-import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
-import ao.bucket.index.detail.preflop.HoleOdds;
+import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
+import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.BucketDisplay;
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.HistBucketizer;
+import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
+import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
@@ -14,7 +15,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.holdem.bot.regret.InfoPart;
 import ao.holdem.bot.regret.mono.MonoRegretMin;
 import ao.util.math.rand.Rand;
@@ -205,7 +206,7 @@ public class BucketizerTest
         Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
         Community flop = new Community(Card.ACE_OF_HEARTS,
                 Card.FIVE_OF_HEARTS, Card.THREE_OF_DIAMONDS);
-        hole.asCanon().addFlop(flop)
+        CanonHole.create(hole).addFlop(flop)
                 .addTurn(Card.NINE_OF_CLUBS)
                 .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
 

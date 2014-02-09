@@ -29,6 +29,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-game</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-canon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-abs</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>ao.ai</groupId>

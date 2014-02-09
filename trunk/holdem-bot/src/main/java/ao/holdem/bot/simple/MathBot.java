@@ -7,9 +7,9 @@ import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.agglom.OddFinder;
-import ao.odds.agglom.Odds;
-import ao.odds.agglom.impl.ApproximateOddFinder;
+import ao.holdem.abs.odds.agglom.OddFinder;
+import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.abs.odds.agglom.impl.ApproximateOddFinder;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
