@@ -12,6 +12,7 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
+import ao.holdem.model.card.*;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ca.ualberta.cs.poker.free.client.ClientPokerDynamics;
 import ca.ualberta.cs.poker.free.client.PokerClient;
@@ -224,8 +225,8 @@ public class AaaiAdapter extends PokerClient
                 stateFlow.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(
-                                toAoCard(state.hole[ seat ][0]),
-                                toAoCard(state.hole[ seat ][1])),
+                                toAoCard(state.hole[seat][0]),
+                                toAoCard(state.hole[seat][1])),
                         new Community(
                                 toAoCard(state.board[0]),
                                 toAoCard(state.board[1]),

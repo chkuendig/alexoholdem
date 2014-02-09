@@ -1,5 +1,8 @@
 package ao.general.impl;
 
+import ao.general.InformationSet;
+import ao.general.NashEquilibriumStrategySolver;
+import ao.general.StrategyProfile;
 import ao.util.data.tuple.TwoTuple;
 
 /**
