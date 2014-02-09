@@ -1,4 +1,4 @@
-package ao.ai.gen;
+package ao.holdem.gen;
 
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;

@@ -1,4 +1,4 @@
-package ao.ai.gen;
+package ao.holdem.gen;
 
 import ao.holdem.engine.state.tree.StateTree;
 import com.google.common.base.Preconditions;
