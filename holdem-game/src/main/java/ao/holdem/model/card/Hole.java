@@ -1,6 +1,5 @@
 package ao.holdem.model.card;
 
-import ao.bucket.index.canon.hole.CanonHole;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -73,10 +72,10 @@ public class Hole
         return B;
     }
 
-    public CanonHole asCanon()
-    {
-        return CanonHole.create(A, B);
-    }
+//    public CanonHole asCanon()
+//    {
+//        return CanonHole.create(A, B);
+//    }
 
 
     //--------------------------------------------------------------------

@@ -1,15 +1,16 @@
 package ao.holdem.bot.regret;
 
-import ao.bucket.abstraction.access.BucketDecoder;
-import ao.bucket.abstraction.access.odds.BucketOdds;
-import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.bucket.abstraction.bucketize.smart.HistBucketizer;
-import ao.bucket.index.detail.flop.FlopDetails;
-import ao.bucket.index.detail.turn.TurnRivers;
+import ao.holdem.abs.bucket.abstraction.access.BucketDecoder;
+import ao.holdem.abs.bucket.abstraction.access.odds.BucketOdds;
+import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
+import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.HistBucketizer;
+import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
+import ao.holdem.abs.bucket.index.detail.turn.TurnRivers;
+import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
+import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
-import ao.odds.eval.eval7.Eval7Faster;
 import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
@@ -127,12 +128,12 @@ public class AbstractionOptimizer
                              propValue > oppValue ? 1.0 : 0.5 );
 
             long propCanonRiver =
-                    Hole.valueOf(cards[0], cards[1]).asCanon()
+                    CanonHole.create(cards[0], cards[1])
                         .addFlop(cards[4], cards[5], cards[6])
                         .addTurn(cards[7]).addRiver(cards[8])
                         .canonIndex();
             long oppCanonRiver =
-                    Hole.valueOf(cards[2], cards[3]).asCanon()
+                    CanonHole.create(cards[2], cards[3])
                         .addFlop(cards[4], cards[5], cards[6])
                         .addTurn(cards[7]).addRiver(cards[8])
                         .canonIndex();
@@ -177,9 +178,9 @@ public class AbstractionOptimizer
                         communityShortcut, oppHole[0], oppHole[1]);
 
                 long oppCanonRiver =
-                    Hole.valueOf(
+                    CanonHole.create(
                             oppHole[0], oppHole[1]
-                    ).asCanon().addFlop(
+                    ).addFlop(
                             community[0], community[1], community[2]
                     ).addTurn(
                             community[3]
@@ -199,9 +200,9 @@ public class AbstractionOptimizer
                              propValue > oppValue ? 1.0 : 0.5 );
 
                     long propCanonRiver =
-                        Hole.valueOf(
+                        CanonHole.create(
                                 propHole[0], propHole[1]
-                        ).asCanon().addFlop(
+                        ).addFlop(
                                 community[0], community[1], community[2]
                         ).addTurn(
                                 community[3]

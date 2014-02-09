@@ -2,10 +2,10 @@ package ao.holdem.bot.limit_cfr;
 
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.regret.HoldemAbstraction;
-import ao.bucket.index.canon.flop.Flop;
-import ao.bucket.index.canon.hole.CanonHole;
-import ao.bucket.index.canon.river.River;
-import ao.bucket.index.canon.turn.Turn;
+import ao.holdem.canon.flop.Flop;
+import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.canon.river.River;
+import ao.holdem.canon.turn.Turn;
 import ao.holdem.engine.state.State;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Avatar;
@@ -15,8 +15,8 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.eval.HandRank;
-import ao.odds.eval.eval_567.EvalSlow;
+import ao.holdem.engine.state.eval.HandRank;
+import ao.holdem.engine.state.eval.EvalSlow;
 import ao.holdem.bot.regret.InfoMatrix;
 import org.apache.log4j.Logger;
 
@@ -203,7 +203,7 @@ public class CfrBot2 extends AbstractPlayer
 
         if (canonHole == null) {
             try{
-                canonHole  = cards.hole().asCanon();
+                canonHole  = CanonHole.create(cards.hole());
                 holeBucket = ABS.tree(true).getHole(
                                     canonHole.canonIndex());
             } catch (Throwable t) {

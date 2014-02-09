@@ -32,6 +32,7 @@
         <module>holdem-bot</module>
         <module>holdem-gen</module>
         <module>holdem-abs</module>
+        <module>holdem-canon</module>
     </modules>
 
 
@@ -54,6 +55,18 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>holdem-game</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>holdem-canon</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>holdem-abs</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

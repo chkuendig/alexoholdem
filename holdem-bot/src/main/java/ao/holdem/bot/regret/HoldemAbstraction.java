@@ -1,15 +1,15 @@
 package ao.holdem.bot.regret;
 
 import ao.Infrastructure;
-import ao.bucket.abstraction.access.BucketDecoder;
-import ao.bucket.abstraction.access.BucketSequencer;
-import ao.bucket.abstraction.access.odds.BucketOdds;
-import ao.bucket.abstraction.access.odds.IBucketOdds;
-import ao.bucket.abstraction.access.tree.BucketTree;
-import ao.bucket.abstraction.access.tree.BucketTreeImpl;
-import ao.bucket.abstraction.bucketize.build.BucketTreeBuilder;
-import ao.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
-import ao.bucket.abstraction.bucketize.def.Bucketizer;
+import ao.holdem.abs.bucket.abstraction.access.BucketDecoder;
+import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
+import ao.holdem.abs.bucket.abstraction.access.odds.BucketOdds;
+import ao.holdem.abs.bucket.abstraction.access.odds.IBucketOdds;
+import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
+import ao.holdem.abs.bucket.abstraction.access.tree.BucketTreeImpl;
+import ao.holdem.abs.bucket.abstraction.bucketize.build.BucketTreeBuilder;
+import ao.holdem.abs.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
+import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 

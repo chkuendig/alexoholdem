@@ -8,7 +8,7 @@ import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.odds.agglom.impl.PreciseHeadsUpOdds;
+import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.ui.AoConsole;
 
 import java.util.LinkedHashMap;
