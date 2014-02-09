@@ -1,5 +1,6 @@
 package ao.ai.simple.starting_hands;
 
+import static ao.holdem.model.card.Rank.*;
 import ao.holdem.model.card.Hole;
 
 /**
