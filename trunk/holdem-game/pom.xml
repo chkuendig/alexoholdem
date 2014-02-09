@@ -20,6 +20,10 @@
 
 
     <!--====================================================================-->
+    <name>Texas Hold'em : Game</name>
+
+
+    <!--====================================================================-->
     <dependencies>
         <!-- ALEX OSTROVSKY DEPENDENCIES -->
         <dependency>
@@ -27,17 +31,12 @@
             <artifactId>util-all</artifactId>
             <version>2.4.3</version>
         </dependency>
-        <dependency>
-            <groupId>ao.ai</groupId>
-            <artifactId>ai-classification</artifactId>
-            <version>${ao-ai.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>ao.ai</groupId>
             <artifactId>ai-cluster</artifactId>
             <version>${ao-ai.version}</version>
         </dependency>
-
 
         <!-- POKER DEPENDENCIES -->
         <dependency>
@@ -57,11 +56,6 @@
             <artifactId>je</artifactId>
             <version>5.0.73</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.coconut.forkjoin</groupId>
-            <artifactId>jsr166y</artifactId>
-            <version>070108</version>
-        </dependency>-->
         <dependency>
             <groupId>gnu</groupId>
             <artifactId>cajo</artifactId>
@@ -73,32 +67,4 @@
             <version>55j</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>ao.holdem.bot.regret.AbstractionOptimizer</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
