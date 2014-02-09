@@ -8,7 +8,8 @@ import ao.holdem.engine.state.eval.Eval5;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class Eval7Faster
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-        Logger.getLogger(Eval7Faster.class);
+            LoggerFactory.getLogger(Eval7Faster.class);
 
 
     //--------------------------------------------------------------------
@@ -418,7 +419,7 @@ public class Eval7Faster
                 // insert the hand rank into the hand rank compact table
                 handRanks[keyIndex * 53 + 53] =
                         getHandRank(keys[keyIndex]);
-//                handRanks[keyIndex * 53 + 53] = -1000000000;
+                // handRanks[keyIndex * 53 + 53] = -1000000000;
             }
         }
 
@@ -469,7 +470,7 @@ public class Eval7Faster
             int invIndex1, int invIndex2, int invIndex3, int invIndex4,
             int invIndex5, int invIndex6, int invIndex7)
     {
-// HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
+    // HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
 
         return (short) handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
@@ -605,18 +606,20 @@ public class Eval7Faster
     }
 
 
+
     //--------------------------------------------------------------------
-	public static void main(String [] args) {
+    public static void preCalculate()
+    {
         // much faster if called from here (when commented out above)
 //        retrieveOrCompute();
-        
+
         int c0, c1, c2, c3, c4, c5, c6;
         int u0, u1, u2, u3, u4, u5;
 
         if (verbose) {
-        	System.out.print(
+            System.out.print(
                     "Enumerating hand frequencies...");
-        	startTimer = System.currentTimeMillis();
+            startTimer = System.currentTimeMillis();
         }
         int frequency[] = new int[ HandRank.values().length ];
 
@@ -648,13 +651,13 @@ public class Eval7Faster
         }
 
         if (verbose) {
-        	stopTimer = System.currentTimeMillis();
-        	System.out.printf(
+            stopTimer = System.currentTimeMillis();
+            System.out.printf(
                     "done.\n\n%35s %f seconds\n\n",
                     "Time Required:",
                     ((stopTimer - startTimer) / 1000.0));
         }
 
         System.out.println(Arrays.toString(frequency));
-	}
+    }
 }

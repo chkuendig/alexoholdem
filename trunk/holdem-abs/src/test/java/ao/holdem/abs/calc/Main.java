@@ -1,4 +1,4 @@
-package ao.holdem.abs;
+package ao.holdem.abs.calc;
 
 
 import ao.holdem.model.card.Card;
@@ -106,7 +106,7 @@ public class Main
 //        OddFinder fg = new PreciseHeadsUpOdds();
         for (int opps = 1; opps <= 1; opps++)
         {
-            for (Card[] holes : new Combiner<Card>(Card.values(), 2))
+            for (Card[] holes : new Combiner<>(Card.values(), 2))
             {
                 Odds approxOdds =
                         fa.compute(Hole.valueOf(holes[0], holes[1]), c, opps);
@@ -211,7 +211,7 @@ public class Main
     public static void doRun52c7()
     {
         Combiner<Card> permuter =
-                new Combiner<Card>(Card.values(), 7);
+                new Combiner<>(Card.values(), 7);
         BitSet mapped = new BitSet();
 
         while (permuter.hasMoreElements())

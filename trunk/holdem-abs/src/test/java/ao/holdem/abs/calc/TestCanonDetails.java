@@ -1,5 +1,6 @@
-package ao.holdem.abs.bucket.index.detail;
+package ao.holdem.abs.calc;
 
+import ao.holdem.abs.bucket.index.detail.DetailLookup;
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.canon.turn.Turn;

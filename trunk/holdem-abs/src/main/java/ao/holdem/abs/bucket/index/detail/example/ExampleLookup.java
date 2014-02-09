@@ -37,65 +37,6 @@ public class ExampleLookup
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        testHoleFlopConcistency();
-    }
-
-    private static void testHoleFlopConcistency()
-    {
-        HandEnum.turns(
-                new PermisiveFilter<CanonHole>("%1$s"),
-                new PermisiveFilter<Flop>(),
-                new UniqueFilter<Turn>(),
-                new Traverser<Turn>() {
-            public void traverse(Turn turn) {
-                Odds givenOdds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        turn.flop().hole().reify(),
-                        turn.flop().community());
-
-//                CanonTurnDetail turnDet =
-//                        TurnDetails.compact( turn.canonIndex() );
-                CanonFlopDetail flopDet =
-                        FlopDetails.containing(
-                                turn.canonIndex() );
-                CanonHoleDetail hole = flopDet.holeDetail();
-
-                Odds predictedOdds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        hole.example(),
-                        new Community(flopDet.a(),
-                                      flopDet.b(),
-                                      flopDet.c()));
-
-                assert givenOdds.equals( predictedOdds );
-            }});
-    }
-
-    public static void testHoleConcistency()
-    {
-        HandEnum.flops(
-                new PermisiveFilter<CanonHole>("%1$s"),
-                new PermisiveFilter<Flop>(),
-                new Traverser<Flop>() {
-            public void traverse(Flop flop) {
-
-                Odds givenOdds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        flop.hole().reify(), Community.PREFLOP);
-
-                Odds predictedOdds = PreciseHeadsUpOdds.INSTANCE.compute(
-                        HoleDetails.lookup(
-                                (char) FlopDetails.lookup(
-                                        flop.canonIndex()).holeDetail().canonIndex()
-                        ).example(),
-                        Community.PREFLOP);
-
-                assert givenOdds.equals( predictedOdds );
-            }});
-    }
-
-
-
-    //--------------------------------------------------------------------
     private static final File DIR =
             Dirs.get("lookup/canon/detail/example/");
 

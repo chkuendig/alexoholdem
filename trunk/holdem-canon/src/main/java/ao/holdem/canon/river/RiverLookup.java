@@ -20,13 +20,6 @@ import org.apache.log4j.Logger;
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        offset(55190537);
-    }
-
-
-    //--------------------------------------------------------------------
     public static long offset(int canonTurn)
     {
         int  index = canonTurn / CHUNK;

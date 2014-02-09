@@ -33,22 +33,6 @@ import java.util.Set;
 
 
     //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-//        rawCases();
-//        compressRawCases();
-        //computeEncoding();
-
-        long size = 0;
-        for (byte caseOrdinal : CASES)
-        {
-            size += RiverCaseSet.VALUES[ caseOrdinal ].size();
-        }
-        LOG.info(size);
-    }
-
-
-    //--------------------------------------------------------------------
     private static byte[] rawCases()
     {
         LOG.info("rawCases");
