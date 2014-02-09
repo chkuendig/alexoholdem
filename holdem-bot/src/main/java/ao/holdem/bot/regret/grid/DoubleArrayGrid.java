@@ -1,4 +1,4 @@
-package ao.regret.holdem.grid;
+package ao.holdem.bot.regret.grid;
 
 import ao.util.persist.PersistentDoubles;
 

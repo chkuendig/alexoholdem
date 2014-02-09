@@ -86,7 +86,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ao.bucket.abstraction.AbstractionOptimizer</mainClass>
+                            <mainClass>ao.holdem.bot.regret.AbstractionOptimizer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

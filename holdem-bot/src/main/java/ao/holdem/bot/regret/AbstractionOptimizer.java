@@ -1,4 +1,4 @@
-package ao.bucket.abstraction;
+package ao.holdem.bot.regret;
 
 import ao.bucket.abstraction.access.BucketDecoder;
 import ao.bucket.abstraction.access.odds.BucketOdds;

@@ -1,7 +1,7 @@
 package ao.holdem.bot.limit_cfr;
 
 import ao.holdem.bot.AbstractPlayer;
-import ao.bucket.abstraction.HoldemAbstraction;
+import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.bucket.index.canon.flop.Flop;
 import ao.bucket.index.canon.hole.CanonHole;
 import ao.bucket.index.canon.river.River;
@@ -17,7 +17,7 @@ import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.odds.eval.HandRank;
 import ao.odds.eval.eval_567.EvalSlow;
-import ao.regret.holdem.InfoMatrix;
+import ao.holdem.bot.regret.InfoMatrix;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -158,9 +158,10 @@ public class CfrBot2 extends AbstractPlayer
         prevNode = gamePath;
 
         findBucket(cards, state.round());
+
         InfoMatrix.InfoSet infoSet =
-                gamePath.infoSet(roundBucket,
-                        ABS.infoPart(NAME, true, DOUBLE_PRECISION));
+                ABS.infoPart(NAME, true, DOUBLE_PRECISION)
+                    .infoSet(gamePath, roundBucket);
 
         AbstractAction act = infoSet.nextProbableAction();
         Action realAction = state.reify( act.toFallbackAction() );

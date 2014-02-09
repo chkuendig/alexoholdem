@@ -1,4 +1,4 @@
-package ao.bucket.abstraction;
+package ao.holdem.bot.regret;
 
 import ao.Infrastructure;
 import ao.bucket.abstraction.access.BucketDecoder;
@@ -10,7 +10,6 @@ import ao.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.bucket.abstraction.bucketize.build.BucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
 import ao.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.regret.holdem.InfoPart;
 import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
 
