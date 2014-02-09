@@ -1,4 +1,4 @@
-package ao.holdem.abs.bucket.index.test;
+package ao.holdem.abs.calc;
 
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.hole.CanonHole;
@@ -29,8 +29,8 @@ public class CanonIndexTest
 
     public static void main(String[] args)
     {
-//        testFill();
-        testConsistency();
+        testFill();
+//        testConsistency();
     }
 
 

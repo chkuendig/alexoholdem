@@ -55,7 +55,6 @@ public class GeneralHistFinder implements HistFinder
     public StrengthHist compute(Hole      hole,
                                 Community community)
     {
-
         Card cards[] = initKnownCardsToEnd(hole, community);
         return rollOutCommunity(
                 cards,

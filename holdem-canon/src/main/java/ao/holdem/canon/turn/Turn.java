@@ -20,9 +20,10 @@ public class Turn implements CanonIndexed
 {
     //--------------------------------------------------------------------
     public  static final int    CANONS = 55190538;
+
+
     //--------------------------------------------------------------------
     private final CanonCard HOLE[],
-//                            FLOP[],
                             TURN;
     private final Flop      FLOP_CARDS;
     private final Card      TURN_CARD;

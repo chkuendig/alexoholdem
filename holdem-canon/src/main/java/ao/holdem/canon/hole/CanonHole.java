@@ -28,7 +28,7 @@ public class CanonHole implements CanonIndexed
     //--------------------------------------------------------------------
     public static CanonHole create(Hole hole)
     {
-        return create(hole.a(), hole.a());
+        return create(hole.a(), hole.b());
     }
 
     public static CanonHole create(Card a, Card b)

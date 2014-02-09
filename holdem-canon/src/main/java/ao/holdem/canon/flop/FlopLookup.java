@@ -135,15 +135,6 @@ import java.util.Arrays;
         return offsets;
     }
 
-    public static void main(String[] args)
-    {
-        for (int[] subOffsets : OFFSETS)
-        {
-            LOG.info(
-                    Arrays.toString( subOffsets ));
-        }
-    }
-
 
     //--------------------------------------------------------------------
     public static int globalOffset(CanonHole hole, FlopCase flopCase)

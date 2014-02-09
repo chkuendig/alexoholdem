@@ -41,11 +41,6 @@ import java.util.Set;
         CODED_OFFSET = encodeOffsets(caseSets);
     }
 
-    public static void main(String args[])
-    {
-        // initialize
-    }
-
 
     //--------------------------------------------------------------------
     private static TurnCase[][] retrieveOrCalculateCaseSets()
