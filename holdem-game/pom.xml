@@ -57,11 +57,11 @@
             <artifactId>je</artifactId>
             <version>5.0.73</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.coconut.forkjoin</groupId>
             <artifactId>jsr166y</artifactId>
             <version>070108</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>gnu</groupId>
             <artifactId>cajo</artifactId>

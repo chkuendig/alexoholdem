@@ -3,10 +3,8 @@ package ao.regret.holdem.mono;
 import ao.bucket.abstraction.access.odds.IBucketOdds;
 import ao.regret.holdem.InfoPart;
 import ao.regret.holdem.IterativeMinimizer;
-import ao.regret.holdem.parallel.ItrParAvgStrat;
 import ao.regret.holdem.serial.AvgStrat;
 import ao.regret.holdem.serial.RegMin;
-import jsr166y.forkjoin.ForkJoinPool;
 
 /**
  * User: alex
@@ -24,17 +22,6 @@ public class ChainMinimizer implements IterativeMinimizer
         return new ChainMinimizer(
                 new RegMin(info, odds, aggression),
                 new AvgStrat(info));
-    }
-
-    public static IterativeMinimizer newParAvgStrat(
-            InfoPart     info,
-            IBucketOdds  odds,
-            double       aggression,
-            ForkJoinPool exec)
-    {
-        return new ChainMinimizer(
-                new RegMin(info, odds, aggression),
-                new ItrParAvgStrat(exec, info));
     }
 
 
