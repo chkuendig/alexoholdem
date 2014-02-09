@@ -38,12 +38,6 @@
             <version>${ao-ai.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>ao.ai.cfr</groupId>
-            <artifactId>ao-ai-cfr</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
 
         <!-- POKER DEPENDENCIES -->
         <dependency>

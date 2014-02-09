@@ -1,4 +1,4 @@
-package ao.ai.gen;
+package ao.holdem.gen;
 
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.act.AbstractAction;
