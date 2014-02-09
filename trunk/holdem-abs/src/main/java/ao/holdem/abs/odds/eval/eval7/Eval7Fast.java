@@ -2,7 +2,7 @@ package ao.holdem.abs.odds.eval.eval7;
 
 
 import ao.holdem.model.card.Card;
-import ao.holdem.engine.state.eval.EvalSlow;
+import ao.holdem.engine.state.eval.EvalBy5;
 import ao.util.math.stats.Combiner;
 import ao.util.math.stats.Combo;
 
@@ -112,7 +112,7 @@ public class Eval7Fast
             int index = Eval7FastLookup.index52c7(mask(handOf7));
             if (isNull(vals, index))
             {
-                set(vals, index, EvalSlow.valueOf( handOf7 ));
+                set(vals, index, EvalBy5.valueOf(handOf7));
             }
         }
     }
@@ -152,7 +152,7 @@ public class Eval7Fast
         int index = Eval7FastLookup.index52c7( mask(sevenCards) );
         short val = get(values, index);
         return val == -1
-                ? set(values, index, EvalSlow.valueOf( sevenCards ))
+                ? set(values, index, EvalBy5.valueOf(sevenCards))
                 : val;
     }
 
@@ -165,7 +165,7 @@ public class Eval7Fast
         short val = get(values, index);
         return val == -1
                 ? set(values, index,
-                      EvalSlow.valueOf(c1, c2, c3, c4, c5, c6, c7))
+                      EvalBy5.valueOf(c1, c2, c3, c4, c5, c6, c7))
                 : val;
     }
 

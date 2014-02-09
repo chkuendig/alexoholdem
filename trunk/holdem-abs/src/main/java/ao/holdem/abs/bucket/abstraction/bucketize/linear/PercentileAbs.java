@@ -5,9 +5,8 @@ import ao.holdem.abs.bucket.abstraction.alloc.BucketAllocator;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.ScalarBucketizer;
 import ao.holdem.abs.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.holdem.model.Round;
-import com.google.inject.internal.Function;
-import com.google.inject.internal.MapMaker;
-import com.google.inject.internal.Nullable;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -26,19 +25,15 @@ public class PercentileAbs implements ScalarBucketizer
 
 
     //--------------------------------------------------------------------
-    private static final ConcurrentMap<
-            BucketTree.Branch, IndexedStrengthList> sortedDetails =
-                new MapMaker()
-                            .softValues()
-                            .makeComputingMap(
-                        new Function<BucketTree.Branch,
-                                     IndexedStrengthList>() {
-                    @Override public IndexedStrengthList apply(
-                            @Nullable BucketTree.Branch branch) {
-                        LOG.info("computing: " + branch);
-                        return computeSortedDetails(branch);
-                    }
-                });
+    private static final ConcurrentMap<BucketTree.Branch, IndexedStrengthList> sortedDetails =
+            CacheBuilder.newBuilder()
+            .softValues()
+            .build(new CacheLoader<BucketTree.Branch, IndexedStrengthList>() {
+                @Override public IndexedStrengthList load(BucketTree.Branch branch) {
+                    LOG.info("computing: " + branch);
+                    return computeSortedDetails(branch);
+                }
+            }).asMap();
 
     private static IndexedStrengthList computeSortedDetails(
             BucketTree.Branch branch)

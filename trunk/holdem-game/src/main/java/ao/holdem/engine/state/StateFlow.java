@@ -1,6 +1,7 @@
 package ao.holdem.engine.state;
 
 //import ao.holdem.engine.analysis.Analysis;
+import ao.holdem.engine.state.eval.EvalBy5;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
@@ -10,7 +11,6 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.replay.Replay;
-import ao.holdem.engine.state.eval.EvalSlow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,7 +175,7 @@ public class StateFlow
 
                 eval[5] = hole.a();
                 eval[6] = hole.b();
-                short handRank = EvalSlow.valueOf(eval);
+                short handRank = EvalBy5.valueOf(eval);
 
                 if (handRank > topHandRank)
                 {

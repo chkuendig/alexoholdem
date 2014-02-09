@@ -1,7 +1,7 @@
 package ao.irc;
 
 import ao.holdem.model.replay.Replay;
-import com.google.inject.Inject;
+import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -17,8 +17,12 @@ public class IrcRunner
 
 
     //--------------------------------------------------------------------
-    @Inject IrcHistorian   historian;
+    private final IrcHistorian historian;
 //    @Inject HandHistoryDao hands;
+
+    public IrcRunner(IrcHistorian historian) {
+        this.historian = historian;
+    }
 
 
     //--------------------------------------------------------------------
@@ -29,15 +33,14 @@ public class IrcRunner
         for (Replay hist :
                 historian.fromSnapshot(ircDir))
         {
-//            hands.store( hist );
-//            System.out.println("hist = " + hist);
+            System.out.println("hist = " + hist);
         }
     }
 
     public void runOnSubdirs(String ircDir)
     {
         File dir = new File(ircDir);
-        assert dir.isDirectory();
+        Preconditions.checkArgument(dir.isDirectory());
 
         for (File subdir : dir.listFiles())
         {
@@ -49,5 +52,15 @@ public class IrcRunner
             long end = System.currentTimeMillis();
             LOG.info("took " + (end - start));
         }
+    }
+
+
+    public static void main(String[] args) {
+        IrcHistorian historian = new IrcHistorian();
+        IrcRunner runner = new IrcRunner(historian);
+
+//        runner.runOnSubdirs(
+//                "C:\\alex\\data\\limit_holdem\\holdem");
+//                "C:\\alex\\data\\irc_poker\\holdem3");
     }
 }

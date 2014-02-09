@@ -1,5 +1,6 @@
 package ao.holdem.abs.odds.agglom.hist;
 
+import ao.holdem.engine.state.eval.HandStrength;
 import ao.holdem.persist.GenericBinding;
 import ao.holdem.engine.state.eval.Eval5;
 import ao.util.data.Arrs;
@@ -32,7 +33,7 @@ public class StrengthHist implements Comparable<StrengthHist>
     //--------------------------------------------------------------------
     public StrengthHist()
     {
-        this( new int[Eval5.VALUE_COUNT] );
+        this( new int[HandStrength.COUNT] );
     }
     private StrengthHist(int hist[])
     {
@@ -141,13 +142,13 @@ public class StrengthHist implements Comparable<StrengthHist>
 
 
     //--------------------------------------------------------------------
-    public static final int     BINDING_SIZE = Eval5.VALUE_COUNT * 4;
+    public static final int     BINDING_SIZE = HandStrength.COUNT * 4;
     public static final Binding BINDING      = new Binding();
     public static class Binding extends GenericBinding<StrengthHist>
     {
         public StrengthHist read(TupleInput input)
         {
-            int hist[] = new int[ Eval5.VALUE_COUNT ];
+            int hist[] = new int[ HandStrength.COUNT ];
             for (int i = 0; i < hist.length; i++) {
                 hist[i] = input.readInt();
             }

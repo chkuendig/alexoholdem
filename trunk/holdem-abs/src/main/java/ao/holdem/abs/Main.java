@@ -10,7 +10,7 @@ import ao.holdem.abs.odds.agglom.impl.ApproximateOddFinder;
 import ao.holdem.engine.state.eval.HandRank;
 import ao.holdem.abs.odds.eval.eval7.Eval7FastLookup;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
-import ao.holdem.engine.state.eval.EvalSlow;
+import ao.holdem.engine.state.eval.EvalBy5;
 import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
@@ -317,11 +317,11 @@ public class Main
 //                }
 //            });
 
-            if (value != EvalSlow.valueOf(
+            if (value != EvalBy5.valueOf(
                     card0, card1, card2, card3, card4, card5, card6))
             {
                 LOG.error("WTF!!!!!\t" + value + "\t" +
-                        EvalSlow.valueOf(card0, card1, card2,
+                        EvalBy5.valueOf(card0, card1, card2,
                                 card3, card4, card5, card6));
             }
             frequency[ HandRank.fromValue(value).ordinal() ]++;
@@ -354,10 +354,10 @@ public class Main
 //            int value = EvalSlow.valueOf(hand);
             short value = Eval7Faster.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
-            if (value != EvalSlow.valueOf(hand))
+            if (value != EvalBy5.valueOf(hand))
             {
                 LOG.info(Arrays.toString(hand) + "\t" +
-                        value + "\t" + EvalSlow.valueOf(hand));
+                        value + "\t" + EvalBy5.valueOf(hand));
                 Eval7Faster.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4], hand[5]);
             }
@@ -384,7 +384,7 @@ public class Main
 
             Card hand[] = permuter.nextElement();
 
-            short value = EvalSlow.valueOf(hand);
+            short value = EvalBy5.valueOf(hand);
 //            int value = Eval7Faster.valueOf(
 //                            hand[0], hand[1], hand[2], hand[3], hand[4]);
             frequency[ HandRank.fromValue(value).ordinal() ]++;

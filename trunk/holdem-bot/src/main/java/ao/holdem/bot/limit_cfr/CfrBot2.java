@@ -16,7 +16,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.engine.state.eval.HandRank;
-import ao.holdem.engine.state.eval.EvalSlow;
+import ao.holdem.engine.state.eval.EvalBy5;
 import ao.holdem.bot.regret.InfoMatrix;
 import org.apache.log4j.Logger;
 
@@ -110,7 +110,7 @@ public class CfrBot2 extends AbstractPlayer
     public static String handType(CardSequence cards) {
         if (! cards.community().hasFlop()) return "";
 
-        short value = EvalSlow.valueOf(
+        short value = EvalBy5.valueOf(
                 CardSequence.Util.knowCards(cards));
         return "(" + HandRank.fromValue( value ) +")";
     }

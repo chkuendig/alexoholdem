@@ -3,68 +3,30 @@ package ao.holdem.engine.state.eval;
 import ao.util.persist.PersistentShorts;
 
 /**
- * see
+ * See:
  *  http://www.suffecool.net/poker/code/arrays.h
- *  http://www.geocities.com/psenzee/code/fast_eval.c
+ *  http://www.psenzee.com/code/fast_eval.c
  */
-/*package-private*/ class Eval5Lookup
-{
-    //--------------------------------------------------------------------
-//    private static final String DIR        = Infrastructure.path(
-//                                             "lookup/eval/eval5/");
-//    private static final String F_UNIQUE5  = DIR + "unique5.txt";
-//    private static final String F_FLUSHES  = DIR + "flushes.txt";
-//    private static final String F_HASH_ADJ = DIR + "hash_adjust.txt";
-//    private static final String F_HASH_VAL = DIR + "hash_vals.txt";
-
-//    private static final String DIR        = Infrastructure.path(
-//                                             "resources/eval5/");
-
-    private static final String DIR        =
-            Eval5Lookup.class.getResource("/eval/eval5/").getPath();
-    private static final String F_UNIQUE5  = DIR + "unique5.short";
-    private static final String F_FLUSHES  = DIR + "flushes.short";
-    private static final String F_HASH_ADJ = DIR + "hash_adjust.short";
-    private static final String F_HASH_VAL = DIR + "hash_vals.short";
-
-
-    //--------------------------------------------------------------------
-    private Eval5Lookup() {}
-
-
-    //--------------------------------------------------------------------
-    private final static short flushes[];
-    private final static short hashAdjust[];
-    private final static short hashVals[];
-    private final static short unique5[];
-
-    static
-    {
-        unique5    = PersistentShorts.retrieve(F_UNIQUE5);
-        flushes    = PersistentShorts.retrieve(F_FLUSHES);
-        hashAdjust = PersistentShorts.retrieve(F_HASH_ADJ);
-        hashVals   = PersistentShorts.retrieve(F_HASH_VAL);
-    }
-
-
+enum Eval5Lookup
+{;
     //--------------------------------------------------------------------
     public static short unique5(int index)
     {
-        return unique5[ index ];
+        return Eval5Const.UNIQUE_5[ index ];
     }
 
     
     //--------------------------------------------------------------------
     public static short flushes(int index)
     {
-        return flushes[ index ];
+        return Eval5Const.FLUSHES[ index ];
     }
     
 
     //--------------------------------------------------------------------
     public static short remainingHands(int primeProduct)
     {
-        return hashVals[ findFast(primeProduct) ];
+        return Eval5Const.HASH_VALUES[ findFast(primeProduct) ];
     }
     private static int findFast(int u)
     {
@@ -83,6 +45,6 @@ import ao.util.persist.PersistentShorts;
                      ((adjusted << 2) & 0xFFFFFFFFL)
                     ) & 0xFFFFFFFFL
                    ) >> 19);
-        return (int)(a ^ hashAdjust[(int) b]);
+        return (int)(a ^ Eval5Const.HASH_ADJUST[(int) b]);
     }
 }

@@ -1,5 +1,6 @@
 package ao.holdem.abs.bucket.abstraction.access.odds;
 
+import ao.holdem.engine.state.eval.HandStrength;
 import ao.holdem.persist.GenericBinding;
 import ao.holdem.abs.odds.agglom.hist.CompactRiverStrengths;
 import ao.holdem.abs.odds.agglom.hist.StrengthHist;
@@ -38,7 +39,7 @@ public class RiverHist
     {
         this();
 
-        for (short i = 0; i < Eval5.VALUE_COUNT; i++)
+        for (short i = 0; i < HandStrength.COUNT; i++)
         {
             short riverI = CompactRiverStrengths.compact(i);
             if (riverI != -1)
