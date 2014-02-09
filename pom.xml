@@ -22,14 +22,15 @@
 
 
     <!--====================================================================-->
-    <name>AlexO Hold'em</name>
+    <name>Texas Hold'em</name>
     <url>http://code.google.com/p/alexoholdem</url>
 
 
     <!--====================================================================-->
     <modules>
         <module>holdem-game</module>
-        <module>game-ai</module>
+        <module>holdem-bot</module>
+        <module>holdem-gen</module>
     </modules>
 
 
