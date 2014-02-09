@@ -31,6 +31,7 @@
         <module>holdem-game</module>
         <module>holdem-bot</module>
         <module>holdem-gen</module>
+        <module>holdem-abs</module>
     </modules>
 
 

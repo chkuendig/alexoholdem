@@ -20,11 +20,50 @@
 
 
     <!--====================================================================-->
+    <name>Texas Hold'em : Bot</name>
+
+
+    <!--====================================================================-->
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-game</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ao.ai</groupId>
+            <artifactId>ai-classification</artifactId>
+            <version>${ao-ai.version}</version>
+        </dependency>
     </dependencies>
 
+
+    <!--====================================================================-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>ao.holdem.bot.regret.AbstractionOptimizer</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

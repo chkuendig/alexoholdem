@@ -16,24 +16,10 @@
 
 
     <!--====================================================================-->
-    <artifactId>holdem-gen</artifactId>
+    <artifactId>holdem-abs</artifactId>
 
 
     <!--====================================================================-->
-    <name>Texas Hold'em : General</name>
+    <name>Texas Hold'em : Abstraction</name>
 
-
-    <!--====================================================================-->
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>holdem-game</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ao.ai.cfr</groupId>
-            <artifactId>ao-ai-cfr</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>
