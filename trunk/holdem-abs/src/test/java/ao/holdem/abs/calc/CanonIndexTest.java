@@ -30,7 +30,7 @@ public class CanonIndexTest
     public static void main(String[] args)
     {
         testFill();
-//        testConsistency();
+        testConsistency();
     }
 
 

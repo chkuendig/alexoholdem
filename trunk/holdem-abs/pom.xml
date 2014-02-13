@@ -33,5 +33,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-canon</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge</groupId>
+            <artifactId>lpsolve</artifactId>
+            <version>55j</version>
+        </dependency>
     </dependencies>
 </project>

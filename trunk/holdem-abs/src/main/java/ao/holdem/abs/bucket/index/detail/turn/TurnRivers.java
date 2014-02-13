@@ -18,11 +18,9 @@ import java.util.Arrays;
  * Date: Feb 10, 2009
  * Time: 5:10:31 PM
  */
-public class TurnRivers
-{
+public enum TurnRivers
+{;
     //--------------------------------------------------------------------
-    private TurnRivers() {}
-
     private static final Logger LOG =
             Logger.getLogger(TurnRivers.class);
 
@@ -136,26 +134,5 @@ public class TurnRivers
             }
         }
         return -1;
-    }
-
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-//        System.out.println(
-//                rangeOf(TurnLookup.CANONS - 1));
-//        System.out.println(
-//                turnFor(RiverLookup.CANONS - 1));
-
-//        for (long river = 0; river < RiverLookup.CANONS; river++)
-//        {
-//            if (river % 10000000 == 0) System.out.print(".");
-//
-//            int turn = turnFor(river);
-//            if (turn == -1) {
-//                System.out.println("err for: " + river);
-//            }
-//        }
     }
 }

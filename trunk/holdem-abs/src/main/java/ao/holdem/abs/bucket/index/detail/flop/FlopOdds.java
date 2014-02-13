@@ -17,47 +17,9 @@ import java.util.Arrays;
  * Date: Jan 23, 2009
  * Time: 2:20:04 PM
  */
-public class FlopOdds
-{
+public enum FlopOdds
+{;
     //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        long minWins = Integer.MAX_VALUE;
-        long maxWins = Integer.MIN_VALUE;
-
-        long minLose = Integer.MAX_VALUE;
-        long maxLose = Integer.MIN_VALUE;
-
-        long minTies = Integer.MAX_VALUE;
-        long maxTies = Integer.MIN_VALUE;
-
-        for (int i = 0; i < Flop.CANONS; i++)
-        {
-            Odds odds = lookup(i);
-
-            minWins = Math.min(minWins, odds.winOdds());
-            maxWins = Math.max(maxWins, odds.winOdds());
-
-            minLose = Math.min(minLose, odds.loseOdds());
-            maxLose = Math.max(maxLose, odds.loseOdds());
-
-            minTies = Math.min(minTies, odds.splitOdds());
-            maxTies = Math.max(maxTies, odds.splitOdds());
-        }
-
-        LOG.info("minWins = " + minWins);
-        LOG.info("maxWins = " + maxWins);
-
-        LOG.info("minLose = " + minLose);
-        LOG.info("maxLose = " + maxLose);
-
-        LOG.info("minTies = " + minTies);
-        LOG.info("maxTies = " + maxTies);
-    }
-
-
-    //--------------------------------------------------------------------
-    private FlopOdds() {}
     private static final Logger LOG =
             Logger.getLogger(FlopOdds.class);
 

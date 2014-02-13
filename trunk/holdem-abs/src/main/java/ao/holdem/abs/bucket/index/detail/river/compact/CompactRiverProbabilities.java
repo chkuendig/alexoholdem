@@ -15,26 +15,14 @@ import java.io.File;
 import java.util.Arrays;
 
 /**
- * User: alex
  * Date: 1-Jul-2009
  * Time: 5:58:02 PM
  */
-public class CompactRiverProbabilities
-{
+public enum CompactRiverProbabilities
+{;
     //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(CompactRiverProbabilities.class);
-
-    private CompactRiverProbabilities() {}
-
-    public static void main(String[] args) {
-        // this fails because not all
-        //   used probabilities are consecutive
-        
-//        for (int raw = 0; raw < ProbabilityEncoding.COUNT; raw++) {
-//            LOG.info(raw + "\t" + (int) compact((char) raw));
-//        }
-    }
 
 
     //--------------------------------------------------------------------

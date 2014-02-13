@@ -12,25 +12,12 @@ import java.io.File;
 import java.util.BitSet;
 
 /**
- * User: alex
  * Date: 9-Jul-2009
  * Time: 10:20:38 PM
  */
-public class CompactRiverCounts
-{
+public enum CompactRiverCounts
+{;
     //--------------------------------------------------------------------
-    public static void main(String[] args) {
-        for (int i = 0;
-                 i < CompactRiverCounts.NUM_COUNTS;
-                 i++) {
-            LOG.info(i + "\t" + CompactRiverCounts.count(i));
-        }
-    }
-
-
-    //--------------------------------------------------------------------
-    private CompactRiverCounts() {}
-
     private static final Logger LOG =
             Logger.getLogger(CompactRiverCounts.class);
 

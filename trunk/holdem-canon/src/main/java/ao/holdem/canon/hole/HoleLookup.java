@@ -11,13 +11,11 @@ import java.util.Arrays;
  * Date: Jan 21, 2009
  * Time: 12:44:16 PM
  */
-public class HoleLookup
-{
+public enum HoleLookup
+{;
     //--------------------------------------------------------------------
     private static final int PAIR_COUNT             = 13;
     private static final int PAIR_PLUS_SUITED_COUNT = PAIR_COUNT + 78;
-
-    private HoleLookup() {}
 
 
     //--------------------------------------------------------------------

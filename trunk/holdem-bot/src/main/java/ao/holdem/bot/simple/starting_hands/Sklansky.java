@@ -7,10 +7,11 @@ import static ao.holdem.model.card.Rank.*;
 /**
  *
  */
-public class Sklansky
-{
+public enum Sklansky
+{;
     //--------------------------------------------------------------------
-    private Sklansky() {}
+    public static final int LOW  = 1;
+    public static final int HIGH = 9;
 
 
     //--------------------------------------------------------------------
@@ -18,7 +19,7 @@ public class Sklansky
     // - if it doesn't say "suited", does that mean its unsuited,
     //                               or that suit doesn't matter?
     //      ^ doesn't actually matter, coz a suited variant would
-    //          always be slurped up by a higher sklansky group.
+    //          always be slurped up by a higher Sklansky group.
 
     public static int groupOf(Hole hole)
     {

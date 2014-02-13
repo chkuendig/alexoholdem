@@ -62,10 +62,5 @@
             <artifactId>cajo</artifactId>
             <version>1.139</version>
         </dependency>
-        <dependency>
-            <groupId>net.sourceforge</groupId>
-            <artifactId>lpsolve</artifactId>
-            <version>55j</version>
-        </dependency>
     </dependencies>
 </project>
