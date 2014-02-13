@@ -30,63 +30,9 @@ import java.util.List;
  * Date: Feb 10, 2009
  * Time: 5:43:45 PM
  */
-public class RiverEvalLookup
-{
+public enum RiverEvalLookup
+{;
     //--------------------------------------------------------------------
-    public static void main(String[] args) throws IOException
-    {
-//        final long   start      = System.currentTimeMillis();
-//        final long[] totalCount = {0};
-//        final long[] seen       = new long[ 25 ];
-//        RiverEvalLookup.traverse(new AbsVisitor() {
-//            public void traverse(
-//                    long canonIndex, short strength, byte count) {
-//                seen[ count ]++;
-//                totalCount[0] += count;
-//            }
-//        });
-//        System.out.println("total: " + totalCount[0]);
-//        System.out.println("took: "  +
-//                           (System.currentTimeMillis() - start));
-//        System.out.println("distribution: "  +
-//                           Arrays.toString(seen));
-
-        final int byStrength[] = new int[ Character.MAX_VALUE + 1];
-        RiverEvalLookup.traverse(
-            new CanonRange[]{CanonRange.newFromTo(
-                    0, River.CANONS - 1)},
-            new VsRandomVisitor() {
-                public void traverse(
-                        long   canonIndex,
-                        double strengthVsRandom,
-                        byte   represents) {
-
-                    char strAsChar =
-                            ProbabilityEncoding.encodeWinProb(strengthVsRandom);
-
-                    byStrength[strAsChar] += represents;
-
-//                    River r = RiverExamples.examplesOf(
-//                                             canonIndex).get(0);
-//                    char verify = (char)(Character.MAX_VALUE *
-//                            r.vsRandom(new PreciseHeadsUpOdds()));
-//
-//                    System.out.println(
-//                            canonIndex       + "\t" +
-//                            strengthVsRandom + "\t" +
-//                            (int) strAsChar  + "\t" +
-//                            (int) verify);
-//                    assert strAsChar == verify;
-                }
-            });
-
-        LOG.info(Arrays.toString( byStrength ));
-    }
-
-
-    //--------------------------------------------------------------------
-    private RiverEvalLookup() {}
-
     private static final Logger LOG =
             Logger.getLogger(RiverEvalLookup.class);
 

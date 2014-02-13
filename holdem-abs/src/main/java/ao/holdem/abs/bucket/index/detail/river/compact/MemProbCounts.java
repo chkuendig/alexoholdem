@@ -12,46 +12,12 @@ import org.apache.log4j.Logger;
 import java.io.File;
 
 /**
- * User: alex
  * Date: 9-Jul-2009
  * Time: 10:16:28 PM
  */
-public class MemProbCounts
-{
+public enum MemProbCounts
+{;
     //--------------------------------------------------------------------
-    public static void main(String[] args) {
-        long totalCount = 0;
-        for (long r = 0; r < River.CANONS; r++) {
-            totalCount += MemProbCounts.riverCount(r);
-        }
-        LOG.info("totalCount: " + totalCount);
-
-        RiverEvalLookup.traverse(
-            new CanonRange[]{CanonRange.newFromCount(
-//                    (long) Integer.MAX_VALUE - 1, 100
-                    0, River.CANONS
-            )},
-            new RiverEvalLookup.VsRandomVisitor() {
-                public void traverse(
-                        long   canonIndex,
-                        double strengthVsRandom,
-                        byte   represents)
-                {
-                    byte rep = MemProbCounts.riverCount(canonIndex);
-                    if (rep != represents)
-                    {
-                        LOG.error(canonIndex +" err: " +
-                                  rep + " vs " + represents);
-                        System.exit(1);
-                    }
-                }
-            });
-    }
-
-
-    //--------------------------------------------------------------------
-    private MemProbCounts() {}
-
     private static final Logger LOG =
             Logger.getLogger(MemProbCounts.class);
 

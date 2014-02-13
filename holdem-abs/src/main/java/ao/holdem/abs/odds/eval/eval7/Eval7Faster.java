@@ -8,6 +8,9 @@ import ao.holdem.engine.state.eval.Eval5;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
+import com.google.common.collect.EnumMultiset;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +38,9 @@ public class Eval7Faster
 	private final static int NUM_SUITS = 4;
 	private final static int NUM_RANKS = 13;
 
-	private static int[]   handRanks   = null; // hand rank compact
+    private static boolean retrievedOrComputed = false;
+
+    private static int[]   handRanks   = null; // hand rank compact
 	private static boolean verbose     = true; // toggles verbose mode
 
 	private static int[]  hand; 			   // cards in a hand
@@ -50,13 +55,12 @@ public class Eval7Faster
 
 
     //--------------------------------------------------------------------
-    static
+    static void retrieveOrComputeIfRequired()
     {
-        retrieveOrCompute();
-    }
+        if (retrievedOrComputed) {
+            return;
+        }
 
-    private static void retrieveOrCompute()
-    {
         LOG.info("retrieveOrCompute");
 
         handRanks = PersistentInts.retrieve(F_RANK);
@@ -80,6 +84,8 @@ public class Eval7Faster
         {
             LOG.info("retrieved");
         }
+
+        retrievedOrComputed = true;
     }
 
 
@@ -338,20 +344,6 @@ public class Eval7Faster
         return handRank;
 	}
 
-//    private static boolean lastCardIsUnique(
-//            Card cards[], int atIndex)
-//    {
-//        Card unique = cards[ atIndex ];
-//        for (int i = 0; i < atIndex; i++)
-//        {
-//            if (unique == cards[i])
-//            {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
 		
     //--------------------------------------------------------------------
 	private static void generateTables() {
@@ -445,6 +437,8 @@ public class Eval7Faster
             int invIndex1, int invIndex2, int invIndex3,
             int invIndex4, int invIndex5, int invIndex6)
     {
+        retrieveOrComputeIfRequired();
+
         return (short) (handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
                     53 + invIndex1] + invIndex2] + invIndex3] + invIndex4]
@@ -470,8 +464,9 @@ public class Eval7Faster
             int invIndex1, int invIndex2, int invIndex3, int invIndex4,
             int invIndex5, int invIndex6, int invIndex7)
     {
-    // HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
+        retrieveOrComputeIfRequired();
 
+        // HR(HR(HR(HR(c1 * 140660 - c2 * 2704 + c3 * 52 - c4) + c5) + c6) + c7)
         return (short) handRanks[handRanks[handRanks[handRanks[
                 handRanks[handRanks[handRanks[
                     53 + invIndex1] + invIndex2] + invIndex3] + invIndex4]
@@ -544,6 +539,7 @@ public class Eval7Faster
             int invIndex1, int invIndex2, int invIndex3,
             int invIndex4, int invIndex5, int invIndex6)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[shortcutFor(
                 invIndex1, invIndex2, invIndex3, invIndex4, invIndex5)
                  + invIndex6];
@@ -552,6 +548,7 @@ public class Eval7Faster
             int invIndex1, int invIndex2,
             int invIndex3, int invIndex4, int invIndex5)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[
                 shortcutFor(invIndex1, invIndex2, invIndex3, invIndex4) +
                     invIndex5];
@@ -559,23 +556,27 @@ public class Eval7Faster
     public static int shortcutFor(
             int invIndexA, int invIndexB, int invIndexC, int invIndexD)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[shortcutFor(invIndexA, invIndexB, invIndexC) +
                             invIndexD];
     }
     public static int shortcutFor(
             int invIndexA, int invIndexB, int invIndexC)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[shortcutFor(invIndexA, invIndexB) +
                          invIndexC];
     }
     public static int shortcutFor(
             int invIndexA, int invIndexB)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[handRanks[
                     53 + invIndexA] + invIndexB];
     }
     public static int nextShortcut(int from, int invIndex)
     {
+        retrieveOrComputeIfRequired();
         return handRanks[from + invIndex];
     }
 
@@ -595,6 +596,7 @@ public class Eval7Faster
     public static short fastValueOf(
             int shortcut, int invIndexA, int invIndexB)
     {
+        retrieveOrComputeIfRequired();
         return (short) handRanks[handRanks[
                         shortcut + invIndexA] + invIndexB];
     }
@@ -602,26 +604,25 @@ public class Eval7Faster
     public static short fastValueOf(
             int shortcut, int invIndex)
     {
+        retrieveOrComputeIfRequired();
         return (short) handRanks[shortcut + invIndex];
     }
 
 
 
     //--------------------------------------------------------------------
-    public static void preCalculate()
+    public static Multiset<HandRank> computeAll()
     {
-        // much faster if called from here (when commented out above)
-//        retrieveOrCompute();
+        retrieveOrComputeIfRequired();
 
         int c0, c1, c2, c3, c4, c5, c6;
         int u0, u1, u2, u3, u4, u5;
 
         if (verbose) {
-            System.out.print(
-                    "Enumerating hand frequencies...");
             startTimer = System.currentTimeMillis();
         }
-        int frequency[] = new int[ HandRank.values().length ];
+
+        Multiset<HandRank> histogram = EnumMultiset.create(HandRank.class);
 
         for (c0 = 1; c0 < 53; c0++) {
             u0 = handRanks[53 + c0];
@@ -637,11 +638,8 @@ public class Eval7Faster
                                 u5 = handRanks[u4 + c5];
                                 for (c6 = c5 + 1; c6 < 53; c6++)
                                 {
-                                    final short value = (short) handRanks[u5 + c6];
-                                    frequency[
-                                            HandRank.fromValue(value)
-                                                    .ordinal()
-                                            ]++;
+                                    short value = (short) handRanks[u5 + c6];
+                                    histogram.add(HandRank.fromValue(value));
                                 }
                             }
                         }
@@ -652,12 +650,9 @@ public class Eval7Faster
 
         if (verbose) {
             stopTimer = System.currentTimeMillis();
-            System.out.printf(
-                    "done.\n\n%35s %f seconds\n\n",
-                    "Time Required:",
-                    ((stopTimer - startTimer) / 1000.0));
+            LOG.info("done");
         }
 
-        System.out.println(Arrays.toString(frequency));
+        return histogram;
     }
 }

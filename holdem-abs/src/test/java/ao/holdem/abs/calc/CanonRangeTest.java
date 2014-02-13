@@ -1,5 +1,7 @@
-package ao.holdem.abs.bucket.index.detail.range;
+package ao.holdem.abs.calc;
 
+import ao.holdem.abs.bucket.index.detail.range.CanonRange;
+import ao.holdem.abs.bucket.index.detail.range.RangeLookup;
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.canon.turn.Turn;
@@ -7,7 +9,6 @@ import ao.holdem.model.Round;
 import org.apache.log4j.Logger;
 
 /**
- * User: alex
  * Date: 1-Aug-2009
  * Time: 4:17:18 PM
  */

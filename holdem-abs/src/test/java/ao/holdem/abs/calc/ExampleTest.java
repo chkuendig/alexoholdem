@@ -24,6 +24,7 @@ public class ExampleTest
     public static void main(String[] args)
     {
         testHoleFlopConcistency();
+        testHoleConcistency();
     }
 
     private static void testHoleFlopConcistency()

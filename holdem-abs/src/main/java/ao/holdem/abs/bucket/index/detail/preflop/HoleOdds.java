@@ -12,52 +12,11 @@ import org.apache.log4j.Logger;
  * Date: Jan 27, 2009
  * Time: 11:02:10 PM
  */
-public class HoleOdds
-{
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        long minWins = Integer.MAX_VALUE;
-        long maxWins = Integer.MIN_VALUE;
-
-        long minLose = Integer.MAX_VALUE;
-        long maxLose = Integer.MIN_VALUE;
-
-        long minTies = Integer.MAX_VALUE;
-        long maxTies = Integer.MIN_VALUE;
-
-        for (int i = 0; i < CanonHole.CANONS; i++)
-        {
-            Odds odds = lookup(i);
-
-            minWins = Math.min(minWins, odds.winOdds());
-            maxWins = Math.max(maxWins, odds.winOdds());
-
-            minLose = Math.min(minLose, odds.loseOdds());
-            maxLose = Math.max(maxLose, odds.loseOdds());
-
-            minTies = Math.min(minTies, odds.splitOdds());
-            maxTies = Math.max(maxTies, odds.splitOdds());
-        }
-
-        LOG.info("minWins = " + minWins);
-        LOG.info("maxWins = " + maxWins);
-
-        LOG.info("minLose = " + minLose);
-        LOG.info("maxLose = " + maxLose);
-
-        LOG.info("minTies = " + minTies);
-        LOG.info("maxTies = " + maxTies);
-    }
-
-
+public enum HoleOdds
+{;
     //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(HoleOdds.class);
-
-
-    //--------------------------------------------------------------------
-    private HoleOdds() {}
 
 
     //--------------------------------------------------------------------

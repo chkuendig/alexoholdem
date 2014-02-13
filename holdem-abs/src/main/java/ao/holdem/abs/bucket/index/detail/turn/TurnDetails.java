@@ -22,43 +22,14 @@ import java.util.List;
  * Date: Jan 9, 2009
  * Time: 12:39:28 PM
  */
-public class TurnDetails
-{
+public enum TurnDetails
+{;
     //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(TurnDetails.class);
 
     private static final File   DIR =
             Dirs.get("lookup/canon/detail/turn/");
-
-    private TurnDetails() {}
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        HandEnum.uniqueTurns(
-                new Traverser<Turn>() {
-            public void traverse(Turn turn) {
-                int index = turn.canonIndex();
-                CanonTurnDetail details = TurnDetails.lookup(index);
-
-                if (details.canonIndex() != index) {
-                    LOG.error("TurnDetailFlyweight index error");
-                }
-                if (((char)(details.strength() * Character.MAX_VALUE)) !=
-                        ((char)(TurnOdds.lookup(index).strengthVsRandom()
-                                  * Character.MAX_VALUE))) {
-                    LOG.error(
-                            "TurnDetailFlyweight strength error: " +
-                            details.strength() + " vs " +
-                            TurnOdds.lookup(index).strengthVsRandom());
-                }
-
-//                System.out.println(
-//                        details.represents());
-            }});
-    }
 
 
     //--------------------------------------------------------------------

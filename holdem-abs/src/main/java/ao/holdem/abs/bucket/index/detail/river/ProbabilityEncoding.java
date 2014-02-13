@@ -7,63 +7,25 @@ import ao.holdem.abs.odds.agglom.OddFinder;
 import ao.holdem.abs.odds.agglom.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.math.stats.Combiner;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 /**
- * User: alex
  * Date: 2-Jun-2009
  * Time: 4:14:23 PM
  */
-public class ProbabilityEncoding
-{
+public enum ProbabilityEncoding
+{;
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(ProbabilityEncoding.class);
-
-
-    private ProbabilityEncoding() {}
+            LoggerFactory.getLogger(ProbabilityEncoding.class);
 
 
     //--------------------------------------------------------------------
     public static int COUNT = Character.MAX_VALUE;
     public static int MAX   = COUNT - 1;
-
-
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        double[] codingToProb = new double[ COUNT ];
-        Arrays.fill(codingToProb, Double.NaN);
-
-        int    errCount  = 0;
-        double mrsError  = 0;
-
-        OddFinder oddFinder = new PreciseHeadsUpOdds();
-        for (Card[] hand : new Combiner<Card>(Card.VALUES, 7))
-        {
-            Hole hole = Hole.valueOf(hand[0], hand[1]);
-            Community community = new Community(
-                    hand[2], hand[3], hand[4], hand[5], hand[6]);
-
-            Odds odds = oddFinder.compute(hole, community, 1);
-            double winProb = odds.strengthVsRandom();
-
-            char   coding    = encodeWinProb(winProb);
-            double codedProb = codingToProb[ coding ];
-            if (Double.isNaN(codedProb)) {
-                codingToProb[ coding ] = winProb;
-            } else {
-                double delta = codedProb - winProb;
-                mrsError += delta * delta;
-                errCount++;
-            }
-        }
-
-        LOG.info("Mean root squared error: " +
-                    Math.sqrt(mrsError / errCount));
-    }
 
 
     //--------------------------------------------------------------------

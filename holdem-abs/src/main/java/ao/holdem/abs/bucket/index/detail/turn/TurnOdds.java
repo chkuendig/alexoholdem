@@ -18,45 +18,8 @@ import java.util.Arrays;
  * Date: Jan 14, 2009
  * Time: 1:37:12 PM
  */
-public class TurnOdds
-{
-    //--------------------------------------------------------------------
-    public static void main(String[] args)
-    {
-        long minWins = Integer.MAX_VALUE;
-        long maxWins = Integer.MIN_VALUE;
-
-        long minLose = Integer.MAX_VALUE;
-        long maxLose = Integer.MIN_VALUE;
-
-        long minTies = Integer.MAX_VALUE;
-        long maxTies = Integer.MIN_VALUE;
-
-        for (int i = 0; i < Turn.CANONS; i++)
-        {
-            Odds odds = lookup(i);
-
-            minWins = Math.min(minWins, odds.winOdds());
-            maxWins = Math.max(maxWins, odds.winOdds());
-
-            minLose = Math.min(minLose, odds.loseOdds());
-            maxLose = Math.max(maxLose, odds.loseOdds());
-
-            minTies = Math.min(minTies, odds.splitOdds());
-            maxTies = Math.max(maxTies, odds.splitOdds());
-        }
-
-        LOG.info("minWins = " + minWins);
-        LOG.info("maxWins = " + maxWins);
-
-        LOG.info("minLose = " + minLose);
-        LOG.info("maxLose = " + maxLose);
-
-        LOG.info("minTies = " + minTies);
-        LOG.info("maxTies = " + maxTies);
-    }
-
-
+public enum TurnOdds
+{;
     //--------------------------------------------------------------------
     private static final Logger LOG =
             Logger.getLogger(TurnOdds.class);
@@ -73,10 +36,6 @@ public class TurnOdds
     private static final File WIN_FILE   = new File(DIR,   "wins.char");
     private static final File LOSE_FILE  = new File(DIR, "losses.char");
     private static final File SPLIT_FILE = new File(DIR, "splits.char");
-
-
-    //--------------------------------------------------------------------
-    private TurnOdds() {}
 
 
     //--------------------------------------------------------------------

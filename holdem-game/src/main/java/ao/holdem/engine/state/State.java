@@ -116,8 +116,7 @@ public class State
     public Map<AbstractAction, State> actions(boolean nonDominated)
     {
         EnumMap<AbstractAction, State> validActions =
-                new EnumMap<AbstractAction, State>(
-                        AbstractAction.class);
+                new EnumMap<>(AbstractAction.class);
 
         State quitFold  = nonDominated && canCheck()
                           ? null : advanceIfValid(Action.FOLD);
@@ -166,11 +165,11 @@ public class State
         boolean betRaise   =
                     act.abstraction() == AbstractAction.BET_RAISE;
 
-        Seat  nextPlayers[]     = nextPlayers(act);
-        int   nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
-        int   nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
-        ChipStack nextStakes        = nextStakes(nextPlayers, betRaise);
-        int   nextRoundStaker   =
+        Seat nextPlayers[]    = nextPlayers(act);
+        int nextNextToAct     = nextNextToAct(nextPlayers, roundEnder);
+        int nextRemainingBets = nextRemainingBets(roundEnder, betRaise);
+        ChipStack nextStakes  = nextStakes(nextPlayers, betRaise);
+        int nextRoundStaker   =
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
         return new State(nextRound,

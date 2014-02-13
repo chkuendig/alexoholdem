@@ -3,6 +3,7 @@ package ao.holdem.model.card;
 
 import ao.holdem.model.Round;
 import ao.util.serial.Prototype;
+import com.google.common.base.Objects;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -251,27 +252,20 @@ public class Community implements Prototype<Community>
 
     public boolean equals(Object o)
     {
-        //if (this == o) return true;
-        if (o == null ||
-            getClass() != o.getClass()) return false;
+        if (! (o instanceof Community)) {
+            return false;
+        }
 
-        Community community = (Community) o;
-        return FLOP_A == community.FLOP_A &&
-               FLOP_B == community.FLOP_B &&
-               FLOP_C == community.FLOP_C &&
-               RIVER  == community.RIVER  &&
-               TURN   == community.TURN;
+        Community that = (Community) o;
+        return Objects.equal(FLOP_A, that.FLOP_A) &&
+                Objects.equal(FLOP_B, that.FLOP_B) &&
+                Objects.equal(FLOP_C, that.FLOP_C) &&
+                Objects.equal(TURN, that.TURN) &&
+                Objects.equal(RIVER, that.RIVER);
     }
 
-    public int hashCode()
-    {
-        int result;
-        result =               (FLOP_A != null ? FLOP_A.hashCode() : 0);
-        result = 31 * result + (FLOP_B != null ? FLOP_B.hashCode() : 0);
-        result = 31 * result + (FLOP_C != null ? FLOP_C.hashCode() : 0);
-        result = 31 * result + (TURN   != null ? TURN.hashCode()   : 0);
-        result = 31 * result + (RIVER  != null ? RIVER.hashCode()  : 0);
-        return result;
+    public int hashCode() {
+        return Objects.hashCode(FLOP_A, FLOP_B, FLOP_C, TURN, RIVER);
     }
 
 

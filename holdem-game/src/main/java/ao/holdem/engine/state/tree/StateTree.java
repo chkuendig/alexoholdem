@@ -90,7 +90,7 @@ public class StateTree
     {
         if (path  == null) return nextPreflopId++;
         if (round == null) return nextPostflopTerminalId++;
-        return nextId[  path.ordinal()     ]
+        return nextId[ path.ordinal()      ]
                      [ round.ordinal() - 1 ]++;
     }
 
@@ -145,7 +145,8 @@ public class StateTree
                      State                state,
                      Round                prevRound,
                      List<AbstractAction> path,
-                     PathToFlop           pathToFlop) {
+                     PathToFlop           pathToFlop)
+        {
             if (pathToFlop != null) {
                 PATH = pathToFlop;
             } else {
@@ -169,15 +170,14 @@ public class StateTree
             DEALER_NEXT   = state.dealerIsNext();
             STATE         = state;
 
-            KIDS   = new EnumMap<AbstractAction, Node>(
-                          AbstractAction.class);
+            KIDS   = new EnumMap<>(AbstractAction.class);
             for (Map.Entry<AbstractAction, State> act :
-//                    state.actions(false).entrySet())
-                    state.viableActions().entrySet())
+                    state.actions(false).entrySet())
+//                    state.viableActions().entrySet())
             {
                 List<AbstractAction> nextPath =
                         (PATH == null)
-                        ? new ArrayList<AbstractAction>(path) : null;
+                        ? new ArrayList<>(path) : null;
 
 //                if (! act.getValue().atEndOfHand()) {
                     KIDS.put(act.getKey(),
