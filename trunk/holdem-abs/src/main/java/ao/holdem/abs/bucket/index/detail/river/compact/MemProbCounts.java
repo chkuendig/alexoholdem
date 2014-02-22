@@ -5,9 +5,9 @@ import ao.holdem.canon.river.River;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;
 import ao.holdem.abs.bucket.index.detail.river.RiverEvalLookup;
 import ao.util.io.Dirs;
-import ao.util.persist.PersistentChars;
 import ao.util.time.Stopwatch;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -19,60 +19,54 @@ public enum MemProbCounts
 {;
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(MemProbCounts.class);
+            LoggerFactory.getLogger(MemProbCounts.class);
 
 
     //--------------------------------------------------------------------
     private static final File dir        =
             Dirs.get(Infrastructure.path("lookup/eval/river"));
-    private static final File storeFileA =
-            new File(dir, "compact_prob_count_a.char");
-    private static final File storeFileB =
-            new File(dir, "compact_prob_count_b.char");
+
+    private static final File storeFileDir =
+            new File(dir, "compact_prob_count");
 
     private static final char PROB_MASK   = 0x7FF;
     private static final char COUNT_SHIFT = 11;
 
-    private static final char PROB_COUNT_A[] =
-            retrieveOrCreate(storeFileA, 0, Integer.MAX_VALUE - 1);
-    private static final char PROB_COUNT_B[] =
-            retrieveOrCreate(storeFileB,
-                             Integer.MAX_VALUE,
-                             River.CANONS - 1);
+    private static final CharArray64 PROB_COUNT =
+            retrieveOrCreate(storeFileDir);
 
 
     //--------------------------------------------------------------------
-    private static char[] retrieveOrCreate(
-            File file, long from, long to)
+    private static CharArray64 retrieveOrCreate(File path)
     {
-        LOG.debug("retrieveOrCreate " + from + "\t" + to);
+        LOG.info("retrieveOrCreate: {}", path);
 
-        Stopwatch t   = new Stopwatch();
-        char cached[] = PersistentChars.retrieve(file);
-        if (cached != null)
+        Stopwatch t = new Stopwatch();
+        CharArray64 counts = CharArray64.read(River.CANONS, path);
+
+        if (counts != null)
         {
-            LOG.debug("took " + t.timing());
-            return cached;
+            LOG.info("retrieved in: " + t.timing());
+            return counts;
         }
 
-        cached = computeProbCounts(from, to);
-        PersistentChars.persist(cached, file);
-        return cached;
+        counts = computeProbCounts();
+        counts.write(path);
+        return counts;
     }
 
 
     //--------------------------------------------------------------------
-    private static char[] computeProbCounts(
-            final long from,
-            final long to)
+    private static CharArray64 computeProbCounts()
     {
-        LOG.debug("computeProbCounts");
+        LOG.info("computeProbCounts");
 
-        final int  len          = (int) (to - from) + 1;
-        final char probCounts[] = new char[ len ];
+        final CharArray64 probCounts = new CharArray64(River.CANONS);
 
         RiverEvalLookup.traverse(
-            new CanonRange[]{CanonRange.newFromCount(from, len)},
+            new CanonRange[]{CanonRange.newFromCount(
+                    0, River.CANONS)},
+//                    0, 100)},
             new RiverEvalLookup.VsRandomVisitor() {
                 public void traverse(
                         long   canonIndex,
@@ -83,13 +77,9 @@ public enum MemProbCounts
 //        (int) CompactRiverProbabilities.compact(strengthVsRandom) + "\t" +
 //        represents + "\t" + CompactRiverCounts.indexOf(represents));
 
-                    int index = (int) (canonIndex - from);
+                    assert probCounts.get(canonIndex) == 0 : canonIndex;
 
-                    assert probCounts[ index ] == 0
-                           : canonIndex + "\t" + index;
-
-                    probCounts[ index ] =
-                            encode(strengthVsRandom, represents);
+                    probCounts.set(canonIndex, encode(strengthVsRandom, represents));
 
 //                    assert decodeProb(probCounts[ index ]) ==
 //                            CompactRiverProbabilities.compact(
@@ -131,29 +121,19 @@ public enum MemProbCounts
 
 
     //--------------------------------------------------------------------
-    public static double realProb(long riverIndex)
+    public static char compactNonLossProbability(long riverIndex)
     {
         return CompactRiverProbabilities.nonLossProbability(
                  compactProb( riverIndex ));
     }
     public static char compactProb(long riverIndex)
     {
-        if (riverIndex < Integer.MAX_VALUE) {
-            return decodeProb(PROB_COUNT_A[(int) riverIndex]);
-        } else {
-            return decodeProb(PROB_COUNT_B[
-                    (int) (riverIndex - Integer.MAX_VALUE)]);
-        }
+        return decodeProb(PROB_COUNT.get(riverIndex));
     }
 
     public static byte compactCount(long riverIndex)
     {
-        if (riverIndex < Integer.MAX_VALUE) {
-            return decodeRep(PROB_COUNT_A[(int) riverIndex]);
-        } else {
-            return decodeRep(PROB_COUNT_B[
-                    (int) (riverIndex - Integer.MAX_VALUE)]);
-        }
+        return decodeRep(PROB_COUNT.get(riverIndex));
     }
 
     public static byte riverCount(long riverIndex)

@@ -9,7 +9,8 @@ import ao.util.io.Dirs;
 import ao.util.pass.Traverser;
 import ao.util.persist.PersistentChars;
 import ao.util.persist.PersistentInts;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
@@ -22,9 +23,9 @@ public enum TurnOdds
 {;
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(TurnOdds.class);
+            LoggerFactory.getLogger(TurnOdds.class);
 
-    private static final char SENTINAL = Character.MAX_VALUE;
+    private static final char SENTINEL = Character.MAX_VALUE;
 
 
     //--------------------------------------------------------------------
@@ -78,7 +79,7 @@ public enum TurnOdds
     private static char[] oddsComponent()
     {
         char[] component = new char[ Turn.CANONS ];
-        Arrays.fill( component, SENTINAL );
+        Arrays.fill( component, SENTINEL);
         return component;
     }
 
@@ -95,7 +96,7 @@ public enum TurnOdds
         HandEnum.uniqueTurns(
                 new Traverser<Turn>() {
             public void traverse(Turn turn) {
-                if (WIN[ turn.canonIndex() ] != SENTINAL) {
+                if (WIN[ turn.canonIndex() ] != SENTINEL) {
                     skipCount[0]++;
                     return;
                 } else if (skipCount[0] != 0) {
@@ -127,16 +128,15 @@ public enum TurnOdds
         if (count % 1000 == 0)
             System.out.print(".");
 
-        boolean milesoneReached = ((count + 1) % 50000 == 0);
-        if (milesoneReached) {
-            System.out.println(
-                    " " + (count + 1) + ", completed 50,000 in " +
-                    (System.currentTimeMillis() - milestoneStart[0]));
+        boolean milestoneReached = ((count + 1) % 50000 == 0);
+        if (milestoneReached) {
+            LOG.info(" {}, completed 50,000 in {}",
+                    count + 1, System.currentTimeMillis() - milestoneStart[0]);
         }
 
         if ((count + 1) % 1000000 == 0) flush();
 
-        if (milesoneReached)
+        if (milestoneReached)
             milestoneStart[0] = System.currentTimeMillis();
     }
 

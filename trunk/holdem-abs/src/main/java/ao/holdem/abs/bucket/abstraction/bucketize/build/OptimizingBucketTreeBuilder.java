@@ -15,11 +15,11 @@ import java.util.List;
  * Date: 21-May-2009
  * Time: 6:08:15 PM
  */
-public class SmartBucketTreeBuilder implements BucketTreeBuilder
+public class OptimizingBucketTreeBuilder implements BucketTreeBuilder
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(SmartBucketTreeBuilder.class);
+            Logger.getLogger(OptimizingBucketTreeBuilder.class);
 
 
     //--------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 
 
     //--------------------------------------------------------------------
-    public SmartBucketTreeBuilder(Bucketizer bucketizer)
+    public OptimizingBucketTreeBuilder(Bucketizer bucketizer)
     {
         BUCKETIZER = bucketizer;
     }
@@ -165,4 +165,11 @@ public class SmartBucketTreeBuilder implements BucketTreeBuilder
 //
 //        return parentPaths;
 //    }
+
+
+
+    @Override
+    public String id() {
+        return "opt;" + BUCKETIZER.id();
+    }
 }

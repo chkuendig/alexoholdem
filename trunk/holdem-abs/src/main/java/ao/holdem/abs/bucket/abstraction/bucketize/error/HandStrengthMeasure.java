@@ -44,7 +44,7 @@ public class HandStrengthMeasure
         }
 
         double error = 0;
-        int    total = 0;
+        long   total = 0;
         for (int i = 0; i < details.length(); i++)
         {
             int    bucket = branch.get(details.index(i));
@@ -54,31 +54,6 @@ public class HandStrengthMeasure
             error += delta * delta * details.represents(i);
             total += details.represents(i);
         }
-
-
-//        for (byte bucket = 0; bucket < nBuckets; bucket++)
-//        {
-//            double sum   = 0;
-//            int    count = 0;
-//            for (int i = 0; i < details.length(); i++)
-//            {
-//                if (bucket != branch.get(details.index(i))) continue;
-//
-//                sum   += details.realStrength(i) *
-//                         details.represents(i);
-//                count += details.represents(i);
-//            }
-//
-//            double mean  = sum / count;
-//            for (int i = 0; i < details.length(); i++)
-//            {
-//                if (bucket != branch.get(details.index(i))) continue;
-//
-//                error += Math.pow(details.realStrength(i) - mean, 2) *
-//                         details.represents(i);
-//                total += details.represents(i);
-//            }
-//        }
 
         return total == 0
                ? 0 : Math.sqrt(error / total);

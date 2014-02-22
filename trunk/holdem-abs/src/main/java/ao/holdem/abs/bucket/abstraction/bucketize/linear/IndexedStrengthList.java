@@ -4,6 +4,7 @@ import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.abs.bucket.index.detail.CanonDetail;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;
 import ao.holdem.abs.bucket.index.detail.river.ProbabilityEncoding;
+import ao.holdem.abs.bucket.index.detail.river.RiverEvalLookup;
 import ao.holdem.abs.bucket.index.detail.river.compact.MemProbCounts;
 import ao.holdem.abs.bucket.index.detail.turn.TurnDetails;
 import ao.holdem.model.Round;
@@ -35,10 +36,9 @@ public class IndexedStrengthList
             strengthsRiver(BucketTree.Branch branch)
     {
         int        nRivers       = 0;
-        CanonRange toBucketize[] = new CanonRange[
-                        branch.parentCanons().length ];
-        for (int i = 0; i < branch.parentCanons().length; i++) {
+        CanonRange toBucketize[] = new CanonRange[ branch.parentCanons().length ];
 
+        for (int i = 0; i < toBucketize.length; i++) {
             int canonIndex = branch.parentCanons()[i];
             toBucketize[ i ] = TurnDetails.lookup(canonIndex).range();
             nRivers += toBucketize[ i ].count();
@@ -49,33 +49,33 @@ public class IndexedStrengthList
         final IndexedStrengthList rivers =
                 new IndexedStrengthList( nRivers );
 
-        for (CanonRange riverRange : toBucketize)
-        {
-            for (long river  = riverRange.from();
-                      river <= riverRange.toInclusive();
-                      river++)
-            {
-                rivers.set(nextIndex[0]++,
-                           river,
-                           MemProbCounts.realProb  ( river ),
-                           MemProbCounts.riverCount( river ));
-            }
-        }
+//        for (CanonRange riverRange : toBucketize)
+//        {
+//            for (long river  = riverRange.from();
+//                      river <= riverRange.toInclusive();
+//                      river++)
+//            {
+//                rivers.set(nextIndex[0]++,
+//                           river,
+//                           MemProbCounts.compactNonLossProbability(river), // todo: is this correct?
+//                           MemProbCounts.riverCount( river ));
+//            }
+//        }
 
-//        RiverEvalLookup.traverse(
-//                toBucketize,
-//                new RiverEvalLookup.VsRandomVisitor() {
-//                    public void traverse(
-//                            long   canonIndex,
-//                            double strengthVsRandom,
-//                            byte   represents) {
-//
-//                        rivers.set(nextIndex[0]++,
-//                                   canonIndex,
-//                                   strengthVsRandom,
-//                                   represents);
-//                    }
-//                });
+        RiverEvalLookup.traverse(
+                toBucketize,
+                new RiverEvalLookup.VsRandomVisitor() {
+                    public void traverse(
+                            long   canonIndex,
+                            double strengthVsRandom,
+                            byte   represents) {
+
+                        rivers.set(nextIndex[0]++,
+                                   canonIndex,
+                                   strengthVsRandom,
+                                   represents);
+                    }
+                });
 
         return rivers;
     }

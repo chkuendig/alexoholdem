@@ -1,4 +1,4 @@
-package ao.holdem.abs.calc;
+package ao.holdem.abs.calc.odds;
 
 import ao.holdem.abs.bucket.index.detail.flop.FlopOdds;
 import ao.holdem.abs.odds.agglom.Odds;

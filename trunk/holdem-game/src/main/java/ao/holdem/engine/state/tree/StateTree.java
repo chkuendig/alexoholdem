@@ -170,10 +170,10 @@ public class StateTree
             DEALER_NEXT   = state.dealerIsNext();
             STATE         = state;
 
-            KIDS   = new EnumMap<>(AbstractAction.class);
+            KIDS = new EnumMap<>(AbstractAction.class);
             for (Map.Entry<AbstractAction, State> act :
-                    state.actions(false).entrySet())
-//                    state.viableActions().entrySet())
+//                    state.actions(false).entrySet())
+                    state.viableActions().entrySet())
             {
                 List<AbstractAction> nextPath =
                         (PATH == null)

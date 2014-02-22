@@ -41,7 +41,7 @@ public class CanonIndexTest
         testFlopConsistency();
         testTurnConsistency();
         try {
-            RiverEvalLookup.main(null);
+            RiverEvalLookupTest.main(null);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -19,11 +19,6 @@ import java.util.Arrays;
 public enum ProbabilityEncoding
 {;
     //--------------------------------------------------------------------
-    private static final Logger LOG =
-            LoggerFactory.getLogger(ProbabilityEncoding.class);
-
-
-    //--------------------------------------------------------------------
     public static int COUNT = Character.MAX_VALUE;
     public static int MAX   = COUNT - 1;
 

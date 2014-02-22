@@ -1,5 +1,6 @@
 package ao.holdem.bot.main;
 
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.bot.limit_cfr.CfrBot2;
 import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
@@ -21,7 +22,8 @@ import ao.holdem.bot.regret.mono.MonoRegretMin;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,7 +39,7 @@ public class BucketizerTest
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(BucketizerTest.class);
+            LoggerFactory.getLogger(BucketizerTest.class);
 
 //    private static final String BOT_NAME = "agro";
     private static final String  BOT_NAME   = "serial";
@@ -106,8 +108,8 @@ public class BucketizerTest
 
             abs.tree(false); // 4
 
-            computeCfr(abs);
-            vsHuman(abs);
+//            computeCfr(abs);
+//            vsHuman(abs);
         } else {
             if (needSamples) {
                 computeSamples(
@@ -165,8 +167,8 @@ public class BucketizerTest
             char       nRiverBuckets)
     {
         return abstractHoldem(
-//                new KMeansBucketizer(),
-                new HistBucketizer((byte) 3),
+                new KMeansBucketizer(),
+//                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
     }
 
