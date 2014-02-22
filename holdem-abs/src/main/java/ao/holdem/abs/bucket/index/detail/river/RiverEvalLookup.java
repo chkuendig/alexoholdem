@@ -19,7 +19,8 @@ import ao.util.io.Dirs;
 import ao.util.pass.Traverser;
 import ao.util.persist.PersistentInts;
 import ao.util.time.Stopwatch;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public enum RiverEvalLookup
 {;
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(RiverEvalLookup.class);
+            LoggerFactory.getLogger(RiverEvalLookup.class);
 
     private static final File dir      = Dirs.get(Infrastructure.path(
             "lookup/canon/detail/river"));
@@ -90,10 +91,11 @@ public enum RiverEvalLookup
         int  count       = (int)(toExcluding - from);
         if (count == 0) return;
 
-        LongBitSet allowHoles  = new LongBitSet( CanonHole.CANONS);
-        LongBitSet allowFlops  = new LongBitSet( Flop.CANONS);
-        LongBitSet allowTurns  = new LongBitSet( Turn.CANONS);
+        LongBitSet allowHoles  = new LongBitSet(CanonHole.CANONS);
+        LongBitSet allowFlops  = new LongBitSet(Flop.CANONS);
+        LongBitSet allowTurns  = new LongBitSet(Turn.CANONS);
         LongBitSet allowRivers = new LongBitSet(River.CANONS);
+
         computeAllowedEvalDetails(
                 from, toExcluding,
                 allowHoles, allowFlops, allowTurns, allowRivers);
@@ -105,6 +107,7 @@ public enum RiverEvalLookup
         computeEvalDetailsForAllowed(
                 from, strengths, represents, winProbs,
                 allowHoles, allowFlops, allowTurns, allowRivers);
+
         appendEvalDetails(strengths, represents, winProbs);
 
         LOG.debug("chunk from " + from + " took " + timer.timing());

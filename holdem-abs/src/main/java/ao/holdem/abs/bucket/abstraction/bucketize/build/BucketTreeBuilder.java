@@ -17,4 +17,8 @@ public interface BucketTreeBuilder
             char numFlopBuckets,
             char numTurnBuckets,
             char numRiverBuckets);
+
+
+    //--------------------------------------------------------------------
+    String id();
 }

@@ -147,4 +147,11 @@ public class FastBucketTreeBuilder implements BucketTreeBuilder
         }
         return turnBucketIndex;
     }
+
+
+    //--------------------------------------------------------------------
+    @Override
+    public String id() {
+        return "fast;" + BUCKETIZER.id();
+    }
 }

@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * Date: 25-Jul-2009
  * Time: 11:42:15 AM
  */
-public class HistBucketizer implements Bucketizer
+public class  HistBucketizer implements Bucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =

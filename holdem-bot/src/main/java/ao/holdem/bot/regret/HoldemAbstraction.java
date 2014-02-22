@@ -8,7 +8,7 @@ import ao.holdem.abs.bucket.abstraction.access.odds.IBucketOdds;
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTreeImpl;
 import ao.holdem.abs.bucket.abstraction.bucketize.build.BucketTreeBuilder;
-import ao.holdem.abs.bucket.abstraction.bucketize.build.SmartBucketTreeBuilder;
+import ao.holdem.abs.bucket.abstraction.bucketize.build.FastBucketTreeBuilder;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.util.io.Dirs;
 import org.apache.log4j.Logger;
@@ -33,13 +33,14 @@ public class HoldemAbstraction
 
     //--------------------------------------------------------------------
 //    private final String ID;
-    private final File       DIR;
+    private final File DIR;
 
-    private final Bucketizer BUCKETIZER;
-    private final int        N_HOLES;
-    private final char       N_FLOPS;
-    private final char       N_TURNS;
-    private final char       N_RIVERS;
+    private final BucketTreeBuilder TREE_BUILDER;
+
+    private final int  N_HOLES;
+    private final char N_FLOPS;
+    private final char N_TURNS;
+    private final char N_RIVERS;
 
     private BucketTree            tree;
     private BucketDecoder         decoder;
@@ -51,38 +52,50 @@ public class HoldemAbstraction
     //--------------------------------------------------------------------
     public HoldemAbstraction(
             Bucketizer bucketizer,
-            int        nHoleBuckets,
-            char       nFlopBuckets,
-            char       nTurnBuckets,
-            char       nRiverBuckets)
+            int  nHoleBuckets,
+            char nFlopBuckets,
+            char nTurnBuckets,
+            char nRiverBuckets)
+    {
+        this(new FastBucketTreeBuilder(bucketizer),
+                nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+    }
+
+    public HoldemAbstraction(
+            BucketTreeBuilder treeBuilder,
+            int  nHoleBuckets,
+            char nFlopBuckets,
+            char nTurnBuckets,
+            char nRiverBuckets)
     {
         DIR = Dirs.get(Infrastructure.path(
-                "lookup/bucket/" + id(bucketizer, nHoleBuckets,
+                "lookup/bucket/" + id(treeBuilder, nHoleBuckets,
                                       nFlopBuckets, nTurnBuckets, nRiverBuckets)));
 
-        BUCKETIZER = bucketizer;
-        N_HOLES    = nHoleBuckets;
-        N_FLOPS    = nFlopBuckets;
-        N_TURNS    = nTurnBuckets;
-        N_RIVERS   = nRiverBuckets;
+        TREE_BUILDER = treeBuilder;
 
-        infoParts  = new HashMap<String, InfoPart>();
+        N_HOLES  = nHoleBuckets;
+        N_FLOPS  = nFlopBuckets;
+        N_TURNS  = nTurnBuckets;
+        N_RIVERS = nRiverBuckets;
+
+        infoParts = new HashMap<>();
     }
 
 
     //--------------------------------------------------------------------
     private String id(
-            Bucketizer bucketizer,
-            int        numHoleBuckets,
-            char       numFlopBuckets,
-            char       numTurnBuckets,
-            char       numRiverBuckets)
+            BucketTreeBuilder bucketizer,
+            int numHoleBuckets,
+            char numFlopBuckets,
+            char numTurnBuckets,
+            char numRiverBuckets)
     {
         StringBuilder str = new StringBuilder();
 
         str.append( bucketizer.id() )
            .append( ';' )
-           .append( (int) numHoleBuckets )
+           .append( numHoleBuckets )
            .append( '.' )
            .append( (int) numFlopBuckets )
            .append( '.' )
@@ -105,11 +118,7 @@ public class HoldemAbstraction
         }
         else
         {
-            BucketTreeBuilder treeBuilder =
-//                    new FastBucketTreeBuilder(BUCKETIZER);
-                    new SmartBucketTreeBuilder(BUCKETIZER);
-
-            tree = treeBuilder.bucketize(
+            tree = TREE_BUILDER.bucketize(
                     DIR, N_HOLES, N_FLOPS, N_TURNS, N_RIVERS);
         }
         return tree;

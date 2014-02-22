@@ -57,10 +57,7 @@ public class RiverBucketizer
                       river <= rivers.toInclusive();
                       river++)
             {
-                probCount[
-                        CompactRiverProbabilities.nonLossProbability(
-                                MemProbCounts.compactProb(river))
-                        ]+= MemProbCounts.compactCount(river);
+                probCount[ MemProbCounts.compactNonLossProbability(river) ]+= MemProbCounts.compactCount(river);
             }
         }
 

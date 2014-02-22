@@ -6,12 +6,12 @@ import ao.holdem.abs.bucket.abstraction.bucketize.error.HandStrengthMeasure;
 import ao.holdem.abs.bucket.abstraction.bucketize.linear.IndexedStrengthList;
 import ao.util.math.rand.MersenneTwisterFast;
 import ao.util.time.Stopwatch;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 /**
- * User: Alex Ostrovsky
  * Date: 12-May-2009
  * Time: 8:51:59 PM
  */
@@ -19,14 +19,14 @@ public class KMeansBucketizer implements ScalarBucketizer
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(KMeansBucketizer.class);
+            LoggerFactory.getLogger(KMeansBucketizer.class);
 
 
     //--------------------------------------------------------------------
-    private static final double HEAVY_DELTA_CUTOFF = 0.01;
-    private static final int    HEAVY_BEST_OF      = 10;
+    private static final double HEAVY_DELTA_CUTOFF = 0.0001;
+    private static final int    HEAVY_BEST_OF      = 256;
 
-    private static final double LIGHT_DELTA_CUTOFF = 0.1;
+    private static final double LIGHT_DELTA_CUTOFF = 0.01;
     private static final int    LIGHT_BEST_OF      = 2;
 
 
@@ -76,6 +76,8 @@ public class KMeansBucketizer implements ScalarBucketizer
 
             bucketize(branch, details, numBuckets, rand, false);
             double err = errorMeasure.error(branch, details, numBuckets);
+            LOG.debug("Error {}: {}", i + 1, err);
+
             if (err < minErr) {
                 minErr      = err;
                 minErrIndex = i;
@@ -111,12 +113,12 @@ public class KMeansBucketizer implements ScalarBucketizer
         }
 
         if (! verbose) return;
-        LOG.debug("bucketized " + branch.round() +
-                  " into " + numBuckets +
-                  "\t(p " + branch.parentCanons().length +
-                  " \tc " + strengths.length()   +
-                  ")\t" + Arrays.toString(counts) +
-                  "\ttook " + time + " per " + bestOf + " trials");
+        LOG.info("bucketized " + branch.round() +
+                " into " + numBuckets +
+                "\t(p " + branch.parentCanons().length +
+                " \tc " + strengths.length() +
+                ")\t" + Arrays.toString(counts) +
+                "\ttook " + time + " per " + bestOf + " trials");
     }
 
 
@@ -127,12 +129,15 @@ public class KMeansBucketizer implements ScalarBucketizer
     {
         int clusters[] = new int[ strengths.length() ];
 
+        int iterationCount = 0;
         double delta;
         do
         {
             delta = iterateKMeans(means, strengths, clusters);
+            iterationCount++;
+            LOG.debug("KMeans iteration delta {}: {}", iterationCount, delta);
         }
-        while (delta > deltaCutoff);
+        while (delta != 0 && (delta > deltaCutoff || iterationCount < 5));
 
         return clusters;
     }

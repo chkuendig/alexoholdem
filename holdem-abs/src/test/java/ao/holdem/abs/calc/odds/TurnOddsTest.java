@@ -1,13 +1,14 @@
-package ao.holdem.abs.calc;
+package ao.holdem.abs.calc.odds;
 
-import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
+import ao.holdem.abs.bucket.index.detail.turn.TurnOdds;
 import ao.holdem.abs.odds.agglom.Odds;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.canon.turn.Turn;
 
 /**
- * 13/02/14 6:26 PM
+ * 13/02/14 6:29 PM
  */
-public class HoleOddsTest {
+public class TurnOddsTest
+{
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
@@ -20,9 +21,9 @@ public class HoleOddsTest {
         long minTies = Integer.MAX_VALUE;
         long maxTies = Integer.MIN_VALUE;
 
-        for (int i = 0; i < CanonHole.CANONS; i++)
+        for (int i = 0; i < Turn.CANONS; i++)
         {
-            Odds odds = HoleOdds.lookup(i);
+            Odds odds = TurnOdds.lookup(i);
 
             minWins = Math.min(minWins, odds.winOdds());
             maxWins = Math.max(maxWins, odds.winOdds());
@@ -43,4 +44,5 @@ public class HoleOddsTest {
         System.out.println("minTies = " + minTies);
         System.out.println("maxTies = " + maxTies);
     }
+
 }

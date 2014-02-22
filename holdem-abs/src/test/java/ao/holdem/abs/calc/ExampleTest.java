@@ -23,11 +23,11 @@ public class ExampleTest
     //--------------------------------------------------------------------
     public static void main(String[] args)
     {
-        testHoleFlopConcistency();
-        testHoleConcistency();
+        testHoleFlopConsistency();
+        testHoleConsistency();
     }
 
-    private static void testHoleFlopConcistency()
+    private static void testHoleFlopConsistency()
     {
         HandEnum.turns(
                 new PermisiveFilter<CanonHole>("%1$s"),
@@ -57,7 +57,7 @@ public class ExampleTest
                 });
     }
 
-    private static void testHoleConcistency()
+    private static void testHoleConsistency()
     {
         HandEnum.flops(
                 new PermisiveFilter<CanonHole>("%1$s"),

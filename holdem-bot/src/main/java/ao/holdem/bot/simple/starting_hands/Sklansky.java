@@ -24,32 +24,32 @@ public enum Sklansky
     public static int groupOf(Hole hole)
     {
         // 1  	AA, KK, QQ, JJ, AKs
-        if (    hole.hasRanks(ACE, ACE)   ||
-                hole.hasRanks(KING, KING)  ||
+        if (    hole.hasRanks(ACE, ACE)     ||
+                hole.hasRanks(KING, KING)   ||
                 hole.hasRanks(QUEEN, QUEEN) ||
-                hole.hasRanks(JACK, JACK)  ||
-                hole.hasRanks(ACE, KING)  && hole.isSuited())
+                hole.hasRanks(JACK, JACK)   ||
+                hole.hasRanks(ACE, KING) && hole.isSuited())
         {
             return 1;
         }
 
         // 2  	TT, AQs, AJs, KQs, AK
-        if (    hole.hasRanks(TEN, TEN)                    ||
-                hole.hasRanks(ACE, QUEEN) && hole.isSuited() ||
-                hole.hasRanks(ACE, JACK)  && hole.isSuited() ||
+        if (    hole.hasRanks(TEN,  TEN  )                    ||
+                hole.hasRanks(ACE,  QUEEN) && hole.isSuited() ||
+                hole.hasRanks(ACE,  JACK ) && hole.isSuited() ||
                 hole.hasRanks(KING, QUEEN) && hole.isSuited() ||
-                hole.hasRanks(ACE, KING))
+                hole.hasRanks(ACE,  KING))
         {
             return 2;
         }
 
         // 3  	99, JTs, QJs, KJs, ATs, AQ
-        if (    hole.hasRanks(NINE, NINE)                  ||
-                hole.hasRanks(JACK, TEN)  && hole.isSuited() ||
+        if (    hole.hasRanks(NINE,  NINE)                    ||
+                hole.hasRanks(JACK,  TEN)  && hole.isSuited() ||
                 hole.hasRanks(QUEEN, JACK) && hole.isSuited() ||
-                hole.hasRanks(KING, JACK) && hole.isSuited() ||
-                hole.hasRanks(ACE, TEN)  && hole.isSuited() ||
-                hole.hasRanks(ACE, QUEEN))
+                hole.hasRanks(KING,  JACK) && hole.isSuited() ||
+                hole.hasRanks(ACE,   TEN)  && hole.isSuited() ||
+                hole.hasRanks(ACE,   QUEEN))
         {
             return 3;
         }
