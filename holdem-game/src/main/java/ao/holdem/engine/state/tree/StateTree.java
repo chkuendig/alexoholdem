@@ -5,7 +5,8 @@ import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -17,7 +18,7 @@ public class StateTree
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(StateTree.class);
+            LoggerFactory.getLogger(StateTree.class);
 
     private StateTree() {}
 
@@ -33,6 +34,8 @@ public class StateTree
             new char[ PathToFlop.VALUES.length ]
                     [ Round.VALUES.length - 1  ];
 
+    private static int nextIndex = 0;
+
 
     private static final Node ROOT;
 
@@ -41,6 +44,7 @@ public class StateTree
         LOG.debug("computing heads-up");
         ROOT = new Node(State.autoBlindInstance(Arrays.asList(
             Avatar.local("dealee"), Avatar.local("dealer"))));
+        LOG.debug("tree size: {}", nextIndex);
     }
     
 
@@ -96,6 +100,10 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
+    public static int nodeCount() {
+        return nextIndex;
+    }
+
     public static char intentCount(Round intentRound)
     {
         return nextIntent[ intentRound.ordinal() ];
@@ -116,6 +124,7 @@ public class StateTree
     public static class Node
     {
         //----------------------------------------------------------------
+        private final int           INDEX;
         private final char          ID;
         private final char          INTENT;
         private final boolean       CAN_RAISE;
@@ -158,6 +167,7 @@ public class StateTree
 
             //nextIntent
 
+            INDEX         = nextIndex++;
             ID            = nextId(PATH, state.round());
             INTENT        = nextIntent(prevRound);
             CAN_RAISE     = state.canRaise();
@@ -172,8 +182,8 @@ public class StateTree
 
             KIDS = new EnumMap<>(AbstractAction.class);
             for (Map.Entry<AbstractAction, State> act :
-//                    state.actions(false).entrySet())
-                    state.viableActions().entrySet())
+                    state.actions(false).entrySet())
+//                    state.viableActions().entrySet())
             {
                 List<AbstractAction> nextPath =
                         (PATH == null)
@@ -239,6 +249,10 @@ public class StateTree
         }
         public PathToFlop pathToFlop() {
             return PATH;
+        }
+
+        public int index() {
+            return INDEX;
         }
 
         // sequential for (round, pathToFlop) combination

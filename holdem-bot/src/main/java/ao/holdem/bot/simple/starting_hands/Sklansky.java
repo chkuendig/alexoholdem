@@ -115,8 +115,7 @@ public enum Sklansky
             return 7;
         }
 
-        // 8  	87, A9, Q9, 76, 42s, 32s, 96s, 85s, J8, J7s, 65, 54,
-        //          74s, K9, T8
+        // 8  	87, A9, Q9, 76, 42s, 32s, 96s, 85s, J8, J7s, 65, 54, 74s, K9, T8
         if (    hole.hasRanks(EIGHT, SEVEN)                  ||
                 hole.hasRanks(ACE, NINE)                   ||
                 hole.hasRanks(QUEEN, NINE)                   ||

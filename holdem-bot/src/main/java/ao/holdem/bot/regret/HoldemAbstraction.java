@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: shalom
- * Date: Feb 27, 2009
- * Time: 3:42:25 PM
+ * Feb 27, 2009
  *
  * Note: NOT threadsafe
  */
@@ -231,4 +229,22 @@ public class HoldemAbstraction
                InfoPart.exists(infoPartDir(name, doublePrecision));
 
     }
+
+
+    //--------------------------------------------------------------------
+//    public int holeBucketCount() {
+//        return N_HOLES;
+//    }
+//
+//    public int flopBucketCount() {
+//        return N_FLOPS;
+//    }
+//
+//    public int turnBucketCount() {
+//        return N_TURNS;
+//    }
+//
+//    public int riverBucketCount() {
+//        return N_RIVERS;
+//    }
 }

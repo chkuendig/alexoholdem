@@ -79,14 +79,14 @@ public class DealerTest
         assert brains.size() == 2;
         assert DUPLICATE_ROUNDS >= 10;
 
-        List<Avatar> orderA = new ArrayList<Avatar>(brains.keySet());
-        List<Avatar> orderB = new ArrayList<Avatar>(orderA);
+        List<Avatar> orderA = new ArrayList<>(brains.keySet());
+        List<Avatar> orderB = new ArrayList<>(orderA);
         Collections.swap(orderB, 0, 1);
 
         Random r = new Random(Rand.nextLong());
 
         List<Avatar>       order       = orderA;
-        Progress           progress    = new Progress(DUPLICATE_ROUNDS);
+//        Progress           progress    = new Progress(DUPLICATE_ROUNDS);
         Dealer             dealer      = new Dealer(true, brains);
         Map<Avatar, ChipStack> cumDeltas   = new HashMap<Avatar, ChipStack>();
         ChipStack dealerDelta = ChipStack.ZERO;
@@ -139,7 +139,7 @@ public class DealerTest
 //                dealerDelta = dealerDelta.plus(deltas.get(order.get(1)));
             }
 
-            progress.checkpoint();
+//            progress.checkpoint();
             if (((trialSet + 1) % (DUPLICATE_ROUNDS / 1000)) == 0) {
                 displayDeltas(
                         cumDeltas, dealerDelta, brains, trialSet + 1);
@@ -155,6 +155,7 @@ public class DealerTest
             Map<Avatar, Player> brains,
             long                dupeRounds)
     {
+        System.out.println();
         for (Map.Entry<Avatar, ChipStack> delta
                 : cumDeltas.entrySet())
         {
