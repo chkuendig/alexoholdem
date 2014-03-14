@@ -62,9 +62,9 @@ public class BucketTreeImpl implements BucketTree
         else
         {
             LOG.debug("loading (or creating)");
-            holes  = new FullLongByteList( holeFile,  CanonHole.CANONS);
-            flops  = new FullLongByteList( flopFile,  Flop.CANONS);
-            turns  = new HalfLongByteList( turnFile,  Turn.CANONS);
+            holes  = new FullLongByteList(holeFile , CanonHole.CANONS);
+            flops  = new FullLongByteList(flopFile , Flop.CANONS);
+            turns  = new HalfLongByteList(turnFile , Turn.CANONS);
             rivers = new HalfLongByteList(riverFile, River.CANONS);
         }
     }
@@ -273,10 +273,10 @@ public class BucketTreeImpl implements BucketTree
         //----------------------------------------------------------------
         public List<Branch> subBranches()
         {
-            if (round == Round.RIVER) return new ArrayList<Branch>();
+            if (round == Round.RIVER) return new ArrayList<>();
 
             AutovivifiedList<IntList> subBranchCanons =
-                    new AutovivifiedList<IntList>();
+                    new AutovivifiedList<>();
 
             for (CanonDetail detail : details())
             {
@@ -290,7 +290,7 @@ public class BucketTreeImpl implements BucketTree
                 bucketCanons.add( (int) detail.canonIndex() );
             }
 
-            List<Branch> subBranches = new ArrayList<Branch>();
+            List<Branch> subBranches = new ArrayList<>();
             for (IntList subBranchCanon : subBranchCanons) {
                 subBranches.add(
                         new BranchImpl(

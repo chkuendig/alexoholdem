@@ -23,7 +23,7 @@ public class DeckCards implements ChanceCards
     public DeckCards()
     {
         cards = new Deck();
-        holes = new HashMap<Avatar, Hole>();
+        holes = new HashMap<>();
     }
 
     private DeckCards(Deck copyCards,

@@ -5,7 +5,8 @@ import ao.util.data.primitive.CharList;
 import ao.util.data.primitive.IntList;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,11 +20,11 @@ public class BucketDecoder
 {
     //--------------------------------------------------------------------
     private static final Logger LOG =
-            Logger.getLogger(BucketDecoder.class);
+            LoggerFactory.getLogger(BucketDecoder.class);
 
-    private static final String SUB_DIR      =  "map";
-    private static final String F_NUM_FLOPS  =  "nFlops.int";
-    private static final String F_NUM_TURNS  =  "nTurns.int";
+    private static final String SUB_DIR      = "map";
+    private static final String F_NUM_FLOPS  = "nFlops.int";
+    private static final String F_NUM_TURNS  = "nTurns.int";
     private static final String F_NUM_RIVERS = "nRivers.int";
 
 
@@ -211,7 +212,7 @@ public class BucketDecoder
         char nextRiverBucket[] = {0};
 
         List<char[][][]> holeBuckets =
-                new ArrayList<char[][][]>();
+                new ArrayList<>();
         for (Branch flop : holes.subBranches())
         {
             holeBuckets.add(
@@ -225,7 +226,7 @@ public class BucketDecoder
             Branch flop, char nextRiverBucket[])
     {
         List<char[][]> flopBuckets =
-                new ArrayList<char[][]>();
+                new ArrayList<>();
         for (Branch turn : flop.subBranches())
         {
             flopBuckets.add(
@@ -239,7 +240,7 @@ public class BucketDecoder
             Branch turn, char nextRiverBucket[])
     {
         List<char[]> turnBuckets =
-                new ArrayList<char[]>();
+                new ArrayList<>();
         for (Branch river : turn.subBranches()) {
             turnBuckets.add(
                     decodeRivers(river, nextRiverBucket));

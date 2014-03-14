@@ -1,12 +1,18 @@
 package ao.holdem.gen
 
-import ao.learn.mst.gen5.{ExtensiveAbstraction, ExtensivePlayer, ExtensiveGame}
-import ao.learn.mst.gen5.cfr.{OutcomeSampling2CfrMinimizer, OutcomeSamplingCfrMinimizer, ProbingCfrMinimizer}
+import ao.learn.mst.gen5.{ExtensiveAbstraction, ExtensiveGame}
+import ao.learn.mst.gen5.cfr.OutcomeSampling2CfrMinimizer
 import ao.learn.mst.gen5.solve.{SolutionApproximation, ExtensiveSolver}
-import ao.holdem.gen.abs.{SingleInfoAbstraction, SklanskyInfoAbstraction}
-import ao.learn.mst.gen5.strategy.ExtensiveStrategyProfile
+import ao.holdem.gen.abs.{BucketAbstraction, SingleInfoAbstraction, SklanskyInfoAbstraction}
 import ao.holdem.bot.simple.starting_hands.Sklansky
 import ao.learn.mst.lib.{DisplayUtils, NumUtils}
+import ao.holdem.bot.regret.HoldemAbstraction
+import ao.holdem.abs.bucket.abstraction.bucketize.build.FastBucketTreeBuilder
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer
+import ao.holdem.canon.hole.{HoleLookup, CanonHole}
+import com.google.common.collect.ImmutableMultimap
+import scala.collection.JavaConversions._
+import ao.learn.mst.gen5.s2.MixedStrategy
 
 /**
  *
@@ -17,33 +23,58 @@ object GenMain extends App
     HoldemGame
 
   val solver: ExtensiveSolver[HoldemState, HoldemInfo, HoldemAction] =
-//    new ProbingCfrMinimizer[HoldemState, HoldemInfo, HoldemAction](
     new OutcomeSampling2CfrMinimizer[HoldemState, HoldemInfo, HoldemAction](
       true)
 
+  val holdemAbstraction: HoldemAbstraction =
+    new HoldemAbstraction(
+      new FastBucketTreeBuilder(new KMeansBucketizer),
+      5, 25.toChar, 125.toChar, 625.toChar)
+  val bucketTree = holdemAbstraction.tree(false)
+
+  val holeCards: ImmutableMultimap[Int, CanonHole] = {
+    val buff: ImmutableMultimap.Builder[Int, CanonHole] = ImmutableMultimap.builder()
+
+    for (h <- 0 until CanonHole.CANONS) {
+      val hole: CanonHole = HoleLookup.lookup(h)
+      val bucket: Int = bucketTree.getHole(h)
+      buff.put(bucket, hole)
+    }
+
+    buff.build()
+  }
+
   val abstraction: ExtensiveAbstraction[HoldemInfo, HoldemAction] =
-    SingleInfoAbstraction
+//    SingleInfoAbstraction
 //    HoleInfoAbstraction
 //    SklanskyInfoAbstraction
+      BucketAbstraction(holdemAbstraction)
 
   val solution: SolutionApproximation[HoldemInfo, HoldemAction] =
     solver.initialSolution(game)
 
-  (0 to 10000000).foreach(i => {
+  (0 to 1000 * 1000 * 1000).foreach(i => {
+    val strategy: MixedStrategy =
+      solution.strategyView
+
     solution.optimize(abstraction)
 
-    val strategy: ExtensiveStrategyProfile =
-      solution.strategy
-
-    if (i % 1000 == 0)
+    if (i % 10000 == 0)
     {
       println(s"\n\n$i")
       println("-" * 79)
 
-      val rootActions: Seq[Double] =
-        strategy.actionProbabilityMass(0)
+      for (bucket <- holeCards.keySet()) {
+        val probs: Seq[Double] =
+          strategy.probabilities(bucket, 3)
 
-      println(s"$i\t$rootActions")
+        println(s"${DisplayUtils.displayProbabilities(probs)}\t${holeCards.get(bucket)}")
+      }
+
+//      val rootActions: Seq[Double] =
+//        strategy.actionProbabilityMass(0)
+//
+//      println(s"$i\t$rootActions")
 
 //      for (g <- 0 to Sklansky.HIGH) {
 //        val probs: Seq[Double] =
@@ -51,12 +82,12 @@ object GenMain extends App
 //
 //        val name: String =
 //          if (g == 0) {
-//            "Post-flop"
+//            "PF"
 //          } else {
 //            s"S$g"
 //          }
 //
-//        println(s"$name\t${DisplayUtils.displayProbabilities(probs)}")
+//        println(s"$i\t$name\t${DisplayUtils.displayProbabilities(probs)}")
 //      }
 
 //      for (h <- 0 until CanonHole.CANONS) {
@@ -66,9 +97,11 @@ object GenMain extends App
 //        val probs: Seq[Double] =
 //          strategy.actionProbabilityMass(h)
 //
-//        println(s"$hole\t${CommonUtils.displayProbabilities(probs)}")
+//        println(s"$hole\t${DisplayUtils.displayProbabilities(probs)}")
 //      }
     }
+
+//    solution.optimize(abstraction)
   })
 
 
