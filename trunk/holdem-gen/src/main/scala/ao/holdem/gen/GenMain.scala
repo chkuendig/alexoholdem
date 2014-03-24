@@ -12,7 +12,11 @@ import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer
 import ao.holdem.canon.hole.{HoleLookup, CanonHole}
 import com.google.common.collect.ImmutableMultimap
 import scala.collection.JavaConversions._
-import ao.learn.mst.gen5.s2.MixedStrategy
+import ao.learn.mst.gen5.solve2.{RegretMinimizer, RegretSampler}
+import ao.learn.mst.gen5.cfr2.OutcomeRegretSampler
+import ao.learn.mst.gen5.state.{OptimizationState, MixedStrategy}
+import ao.learn.mst.gen5.state.impl.ArrayOptimizationState
+import com.google.common.base.Stopwatch
 
 /**
  *
@@ -22,9 +26,8 @@ object GenMain extends App
   val game: ExtensiveGame[HoldemState, HoldemInfo, HoldemAction] =
     HoldemGame
 
-  val solver: ExtensiveSolver[HoldemState, HoldemInfo, HoldemAction] =
-    new OutcomeSampling2CfrMinimizer[HoldemState, HoldemInfo, HoldemAction](
-      true)
+  val sampler: RegretSampler[HoldemState, HoldemInfo, HoldemAction] =
+    new OutcomeRegretSampler[HoldemState, HoldemInfo, HoldemAction]()
 
   val holdemAbstraction: HoldemAbstraction =
     new HoldemAbstraction(
@@ -44,22 +47,27 @@ object GenMain extends App
     buff.build()
   }
 
+  val statePath = "work/opt/" + holdemAbstraction.id()
+  val state: ArrayOptimizationState =
+    ArrayOptimizationState.readOrEmpty(statePath)
+
   val abstraction: ExtensiveAbstraction[HoldemInfo, HoldemAction] =
 //    SingleInfoAbstraction
 //    HoleInfoAbstraction
 //    SklanskyInfoAbstraction
       BucketAbstraction(holdemAbstraction)
 
-  val solution: SolutionApproximation[HoldemInfo, HoldemAction] =
-    solver.initialSolution(game)
+  val solver = new RegretMinimizer(
+    game, abstraction, state, true)
 
   (0 to 1000 * 1000 * 1000).foreach(i => {
+
     val strategy: MixedStrategy =
-      solution.strategyView
+      solver.strategyView
 
-    solution.optimize(abstraction)
+    solver.iterate(sampler)
 
-    if (i % 10000 == 0)
+    if (i % 25000 == 0)
     {
       println(s"\n\n$i")
       println("-" * 79)
@@ -99,9 +107,11 @@ object GenMain extends App
 //
 //        println(s"$hole\t${DisplayUtils.displayProbabilities(probs)}")
 //      }
-    }
 
-//    solution.optimize(abstraction)
+      val timer = Stopwatch.createStarted()
+      state.write(statePath)
+      println(s"Done writing, took $timer")
+    }
   })
 
 

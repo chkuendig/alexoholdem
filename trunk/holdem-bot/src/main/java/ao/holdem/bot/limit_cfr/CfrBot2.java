@@ -25,12 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-//import ao.holdem.engine.analysis.Analysis;
 
 /**
- * User: alex
- * Date: 21-Apr-2009
- * Time: 11:04:13 PM
+ * 21-Apr-2009 11:04:13 PM
  */
 public class CfrBot2 extends AbstractPlayer
 {
@@ -202,14 +199,13 @@ public class CfrBot2 extends AbstractPlayer
 
 
         if (canonHole == null) {
-            try{
+            try {
                 canonHole  = CanonHole.create(cards.hole());
                 holeBucket = ABS.tree(true).getHole(
                                     canonHole.canonIndex());
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-
         }
         if (round == Round.PREFLOP) {
             roundBucket = (char) holeBucket;

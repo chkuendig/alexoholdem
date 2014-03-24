@@ -5,6 +5,7 @@ import ao.holdem.abs.bucket.abstraction.access.odds.BucketOdds;
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.HistBucketizer;
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.abs.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
@@ -237,13 +238,13 @@ public class AbstractionOptimizer
             char       nRiverBuckets)
     {
         return abstractHoldem(
-//                new KMeansBucketizer(),
+                new KMeansBucketizer(),
 //                new PotentialBucketizer(),
 //                new HandStrengthAbs(),
 //                new PercentileAbs(),
 //                new HistBucketizer((byte) 4),
 //                new HistBucketizer((byte) 2),
-                new HistBucketizer((byte) 3),
+//                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
     }
 

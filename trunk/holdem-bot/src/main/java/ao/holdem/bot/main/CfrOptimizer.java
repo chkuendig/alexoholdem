@@ -1,5 +1,6 @@
 package ao.holdem.bot.main;
 
+import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.bot.limit_cfr.CfrBot2;
 import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
@@ -161,8 +162,8 @@ public class CfrOptimizer
             char       nRiverBuckets)
     {
         return abstractHoldem(
-//                new KMeansBucketizer(),
-                new HistBucketizer((byte) 3),
+                new KMeansBucketizer(),
+//                new HistBucketizer((byte) 3),
                 nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
     }
 
