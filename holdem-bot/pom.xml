@@ -37,12 +37,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-abs</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>ao.ai</groupId>
-            <artifactId>ai-classification</artifactId>
-            <version>${ao-ai.version}</version>
-        </dependency>
     </dependencies>
 
 

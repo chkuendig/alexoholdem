@@ -39,8 +39,7 @@ public interface Player
      *          FallbackAction.
      */
      Action act(State        state,
-                CardSequence cards/*,
-                Analysis     analysis*/);
+                CardSequence cards);
 
 
     /**

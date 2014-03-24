@@ -45,7 +45,6 @@
 
     <properties>
         <svn.root>https://alexoholdem.googlecode.com/svn/proj/holdem</svn.root>
-        <ao-ai.version>0.0.7</ao-ai.version>
     </properties>
 
 

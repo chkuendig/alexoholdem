@@ -30,7 +30,7 @@ public class HoldemAbstraction
 
 
     //--------------------------------------------------------------------
-//    private final String ID;
+    private final String ID;
     private final File DIR;
 
     private final BucketTreeBuilder TREE_BUILDER;
@@ -66,9 +66,8 @@ public class HoldemAbstraction
             char nTurnBuckets,
             char nRiverBuckets)
     {
-        DIR = Dirs.get(Infrastructure.path(
-                "lookup/bucket/" + id(treeBuilder, nHoleBuckets,
-                                      nFlopBuckets, nTurnBuckets, nRiverBuckets)));
+        ID = id(treeBuilder, nHoleBuckets, nFlopBuckets, nTurnBuckets, nRiverBuckets);
+        DIR = Dirs.get(Infrastructure.path("lookup/bucket/" + ID));
 
         TREE_BUILDER = treeBuilder;
 
@@ -102,6 +101,10 @@ public class HoldemAbstraction
            .append( (int) numRiverBuckets );
 
         return str.toString();
+    }
+
+    public String id() {
+        return ID;
     }
 
 

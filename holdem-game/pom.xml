@@ -32,12 +32,6 @@
             <version>2.4.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>ao.ai</groupId>
-            <artifactId>ai-cluster</artifactId>
-            <version>${ao-ai.version}</version>
-        </dependency>
-
         <!-- POKER DEPENDENCIES -->
         <dependency>
             <groupId>ca.ualberta.cs</groupId>
