@@ -7,7 +7,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 
 /**
- *
+ * State of position at a table.
  */
 public class Seat
 {

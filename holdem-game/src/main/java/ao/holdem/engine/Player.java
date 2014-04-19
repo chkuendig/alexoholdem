@@ -1,6 +1,6 @@
 package ao.holdem.engine;
 
-//import ao.holdem.engine.analysis.Analysis;
+
 import ao.holdem.engine.state.State;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
@@ -30,9 +30,6 @@ public interface Player
      *          hand state from POV of this player.
      * @param cards
      *          private hole cards, and public community cards.
-//     * @param analysis
-//     *          shared analysis of the players in this hand.
-//     *          can be used to predict players' actions.
      * @return
      *          the action you wish to perform.  If it is not
      *          a valid action, then it will be processed though
