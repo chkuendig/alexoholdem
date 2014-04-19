@@ -59,8 +59,6 @@
         </dependency>
 
 
-
-
         <dependency>
             <groupId>org.specs2</groupId>
             <artifactId>specs2_${scala-major.version}</artifactId>

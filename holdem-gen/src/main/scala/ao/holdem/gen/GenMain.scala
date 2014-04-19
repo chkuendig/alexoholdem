@@ -17,6 +17,8 @@ import ao.learn.mst.gen5.cfr2.OutcomeRegretSampler
 import ao.learn.mst.gen5.state.{OptimizationState, MixedStrategy}
 import ao.learn.mst.gen5.state.impl.ArrayOptimizationState
 import com.google.common.base.Stopwatch
+import scala.util.Random
+import org.apache.commons.math3.random.{Well512a, MersenneTwister, RandomAdaptor}
 
 /**
  *
@@ -26,13 +28,19 @@ object GenMain extends App
   val game: ExtensiveGame[HoldemState, HoldemInfo, HoldemAction] =
     HoldemGame
 
+  val rand =
+    new Random(new RandomAdaptor(new Well512a()))
+
   val sampler: RegretSampler[HoldemState, HoldemInfo, HoldemAction] =
-    new OutcomeRegretSampler[HoldemState, HoldemInfo, HoldemAction]()
+    new OutcomeRegretSampler[HoldemState, HoldemInfo, HoldemAction](
+      randomness = rand)
 
   val holdemAbstraction: HoldemAbstraction =
     new HoldemAbstraction(
       new FastBucketTreeBuilder(new KMeansBucketizer),
-      5, 25.toChar, 125.toChar, 625.toChar)
+//      5, 25.toChar, 125.toChar, 625.toChar)
+      8, 64.toChar, 512.toChar, 4096.toChar)
+
   val bucketTree = holdemAbstraction.tree(false)
 
   val holeCards: ImmutableMultimap[Int, CanonHole] = {

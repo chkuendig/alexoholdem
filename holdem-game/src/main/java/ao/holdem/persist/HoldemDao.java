@@ -1,6 +1,7 @@
 package ao.holdem.persist;
 
 import ao.holdem.model.Avatar;
+import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.replay.Replay;
 import ao.util.math.rand.Rand;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -131,7 +132,7 @@ public class HoldemDao
                       OperationStatus.SUCCESS)
         {
             Avatar avatar =
-                    Avatar.BINDING.entryToObject(
+                    AvatarBinding.INSTANCE.entryToObject(
                             new TupleInput(foundKey.getData()));
 
             int    count      = cursor.count();

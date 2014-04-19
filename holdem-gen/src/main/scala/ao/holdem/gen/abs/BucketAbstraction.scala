@@ -63,7 +63,10 @@ case class BucketAbstraction(abstraction: HoldemAbstraction)
     }
 
     val cardSequenceCount: Int =
-      decoder.holeBucketCount() + decoder.flopBucketCount() + decoder.turnBucketCount() + decoder.riverBucketCount()
+      decoder.holeBucketCount() +
+      decoder.flopBucketCount() +
+      decoder.turnBucketCount() +
+      decoder.riverBucketCount()
 
     cardSequenceIndex + actionSequenceIndex * cardSequenceCount
   }

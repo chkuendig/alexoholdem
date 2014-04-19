@@ -60,14 +60,18 @@ public class BucketizerTest
 //        char nFlopBuckets  =  1024;
 //        char nTurnBuckets  =  8192;
 //        char nRiverBuckets = 65535;
-        int  nHoleBuckets  =   5;
-        char nFlopBuckets  =  25;
-        char nTurnBuckets  = 125;
-        char nRiverBuckets = 625;
-//        int  nHoleBuckets  =    48;
-//        char nFlopBuckets  =  1024;
-//        char nTurnBuckets  =  8192;
-//        char nRiverBuckets = 65535;
+//        int  nHoleBuckets  =   5;
+//        char nFlopBuckets  =  25;
+//        char nTurnBuckets  = 125;
+//        char nRiverBuckets = 625;
+//        int  nHoleBuckets  =    6;
+//        char nFlopBuckets  =   36;
+//        char nTurnBuckets  =  216;
+//        char nRiverBuckets = 1296;
+        int  nHoleBuckets  =    8;
+        char nFlopBuckets  =   64;
+        char nTurnBuckets  =  512;
+        char nRiverBuckets = 4096;
 
         Boolean needSamples = null;
         if (args.length > 1)

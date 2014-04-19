@@ -1,6 +1,7 @@
 package ao.holdem.model.replay;
 
 import ao.holdem.model.Avatar;
+import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.Community;
@@ -179,7 +180,7 @@ public class Replay
 
             for (Avatar player : hand.players())
             {
-                Avatar.BINDING.objectToEntry(player, output);
+                AvatarBinding.INSTANCE.objectToEntry(player, output);
                 Hole.BINDING.objectToEntry(
                         hand.holes.get(player), output);
 
@@ -212,7 +213,7 @@ public class Replay
             for (short player = 0; player < numPlayers; player++)
             {
                 Avatar avatar =
-                        Avatar.BINDING.entryToObject(dataInput);
+                        AvatarBinding.INSTANCE.entryToObject(dataInput);
                 clockwiseDealerLast.add( avatar );
 
                 Hole hole = Hole.BINDING.entryToObject(dataInput);

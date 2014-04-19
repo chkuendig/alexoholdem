@@ -25,6 +25,11 @@
 
     <!--====================================================================-->
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-core</artifactId>
+        </dependency>
+
         <!-- ALEX OSTROVSKY DEPENDENCIES -->
         <dependency>
             <groupId>ao.util</groupId>
