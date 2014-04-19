@@ -1,13 +1,10 @@
 package ao.holdem.model;
 
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
-
 import java.io.Serializable;
 
 /**
- *
+ * Represents a player's identity.
+ * Could be factored out of core logic.
  */
 public class Avatar implements Serializable
 {
@@ -32,6 +29,11 @@ public class Avatar implements Serializable
 
     
     //--------------------------------------------------------------------
+    public String domain()
+    {
+        return DOMAIN;
+    }
+
     public String name()
     {
         return NAME;
@@ -62,27 +64,5 @@ public class Avatar implements Serializable
         result = DOMAIN.hashCode();
         result = 31 * result + NAME.hashCode();
         return result;
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding<Avatar>
-    {
-        public Avatar entryToObject(TupleInput input)
-        {
-            String domain = input.readString();
-            String name   = input.readString();
-            return new Avatar(domain, name);
-        }
-
-        public void objectToEntry(
-                Avatar      object,
-                TupleOutput output)
-        {
-            Avatar avatar = (Avatar) object;
-            output.writeString(avatar.DOMAIN);
-            output.writeString(avatar.NAME);
-        }
     }
 }

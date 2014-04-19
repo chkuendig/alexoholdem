@@ -14,30 +14,32 @@ import ao.holdem.abs.bucket.index.detail.river.ProbabilityEncoding;
 import ao.holdem.abs.bucket.index.detail.river.compact.CompactRiverProbabilities;
 import ao.holdem.abs.bucket.index.detail.river.compact.MemProbCounts;
 import ao.holdem.model.Round;
-import ao.util.time.Stopwatch;
+import com.google.common.base.Stopwatch;
+import org.apache.commons.math3.ml.clustering.Clusterer;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.clustering.MultiKMeansPlusPlusClusterer;
 import org.apache.log4j.Logger;
 
 /**
- * User: alex
- * Date: 2-Jun-2009
- * Time: 4:00:31 PM
+ * 2-Jun-2009
  */
 public class RiverBucketizer
 {
-//    //--------------------------------------------------------------------
-//    private static final Logger LOG =
-//            Logger.getLogger(RiverBucketizer.class);
-//
+    //--------------------------------------------------------------------
+    private static final Logger LOG =
+            Logger.getLogger(RiverBucketizer.class);
+
 //    public static void main(String[] args) {
 //        RiverBucketizer.bucketizeAll((byte) 5, null);
 //    }
-//
-//
-//    //--------------------------------------------------------------------
-//    public RiverBucketizer() {}
-//
-//
-//    //--------------------------------------------------------------------
+
+
+    //--------------------------------------------------------------------
+    public RiverBucketizer() {}
+
+
+    //--------------------------------------------------------------------
 //    public static double bucketize(
 //            LongByteList branch,
 //            Round        parentRound,
@@ -48,11 +50,12 @@ public class RiverBucketizer
 //                    " parentRound " + parentRound +
 //                    ", |parentCanons| " + parentCanons.length +
 //                    ", nClusters " + nClusters);
-//        Stopwatch timer = new Stopwatch();
+//        Stopwatch timer = Stopwatch.createStarted();
 //
 //        int probCount[] = new int[ ProbabilityEncoding.COUNT ];
 //        for (CanonRange rivers : RangeLookup.lookup(
-//                parentRound, parentCanons, Round.RIVER)) {
+//                parentRound, parentCanons, Round.RIVER))
+//        {
 //            for (long river  = rivers.from();
 //                      river <= rivers.toInclusive();
 //                      river++)
@@ -110,18 +113,18 @@ public class RiverBucketizer
 //                    ", took " + timer);
 //        return clustering.error();
 //    }
-//
-//
-//    //--------------------------------------------------------------------
+
+
+    //--------------------------------------------------------------------
 //    public static double bucketizeAll(
 //            final byte         nClusters,
 //            final LongByteList into)
 //    {
 //        return bucketize(into, null, new int[0], nClusters);
 //    }
-//
-//
-//
+
+
+
 //    //--------------------------------------------------------------------
 //    private static Clustering cluster(
 //            ScalarDomain<MeanEuclidean> domain,

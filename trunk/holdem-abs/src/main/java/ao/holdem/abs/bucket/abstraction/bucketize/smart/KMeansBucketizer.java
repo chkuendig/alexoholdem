@@ -27,7 +27,7 @@ public class KMeansBucketizer implements ScalarBucketizer
     private static final int    HEAVY_BEST_OF      = 256;
 
     private static final double LIGHT_DELTA_CUTOFF = 0.01;
-    private static final int    LIGHT_BEST_OF      = 2;
+    private static final int    LIGHT_BEST_OF      = 1;
 
 
     //--------------------------------------------------------------------
@@ -163,7 +163,7 @@ public class KMeansBucketizer implements ScalarBucketizer
             int                 clusters[])
     {
         for (int i = 0; i < strengths.length(); i++) {
-            double strength = strengths.realStrength(i);
+            double strength = value(strengths.realStrength(i));
 
             byte   leastDistIndex = -1;
             double leastDistance  = Double.POSITIVE_INFINITY;
@@ -198,7 +198,7 @@ public class KMeansBucketizer implements ScalarBucketizer
             for (int j = 0; j < clusters.length; j++) {
                 if (clusters[j] != i) continue;
 
-                sum += details.realStrength(j) *
+                sum += value(details.realStrength(j)) *
                        details.represents(j);
                 count += details.represents(j);
             }
@@ -245,8 +245,9 @@ public class KMeansBucketizer implements ScalarBucketizer
                 for (int j = 0; j < k; j++) {
                     if (i == means[j]) continue next_point;
 
-                    double dist = Math.abs(details.realStrength(i) -
-                                           details.realStrength(means[j]));
+                    double dist = Math.abs(
+                            value(details.realStrength(i)) -
+                            value(details.realStrength(means[j])));
                     if (nearestCluster > dist) {
                         nearestCluster = dist;
                     }
@@ -269,9 +270,13 @@ public class KMeansBucketizer implements ScalarBucketizer
 
         double meanVals[] = new double[ means.length ];
         for (int i = 0; i < means.length; i++) {
-            meanVals[ i ] = details.realStrength( means[i] );
+            meanVals[ i ] = value(details.realStrength(means[i]));
         }
         return meanVals;
+    }
+
+    private double value(double winProbability) {
+        return winProbability * winProbability;
     }
 
 

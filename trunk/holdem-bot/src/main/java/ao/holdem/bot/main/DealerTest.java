@@ -36,9 +36,13 @@ public class DealerTest
     public void vsHuman(final Player brain) {
         vsHuman(brain, Rand.nextBoolean(), true);
     }
-    public void vsHuman(final Player  brain,
-                              boolean humanDealerFirst,
-                              boolean swap) {
+    public void vsHuman(
+            final Player  brain,
+            boolean humanDealerFirst,
+            boolean swap)
+    {
+        Rand.randomize();
+
         final Avatar bot = Avatar.local("bot");
         final Avatar you = Avatar.local("you");
         Dealer d = new Dealer(true, new HashMap<Avatar, Player>(){{

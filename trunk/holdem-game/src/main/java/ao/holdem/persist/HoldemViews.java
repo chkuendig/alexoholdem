@@ -1,6 +1,7 @@
 package ao.holdem.persist;
 
 import ao.holdem.model.Avatar;
+import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.replay.Replay;
 import com.sleepycat.bind.EntityBinding;
 import com.sleepycat.bind.EntryBinding;
@@ -23,7 +24,7 @@ public class HoldemViews
         EntryBinding <UniqueId>  handKeyBinding   = UniqueId.BINDING;
         EntityBinding<Replay>    handValueBinding = Replay  .BINDING;
 
-        EntryBinding<Avatar>   avatarKeyBinding   = Avatar.BINDING;
+        EntryBinding<Avatar>   avatarKeyBinding   = AvatarBinding.INSTANCE;
         EntryBinding<UniqueId> avatarValueBinding = UniqueId.BINDING;
 
         hands = new StoredMap<UniqueId, Replay>(
