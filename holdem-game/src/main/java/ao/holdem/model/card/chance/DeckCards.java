@@ -26,15 +26,6 @@ public class DeckCards implements ChanceCards
         holes = new HashMap<>();
     }
 
-    private DeckCards(Deck copyCards,
-                      Map<Avatar, Hole> copyHoles,
-                      Community copyCommunity)
-    {
-        cards     = copyCards;
-        holes     = copyHoles;
-        community = copyCommunity;
-    }
-
 
     //--------------------------------------------------------------------
     public Hole hole(Avatar forPlayer)
@@ -97,23 +88,5 @@ public class DeckCards implements ChanceCards
         {
             community = community.addRiver( cards.nextCard() );
         }
-    }
-
-
-    //--------------------------------------------------------------------
-    public void reset()
-    {
-        cards.reset();
-        holes.clear();
-        community = Community.PREFLOP;
-    }
-
-
-    //--------------------------------------------------------------------
-    public DeckCards prototype()
-    {
-        return new DeckCards(cards.prototype(),
-                             new HashMap<Avatar, Hole>(holes),
-                             community);
     }
 }

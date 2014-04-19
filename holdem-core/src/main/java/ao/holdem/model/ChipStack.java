@@ -1,9 +1,5 @@
 package ao.holdem.model;
 
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
-
 /**
  * One or more chips.
  */
@@ -156,24 +152,5 @@ public class ChipStack implements Comparable<ChipStack>
     public int hashCode()
     {
         return smallBlinds;
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding
-    {
-        public ChipStack entryToObject(TupleInput input)
-        {
-            short smallBlinds = input.readShort();
-            return ChipStack.newInstance(smallBlinds);
-        }
-
-        public void objectToEntry(Object      object,
-                                  TupleOutput output)
-        {
-            ChipStack chips = (ChipStack) object;
-            output.writeShort((short) chips.smallBlinds);
-        }
     }
 }

@@ -2,29 +2,24 @@ package ao.holdem.model.card;
 
 
 import ao.holdem.model.Round;
-import ao.util.serial.Prototype;
-import com.google.common.base.Objects;
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 
 import java.util.Arrays;
 
 /**
  *
  */
-public class Community implements Prototype<Community>
+public class Community
 {
     //--------------------------------------------------------------------
     public static final Community PREFLOP = new Community();
 
 
     //--------------------------------------------------------------------
-    private final Card FLOP_A;
-    private final Card FLOP_B;
-    private final Card FLOP_C;
-    private final Card TURN;
-    private final Card RIVER;
+    private final Card flopA;
+    private final Card flopB;
+    private final Card flopC;
+    private final Card turn;
+    private final Card river;
 
 
     //--------------------------------------------------------------------
@@ -45,11 +40,11 @@ public class Community implements Prototype<Community>
     public Community(
             Card flopA, Card flopB, Card flopC, Card turn, Card river)
     {
-        FLOP_A = flopA;
-        FLOP_B = flopB;
-        FLOP_C = flopC;
-        TURN   = turn;
-        RIVER  = river;
+        this.flopA = flopA;
+        this.flopB = flopB;
+        this.flopC = flopC;
+        this.turn = turn;
+        this.river = river;
 
         validate();
     }
@@ -58,22 +53,22 @@ public class Community implements Prototype<Community>
     //--------------------------------------------------------------------
     private void validate()
     {
-        assert FLOP_A == null && FLOP_B == null && FLOP_C == null ||
-               FLOP_A != null && FLOP_B != null && FLOP_C != null :
+        assert flopA == null && flopB == null && flopC == null ||
+               flopA != null && flopB != null && flopC != null :
                 "all 3 flop cards must be delt atomically";
 
-        assert TURN == null || FLOP_A != null :
+        assert turn == null || flopA != null :
                 "turn requires the flop to be present";
 
-        assert RIVER == null || TURN != null :
+        assert river == null || turn != null :
                 "river requires the turn to be present";
 
         assert hasRiver() &&
-                 areUnique(FLOP_A, FLOP_B, FLOP_C, TURN, RIVER) ||
+                 areUnique(flopA, flopB, flopC, turn, river) ||
                hasTurn() &&
-                 areUnique(FLOP_A, FLOP_B, FLOP_C, TURN) ||
+                 areUnique(flopA, flopB, flopC, turn) ||
                hasFlop() &&
-                 areUnique(FLOP_A, FLOP_B, FLOP_C) ||
+                 areUnique(flopA, flopB, flopC) ||
                isPreflop() :
                  "community cards cannot repeat";
     }
@@ -98,32 +93,32 @@ public class Community implements Prototype<Community>
     //--------------------------------------------------------------------
     public Card flopA()
     {
-        return FLOP_A;
+        return flopA;
     }
     public Card flopB()
     {
-        return FLOP_B;
+        return flopB;
     }
     public Card flopC()
     {
-        return FLOP_C;
+        return flopC;
     }
     public Card turn()
     {
-        return TURN;
+        return turn;
     }
     public Card river()
     {
-        return RIVER;
+        return river;
     }
 
     public boolean contains(Card card)
     {
-        return FLOP_A == card ||
-               FLOP_B == card ||
-               FLOP_C == card ||
-               TURN   == card ||
-               RIVER  == card;
+        return flopA == card ||
+               flopB == card ||
+               flopC == card ||
+               turn == card ||
+               river == card;
     }
     
 
@@ -145,38 +140,35 @@ public class Community implements Prototype<Community>
     }
     public boolean hasFlop()
     {
-        return FLOP_A != null;
+        return flopA != null;
     }
     public boolean hasTurn()
     {
-        return TURN != null;
+        return turn != null;
     }
     public boolean hasRiver()
     {
-        return RIVER != null;
+        return river != null;
     }
 
 
     //--------------------------------------------------------------------
     public Community addTurn(Card turn)
     {
-        assert TURN == null && turn != null;
-        return new Community(FLOP_A, FLOP_B, FLOP_C, turn);
+        assert this.turn == null && turn != null;
+        return new Community(flopA, flopB, flopC, turn);
     }
 
     public Community addRiver(Card river)
     {
-        assert RIVER == null && river != null;
-        return new Community(FLOP_A, FLOP_B, FLOP_C, TURN, river);
+        assert this.river == null && river != null;
+        return new Community(flopA, flopB, flopC, turn, river);
     }
 
 
     //--------------------------------------------------------------------
     public Community asOf(Round round)
     {
-//        return (round == null)
-//                ? Round.RIVER.ofCommunity( this )
-//                : round.ofCommunity( this );
         return round.ofCommunity( this );
     }
 
@@ -188,14 +180,14 @@ public class Community implements Prototype<Community>
     {
         assert hasFlop() : "no flop cards available";
         return hasTurn()
-                ? new Community(FLOP_A, FLOP_B, FLOP_C)
+                ? new Community(flopA, flopB, flopC)
                 : this;
     }
     public Community asTurn()
     {
         assert hasTurn() : "no turn cards available";
         return hasRiver()
-               ? new Community(FLOP_A, FLOP_B, FLOP_C, TURN)
+               ? new Community(flopA, flopB, flopC, turn)
                : this;
     }
     public Community asRiver()
@@ -226,20 +218,13 @@ public class Community implements Prototype<Community>
         Card known[] = new Card[5];
         switch (knownCount())
         {
-            case 5: known[4] = RIVER;
-            case 4: known[3] = TURN;
-            case 3: known[2] = FLOP_C;
-                    known[1] = FLOP_B;
-                    known[0] = FLOP_A;
+            case 5: known[4] = river;
+            case 4: known[3] = turn;
+            case 3: known[2] = flopC;
+                    known[1] = flopB;
+                    known[0] = flopA;
         }
         return known;
-    }
-
-
-    //--------------------------------------------------------------------
-    public Community prototype()
-    {
-        return this;
     }
 
 
@@ -257,42 +242,15 @@ public class Community implements Prototype<Community>
         }
 
         Community that = (Community) o;
-        return Objects.equal(FLOP_A, that.FLOP_A) &&
-                Objects.equal(FLOP_B, that.FLOP_B) &&
-                Objects.equal(FLOP_C, that.FLOP_C) &&
-                Objects.equal(TURN, that.TURN) &&
-                Objects.equal(RIVER, that.RIVER);
+        return flopA == that.flopA &&
+                flopB == that.flopB &&
+                flopC == that.flopC &&
+                turn == that.turn &&
+                river == that.river;
     }
 
     public int hashCode() {
-        return Objects.hashCode(FLOP_A, FLOP_B, FLOP_C, TURN, RIVER);
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding
-    {
-        public Community entryToObject(TupleInput input)
-        {
-            Card flopA = Card.BINDING.entryToObject(input);
-            Card flopB = Card.BINDING.entryToObject(input);
-            Card flopC = Card.BINDING.entryToObject(input);
-            Card turn  = Card.BINDING.entryToObject(input);
-            Card river = Card.BINDING.entryToObject(input);
-
-            return new Community(flopA, flopB, flopC, turn, river);
-        }
-
-        public void objectToEntry(Object object, TupleOutput output)
-        {
-            Community community = (Community) object;
-
-            Card.BINDING.objectToEntry(community.FLOP_A, output);
-            Card.BINDING.objectToEntry(community.FLOP_B, output);
-            Card.BINDING.objectToEntry(community.FLOP_C, output);
-            Card.BINDING.objectToEntry(community.TURN,   output);
-            Card.BINDING.objectToEntry(community.RIVER,  output);
-        }
+        return Arrays.hashCode(new Card[]{
+                flopA, flopB, flopC, turn, river});
     }
 }

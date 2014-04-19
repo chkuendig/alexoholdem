@@ -17,6 +17,7 @@ public enum AbstractAction
                 ChipStack toCall, boolean betMadeThisRound) {
             return Action.FOLD;
         }},
+
     CHECK_CALL(FallbackAction.CHECK_OR_CALL){
         public Action toAction(
                 ChipStack toCall, boolean betMadeThisRound) {
@@ -24,6 +25,7 @@ public enum AbstractAction
                    ? Action.CHECK
                    : Action.CALL;
         }},
+
     BET_RAISE(FallbackAction.RAISE_OR_CALL){
         public Action toAction(
                 ChipStack toCall, boolean betMadeThisRound) {
@@ -31,6 +33,7 @@ public enum AbstractAction
                    ? Action.RAISE
                    : Action.BET;
         }};
+
 
     public static final AbstractAction[] VALUES = values();
 
@@ -47,12 +50,6 @@ public enum AbstractAction
 
 
     //--------------------------------------------------------------------
-//    public Action fallback(HandState state)
-//    {
-//        return fallback(state.toCall(),
-//                            state.remainingBetsInRound() < 4);
-//    }
-
     public abstract Action toAction(
             ChipStack toCall,
             boolean betMadeThisRound);

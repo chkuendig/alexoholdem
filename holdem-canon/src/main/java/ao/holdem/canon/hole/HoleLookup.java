@@ -71,8 +71,8 @@ public enum HoleLookup
         }
         else
         {
-            int hi  = hole.hi().rank().ordinal();
-            int lo  = hole.lo().rank().ordinal();
+            int hi  = hole.high().rank().ordinal();
+            int lo  = hole.low().rank().ordinal();
 
             int subIndex = hi * (hi - 1) / 2 + lo;
 
@@ -90,8 +90,8 @@ public enum HoleLookup
                ? Order.pair(hole.a().suit(), hole.b().suit())
                : hole.isSuited()
                  ? Order.suited  (hole.a().suit())
-                 : Order.unsuited(hole.hi().suit(),
-                                  hole.lo().suit());
+                 : Order.unsuited(hole.high().suit(),
+                                  hole.low().suit());
     }
 
 

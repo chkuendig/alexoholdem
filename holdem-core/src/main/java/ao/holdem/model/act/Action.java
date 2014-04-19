@@ -1,7 +1,5 @@
 package ao.holdem.model.act;
 
-import ao.holdem.persist.EnumBinding;
-
 
 /**
  * An action in Limit Holdem.
@@ -108,22 +106,4 @@ public enum Action
     {
         return ABSTRACTION == abstraction;
     }
-
-//    public boolean isCheckCall()
-//    {
-//        return ABSTRACTION == AbstractAction.CHECK_CALL;
-//    }
-//    public boolean isBetRaise()
-//    {
-//        return ABSTRACTION == AbstractAction.BET_RAISE;
-//    }
-//    public boolean isQuitFold()
-//    {
-//        return ABSTRACTION == AbstractAction.QUIT_FOLD;
-//    }
-
-
-    //--------------------------------------------------------------------
-    public static final EnumBinding<Action> BINDING =
-            new EnumBinding<Action>(Action.class);
 }

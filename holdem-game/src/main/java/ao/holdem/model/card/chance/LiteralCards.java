@@ -38,11 +38,4 @@ public class LiteralCards implements ChanceCards
     {
         return holes.get( forPlayer );
     }
-
-
-    //--------------------------------------------------------------------
-    public ChanceCards prototype()
-    {
-        return this;
-    }
 }

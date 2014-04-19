@@ -10,8 +10,8 @@ import ao.holdem.model.card.Hole;
 public class LiteralCardSequence implements CardSequence
 {
     //--------------------------------------------------------------------
-    private final Hole      HOLE;
-    private final Community COMMUNITY;
+    private final Hole hole;
+    private final Community community;
 
 
     //--------------------------------------------------------------------
@@ -24,20 +24,20 @@ public class LiteralCardSequence implements CardSequence
             Hole      hole,
             Community community)
     {
-        HOLE      = hole;
-        COMMUNITY = community;
+        this.hole = hole;
+        this.community = community;
     }
 
 
     //--------------------------------------------------------------------
     public Hole hole()
     {
-        return HOLE;
+        return hole;
     }
 
     public Community community()
     {
-        return COMMUNITY;
+        return community;
     }
 
 
@@ -46,7 +46,7 @@ public class LiteralCardSequence implements CardSequence
             Card flopA, Card flopB, Card flopC)
     {
         return new LiteralCardSequence(
-                HOLE,
+                hole,
                 new Community(flopA, flopB, flopC));
     }
     public LiteralCardSequence addFlop(
@@ -59,23 +59,23 @@ public class LiteralCardSequence implements CardSequence
             Card turn)
     {
         return new LiteralCardSequence(
-                HOLE,
-                COMMUNITY.addTurn(turn));
+                hole,
+                community.addTurn(turn));
     }
 
     public LiteralCardSequence addRiver(
             Card river)
     {
         return new LiteralCardSequence(
-                HOLE,
-                COMMUNITY.addRiver(river));
+                hole,
+                community.addRiver(river));
     }
 
 
     //--------------------------------------------------------------------
     @Override public String toString()
     {
-        return HOLE + " | " + COMMUNITY;
+        return hole + " | " + community;
     }
 
 
@@ -85,17 +85,17 @@ public class LiteralCardSequence implements CardSequence
         if (o == null || getClass() != o.getClass()) return false;
 
         LiteralCardSequence that = (LiteralCardSequence) o;
-        return !(COMMUNITY != null
-                ? !COMMUNITY.equals(that.COMMUNITY)
-                : that.COMMUNITY != null) &&
-               !(HOLE != null
-                 ? !HOLE.equals(that.HOLE) : that.HOLE != null);
+        return !(community != null
+                ? !community.equals(that.community)
+                : that.community != null) &&
+               !(hole != null
+                 ? !hole.equals(that.hole) : that.hole != null);
     }
 
     @Override public int hashCode() {
-        int result = HOLE != null ? HOLE.hashCode() : 0;
+        int result = hole != null ? hole.hashCode() : 0;
         result = 31 * result +
-                (COMMUNITY != null ? COMMUNITY.hashCode() : 0);
+                (community != null ? community.hashCode() : 0);
         return result;
     }
 }

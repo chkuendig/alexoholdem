@@ -3,7 +3,8 @@ package ao.holdem.model.card.chance;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.util.data.Arrs;
+
+import java.util.*;
 
 /**
  *
@@ -11,21 +12,18 @@ import ao.util.data.Arrs;
 public class Deck
 {
     //--------------------------------------------------------------------
-    private final Card cards[];
-    private       int  nextIndex = 0;
+    private final List<Card> cards;
+    private       int        nextIndex = 0;
 
 
     //--------------------------------------------------------------------
-    public Deck()
-    {
-        cards = Card.VALUES.clone();
-        Arrs.shuffle(cards);
+    public Deck() {
+        this(new Random());
     }
-
-    private Deck(Card copyCards[], int copyNextIndex)
+    public Deck(Random rand)
     {
-        cards     = copyCards;
-        nextIndex = copyNextIndex;
+        cards = new ArrayList<>(Arrays.asList(Card.VALUES));
+        Collections.shuffle(cards, rand);
     }
 
 
@@ -46,15 +44,8 @@ public class Deck
     //--------------------------------------------------------------------
     public Card nextCard()
     {
-        assert nextIndex < cards.length;
-
-        return cards[ nextIndex++ ];
-//        int swapRange = cards.length - nextIndex;
-//        int destIndex = swapRange - 1;
-//        swap(cards, destIndex, Rand.nextInt(swapRange));
-//
-//        nextIndex++;
-//        return cards[ destIndex ];
+        assert nextIndex < cards.size();
+        return cards.get( nextIndex++ );
     }
 
 
@@ -67,12 +58,5 @@ public class Deck
     public int cardsDealt()
     {
         return nextIndex;
-    }
-
-
-    //--------------------------------------------------------------------
-    public Deck prototype()
-    {
-        return new Deck(cards, nextIndex);
     }
 }
