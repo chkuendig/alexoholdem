@@ -1,9 +1,8 @@
 package ao.holdem.abs.odds.agglom.hist;
 
 import ao.Infrastructure;
-import ao.holdem.engine.state.eval.HandStrength;
+import ao.holdem.engine.eval.HandStrength;
 import ao.holdem.model.card.Card;
-import ao.holdem.engine.state.eval.Eval5;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
 import ao.util.data.primitive.ShortList;
 import ao.util.io.Dirs;

@@ -1,6 +1,6 @@
 package ao.holdem.engine.state;
 
-import ao.holdem.engine.state.eval.EvalBy5;
+import ao.holdem.engine.eval.EvalBy5;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;

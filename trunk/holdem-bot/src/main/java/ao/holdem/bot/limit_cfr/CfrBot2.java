@@ -15,8 +15,8 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.engine.state.eval.HandRank;
-import ao.holdem.engine.state.eval.EvalBy5;
+import ao.holdem.engine.eval.HandRank;
+import ao.holdem.engine.eval.EvalBy5;
 import ao.holdem.bot.regret.InfoMatrix;
 import org.apache.log4j.Logger;
 
