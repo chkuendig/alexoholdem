@@ -16,35 +16,35 @@ public class Avatar implements Serializable
 
 
     //--------------------------------------------------------------------
-    private final String DOMAIN;
-    private final String NAME;
+    private final String domain;
+    private final String name;
 
 
     //--------------------------------------------------------------------
     public Avatar(String domain, String name)
     {
-        DOMAIN = domain;
-        NAME   = name;
+        this.domain = domain;
+        this.name   = name;
     }
 
     
     //--------------------------------------------------------------------
     public String domain()
     {
-        return DOMAIN;
+        return domain;
     }
 
     public String name()
     {
-        return NAME;
+        return name;
     }
 
 
     //--------------------------------------------------------------------
     public String toString()
     {
-        //return DOMAIN + "." + NAME;
-        return NAME;
+        //return domain + "." + name;
+        return name;
     }
 
     public boolean equals(Object o)
@@ -54,15 +54,15 @@ public class Avatar implements Serializable
             getClass() != o.getClass()) return false;
 
         Avatar avatar = (Avatar) o;
-        return DOMAIN.equals(avatar.DOMAIN) &&
-               NAME.equals(avatar.NAME);
+        return domain.equals(avatar.domain) &&
+               name.equals(avatar.name);
     }
 
     public int hashCode()
     {
         int result;
-        result = DOMAIN.hashCode();
-        result = 31 * result + NAME.hashCode();
+        result = domain.hashCode();
+        result = 31 * result + name.hashCode();
         return result;
     }
 }

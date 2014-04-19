@@ -10,23 +10,24 @@ public enum Suit
     //--------------------------------------------------------------------
     CLUBS("c"), DIAMONDS("d"), HEARTS("h"), SPADES("s");
 
-    public static Suit VALUES[] = values();
+    // pre-computed for performance reasons (should be immutable)
+    public static final Suit VALUES[] = values();
 
 
     //--------------------------------------------------------------------
-    private final String NAME;
+    private final String name;
 
 
     //--------------------------------------------------------------------
     private Suit(String name)
     {
-        NAME = name;
+        this.name = name;
     }
 
 
     //--------------------------------------------------------------------
     public String toString()
     {
-        return NAME;
+        return name;
     }
 }

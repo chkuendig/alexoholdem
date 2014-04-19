@@ -1,13 +1,9 @@
 package ao.holdem.model.card;
 
-import ao.holdem.persist.EnumBinding;
-import ao.util.data.Arrs;
-
-import java.util.Comparator;
 
 /**
  * Note that this given order of cards
- *  is standard and will not be changed.
+ *  is standard and must be kept.
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public enum Card
@@ -69,8 +65,18 @@ public enum Card
     KING_OF_SPADES (Rank.KING,  Suit.SPADES),
     ACE_OF_SPADES  (Rank.ACE,   Suit.SPADES);
 
-    public static final Card VALUES[]  = Card.values(); // optimization
-    public static final int  INDEXES[] = Arrs.sequence(VALUES.length);
+    // pre-computed for performance reasons (should be immutable)
+    public static final Card[] VALUES = Card.values(); // optimization
+
+    // pre-computed for performance reasons (should be immutable)
+    public static final int[] INDEXES = computeIndexes();
+    private static int[] computeIndexes() {
+        int[] indexes = new int[VALUES.length];
+        for (int i = 0; i < indexes.length; i++) {
+            indexes[i] = i;
+        }
+        return indexes;
+    }
     
 
     //--------------------------------------------------------------------
@@ -83,20 +89,13 @@ public enum Card
     public static Card valueOf(Rank rank, Suit suit)
     {
         return VALUES[ rank.ordinal() +
-                       suit.ordinal() * Rank.values().length ];
+                       suit.ordinal() * Rank.VALUES.length ];
     }
-//    public static Card valueOf(int index)
-//    {
-//        return VALUES[ index - 1 ];
-//    }
 
-    // 5h Qd 6c Ac 6s
-    public static Card valueOfCard(String name)
-    {
-        for (Card c : values())
-        {
-            if (c.toString().equals( name ))
-            {
+    // e.g.: 5h Qd 6c Ac 6s
+    public static Card valueOfCard(String name) {
+        for (Card c : VALUES) {
+            if (c.toString().equals( name )) {
                 return c;
             }
         }
@@ -105,31 +104,31 @@ public enum Card
 
 
     //--------------------------------------------------------------------
-    private final Rank RANK;
-    private final Suit SUIT;
-    private final int  INDEX;
-    private final int  INVERTED_INDEX;
+    private final Rank rank;
+    private final Suit suit;
+    private final int index;
+    private final int invertedIndex;
 
     private Card(Rank rank, Suit suit)
     {
-        RANK = rank;
-        SUIT = suit;
+        this.rank = rank;
+        this.suit = suit;
 
-        INDEX          = ordinal() + 1;
-        INVERTED_INDEX = RANK.ordinal() * Suit.values().length +
-                         SUIT.ordinal() + 1;
+        index = ordinal() + 1;
+
+        invertedIndex =
+                this.rank.ordinal() * Suit.values().length +
+                this.suit.ordinal() + 1;
     }
 
 
     //--------------------------------------------------------------------
-    public Rank rank()
-    {
-        return RANK;
+    public Rank rank() {
+        return rank;
     }
 
-    public Suit suit()
-    {
-        return SUIT;
+    public Suit suit() {
+        return suit;
     }
 
 
@@ -150,9 +149,8 @@ public enum Card
         Ac = 13    Ad = 26    Ah = 39    As = 52
      * @return the index from the table above
      */
-    public int index()
-    {
-        return INDEX;
+    public int index() {
+        return index;
     }
 
     /** Card to inverted index conversion:
@@ -171,52 +169,14 @@ public enum Card
        Ac = 49    Ad = 50    Ah = 51    As = 52
      * @return index from table above
      */
-    public int invertedIndex()
-    {
-        return INVERTED_INDEX;
+    public int invertedIndex() {
+        return invertedIndex;
     }
 
 
     //--------------------------------------------------------------------
     @Override
-    public String toString()
-    {
-        return RANK.toString() + SUIT;
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final EnumBinding<Card> BINDING =
-                                new EnumBinding<Card>(Card.class);
-
-
-    //--------------------------------------------------------------------
-    public static final ByRank BY_RANK_DSC = new ByRank(false);
-    public static final ByRank BY_RANK_ASC = new ByRank(true);
-    public static class ByRank implements Comparator<Card>
-    {
-        private final boolean ascending;
-        private ByRank(boolean asc)
-        {
-            ascending = asc;
-        }
-
-        public int compare(Card a, Card b)
-        {
-            int cmp = a.rank().compareTo( b.rank() );
-            int cmpB =
-                    cmp == 0
-                    ? a.suit().compareTo( b.suit() )
-                    : cmp;
-            return ascending ? cmpB : -cmpB;
-        }
-        public Card min(Card a, Card b)
-        {
-            return compare(a, b) < 0 ? a : b;
-        }
-        public Card max(Card a, Card b)
-        {
-            return compare(a, b) > 0 ? a : b;
-        }
+    public String toString() {
+        return rank.toString() + suit;
     }
 }

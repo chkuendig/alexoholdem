@@ -1,9 +1,5 @@
 package ao.holdem.model.card;
 
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
-
 
 /**
  * Hole cards, with canonical indexing
@@ -15,13 +11,14 @@ public class Hole
     private static final Hole[][] VALUES  = new Hole[52][52];
     static
     {
-        Card cards[] = Card.VALUES;
+        Card[] cards = Card.VALUES;
         for (int i = 0; i < 52; i++)
         {
             for (int j = 0; j < 52; j++)
             {
                 if (i == j) continue;
-                Hole hole    = new Hole(cards[i], cards[j]);
+
+                Hole hole = new Hole(cards[i], cards[j]);
                 VALUES[i][j] = hole;
             }
         }
@@ -121,7 +118,7 @@ public class Hole
      * @return the card with the higher rank.
      * @throws AssertionError if Hole is paired()
      */
-    public Card hi()
+    public Card high()
     {
         assert !isPair();
         return (A.rank().compareTo( B.rank() ) > 0
@@ -132,7 +129,7 @@ public class Hole
      * @return the card with the lower rank.
      * @throws AssertionError if Hole is paired()
      */
-    public Card lo()
+    public Card low()
     {
         assert !isPair();
         return (A.rank().compareTo( B.rank() ) < 0
@@ -163,34 +160,5 @@ public class Hole
     public int hashCode()
     {
         return A.ordinal() * 52 + B.ordinal();
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-    public static class Binding extends TupleBinding
-    {
-        public Hole entryToObject(TupleInput input)
-        {
-            byte cardA = input.readByte();
-            byte cardB = input.readByte();
-            return Hole.VALUES[ cardA ][ cardB ];
-        }
-
-        public void objectToEntry(Object object, TupleOutput output)
-        {
-            Hole hole = (Hole) object;
-
-            if (hole == null)
-            {
-                output.writeByte( (byte) 0                );
-                output.writeByte( (byte) 0                );
-            }
-            else
-            {
-                output.writeByte( (byte) hole.A.ordinal() );
-                output.writeByte( (byte) hole.B.ordinal() );
-            }
-        }
     }
 }

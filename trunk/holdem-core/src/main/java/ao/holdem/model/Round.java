@@ -28,19 +28,9 @@ public enum Round
             return full.asRiver();
         }};
 
+    // pre-computed for performance reasons (should be immutable)
     public static final Round[] VALUES = values();
     public static final int     COUNT  = VALUES.length;
-
-
-//    //--------------------------------------------------------------------
-//    private final Round NEXT;
-//
-//
-//    //--------------------------------------------------------------------
-//    private Round(Round next)
-//    {
-//        NEXT = next;
-//    }
 
 
     //--------------------------------------------------------------------

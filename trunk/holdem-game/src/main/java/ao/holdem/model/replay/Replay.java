@@ -4,8 +4,11 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.Action;
+import ao.holdem.model.act.ActionBinding;
 import ao.holdem.model.card.Community;
+import ao.holdem.model.card.CommunityBinding;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.HoleBinding;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.chance.LiteralCards;
 import ao.holdem.persist.UniqueId;
@@ -171,17 +174,15 @@ public class Replay
                     hand.id, output);
         }
 
-        public void objectToData(Replay object, TupleOutput output)
+        public void objectToData(Replay hand, TupleOutput output)
         {
-            Replay hand = (Replay) object;
-
-            Community.BINDING.objectToEntry(hand.community, output);
+            CommunityBinding.INSTANCE.objectToEntry(hand.community, output);
             output.writeShort( hand.players().size() );
 
             for (Avatar player : hand.players())
             {
                 AvatarBinding.INSTANCE.objectToEntry(player, output);
-                Hole.BINDING.objectToEntry(
+                HoleBinding.INSTANCE.objectToEntry(
                         hand.holes.get(player), output);
 
                 List<Action> acts = hand.action.get(player);
@@ -189,7 +190,7 @@ public class Replay
 
                 for (Action act : acts)
                 {
-                    Action.BINDING.objectToEntry(act, output);
+                    ActionBinding.INSTANCE.objectToEntry(act, output);
                 }
             }
         }
@@ -200,7 +201,7 @@ public class Replay
             UniqueId id = UniqueId.BINDING.entryToObject(keyInput);
 
             Community community =
-                    Community.BINDING.entryToObject(dataInput);
+                    CommunityBinding.INSTANCE.entryToObject(dataInput);
             short numPlayers = dataInput.readShort();
 
             List<Avatar> clockwiseDealerLast =
@@ -216,7 +217,7 @@ public class Replay
                         AvatarBinding.INSTANCE.entryToObject(dataInput);
                 clockwiseDealerLast.add( avatar );
 
-                Hole hole = Hole.BINDING.entryToObject(dataInput);
+                Hole hole = HoleBinding.INSTANCE.entryToObject(dataInput);
                 holes.put(avatar, hole);
 
                 short        numActions = dataInput.readShort();
@@ -227,7 +228,7 @@ public class Replay
                 for (short action = 0; action < numActions; action++)
                 {
                     Action act =
-                            Action.BINDING.entryToObject(dataInput);
+                            ActionBinding.INSTANCE.entryToObject(dataInput);
                     actions.add( act );
                 }
             }

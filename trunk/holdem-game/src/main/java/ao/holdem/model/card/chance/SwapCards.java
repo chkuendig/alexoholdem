@@ -80,8 +80,4 @@ public class SwapCards implements ChanceCards
     public Community community(Round asOf) {
         return community.asOf( asOf );
     }
-
-    public ChanceCards prototype() {
-        return this;
-    }
 }

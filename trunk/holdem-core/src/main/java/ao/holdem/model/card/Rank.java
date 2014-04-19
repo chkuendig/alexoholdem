@@ -11,6 +11,7 @@ public enum Rank
     TEN("T"), JACK("J"),  QUEEN("Q"), KING("K"),
     ACE("A");
 
+    // pre-computed for performance reasons (should be immutable)
     public static final Rank VALUES[] = values();
 
     public static final Rank VALUES_REVERSE[];
@@ -25,13 +26,13 @@ public enum Rank
 
 
     //--------------------------------------------------------------------
-    private final String NAME;
+    private final String name;
 
 
     //--------------------------------------------------------------------
     private Rank(String name)
     {
-        NAME  = name;
+        this.name = name;
     }
 
 
@@ -43,8 +44,8 @@ public enum Rank
 
 
     //--------------------------------------------------------------------
-    public String toString()
-    {
-        return NAME;
+    @Override
+    public String toString() {
+        return name;
     }
 }

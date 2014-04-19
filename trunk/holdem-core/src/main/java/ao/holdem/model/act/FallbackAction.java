@@ -56,15 +56,11 @@ public enum FallbackAction
                    : Action.CALL;
         }};
 
+
     public static final FallbackAction VALUES[] = values();
 
 
     //--------------------------------------------------------------------
-//    public RealAction fallback(HandState state)
-//    {
-//        return state.fallback(this);
-//    }
-
     public abstract Action fallback(
             boolean canCheck,
             boolean canRaise);
