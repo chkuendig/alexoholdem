@@ -8,6 +8,7 @@ import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.replay.Replay;
 import ao.holdem.model.replay.StackedReplay;
 
 import java.util.Collections;
@@ -61,8 +62,7 @@ public class Dealer
         publishOutcome(
                 Collections.unmodifiableMap( deltas ));
         return new StackedReplay(
-                    stateFlow.asReplay(cards),
-                    deltas);
+                new Replay(stateFlow, cards), deltas);
     }
 
     private void handleQuitters(StateFlow stateFlow)

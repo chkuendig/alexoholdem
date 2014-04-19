@@ -1,5 +1,6 @@
 package ao.holdem.model.replay;
 
+import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.Round;
@@ -32,6 +33,12 @@ public class Replay
 
 
     //--------------------------------------------------------------------
+    public Replay(StateFlow stateFlow, ChanceCards cards)
+    {
+        this(stateFlow.players(), cards, stateFlow.lastActRound(), stateFlow.actions());
+    }
+
+
     public Replay(List<Avatar>              clockwiseDealerLast,
                   ChanceCards               cards,
                   Round                     asOf,
