@@ -9,7 +9,6 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
-import ao.holdem.model.replay.Replay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +55,18 @@ public class StateFlow
         return head;
     }
 
+    public List<Avatar> players() {
+        return players;
+    }
+
+    public Round lastActRound() {
+        return lastActRound;
+    }
+
+    public Map<Avatar, List<Action>> actions() {
+        return actions;
+    }
+
 
     //--------------------------------------------------------------------
     /**
@@ -87,11 +98,6 @@ public class StateFlow
 
 
     //--------------------------------------------------------------------
-    public Replay asReplay(ChanceCards cards)
-    {
-        return new Replay(players, cards, lastActRound, actions);
-    }
-
     public Map<Avatar, ChipStack> deltas(ChanceCards cards)
     {
         List<Avatar>           winners = winners(cards);
