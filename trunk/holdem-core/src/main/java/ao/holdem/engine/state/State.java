@@ -11,7 +11,7 @@ import ao.holdem.model.act.FallbackAction;
 import java.util.*;
 
 /**
- * Holdem hand state.
+ * Hold'em hand state.
  */
 public class State
 {
@@ -27,12 +27,6 @@ public class State
     private final int       latestRoundStaker;
     private final ChipStack stakes;
     private final State     startOfRound;
-
-//    /**
-//     * This is the first player scheduled to act, not necessarily
-//     *   the that did because of a quit or all-in action.
-//     */
-//    private final int   firstToActVoluntarely;
 
 
     //--------------------------------------------------------------------
@@ -53,7 +47,6 @@ public class State
         latestRoundStaker     = -1;
         stakes                = ChipStack.ZERO;
         startOfRound          = this;
-//        firstToActVoluntarely = index(nextToAct + 2);
     }
     private Seat initPlayerState(
             List<Avatar> clockwiseDealerLast,
@@ -79,18 +72,15 @@ public class State
                   int   copyRemainingRoundBets,
                   int   copyLatestRoundStaker,
                   ChipStack copyStakes,
-                  State copyStartOfRound)//,
-//                  int   copyFirstToActVoluntarely)
+                  State copyStartOfRound)
     {
-        round                 = copyRound;
-        seats                 = copySeats;
-        nextToAct             = copyNextToAct;
-        remainingRoundBets    = copyRemainingRoundBets;
-        latestRoundStaker     = copyLatestRoundStaker;
-        stakes                = copyStakes;
-        startOfRound          = (copyStartOfRound == null)
-                                 ? this : copyStartOfRound;
-//        firstToActVoluntarely = copyFirstToActVoluntarely;
+        round              = copyRound;
+        seats              = copySeats;
+        nextToAct          = copyNextToAct;
+        remainingRoundBets = copyRemainingRoundBets;
+        latestRoundStaker  = copyLatestRoundStaker;
+        stakes             = copyStakes;
+        startOfRound       = (copyStartOfRound == null ? this : copyStartOfRound);
     }
 
 
@@ -178,8 +168,7 @@ public class State
                          nextRemainingBets,
                          nextRoundStaker,
                          nextStakes,
-                         roundEnder ? null : startOfRound);//,
-//                         firstToActVoluntarely);
+                         roundEnder ? null : startOfRound);
     }
 
     private Seat[] nextPlayers(Action act)
@@ -272,8 +261,7 @@ public class State
                          remainingRoundBets,
                          nextRoundStaker,
                          betSize,
-                         startOfRound);//,
-//                         firstToActVoluntarely);
+                         startOfRound);
     }
 
 
@@ -295,9 +283,7 @@ public class State
         boolean roundEnder = (perlimStaker == nextActive);
 
         int nextRoundStaker =
-                roundEnder
-                ? -1 : perlimStaker;
-//        int nextRoundStaker = -1;
+                roundEnder ? -1 : perlimStaker;
 
         Round nextRound = roundEnder ? round.next() : round;
         int nextNextToAct =
@@ -311,8 +297,7 @@ public class State
                          nextRemainingBets(roundEnder, false),
                          nextRoundStaker,
                          stakes,
-                         roundEnder ? null : startOfRound);//,
-//                         firstToActVoluntarely);
+                         roundEnder ? null : startOfRound);
     }
 
     /**
@@ -556,12 +541,6 @@ public class State
         return nextToAct;
     }
 
-//    public boolean firstToActVoluntarelyIsNext()
-//    {
-//        assert seats.length == 2 : "only works with heads up";
-//        return firstToActVoluntarely == nextToAct;
-//    }
-
     /**
      * @return true if dealer is next to act,
      *          if the game is over, then returns as if
@@ -620,7 +599,6 @@ public class State
                        "pot                = " + pot()                +
                "\n    , to call            = " + toCall()             +
                '}';
-        //return nextToAct() + ", " + round;
     }
 
     @Override public boolean equals(Object o)

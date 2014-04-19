@@ -1,6 +1,5 @@
 package ao.holdem.engine.state;
 
-//import ao.holdem.engine.analysis.Analysis;
 import ao.holdem.engine.state.eval.EvalBy5;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
@@ -27,8 +26,6 @@ public class StateFlow
     private Round                     lastActRound;
     private List<Avatar>              players;
     private Map<Avatar, List<Action>> actions;
-//    private Analysis                  analysis;
-//    private List<Avatar>              allIns;
 
 
     //--------------------------------------------------------------------
@@ -36,11 +33,8 @@ public class StateFlow
             List<Avatar> clockwiseDealerLast,
             boolean      autoPostBlinds)
     {
-        players  = clockwiseDealerLast;
-        head     = new State( players );
-
-//        analysis = new Analysis();
-//        analysis.analyze( head );
+        players = clockwiseDealerLast;
+        head    = new State( players );
 
         actions = new HashMap<>();
         for (Avatar avatar : clockwiseDealerLast)
@@ -53,8 +47,6 @@ public class StateFlow
             advance(Action.SMALL_BLIND);
             advance(Action.BIG_BLIND);
         }
-
-//        allIns = new ArrayList<Avatar>();
     }
 
 
@@ -79,14 +71,8 @@ public class StateFlow
 
         lastActRound = head.round();
         head         = head.advance(act);
-//        analysis.analyze( head );
 
         actions.get(nextToAct).add( act );
-
-//        if (act.isAllIn())
-//        {
-//            allIns.add( nextToAct );
-//        }
 
         return head.seats()[ nextToActIndex ];
     }
@@ -95,24 +81,9 @@ public class StateFlow
     {
         assert !head.atEndOfHand() : "can't quit after hand is over.";
 
-        // this condition is needed for when
-        //   a person quits *after* the hand is over.
-//        lastActRound =
-//                (head.round() == null)
-//                 ? lastActRound
-//                 : head.round();
-
         lastActRound = head.round();
         head         = head.advanceQuitter( quitter );
-//        analysis.analyze( head );
     }
-
-
-    //--------------------------------------------------------------------
-//    public Analysis analysis()
-//    {
-//        return analysis;
-//    }
 
 
     //--------------------------------------------------------------------
@@ -162,12 +133,12 @@ public class StateFlow
         else if (finalists.size() > 1)
         {
             Community community = cards.community( Round.RIVER );
-            Card      eval[]    =
+            Card[] eval =
                     {community.flopA(), community.flopB(),
                      community.flopC(), community.turn(),
                      community.river(), null, null};
 
-            short     topHandRank = -1;
+            short topHandRank = -1;
             for (Seat seat : finalists)
             {
                 Hole hole = cards.hole(seat.player());
@@ -190,94 +161,4 @@ public class StateFlow
         }
         return winners;
     }
-
-
-//    private Map<Avatar, Chips> deltas(ChanceCards cards)
-//    {
-//        assert head.atEndOfHand();
-//
-//        Map<Avatar, Chips> commits = new HashMap<Avatar, Chips>();
-//        for (Seat seat : head.seats())
-//        {
-//            commits.put(seat.player(), seat.commitment());
-//        }
-//
-//        Map<Avatar, Chips> deltas = new HashMap<Avatar, Chips>();
-//        for (List<Avatar> pot : pots())
-//        {
-//            short        greatestHandRank    = -1;
-//            List<Avatar> greatestHandHolders = new ArrayList<Avatar>();
-//            Chips        lowest              = Chips.MAX_VALUE;
-//
-//            for (Avatar staker : pot)
-//            {
-//                Chips remainingCommitment = commits.get(staker);
-//                if (remainingCommitment.compareTo(lowest) < 0)
-//                {
-//                    lowest = remainingCommitment;
-//                }
-//
-//                short handRank = EvalSlow.valueOf(/* xxxx */);
-//                if (handRank > greatestHandRank)
-//                {
-//                    greatestHandRank = handRank;
-//
-//                    greatestHandHolders.clear();
-//                    greatestHandHolders.add(staker);
-//                }
-//                else if (handRank == greatestHandRank)
-//                {
-//                    greatestHandHolders.add(staker);
-//                }
-//            }
-//
-//            for (Avatar staker : pot)
-//            {
-//                if (greatestHandHolders.contains(staker))
-//                {
-//
-//                }
-//            }
-//        }
-//
-//        return deltas;
-//    }
-
-    /**
-     * In Holdem, when a player goes all in, he cannot win
-     *  more than his stake in the pot.
-     * So for example, if there are 4 players (A, B, C, D):
-     *  A bets all-in.
-     *  B re-raises all-in.
-     *  C re-raises all-in.
-     *  D calls.
-     * In this situation,
-     *  if A has the best cards, he will his share of the pot,
-     *      then the rest will be up for grabs as if  he
-     *      never existed.
-     * The general rule is, the person with the best hand wins
-     *  the pot elligible to him. Then, all players in smaller
-     *  or equal pots are forgotten, and the process is repeated.
-     */
-//    private List<List<Avatar>> pots()
-//    {
-//        List<List<Avatar>> pots = new ArrayList<List<Avatar>>();
-//        List<Avatar>       all  = new ArrayList<Avatar>(players);
-//
-//        pots.add( all );
-//        for (Avatar allIn : allIns)
-//        {
-//            List<Avatar> sidepot = new ArrayList<Avatar>();
-//            for (Avatar avatar : pots.get(pots.size() - 1))
-//            {
-//                if (! avatar.equals(allIn))
-//                {
-//                    sidepot.add( avatar );
-//                }
-//            }
-//            pots.add( sidepot );
-//        }
-//
-//        return pots;
-//    }
 }
