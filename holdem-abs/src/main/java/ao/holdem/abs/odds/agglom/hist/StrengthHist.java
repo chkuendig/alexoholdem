@@ -1,8 +1,7 @@
 package ao.holdem.abs.odds.agglom.hist;
 
-import ao.holdem.engine.state.eval.HandStrength;
+import ao.holdem.engine.eval.HandStrength;
 import ao.holdem.persist.GenericBinding;
-import ao.holdem.engine.state.eval.Eval5;
 import ao.util.data.Arrs;
 import ao.util.math.crypt.MD5;
 import ao.util.math.crypt.SecureHash;

@@ -2,7 +2,7 @@ package ao.holdem.abs.odds.eval.eval7;
 
 
 import ao.holdem.model.card.Card;
-import ao.holdem.engine.state.eval.EvalBy5;
+import ao.holdem.engine.eval.EvalBy5;
 import ao.util.math.stats.Combiner;
 import ao.util.math.stats.Combo;
 

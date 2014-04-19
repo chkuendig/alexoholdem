@@ -1,10 +1,9 @@
 package ao.holdem.abs.bucket.abstraction.access.odds;
 
-import ao.holdem.engine.state.eval.HandStrength;
+import ao.holdem.engine.eval.HandStrength;
 import ao.holdem.persist.GenericBinding;
 import ao.holdem.abs.odds.agglom.hist.CompactRiverStrengths;
 import ao.holdem.abs.odds.agglom.hist.StrengthHist;
-import ao.holdem.engine.state.eval.Eval5;
 import ao.util.data.Arrs;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

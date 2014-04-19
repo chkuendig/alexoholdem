@@ -50,8 +50,7 @@ public class Dealer
                                     cards.hole( player ),
                                     cards.community(
                                             stateFlow.head().round() )
-                            )/*,
-                            stateFlow.analysis()*/);
+                            ));
 
             stateFlow.advance(act);
             handleQuitters( stateFlow );

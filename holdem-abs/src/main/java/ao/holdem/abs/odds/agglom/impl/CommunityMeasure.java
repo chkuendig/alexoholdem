@@ -1,10 +1,9 @@
 package ao.holdem.abs.odds.agglom.impl;
 
-import ao.holdem.engine.state.eval.EvalBy5;
-import ao.holdem.engine.state.eval.HandStrength;
+import ao.holdem.engine.eval.EvalBy5;
+import ao.holdem.engine.eval.HandStrength;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
-import ao.holdem.engine.state.eval.Eval5;
 import ao.util.math.stats.FastCombiner;
 
 /**

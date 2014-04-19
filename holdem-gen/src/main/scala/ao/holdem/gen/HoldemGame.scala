@@ -9,7 +9,7 @@ import ao.holdem.model.Round
 import ao.holdem.engine.state.HeadsUpStatus
 import ao.learn.mst.gen5.node.Chance
 import scala.Some
-import ao.holdem.engine.state.eval.EvalBy5
+import ao.holdem.engine.eval.EvalBy5
 import scala.collection.JavaConversions._
 
 
