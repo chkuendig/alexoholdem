@@ -105,12 +105,14 @@ public class IrcHandItr implements Iterable<Replay>
         Dealer dealer = new Dealer(false, brains);
         try
         {
-            StackedReplay out =
-                    dealer.play(playerHandles,
-                                new LiteralCards(
-                                        hand.community(), holes));
-//            System.out.println("winners: " +
-//                           Arrays.deepToString(out.winners().toArray()));
+            List<Hole> holesInOrder = new ArrayList<>();
+            for (Avatar player : playerHandles) {
+                holesInOrder.add(holes.get(player));
+            }
+
+            StackedReplay out = dealer.play(
+                    playerHandles, new LiteralCards(hand.community(), holesInOrder));
+
             return out.replay();
         }
         catch (Throwable e)

@@ -23,8 +23,8 @@ public class SwapCards implements ChanceCards
     private final Hole      holeA;
     private final Hole      holeB;
 
-    private       Avatar    playerA;
-    private       boolean   swap = false;
+    private int playerA = -1;
+    private boolean swap = false;
 
     
     //--------------------------------------------------------------------
@@ -60,12 +60,12 @@ public class SwapCards implements ChanceCards
 
 
     //--------------------------------------------------------------------
-    public Hole hole(Avatar forPlayer) {
-        if (playerA == null) {
+    public Hole hole(int forPlayer) {
+        if (playerA == -1) {
             playerA = forPlayer;
         }
 
-        return swap ^ playerA.equals( forPlayer )
+        return swap ^ (playerA == forPlayer)
                ? holeA
                : holeB;
     }

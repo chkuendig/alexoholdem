@@ -41,8 +41,7 @@ public class StateTree
     static
     {
         LOG.debug("computing heads-up");
-        ROOT = new Node(State.autoBlindInstance(Arrays.asList(
-            Avatar.local("dealee"), Avatar.local("dealer"))));
+        ROOT = new Node(State.autoBlindInstance(2));
         LOG.debug("tree size: {}", nextIndex);
     }
     

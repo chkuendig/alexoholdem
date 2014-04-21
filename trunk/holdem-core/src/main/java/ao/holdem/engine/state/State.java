@@ -12,6 +12,8 @@ import java.util.*;
 
 /**
  * Hold'em hand state.
+ *
+ * Player index is clockwise with dealer being last.
  */
 public class State
 {
@@ -31,36 +33,34 @@ public class State
 
     //--------------------------------------------------------------------
     // expects blind actions
-    public State(List<Avatar> clockwiseDealerLast)
+    public State(int playerCount)
     {
-        seats = new Seat[ clockwiseDealerLast.size() ];
+        assert playerCount >= 2;
+
+        seats = new Seat[ playerCount ];
         for (int i = 0; i < seats.length; i++)
         {
-            seats[i] = initPlayerState(clockwiseDealerLast, i);
+            seats[i] = initPlayerState(i);
         }
 
-        boolean isHeadsUp     = (clockwiseDealerLast.size() == 2);
+        boolean isHeadsUp = (playerCount == 2);
 
-        round                 = Round.PREFLOP;
-        nextToAct             = (isHeadsUp ? 1 : 0);
-        remainingRoundBets    = BETS_PER_ROUND - 1; // -1 for upcoming BB
-        latestRoundStaker     = -1;
-        stakes                = ChipStack.ZERO;
-        startOfRound          = this;
+        round              = Round.PREFLOP;
+        nextToAct          = (isHeadsUp ? 1 : 0);
+        remainingRoundBets = BETS_PER_ROUND - 1; // -1 for upcoming BB
+        latestRoundStaker  = -1;
+        stakes             = ChipStack.ZERO;
+        startOfRound       = this;
     }
-    private Seat initPlayerState(
-            List<Avatar> clockwiseDealerLast,
-            int          playerIndex)
-    {
-        Avatar player = clockwiseDealerLast.get( playerIndex );
-        return new Seat(player);
+    private Seat initPlayerState(int playerIndex) {
+        return new Seat(playerIndex);
     }
 
     // automatically posts blinds
     public static State autoBlindInstance(
-            List<Avatar> clockwiseDealerLast)
+            int playerCount)
     {
-        return new State(clockwiseDealerLast)
+        return new State(playerCount)
                     .advanceBlind( Action.SMALL_BLIND )
                     .advanceBlind( Action.BIG_BLIND   );
     }
@@ -85,9 +85,9 @@ public class State
 
 
     //--------------------------------------------------------------------
-    public State advance(Avatar player, Action act)
+    public State advance(int playerIndex, Action act)
     {
-        validateNextAction(player, act);
+        validateNextAction(playerIndex, act);
         return act.isBlind()
                 ? advanceBlind(act)
                 : advanceVoluntary(act);
@@ -267,17 +267,16 @@ public class State
 
     //--------------------------------------------------------------------
     // assert ! quitter.equals( nextToAct().handle() )
-    public State advanceQuitter(Avatar quitter)
+    public State advanceQuitter(int quitterIndex)
     {
-        int index = indexOf(quitter);
-        if (seats[ index ].isFolded() /*||
+        if (seats[ quitterIndex ].isFolded() /*||
             atEndOfHand()*/) return this;
 
-        Seat nextPlayers[] = seats.clone();
-        nextPlayers[ index ] = nextPlayers[ index ].fold(round);
+        Seat[] nextPlayers = seats.clone();
+        nextPlayers[ quitterIndex ] = nextPlayers[ quitterIndex ].fold(round);
         
         int perlimStaker   =
-                roundStakerAfterQuit(nextPlayers, index);
+                roundStakerAfterQuit(nextPlayers, quitterIndex);
         int nextActive =
                 nextActiveAfter(nextPlayers, index(nextToAct - 1));
         boolean roundEnder = (perlimStaker == nextActive);
@@ -472,14 +471,6 @@ public class State
                 ? fromIndex + seats.length
                 : fromIndex % seats.length;
     }
-    private int indexOf(Avatar player)
-    {
-        for (int i = 0; i < seats.length; i++)
-        {
-            if (seats[ i ].player().equals( player )) return i;
-        }
-        return -1;
-    }
 
     private int nextActiveAfter(int playerIndex)
     {
@@ -569,20 +560,20 @@ public class State
 
     //--------------------------------------------------------------------
     private void validateNextAction(
-            Avatar player, Action act)
+            int playerIndex, Action act)
     {
-        if (atEndOfHand())
-            throw new RuleBreach(
-                        "the hand is already done: " + this);
+        if (atEndOfHand()) {
+            throw new RuleBreach("the hand is already done: " + this);
+        }
 
-        if (! nextToAct().player().equals( player ))
-            throw new RuleBreach(
-                        "expected " + nextToAct().player() + " not " +
-                                      player);
+        if (nextToAct().player() != playerIndex) {
+            throw new RuleBreach("expected " + nextToAct().player() + " not " + playerIndex);
+        }
 
         if (remainingRoundBets == 0 &&
-                act.abstraction() == AbstractAction.BET_RAISE)
+                act.abstraction() == AbstractAction.BET_RAISE) {
             throw new RuleBreach("round betting cap exceeded");
+        }
     }
 
 

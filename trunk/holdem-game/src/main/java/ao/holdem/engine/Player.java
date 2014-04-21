@@ -2,12 +2,11 @@ package ao.holdem.engine;
 
 
 import ao.holdem.engine.state.State;
-import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.sequence.CardSequence;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * A Limit Holdem player.
@@ -56,5 +55,5 @@ public interface Player
      * @param deltas
      *          the change in stack size for each player.
      */
-    void handEnded(Map<Avatar, ChipStack> deltas);
+    void handEnded(List<ChipStack> deltas);
 }

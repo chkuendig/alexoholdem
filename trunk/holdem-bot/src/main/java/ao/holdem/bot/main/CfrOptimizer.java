@@ -192,8 +192,7 @@ public class CfrOptimizer
 //            put(Avatar.local("cfr2"), bot);
 //        }});
 
-        StateFlow sf = new StateFlow(Arrays.asList(
-                Avatar.local("a"), Avatar.local("a")), true);
+        StateFlow sf = new StateFlow(2, true);
         bot.act(sf.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,

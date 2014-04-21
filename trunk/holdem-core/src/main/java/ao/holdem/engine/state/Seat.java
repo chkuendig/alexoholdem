@@ -1,6 +1,5 @@
 package ao.holdem.engine.state;
 
-import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
@@ -12,7 +11,7 @@ import ao.holdem.model.act.Action;
 public class Seat
 {
     //--------------------------------------------------------------------
-    private final Avatar    player;
+    private final int       player;
     private final ChipStack commitment;
     private final boolean   isAllIn;
     private final boolean   isFolded;
@@ -20,19 +19,19 @@ public class Seat
 
 
     //--------------------------------------------------------------------
-    public Seat(Avatar playerHandle)
+    public Seat(int playerIndex)
     {
-        this(playerHandle, ChipStack.ZERO, false, false, null);
+        this(playerIndex, ChipStack.ZERO, false, false, null);
     }
 
     private Seat(
-            Avatar    playerHandle,
+            int       playerIndex,
             ChipStack totalCommitment,
             boolean   allIn,
             boolean   folded,
             Round     round)
     {
-        player     = playerHandle;
+        player     = playerIndex;
         commitment = totalCommitment;
         isAllIn    = allIn;
         isFolded   = folded;
@@ -124,19 +123,21 @@ public class Seat
         return commitment;
     }
 
-    public Avatar player()
+    public int player()
     {
         return player;
     }
 
 
     //--------------------------------------------------------------------
-    @Override public String toString()
+    @Override
+    public String toString()
     {
-        return player.toString();
+        return String.valueOf(player);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -152,7 +153,7 @@ public class Seat
     }
 
     @Override public int hashCode() {
-        int result = player != null ? player.hashCode() : 0;
+        int result = player;
         result = 31 * result + (commitment != null ? commitment.hashCode() : 0);
         result = 31 * result + (isAllIn ? 1 : 0);
         result = 31 * result + (isFolded ? 1 : 0);

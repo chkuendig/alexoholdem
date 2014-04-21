@@ -33,11 +33,7 @@ public class StateTest
     //--------------------------------------------------------------------
     public void countStates()
     {
-        Avatar dealee = Avatar.local("Dealee");
-        Avatar dealer = Avatar.local("Dealer");
-
-        State root = State.autoBlindInstance(Arrays.asList(
-                        dealee, dealer));
+        State root = State.autoBlindInstance(2);
 
         int[][] byRoundDepth = new int[4][ root.seats().length * 3 * 4 ];
         countStates(root, 0, byRoundDepth);
@@ -74,8 +70,7 @@ public class StateTest
         Avatar dealee = Avatar.local("Dealee");
         Avatar dealer = Avatar.local("Dealer");
 
-        State state = State.autoBlindInstance(Arrays.asList(
-                        dealee, dealer));
+        State state = State.autoBlindInstance(2);
 
         while (state.headsUpStatus() == HeadsUpStatus.IN_PROGRESS)
         {

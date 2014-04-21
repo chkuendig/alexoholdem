@@ -147,8 +147,7 @@ public class AaaiAdapter extends PokerClient
      * Updates state and calls takeAction()
      */
     public void handleStateChange() {
-        LOG.debug("state: " + currentGameStateString + "\t" +
-                  state.bankroll);
+        LOG.debug("state: " + currentGameStateString + "\t" + state.bankroll);
 
         state.setFromMatchStateMessage(currentGameStateString);
         if (state.handOver) {
@@ -157,11 +156,17 @@ public class AaaiAdapter extends PokerClient
             prevBankroll = state.bankroll;
 
             LOG.debug("hand ended: " + bankrollDelta);
-            deleget.handEnded(new HashMap<Avatar, ChipStack>(){{
-                int sbDelta = (int) bankrollDelta;
-                put(HOME, ChipStack.newInstance(sbDelta));
-                put(AWAY, ChipStack.newInstance(-sbDelta));
-            }});
+            int dealeeDelta = (int) ((state.winnerIndex == 0 ? 1 : -1) * bankrollDelta);
+            deleget.handEnded(Arrays.asList(
+                    ChipStack.newInstance(dealeeDelta),
+                    ChipStack.newInstance(-dealeeDelta)));
+
+             // is the above equivalent to this?
+//            deleget.handEnded(new HashMap<Avatar, ChipStack>(){{
+//                int sbDelta = (int) bankrollDelta;
+//                put(HOME, ChipStack.newInstance(sbDelta));
+//                put(AWAY, ChipStack.newInstance(-sbDelta));
+//            }});
         }
         else if (state.isOurTurn())
         {
@@ -187,13 +192,7 @@ public class AaaiAdapter extends PokerClient
     //--------------------------------------------------------------------
     private void doTakeAction() throws IOException
     {
-        boolean amDealer = (state.seatTaken == 1);
-
-        StateFlow stateFlow = new StateFlow(
-                amDealer
-                ? Arrays.asList(AWAY, HOME)
-                : Arrays.asList(HOME, AWAY),
-                true);
+        StateFlow stateFlow = new StateFlow(2,true);
 
         for (int i = 0; i < state.bettingSequence.length(); i++)
         {
@@ -275,7 +274,6 @@ public class AaaiAdapter extends PokerClient
             case ACE:   aoRank = Rank.ACE;   break;
         }
 
-        return aoRank == null || aoSuit == null
-               ? null : Card.valueOf(aoRank, aoSuit);
+        return Card.valueOf(aoRank, aoSuit);
     }
 }

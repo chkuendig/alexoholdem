@@ -20,10 +20,6 @@ import java.util.Map;
 public class AlwaysCallBot extends AbstractPlayer
 {
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, ChipStack> deltas) {}
-
-
-    //--------------------------------------------------------------------
     public Action act(State state,
                       CardSequence cards/*,
                       Analysis analysis*/)
