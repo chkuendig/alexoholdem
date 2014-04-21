@@ -5,7 +5,7 @@ import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -13,16 +13,16 @@ import java.util.Map;
 public class LiteralCards implements ChanceCards
 {
     //--------------------------------------------------------------------
-    private Community         community;
-    private Map<Avatar, Hole> holes;
+    private Community community;
+    private List<Hole> holes;
 
 
     //--------------------------------------------------------------------
-    public LiteralCards(Community         community,
-                        Map<Avatar, Hole> holes)
+    public LiteralCards(Community community,
+                        List<Hole> holesClockwiseDealerLast)
     {
         this.community = community;
-        this.holes     = holes;
+        this.holes     = holesClockwiseDealerLast;
     }
 
 
@@ -34,7 +34,7 @@ public class LiteralCards implements ChanceCards
 
 
     //--------------------------------------------------------------------
-    public Hole hole(Avatar forPlayer)
+    public Hole hole(int forPlayer)
     {
         return holes.get( forPlayer );
     }

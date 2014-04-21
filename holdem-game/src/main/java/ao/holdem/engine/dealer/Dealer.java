@@ -7,11 +7,13 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.ChanceCards;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.holdem.model.replay.Replay;
 import ao.holdem.model.replay.StackedReplay;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,52 +39,58 @@ public class Dealer
     //--------------------------------------------------------------------
     public StackedReplay play(
             List<Avatar> clockwiseDealerLast,
-            ChanceCards  cards)
+            ChanceCards cards)
     {
-        StateFlow stateFlow = new StateFlow(clockwiseDealerLast,
-                                            autoBlinds);
+        StateFlow stateFlow = new StateFlow(
+                clockwiseDealerLast.size(), autoBlinds);
+
         do
         {
-            Avatar player = stateFlow.head().nextToAct().player();
-            Action act    =
-                    brains.get( player ).act(
-                            stateFlow.head(),
-                            new LiteralCardSequence(
-                                    cards.hole( player ),
-                                    cards.community(
-                                            stateFlow.head().round() )
-                            ));
+            int playerIndex = stateFlow.head().nextToAct().player();
+
+            CardSequence playerCards = new LiteralCardSequence(
+                    cards.hole(playerIndex),
+                    cards.community(stateFlow.head().round()));
+
+            Avatar player = clockwiseDealerLast.get(playerIndex);
+
+            Action act = brains.get(player)
+                    .act(stateFlow.head(), playerCards);
 
             stateFlow.advance(act);
-            handleQuitters( stateFlow );
+            handleQuitters(stateFlow, clockwiseDealerLast);
         }
         while (! stateFlow.head().atEndOfHand());
 
-        Map<Avatar, ChipStack> deltas = stateFlow.deltas(cards);
-        publishOutcome(
-                Collections.unmodifiableMap( deltas ));
+        List<ChipStack> deltas = stateFlow.deltas(cards);
+        publishOutcome(Collections.unmodifiableList(deltas));
+
+        Map<Avatar, ChipStack> avatarToDelta = new HashMap<>();
+        for (int i = 0; i < deltas.size(); i++) {
+            avatarToDelta.put(clockwiseDealerLast.get(i), deltas.get(i));
+        }
         return new StackedReplay(
-                new Replay(stateFlow, cards), deltas);
+                Replay.fromFlow(clockwiseDealerLast, cards, stateFlow), avatarToDelta);
     }
 
-    private void handleQuitters(StateFlow stateFlow)
+    private void handleQuitters(StateFlow stateFlow, List<Avatar> clockwiseDealerLast)
     {
         for (Seat pState : stateFlow.head().unfolded())
         {
-            Avatar player = pState.player();
+            int playerIndex = pState.player();
+            Avatar player = clockwiseDealerLast.get(playerIndex);
+
             if (brains.get( player ).hasQuit())
             {
-                stateFlow.advanceQuitter( player );
+                stateFlow.advanceQuitter( playerIndex );
             }
         }
     }
 
-    private void publishOutcome(Map<Avatar, ChipStack> deltas)
+    private void publishOutcome(List<ChipStack> deltas)
     {
-        for (Avatar avatar : deltas.keySet())
-        {
-            brains.get( avatar )
-                    .handEnded( deltas );
+        for (Player p : brains.values()) {
+            p.handEnded(deltas);
         }
     }
 }

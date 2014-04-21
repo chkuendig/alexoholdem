@@ -36,7 +36,7 @@ class GenPlayer(
   private val displayInfo = true
 
 
-  override def handEnded(deltas: java.util.Map[Avatar, ChipStack]) {
+  override def handEnded(deltas: java.util.List[ChipStack]) {
     prevNode = StateTree.headsUpRoot
 
     if (displayInfo) {

@@ -201,13 +201,11 @@ public class BucketizerTest
 //            put(Avatar.local("cfr2"), bot);
 //        }});
 
-        StateFlow sf = new StateFlow(Arrays.asList(
-                Avatar.local("a"), Avatar.local("a")), true);
+        StateFlow sf = new StateFlow(2, true);
         bot.act(sf.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,
-                                     Card.FIVE_OF_SPADES))/*,
-                sf.analysis()*/);
+                                     Card.FIVE_OF_SPADES)));
 
         Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
         Community flop = new Community(Card.ACE_OF_HEARTS,

@@ -5,8 +5,8 @@ import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,27 +14,32 @@ import java.util.Map;
 public class DeckCards implements ChanceCards
 {
     //--------------------------------------------------------------------
-    private final Deck              cards;
-    private final Map<Avatar, Hole> holes;
-    private       Community         community = Community.PREFLOP;
+    private final Deck       cards;
+    private final List<Hole> holes;
+    private       Community  community = Community.PREFLOP;
 
 
     //--------------------------------------------------------------------
     public DeckCards()
     {
         cards = new Deck();
-        holes = new HashMap<>();
+        holes = new ArrayList<>();
     }
 
 
     //--------------------------------------------------------------------
-    public Hole hole(Avatar forPlayer)
+    @Override
+    public Hole hole(int forPlayer)
     {
+        while (holes.size() <= forPlayer) {
+            holes.add(null);
+        }
+
         Hole hole = holes.get( forPlayer );
         if (hole == null)
         {
             hole = cards.nextHole();
-            holes.put( forPlayer, hole );
+            holes.set(forPlayer, hole);
         }
         return hole;
     }

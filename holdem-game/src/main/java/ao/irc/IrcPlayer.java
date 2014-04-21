@@ -26,13 +26,9 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    public void handEnded(Map<Avatar, ChipStack> deltas) {}
-
-    
-    //--------------------------------------------------------------------
     public IrcPlayer(IrcAction action)
     {
-        acts       = new ArrayList<Action>();
+        acts       = new ArrayList<>();
         nextAction = 0;
 
         acts.addAll(Arrays.asList( action.preFlop() ));
@@ -43,7 +39,11 @@ public class IrcPlayer implements Player
 
 
     //--------------------------------------------------------------------
-    @Override public void observe(State nextToActState) {}
+    @Override
+    public void observe(State nextToActState) {}
+
+    @Override
+    public void handEnded(List<ChipStack> deltas) {}
 
 
     //--------------------------------------------------------------------

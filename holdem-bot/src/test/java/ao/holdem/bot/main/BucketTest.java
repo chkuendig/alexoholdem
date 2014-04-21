@@ -46,8 +46,8 @@ public class BucketTest
         System.out.println();
 
         ChanceCards cards = new DeckCards();
-        Hole holeA = cards.hole(Avatar.local("dealer"));
-        Hole holeB = cards.hole(Avatar.local("dealee"));
+        Hole holeA = cards.hole(1);
+        Hole holeB = cards.hole(0);
         Community community = cards.community(Round.RIVER);
 
         CanonHole canonHoleA = CanonHole.create(holeA);

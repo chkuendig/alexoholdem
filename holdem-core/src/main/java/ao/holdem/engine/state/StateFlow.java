@@ -10,10 +10,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.ChanceCards;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -21,24 +18,19 @@ import java.util.Map;
 public class StateFlow
 {
     //--------------------------------------------------------------------
-    private State                     head;
-    private Round                     lastActRound;
-    private List<Avatar>              players;
-    private Map<Avatar, List<Action>> actions;
+    private State              head;
+    private Round              lastActRound;
+    private List<List<Action>> actions;
 
 
     //--------------------------------------------------------------------
-    public StateFlow(
-            List<Avatar> clockwiseDealerLast,
-            boolean      autoPostBlinds)
+    public StateFlow(int playerCount, boolean autoPostBlinds)
     {
-        players = clockwiseDealerLast;
-        head    = new State( players );
+        head = new State( playerCount );
 
-        actions = new HashMap<>();
-        for (Avatar avatar : clockwiseDealerLast)
-        {
-            actions.put(avatar, new ArrayList<Action>());
+        actions = new ArrayList<>(playerCount);
+        for (int i = 0; i < playerCount; i++) {
+            actions.add(new ArrayList<Action>());
         }
 
         if (autoPostBlinds)
@@ -55,15 +47,15 @@ public class StateFlow
         return head;
     }
 
-    public List<Avatar> players() {
-        return players;
+    public int playerCount() {
+        return actions.size();
     }
 
     public Round lastActRound() {
         return lastActRound;
     }
 
-    public Map<Avatar, List<Action>> actions() {
+    public List<List<Action>> actions() {
         return actions;
     }
 
@@ -77,60 +69,59 @@ public class StateFlow
      */
     public Seat advance(Action act)
     {
-        int    nextToActIndex = head.nextToActIndex();
-        Avatar nextToAct      = head.nextToAct().player();
+        int nextToActIndex = head.nextToActIndex();
 
         lastActRound = head.round();
         head         = head.advance(act);
 
-        actions.get(nextToAct).add( act );
+        actions.get(nextToActIndex).add( act );
 
         return head.seats()[ nextToActIndex ];
     }
 
-    public void advanceQuitter(Avatar quitter)
+    public void advanceQuitter(int quitterIndex)
     {
         assert !head.atEndOfHand() : "can't quit after hand is over.";
 
         lastActRound = head.round();
-        head         = head.advanceQuitter( quitter );
+        head         = head.advanceQuitter( quitterIndex );
     }
 
 
     //--------------------------------------------------------------------
-    public Map<Avatar, ChipStack> deltas(ChanceCards cards)
+    public List<ChipStack> deltas(ChanceCards cards)
     {
-        List<Avatar>           winners = winners(cards);
-        Map<Avatar, ChipStack> deltas  = new HashMap<Avatar, ChipStack>();
+        List<Integer> winners = winners(cards);
+        ChipStack[] deltas = new ChipStack[playerCount()];
 
         ChipStack totalCommit = ChipStack.ZERO;
         for (Seat seat : head().seats())
         {
             ChipStack commit = seat.commitment();
             totalCommit = totalCommit.plus(commit);
-            deltas.put(seat.player(), commit.negate());
+            deltas[seat.player()] = commit.negate();
         }
 
-        ChipStack winnings  = totalCommit.split(     winners.size() );
+        ChipStack winnings = totalCommit.split( winners.size() );
         ChipStack remainder = totalCommit.remainder( winners.size() );
         for (int i = 0; i < winners.size(); i++)
         {
-            Avatar winner = winners.get(i);
+            int winner = winners.get(i);
             ChipStack total  = (i == 0)
                              ? winnings.plus( remainder )
                              : winnings;
-            deltas.put(winner, deltas.get(winner).plus(total));
+            deltas[winner] = deltas[winner].plus(total);
         }
 
-        return deltas;
+        return Arrays.asList(deltas);
     }
 
-    private List<Avatar> winners(ChanceCards cards)
+    private List<Integer> winners(ChanceCards cards)
     {
         assert head.atEndOfHand();
 
-        List<Avatar> winners   = new ArrayList<Avatar>();
-        List<Seat>   finalists = head().unfolded();
+        List<Integer> winners = new ArrayList<>();
+        List<Seat> finalists = head().unfolded();
 
         if (finalists.size() == 1)
         {
@@ -139,10 +130,9 @@ public class StateFlow
         else if (finalists.size() > 1)
         {
             Community community = cards.community( Round.RIVER );
-            Card[] eval =
-                    {community.flopA(), community.flopB(),
-                     community.flopC(), community.turn(),
-                     community.river(), null, null};
+            Card[] eval = {
+                    community.flopA(), community.flopB(), community.flopC(),
+                    community.turn(), community.river(), null, null};
 
             short topHandRank = -1;
             for (Seat seat : finalists)

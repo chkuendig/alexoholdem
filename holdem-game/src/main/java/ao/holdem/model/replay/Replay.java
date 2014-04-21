@@ -33,9 +33,14 @@ public class Replay
 
 
     //--------------------------------------------------------------------
-    public Replay(StateFlow stateFlow, ChanceCards cards)
+    public static Replay fromFlow(List<Avatar> clockwiseDealerLast, ChanceCards cards, StateFlow stateFlow)
     {
-        this(stateFlow.players(), cards, stateFlow.lastActRound(), stateFlow.actions());
+        Map<Avatar, List<Action>> playerAction = new HashMap<>();
+        for (int i = 0; i < stateFlow.playerCount(); i++) {
+            playerAction.put(clockwiseDealerLast.get(i), stateFlow.actions().get(i));
+        }
+
+        return new Replay(clockwiseDealerLast, cards, stateFlow.lastActRound(), playerAction);
     }
 
 
@@ -52,7 +57,7 @@ public class Replay
 
         for (Avatar avatar : clockwiseDealerLast)
         {
-            addHole(avatar, cards.hole(avatar));
+            addHole(avatar, cards.hole(clockwiseDealerLast.indexOf(avatar)));
         }
     }
 
@@ -131,7 +136,12 @@ public class Replay
 
     public ChanceCards cards()
     {
-        return new LiteralCards(community, holes);
+        List<Hole> inOrder = new ArrayList<>();
+        for (Avatar player : players) {
+            inOrder.add(holes.get(player));
+        }
+
+        return new LiteralCards(community, inOrder);
     }
 
 

@@ -54,8 +54,7 @@ public class TableHandler
     {
         BRAIN.handEnded(null);
 
-        stateFlow = new StateFlow(
-                Arrays.asList(OPP, PRO), true);
+        stateFlow = new StateFlow(2, true);
 
         Action act = BRAIN.act(
                 stateFlow.head(),
@@ -70,8 +69,7 @@ public class TableHandler
     {
         BRAIN.handEnded(null);
 
-        stateFlow = new StateFlow(
-                Arrays.asList(PRO, OPP), true);
+        stateFlow = new StateFlow(2, true);
     }
 
 
