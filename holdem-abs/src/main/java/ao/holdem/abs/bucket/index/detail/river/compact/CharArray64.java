@@ -1,6 +1,5 @@
 package ao.holdem.abs.bucket.index.detail.river.compact;
 
-import ao.util.io.Dirs;
 import ao.util.persist.PersistentChars;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /**
  * http://stackoverflow.com/questions/878309/java-array-with-more-than-4gb-elements
@@ -109,7 +107,7 @@ public class CharArray64
             try {
                 Files.createParentDirs(part);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new RuntimeException(e);
             }
 
             PersistentChars.persist(data[i], part);

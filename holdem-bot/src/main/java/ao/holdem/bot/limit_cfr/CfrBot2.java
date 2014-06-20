@@ -6,7 +6,7 @@ import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
@@ -122,7 +122,7 @@ public class CfrBot2 extends AbstractPlayer
 
     //--------------------------------------------------------------------
     @SuppressWarnings({"UnusedAssignment"})
-    public Action act(State        state,
+    public Action act(ActionState state,
                       CardSequence cards/*,
                       Analysis     analysis*/)
     {

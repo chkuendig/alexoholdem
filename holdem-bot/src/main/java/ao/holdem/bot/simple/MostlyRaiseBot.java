@@ -1,7 +1,7 @@
 package ao.holdem.bot.simple;
 
 import ao.holdem.bot.AbstractPlayer;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
@@ -20,7 +20,7 @@ public class MostlyRaiseBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public Action act(State state, CardSequence cards)
+    public Action act(ActionState state, CardSequence cards)
     {
         boolean shouldRaise = Math.random() < 0.66;
 

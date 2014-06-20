@@ -24,7 +24,7 @@ public enum Action
     BIG_BLIND(          false, true, null),
     BIG_BLIND_ALL_IN(   true,  true, null);
 
-    public static final Action VALUES[] = values();
+    public static final Action[] VALUES = values();
 
 
     //--------------------------------------------------------------------

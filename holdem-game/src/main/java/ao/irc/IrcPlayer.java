@@ -2,8 +2,7 @@ package ao.irc;
 
 import ao.holdem.engine.Player;
 import ao.holdem.engine.RuleBreach;
-import ao.holdem.engine.state.State;
-import ao.holdem.model.Avatar;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -11,7 +10,6 @@ import ao.holdem.model.card.sequence.CardSequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 //import ao.holdem.engine.analysis.Analysis;
 
@@ -40,14 +38,14 @@ public class IrcPlayer implements Player
 
     //--------------------------------------------------------------------
     @Override
-    public void observe(State nextToActState) {}
+    public void observe(ActionState nextToActState) {}
 
     @Override
     public void handEnded(List<ChipStack> deltas) {}
 
 
     //--------------------------------------------------------------------
-    public Action act(State        state,
+    public Action act(ActionState state,
                       CardSequence cards/*,
                       Analysis     analysis*/)
     {

@@ -105,8 +105,8 @@ object HoldemGame
             val handStrengths: Seq[Short] =
               (0 until playerCount).map(player => {
                 val cards: Array[Card] =
-                  state.holes(player).asArray() ++
-                    state.community.known()
+                  state.holes(player).toArray() ++
+                    state.community.toArray()
 
                 EvalBy5.valueOf(cards: _*)
               })

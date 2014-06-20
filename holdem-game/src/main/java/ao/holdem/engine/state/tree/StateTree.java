@@ -1,8 +1,7 @@
 package ao.holdem.engine.state.tree;
 
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.engine.state.HeadsUpStatus;
-import ao.holdem.engine.state.State;
-import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class StateTree
     static
     {
         LOG.debug("computing heads-up");
-        ROOT = new Node(State.autoBlindInstance(2));
+        ROOT = new Node(ActionState.autoBlindInstance(2));
         LOG.debug("tree size: {}", nextIndex);
     }
     
@@ -54,19 +53,19 @@ public class StateTree
 
 
     //--------------------------------------------------------------------
-    public static Node fromState(State state)
+    public static Node fromState(ActionState state)
     {
         return fromState(state, Integer.MAX_VALUE);
     }
-    public static Node fromState(State state, int plyLeft) {
+    public static Node fromState(ActionState state, int plyLeft) {
         return fromState(headsUpRoot(), state, plyLeft);
     }
-    public static Node fromState(Node startingAt, State state) {
+    public static Node fromState(Node startingAt, ActionState state) {
         return fromState(startingAt, state, Integer.MAX_VALUE);
     }
 
     public static Node fromState(
-            Node startingAt, State state, int plyLeft)
+            Node startingAt, ActionState state, int plyLeft)
     {
         if (plyLeft == 0) return null;
         if (startingAt.state().equals( state )) {
@@ -134,7 +133,7 @@ public class StateTree
         private final int           DEALER_COMMIT;
         private final int           DEALEE_COMMIT;
         private final HeadsUpStatus STATUS;
-        private final State         STATE;
+        private final ActionState STATE;
 
         private final EnumMap<AbstractAction, Node> KIDS;
         private final Node                          KID_NODES[];
@@ -144,12 +143,12 @@ public class StateTree
 
 
         //----------------------------------------------------------------
-        private Node(State state) {
+        private Node(ActionState state) {
             this(null, state, null,
                  new ArrayList<AbstractAction>(), null);
         }
         private Node(AbstractAction       prevAct,
-                     State                state,
+                     ActionState state,
                      Round                prevRound,
                      List<AbstractAction> path,
                      PathToFlop           pathToFlop)
@@ -179,7 +178,7 @@ public class StateTree
             STATE         = state;
 
             KIDS = new EnumMap<>(AbstractAction.class);
-            for (Map.Entry<AbstractAction, State> act :
+            for (Map.Entry<AbstractAction, ActionState> act :
                     state.actions(false).entrySet())
 //                    state.viableActions().entrySet())
             {
@@ -218,7 +217,7 @@ public class StateTree
         public HeadsUpStatus status() {
             return STATUS;
         }
-        public State state() {
+        public ActionState state() {
             return STATE;
         }
 

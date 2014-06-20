@@ -1,7 +1,6 @@
 package ao.holdem.engine.state;
 
 import ao.holdem.engine.RuleBreach;
-import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
@@ -15,7 +14,7 @@ import java.util.*;
  *
  * Player index is clockwise with dealer being last.
  */
-public class State
+public class ActionState
 {
     //--------------------------------------------------------------------
     private static final int BETS_PER_ROUND = 4;
@@ -28,12 +27,12 @@ public class State
     private final int       remainingRoundBets;
     private final int       latestRoundStaker;
     private final ChipStack stakes;
-    private final State     startOfRound;
+    private final ActionState startOfRound;
 
 
     //--------------------------------------------------------------------
     // expects blind actions
-    public State(int playerCount)
+    public ActionState(int playerCount)
     {
         assert playerCount >= 2;
 
@@ -57,22 +56,22 @@ public class State
     }
 
     // automatically posts blinds
-    public static State autoBlindInstance(
+    public static ActionState autoBlindInstance(
             int playerCount)
     {
-        return new State(playerCount)
+        return new ActionState(playerCount)
                     .advanceBlind( Action.SMALL_BLIND )
                     .advanceBlind( Action.BIG_BLIND   );
     }
 
     // copy constructor
-    private State(Round copyRound,
-                  Seat  copySeats[],
-                  int   copyNextToAct,
-                  int   copyRemainingRoundBets,
-                  int   copyLatestRoundStaker,
-                  ChipStack copyStakes,
-                  State copyStartOfRound)
+    private ActionState(Round copyRound,
+                        Seat copySeats[],
+                        int copyNextToAct,
+                        int copyRemainingRoundBets,
+                        int copyLatestRoundStaker,
+                        ChipStack copyStakes,
+                        ActionState copyStartOfRound)
     {
         round              = copyRound;
         seats              = copySeats;
@@ -85,33 +84,33 @@ public class State
 
 
     //--------------------------------------------------------------------
-    public State advance(int playerIndex, Action act)
+    public ActionState advance(int playerIndex, Action act)
     {
         validateNextAction(playerIndex, act);
         return act.isBlind()
                 ? advanceBlind(act)
                 : advanceVoluntary(act);
     }
-    public State advance(Action act)
+    public ActionState advance(Action act)
     {
         return advance(nextToAct().player(), act);
     }
 
 
     //--------------------------------------------------------------------
-    public Map<AbstractAction, State> viableActions()
+    public Map<AbstractAction, ActionState> viableActions()
     {
         return actions(true);
     }
-    public Map<AbstractAction, State> actions(boolean nonDominated)
+    public Map<AbstractAction, ActionState> actions(boolean nonDominated)
     {
-        EnumMap<AbstractAction, State> validActions =
+        EnumMap<AbstractAction, ActionState> validActions =
                 new EnumMap<>(AbstractAction.class);
 
-        State quitFold  = nonDominated && canCheck()
+        ActionState quitFold  = nonDominated && canCheck()
                           ? null : advanceIfValid(Action.FOLD);
-        State checkCall = firstValid(Action.CALL, Action.CHECK);
-        State betRaise  = firstValid(Action.RAISE, Action.BET);
+        ActionState checkCall = firstValid(Action.CALL, Action.CHECK);
+        ActionState betRaise  = firstValid(Action.RAISE, Action.BET);
 
         if (quitFold != null)
             validActions.put(AbstractAction.QUIT_FOLD, quitFold);
@@ -125,16 +124,16 @@ public class State
         return validActions;
     }
 
-    private State firstValid(Action... acts)
+    private ActionState firstValid(Action... acts)
     {
         for (Action act : acts)
         {
-            State nextState = advanceIfValid(act);
+            ActionState nextState = advanceIfValid(act);
             if (nextState != null) return nextState;
         }
         return null;
     }
-    private State advanceIfValid(Action act)
+    private ActionState advanceIfValid(Action act)
     {
         try
         {
@@ -148,7 +147,7 @@ public class State
 
                        
     //--------------------------------------------------------------------
-    private State advanceVoluntary(Action act)
+    private ActionState advanceVoluntary(Action act)
     {
         Round   nextRound  = nextBettingRound(act);
         boolean roundEnder = (round != nextRound);
@@ -162,13 +161,14 @@ public class State
         int nextRoundStaker   =
                 nextLatestRoundStaker(act, roundEnder, betRaise);
 
-        return new State(nextRound,
-                         nextPlayers,
-                         nextNextToAct,
-                         nextRemainingBets,
-                         nextRoundStaker,
-                         nextStakes,
-                         roundEnder ? null : startOfRound);
+        return new ActionState(
+                nextRound,
+                nextPlayers,
+                nextNextToAct,
+                nextRemainingBets,
+                nextRoundStaker,
+                nextStakes,
+                roundEnder ? null : startOfRound);
     }
 
     private Seat[] nextPlayers(Action act)
@@ -236,7 +236,7 @@ public class State
 
 
     //--------------------------------------------------------------------
-    private State advanceBlind(Action act)
+    private ActionState advanceBlind(Action act)
     {
         boolean isSmall = act.isSmallBlind();
 
@@ -255,7 +255,7 @@ public class State
                 act == Action.BIG_BLIND_ALL_IN
                 ? nextToAct : latestRoundStaker;
 
-        return new State(round,
+        return new ActionState(round,
                          nextPlayers,
                          nextNextToAct,
                          remainingRoundBets,
@@ -267,7 +267,7 @@ public class State
 
     //--------------------------------------------------------------------
     // assert ! quitter.equals( nextToAct().handle() )
-    public State advanceQuitter(int quitterIndex)
+    public ActionState advanceQuitter(int quitterIndex)
     {
         if (seats[ quitterIndex ].isFolded() /*||
             atEndOfHand()*/) return this;
@@ -290,7 +290,7 @@ public class State
                 ? nextActiveAfter(nextPlayers, seats.length - 1)
                 : nextActive;
 
-        return new State(nextRound,
+        return new ActionState(nextRound,
                          nextPlayers,
                          nextNextToAct,
                          nextRemainingBets(roundEnder, false),
@@ -598,7 +598,7 @@ public class State
         if (o == null ||
             getClass() != o.getClass()) return false;
 
-        State state = (State) o;
+        ActionState state = (ActionState) o;
 
         return latestRoundStaker  == state.latestRoundStaker  &&
                nextToAct          == state.nextToAct          &&

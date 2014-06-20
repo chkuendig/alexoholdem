@@ -4,6 +4,8 @@ package ao.holdem.model.card;
 import ao.holdem.model.Round;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  *
@@ -53,24 +55,25 @@ public class Community
     //--------------------------------------------------------------------
     private void validate()
     {
-        assert flopA == null && flopB == null && flopC == null ||
-               flopA != null && flopB != null && flopC != null :
-                "all 3 flop cards must be delt atomically";
+        if (! (flopA == null && flopB == null && flopC == null ||
+               flopA != null && flopB != null && flopC != null)) {
+            throw new IllegalArgumentException("All 3 flop cards must be dealt atomically");
+        }
 
-        assert turn == null || flopA != null :
-                "turn requires the flop to be present";
+        if (! (turn == null || flopA != null)) {
+            throw new IllegalArgumentException("Turn requires the flop to be present");
+        }
 
-        assert river == null || turn != null :
-                "river requires the turn to be present";
+        if (! (river == null || turn != null)) {
+            throw new IllegalArgumentException("River requires the turn to be present");
+        }
 
-        assert hasRiver() &&
-                 areUnique(flopA, flopB, flopC, turn, river) ||
-               hasTurn() &&
-                 areUnique(flopA, flopB, flopC, turn) ||
-               hasFlop() &&
-                 areUnique(flopA, flopB, flopC) ||
-               isPreflop() :
-                 "community cards cannot repeat";
+        if (! (hasRiver() && areUnique(flopA, flopB, flopC, turn, river) ||
+                hasTurn() && areUnique(flopA, flopB, flopC, turn) ||
+                hasFlop() && areUnique(flopA, flopB, flopC) ||
+                isPreflop())) {
+            throw new IllegalArgumentException("Community cards must be unique");
+        }
     }
 
     private static boolean areUnique(
@@ -153,15 +156,37 @@ public class Community
 
 
     //--------------------------------------------------------------------
+    public Community addFlop(Card flopA, Card flopB, Card flopC) {
+        if (flopA == null || flopB == null || flopC == null) {
+            throw new NullPointerException();
+        }
+        if (this.flopA != null || this.flopB != null || this.flopC != null) {
+            throw new IllegalArgumentException("Flop already dealt");
+        }
+        return new Community(flopA, flopB, flopC);
+    }
+
     public Community addTurn(Card turn)
     {
-        assert this.turn == null && turn != null;
+        if (turn == null) {
+            throw new NullPointerException();
+        }
+        if (this.turn != null) {
+            throw new IllegalArgumentException("Turn already dealt");
+        }
+
         return new Community(flopA, flopB, flopC, turn);
     }
 
     public Community addRiver(Card river)
     {
-        assert this.river == null && river != null;
+        if (river == null) {
+            throw new NullPointerException();
+        }
+        if (this.river != null) {
+            throw new IllegalArgumentException("River already dealt");
+        }
+
         return new Community(flopA, flopB, flopC, turn, river);
     }
 
@@ -200,20 +225,17 @@ public class Community
     //--------------------------------------------------------------------
     public int knownCount()
     {
-        return hasRiver()
-                ? 5
-                : hasTurn()
-                   ? 4
-                   : hasFlop()
-                      ? 3 : 0;
+        return hasRiver() ? 5 :
+                hasTurn() ? 4 :
+                hasFlop() ? 3 : 0;
     }
 
-    public Card[] known()
+    public Card[] toArray()
     {
-        return Arrays.copyOf(asArray(), knownCount());
+        return Arrays.copyOf(toShowdownArray(), knownCount());
     }
 
-    private Card[] asArray()
+    private Card[] toShowdownArray()
     {
         Card known[] = new Card[5];
         switch (knownCount())
@@ -227,12 +249,16 @@ public class Community
         return known;
     }
 
+    public Set<Card> toSet() {
+        return EnumSet.copyOf(Arrays.asList(toArray()));
+    }
+
 
     //--------------------------------------------------------------------
     @Override
     public String toString()
     {
-        return Arrays.toString( known() );
+        return Arrays.toString( toArray() );
     }
 
     public boolean equals(Object o)

@@ -2,7 +2,7 @@ package ao.holdem.bot.human;
 
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.limit_cfr.CfrBot2;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
@@ -51,7 +51,7 @@ public class ConsoleBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public Action act(State        state,
+    public Action act(ActionState state,
                       CardSequence cards/*,
                       Analysis     analysis*/)
     {
@@ -86,7 +86,7 @@ public class ConsoleBot extends AbstractPlayer
 
     
     //--------------------------------------------------------------------
-    private FallbackAction ask(State state)
+    private FallbackAction ask(ActionState state)
     {
         StringBuilder message = new StringBuilder();
 

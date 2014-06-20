@@ -1,7 +1,7 @@
 package ao.holdem.engine;
 
 
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.sequence.CardSequence;
@@ -18,7 +18,8 @@ public interface Player
      * @param nextToActState state of opponent, they need to perform
      *          an action at this point
      */
-    void observe(State nextToActState);
+    void observe(ActionState nextToActState);
+
 
     /**
      * Requests the player to perform an action.
@@ -34,7 +35,7 @@ public interface Player
      *          a valid action, then it will be processed though
      *          FallbackAction.
      */
-     Action act(State        state,
+     Action act(ActionState state,
                 CardSequence cards);
 
 

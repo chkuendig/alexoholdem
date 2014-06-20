@@ -6,7 +6,7 @@ import ao.holdem.bot.simple.RandomBot;
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.engine.Player;
-import ao.holdem.engine.state.StateFlow;
+import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * User: alex
@@ -192,7 +191,7 @@ public class AaaiAdapter extends PokerClient
     //--------------------------------------------------------------------
     private void doTakeAction() throws IOException
     {
-        StateFlow stateFlow = new StateFlow(2,true);
+        ActionStateFlow stateFlow = new ActionStateFlow(2,true);
 
         for (int i = 0; i < state.bettingSequence.length(); i++)
         {

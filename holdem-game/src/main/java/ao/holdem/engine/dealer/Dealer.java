@@ -1,8 +1,8 @@
 package ao.holdem.engine.dealer;
 
 import ao.holdem.engine.Player;
+import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.engine.state.Seat;
-import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
@@ -41,7 +41,7 @@ public class Dealer
             List<Avatar> clockwiseDealerLast,
             ChanceCards cards)
     {
-        StateFlow stateFlow = new StateFlow(
+        ActionStateFlow stateFlow = new ActionStateFlow(
                 clockwiseDealerLast.size(), autoBlinds);
 
         do
@@ -73,7 +73,7 @@ public class Dealer
                 Replay.fromFlow(clockwiseDealerLast, cards, stateFlow), avatarToDelta);
     }
 
-    private void handleQuitters(StateFlow stateFlow, List<Avatar> clockwiseDealerLast)
+    private void handleQuitters(ActionStateFlow stateFlow, List<Avatar> clockwiseDealerLast)
     {
         for (Seat pState : stateFlow.head().unfolded())
         {

@@ -6,11 +6,10 @@ import ao.holdem.bot.limit_cfr.CfrBot2;
 import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.BucketDisplay;
-import ao.holdem.abs.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.canon.hole.CanonHole;
 import ao.holdem.engine.Player;
-import ao.holdem.engine.state.StateFlow;
+import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -26,7 +25,6 @@ import ao.util.time.Stopwatch;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -192,7 +190,7 @@ public class CfrOptimizer
 //            put(Avatar.local("cfr2"), bot);
 //        }});
 
-        StateFlow sf = new StateFlow(2, true);
+        ActionStateFlow sf = new ActionStateFlow(2, true);
         bot.act(sf.head(),
                 new LiteralCardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,

@@ -6,8 +6,8 @@ package ao.holdem.model;
 public class ChipStack implements Comparable<ChipStack>
 {
     //------------------------------------------------------------------------
-    private static final ChipStack CACHE_NEGATIVE[] = new ChipStack[ 64  ];
-    private static final ChipStack CACHE_POSITIVE[] = new ChipStack[ 256 ];
+    private static final ChipStack[] CACHE_NEGATIVE = new ChipStack[ 64  ];
+    private static final ChipStack[] CACHE_POSITIVE = new ChipStack[ 256 ];
     static
     {
         for (int i = 0; i < CACHE_NEGATIVE.length; i++) {
