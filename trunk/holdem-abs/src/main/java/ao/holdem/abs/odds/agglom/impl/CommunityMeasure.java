@@ -43,7 +43,7 @@ public class CommunityMeasure
         int unknownCount = 52 - of.knownCount();
 
 //        TemprotureVisitor thermostat = new TemprotureVisitor(shortcut);
-        TemprotureVisitor thermostat = new TemprotureVisitor(of.known());
+        TemprotureVisitor thermostat = new TemprotureVisitor(of.toArray());
         FastCombiner<Card> combin =
                 new FastCombiner<Card>(cards, unknownCount);
         combin.combine(thermostat);

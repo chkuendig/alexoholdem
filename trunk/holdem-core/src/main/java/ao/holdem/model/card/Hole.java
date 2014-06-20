@@ -1,6 +1,9 @@
 package ao.holdem.model.card;
 
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * Hole cards, with canonical indexing
  *          (accounting for suit isomorphisms).
@@ -35,14 +38,16 @@ public class Hole
      */
     public static Hole valueOf(Card a, Card b)
     {
+        if (a == b) {
+            throw new IllegalArgumentException("Hole cards must be unique");
+        }
         return VALUES[ a.ordinal() ][ b.ordinal() ];
     }
 
 
     //--------------------------------------------------------------------
-    private final Card      A, B;
-    private final Card      AS_ARRAY[];
-    private final boolean   IS_PAIR;
+    private final Card a, b;
+    private final boolean isPair;
 
 
     //--------------------------------------------------------------------
@@ -51,65 +56,65 @@ public class Hole
         assert a != null && b != null;
         assert a != b;
 
-        A           = a;
-        B           = b;
-        AS_ARRAY    = new Card[]{A, B};
-        IS_PAIR     = computeIsPair();
+        this.a = a;
+        this.b = b;
+
+        isPair = computeIsPair();
     }
 
 
     //--------------------------------------------------------------------
     public Card a()
     {
-        return A;
+        return a;
     }
 
     public Card b()
     {
-        return B;
+        return b;
     }
 
 //    public CanonHole asCanon()
 //    {
-//        return CanonHole.create(A, B);
+//        return CanonHole.create(a, b);
 //    }
 
 
     //--------------------------------------------------------------------
     public boolean hasRanks(Rank rankA, Rank rankB)
     {
-        return A.rank() == rankA && B.rank() == rankB ||
-               A.rank() == rankB && B.rank() == rankA;
+        return a.rank() == rankA && b.rank() == rankB ||
+               a.rank() == rankB && b.rank() == rankA;
     }
 
     public boolean hasRank(Rank rank)
     {
-        return A.rank() == rank || B.rank() == rank;
+        return a.rank() == rank || b.rank() == rank;
     }
 
     public boolean isSuited()
     {
-        return A.suit() == B.suit();
+        return a.suit() == b.suit();
     }
 
     public boolean isPair()
     {
-        return IS_PAIR;
+        return isPair;
     }
     private boolean computeIsPair()
     {
-        return A.rank() == B.rank();
+        return a.rank() == b.rank();
     }
 
     public boolean hasXcard()
     {
-        return A.rank().ordinal() < Rank.JACK.ordinal() ||
-                B.rank().ordinal() < Rank.JACK.ordinal();
+        return a.rank().ordinal() < Rank.JACK.ordinal() ||
+                b.rank().ordinal() < Rank.JACK.ordinal();
     }
 
     public boolean contains(Card card)
     {
-        return A == card || B == card;
+        return a == card || b == card;
     }
 
 
@@ -121,8 +126,8 @@ public class Hole
     public Card high()
     {
         assert !isPair();
-        return (A.rank().compareTo( B.rank() ) > 0
-                ? A : B);
+        return (a.rank().compareTo( b.rank() ) > 0
+                ? a : b);
     }
 
     /**
@@ -132,13 +137,16 @@ public class Hole
     public Card low()
     {
         assert !isPair();
-        return (A.rank().compareTo( B.rank() ) < 0
-                ? A : B);
+        return (a.rank().compareTo( b.rank() ) < 0
+                ? a : b);
     }
 
-    public Card[] asArray()
-    {
-        return AS_ARRAY;
+
+    public Set<Card> toSet() {
+        return EnumSet.of(a, b);
+    }
+    public Card[] toArray() {
+        return new Card[]{a, b};
     }
 
 
@@ -146,7 +154,7 @@ public class Hole
     @Override
     public String toString()
     {
-        return "[" + A + ", " + B + "]";
+        return "[" + a + ", " + b + "]";
     }
 
     @Override
@@ -159,6 +167,6 @@ public class Hole
     @Override
     public int hashCode()
     {
-        return A.ordinal() * 52 + B.ordinal();
+        return a.ordinal() * 52 + b.ordinal();
     }
 }

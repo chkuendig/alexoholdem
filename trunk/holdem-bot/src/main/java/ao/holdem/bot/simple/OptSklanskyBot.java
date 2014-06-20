@@ -2,7 +2,7 @@ package ao.holdem.bot.simple;
 
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.simple.starting_hands.Sklansky;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
@@ -22,12 +22,12 @@ public class OptSklanskyBot extends AbstractPlayer
 
 
     //--------------------------------------------------------------------
-    public Action act(State state, CardSequence cards)
+    public Action act(ActionState state, CardSequence cards)
     {
         return state.reify(sampleAction(state, cards));
     }
 
-    private FallbackAction sampleAction(State state, CardSequence cards) {
+    private FallbackAction sampleAction(ActionState state, CardSequence cards) {
         //    P	11	329	658
         //    S1	29	267	703
         //    S2	26	279	693

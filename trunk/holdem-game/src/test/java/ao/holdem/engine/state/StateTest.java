@@ -33,7 +33,7 @@ public class StateTest
     //--------------------------------------------------------------------
     public void countStates()
     {
-        State root = State.autoBlindInstance(2);
+        ActionState root = ActionState.autoBlindInstance(2);
 
         int[][] byRoundDepth = new int[4][ root.seats().length * 3 * 4 ];
         countStates(root, 0, byRoundDepth);
@@ -48,7 +48,7 @@ public class StateTest
     }
 
     private void countStates(
-            State under, int depth, int[][] byRoundDepth)
+            ActionState under, int depth, int[][] byRoundDepth)
     {
         if (under.atEndOfHand()) {
             //byRoundDepth[ 4 ][ depth ]++;
@@ -56,7 +56,7 @@ public class StateTest
         }
         byRoundDepth[under.round().ordinal()][ depth ]++;
 
-        for (State subState : under.viableActions().values())
+        for (ActionState subState : under.viableActions().values())
         {
             countStates( subState, depth + 1, byRoundDepth );
         }
@@ -70,7 +70,7 @@ public class StateTest
         Avatar dealee = Avatar.local("Dealee");
         Avatar dealer = Avatar.local("Dealer");
 
-        State state = State.autoBlindInstance(2);
+        ActionState state = ActionState.autoBlindInstance(2);
 
         while (state.headsUpStatus() == HeadsUpStatus.IN_PROGRESS)
         {
@@ -79,7 +79,7 @@ public class StateTest
             LOG.info( state );
             LOG.info((isDealer ? dealer : dealee) + " to act...");
 
-            Map<AbstractAction, State>
+            Map<AbstractAction, ActionState>
                            acts    = state.viableActions();
             AbstractAction nextAct = inputNextAct(acts);
 
@@ -91,7 +91,7 @@ public class StateTest
     }
 
     private AbstractAction inputNextAct(
-            Map<AbstractAction, State> acts)
+            Map<AbstractAction, ActionState> acts)
     {
         AbstractAction nextAct = null;
         do

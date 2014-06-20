@@ -1,6 +1,6 @@
 package ao.holdem.model.replay;
 
-import ao.holdem.engine.state.StateFlow;
+import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.AvatarBinding;
 import ao.holdem.model.Round;
@@ -33,7 +33,7 @@ public class Replay
 
 
     //--------------------------------------------------------------------
-    public static Replay fromFlow(List<Avatar> clockwiseDealerLast, ChanceCards cards, StateFlow stateFlow)
+    public static Replay fromFlow(List<Avatar> clockwiseDealerLast, ChanceCards cards, ActionStateFlow stateFlow)
     {
         Map<Avatar, List<Action>> playerAction = new HashMap<>();
         for (int i = 0; i < stateFlow.playerCount(); i++) {

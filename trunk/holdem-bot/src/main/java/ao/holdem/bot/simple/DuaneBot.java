@@ -2,7 +2,7 @@ package ao.holdem.bot.simple;
 
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.simple.starting_hands.Sklansky;
-import ao.holdem.engine.state.State;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.ChipStack;
 import ao.holdem.model.Round;
@@ -25,7 +25,7 @@ public class DuaneBot extends AbstractPlayer
 
     
     //--------------------------------------------------------------------
-    public Action act(State        state,
+    public Action act(ActionState state,
                       CardSequence cards/*,
                       Analysis     analysis*/)
     {

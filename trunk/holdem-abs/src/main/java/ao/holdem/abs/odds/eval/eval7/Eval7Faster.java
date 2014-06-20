@@ -316,7 +316,7 @@ public class Eval7Faster
 
             switch (numCards) {
                 case 5 :
-                    handRank = EvalBy5.valueOf(
+                    handRank = Eval5.valueOf(
                             hand[0], hand[1], hand[2], hand[3], hand[4]);
                     break;
 

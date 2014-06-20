@@ -1,16 +1,14 @@
 package ao.holdem.net;
 
 import ao.holdem.engine.Player;
+import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.engine.state.Seat;
-import ao.holdem.engine.state.StateFlow;
 import ao.holdem.model.Avatar;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.LiteralCardSequence;
-
-import java.util.Arrays;
 
 /**
  * 
@@ -22,7 +20,7 @@ public class TableHandler
     private final Avatar OPP;
     private final Player BRAIN;
 
-    private StateFlow stateFlow = null;
+    private ActionStateFlow stateFlow = null;
 
 
     //--------------------------------------------------------------------
@@ -54,7 +52,7 @@ public class TableHandler
     {
         BRAIN.handEnded(null);
 
-        stateFlow = new StateFlow(2, true);
+        stateFlow = new ActionStateFlow(2, true);
 
         Action act = BRAIN.act(
                 stateFlow.head(),
@@ -69,7 +67,7 @@ public class TableHandler
     {
         BRAIN.handEnded(null);
 
-        stateFlow = new StateFlow(2, true);
+        stateFlow = new ActionStateFlow(2, true);
     }
 
 

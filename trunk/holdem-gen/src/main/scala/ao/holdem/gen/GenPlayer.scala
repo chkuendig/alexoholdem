@@ -3,7 +3,7 @@ package ao.holdem.gen
 import ao.holdem.bot.AbstractPlayer
 import ao.holdem.bot.regret.HoldemAbstraction
 import ao.learn.mst.gen5.state.strategy.StrategyAccumulator
-import ao.holdem.engine.state.State
+import ao.holdem.engine.state.ActionState
 import ao.holdem.model.card.sequence.CardSequence
 import ao.holdem.model.act.{AbstractAction, Action}
 import ao.holdem.engine.state.tree.StateTree
@@ -45,7 +45,7 @@ class GenPlayer(
   }
 
 
-  override def act(state: State, cards: CardSequence): Action = {
+  override def act(state: ActionState, cards: CardSequence): Action = {
     require(state.seats.length == 2, "Only works in heads-up mode")
 
     var gamePath: StateTree.Node = StateTree.fromState(prevNode, state, 4)
