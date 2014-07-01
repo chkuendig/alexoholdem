@@ -1,8 +1,4 @@
-package ao.holdem.abs.odds.agglom;
-
-import ao.holdem.persist.GenericBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
+package ao.holdem.engine.eval.odds;
 
 /**
  * odds from the point of view of one player.
@@ -99,24 +95,6 @@ public class Odds
     {
         return (WIN + (double)SPLIT/numberOfPlayers)
                / (WIN + LOSE + SPLIT);
-    }
-
-
-    //--------------------------------------------------------------------
-    public static final Binding BINDING = new Binding();
-
-    public static class Binding extends GenericBinding<Odds> {
-        public Odds read(TupleInput tupleInput) {
-            return new Odds(tupleInput.readLong(),
-                            tupleInput.readLong(),
-                            tupleInput.readLong());
-        }
-
-        public void write(Odds o, TupleOutput tupleOutput) {
-            tupleOutput.writeLong( o.WIN   );
-            tupleOutput.writeLong( o.LOSE  );
-            tupleOutput.writeLong( o.SPLIT );
-        }
     }
 
 

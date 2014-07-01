@@ -14,9 +14,9 @@ import org.apache.log4j.Logger;
     private static final Logger LOG =
             Logger.getLogger(RiverLookup.class);
 
-    private static final int  SHRINK    = 3;
-    private static final int  CHUNK     = (1 << (SHRINK));
-    private static final int  OFFSETS[] = computeOffsets();
+    private static final int   SHRINK  = 3;
+    private static final int   CHUNK   = (1 << (SHRINK));
+    private static final int[] OFFSETS = computeOffsets();
 
 
     //--------------------------------------------------------------------

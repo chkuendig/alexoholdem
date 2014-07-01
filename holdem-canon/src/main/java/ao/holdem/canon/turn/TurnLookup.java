@@ -1,10 +1,10 @@
 package ao.holdem.canon.turn;
 
 import ao.Infrastructure;
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.CanonSuit;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.CanonSuit;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.canon.enumeration.PermisiveFilter;
 import ao.holdem.canon.enumeration.UniqueFilter;

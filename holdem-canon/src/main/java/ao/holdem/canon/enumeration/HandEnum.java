@@ -1,7 +1,7 @@
 package ao.holdem.canon.enumeration;
 
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.model.card.Card;
@@ -79,7 +79,7 @@ public class HandEnum
                         Card.INDEXES, Card.INDEXES.length - 2).combine(
                         new CombinationVisitor3() {
                 public void visit(int flopA, int flopB, int flopC) {
-                    Flop flop = canonHole.addFlop(
+                    Flop flop = new Flop(canonHole,
                         CARDS[flopA], CARDS[flopB], CARDS[flopC]);
 
                     if (flopFilter.accept(flop))

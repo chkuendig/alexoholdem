@@ -250,7 +250,9 @@ public class Community
     }
 
     public Set<Card> toSet() {
-        return EnumSet.copyOf(Arrays.asList(toArray()));
+        EnumSet<Card> copy = EnumSet.noneOf(Card.class);
+        copy.addAll(Arrays.asList(toArray()));
+        return copy;
     }
 
 

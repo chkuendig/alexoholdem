@@ -1,12 +1,10 @@
 package ao.holdem.canon.river;
 
-import ao.holdem.canon.CanonIndexed;
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.Order;
+import ao.holdem.model.card.canon.base.CanonIndexed;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.Order;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
-import ao.holdem.model.card.Hole;
 
 /**
  * Date: Sep 1, 2008
@@ -34,8 +32,8 @@ public class River implements CanonIndexed
     {
         Order     order  = turnCards.refineOrder(
                                Order.suited(riverCard.suit()));
-        CanonCard hole[] = turnCards.refineHole(order);
-        CanonCard flop[] = turnCards.refineFlop(order);
+        CanonCard[] hole = turnCards.refineHole(order);
+        CanonCard[] flop = turnCards.refineFlop(order);
         CanonCard turn   = turnCards.refineTurn(order);
         RIVER            = order.asCanon(riverCard);
 

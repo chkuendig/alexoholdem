@@ -1,8 +1,8 @@
 package ao.holdem.canon.river;
 
-import ao.holdem.canon.card.CanonSuit;
+import ao.holdem.model.card.canon.CanonSuit;
 
-import static ao.holdem.canon.card.CanonSuit.*;
+import static ao.holdem.model.card.canon.CanonSuit.*;
 
 /**
  * Date: Sep 16, 2008

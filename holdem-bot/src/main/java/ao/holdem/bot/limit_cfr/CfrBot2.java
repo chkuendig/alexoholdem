@@ -3,7 +3,7 @@ package ao.holdem.bot.limit_cfr;
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.engine.state.ActionState;
@@ -215,7 +215,7 @@ public class CfrBot2 extends AbstractPlayer
 
 
         if (canonFlop == null) {
-            canonFlop  = canonHole.addFlop(cards.community());
+            canonFlop  = new Flop(canonHole, cards.community());
             flopBucket = ABS.tree(true).getFlop( canonFlop.canonIndex() );
         }
         if (round == Round.FLOP) {

@@ -2,13 +2,13 @@ package ao.holdem.abs.odds.agglom.impl;
 
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOddsDao;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.Deck;
 import ao.holdem.abs.odds.agglom.OddFinder;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
 import org.apache.log4j.Logger;
 
@@ -91,7 +91,7 @@ public class PreciseHeadsUpOdds implements OddFinder
 
 
     //--------------------------------------------------------------------
-    private static Odds rollOutFlopTurnRiver(Card cards[])
+    private static Odds rollOutFlopTurnRiver(Card[] cards)
     {
         Odds odds = new Odds();
         for (int flopIndexC = 4; flopIndexC <= FLOP_C; flopIndexC++)
@@ -195,7 +195,7 @@ public class PreciseHeadsUpOdds implements OddFinder
 
     //--------------------------------------------------------------------
     private static Odds rollOutRiver(
-            Card  cards[])
+            Card[] cards)
     {
         Odds odds = new Odds();
         for (int riverIndex = 0;
@@ -306,17 +306,7 @@ public class PreciseHeadsUpOdds implements OddFinder
             Hole hole, Community community)
     {
         EnumSet<Card> seq = EnumSet.of(hole.a(), hole.b());
-        if (community.hasRiver()) {
-            seq.add( community.river() );
-        }
-        if (community.hasTurn()) {
-            seq.add( community.turn() );
-        }
-        if (community.hasFlop()) {
-            seq.add( community.flopA() );
-            seq.add( community.flopB() );
-            seq.add( community.flopC() );
-        }
+        seq.addAll(community.toSet());
         return seq;
     }
 

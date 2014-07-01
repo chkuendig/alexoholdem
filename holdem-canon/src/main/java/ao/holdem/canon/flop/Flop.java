@@ -1,9 +1,9 @@
 package ao.holdem.canon.flop;
 
-import ao.holdem.canon.CanonIndexed;
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.Order;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.base.CanonIndexed;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.Order;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -177,18 +177,18 @@ public class Flop implements CanonIndexed
         return HOLE_CARDS;
     }
 
-//    public Card flopA()
-//    {
-//        return FLOP_A;
-//    }
-//    public Card flopB()
-//    {
-//        return FLOP_B;
-//    }
-//    public Card flopC()
-//    {
-//        return FLOP_C;
-//    }
+    public Card flopA()
+    {
+        return FLOP_A;
+    }
+    public Card flopB()
+    {
+        return FLOP_B;
+    }
+    public Card flopC()
+    {
+        return FLOP_C;
+    }
     public Community community()
     {
         return new Community(FLOP_A, FLOP_B, FLOP_C);

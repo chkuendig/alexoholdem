@@ -1,12 +1,10 @@
-package ao.holdem.canon.hole;
+package ao.holdem.model.card.canon.hole;
 
-import ao.holdem.canon.CanonIndexed;
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.Order;
-import ao.holdem.canon.flop.Flop;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.Order;
+import ao.holdem.model.card.canon.base.CanonIndexed;
 
 /**
  * Date: Jan 21, 2009
@@ -35,6 +33,12 @@ public class CanonHole implements CanonIndexed
     {
         return HoleLookup.lookup(a, b);
     }
+
+    public static CanonHole create(int canonIndex)
+    {
+        return HoleLookup.lookup(canonIndex);
+    }
+
 
     /*package-private*/
             CanonHole(Hole        hole,
@@ -92,15 +96,6 @@ public class CanonHole implements CanonIndexed
 
 
     //--------------------------------------------------------------------
-    public Flop addFlop(Community community)
-    {
-        return new Flop(this, community);
-    }
-    public Flop addFlop(Card flopA, Card flopB, Card flopC)
-    {
-        return new Flop(this, flopA, flopB, flopC);
-    }
-
     public CanonCard[] asWild(Order refineWith)
     {
         return asWild(CANON, refineWith);

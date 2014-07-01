@@ -3,7 +3,7 @@ package ao.holdem.abs.bucket.index.detail.turn;
 import ao.Infrastructure;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.canon.enumeration.HandEnum;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dirs;
 import ao.util.pass.Traverser;

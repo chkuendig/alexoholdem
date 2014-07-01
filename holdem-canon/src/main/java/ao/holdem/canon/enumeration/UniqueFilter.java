@@ -1,6 +1,6 @@
 package ao.holdem.canon.enumeration;
 
-import ao.holdem.canon.CanonIndexed;
+import ao.holdem.model.card.canon.base.CanonIndexed;
 import ao.util.pass.Filter;
 import org.apache.log4j.Logger;
 

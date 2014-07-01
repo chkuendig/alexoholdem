@@ -24,7 +24,9 @@ public class CardState implements ChanceCards
     }
 
     private void checkUnique() {
-        Set<Card> cards = EnumSet.copyOf(Arrays.asList(community.toArray()));
+        Set<Card> cards = EnumSet.noneOf(Card.class);
+        cards.addAll(Arrays.asList(community.toArray()));
+
         for (Hole hole : holes) {
             cards.addAll(Arrays.asList(hole.toArray()));
         }

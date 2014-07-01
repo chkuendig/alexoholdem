@@ -21,12 +21,12 @@ public class ActionState
 
 
     //--------------------------------------------------------------------
-    private final Round     round;
-    private final Seat      seats[];
-    private final int       nextToAct;
-    private final int       remainingRoundBets;
-    private final int       latestRoundStaker;
-    private final ChipStack stakes;
+    private final Round       round;
+    private final Seat[]      seats;
+    private final int         nextToAct;
+    private final int         remainingRoundBets;
+    private final int         latestRoundStaker;
+    private final ChipStack   stakes;
     private final ActionState startOfRound;
 
 
@@ -389,9 +389,9 @@ public class ActionState
 
     public Seat[] seats()
     {
-        return seats;
+        return seats.clone();
     }
-    public Seat seats(int indexDealerLast)
+    public Seat seat(int indexDealerLast)
     {
         return seats[   indexDealerLast < 0
                       ? indexDealerLast + seats.length
@@ -408,18 +408,18 @@ public class ActionState
 
     public List<Seat> unfolded()
     {
-        List<Seat> condenters = new ArrayList<Seat>();
+        List<Seat> contenders = new ArrayList<Seat>();
 
         int firstUnfolded = nextUnfoldedAfter( nextToAct - 1 );
         int cursor        = firstUnfolded;
         do
         {
-            condenters.add( seats[cursor] );
+            contenders.add(seats[cursor]);
             cursor = nextUnfoldedAfter(cursor);
         }
         while (cursor != firstUnfolded);
 
-        return condenters;
+        return contenders;
     }
 
     public ChipStack pot()
@@ -508,7 +508,7 @@ public class ActionState
         return nextUnfoldedAfter(seats, playerIndex);
     }
     private int nextUnfoldedAfter(
-            Seat pStates[],
+            Seat[] pStates,
             int  playerIndex)
     {
         for (int i = 1; i <= pStates.length; i++)

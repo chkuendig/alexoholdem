@@ -1,4 +1,4 @@
-package ao.holdem.canon.card;
+package ao.holdem.model.card.canon;
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Suit;
@@ -450,33 +450,6 @@ public enum Order
             }
         }
     }
-//    private void initAsWild()
-//    {
-//        boolean isSecondWild = false;
-//        for (int i = 0; i < Suit.VALUES.length; i++)
-//        {
-//            boolean wildIndex = false;
-//            for (Suit p : Suit.VALUES)
-//            {
-//                for (Suit q : Suit.VALUES)
-//                {
-//                    if (p == q) continue;
-//                    if (i == PRECEDENCE[p.ordinal()] &&
-//                        PRECEDENCE[p.ordinal()] ==
-//                            PRECEDENCE[q.ordinal()])
-//                    {
-//                        AS_WILD[ p.ordinal() ] =
-//                                isSecondWild
-//                                ? CanonSuit.WILD
-//                                : CanonSuit.WILD_B;
-//                        wildIndex = true;
-//                        break;
-//                    }
-//                }
-//            }
-//            isSecondWild |= wildIndex;
-//        }
-//    }
 
 
     //--------------------------------------------------------------------
@@ -493,16 +466,12 @@ public enum Order
     //--------------------------------------------------------------------
     public CanonSuit asWild(Suit suit)
     {
-//        CanonSuit asCanon = AS_WILD[ suit.ordinal() ];
-//        return asCanon != null
-//               ? asCanon
-//               : CanonSuit.VALUES[
-//                    PRECEDENCE[ suit.ordinal() ]];
         return IS_WILD[ suit.ordinal() ]
                ? CanonSuit.WILD
                : CanonSuit.VALUES[
                     PRECEDENCE[ suit.ordinal() ]];
     }
+
     public CanonCard asCanon(Card card)
     {
         return CanonCard.valueOf(

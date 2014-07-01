@@ -2,10 +2,11 @@ package ao.holdem.gen.abs
 
 import ao.learn.mst.gen5.ExtensiveAbstraction
 import ao.holdem.gen.{DecisionAction, HoldemAction, HoldemInfo}
-import ao.holdem.canon.hole.CanonHole
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree
 import ao.holdem.bot.regret.HoldemAbstraction
 import ao.holdem.abs.bucket.abstraction.access.BucketDecoder
+import ao.holdem.model.card.canon.hole.CanonHole
+import ao.holdem.canon.flop.Flop
 
 /**
  * 22/02/14 9:17 PM
@@ -30,7 +31,7 @@ case class BucketAbstraction(abstraction: HoldemAbstraction)
       val community = informationSet.community
 
       if (community.hasFlop) {
-        val flop = canonHole.addFlop(community)
+        val flop = new Flop(canonHole, community)
         val flopSubBucket = bucketTree.getFlop(flop.canonIndex())
         val flopBucket = decoder.decode(holeBucket, flopSubBucket)
         val flopOffset = decoder.holeBucketCount()

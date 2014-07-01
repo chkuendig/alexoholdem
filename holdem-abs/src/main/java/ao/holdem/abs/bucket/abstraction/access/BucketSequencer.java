@@ -2,10 +2,9 @@ package ao.holdem.abs.bucket.abstraction.access;
 
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -116,7 +115,7 @@ public class BucketSequencer
         CanonHole canonHole  = CanonHole.create(hole);
         int       holeBucket = tree.getHole(canonHole.canonIndex());
 
-        Flop flop        = canonHole.addFlop(community);
+        Flop flop        = new Flop(canonHole, community);
         int  flopBucket  = tree.getFlop( flop.canonIndex() );
 
         Turn turn        = flop.addTurn(community.turn());

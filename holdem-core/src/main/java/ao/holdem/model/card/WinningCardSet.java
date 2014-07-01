@@ -64,7 +64,18 @@ public class WinningCardSet
         }
 
         checkFiveEach(cardState);
+        checkCommunityNotSplit(cardState);
     }
+
+    private void checkCommunityNotSplit(CardState cardState) {
+        boolean communityShared = commonCommunity.isEmpty();
+        boolean communityNotShared = dealeeCommunity.isEmpty() && dealerCommunity.isEmpty();
+
+        if (! (communityShared ^ communityNotShared)) {
+            throw new IllegalStateException("Player-unique winning community: " + cardState);
+        }
+    }
+
 
     private List<Set<Card>> mostCommonSubsets(Collection<Set<Card>> allDealeeStrongest, Collection<Set<Card>> allDealerStrongest) {
         Set<Card> mostCommon = null;
@@ -157,6 +168,23 @@ public class WinningCardSet
 
         return player == 0 ? dealeeCommunity : dealerCommunity;
     }
+
+    public Set<Card> community() {
+        Set<Card> community = EnumSet.noneOf(Card.class);
+        community.addAll(commonCommunity);
+        community.addAll(dealeeCommunity);
+        community.addAll(dealerCommunity);
+        return Collections.unmodifiableSet(community);
+    }
+
+    public Set<Card> all() {
+        Set<Card> all = EnumSet.noneOf(Card.class);
+        all.addAll(community());
+        all.addAll(dealeeHole);
+        all.addAll(dealerHole);
+        return Collections.unmodifiableSet(all);
+    }
+
 
     public Set<Card> hole(int player) {
         if (! (0 <= player && player <= 1)) {

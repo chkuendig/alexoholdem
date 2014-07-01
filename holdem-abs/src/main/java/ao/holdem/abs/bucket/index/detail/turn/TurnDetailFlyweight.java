@@ -5,7 +5,7 @@ import ao.holdem.abs.bucket.index.detail.CanonDetail;
 import ao.holdem.abs.bucket.index.detail.example.ExampleLookup;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;
 import ao.holdem.model.card.Card;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentChars;
 

@@ -1,11 +1,11 @@
 package ao.holdem.canon.turn;
 
-import ao.holdem.canon.CanonIndexed;
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.CanonSuit;
-import ao.holdem.canon.card.Order;
+import ao.holdem.model.card.canon.base.CanonIndexed;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.CanonSuit;
+import ao.holdem.model.card.canon.Order;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
@@ -100,6 +100,10 @@ public class Turn implements CanonIndexed
     public CanonSuit turnSuit()
     {
         return TURN.suit();
+    }
+
+    public Card turnRealCard() {
+        return TURN_CARD;
     }
 
 

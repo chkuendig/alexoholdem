@@ -1,6 +1,6 @@
 package ao.holdem.canon.enumeration;
 
-import ao.holdem.canon.CanonIndexed;
+import ao.holdem.model.card.canon.base.CanonIndexed;
 import ao.util.data.LongBitSet;
 import ao.util.pass.Filter;
 

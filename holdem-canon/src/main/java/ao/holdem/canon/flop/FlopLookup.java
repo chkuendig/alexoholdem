@@ -1,8 +1,7 @@
 package ao.holdem.canon.flop;
 
 import ao.Infrastructure;
-import ao.holdem.canon.hole.CanonHole;
-import ao.holdem.canon.hole.HoleLookup;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.Card;
 import ao.util.data.Arrs;
 import ao.util.io.Dirs;
@@ -101,7 +100,7 @@ import java.util.Arrays;
                  canonHole < CanonHole.CANONS;
                  canonHole++)
         {
-            CanonHole hole = HoleLookup.lookup( canonHole );
+            CanonHole hole = CanonHole.create(canonHole);
             Card holeCards[] = {hole.a(), hole.b()};
 
             int subOffsets[] = offsets[ hole.canonIndex() ];
@@ -114,12 +113,10 @@ import java.util.Arrays;
             Arrs.swap(cards, holeCards[1].ordinal(), 51  );
             Arrs.swap(cards, holeCards[0].ordinal(), 51-1);
 
-            for (Card[] flopCards : new Combiner<Card>(cards, 50, 3))
+            for (Card[] flopCards : new Combiner<>(cards, 50, 3))
             {
-                Flop isoFlop = hole.addFlop(
-                                    flopCards[0],
-                                    flopCards[1],
-                                    flopCards[2]);
+                Flop isoFlop = new Flop(hole,
+                        flopCards[0], flopCards[1], flopCards[2]);
 
                 FlopCase flopCase = isoFlop.flopCase();
                 if (subOffsets[ flopCase.ordinal() ] != -1) continue;

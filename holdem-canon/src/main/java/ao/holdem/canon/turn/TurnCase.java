@@ -1,8 +1,8 @@
 package ao.holdem.canon.turn;
 
-import ao.holdem.canon.card.CanonSuit;
+import ao.holdem.model.card.canon.CanonSuit;
 
-import static ao.holdem.canon.card.CanonSuit.*;
+import static ao.holdem.model.card.canon.CanonSuit.*;
 
 import java.util.*;
 

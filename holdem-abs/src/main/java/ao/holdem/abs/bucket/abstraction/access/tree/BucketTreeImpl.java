@@ -5,7 +5,7 @@ import ao.holdem.abs.bucket.abstraction.access.tree.list.HalfLongByteList;
 import ao.holdem.abs.bucket.abstraction.access.tree.list.StoredHalfLongByteList;
 import ao.holdem.abs.bucket.abstraction.access.tree.list.StoredLongByteList;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.abs.bucket.index.detail.CanonDetail;
@@ -45,9 +45,9 @@ public class BucketTreeImpl implements BucketTree
     {
         flushFlag  = new File(dir, "flushed");
 
-        File  holeFile = new File(dir, "holes");
-        File  flopFile = new File(dir, "flops");
-        File  turnFile = new File(dir, "turns");
+        File holeFile = new File(dir, "holes");
+        File flopFile = new File(dir, "flops");
+        File turnFile = new File(dir, "turns");
         File riverFile = new File(dir, "rivers");
         //File riverDir  =  Dir.get(dir, "rivers");
 
@@ -56,15 +56,15 @@ public class BucketTreeImpl implements BucketTree
             LOG.debug("retrieving stored read-only");
             holes  = new StoredLongByteList(holeFile);
             flops  = new StoredLongByteList(flopFile);
-            turns  = new StoredHalfLongByteList( turnFile);
+            turns  = new StoredHalfLongByteList(turnFile);
             rivers = new StoredHalfLongByteList(riverFile);
         }
         else
         {
             LOG.debug("loading (or creating)");
-            holes  = new FullLongByteList(holeFile , CanonHole.CANONS);
-            flops  = new FullLongByteList(flopFile , Flop.CANONS);
-            turns  = new HalfLongByteList(turnFile , Turn.CANONS);
+            holes  = new FullLongByteList(holeFile, CanonHole.CANONS);
+            flops  = new FullLongByteList(flopFile, Flop.CANONS);
+            turns  = new HalfLongByteList(turnFile, Turn.CANONS);
             rivers = new HalfLongByteList(riverFile, River.CANONS);
         }
     }

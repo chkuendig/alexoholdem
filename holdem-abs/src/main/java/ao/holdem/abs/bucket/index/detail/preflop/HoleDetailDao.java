@@ -1,7 +1,7 @@
 package ao.holdem.abs.bucket.index.detail.preflop;
 
 import ao.Infrastructure;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentBytes;
 import com.sleepycat.bind.tuple.TupleInput;

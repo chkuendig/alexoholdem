@@ -5,10 +5,9 @@ import ao.holdem.abs.bucket.abstraction.bucketize.build.FastBucketTreeBuilder;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.bot.regret.HoldemAbstraction;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -59,8 +58,8 @@ public class BucketTest
         System.out.println(holeA + "\t" + holeBucketA);
         System.out.println(holeB + "\t" + holeBucketB);
 
-        Flop flopA = canonHoleA.addFlop(community);
-        Flop flopB = canonHoleB.addFlop(community);
+        Flop flopA = new Flop(canonHoleA, community);
+        Flop flopB = new Flop(canonHoleB, community);
 
         int flopBucketA = tree.getFlop(flopA.canonIndex());
         int flopBucketB = tree.getFlop(flopB.canonIndex());

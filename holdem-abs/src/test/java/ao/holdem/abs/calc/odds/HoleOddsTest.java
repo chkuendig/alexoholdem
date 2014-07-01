@@ -1,8 +1,11 @@
 package ao.holdem.abs.calc.odds;
 
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
-import ao.holdem.abs.odds.agglom.Odds;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.engine.eval.odds.OddsBy5;
+import ao.holdem.model.card.Community;
+import ao.holdem.model.card.canon.hole.CanonHole;
+import ao.holdem.model.card.sequence.LiteralCardSequence;
 
 /**
  * 13/02/14 6:26 PM
@@ -22,7 +25,14 @@ public class HoleOddsTest {
 
         for (int i = 0; i < CanonHole.CANONS; i++)
         {
+            CanonHole hole = CanonHole.create(i);
             Odds odds = HoleOdds.lookup(i);
+
+            double approx = OddsBy5.approximateHeadsUpHandStrength(
+                    new LiteralCardSequence(hole.reify(), Community.PREFLOP));
+            double delta = odds.strengthVsRandom() - approx;
+            System.out.println(hole + "\t" + odds.strengthVsRandom() + "\t" + approx + "\t" + delta);
+            //System.out.println(hole + "\t" + odds);
 
             minWins = Math.min(minWins, odds.winOdds());
             maxWins = Math.max(maxWins, odds.winOdds());

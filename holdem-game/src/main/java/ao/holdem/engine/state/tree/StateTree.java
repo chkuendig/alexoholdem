@@ -172,8 +172,8 @@ public class StateTree
             STATUS        = state.headsUpStatus();
             ROUND         = state.round();
             STAKES        = state.stakes().smallBlinds();
-            DEALER_COMMIT = state.seats(1).commitment().smallBlinds();
-            DEALEE_COMMIT = state.seats(0).commitment().smallBlinds();
+            DEALER_COMMIT = state.seat(1).commitment().smallBlinds();
+            DEALEE_COMMIT = state.seat(0).commitment().smallBlinds();
             DEALER_NEXT   = state.dealerIsNext();
             STATE         = state;
 
