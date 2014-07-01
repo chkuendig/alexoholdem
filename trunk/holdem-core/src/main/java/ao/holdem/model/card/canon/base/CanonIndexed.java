@@ -1,4 +1,4 @@
-package ao.holdem.canon;
+package ao.holdem.model.card.canon.base;
 
 /**
  * Date: Jan 21, 2009
@@ -6,5 +6,5 @@ package ao.holdem.canon;
  */
 public interface CanonIndexed
 {
-    public long packedCanonIndex();
+    long packedCanonIndex();
 }

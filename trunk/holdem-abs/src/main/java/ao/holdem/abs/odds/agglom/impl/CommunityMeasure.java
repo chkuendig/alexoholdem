@@ -43,7 +43,7 @@ public class CommunityMeasure
         int unknownCount = 52 - of.knownCount();
 
 //        TemprotureVisitor thermostat = new TemprotureVisitor(shortcut);
-        TemprotureVisitor thermostat = new TemprotureVisitor(of.toArray());
+        TemperatureVisitor thermostat = new TemperatureVisitor(of.toArray());
         FastCombiner<Card> combin =
                 new FastCombiner<Card>(cards, unknownCount);
         combin.combine(thermostat);
@@ -84,7 +84,7 @@ public class CommunityMeasure
 
 
     //--------------------------------------------------------------------
-    private static class TemprotureVisitor
+    private static class TemperatureVisitor
             implements FastCombiner.CombinationVisitor2<Card>
     {
         private int    count;
@@ -92,11 +92,11 @@ public class CommunityMeasure
         private int    shortcut;
         private Card[] community;
 
-        public TemprotureVisitor(int shortcut)
+        public TemperatureVisitor(int shortcut)
         {
             this.shortcut = shortcut;
         }
-        public TemprotureVisitor(Card[] community)
+        public TemperatureVisitor(Card[] community)
         {
             this.community = community;
         }

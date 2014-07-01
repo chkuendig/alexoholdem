@@ -1,9 +1,9 @@
-package ao.holdem.canon.card;
+package ao.holdem.model.card.canon;
 
 import ao.holdem.model.card.Rank;
 
-import static ao.holdem.canon.card.CanonSuit.*;
 import static ao.holdem.model.card.Rank.*;
+import static ao.holdem.model.card.canon.CanonSuit.*;
 
 /**
  * Date: Sep 11, 2008
@@ -70,19 +70,19 @@ public enum CanonCard
     KING_OF_FOURTH (KING,  FOURTH),
     ACE_OF_FOURTH  (ACE,   FOURTH),
 
-      TWO_OF_WILD(  TWO, WILD),
+    TWO_OF_WILD  (TWO,   WILD),
     THREE_OF_WILD(THREE, WILD),
-     FOUR_OF_WILD( FOUR, WILD),
-     FIVE_OF_WILD( FIVE, WILD),
-      SIX_OF_WILD(  SIX, WILD),
+    FOUR_OF_WILD (FOUR,  WILD),
+    FIVE_OF_WILD (FIVE,  WILD),
+    SIX_OF_WILD  (SIX,   WILD),
     SEVEN_OF_WILD(SEVEN, WILD),
     EIGHT_OF_WILD(EIGHT, WILD),
-     NINE_OF_WILD( NINE, WILD),
-      TEN_OF_WILD(  TEN, WILD),
-     JACK_OF_WILD( JACK, WILD),
+    NINE_OF_WILD (NINE,  WILD),
+    TEN_OF_WILD  (TEN,   WILD),
+    JACK_OF_WILD (JACK,  WILD),
     QUEEN_OF_WILD(QUEEN, WILD),
-     KING_OF_WILD( KING, WILD),
-      ACE_OF_WILD(  ACE, WILD),
+    KING_OF_WILD (KING,  WILD),
+    ACE_OF_WILD  (ACE,   WILD)
     ;
 
     public static final CanonCard VALUES[] = values();

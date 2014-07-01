@@ -1,15 +1,14 @@
 package ao.holdem.abs.calc;
 
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.abs.bucket.index.detail.river.RiverEvalLookup;
 import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.canon.enumeration.PermisiveFilter;
 import ao.holdem.canon.enumeration.UniqueFilter;
 import ao.holdem.model.card.Community;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.abs.odds.agglom.hist.GeneralHistFinder;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.pass.Traverser;

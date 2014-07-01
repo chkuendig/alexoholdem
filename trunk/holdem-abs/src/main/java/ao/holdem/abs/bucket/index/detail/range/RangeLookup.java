@@ -1,6 +1,6 @@
 package ao.holdem.abs.bucket.index.detail.range;
 
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.abs.bucket.index.detail.DetailLookup;
 import ao.holdem.abs.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.model.Round;

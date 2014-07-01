@@ -1,20 +1,12 @@
 package ao.holdem.abs.bucket.index.detail.example;
 
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.abs.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
-import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
-import ao.holdem.abs.bucket.index.detail.preflop.CanonHoleDetail;
-import ao.holdem.abs.bucket.index.detail.preflop.HoleDetails;
 import ao.holdem.canon.enumeration.HandEnum;
-import ao.holdem.canon.enumeration.PermisiveFilter;
-import ao.holdem.canon.enumeration.UniqueFilter;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.abs.odds.agglom.Odds;
-import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dirs;
 import ao.util.pass.Traverser;
 import ao.util.persist.PersistentBytes;

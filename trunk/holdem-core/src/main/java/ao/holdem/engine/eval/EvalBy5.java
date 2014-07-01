@@ -15,6 +15,10 @@ import java.util.*;
 public enum EvalBy5
 {;
     //--------------------------------------------------------------------
+    public static short valueOf(Collection<Card> cards) {
+        return valueOf(cards.toArray(new Card[cards.size()]));
+    }
+
     public static short valueOf(Card... cards)
     {
         switch (cards.length) {

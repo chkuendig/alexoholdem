@@ -2,7 +2,7 @@ package ao.holdem.abs.bucket.abstraction.bucketize.smart;
 
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.abs.bucket.abstraction.access.tree.LongByteList;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;

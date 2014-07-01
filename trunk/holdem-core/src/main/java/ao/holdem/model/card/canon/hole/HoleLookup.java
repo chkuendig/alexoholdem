@@ -1,7 +1,7 @@
-package ao.holdem.canon.hole;
+package ao.holdem.model.card.canon.hole;
 
-import ao.holdem.canon.card.CanonCard;
-import ao.holdem.canon.card.Order;
+import ao.holdem.model.card.canon.CanonCard;
+import ao.holdem.model.card.canon.Order;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Hole;
 
@@ -11,7 +11,7 @@ import java.util.Arrays;
  * Date: Jan 21, 2009
  * Time: 12:44:16 PM
  */
-public enum HoleLookup
+enum HoleLookup
 {;
     //--------------------------------------------------------------------
     private static final int PAIR_COUNT             = 13;
@@ -96,7 +96,7 @@ public enum HoleLookup
 
 
     //--------------------------------------------------------------------
-    public static CanonHole lookup(Card holeCards[])
+    public static CanonHole lookup(Card[] holeCards)
     {
         return lookup(holeCards[0], holeCards[1]);
     }

@@ -1,6 +1,6 @@
 package ao.holdem.canon.flop;
 
-import ao.holdem.canon.card.CanonSuit;
+import ao.holdem.model.card.canon.CanonSuit;
 
 import static ao.holdem.canon.flop.FlopUtil.offset;
 import static ao.holdem.canon.flop.FlopUtil.sortColex;

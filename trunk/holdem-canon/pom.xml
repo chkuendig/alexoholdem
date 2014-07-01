@@ -29,5 +29,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-game</artifactId>
         </dependency>
+
+        <!--<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>holdem-core</artifactId>
+        </dependency>-->
     </dependencies>
 </project>

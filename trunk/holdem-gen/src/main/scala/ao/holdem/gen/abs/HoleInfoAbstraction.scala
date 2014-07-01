@@ -2,7 +2,7 @@ package ao.holdem.gen.abs
 
 import ao.learn.mst.gen5.ExtensiveAbstraction
 import ao.holdem.gen.{DecisionAction, HoldemAction, HoldemInfo}
-import ao.holdem.canon.hole.CanonHole
+import ao.holdem.model.card.canon.hole.CanonHole
 
 
 object HoleInfoAbstraction

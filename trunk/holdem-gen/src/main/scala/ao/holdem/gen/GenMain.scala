@@ -9,7 +9,6 @@ import ao.learn.mst.lib.{DisplayUtils, NumUtils}
 import ao.holdem.bot.regret.HoldemAbstraction
 import ao.holdem.abs.bucket.abstraction.bucketize.build.FastBucketTreeBuilder
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer
-import ao.holdem.canon.hole.{HoleLookup, CanonHole}
 import com.google.common.collect.ImmutableMultimap
 import scala.collection.JavaConversions._
 import ao.learn.mst.gen5.solve2.{RegretMinimizer, RegretSampler}
@@ -19,6 +18,7 @@ import ao.learn.mst.gen5.state.impl.ArrayOptimizationState
 import com.google.common.base.Stopwatch
 import scala.util.Random
 import org.apache.commons.math3.random.{Well512a, MersenneTwister, RandomAdaptor}
+import ao.holdem.model.card.canon.hole.CanonHole
 
 /**
  *
@@ -47,7 +47,7 @@ object GenMain extends App
     val buff: ImmutableMultimap.Builder[Int, CanonHole] = ImmutableMultimap.builder()
 
     for (h <- 0 until CanonHole.CANONS) {
-      val hole: CanonHole = HoleLookup.lookup(h)
+      val hole = CanonHole.create(h)
       val bucket: Int = bucketTree.getHole(h)
       buff.put(bucket, hole)
     }

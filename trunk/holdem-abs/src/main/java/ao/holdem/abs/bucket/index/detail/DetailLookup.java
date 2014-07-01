@@ -1,7 +1,7 @@
 package ao.holdem.abs.bucket.index.detail;
 
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetailFlyweight.CanonFlopDetail;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.abs.bucket.index.detail.preflop.CanonHoleDetail;

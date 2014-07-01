@@ -1,7 +1,7 @@
 package ao.holdem.abs.bucket.index.detail.preflop;
 
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.abs.bucket.index.detail.preflop.CanonHoleDetail.Buffer;
 import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.canon.enumeration.PermisiveFilter;

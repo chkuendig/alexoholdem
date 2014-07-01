@@ -4,14 +4,13 @@ import ao.holdem.abs.bucket.abstraction.access.BucketDecoder;
 import ao.holdem.abs.bucket.abstraction.access.odds.BucketOdds;
 import ao.holdem.abs.bucket.abstraction.access.tree.BucketTree;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
-import ao.holdem.abs.bucket.abstraction.bucketize.smart.HistBucketizer;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.KMeansBucketizer;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.abs.bucket.index.detail.turn.TurnRivers;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.canon.flop.Flop;
 import ao.holdem.model.card.Card;
-import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.util.data.Arrs;
 import ao.util.math.rand.Rand;
 import ao.util.math.stats.Combiner;
@@ -128,16 +127,16 @@ public class AbstractionOptimizer
                             (propValue < oppValue ? 0.0 :
                              propValue > oppValue ? 1.0 : 0.5 );
 
-            long propCanonRiver =
-                    CanonHole.create(cards[0], cards[1])
-                        .addFlop(cards[4], cards[5], cards[6])
-                        .addTurn(cards[7]).addRiver(cards[8])
-                        .canonIndex();
-            long oppCanonRiver =
-                    CanonHole.create(cards[2], cards[3])
-                        .addFlop(cards[4], cards[5], cards[6])
-                        .addTurn(cards[7]).addRiver(cards[8])
-                        .canonIndex();
+            long propCanonRiver = new Flop(
+                    CanonHole.create(cards[0], cards[1]),
+                    cards[4], cards[5], cards[6])
+                    .addTurn(cards[7]).addRiver(cards[8])
+                    .canonIndex();
+            long oppCanonRiver = new Flop(
+                    CanonHole.create(cards[2], cards[3]),
+                    cards[4], cards[5], cards[6])
+                    .addTurn(cards[7]).addRiver(cards[8])
+                    .canonIndex();
             double abstractVsRandom =
                     odds.nonLossProb(
                         riverBucket(tree, decoder, propCanonRiver),
@@ -178,15 +177,13 @@ public class AbstractionOptimizer
                 short oppValue = Eval7Faster.fastValueOf(
                         communityShortcut, oppHole[0], oppHole[1]);
 
-                long oppCanonRiver =
-                    CanonHole.create(
-                            oppHole[0], oppHole[1]
-                    ).addFlop(
-                            community[0], community[1], community[2]
+                long oppCanonRiver = new Flop(
+                        CanonHole.create(oppHole[0], oppHole[1]),
+                        community[0], community[1], community[2]
                     ).addTurn(
-                            community[3]
+                        community[3]
                     ).addRiver(
-                            community[4]
+                        community[4]
                     ).canonIndex();
 
 
@@ -200,16 +197,14 @@ public class AbstractionOptimizer
                             (propValue < oppValue ? 0.0 :
                              propValue > oppValue ? 1.0 : 0.5 );
 
-                    long propCanonRiver =
-                        CanonHole.create(
-                                propHole[0], propHole[1]
-                        ).addFlop(
-                                community[0], community[1], community[2]
-                        ).addTurn(
+                    long propCanonRiver = new Flop(
+                            CanonHole.create(propHole[0], propHole[1]),
+                            community[0], community[1], community[2]
+                            ).addTurn(
                                 community[3]
-                        ).addRiver(
+                            ).addRiver(
                                 community[4]
-                        ).canonIndex();
+                            ).canonIndex();
 
                     double abstractVsRandom =
                             odds.nonLossProb(

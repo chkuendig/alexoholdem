@@ -1,7 +1,7 @@
 package ao.holdem.abs.calc.odds;
 
 import ao.holdem.abs.bucket.index.detail.turn.TurnOdds;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.canon.turn.Turn;
 
 /**

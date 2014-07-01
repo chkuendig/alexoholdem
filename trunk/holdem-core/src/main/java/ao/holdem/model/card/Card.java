@@ -68,6 +68,8 @@ public enum Card
     // pre-computed for performance reasons (should be immutable)
     public static final Card[] VALUES = Card.values(); // optimization
 
+    public static final int COUNT = VALUES.length;
+
     // pre-computed for performance reasons (should be immutable)
     public static final int[] INDEXES = computeIndexes();
     private static int[] computeIndexes() {

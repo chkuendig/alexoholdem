@@ -3,7 +3,7 @@ package ao.holdem.abs.calc;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;
 import ao.holdem.abs.bucket.index.detail.range.RangeLookup;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.turn.Turn;
 import ao.holdem.model.Round;
 import org.apache.log4j.Logger;

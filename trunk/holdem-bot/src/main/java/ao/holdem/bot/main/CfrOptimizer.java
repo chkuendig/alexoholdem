@@ -7,7 +7,8 @@ import ao.holdem.abs.bucket.abstraction.access.BucketSequencer;
 import ao.holdem.abs.bucket.abstraction.bucketize.def.Bucketizer;
 import ao.holdem.abs.bucket.abstraction.bucketize.smart.BucketDisplay;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.canon.flop.Flop;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.engine.Player;
 import ao.holdem.engine.state.ActionStateFlow;
 import ao.holdem.model.Avatar;
@@ -200,7 +201,7 @@ public class CfrOptimizer
         Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
         Community flop = new Community(Card.ACE_OF_HEARTS,
                 Card.FIVE_OF_HEARTS, Card.THREE_OF_DIAMONDS);
-        CanonHole.create(hole).addFlop(flop)
+        new Flop(CanonHole.create(hole), flop)
                 .addTurn(Card.NINE_OF_CLUBS)
                 .addRiver(Card.TEN_OF_DIAMONDS).canonIndex();
 

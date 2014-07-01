@@ -1,7 +1,7 @@
 package ao.holdem.abs.bucket.abstraction.bucketize.smart;
 
 import ao.holdem.abs.bucket.abstraction.access.tree.LongByteList;
-import ao.holdem.canon.hole.CanonHole;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Rank;
 import ao.holdem.model.card.Suit;

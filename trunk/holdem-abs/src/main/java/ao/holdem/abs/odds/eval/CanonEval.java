@@ -25,6 +25,7 @@ public class CanonEval
                 river.riverRealCard());
         return CompactRiverStrengths.compact(v);
     }
+
     public static double vsRandom(River river, OddFinder odds)
     {
         Hole      h = river.turn().hole().reify();

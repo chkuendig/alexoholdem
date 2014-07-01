@@ -1,4 +1,4 @@
-package ao.holdem.canon.card;
+package ao.holdem.model.card.canon;
 
 /**
  *

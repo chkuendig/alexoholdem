@@ -3,7 +3,7 @@ package ao.holdem.abs.bucket.index.detail.flop;
 import ao.Infrastructure;
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.enumeration.HandEnum;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dirs;
 import ao.util.pass.Traverser;
@@ -104,7 +104,7 @@ public enum FlopOdds
     {
         LOG.debug("computing odds");
 
-        final int[]  skinCount      = {0};
+        final int[]  skipCount      = {0};
         final int[]  calcCount      = {0};
         final long[] milestoneStart = {0};
 
@@ -112,11 +112,11 @@ public enum FlopOdds
                 new Traverser<Flop>() {
             public void traverse(Flop flop) {
                 if (WIN[ flop.canonIndex() ] != SENTINAL) {
-                    skinCount[0]++;
+                    skipCount[0]++;
                     return;
-                } else if (skinCount[0] != 0) {
-                    LOG.info("skipped " + skinCount[0]);
-                    skinCount[0] = 0;
+                } else if (skipCount[0] != 0) {
+                    LOG.info("skipped " + skipCount[0]);
+                    skipCount[0] = 0;
                 }
 
                 Odds odds = PreciseHeadsUpOdds.INSTANCE.compute(

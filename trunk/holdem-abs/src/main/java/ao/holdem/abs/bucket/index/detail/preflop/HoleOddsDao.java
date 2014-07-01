@@ -1,7 +1,7 @@
 package ao.holdem.abs.bucket.index.detail.preflop;
 
-import ao.holdem.canon.hole.CanonHole;
-import ao.holdem.abs.odds.agglom.Odds;
+import ao.holdem.model.card.canon.hole.CanonHole;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.util.io.Dirs;
 import ao.util.persist.PersistentInts;
 import ao.util.persist.PersistentLongs;
