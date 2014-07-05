@@ -12,8 +12,10 @@ import java.util.Random;
 /**
  * Approximate odds finder using EvalBy5
  */
-public enum OddsBy5
-{;
+public enum OddsBy5 implements OddsEvaluator
+{
+    INSTANCE;
+
     private static final Random RANDOM = new Random();
 
     private static final int FLOP_ITERATIONS = 10000;
@@ -44,7 +46,7 @@ public enum OddsBy5
     private static final int OPP_B_RANGE = OPP_B_INDEX + 1;
 
 
-    public static double approximateHeadsUpHandStrength(CardSequence cards)
+    public double approximateHeadsUpHandStrength(CardSequence cards)
     {
         if (cards.community().isPreflop()) {
             return HeadsUpPreflopOdds.handStrength(cards.hole());
@@ -76,27 +78,9 @@ public enum OddsBy5
         int iteration = 1;
         for (; iteration <= FLOP_ITERATIONS; iteration++) {
             swap(buffer, RANDOM.nextInt(TURN_RANGE), TURN_INDEX);
-
             swap(buffer, RANDOM.nextInt(RIVER_RANGE), RIVER_INDEX);
 
-            swap(buffer, RANDOM.nextInt(OPP_A_RANGE), OPP_A_INDEX);
-            swap(buffer, RANDOM.nextInt(OPP_B_RANGE), OPP_B_INDEX);
-
-            short value = EvalBy5.valueOf(
-                    buffer[HOLE_A_INDEX], buffer[HOLE_B_INDEX],
-                    buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
-                    buffer[TURN_INDEX], buffer[RIVER_INDEX]);
-
-            short oppValue = EvalBy5.valueOf(
-                    buffer[OPP_A_INDEX], buffer[OPP_B_INDEX],
-                    buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
-                    buffer[TURN_INDEX], buffer[RIVER_INDEX]);
-
-            double delta =
-                    (value > oppValue) ? 1 :
-                    (value < oppValue) ? 0 : 0.5;
-
-            sum += delta;
+            sum += sampleVsOpponent(buffer);
         }
 
         return sum / iteration;
@@ -111,28 +95,31 @@ public enum OddsBy5
         for (; iteration <= TURN_ITERATIONS; iteration++) {
             swap(buffer, RANDOM.nextInt(RIVER_RANGE), RIVER_INDEX);
 
-            swap(buffer, RANDOM.nextInt(OPP_A_RANGE), OPP_A_INDEX);
-            swap(buffer, RANDOM.nextInt(OPP_B_RANGE), OPP_B_INDEX);
-
-            short value = EvalBy5.valueOf(
-                    buffer[HOLE_A_INDEX], buffer[HOLE_B_INDEX],
-                    buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
-                    buffer[TURN_INDEX], buffer[RIVER_INDEX]);
-
-            short oppValue = EvalBy5.valueOf(
-                    buffer[OPP_A_INDEX], buffer[OPP_B_INDEX],
-                    buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
-                    buffer[TURN_INDEX], buffer[RIVER_INDEX]);
-
-            double delta =
-                    (value > oppValue) ? 1 :
-                    (value < oppValue) ? 0 : 0.5;
-
-            sum += delta;
+            sum += sampleVsOpponent(buffer);
         }
 
         return sum / iteration;
     }
+
+
+    private static double sampleVsOpponent(Card[] buffer) {
+        swap(buffer, RANDOM.nextInt(OPP_A_RANGE), OPP_A_INDEX);
+        swap(buffer, RANDOM.nextInt(OPP_B_RANGE), OPP_B_INDEX);
+
+        short value = EvalBy5.valueOf(
+                buffer[HOLE_A_INDEX], buffer[HOLE_B_INDEX],
+                buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
+                buffer[TURN_INDEX], buffer[RIVER_INDEX]);
+
+        short oppValue = EvalBy5.valueOf(
+                buffer[OPP_A_INDEX], buffer[OPP_B_INDEX],
+                buffer[FLOP_A_INDEX], buffer[FLOP_B_INDEX], buffer[FLOP_C_INDEX],
+                buffer[TURN_INDEX], buffer[RIVER_INDEX]);
+
+        return (value > oppValue) ? 1 :
+                (value < oppValue) ? 0 : 0.5;
+    }
+
 
 
     //--------------------------------------------------------------------

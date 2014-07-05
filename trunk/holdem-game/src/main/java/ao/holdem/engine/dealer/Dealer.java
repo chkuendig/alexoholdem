@@ -8,7 +8,6 @@ import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.chance.ChanceCards;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
 import ao.holdem.model.replay.Replay;
 import ao.holdem.model.replay.StackedReplay;
 
@@ -48,7 +47,7 @@ public class Dealer
         {
             int playerIndex = stateFlow.head().nextToAct().player();
 
-            CardSequence playerCards = new LiteralCardSequence(
+            CardSequence playerCards = new CardSequence(
                     cards.hole(playerIndex),
                     cards.community(stateFlow.head().round()));
 

@@ -13,7 +13,7 @@ import ao.holdem.model.card.canon.base.CanonIndexed;
 public class CanonHole implements CanonIndexed
 {
     //--------------------------------------------------------------------
-    public  static final int CANONS = 169;
+    public static final int CANONS = 169;
 
 
     //--------------------------------------------------------------------

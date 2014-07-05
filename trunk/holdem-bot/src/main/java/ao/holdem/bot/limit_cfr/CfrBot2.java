@@ -2,10 +2,12 @@ package ao.holdem.bot.limit_cfr;
 
 import ao.holdem.bot.AbstractPlayer;
 import ao.holdem.bot.regret.HoldemAbstraction;
+import ao.holdem.bot.regret.InfoMatrix;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
+import ao.holdem.engine.eval.EvalBy5;
+import ao.holdem.engine.eval.HandRank;
 import ao.holdem.engine.state.ActionState;
 import ao.holdem.engine.state.tree.StateTree;
 import ao.holdem.model.Avatar;
@@ -14,10 +16,8 @@ import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
+import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.sequence.CardSequence;
-import ao.holdem.engine.eval.HandRank;
-import ao.holdem.engine.eval.EvalBy5;
-import ao.holdem.bot.regret.InfoMatrix;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class CfrBot2 extends AbstractPlayer
         if (! cards.community().hasFlop()) return "";
 
         short value = EvalBy5.valueOf(
-                CardSequence.Util.knowCards(cards));
+                cards.knowCards());
         return "(" + HandRank.fromValue( value ) +")";
     }
 

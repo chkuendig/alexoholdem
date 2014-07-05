@@ -26,6 +26,12 @@
     <!--====================================================================-->
     <dependencies>
         <dependency>
+            <groupId>ao.ai.cfr</groupId>
+            <artifactId>ai-cfr-java</artifactId>
+            <version>${ai-cfr.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>holdem-core</artifactId>
         </dependency>

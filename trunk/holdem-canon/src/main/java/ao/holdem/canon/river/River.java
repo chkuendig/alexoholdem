@@ -13,7 +13,8 @@ import ao.holdem.model.card.Card;
 public class River implements CanonIndexed
 {
     //--------------------------------------------------------------------
-    public  static final long CANONS    = 2428287420L;
+    public static final long CANONS = 2428287420L;
+
 
     //--------------------------------------------------------------------
     private final CanonCard RIVER;

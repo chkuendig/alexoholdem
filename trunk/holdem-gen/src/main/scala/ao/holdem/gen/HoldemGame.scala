@@ -49,27 +49,52 @@ object HoldemGame
     val round: Round =
       state.actionSequence.round()
 
-    val chances: Traversable[HoldemAction] =
+//    val chances: Traversable[HoldemAction] =
+//      if (state.holes.length < playerCount) {
+//        val permutations: Iterable[Array[Card]] =
+//          new Combiner(state.deck.toArray, 2)
+//
+//        val holeChances: Traversable[HoleChance] =
+//          permutations.map(hole => HoleChance(hole(0), hole(1)))
+//
+//        holeChances
+//      } else if (round == Round.FLOP && ! state.community.hasFlop) {
+//        val permutations: Iterable[Array[Card]] =
+//          new Combiner(state.deck.toArray, 3)
+//
+//        val flopChances: Traversable[FlopChance] =
+//          permutations.map(flop => FlopChance(flop(0), flop(1), flop(2)))
+//
+//        flopChances
+//      } else if (round == Round.TURN && ! state.community.hasTurn) {
+//        state.deck.map(TurnChance)
+//      } else if (round == Round.RIVER && ! state.community.hasRiver) {
+//        state.deck.map(RiverChance)
+//      } else {
+//        None
+//      }
+
+    val chances: Option[OutcomeSet[HoldemAction]] =
       if (state.holes.length < playerCount) {
-        val permutations: Iterable[Array[Card]] =
-          new Combiner(state.deck.toArray, 2)
-
-        val holeChances: Traversable[HoleChance] =
-          permutations.map(hole => HoleChance(hole(0), hole(1)))
-
-        holeChances
+        Some(CombinationOutcomeSet(
+          state.deck.toArray[Card],
+          (hole: Seq[Card]) => HoleChance(hole(0), hole(1)),
+          2))
       } else if (round == Round.FLOP && ! state.community.hasFlop) {
-        val permutations: Iterable[Array[Card]] =
-          new Combiner(state.deck.toArray, 3)
-
-        val flopChances: Traversable[FlopChance] =
-          permutations.map(flop => FlopChance(flop(0), flop(1), flop(2)))
-
-        flopChances
+        Some(CombinationOutcomeSet(
+          state.deck.toArray[Card],
+          (flop: Seq[Card]) => FlopChance(flop(0), flop(1), flop(2)),
+          3))
       } else if (round == Round.TURN && ! state.community.hasTurn) {
-        state.deck.map(TurnChance)
+        Some(CombinationOutcomeSet(
+          state.deck.toArray[Card],
+          (turn: Seq[Card]) => TurnChance(turn(0)),
+          1))
       } else if (round == Round.RIVER && ! state.community.hasRiver) {
-        state.deck.map(RiverChance)
+        Some(CombinationOutcomeSet(
+          state.deck.toArray[Card],
+          (river: Seq[Card]) => RiverChance(river(0)),
+          1))
       } else {
         None
       }
@@ -77,7 +102,8 @@ object HoldemGame
     if (chances.isEmpty) {
       None
     } else {
-      Some(Chance(Outcome.equalProbability(chances)))
+      //Some(Chance(UniformOutcomeSet(chances.toSeq)))
+      Some(Chance(chances.get))
     }
   }
 
@@ -105,9 +131,9 @@ object HoldemGame
             val handStrengths: Seq[Short] =
               (0 until playerCount).map(player => {
                 val cards: Array[Card] =
-                  state.holes(player).toArray() ++
-                    state.community.toArray()
-
+                  state.holes(player).toArray ++
+                    state.community.toArray
+                
                 EvalBy5.valueOf(cards: _*)
               })
 

@@ -1,10 +1,15 @@
 package ao.holdem.model;
 
+import java.io.Serializable;
+
 /**
  * One or more chips.
  */
-public class ChipStack implements Comparable<ChipStack>
+public class ChipStack implements Comparable<ChipStack>, Serializable
 {
+    private static final long serialVersionUID = 20140701L;
+
+
     //------------------------------------------------------------------------
     private static final ChipStack[] CACHE_NEGATIVE = new ChipStack[ 64  ];
     private static final ChipStack[] CACHE_POSITIVE = new ChipStack[ 256 ];

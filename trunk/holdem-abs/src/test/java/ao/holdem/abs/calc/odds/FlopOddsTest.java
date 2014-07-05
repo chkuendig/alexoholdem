@@ -3,11 +3,11 @@ package ao.holdem.abs.calc.odds;
 import ao.holdem.abs.bucket.index.detail.DetailLookup;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetailFlyweight;
 import ao.holdem.abs.bucket.index.detail.flop.FlopOdds;
-import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.canon.flop.Flop;
+import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.engine.eval.odds.OddsBy5;
 import ao.holdem.model.card.Community;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 
 /**
  * 13/02/14 6:24 PM
@@ -38,7 +38,7 @@ public class FlopOddsTest
                         detail.a(), detail.b(), detail.c());
                 //System.out.println(exampleFlop + "\t" + odds);
 
-                double approx = OddsBy5.approximateHeadsUpHandStrength(new LiteralCardSequence(
+                double approx = OddsBy5.INSTANCE.approximateHeadsUpHandStrength(new CardSequence(
                         exampleFlop.hole().reify(),
                         new Community(exampleFlop.flopA(), exampleFlop.flopB(), exampleFlop.flopC())));
                 double delta = odds.strengthVsRandom() - approx;

@@ -7,6 +7,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -14,8 +15,12 @@ import java.util.*;
  *
  * Player index is clockwise with dealer being last.
  */
-public class ActionState
+public class ActionState implements Serializable
 {
+    //--------------------------------------------------------------------
+    private static final long serialVersionUID = 20140701L;
+
+
     //--------------------------------------------------------------------
     private static final int BETS_PER_ROUND = 4;
 

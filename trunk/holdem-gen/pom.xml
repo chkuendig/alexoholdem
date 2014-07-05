@@ -54,8 +54,8 @@
 
         <dependency>
             <groupId>ao.ai.cfr</groupId>
-            <artifactId>ao-ai-cfr</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>ai-cfr-scala</artifactId>
+            <version>${ai-cfr.version}</version>
         </dependency>
 
 

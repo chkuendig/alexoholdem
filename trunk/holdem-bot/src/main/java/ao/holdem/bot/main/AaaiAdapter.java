@@ -12,7 +12,7 @@ import ao.holdem.model.ChipStack;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.*;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 import ca.ualberta.cs.poker.free.client.ClientPokerDynamics;
 import ca.ualberta.cs.poker.free.client.PokerClient;
 import org.apache.log4j.Logger;
@@ -220,7 +220,7 @@ public class AaaiAdapter extends PokerClient
         int    seat = state.seatTaken;
         Action act  = deleget.act(
                 stateFlow.head(),
-                new LiteralCardSequence(
+                new CardSequence(
                         Hole.valueOf(
                                 toAoCard(state.hole[seat][0]),
                                 toAoCard(state.hole[seat][1])),
