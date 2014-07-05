@@ -5,11 +5,16 @@ import ao.holdem.model.Round;
 import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 
+import java.io.Serializable;
+
 /**
  * State of position at a table.
  */
-public class Seat
+public class Seat implements Serializable
 {
+    private static final long serialVersionUID = 20140701L;
+
+
     //--------------------------------------------------------------------
     private final int       player;
     private final ChipStack commitment;

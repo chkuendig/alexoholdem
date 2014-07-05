@@ -34,6 +34,7 @@
         <module>holdem-abs</module>
         <module>holdem-canon</module>
         <module>holdem-core</module>
+        <module>holdem-core-ai</module>
     </modules>
 
 
@@ -45,6 +46,8 @@
     </scm>
 
     <properties>
+        <ai-cfr.version>1.0.0-SNAPSHOT</ai-cfr.version>
+
         <svn.root>https://alexoholdem.googlecode.com/svn/proj/holdem</svn.root>
     </properties>
 

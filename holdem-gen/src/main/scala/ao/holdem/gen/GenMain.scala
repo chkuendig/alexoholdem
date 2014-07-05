@@ -1,9 +1,8 @@
 package ao.holdem.gen
 
 import ao.learn.mst.gen5.{ExtensiveAbstraction, ExtensiveGame}
-import ao.learn.mst.gen5.cfr.OutcomeSampling2CfrMinimizer
 import ao.learn.mst.gen5.solve.{SolutionApproximation, ExtensiveSolver}
-import ao.holdem.gen.abs.{BucketAbstraction, SingleInfoAbstraction, SklanskyInfoAbstraction}
+import ao.holdem.gen.abs.{GenStateAbstraction, BucketAbstraction, SingleInfoAbstraction, SklanskyInfoAbstraction}
 import ao.holdem.bot.simple.starting_hands.Sklansky
 import ao.learn.mst.lib.{DisplayUtils, NumUtils}
 import ao.holdem.bot.regret.HoldemAbstraction
@@ -19,6 +18,13 @@ import com.google.common.base.Stopwatch
 import scala.util.Random
 import org.apache.commons.math3.random.{Well512a, MersenneTwister, RandomAdaptor}
 import ao.holdem.model.card.canon.hole.CanonHole
+import ao.holdem.abs.{CompoundStateAbstraction, StateAbstraction}
+import ao.holdem.abs.card.CardAbstraction
+import ao.holdem.abs.bucket.v2.{ViewActionAbstraction, PercentileImperfectAbstractionBuilder}
+import ao.holdem.abs.act.{BasicActionView, ActionAbstraction}
+import ao.holdem.model.card.sequence.CardSequence
+import java.util.Comparator
+import ao.holdem.engine.eval.odds.OddsBy5
 
 /**
  *
@@ -35,27 +41,51 @@ object GenMain extends App
     new OutcomeRegretSampler[HoldemState, HoldemInfo, HoldemAction](
       randomness = rand)
 
-  val holdemAbstraction: HoldemAbstraction =
-    new HoldemAbstraction(
-      new FastBucketTreeBuilder(new KMeansBucketizer),
-//      5, 25.toChar, 125.toChar, 625.toChar)
-      8, 64.toChar, 512.toChar, 4096.toChar)
+//  val holdemAbstraction: HoldemAbstraction =
+//    new HoldemAbstraction(
+//      new FastBucketTreeBuilder(new KMeansBucketizer),
+////      5, 25.toChar, 125.toChar, 625.toChar)
+//      8, 64.toChar, 512.toChar, 4096.toChar)
 
-  val bucketTree = holdemAbstraction.tree(false)
+  val cardAbstraction: CardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
+    20, 30, 30, 50)
+
+  val stateAbstraction: StateAbstraction = {
+    val actionAbstraction: ActionAbstraction = ViewActionAbstraction.build(
+      BasicActionView.VIEW)
+
+    new CompoundStateAbstraction(
+      cardAbstraction, actionAbstraction,
+      OddsBy5.INSTANCE)
+  }
+
+//  val bucketTree = holdemAbstraction.tree(false)
 
   val holeCards: ImmutableMultimap[Int, CanonHole] = {
     val buff: ImmutableMultimap.Builder[Int, CanonHole] = ImmutableMultimap.builder()
+      .orderKeysBy(new Comparator[Int]() {
+        def compare(a: Int, b: Int): Int =
+          a.compareTo(b)
+      })
 
     for (h <- 0 until CanonHole.CANONS) {
       val hole = CanonHole.create(h)
-      val bucket: Int = bucketTree.getHole(h)
+
+//      val bucket: Int = bucketTree.getHole(h)
+      val bucket: Int =
+        cardAbstraction.indexInRound(
+          new CardSequence(hole.reify()),
+          OddsBy5.INSTANCE)
+
       buff.put(bucket, hole)
     }
 
     buff.build()
   }
 
-  val statePath = "work/opt/" + holdemAbstraction.id()
+  //val statePath = "work/opt/" + holdemAbstraction.id()
+  val statePath = "work/opt/b-20-30-30-50"
+
   val state: ArrayOptimizationState =
     ArrayOptimizationState.readOrEmpty(statePath)
 
@@ -63,7 +93,8 @@ object GenMain extends App
 //    SingleInfoAbstraction
 //    HoleInfoAbstraction
 //    SklanskyInfoAbstraction
-      BucketAbstraction(holdemAbstraction)
+//      BucketAbstraction(holdemAbstraction)
+    new GenStateAbstraction(stateAbstraction)
 
   val solver = new RegretMinimizer(
     game, abstraction, state, true)
@@ -75,7 +106,8 @@ object GenMain extends App
 
     solver.iterate(sampler)
 
-    if (i % 25000 == 0)
+    //if (i % 25000 == 0)
+    if (i % 10000 == 0)
     {
       println(s"\n\n$i")
       println("-" * 79)

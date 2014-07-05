@@ -8,7 +8,7 @@ import ao.holdem.model.act.AbstractAction;
 import ao.holdem.model.act.Action;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class TableHandler
 
         Action act = BRAIN.act(
                 stateFlow.head(),
-                new LiteralCardSequence(hole)/*,
+                new CardSequence(hole)/*,
                 stateFlow.analysis()*/);
 
         stateFlow.advance(act);
@@ -84,7 +84,7 @@ public class TableHandler
 
         Action act = BRAIN.act(
                 stateFlow.head(),
-                new LiteralCardSequence(hole, community)/*,
+                new CardSequence(hole, community)/*,
                 stateFlow.analysis()*/);
 
         stateFlow.advance(act);

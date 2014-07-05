@@ -18,7 +18,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.canon.hole.CanonHole;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.util.math.rand.Rand;
 import ao.util.time.Progress;
 import ao.util.time.Stopwatch;
@@ -201,10 +201,8 @@ public class BucketizerTest
 //        }});
 
         ActionStateFlow sf = new ActionStateFlow(2, true);
-        bot.act(sf.head(),
-                new LiteralCardSequence(
-                        Hole.valueOf(Card.ACE_OF_CLUBS,
-                                     Card.FIVE_OF_SPADES)));
+        bot.act(sf.head(), new CardSequence(
+                Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES)));
 
         Hole hole = Hole.valueOf(Card.ACE_OF_CLUBS, Card.FIVE_OF_SPADES);
         Community flop = new Community(Card.ACE_OF_HEARTS,

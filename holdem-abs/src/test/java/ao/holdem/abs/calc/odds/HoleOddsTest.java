@@ -5,7 +5,7 @@ import ao.holdem.engine.eval.odds.Odds;
 import ao.holdem.engine.eval.odds.OddsBy5;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.canon.hole.CanonHole;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 
 /**
  * 13/02/14 6:26 PM
@@ -28,8 +28,8 @@ public class HoleOddsTest {
             CanonHole hole = CanonHole.create(i);
             Odds odds = HoleOdds.lookup(i);
 
-            double approx = OddsBy5.approximateHeadsUpHandStrength(
-                    new LiteralCardSequence(hole.reify(), Community.PREFLOP));
+            double approx = OddsBy5.INSTANCE.approximateHeadsUpHandStrength(
+                    new CardSequence(hole.reify(), Community.PREFLOP));
             double delta = odds.strengthVsRandom() - approx;
             System.out.println(hole + "\t" + odds.strengthVsRandom() + "\t" + approx + "\t" + delta);
             //System.out.println(hole + "\t" + odds);

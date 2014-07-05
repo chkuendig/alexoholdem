@@ -15,7 +15,7 @@ import ao.holdem.model.Avatar;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
-import ao.holdem.model.card.sequence.LiteralCardSequence;
+import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.holdem.bot.regret.InfoPart;
 import ao.holdem.bot.regret.IterativeMinimizer;
@@ -193,7 +193,7 @@ public class CfrOptimizer
 
         ActionStateFlow sf = new ActionStateFlow(2, true);
         bot.act(sf.head(),
-                new LiteralCardSequence(
+                new CardSequence(
                         Hole.valueOf(Card.ACE_OF_CLUBS,
                                      Card.FIVE_OF_SPADES))/*,
                 sf.analysis()*/);
