@@ -8,7 +8,7 @@ import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.chance.Deck;
 import ao.holdem.abs.odds.agglom.OddFinder;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.eval.eval7.Eval7Faster;
 import org.apache.log4j.Logger;
 

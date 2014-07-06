@@ -1,8 +1,8 @@
 package ao.holdem.abs.calc.odds;
 
 import ao.holdem.abs.bucket.index.detail.preflop.HoleOdds;
-import ao.holdem.engine.eval.odds.Odds;
-import ao.holdem.engine.eval.odds.OddsBy5;
+import ao.holdem.abs.odds.Odds;
+import ao.holdem.ai.odds.OddsBy5;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.sequence.CardSequence;

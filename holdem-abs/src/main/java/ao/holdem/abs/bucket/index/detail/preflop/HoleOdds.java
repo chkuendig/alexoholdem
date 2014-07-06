@@ -3,7 +3,7 @@ package ao.holdem.abs.bucket.index.detail.preflop;
 import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.model.card.Community;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.pass.Traverser;
 import org.apache.log4j.Logger;

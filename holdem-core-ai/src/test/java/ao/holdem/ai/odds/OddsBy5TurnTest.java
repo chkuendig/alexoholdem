@@ -1,13 +1,12 @@
-package ao.holdem.engine.eval.odds;
+package ao.holdem.ai.odds;
 
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class OddsBy5TurnTest
 {
@@ -21,7 +20,7 @@ public class OddsBy5TurnTest
                 new Community(Card.SEVEN_OF_CLUBS, Card.FOUR_OF_HEARTS, Card.TWO_OF_DIAMONDS,
                         Card.THREE_OF_CLUBS)));
 
-        assertEquals(0.31964, actual, epsilon);
+        Assert.assertEquals(0.31964, actual, epsilon);
     }
 
 
@@ -32,7 +31,7 @@ public class OddsBy5TurnTest
                 new Community(Card.TEN_OF_DIAMONDS, Card.FIVE_OF_DIAMONDS, Card.NINE_OF_DIAMONDS,
                         Card.FOUR_OF_SPADES)));
 
-        assertEquals(0.64754, actual, epsilon);
+        Assert.assertEquals(0.64754, actual, epsilon);
     }
 
 
@@ -43,6 +42,6 @@ public class OddsBy5TurnTest
                 new Community(Card.QUEEN_OF_CLUBS, Card.QUEEN_OF_DIAMONDS, Card.QUEEN_OF_HEARTS,
                         Card.FOUR_OF_SPADES)));
 
-        assertEquals(1.0, actual, epsilon);
+        Assert.assertEquals(1.0, actual, epsilon);
     }
 }

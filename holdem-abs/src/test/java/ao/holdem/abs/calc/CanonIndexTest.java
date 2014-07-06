@@ -8,7 +8,7 @@ import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.canon.enumeration.PermisiveFilter;
 import ao.holdem.canon.enumeration.UniqueFilter;
 import ao.holdem.model.card.Community;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.agglom.hist.GeneralHistFinder;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.pass.Traverser;

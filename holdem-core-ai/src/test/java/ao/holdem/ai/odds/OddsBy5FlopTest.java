@@ -1,13 +1,12 @@
-package ao.holdem.engine.eval.odds;
+package ao.holdem.ai.odds;
 
 
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.sequence.CardSequence;
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 
 // expected amounts determined via PreciseHeadsUpOdds
@@ -22,7 +21,7 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.TWO_OF_DIAMONDS, Card.TWO_OF_HEARTS),
                 new Community(Card.TWO_OF_CLUBS, Card.THREE_OF_DIAMONDS, Card.FOUR_OF_DIAMONDS)));
 
-        assertEquals(0.86883, actual, epsilon);
+        Assert.assertEquals(0.86883, actual, epsilon);
     }
 
 
@@ -32,7 +31,7 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.TWO_OF_DIAMONDS, Card.THREE_OF_HEARTS),
                 new Community(Card.NINE_OF_SPADES, Card.SIX_OF_SPADES, Card.EIGHT_OF_SPADES)));
 
-        assertEquals(0.12435, actual, epsilon);
+        Assert.assertEquals(0.12435, actual, epsilon);
     }
 
 
@@ -42,7 +41,7 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.KING_OF_CLUBS, Card.ACE_OF_DIAMONDS),
                 new Community(Card.SIX_OF_CLUBS, Card.TEN_OF_DIAMONDS, Card.EIGHT_OF_HEARTS)));
 
-        assertEquals(0.50135, actual, epsilon);
+        Assert.assertEquals(0.50135, actual, epsilon);
     }
 
 
@@ -52,7 +51,7 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.QUEEN_OF_SPADES, Card.QUEEN_OF_CLUBS),
                 new Community(Card.TWO_OF_CLUBS, Card.QUEEN_OF_DIAMONDS, Card.TWO_OF_SPADES)));
 
-        assertEquals(0.99288, actual, epsilon);
+        Assert.assertEquals(0.99288, actual, epsilon);
     }
 
 
@@ -62,7 +61,7 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.SEVEN_OF_CLUBS, Card.TWO_OF_DIAMONDS),
                 new Community(Card.FOUR_OF_DIAMONDS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS)));
 
-        assertEquals(0.29974, actual, epsilon);
+        Assert.assertEquals(0.29974, actual, epsilon);
     }
 
 
@@ -72,6 +71,6 @@ public class OddsBy5FlopTest
                 Hole.valueOf(Card.NINE_OF_SPADES, Card.QUEEN_OF_CLUBS),
                 new Community(Card.NINE_OF_CLUBS, Card.ACE_OF_CLUBS, Card.TEN_OF_DIAMONDS)));
 
-        assertEquals(0.69945, actual, epsilon);
+        Assert.assertEquals(0.69945, actual, epsilon);
     }
 }

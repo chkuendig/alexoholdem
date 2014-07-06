@@ -1,11 +1,11 @@
-package ao.holdem.abs.bucket.v2;
+package ao.holdem.abs;
 
 import ao.ai.cfr.abs.AbstractionDomain;
 import ao.ai.cfr.abs.AbstractionDomainBuilder;
 import ao.ai.cfr.abs.impl.DigestDomainBuilder;
-import ao.holdem.abs.act.ActionAbstraction;
-import ao.holdem.abs.act.ActionStateUniverse;
-import ao.holdem.abs.act.ActionView;
+import ao.holdem.ai.abs.act.ActionAbstraction;
+import ao.holdem.ai.abs.act.ActionStateUniverse;
+import ao.holdem.ai.abs.act.ActionView;
 import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Round;
 

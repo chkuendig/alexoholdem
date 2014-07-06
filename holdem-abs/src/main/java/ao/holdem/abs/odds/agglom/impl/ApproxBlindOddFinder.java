@@ -4,7 +4,7 @@ import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
 import ao.holdem.abs.odds.agglom.BlindOddFinder;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.util.math.stats.FastCombiner;
 
 /**

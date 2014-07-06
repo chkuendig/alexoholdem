@@ -8,7 +8,7 @@ import ao.holdem.model.act.Action;
 import ao.holdem.model.act.FallbackAction;
 import ao.holdem.model.card.sequence.CardSequence;
 import ao.holdem.abs.odds.agglom.OddFinder;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.ApproximateOddFinder;
 
 import java.io.IOException;

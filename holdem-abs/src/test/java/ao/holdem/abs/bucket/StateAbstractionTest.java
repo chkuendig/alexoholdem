@@ -1,14 +1,14 @@
 package ao.holdem.abs.bucket;
 
-import ao.holdem.abs.CompoundStateAbstraction;
-import ao.holdem.abs.StateAbstraction;
-import ao.holdem.abs.act.ActionAbstraction;
-import ao.holdem.abs.act.ActionStateUniverse;
-import ao.holdem.abs.act.BasicActionView;
 import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder;
-import ao.holdem.abs.bucket.v2.ViewActionAbstraction;
-import ao.holdem.abs.card.CardAbstraction;
-import ao.holdem.engine.eval.odds.OddsBy5;
+import ao.holdem.abs.ViewActionAbstraction;
+import ao.holdem.abs.card.CentroidStrengthAbstraction;
+import ao.holdem.ai.abs.CompoundStateAbstraction;
+import ao.holdem.ai.abs.StateAbstraction;
+import ao.holdem.ai.abs.act.ActionAbstraction;
+import ao.holdem.ai.abs.act.ActionStateUniverse;
+import ao.holdem.ai.abs.act.BasicActionView;
+import ao.holdem.ai.odds.OddsBy5;
 import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.Hole;
@@ -17,14 +17,14 @@ import ao.holdem.model.card.sequence.CardSequence;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class StateAbstractionTest
 {
     @Test
-    public void basicAbstraction()
-    {
-        CardAbstraction cardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
+    public void basicAbstraction() throws IOException {
+        CentroidStrengthAbstraction cardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
                 20, 30, 30, 50);
 
         ActionAbstraction actionAbstraction = ViewActionAbstraction.build(
@@ -37,7 +37,7 @@ public class StateAbstractionTest
         System.out.println(stateAbstraction.size());
 
         Map<Integer, Integer> roundStateActs = Maps.newTreeMap();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 10; i++) {
             for (ActionState state : ActionStateUniverse.headsUpActionDecisionStates()) {
                 int actCount = state.actions(false).size();
 

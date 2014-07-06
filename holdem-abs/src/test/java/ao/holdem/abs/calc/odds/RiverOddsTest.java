@@ -5,7 +5,7 @@ import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.river.River;
 import ao.holdem.canon.turn.Turn;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.chance.Deck;

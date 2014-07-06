@@ -1,4 +1,4 @@
-package ao.holdem.engine.eval.odds;
+package ao.holdem.abs.odds;
 
 /**
  * odds from the point of view of one player.

@@ -1,9 +1,9 @@
 package ao.holdem.abs.bucket;
 
 
-import ao.holdem.abs.card.CardAbstraction;
+import ao.holdem.ai.abs.card.CardAbstraction;
 import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder;
-import ao.holdem.engine.eval.odds.OddsBy5;
+import ao.holdem.ai.odds.OddsBy5;
 import ao.holdem.model.card.canon.hole.CanonHole;
 import ao.holdem.model.card.sequence.CardSequence;
 import org.junit.Test;

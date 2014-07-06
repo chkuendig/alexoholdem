@@ -1,8 +1,8 @@
-package ao.holdem.abs;
+package ao.holdem.ai.abs;
 
-import ao.holdem.abs.act.ActionAbstraction;
-import ao.holdem.abs.card.CardAbstraction;
-import ao.holdem.engine.eval.odds.OddsEvaluator;
+import ao.holdem.ai.abs.act.ActionAbstraction;
+import ao.holdem.ai.abs.card.CardAbstraction;
+import ao.holdem.ai.odds.OddsEvaluator;
 import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.sequence.CardSequence;

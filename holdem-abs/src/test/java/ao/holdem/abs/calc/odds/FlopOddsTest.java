@@ -4,8 +4,8 @@ import ao.holdem.abs.bucket.index.detail.DetailLookup;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetailFlyweight;
 import ao.holdem.abs.bucket.index.detail.flop.FlopOdds;
 import ao.holdem.canon.flop.Flop;
-import ao.holdem.engine.eval.odds.Odds;
-import ao.holdem.engine.eval.odds.OddsBy5;
+import ao.holdem.abs.odds.Odds;
+import ao.holdem.ai.odds.OddsBy5;
 import ao.holdem.model.card.Community;
 import ao.holdem.model.card.sequence.CardSequence;
 
