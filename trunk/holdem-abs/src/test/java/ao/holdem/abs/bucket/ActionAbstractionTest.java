@@ -1,10 +1,10 @@
 package ao.holdem.abs.bucket;
 
 
-import ao.holdem.abs.act.ActionAbstraction;
-import ao.holdem.abs.act.ActionStateUniverse;
-import ao.holdem.abs.act.BasicActionView;
-import ao.holdem.abs.bucket.v2.ViewActionAbstraction;
+import ao.holdem.ai.abs.act.ActionAbstraction;
+import ao.holdem.ai.abs.act.ActionStateUniverse;
+import ao.holdem.ai.abs.act.BasicActionView;
+import ao.holdem.abs.ViewActionAbstraction;
 import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Round;
 import com.google.common.collect.HashBasedTable;

@@ -4,7 +4,7 @@ import ao.holdem.abs.bucket.index.detail.flop.FlopDetailFlyweight;
 import ao.holdem.abs.bucket.index.detail.flop.FlopDetails;
 import ao.holdem.abs.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleDetails;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.holdem.canon.enumeration.HandEnum;
 import ao.holdem.canon.enumeration.PermisiveFilter;

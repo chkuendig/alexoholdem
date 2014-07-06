@@ -1,4 +1,4 @@
-package ao.holdem.abs.act;
+package ao.holdem.ai.abs.act;
 
 
 import ao.holdem.engine.state.ActionState;

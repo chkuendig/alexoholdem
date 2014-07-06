@@ -1,4 +1,4 @@
-package ao.holdem.engine.eval.odds;
+package ao.holdem.ai.odds;
 
 import ao.holdem.model.card.Hole;
 import ao.holdem.model.card.canon.hole.CanonHole;

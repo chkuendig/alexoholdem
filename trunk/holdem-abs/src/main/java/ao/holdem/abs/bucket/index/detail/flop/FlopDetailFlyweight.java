@@ -7,7 +7,7 @@ import ao.holdem.abs.bucket.index.detail.preflop.CanonHoleDetail;
 import ao.holdem.abs.bucket.index.detail.preflop.HoleDetails;
 import ao.holdem.abs.bucket.index.detail.range.CanonRange;
 import ao.holdem.model.card.Card;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.util.math.Calc;
 import ao.util.persist.PersistentBytes;
 import ao.util.persist.PersistentFloats;

@@ -18,13 +18,14 @@ import com.google.common.base.Stopwatch
 import scala.util.Random
 import org.apache.commons.math3.random.{Well512a, MersenneTwister, RandomAdaptor}
 import ao.holdem.model.card.canon.hole.CanonHole
-import ao.holdem.abs.{CompoundStateAbstraction, StateAbstraction}
-import ao.holdem.abs.card.CardAbstraction
-import ao.holdem.abs.bucket.v2.{ViewActionAbstraction, PercentileImperfectAbstractionBuilder}
-import ao.holdem.abs.act.{BasicActionView, ActionAbstraction}
+import ao.holdem.ai.abs.{CompoundStateAbstraction, StateAbstraction}
+import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder
+import ao.holdem.ai.abs.act.{BasicActionView, ActionAbstraction}
 import ao.holdem.model.card.sequence.CardSequence
 import java.util.Comparator
-import ao.holdem.engine.eval.odds.OddsBy5
+import ao.holdem.ai.odds.OddsBy5
+import ao.holdem.ai.abs.card.CardAbstraction
+import ao.holdem.abs.ViewActionAbstraction
 
 /**
  *

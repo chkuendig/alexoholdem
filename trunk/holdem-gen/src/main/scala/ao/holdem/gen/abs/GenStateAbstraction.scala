@@ -1,6 +1,6 @@
 package ao.holdem.gen.abs
 
-import ao.holdem.abs.StateAbstraction
+import ao.holdem.ai.abs.StateAbstraction
 import ao.learn.mst.gen5.ExtensiveAbstraction
 import ao.holdem.gen.{DecisionAction, HoldemAction, HoldemInfo}
 import ao.holdem.model.card.sequence.CardSequence

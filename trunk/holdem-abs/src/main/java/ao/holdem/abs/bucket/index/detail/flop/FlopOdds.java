@@ -3,7 +3,7 @@ package ao.holdem.abs.bucket.index.detail.flop;
 import ao.Infrastructure;
 import ao.holdem.canon.flop.Flop;
 import ao.holdem.canon.enumeration.HandEnum;
-import ao.holdem.engine.eval.odds.Odds;
+import ao.holdem.abs.odds.Odds;
 import ao.holdem.abs.odds.agglom.impl.PreciseHeadsUpOdds;
 import ao.util.io.Dirs;
 import ao.util.pass.Traverser;

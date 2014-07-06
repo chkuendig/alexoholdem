@@ -1,4 +1,4 @@
-package ao.holdem.engine.eval.odds;
+package ao.holdem.ai.odds;
 
 import ao.holdem.engine.eval.EvalBy5;
 import ao.holdem.model.card.Card;
