@@ -27,9 +27,8 @@ public enum PercentileImperfectAbstractionBuilder
 {;
     public static void save(CentroidStrengthAbstraction abstraction) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream objectOut = new ObjectOutputStream(out);
-        objectOut.writeObject(abstraction);
-        objectOut.close();
+        CentroidStrengthAbstraction.save(
+                abstraction, out);
 
         byte[] serialized = out.toByteArray();
 
@@ -45,12 +44,8 @@ public enum PercentileImperfectAbstractionBuilder
         }
 
         InputStream serialized = Files.asByteSource(path).openBufferedStream();
-        ObjectInputStream objectInput = new ObjectInputStream(serialized);
-
         try {
-            return (CentroidStrengthAbstraction) objectInput.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new IOError(e);
+            return CentroidStrengthAbstraction.load(serialized);
         } finally {
             serialized.close();
         }

@@ -8,12 +8,20 @@ import java.util.Set;
 
 public enum ActionStateUniverse
 {;
+    private static Iterable<ActionState> headsUpActionDecisionStates;
+
     public static Iterable<ActionState> headsUpActionDecisionStates() {
+        if (headsUpActionDecisionStates != null) {
+            return headsUpActionDecisionStates;
+        }
+
+
         Set<ActionState> states = new LinkedHashSet<>();
 
         ActionState root = ActionState.autoBlindInstance(2);
         traverse(root, states);
 
+        headsUpActionDecisionStates = states;
         return states;
     }
 

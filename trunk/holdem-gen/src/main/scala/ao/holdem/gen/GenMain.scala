@@ -22,10 +22,14 @@ import ao.holdem.ai.abs.{CompoundStateAbstraction, StateAbstraction}
 import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder
 import ao.holdem.ai.abs.act.{BasicActionView, ActionAbstraction}
 import ao.holdem.model.card.sequence.CardSequence
-import java.util.Comparator
+import java.util.{Date, Comparator}
 import ao.holdem.ai.odds.OddsBy5
 import ao.holdem.ai.abs.card.CardAbstraction
 import ao.holdem.abs.ViewActionAbstraction
+import ao.holdem.engine.state.tree.StateTree
+import ao.holdem.model.card.Community
+import ao.holdem.abs.odds.agglom.impl.OddsFinderEvaluator
+import java.io.File
 
 /**
  *
@@ -52,12 +56,14 @@ object GenMain extends App
     20, 30, 30, 50)
 
   val stateAbstraction: StateAbstraction = {
-    val actionAbstraction: ActionAbstraction = ViewActionAbstraction.build(
+    val actionAbstraction: ActionAbstraction = ViewActionAbstraction.loadOrBuildAndSave(
+      new File("lookup/bucket/BasicActionView.bin"),
       BasicActionView.VIEW)
 
     new CompoundStateAbstraction(
       cardAbstraction, actionAbstraction,
-      OddsBy5.INSTANCE)
+      //OddsBy5.INSTANCE)
+      OddsFinderEvaluator.INSTANCE)
   }
 
 //  val bucketTree = holdemAbstraction.tree(false)
@@ -85,7 +91,8 @@ object GenMain extends App
   }
 
   //val statePath = "work/opt/" + holdemAbstraction.id()
-  val statePath = "work/opt/b-20-30-30-50"
+  //val statePath = "work/opt/b-20-30-30-50"
+  val statePath = "work/opt/b_20_30_30_50_b"
 
   val state: ArrayOptimizationState =
     ArrayOptimizationState.readOrEmpty(statePath)
@@ -107,15 +114,24 @@ object GenMain extends App
 
     solver.iterate(sampler)
 
-    //if (i % 25000 == 0)
-    if (i % 10000 == 0)
+    if (i % 25000 == 0)
+//    if (i % 10000 == 0)
+//    if (i % 1000 == 0)
     {
       println(s"\n\n$i")
       println("-" * 79)
 
       for (bucket <- holeCards.keySet()) {
+        val infoSet: Long =
+          abstraction.informationSetIndex(
+            HoldemInfo(
+              StateTree.headsUpRoot(),
+              holeCards.get(bucket).iterator().next().reify(),
+              Community.PREFLOP
+            ))
+
         val probs: Seq[Double] =
-          strategy.probabilities(bucket, 3)
+          strategy.probabilities(infoSet, 3)
 
         println(s"${DisplayUtils.displayProbabilities(probs)}\t${holeCards.get(bucket)}")
       }
@@ -151,7 +167,7 @@ object GenMain extends App
 
       val timer = Stopwatch.createStarted()
       state.write(statePath)
-      println(s"Done writing, took $timer")
+      println(s"${new Date()}\t- Done writing, took $timer")
     }
   })
 

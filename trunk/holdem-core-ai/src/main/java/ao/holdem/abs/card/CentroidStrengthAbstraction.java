@@ -15,6 +15,15 @@ public class CentroidStrengthAbstraction implements CardAbstraction, Serializabl
     private static final long serialVersionUID = 20140701L;
 
 
+    public static CentroidStrengthAbstraction load(byte[] in) {
+        InputStream inputStream = new ByteArrayInputStream(in);
+        try {
+            return load(inputStream);
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    }
+
     public static CentroidStrengthAbstraction load(InputStream in) throws IOException {
         ObjectInputStream objectIn = new ObjectInputStream(in);
 
@@ -38,6 +47,8 @@ public class CentroidStrengthAbstraction implements CardAbstraction, Serializabl
         objectOut.writeObject(abstraction.flopCentroids);
         objectOut.writeObject(abstraction.turnCentroids);
         objectOut.writeObject(abstraction.riverCentroids);
+
+        objectOut.flush();
     }
 
 

@@ -13,7 +13,11 @@ import ao.holdem.ai.abs.act.ActionAbstraction;
 import ao.holdem.ai.abs.act.BasicActionView;
 import ao.holdem.ai.abs.card.CardAbstraction;
 import ao.holdem.ai.odds.OddsBy5;
+import ao.holdem.engine.state.ActionState;
 import ao.holdem.model.Round;
+import ao.holdem.model.card.Hole;
+import ao.holdem.model.card.canon.hole.CanonHole;
+import ao.holdem.model.card.sequence.CardSequence;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +30,7 @@ public class SimpleAiTest
     public static void main(String[] args) throws IOException {
         File dir = new File("C:/-/proj/OpenHoldem-strat");
 
-        InputStream cardAbsIn = new FileInputStream(new File(dir, "hsp-20-30-30-50.bin"));
+        InputStream cardAbsIn = new FileInputStream(new File(dir, "hsp_20_30_30_50.bin"));
         CardAbstraction cardAbstraction = CentroidStrengthAbstraction.load(cardAbsIn);
         cardAbsIn.close();
 
@@ -41,7 +45,6 @@ public class SimpleAiTest
 
         System.out.println(stateAbstraction.size());
 
-
         ArrayTable strategyStore = new ArrayTable();
         InputStream strategyIn = new FileInputStream(new File(dir, "strategy.bin"));
         strategyStore.read(strategyIn);
@@ -49,6 +52,18 @@ public class SimpleAiTest
 
         MixedStrategy strategy = new AverageStrategy(
                 new ArrayStrategyAccumulator(strategyStore));
+
+        for (int hole = 0; hole < CanonHole.CANONS; hole++) {
+            Hole realHole = CanonHole.create(hole).reify();
+
+            int infoSet = stateAbstraction.indexOf(
+                    ActionState.autoBlindInstance(2),
+                    new CardSequence(realHole));
+
+            double[] probs = strategy.probabilities(infoSet, 3);
+            System.out.println(realHole + "\t" + Arrays.toString(probs));
+        }
+
 
         System.out.println(Arrays.toString(strategyStore.get(0)));
         System.out.println(Arrays.toString(strategy.probabilities(0, 3)));

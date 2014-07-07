@@ -12,14 +12,10 @@ import java.util.Random;
 /**
  * Approximate odds finder using EvalBy5
  */
-public enum OddsBy5 implements OddsEvaluator
+public class OddsBy5 implements OddsEvaluator
 {
-    INSTANCE;
+    public static OddsEvaluator INSTANCE = new OddsBy5(10000, 5000, new Random());
 
-    private static final Random RANDOM = new Random();
-
-    private static final int FLOP_ITERATIONS = 10000;
-    private static final int TURN_ITERATIONS = 5000;
 
     private static final int HOLE_A_INDEX = Card.COUNT - 1;
     private static final int HOLE_B_INDEX = Card.COUNT - 2;
@@ -46,6 +42,19 @@ public enum OddsBy5 implements OddsEvaluator
     private static final int OPP_B_RANGE = OPP_B_INDEX + 1;
 
 
+    private final Random random;
+    private final int flopIterations;
+    private final int turnIterations;
+
+
+    public OddsBy5(int flopIterations, int turnIterations, Random random) {
+        this.flopIterations = flopIterations;
+        this.turnIterations = turnIterations;
+        this.random = random;
+    }
+
+
+    @Override
     public double approximateHeadsUpHandStrength(CardSequence cards)
     {
         if (cards.community().isPreflop()) {
@@ -72,13 +81,13 @@ public enum OddsBy5 implements OddsEvaluator
 
 
     //--------------------------------------------------------------------
-    private static double flopHandStrength(Card[] buffer) {
+    private double flopHandStrength(Card[] buffer) {
         double sum = 0;
 
         int iteration = 1;
-        for (; iteration <= FLOP_ITERATIONS; iteration++) {
-            swap(buffer, RANDOM.nextInt(TURN_RANGE), TURN_INDEX);
-            swap(buffer, RANDOM.nextInt(RIVER_RANGE), RIVER_INDEX);
+        for (; iteration <= flopIterations; iteration++) {
+            swap(buffer, random.nextInt(TURN_RANGE), TURN_INDEX);
+            swap(buffer, random.nextInt(RIVER_RANGE), RIVER_INDEX);
 
             sum += sampleVsOpponent(buffer);
         }
@@ -88,12 +97,12 @@ public enum OddsBy5 implements OddsEvaluator
 
 
     //--------------------------------------------------------------------
-    private static double turnHandStrength(Card[] buffer) {
+    private double turnHandStrength(Card[] buffer) {
         double sum = 0;
 
         int iteration = 1;
-        for (; iteration <= TURN_ITERATIONS; iteration++) {
-            swap(buffer, RANDOM.nextInt(RIVER_RANGE), RIVER_INDEX);
+        for (; iteration <= turnIterations; iteration++) {
+            swap(buffer, random.nextInt(RIVER_RANGE), RIVER_INDEX);
 
             sum += sampleVsOpponent(buffer);
         }
@@ -102,9 +111,9 @@ public enum OddsBy5 implements OddsEvaluator
     }
 
 
-    private static double sampleVsOpponent(Card[] buffer) {
-        swap(buffer, RANDOM.nextInt(OPP_A_RANGE), OPP_A_INDEX);
-        swap(buffer, RANDOM.nextInt(OPP_B_RANGE), OPP_B_INDEX);
+    private double sampleVsOpponent(Card[] buffer) {
+        swap(buffer, random.nextInt(OPP_A_RANGE), OPP_A_INDEX);
+        swap(buffer, random.nextInt(OPP_B_RANGE), OPP_B_INDEX);
 
         short value = EvalBy5.valueOf(
                 buffer[HOLE_A_INDEX], buffer[HOLE_B_INDEX],
