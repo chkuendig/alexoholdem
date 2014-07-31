@@ -1,31 +1,26 @@
 package ao.holdem.gen
 
-import ao.holdem.bot.AbstractPlayer
 import ao.holdem.bot.regret.HoldemAbstraction
 import ao.learn.mst.gen5.state.strategy.StrategyAccumulator
-import ao.holdem.engine.state.ActionState
-import ao.holdem.model.card.sequence.CardSequence
-import ao.holdem.model.act.{AbstractAction, Action}
-import ao.holdem.engine.state.tree.StateTree
-import ao.holdem.model.{ChipStack, Avatar}
-import ao.holdem.gen.abs.BucketAbstraction
 import scala.util.Random
+import ao.holdem.bot.AbstractPlayer
+import ao.holdem.gen.abs.BucketAbstraction
 import ao.learn.mst.gen5.state.strategy.impl.AverageStrategy
+import ao.holdem.engine.state.tree.StateTree
+import ao.holdem.model.card.sequence.CardSequence
+import ao.holdem.model.ChipStack
+import ao.holdem.engine.state.ActionState
+import ao.holdem.model.act.{AbstractAction, Action}
 import ao.learn.mst.lib.DisplayUtils
+import ao.learn.mst.gen5.ExtensiveAbstraction
 
-/**
- *
- */
-class GenPlayer(
-    holdemAbstraction: HoldemAbstraction,
+class MobGenPlayer(
+    holdemAbstraction: ExtensiveAbstraction[HoldemInfo, HoldemAction],
     strategyAccumulator: StrategyAccumulator,
     display: Boolean = false,
     randomness: Random = new Random)
-    extends AbstractPlayer
+  extends AbstractPlayer
 {
-  private val bucketAbstraction =
-    BucketAbstraction(holdemAbstraction)
-
   private val averageStrategy =
     new AverageStrategy(strategyAccumulator)
 
@@ -57,7 +52,7 @@ class GenPlayer(
     }
 
     val info = HoldemInfo(gamePath, cards.hole(), cards.community())
-    val infoIndex: Long = bucketAbstraction.informationSetIndex(info)
+    val infoIndex: Int = holdemAbstraction.informationSetIndex(info)
 
     val actionCount = state.actions(false).size
     val strategy: IndexedSeq[Double] =
@@ -90,3 +85,4 @@ class GenPlayer(
     realAction
   }
 }
+

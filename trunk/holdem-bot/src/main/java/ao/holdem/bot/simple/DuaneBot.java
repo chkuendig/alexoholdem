@@ -26,8 +26,7 @@ public class DuaneBot extends AbstractPlayer
     
     //--------------------------------------------------------------------
     public Action act(ActionState state,
-                      CardSequence cards/*,
-                      Analysis     analysis*/)
+                      CardSequence cards)
     {
         if (state.round() != Round.PREFLOP) {
             return state.reify(FallbackAction.CHECK_OR_CALL);
