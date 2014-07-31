@@ -7,11 +7,21 @@ import ao.learn.mst.gen5.state.strategy.impl.ArrayStrategyStore
 import java.io.File
 import ao.holdem.bot.main.DealerTest
 import ao.holdem.model.Avatar
-import ao.holdem.bot.simple.{MostlyRaiseBot, DuaneBot, AlwaysRaiseBot}
+import ao.holdem.bot.simple._
 import scala.collection.JavaConversions._
 import scala.util.Random
 import org.apache.commons.math3.random.{Well512a, RandomAdaptor}
 import ao.util.math.rand.Rand
+import ao.holdem.ai.abs.card.CardAbstraction
+import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder
+import ao.holdem.ai.abs.{CompoundStateAbstraction, StateAbstraction}
+import ao.holdem.ai.abs.act.{BasicActionView, ActionAbstraction}
+import ao.holdem.abs.ViewActionAbstraction
+import ao.holdem.abs.odds.agglom.impl.OddsFinderEvaluator
+import ao.holdem.ai.odds.OddsBy5
+import ao.learn.mst.gen5.state.impl.ArrayOptimizationState
+import ao.learn.mst.gen5.ExtensiveAbstraction
+import ao.holdem.gen.abs.GenStateAbstraction
 
 /**
  *
@@ -61,17 +71,59 @@ object GenTournament extends App
 //  val midMidGetPlayer = new GenPlayer(
 //    midHoldemAbstraction, midMidStrategy, false, rand)
 
-  new DealerTest().vsHuman(lateSmallGenPlayer)
 
-//  new DealerTest(100 * 1000).headsUp(Map(
-////    Avatar.local("raise") -> new AlwaysRaiseBot(),
-////    Avatar.local("duane") -> new DuaneBot(),
-////    Avatar.local("mostly-raise") -> new MostlyRaiseBot(),
-////    Avatar.local("gen-early") -> earlyGenPlayer,
+
+  val cardAbstraction: CardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
+    20, 30, 30, 50)
+
+  val stateAbstraction: StateAbstraction = {
+    val actionAbstraction: ActionAbstraction = ViewActionAbstraction.loadOrBuildAndSave(
+      new File("lookup/bucket/BasicActionView.bin"),
+      BasicActionView.VIEW)
+
+    new CompoundStateAbstraction(
+      cardAbstraction, actionAbstraction,
+      OddsBy5.INSTANCE)
+  }
+
+  val smallMobileStrategy = new ArrayStrategyStore
+  smallMobileStrategy.read(
+    new File("work/opt/b_20_30_30_50_b/strategy.bin"))
+//    new File("work/opt/b_20_30_30_50_b - Copy (12)/strategy.bin"))
+
+  val smallMobileStrategyAgro = new ArrayStrategyStore
+  smallMobileStrategyAgro.read(
+    new File("work/opt/b_20_30_30_50_agro/strategy.bin"))
+
+  val smallMobileAbstraction: ExtensiveAbstraction[HoldemInfo, HoldemAction] =
+    new GenStateAbstraction(stateAbstraction)
+
+  val smallMobileGenPlayer = new MobGenPlayer(
+    smallMobileAbstraction, smallMobileStrategy, false, rand)
+
+  val smallMobileGenPlayerAgro = new MobGenPlayer(
+    smallMobileAbstraction, smallMobileStrategyAgro, false, rand)
+  
+  
+  
+//  new DealerTest().vsHuman(lateSmallGenPlayer)
+
+  new DealerTest(100 * 1000).headsUp(Map(
+//    Avatar.local("raise") -> new AlwaysRaiseBot(),
+//    Avatar.local("call") -> new AlwaysCallBot(),
+//    Avatar.local("sean") -> new SeanBot(),
+//    Avatar.local("math") -> new MathBot(),
+//    Avatar.local("sean2") -> new ShawnBot()
+//    Avatar.local("duane") -> new DuaneBot(),
+//    Avatar.local("mostly-raise") -> new MostlyRaiseBot()
+//    Avatar.local("gen-early") -> earlyGenPlayer
 ////    Avatar.local("gen-mid") -> midGetPlayer,
-//    Avatar.local("gen-small-late") -> lateSmallGenPlayer,
+//    Avatar.local("gen-small-late") -> lateSmallGenPlayer
 ////    Avatar.local("gen-small-mid") -> midSmallGetPlayer,
 ////    Avatar.local("gen-mid-early") -> earlyMidGetPlayer,
 //    Avatar.local("gen-mid-mid") -> midMidGetPlayer
-//  ))
+    Avatar.local("mob-small-late") -> smallMobileGenPlayer,
+//    Avatar.local("mob-small-lateC") -> smallMobileGenPlayerC
+    Avatar.local("mob-small-agro") -> smallMobileGenPlayerAgro
+  ))
 }

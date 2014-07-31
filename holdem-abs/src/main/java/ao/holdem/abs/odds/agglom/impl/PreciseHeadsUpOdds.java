@@ -80,13 +80,13 @@ public class PreciseHeadsUpOdds implements OddFinder
             Card cards[],
             int  knownCount)
     {
-        return   knownCount == 0
-               ? rollOutFlopTurnRiver(cards)
-               : knownCount == 3
-               ? rollOutTurnRiver(cards)
-               : knownCount == 4
-               ? rollOutRiver(cards)
-               : rollOutOpp(cards);
+        switch (knownCount) {
+            case 0: return rollOutFlopTurnRiver(cards);
+            case 3: return rollOutTurnRiver(cards);
+            case 4: return rollOutRiver(cards);
+            case 5: return rollOutOpp(cards);
+            default: throw new Error();
+        }
     }
 
 
@@ -232,27 +232,35 @@ public class PreciseHeadsUpOdds implements OddFinder
             int   shortcut,
             short thisVal)
     {
-        Odds odds = new Odds();
+        int win = 0;
+        int lose = 0;
+        int split = 0;
+
         for (int oppIndexB = 1; oppIndexB <= OPP_B; oppIndexB++)
         {
             for (int oppIndexA = 0;
                      oppIndexA < oppIndexB;
                      oppIndexA++)
             {
-                short thatVal =
-                        Eval7Faster.fastValueOf(
-                                shortcut,
-                                cards[ oppIndexA ], cards[ oppIndexB ]);
-                odds = odds.plus(
-                        Odds.valueOf(thisVal, thatVal));
+                short thatVal = Eval7Faster.fastValueOf(
+                        shortcut, cards[ oppIndexA ], cards[ oppIndexB ]);
+
+                if (thisVal > thatVal) {
+                    win++;
+                } else if (thisVal < thatVal) {
+                    lose++;
+                } else {
+                    split++;
+                }
             }
         }
-        return odds;
+
+        return new Odds(win, lose, split);
     }
 
     private static Odds rollOutOpp(Card cards[])
     {
-        int   shortcut =
+        int shortcut =
             Eval7Faster.shortcutFor(
                     cards[ FLOP_A ],
                     cards[ FLOP_B ],
@@ -260,7 +268,7 @@ public class PreciseHeadsUpOdds implements OddFinder
                     cards[ TURN   ],
                     cards[ RIVER  ]);
 
-        short thisVal  =
+        short thisVal =
             Eval7Faster.fastValueOf(
                     shortcut,
                     cards[ HOLE_A ], cards[ HOLE_B ]);

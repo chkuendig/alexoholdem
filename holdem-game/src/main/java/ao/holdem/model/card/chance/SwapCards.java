@@ -1,6 +1,5 @@
 package ao.holdem.model.card.chance;
 
-import ao.holdem.model.Avatar;
 import ao.holdem.model.Round;
 import ao.holdem.model.card.Card;
 import ao.holdem.model.card.Community;

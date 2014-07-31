@@ -20,7 +20,7 @@ import org.apache.commons.math3.random.{Well512a, MersenneTwister, RandomAdaptor
 import ao.holdem.model.card.canon.hole.CanonHole
 import ao.holdem.ai.abs.{CompoundStateAbstraction, StateAbstraction}
 import ao.holdem.abs.bucket.v2.PercentileImperfectAbstractionBuilder
-import ao.holdem.ai.abs.act.{BasicActionView, ActionAbstraction}
+import ao.holdem.ai.abs.act.{SmallActionView, BasicActionView, ActionAbstraction}
 import ao.holdem.model.card.sequence.CardSequence
 import java.util.{Date, Comparator}
 import ao.holdem.ai.odds.OddsBy5
@@ -44,7 +44,8 @@ object GenMain extends App
 
   val sampler: RegretSampler[HoldemState, HoldemInfo, HoldemAction] =
     new OutcomeRegretSampler[HoldemState, HoldemInfo, HoldemAction](
-      randomness = rand)
+      randomness = rand,
+      payoffFactor = 1.05)
 
 //  val holdemAbstraction: HoldemAbstraction =
 //    new HoldemAbstraction(
@@ -52,16 +53,26 @@ object GenMain extends App
 ////      5, 25.toChar, 125.toChar, 625.toChar)
 //      8, 64.toChar, 512.toChar, 4096.toChar)
 
-  val cardAbstraction: CardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
-    20, 30, 30, 50)
+//  val cardAbstraction: CardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
+//    20, 30, 30, 50)
+  val smallCardAbstraction: CardAbstraction = PercentileImperfectAbstractionBuilder.loadOrBuildAndSave(
+    5, 20, 20, 20)
+
+  val actionViewName: String =
+    //"BasicActionView.bin"
+    "SmallActionView.bin"
+
 
   val stateAbstraction: StateAbstraction = {
     val actionAbstraction: ActionAbstraction = ViewActionAbstraction.loadOrBuildAndSave(
-      new File("lookup/bucket/BasicActionView.bin"),
-      BasicActionView.VIEW)
+      new File(s"lookup/bucket/$actionViewName"),
+//      BasicActionView.VIEW)
+      SmallActionView.VIEW)
 
     new CompoundStateAbstraction(
-      cardAbstraction, actionAbstraction,
+//      cardAbstraction,
+      smallCardAbstraction,
+      actionAbstraction,
       //OddsBy5.INSTANCE)
       OddsFinderEvaluator.INSTANCE)
   }
@@ -80,7 +91,8 @@ object GenMain extends App
 
 //      val bucket: Int = bucketTree.getHole(h)
       val bucket: Int =
-        cardAbstraction.indexInRound(
+        //cardAbstraction.indexInRound(
+        smallCardAbstraction.indexInRound(
           new CardSequence(hole.reify()),
           OddsBy5.INSTANCE)
 
@@ -92,7 +104,10 @@ object GenMain extends App
 
   //val statePath = "work/opt/" + holdemAbstraction.id()
   //val statePath = "work/opt/b-20-30-30-50"
-  val statePath = "work/opt/b_20_30_30_50_b"
+//  val statePath = "work/opt/b_20_30_30_50_b"
+//  val statePath = "work/opt/b_20_30_30_50_c"
+  //val statePath = "work/opt/b_20_30_30_50_agro"
+  val statePath = "work/opt/s_50_20_20_20_agro"
 
   val state: ArrayOptimizationState =
     ArrayOptimizationState.readOrEmpty(statePath)
@@ -107,14 +122,15 @@ object GenMain extends App
   val solver = new RegretMinimizer(
     game, abstraction, state, true)
 
-  (0 to 1000 * 1000 * 1000).foreach(i => {
+  (0 to 2 * 1000 * 1000 * 1000).foreach(i => {
 
     val strategy: MixedStrategy =
       solver.strategyView
 
     solver.iterate(sampler)
 
-    if (i % 25000 == 0)
+    if (i % 1000000 == 0)
+//    if (i % 25000 == 0)
 //    if (i % 10000 == 0)
 //    if (i % 1000 == 0)
     {

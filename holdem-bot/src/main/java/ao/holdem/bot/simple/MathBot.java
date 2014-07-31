@@ -33,8 +33,7 @@ public class MathBot extends AbstractPlayer
     
     //--------------------------------------------------------------------
     public Action act(ActionState state,
-                      CardSequence cards/*,
-                      Analysis     analysis*/)
+                      CardSequence cards)
     {
         Odds odds;
         if (cards.equals( prevCards )) {
@@ -47,27 +46,34 @@ public class MathBot extends AbstractPlayer
                         state.numActivePlayers()-1);
         }
 
-        double toCall  = state.remainingBetsInRound() * state.betsToCall();
-        double potOdds =
-                (toCall) /
-                (toCall + state.pot().smallBets());
-
-//        if (odds.nonLossPercent() <= potOdds)
-//        {
-//            System.out.println(
-//                "odds: " + odds +
-//                " with " + hole +
-//                " on " + community +
-//                " vs [" + Math.round(potOdds * 100) + "]");
-//        }
+//        double toCall  = state.remainingBetsInRound() * state.betsToCall();
+//        double potOdds =
+//                (toCall) /
+//                (toCall + state.pot().smallBets());
+//
+////        if (odds.nonLossPercent() <= potOdds)
+////        {
+////            System.out.println(
+////                "odds: " + odds +
+////                " with " + hole +
+////                " on " + community +
+////                " vs [" + Math.round(potOdds * 100) + "]");
+////        }
 
         prevOdds  = odds;
         prevCards = cards;
 
-        return state.reify(
-                (odds.strengthVsRandom() > potOdds)
+        double expectedHandStrength = odds.strengthVsRandom();
+
+        FallbackAction act =
+                expectedHandStrength < 0.175 ? FallbackAction.CHECK_OR_FOLD :
+                expectedHandStrength < 0.6 ? FallbackAction.CHECK_OR_CALL :
+                FallbackAction.RAISE_OR_CALL;
+
+        return state.reify(act
+                /*(odds.strengthVsRandom() > potOdds)
                 ? FallbackAction.RAISE_OR_CALL
-                : FallbackAction.CHECK_OR_CALL);
+                : FallbackAction.CHECK_OR_CALL*/);
     }
 
 
